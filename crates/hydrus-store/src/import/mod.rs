@@ -1224,9 +1224,9 @@ impl Copier<'_> {
             .iter()
             .map(|s| (crate::sessions::LAST_SESSION, s))
             .chain(input.other_sessions.iter().map(|s| (s.name.as_str(), s)));
-        for (name, session) in sessions {
+        for (name, input_session) in sessions {
             let mut files = Vec::new();
-            let pages = session
+            let pages = input_session
                 .pages
                 .iter()
                 .map(|p| convert(p, page_queues, &mut files))
@@ -1244,6 +1244,17 @@ impl Copier<'_> {
                 pages,
             };
             crate::sessions::save(self.conn, &session, now)?;
+            if name == crate::sessions::LAST_SESSION && input_session.name != name {
+                // The importer stages the opened source as LAST, but startup
+                // still names its original saved session. Preserve that name
+                // as a frozen snapshot without creating active orphan queues.
+                let named = Session {
+                    name: input_session.name.clone(),
+                    pages: session.pages.clone(),
+                };
+                crate::session_backups::save(self.conn, &named, now.saturating_mul(1_000))?;
+                *self.report.rows.entry("sessions".into()).or_default() += 1;
+            }
             *self.report.rows.entry("sessions".into()).or_default() += 1;
             *self.report.rows.entry("page_files".into()).or_default() += files.len() as u64;
         }
@@ -2046,8 +2057,13 @@ mod network_tests {
             .collect();
         assert_eq!(
             names,
-            ["exit session", "last session", "last session (from hydrus)"],
-            "the named one is what we open with"
+            [
+                "exit session",
+                "last session",
+                "last session (from hydrus)",
+                "my downloads"
+            ],
+            "the opened source keeps its named startup identity as well as native LAST"
         );
         let ours = crate::sessions::load(&conn, crate::sessions::LAST_SESSION)
             .unwrap()
@@ -2068,6 +2084,46 @@ mod network_tests {
             )
             .unwrap();
         assert!(queues > 0, "the session opened with runs its downloaders");
+        let startup: crate::settings::GuiSessionSettings = crate::settings::get(&conn).unwrap();
+        assert_eq!(startup.startup.as_deref(), Some("my downloads"));
+        let frozen = crate::session_backups::latest(&conn, "my downloads")
+            .unwrap()
+            .unwrap();
+        assert_eq!(frozen.session.pages, ours.pages);
+        assert!(!frozen.queues.is_empty());
+        for queue in &frozen.queues {
+            crate::queues::delete_queue(&conn, queue.queue.id).unwrap();
+        }
+        let restored = crate::session_backups::restore_pages(&conn, frozen.clone()).unwrap();
+        let restored_session = hydrus_core::pages::Session {
+            name: "restored".into(),
+            pages: restored,
+        };
+        let replay = crate::session_backups::capture(&conn, &restored_session).unwrap();
+        assert_eq!(replay.queues.len(), frozen.queues.len());
+        for (new, old) in replay.queues.iter().zip(&frozen.queues) {
+            assert_eq!(new.queue.options, old.queue.options);
+            assert_eq!(
+                new.files.iter().map(|seed| &seed.data).collect::<Vec<_>>(),
+                old.files.iter().map(|seed| &seed.data).collect::<Vec<_>>()
+            );
+            assert_eq!(
+                new.gallery.iter().map(|seed| &seed.url).collect::<Vec<_>>(),
+                old.gallery.iter().map(|seed| &seed.url).collect::<Vec<_>>()
+            );
+        }
+        assert_eq!(
+            replay
+                .media
+                .iter()
+                .map(|page| &page.files)
+                .collect::<Vec<_>>(),
+            frozen
+                .media
+                .iter()
+                .map(|page| &page.files)
+                .collect::<Vec<_>>()
+        );
     }
 
     /// A session made by the reference (`oracle/dump_gui_sessions.py`)

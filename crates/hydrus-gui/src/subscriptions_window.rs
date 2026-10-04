@@ -23,17 +23,23 @@ use crate::edit_subscription::{EditSubscription, LogChange, RetryIgnored};
 use crate::edit_subscription_window::Slots;
 use crate::subscriptions_dedupe::{Answer, Dedupe, Question};
 use crate::subscriptions_dialog::{
-    CheckNow, Choice, DELETE_QUESTION, DialogQuery, LOWERCASE_QUESTION, MERGE_PRIMARY,
-    MERGE_QUESTION, NOT_MERGEABLE, Picked, RESET_QUESTION, SELECT_MESSAGE, SEPARATE_CHOICES,
-    SEPARATE_MERGED_CHOICES, SEPARATE_MERGED_NAME, SEPARATE_MERGED_QUESTION, SEPARATE_NAME,
-    SEPARATE_PICK, SEPARATE_QUESTION, Separate, Subscriptions, added_message, picked,
+    CheckNow, Choice, DELETE_QUESTION, DialogQuery, ImportOptionsPaste, LOWERCASE_QUESTION,
+    MERGE_PRIMARY, MERGE_QUESTION, NOT_MERGEABLE, Picked, RESET_QUESTION, SELECT_MESSAGE,
+    SEPARATE_CHOICES, SEPARATE_MERGED_CHOICES, SEPARATE_MERGED_NAME, SEPARATE_MERGED_QUESTION,
+    SEPARATE_NAME, SEPARATE_PICK, SEPARATE_QUESTION, Separate, Subscriptions, added_message,
+    picked,
 };
 use crate::subscriptions_list::ShortSummary;
 use crate::{SubscriptionGalleryWindow, SubscriptionsWindow, TableRow, Tick};
 
+/// The reference warns before using a custom overwrite with several selected rows.
+const MULTIPLE_FAVOURITE_LOAD: &str = "Hey, multiple items in the subscriptions list are selected. I am only going to do this on the topmost selected.  If you need to do this to multiple entries, set up one exactly how you want and then copy/replace-paste to the rest.";
+
 /// What a question waits on.
 enum Asking {
+    FavouriteLoad(String),
     Delete,
+    ClearImportOptions(Vec<u64>, String),
     Select,
     Check(CheckNow),
     /// A message with only "ok".
@@ -80,6 +86,7 @@ struct AsRead {
 
 /// The dialog's state while it is open.
 struct Open {
+    services: Arc<hydrus_store::store::Snapshot>,
     dialog: Subscriptions,
     /// Each subscription as read, by id.
     read: HashMap<i64, AsRead>,
@@ -87,6 +94,7 @@ struct Open {
     asking: Option<Asking>,
     /// The text the question's text box starts with, when it is asked.
     text: RefCell<Option<String>>,
+    favourites: Option<Rc<crate::import_options_favourites_window::Controller>>,
 }
 
 /// Change the dialog's state, and show it again.
@@ -131,6 +139,7 @@ fn read(store: &Store) -> hydrus_store::Result<Open> {
         }
         let naming: hydrus_core::pages::PageNameSettings = hydrus_store::settings::get(conn)?;
         Ok(Open {
+            services: store.snapshot(),
             dialog: Subscriptions::new(loaded),
             read,
             short: ShortSummary {
@@ -139,6 +148,7 @@ fn read(store: &Store) -> hydrus_store::Result<Open> {
             },
             asking: None,
             text: RefCell::new(None),
+            favourites: None,
         })
     })
 }
@@ -363,7 +373,23 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
     let rows: Vec<TableRow> = dialog
         .rows(now, open.short)
         .into_iter()
-        .map(|(_, cells, selected)| {
+        .map(|(key, mut cells, selected)| {
+            if let Some(subscription) = dialog.get(key) {
+                cells[8] = crate::import_options_editor::container_summary(
+                    &subscription.settings.import_options,
+                    &|key| {
+                        hex::decode(key)
+                            .ok()
+                            .and_then(|key| {
+                                open.services
+                                    .services
+                                    .by_key(&hydrus_core::ServiceKey::new(key))
+                                    .ok()
+                            })
+                            .map_or_else(|| "unknown service".into(), |s| s.name.clone())
+                    },
+                );
+            }
             let cells: Vec<SharedString> = cells.into_iter().map(Into::into).collect();
             TableRow {
                 cells: ModelRc::new(VecModel::from(cells)),
@@ -486,6 +512,7 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
         _ => None,
     };
     let question = question.or_else(|| match &open.asking {
+        Some(Asking::ClearImportOptions(_, message)) => yes_no(message),
         Some(Asking::Delete) => Some((
             Choice {
                 title: "Are you sure?".into(),
@@ -512,6 +539,14 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
             false,
         )),
         Some(Asking::Dedupe(_, question, _)) => Some((dedupe_choice(question), false)),
+        Some(Asking::FavouriteLoad(_)) => Some((
+            Choice {
+                title: "Information".into(),
+                message: MULTIPLE_FAVOURITE_LOAD.into(),
+                choices: vec!["ok".into()],
+            },
+            false,
+        )),
         Some(Asking::Information(message)) => Some((
             Choice {
                 title: "Information".into(),
@@ -724,17 +759,27 @@ pub(crate) fn open(
 ) -> Result<SubscriptionsWindow, String> {
     let edit_slots = Rc::new(edit_slots);
     let state = Rc::new(RefCell::new(read(store).map_err(|e| e.to_string())?));
+    let active = Rc::new(Cell::new(true));
     let window = SubscriptionsWindow::new().map_err(|e| e.to_string())?;
     let paused = store
         .read(hydrus_store::settings::get::<hydrus_store::settings::Pauses>)
         .is_ok_and(|p| p.subscriptions);
     window.set_globally_paused(paused);
     let close = {
+        let active = active.clone();
         let weak = window.as_weak();
         let slot = slot.clone();
         let edit = edit_slots.edit.clone();
         let gallery = gallery_slot.clone();
+        let state = state.clone();
         move || {
+            if !active.replace(false) {
+                return;
+            }
+            let favourites = state.borrow().favourites.clone();
+            if let Some(favourites) = favourites {
+                favourites.close();
+            }
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -754,9 +799,19 @@ pub(crate) fn open(
     };
     // (each change shown again)
     let change = {
+        let active = active.clone();
         let weak = window.as_weak();
         let state = state.clone();
         move |f: &dyn Fn(&mut Open)| {
+            if !active.get()
+                || state
+                    .borrow()
+                    .favourites
+                    .as_ref()
+                    .is_some_and(|owner| owner.busy())
+            {
+                return;
+            }
             f(&mut state.borrow_mut());
             if let Some(window) = weak.upgrade() {
                 show(&window, &state.borrow());
@@ -764,6 +819,97 @@ pub(crate) fn open(
         }
     };
     let change: Change = Rc::new(change);
+    let targets: Rc<RefCell<Vec<u64>>> = Rc::default();
+    let favourites = crate::import_options_favourites_window::Controller::new(
+        store.clone(),
+        hydrus_core::import_options::CallerType::SpecificImporter,
+        Rc::new({
+            let state = Rc::downgrade(&state);
+            let targets = targets.clone();
+            let active = active.clone();
+            move || {
+                if !active.get() {
+                    return None;
+                }
+                let state = state.upgrade()?;
+                let open = state.borrow();
+                targets
+                    .borrow()
+                    .first()
+                    .and_then(|key| open.dialog.get(*key))
+                    .map(|s| s.settings.import_options.clone())
+            }
+        }),
+        Rc::new({
+            let state = Rc::downgrade(&state);
+            let targets = targets.clone();
+            let weak = window.as_weak();
+            let active = active.clone();
+            move |options| {
+                if !active.get() {
+                    return;
+                }
+                let Some(state) = state.upgrade() else {
+                    return;
+                };
+                state.borrow_mut().dialog.paste_import_options(
+                    &targets.borrow(),
+                    ImportOptionsPaste::Replace,
+                    &options,
+                );
+                if let Some(window) = weak.upgrade() {
+                    show(&window, &state.borrow());
+                }
+            }
+        }),
+        Rc::new({
+            let state = Rc::downgrade(&state);
+            let weak = window.as_weak();
+            move |error| {
+                if let Some(state) = state.upgrade() {
+                    state.borrow_mut().asking = Some(Asking::Message(error));
+                    if let Some(window) = weak.upgrade() {
+                        show(&window, &state.borrow());
+                    }
+                }
+            }
+        }),
+        Rc::new({
+            let weak = window.as_weak();
+            move |busy| {
+                if let Some(window) = weak.upgrade() {
+                    window.set_import_child_open(busy);
+                }
+            }
+        }),
+    );
+    favourites.set_save_current_allowed(false);
+    state.borrow_mut().favourites = Some(favourites.clone());
+    let refresh_favourites = Rc::new({
+        let favourites = favourites.clone();
+        let weak = window.as_weak();
+        move || {
+            if let (Ok(rows), Some(window)) = (favourites.rows(), weak.upgrade()) {
+                window.set_favourites(ModelRc::new(VecModel::from(rows)));
+            }
+        }
+    });
+    window.on_refresh_favourites({
+        let refresh = refresh_favourites.clone();
+        move || refresh()
+    });
+    window.on_favourite({ let state = state.clone(); let targets = targets.clone(); let favourites = favourites.clone(); let change = change.clone(); let active = active.clone(); let refresh = refresh_favourites.clone(); move |action, name| {
+        if !active.get() || favourites.busy() || state.borrow().asking.is_some() { return; }
+        if action == 0 || action == 1 {
+            let keys = state.borrow().dialog.selected(now());
+            if keys.is_empty() { change(&|open| open.asking = Some(Asking::Information("Hey, nothing is selected in the subscriptions list--select something and try loading again.".into()))); return; }
+            let multiple = keys.len() > 1;
+            *targets.borrow_mut() = keys;
+            if action == 1 && multiple { change(&|open| open.asking = Some(Asking::FavouriteLoad(name.to_string()))); return; }
+        }
+        favourites.choose(action, name.as_str()); refresh();
+    } });
+    refresh_favourites();
     window.on_sort({
         let change = change.clone();
         move |column, ascending| {
@@ -917,17 +1063,35 @@ pub(crate) fn open(
         }
     });
     window.on_chosen({
+        let state = state.clone();
+        let favourites = favourites.clone();
         let change = change.clone();
         let weak = window.as_weak();
         move |index| {
             let Ok(index) = usize::try_from(index) else {
                 return;
             };
+            let favourite = match state.borrow().asking.as_ref() {
+                Some(Asking::FavouriteLoad(name)) => Some(name.clone()),
+                _ => None,
+            };
+            if let Some(name) = favourite {
+                change(&|open| open.asking = None);
+                if index == 0 {
+                    favourites.choose(1, &name);
+                }
+                return;
+            }
             let text = weak
                 .upgrade()
                 .map(|w| w.get_asked_text().to_string())
                 .unwrap_or_default();
             change(&|open| match open.asking.take() {
+                Some(Asking::ClearImportOptions(keys, _)) => {
+                    if index == 0 {
+                        open.dialog.clear_import_options(&keys);
+                    }
+                }
                 Some(Asking::Reset) => {
                     if index == 0 {
                         open.dialog.reset_selected(now());
@@ -1033,7 +1197,8 @@ pub(crate) fn open(
                     let next = dedupe.answer(&mut open.dialog, &answer);
                     ask_dedupe(open, dedupe, next);
                 }
-                Some(Asking::Message(_) | Asking::Information(_)) | None => {}
+                Some(Asking::Message(_) | Asking::Information(_) | Asking::FavouriteLoad(_))
+                | None => {}
             });
         }
     });
@@ -1177,11 +1342,89 @@ pub(crate) fn open(
             }
         }
     });
+    window.on_copy_import_options({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let change = change.clone();
+        let active = active.clone();
+        move || {
+            if !active.get() {
+                return;
+            }
+            let options = {
+                let open = state.borrow();
+                open.dialog
+                    .selection
+                    .one()
+                    .and_then(|key| open.dialog.get(key))
+                    .map(|s| s.settings.import_options.clone())
+            };
+            let Some(options) = options else {
+                return;
+            };
+            match hydrus_downloader_exchange::import_options::encode_text(&options) {
+                Ok(text) => {
+                    crate::to_clipboard(&crate::Clip::Text(text));
+                    if let Some(window) = weak.upgrade() {
+                        window.set_import_status("Copied!".into());
+                    }
+                }
+                Err(error) => {
+                    change(&|open| open.asking = Some(Asking::Message(error.to_string())))
+                }
+            }
+        }
+    });
+    window.on_paste_import_options({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let change = change.clone();
+        let active = active.clone();
+        move |index| {
+            if !active.get() { return; }
+            let Some(mode) = usize::try_from(index).ok().and_then(ImportOptionsPaste::from_menu_index) else { return; };
+            let keys = state.borrow().dialog.selected(now());
+            if keys.is_empty() { return; }
+            let decoded = crate::from_clipboard().and_then(|text|
+                hydrus_downloader_exchange::import_options::decode_text(&text).map_err(|e|
+                    format!("Could not understand the clipboard as JSON-serialised Import Options Container.\n\n{e}")));
+            match decoded {
+                Ok(options) => {
+                    change(&|open| open.dialog.paste_import_options(&keys, mode, &options));
+                    if let Some(window) = weak.upgrade() { window.set_import_status("Pasted!".into()); }
+                }
+                Err(error) => change(&|open| open.asking = Some(Asking::Message(error.clone()))),
+            }
+        }
+    });
+    window.on_clear_import_options({
+        let change = change.clone();
+        move || {
+            change(&|open| {
+                if let Some(question) = open.dialog.clear_import_options_question(now()) {
+                    open.asking = Some(Asking::ClearImportOptions(
+                        open.dialog.selected(now()),
+                        question,
+                    ));
+                }
+            })
+        }
+    });
     window.on_apply({
+        let active = active.clone();
         let state = state.clone();
         let store = store.clone();
         let close = close.clone();
         move || {
+            if !active.get()
+                || state
+                    .borrow()
+                    .favourites
+                    .as_ref()
+                    .is_some_and(|owner| owner.busy())
+            {
+                return;
+            }
             let writes = changes(&state.borrow());
             if let Err(e) = write(&store, writes) {
                 eprintln!("could not save the subscriptions: {e}");

@@ -31,15 +31,43 @@ fn main() -> Result<()> {
     let lock: LockPassword = store
         .read(hydrus_store::settings::get)
         .context("reading the lock password")?;
+    hydrus_gui::session_autosave::install_activity_backend()
+        .context("initializing desktop input activity")?;
+    let run = hydrus_gui::session_startup::Run::begin(store.dir())
+        .context("recording the running client")?;
+    let bad = run.bad();
+    let recovery: Rc<RefCell<Option<hydrus_gui::session_startup::Recovery>>> = Rc::default();
     let client: Rc<RefCell<Option<Client>>> = Rc::default();
     let failed: Rc<RefCell<Option<anyhow::Error>>> = Rc::default();
     let open = {
-        let (client, failed) = (client.clone(), failed.clone());
-        move || match Client::open(store) {
-            Ok(opened) => *client.borrow_mut() = Some(opened),
-            Err(e) => {
-                *failed.borrow_mut() = Some(e);
-                let _ = slint::quit_event_loop();
+        let (client, failed, recovery) = (client.clone(), failed.clone(), recovery.clone());
+        move || {
+            let slot = Rc::downgrade(&recovery);
+            let ready = Rc::new({
+                let store = store.clone();
+                let failed = failed.clone();
+                move |pages: hydrus_store::Result<Pages>| {
+                    match pages
+                        .map_err(anyhow::Error::from)
+                        .and_then(|pages| Client::open(store.clone(), pages))
+                    {
+                        Ok(opened) => *client.borrow_mut() = Some(opened),
+                        Err(error) => {
+                            *failed.borrow_mut() = Some(error);
+                            let _ = slint::quit_event_loop();
+                        }
+                    }
+                    if let Some(slot) = slot.upgrade() {
+                        slot.borrow_mut().take();
+                    }
+                }
+            });
+            match hydrus_gui::session_startup::prepare(store, bad, ready) {
+                Ok(window) => *recovery.borrow_mut() = window,
+                Err(error) => {
+                    *failed.borrow_mut() = Some(anyhow!(error));
+                    let _ = slint::quit_event_loop();
+                }
             }
         }
     };
@@ -61,6 +89,8 @@ fn main() -> Result<()> {
         return Err(e);
     }
     let Some(client) = client.take() else {
+        run.finish()
+            .context("clearing the cancelled startup marker")?;
         return Err(anyhow!(
             "the client is locked, and its password wasn't entered"
         ));
@@ -70,6 +100,7 @@ fn main() -> Result<()> {
     client.bound.pages.borrow_mut().forget_closed();
     // (as hydrus stops its downloads on closing)
     client.daemon.borrow_mut().stop(daemon::GRACE);
+    run.finish().context("recording a clean client shutdown")?;
     Ok(())
 }
 
@@ -84,7 +115,7 @@ struct Client {
 }
 
 impl Client {
-    fn open(store: Arc<Store>) -> Result<Self> {
+    fn open(store: Arc<Store>, pages: Pages) -> Result<Self> {
         let window = MainWindow::new()?;
         // the daemon, run while none does (and, as the reference's work
         // does, only once the client is unlocked)
@@ -124,7 +155,6 @@ impl Client {
                 say(state);
             }
         });
-        let pages = Pages::open(store).context("opening the last session")?;
         let bound = bind(&window, pages);
         // the last session kept as it changes (the reference saves it every
         // five minutes), and what the Client API asks of the pages done

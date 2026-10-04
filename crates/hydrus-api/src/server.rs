@@ -79,3 +79,26 @@ async fn log_request(
     tracing::info!(%method,%path,status=response.status().as_u16(),elapsed_ms=started.elapsed().as_millis(),"Client API request");
     response
 }
+
+/// The reference records activity before authenticating or refusing busy routes.
+/// Use timestamp-only filesystem IPC so database lock_on cannot block this path.
+pub(crate) async fn note_activity(
+    axum::extract::State(state): axum::extract::State<Arc<AppState>>,
+    request: axum::extract::Request,
+    next: axum::middleware::Next,
+) -> axum::response::Response {
+    let now = hydrus_core::TimestampMs::now().0;
+    let written = tokio::task::spawn_blocking(move || {
+        let mut previous = state.api_activity.lock();
+        if now > *previous {
+            hydrus_store::api_activity::touch(state.store.dir(), now)?;
+            *previous = now;
+        }
+        Ok::<(), std::io::Error>(())
+    })
+    .await;
+    if !matches!(written, Ok(Ok(()))) {
+        tracing::warn!("could not publish Client API activity timestamp");
+    }
+    next.run(request).await
+}

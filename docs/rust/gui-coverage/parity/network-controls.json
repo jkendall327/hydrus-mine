@@ -1,0 +1,520 @@
+{
+  "agent": "network-controls",
+  "baseline": "d50df26b",
+  "claims": [
+    {
+      "originalID": "audit-network-download-control-cog",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "All actual reference cog entries: decoded URL/raw clipboard; deduplicated inherited/default context rule submenu excluding ephemeral instances; accepted/cancelled native rule drafts; conditional connection/server retry, domain scrub, per-job bandwidth and gallery-token skips; checked automatic override strictly after creation+5 seconds, owned by page+file/search control across highlighted queues, retired on page close. Request IDs and daemon epochs prevent stale actions. The reference has no debug menu item.",
+      "limits": [
+        "No new debug action is invented; the reference leaf label is broader than its actual _ShowCogMenu implementation.",
+        "Automatic policy is local and intentionally not persisted across rebuilding a control.",
+        "Native rule UI uses detached apply/cancel rather than Qt modal editors."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/ui/importing.slint",
+          "line": 45,
+          "symbol": "export component DownloadControl"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/network_job_control.rs",
+          "line": 344,
+          "symbol": "fn action(&self"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/network_job_control.rs",
+          "line": 61,
+          "symbol": "pub fn cog("
+        },
+        {
+          "relativepath": "crates/hydrus-net/src/engine.rs",
+          "line": 615,
+          "symbol": "pub fn runtime_command("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/network_data_window.rs",
+          "symbol": "fn control_action(&self",
+          "line": 1040
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/network_job_control.rs",
+          "line": 45,
+          "symbol": "fn cog_replays"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/network_job_control.rs",
+          "line": 129,
+          "symbol": "fn control_auto"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
+          "line": 59,
+          "symbol": "fn page_cog"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
+          "line": 253,
+          "symbol": "fn page_override"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
+          "line": 366,
+          "symbol": "fn auto_policy"
+        },
+        {
+          "relativepath": "crates/hydrus-net/tests/engine.rs",
+          "line": 1140,
+          "symbol": "fn runtime_cog_server"
+        },
+        {
+          "relativepath": "crates/hydrus-net/tests/engine.rs",
+          "line": 1198,
+          "symbol": "fn runtime_cog_gallery"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
+          "symbol": "fn current_jobs_cog",
+          "line": 498
+        },
+        {
+          "relativepath": "crates/hydrus-net/src/engine.rs",
+          "line": 2011,
+          "symbol": "async fn runtime_domain_scrub_wakes_a_registered_domain_gate_and_preserves_unrelated_errors"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_network_job_control.py",
+        "fixture": "oracle/fixtures/network_job_control.json",
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; tests authored but not claimed locally passed."
+      }
+    },
+    {
+      "originalID": "audit-network-download-control-errors",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Native page controls and shared Control/Errors support reference show/copy and explicit owner clear, retaining an error after a job leaves, hiding after clear without journal resurrection. Actual engine failures populate owning controls via context+request-role journal; show preserves Network Error title and text, copy preserves exact text. No visible clear menu item. The page-parser example-fetch owner clears only after validating a new URL, sets completed failure text after removing the live job, preserves the error for empty URL/raw test-panel fetch, and closes error descendants when its editor closes.",
+      "limits": [
+        "Native error display is a scrollable window instead of a modal critical message box.",
+        "Failure journal retains 128 requests per daemon epoch and displays the reference long-text prefix."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/ui/importing.slint",
+          "line": 45,
+          "symbol": "export component DownloadControl"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/network_job_control.rs",
+          "line": 344,
+          "symbol": "fn action(&self"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/network_job_control.rs",
+          "line": 61,
+          "symbol": "pub fn cog("
+        },
+        {
+          "relativepath": "crates/hydrus-net/src/engine.rs",
+          "line": 615,
+          "symbol": "pub fn runtime_command("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/network_data_window.rs",
+          "symbol": "fn control_action(&self",
+          "line": 1040
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
+          "line": 435,
+          "symbol": "fn open_editor(",
+          "commit": "af7f5321"
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/network_job_control.rs",
+          "line": 45,
+          "symbol": "fn cog_replays"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/network_job_control.rs",
+          "line": 129,
+          "symbol": "fn control_auto"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
+          "line": 59,
+          "symbol": "fn page_cog"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
+          "line": 253,
+          "symbol": "fn page_override"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
+          "line": 366,
+          "symbol": "fn auto_policy"
+        },
+        {
+          "relativepath": "crates/hydrus-net/tests/engine.rs",
+          "line": 1140,
+          "symbol": "fn runtime_cog_server"
+        },
+        {
+          "relativepath": "crates/hydrus-net/tests/engine.rs",
+          "line": 1198,
+          "symbol": "fn runtime_cog_gallery"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/network_job_control.rs",
+          "symbol": "fn current_jobs_cog",
+          "line": 498
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 275,
+          "symbol": "fn page_fetch_error_menu_retains_completed_failure_and_clears_at_next_request",
+          "commit": "af7f5321"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_network_job_control.py",
+        "fixture": "oracle/fixtures/network_job_control.json",
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; tests authored but not claimed locally passed."
+      },
+      "ownerReferenceRecording": {
+        "script": "oracle/record_parser_fetch_errors.py",
+        "fixture": "oracle/fixtures/parser_fetch_errors.json",
+        "executed": true,
+        "commit": "af7f5321"
+      }
+    },
+    {
+      "originalID": "audit-network-file-log-clipboard-import",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Enabled actual whole-log clipboard import in open file logs and downloader list menus. Nonblank/BOM/newline source parsing, active URL-class request/storage normalization, first-line batch URL/path type including mixed batches, durable duplicate skipping without retrying failed seeds, queue nudge and reread. Empty or unavailable clipboard displays an acknowledgement; cancel/acknowledge changes nothing. Reopened log sees persisted imports; closed/replaced owners reject stale callbacks.",
+      "limits": [
+        "Native acknowledgement/page error presentation replaces Qt clipboard parse-error dialogs."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/file_log.rs",
+          "line": 85,
+          "symbol": "pub fn pasted_sources("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
+          "line": 337,
+          "symbol": "        Action::ImportFromClipboard => {"
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_log.rs",
+          "line": 133,
+          "symbol": "fn clipboard_source_batches_match_actual_reference_imports"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_log.rs",
+          "line": 192,
+          "symbol": "fn clipboard_import_persists_deduplicates_and_handles_empty_or_missing_text"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_file_log_exchange.py",
+        "fixture": "oracle/fixtures/file_log_exchange.json",
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; scoped tests authored and not claimed locally passed."
+      }
+    },
+    {
+      "originalID": "audit-network-file-log-search-urls",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Enabled selected-row search for URLs. Opens a native url search page in combined local file domains containing one OR container of has-url exact-match predicates for selected request URLs beginning http. Existing search engine consumes predicates and reaches files from either OR branch; session save/reopen preserves the page. Opening does not explicitly raise the desktop window.",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/file_log.rs",
+          "line": 140,
+          "symbol": "pub fn url_search("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
+          "line": 356,
+          "symbol": "        Action::SearchUrls => {"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 921,
+          "symbol": "                let predicates = crate::file_log::url_search(&urls);"
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_log.rs",
+          "line": 155,
+          "symbol": "fn selected_urls_are_one_exact_match_or_container"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_log.rs",
+          "line": 267,
+          "symbol": "fn selected_url_search_opens_a_local_or_search_and_reaches_matching_files"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_file_log_exchange.py",
+        "fixture": "oracle/fixtures/file_log_exchange.json",
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; scoped tests authored and not claimed locally passed."
+      }
+    },
+    {
+      "originalID": "audit-network-file-log-png",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Actual from-png importer uses native picker and bounded reference compressed UTF-8 carrier decode, active source normalization/deduplication and durable queue append/nudge. Cancel leaves log unchanged; malformed and empty payloads display Could not import. Actual to-png action opens reusable owned export panel with title, readonly payload description, description, width100–4096/path controls, path/title validation, automatic .png suffix, readable header/compressed payload, brief done state and persistent successful last directory. Frozen payload and parent-close/stale-callback guards preserve owner boundaries.",
+      "limits": [
+        "Native SVG fonts/wrapping and decorative header pixels differ from Qt.",
+        "Export panel is an owned native window rather than a modal Qt dialog.",
+        "16 MiB carrier/payload limit and 4096-character title/description limit. Failed writes do not update the remembered directory."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
+          "line": 318,
+          "symbol": "        Action::ImportFromPng =>"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/png_export_window.rs",
+          "line": 71,
+          "symbol": "pub fn open("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/png_export.rs",
+          "line": 58,
+          "symbol": "pub fn encode("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/png_export.slint",
+          "line": 4,
+          "symbol": "export component PngExportWindow"
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_log.rs",
+          "line": 178,
+          "symbol": "fn source_png_carriers_import_actual_qt_exports_and_render_custom_headers"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_log.rs",
+          "line": 349,
+          "symbol": "fn source_png_dialogs_cancel_validate_import_export_and_close_with_the_log"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_file_log_png.py",
+        "fixture": "oracle/fixtures/file_log_png.json",
+        "binaryFixture": "oracle/fixtures/file_log_sources.png",
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; tests authored and not claimed locally passed."
+      }
+    },
+    {
+      "originalID": "audit-network-file-log-advanced",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Actual advanced menu selected import-object export produces reference SerialisableList v3/FileSeed v8 clipboard JSON, retaining progress/status/timestamps/headers/hashes/referral and primary/source URLs/filterable/additional/parsed tags and named notes. Actual re-normalise all URLs shows reference full Yes/No confirmation in open log and closed-log downloader menus. Yes reads current durable URL classes atomically, normalizes request/comparison URLs and removes subsequent duplicate identities, preserving the earliest seed ID/status/metadata/timestamps; No/closed owner changes nothing. Reference has no object-import action.",
+      "limits": [
+        "Set-valued metadata lists use stable native ordering; JSON object metadata and tuple semantics are preserved.",
+        "No new object-import action is invented from the inventory label."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/file_log.rs",
+          "line": 160,
+          "symbol": "pub fn export_objects("
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/queues.rs",
+          "line": 1123,
+          "symbol": "pub fn renormalise_file_seeds("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/file_log_window.rs",
+          "line": 368,
+          "symbol": "        Action::Renormalise =>"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/importer_list_menu.rs",
+          "line": 215,
+          "symbol": "                if *action == file_log::Action::Renormalise"
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_log.rs",
+          "line": 275,
+          "symbol": "fn selected_import_objects_match_full_reference_clipboard_bytes"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_log.rs",
+          "line": 288,
+          "symbol": "fn renormalisation_collapses_later_duplicates_and_preserves_first_progress_and_metadata"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_log.rs",
+          "line": 435,
+          "symbol": "fn advanced_object_export_and_renormalisation_confirm_before_collapsing_later_duplicates"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/importer_list_menu.rs",
+          "line": 208,
+          "symbol": "fn closed_log_renormalisation_menu_requires_confirmation"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_file_log_advanced.py",
+        "fixture": "oracle/fixtures/file_log_advanced.json",
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "slintCachedCompiler": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; scoped model/GUI tests authored and not claimed locally passed."
+      }
+    },
+    {
+      "originalID": "audit-network-search-log-exchange",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "All actual gallery/check log exchange entries: all URL strings to shared PNG export; clipboard/PNG new URL import with raw-line deduplication, request-normalised existing URL checks, exact duplicate and continuation questions before any write, cancelled/error no-op, reference duplicate No early return, per-page run tokens and continuation flags; complete selected GallerySeed v4 objects in SerialisableList v3 clipboard format. Both open log and closed-log downloader menu reach persisted queues and nudge scheduling. Read-only log menus keep import unavailable.",
+      "limits": [
+        "Native questions are owned nonmodal windows; Escape explicitly cancels. Whole-log menu children belong to the main window; an open log closes its own children.",
+        "PNG uses the shared native header and bounded 16 MiB carrier; font wrapping and decorative rendering differ from Qt.",
+        "The current reference duplicate No button returns without importing, despite its add-all label; no alternative behavior is invented.",
+        "Unrecognised URL text is retained as a pending seed, as the reference does; runtime tokens and force-next-page flags are not in reference object JSON; native set ordering is stable."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/search_log.rs",
+          "symbol": "pub enum ImportStep",
+          "line": 221
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/search_log.rs",
+          "symbol": "pub fn export_objects(",
+          "line": 308
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/search_log_import_window.rs",
+          "symbol": "fn commit(",
+          "line": 48
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/search_log_import_window.rs",
+          "symbol": "fn present(",
+          "line": 130
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/search_log_window.rs",
+          "symbol": "        Action::ImportFromClipboard | Action::ImportFromPng =>",
+          "line": 248
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/importer_list_menu.rs",
+          "symbol": "        Action::SearchLog(action) =>",
+          "line": 248
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/search_log_import.slint",
+          "symbol": "export component SearchLogImportWindow",
+          "line": 4
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/search_log.rs",
+          "symbol": "fn exchange_questions_replay_actual_reference_answers_and_complete_objects",
+          "line": 116
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/search_log.rs",
+          "symbol": "fn exchange_confirmations_png_objects_and_owner_cancel_reach_the_persisted_queue",
+          "line": 177
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/importer_list_menu.rs",
+          "symbol": "fn closed_search_log_exchange_retains_real_questions_and_png_children",
+          "line": 264
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_search_log_exchange.py",
+        "fixture": "oracle/fixtures/search_log_exchange.json",
+        "binaryFixture": "oracle/fixtures/search_log_urls.png",
+        "executed": true,
+        "cancelBoundary": "Qt titlebar close is simulated through the actual Dialog.SetCancelled(True) API before close; direct reject is the reference No result."
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "slintCachedCompiler": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; scoped model/GUI tests authored and not claimed locally passed."
+      }
+    }
+  ],
+  "nativeComponents": [
+    {
+      "name": "SearchLogImportWindow",
+      "file": "crates/hydrus-gui/ui/search_log_import.slint",
+      "title": "Are you sure? / Problem importing from clipboard! / Could not import!",
+      "preferredSize": "650 × 260",
+      "controls": [
+        "Exact duplicate question: only add new urls / add all urls, even duplicates",
+        "Exact continuation question: just check what I am adding / start a potential new search for every url added",
+        "Cancel / Escape / close: no writes",
+        "Error acknowledgement: ok"
+      ],
+      "owner": "Per-open-log Slots closed with log; closed-log downloader actions retained in main window OpenFiles slot",
+      "guiEvidence": "exchange_confirmations_png_objects_and_owner_cancel_reach_the_persisted_queue / closed_search_log_exchange_retains_real_questions_and_png_children"
+    }
+  ]
+}

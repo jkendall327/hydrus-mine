@@ -180,6 +180,92 @@ impl Setting for NotebookCreationSettings {
     const KEY: &'static str = "gui_notebook_creation";
 }
 
+/// `default_new_page_goes`, in the reference choice order.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub enum PageInsertion {
+    FarLeft,
+    LeftOfCurrent,
+    RightOfCurrent,
+    #[default]
+    FarRight,
+}
+
+impl PageInsertion {
+    pub fn from_code(code: i64) -> Option<Self> {
+        match code {
+            0 => Some(Self::FarLeft),
+            1 => Some(Self::LeftOfCurrent),
+            2 => Some(Self::RightOfCurrent),
+            3 => Some(Self::FarRight),
+            _ => None,
+        }
+    }
+
+    pub fn index(self, current: Option<usize>, count: usize) -> usize {
+        let Some(current) = current else {
+            return 0;
+        };
+        match self {
+            Self::FarLeft => 0,
+            Self::LeftOfCurrent => current.min(count),
+            Self::RightOfCurrent => (current + 1).min(count),
+            Self::FarRight => count,
+        }
+    }
+}
+
+impl Setting for PageInsertion {
+    const KEY: &'static str = "gui_page_insertion";
+}
+
+/// Startup and periodic last-session saving, as GUI Sessions edits it.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct GuiSessionSettings {
+    pub startup: Option<String>,
+    pub autosave_minutes: u16,
+    pub only_during_idle: bool,
+    pub warn_large_session: bool,
+}
+
+impl Default for GuiSessionSettings {
+    fn default() -> Self {
+        Self {
+            startup: Some(crate::sessions::LAST_SESSION.into()),
+            autosave_minutes: 5,
+            only_during_idle: false,
+            warn_large_session: true,
+        }
+    }
+}
+
+impl Setting for GuiSessionSettings {
+    const KEY: &'static str = "gui_sessions";
+}
+
+/// Idle eligibility from the reference's user-action and mouse timers.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct GuiIdleSettings {
+    pub enabled: bool,
+    pub user_seconds: Option<u64>,
+    pub mouse_seconds: Option<u64>,
+    pub api_seconds: Option<u64>,
+}
+impl Default for GuiIdleSettings {
+    fn default() -> Self {
+        Self {
+            enabled: true,
+            user_seconds: Some(1800),
+            mouse_seconds: Some(600),
+            api_seconds: None,
+        }
+    }
+}
+impl Setting for GuiIdleSettings {
+    const KEY: &'static str = "gui_idle";
+}
+
 /// Which recognised URL types the desktop watches for in changed clipboard text.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]
@@ -354,8 +440,157 @@ impl Default for SearchDefaults {
     }
 }
 
+impl SearchDefaults {
+    /// Match GetDefaultLocalLocationContext: discard missing domains, then
+    /// use all local file domains if none remain.
+    pub fn resolved_local_location(
+        &self,
+        services: &crate::services::ServiceRegistry,
+    ) -> hydrus_core::search::context::LocationContext {
+        use hydrus_core::search::context::LocationContext;
+        let location = LocationContext::new(
+            self.local_location
+                .current()
+                .iter()
+                .filter(|key| services.by_key(key).is_ok())
+                .cloned(),
+            self.local_location
+                .deleted()
+                .iter()
+                .filter(|key| services.by_key(key).is_ok())
+                .cloned(),
+        );
+        if location.current().is_empty() && location.deleted().is_empty() {
+            LocationContext::single(hydrus_core::ServiceKey::new(
+                hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
+            ))
+        } else {
+            location
+        }
+    }
+}
+
 impl Setting for SearchDefaults {
     const KEY: &'static str = "search_defaults";
+}
+
+/// Read autocomplete and the initial state of a newly created search page.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct FileSearchSettings {
+    pub search_immediately: bool,
+    pub show_system_everything: bool,
+    pub active_predicate_rows: u32,
+    pub autocomplete_rows: u32,
+    pub float_autocomplete: bool,
+    pub implicit_limit: Option<u64>,
+    pub refresh_limited_sort: bool,
+}
+
+impl Default for FileSearchSettings {
+    fn default() -> Self {
+        Self {
+            search_immediately: true,
+            show_system_everything: true,
+            active_predicate_rows: 6,
+            autocomplete_rows: 22,
+            float_autocomplete: true,
+            implicit_limit: None,
+            refresh_limited_sort: true,
+        }
+    }
+}
+
+impl Setting for FileSearchSettings {
+    const KEY: &'static str = "file_search";
+}
+
+/// Native media canvas presentation (`media playback` and `media viewer`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerCanvasSettings {
+    pub recenter_on_resize: bool,
+    pub transparency_checkerboard: bool,
+    pub transparency_greenscreen: bool,
+    pub seek_height: u32,
+    pub seek_hidden_height: Option<u32>,
+    pub seek_nub_width: u32,
+}
+impl Default for ViewerCanvasSettings {
+    fn default() -> Self {
+        Self {
+            recenter_on_resize: true,
+            transparency_checkerboard: false,
+            transparency_greenscreen: false,
+            seek_height: 20,
+            seek_hidden_height: Some(5),
+            seek_nub_width: 10,
+        }
+    }
+}
+impl Setting for ViewerCanvasSettings {
+    const KEY: &'static str = "viewer_canvas";
+}
+
+/// Whether mouseover panels require the native viewer's active window.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerFocusSettings {
+    pub seek_requires_focus: bool,
+    pub hovers_require_focus: bool,
+}
+impl Default for ViewerFocusSettings {
+    fn default() -> Self {
+        Self {
+            seek_requires_focus: true,
+            hovers_require_focus: true,
+        }
+    }
+}
+impl Setting for ViewerFocusSettings {
+    const KEY: &'static str = "viewer_focus";
+}
+
+/// Pointer panning and cursor visibility during native viewer drags.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerPointerSettings {
+    pub disallow_duration_drag: bool,
+    pub hide_during_drag: bool,
+}
+impl Default for ViewerPointerSettings {
+    fn default() -> Self {
+        Self {
+            disallow_duration_drag: false,
+            hide_during_drag: !cfg!(target_os = "macos"),
+        }
+    }
+}
+impl Setting for ViewerPointerSettings {
+    const KEY: &'static str = "viewer_pointer";
+}
+
+/// Pop-in hover panels and the passive bottom-right index in the media viewer.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerHoverSettings {
+    pub tags: bool,
+    pub ratings: bool,
+    pub notes: bool,
+    pub index_background: bool,
+}
+impl Default for ViewerHoverSettings {
+    fn default() -> Self {
+        Self {
+            tags: true,
+            ratings: true,
+            notes: true,
+            index_background: true,
+        }
+    }
+}
+impl Setting for ViewerHoverSettings {
+    const KEY: &'static str = "viewer_hovers";
 }
 
 /// Export folders.

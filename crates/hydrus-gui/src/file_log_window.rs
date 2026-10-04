@@ -5,7 +5,7 @@
 //! change the store at once (as the reference's file log window, a frame,
 //! edits its log in place) and read it again.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -29,6 +29,9 @@ enum Asking {
     Delete(Vec<i64>),
     /// Opening many selected sources.
     OpenMany(Vec<String>),
+    /// Clipboard/store failures are acknowledged without changing the log.
+    Error(String, String),
+    Renormalise,
 }
 
 struct State {
@@ -36,6 +39,8 @@ struct State {
     seeds: Vec<FileSeed>,
     selection: ListSelection<i64>,
     asking: Option<Asking>,
+    exports: crate::png_export_window::Slots,
+    exports_closed: Rc<dyn Fn()>,
 }
 
 impl State {
@@ -67,7 +72,12 @@ impl State {
 /// Showing files in a new page, as a log window's "open ... in a new
 /// page" does; it does nothing until the main window gives it a way.
 #[derive(Clone)]
-pub struct OpenFiles(pub Rc<dyn Fn(Vec<HashId>)>);
+pub struct OpenFiles(
+    pub Rc<dyn Fn(Vec<HashId>)>,
+    pub Rc<dyn Fn(Vec<String>)>,
+    pub crate::png_export_window::Slots,
+    pub crate::search_log_import_window::Slots,
+);
 
 impl std::fmt::Debug for OpenFiles {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -77,7 +87,11 @@ impl std::fmt::Debug for OpenFiles {
 
 impl Default for OpenFiles {
     fn default() -> Self {
-        Self(Rc::new(|_| {}))
+        Self(
+            Rc::new(|_| {}),
+            Rc::new(|_| {}),
+            crate::png_export_window::Slots::default(),
+        )
     }
 }
 
@@ -106,9 +120,7 @@ fn now() -> i64 {
 /// A menu's tree, for the popup.
 fn node(entry: &Entry) -> PopupNode<'_, Entry, Action> {
     match entry {
-        Entry::Item(label, Action::NotYet | Action::ImportFromClipboard | Action::SearchUrls) => {
-            PopupNode::Disabled(label)
-        }
+        Entry::Item(label, Action::NotYet) => PopupNode::Disabled(label),
         Entry::Item(label, action) => PopupNode::Item(label, action),
         Entry::Label(label) => PopupNode::Label(label),
         Entry::Separator => PopupNode::Separator,
@@ -146,12 +158,22 @@ fn show(window: &FileLogWindow, state: &State) {
         None => None,
         Some(Asking::Delete(ids)) => Some(delete_question(ids.len())),
         Some(Asking::OpenMany(_)) => Some(OPEN_MANY_QUESTION.to_owned()),
+        Some(Asking::Error(_, text)) => Some(text.clone()),
+        Some(Asking::Renormalise) => Some(crate::file_log::RENORMALISE_QUESTION.to_owned()),
     };
     window.set_asking(question.is_some());
+    window.set_busy(state.exports.has_open());
     if let Some(message) = question {
-        window.set_asking_title("Are you sure?".into());
+        window.set_asking_title(match &state.asking {
+            Some(Asking::Error(title, _)) => title.clone().into(),
+            _ => "Are you sure?".into(),
+        });
         window.set_asking_message(message.into());
-        let choices: Vec<SharedString> = vec!["yes".into(), "no".into()];
+        let choices: Vec<SharedString> = if matches!(state.asking, Some(Asking::Error(_, _))) {
+            vec!["ok".into()]
+        } else {
+            vec!["yes".into(), "no".into()]
+        };
         window.set_asking_choices(ModelRc::new(VecModel::from(choices)));
     }
 }
@@ -172,7 +194,7 @@ fn hash_ids(store: &Store, seeds: &[&FileSeed]) -> Vec<HashId> {
 }
 
 /// Do a menu's action.
-fn act(store: &Store, state: &mut State, action: &Action, open_files: &dyn Fn(Vec<HashId>)) {
+fn act(store: &Arc<Store>, state: &mut State, action: &Action, open_files: &OpenFiles) {
     let queue = state.queue;
     let now = now();
     // (each change nudges the daemon, which works the queue)
@@ -223,7 +245,7 @@ fn act(store: &Store, state: &mut State, action: &Action, open_files: &dyn Fn(Ve
                 .collect();
             let files = hash_ids(store, &seeds);
             if !files.is_empty() {
-                open_files(files);
+                (open_files.0)(files);
             }
         }
         Action::Reverse => write(Box::new(move |c| queues::reverse_file_seeds(c, queue))),
@@ -234,7 +256,7 @@ fn act(store: &Store, state: &mut State, action: &Action, open_files: &dyn Fn(Ve
         Action::OpenSelectedFiles => {
             let files = hash_ids(store, &state.selected());
             if !files.is_empty() {
-                open_files(files);
+                (open_files.0)(files);
             }
         }
         Action::CopySources => {
@@ -277,26 +299,99 @@ fn act(store: &Store, state: &mut State, action: &Action, open_files: &dyn Fn(Ve
                 state.asking = Some(Asking::Delete(selected_ids));
             }
         }
-        Action::ImportFromClipboard | Action::SearchUrls | Action::NotYet => {}
+        Action::ExportToPng => {
+            let payload = state
+                .seeds
+                .iter()
+                .map(|s| s.data.as_str())
+                .collect::<Vec<_>>()
+                .join("\n");
+            if let Err(error) = crate::png_export_window::open(
+                &state.exports,
+                store,
+                payload,
+                state.exports_closed.clone(),
+            ) {
+                state.asking = Some(Asking::Error("Could not export!".into(), error));
+            }
+        }
+        Action::ImportFromPng => match crate::png_export_window::import_text() {
+            Ok(Some(payload)) => {
+                let result =
+                    crate::file_log::pasted_sources(&payload, &store.snapshot().url_classes)
+                        .and_then(|seeds| {
+                            store
+                                .write(move |ctx| {
+                                    queues::add_file_seeds(ctx.conn(), queue, &seeds, false, now)?;
+                                    queues::nudge(ctx.conn(), queue)
+                                })
+                                .map_err(|e| e.to_string())
+                        });
+                if let Err(error) = result {
+                    state.asking = Some(Asking::Error("Could not import!".into(), error));
+                }
+            }
+            Err(error) => state.asking = Some(Asking::Error("Could not import!".into(), error)),
+            Ok(None) => {}
+        },
+        Action::ImportFromClipboard => {
+            let result = crate::from_clipboard()
+                .map_err(|e| ("Problem pasting!".to_owned(), e))
+                .and_then(|text| {
+                    crate::file_log::pasted_sources(&text, &store.snapshot().url_classes)
+                        .map_err(|e| ("Clipboard Error!".to_owned(), e))
+                })
+                .and_then(|seeds| {
+                    store
+                        .write(move |ctx| {
+                            queues::add_file_seeds(ctx.conn(), queue, &seeds, false, now)?;
+                            queues::nudge(ctx.conn(), queue)
+                        })
+                        .map_err(|e| ("Could not import!".to_owned(), e.to_string()))
+                });
+            if let Err((title, text)) = result {
+                state.asking = Some(Asking::Error(title, text));
+            }
+        }
+        Action::SearchUrls => {
+            let urls = state
+                .selected()
+                .into_iter()
+                .map(|s| s.data.clone())
+                .collect();
+            (open_files.1)(urls);
+        }
+        Action::ExportObjects => match crate::file_log::export_objects(&state.selected()) {
+            Ok(text) => crate::copy_to_clipboard(&text),
+            Err(error) => state.asking = Some(Asking::Error("Could not export!".into(), error)),
+        },
+        Action::Renormalise => state.asking = Some(Asking::Renormalise),
+        Action::NotYet => {}
     }
 }
 
 /// Do a whole log menu's action on `queue`'s log, with no window open (a
 /// downloader list's menu's).
 pub(crate) fn act_on_queue(
-    store: &Store,
+    store: &Arc<Store>,
     queue: i64,
     action: &Action,
-    open_files: &dyn Fn(Vec<HashId>),
-) {
+    open_files: &OpenFiles,
+) -> Option<String> {
     let mut state = State {
         queue,
         seeds: Vec::new(),
         selection: ListSelection::default(),
         asking: None,
+        exports: open_files.2.clone(),
+        exports_closed: Rc::new(|| {}),
     };
     read(store, &mut state);
     act(store, &mut state, action, open_files);
+    match state.asking {
+        Some(Asking::Error(title, text)) => Some(format!("{title} {text}")),
+        _ => None,
+    }
 }
 
 /// Open URLs in the browser, or paths' folders.
@@ -316,15 +411,31 @@ pub(crate) fn open(
     store: &Arc<Store>,
     queue: i64,
     slot: &Rc<RefCell<Option<FileLogWindow>>>,
-    open_files: &Rc<dyn Fn(Vec<HashId>)>,
+    open_files: &OpenFiles,
 ) -> Result<FileLogWindow, String> {
     let window = FileLogWindow::new().map_err(|e| e.to_string())?;
+    let alive = Rc::new(Cell::new(true));
     let state = Rc::new(RefCell::new(State {
         queue,
         seeds: Vec::new(),
         selection: ListSelection::default(),
         asking: None,
+        exports: crate::png_export_window::Slots::default(),
+        exports_closed: Rc::new(|| {}),
     }));
+    state.borrow_mut().exports_closed = Rc::new({
+        let weak_state = Rc::downgrade(&state);
+        let weak_window = window.as_weak();
+        let alive = alive.clone();
+        move || {
+            if !alive.get() {
+                return;
+            }
+            if let (Some(state), Some(w)) = (weak_state.upgrade(), weak_window.upgrade()) {
+                show(&w, &state.borrow());
+            }
+        }
+    });
     read(store, &mut state.borrow_mut());
     // (the reference's widths, in characters)
     window.set_columns(columns(&[
@@ -342,7 +453,11 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let state = state.clone();
         let store = store.clone();
+        let alive = alive.clone();
         move |reread: bool| {
+            if !alive.get() {
+                return;
+            }
             if reread {
                 read(&store, &mut state.borrow_mut());
             }
@@ -355,7 +470,11 @@ pub(crate) fn open(
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
+        let state = state.clone();
+        let alive = alive.clone();
         move || {
+            alive.set(false);
+            state.borrow().exports.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -365,7 +484,15 @@ pub(crate) fn open(
     window.on_row_clicked({
         let state = state.clone();
         let refresh = refresh.clone();
+        let alive = alive.clone();
         move |r, ctrl, shift| {
+            if !alive.get() {
+                return;
+            }
+            if state.borrow().asking.is_some() || state.borrow().exports.has_open() {
+                return;
+            }
+
             if let Ok(r) = usize::try_from(r) {
                 let mut state = state.borrow_mut();
                 let ids = state.ids();
@@ -378,10 +505,18 @@ pub(crate) fn open(
         let state = state.clone();
         let store = store.clone();
         let open_files = open_files.clone();
+        let alive = alive.clone();
         move |_| {
+            if !alive.get() {
+                return;
+            }
+            if state.borrow().asking.is_some() || state.borrow().exports.has_open() {
+                return;
+            }
+
             let files = hash_ids(&store, &state.borrow().selected());
             if !files.is_empty() {
-                open_files(files);
+                (open_files.0)(files);
             }
         }
     });
@@ -390,7 +525,15 @@ pub(crate) fn open(
         let state = state.clone();
         let popup = popup.clone();
         let refresh = refresh.clone();
+        let alive = alive.clone();
         move |r, x, y| {
+            if !alive.get() {
+                return;
+            }
+            if state.borrow().asking.is_some() || state.borrow().exports.has_open() {
+                return;
+            }
+
             {
                 let mut state = state.borrow_mut();
                 let ids = state.ids();
@@ -410,7 +553,15 @@ pub(crate) fn open(
     window.on_log_menu({
         let state = state.clone();
         let popup = popup.clone();
+        let alive = alive.clone();
         move |x, y| {
+            if !alive.get() {
+                return;
+            }
+            if state.borrow().asking.is_some() || state.borrow().exports.has_open() {
+                return;
+            }
+
             let state = state.borrow();
             let entries = log_menu(&state.facts(), !state.selection.is_empty());
             let (entries, actions) = popup_entries(&entries);
@@ -435,10 +586,18 @@ pub(crate) fn open(
         let store = store.clone();
         let refresh = refresh.clone();
         let open_files = open_files.clone();
+        let alive = alive.clone();
         move |p, l, right, top, left| {
+            if !alive.get() {
+                return;
+            }
+            if state.borrow().asking.is_some() || state.borrow().exports.has_open() {
+                return;
+            }
+
             match popup.click(p, l, right, top, left) {
                 Some(Chosen::Action(action)) => {
-                    act(&store, &mut state.borrow_mut(), &action, &*open_files);
+                    act(&store, &mut state.borrow_mut(), &action, &open_files);
                 }
                 Some(Chosen::Copy(text)) => crate::copy_to_clipboard(&text),
                 None => return,
@@ -451,12 +610,20 @@ pub(crate) fn open(
         let store = store.clone();
         let refresh = refresh.clone();
         let open_files = open_files.clone();
+        let alive = alive.clone();
         move || {
+            if !alive.get() {
+                return;
+            }
+            if state.borrow().asking.is_some() || state.borrow().exports.has_open() {
+                return;
+            }
+
             act(
                 &store,
                 &mut state.borrow_mut(),
                 &Action::DeleteSelected,
-                &*open_files,
+                &open_files,
             );
             refresh(false);
         }
@@ -465,7 +632,12 @@ pub(crate) fn open(
         let state = state.clone();
         let store = store.clone();
         let refresh = refresh.clone();
+        let alive = alive.clone();
         move |index| {
+            if !alive.get() {
+                return;
+            }
+
             let asking = state.borrow_mut().asking.take();
             if index == 0 {
                 match asking {
@@ -477,7 +649,22 @@ pub(crate) fn open(
                         }
                     }
                     Some(Asking::OpenMany(sources)) => open_sources(&sources),
-                    None => {}
+                    Some(Asking::Renormalise) => {
+                        let queue = state.borrow().queue;
+                        if let Err(error) = store.write(move |ctx| {
+                            let classes = hydrus_core::url::UrlClasses::new(
+                                hydrus_store::settings::get(ctx.conn())?,
+                            );
+                            queues::renormalise_file_seeds(ctx.conn(), queue, &classes)?;
+                            queues::nudge(ctx.conn(), queue)
+                        }) {
+                            state.borrow_mut().asking = Some(Asking::Error(
+                                "Could not re-normalise!".into(),
+                                error.to_string(),
+                            ));
+                        }
+                    }
+                    Some(Asking::Error(_, _)) | None => {}
                 }
             }
             refresh(true);
@@ -486,7 +673,12 @@ pub(crate) fn open(
     window.on_cancelled({
         let state = state.clone();
         let refresh = refresh.clone();
+        let alive = alive.clone();
         move || {
+            if !alive.get() {
+                return;
+            }
+
             state.borrow_mut().asking = None;
             refresh(false);
         }

@@ -181,3 +181,372 @@ fn the_file_log_lists_a_queues_files_and_acts_on_them() {
     log.invoke_close_window();
     assert!(bound.file_log.borrow().is_none());
 }
+
+fn clipboard_import(log: &FileLogWindow) {
+    log.invoke_log_menu(10.0, 10.0);
+    choose(log, 0, "ADVANCED: import new sources");
+    choose(log, 1, "from clipboard");
+}
+
+#[test]
+fn clipboard_import_persists_deduplicates_and_handles_empty_or_missing_text() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    ui.invoke_chooser_pressed(8);
+    let queue = bound.current.borrow().borrow().importer().unwrap().queue;
+    ui.invoke_open_file_log();
+    let log = bound.file_log.borrow().as_ref().unwrap().clone_strong();
+    let text = Rc::new(RefCell::new(Ok(Some("\u{feff} https://clipboard.example/a b#frag\r\nhttps://clipboard.example/a%20b\nhttps://clipboard.example/日".to_owned()))));
+    hydrus_gui::set_clipboard_reader({
+        let text = text.clone();
+        move || text.borrow().clone()
+    });
+    clipboard_import(&log);
+    clipboard_import(&log);
+    let persisted = store.read(|c| queues::file_seeds(c, queue)).unwrap();
+    assert_eq!(persisted.len(), 2);
+    assert_eq!(persisted[0].data, "https://clipboard.example/a%20b");
+    assert_eq!(persisted[1].data, "https://clipboard.example/%E6%97%A5");
+    assert!(
+        persisted
+            .iter()
+            .all(|s| s.seed_type == SeedType::Url && s.status == SeedStatus::Unknown)
+    );
+    *text.borrow_mut() = Ok(Some(" \n\t".into()));
+    clipboard_import(&log);
+    assert!(log.get_asking());
+    assert!(
+        log.get_asking_message()
+            .contains("Lines of URLs or file paths")
+    );
+    log.invoke_cancelled();
+    assert!(!log.get_asking());
+    assert_eq!(
+        store.read(|c| queues::file_seeds(c, queue)).unwrap(),
+        persisted
+    );
+    *text.borrow_mut() = Ok(None);
+    clipboard_import(&log);
+    assert_eq!(log.get_asking_title(), "Problem pasting!");
+    log.invoke_chosen(0);
+    *text.borrow_mut() = Err("synthetic clipboard access failure".into());
+    clipboard_import(&log);
+    assert_eq!(
+        log.get_asking_message(),
+        "synthetic clipboard access failure"
+    );
+    log.invoke_chosen(0);
+    log.invoke_close_window();
+    *text.borrow_mut() = Ok(Some("https://clipboard.example/stale".into()));
+    log.invoke_log_menu(10.0, 10.0);
+    log.invoke_menu_line_clicked(0, 0, 300.0, 100.0, 10.0);
+    log.invoke_delete_pressed();
+    log.invoke_chosen(0);
+    assert_eq!(
+        store.read(|c| queues::file_seeds(c, queue)).unwrap(),
+        persisted
+    );
+    ui.invoke_open_file_log();
+    let reopened = bound.file_log.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(cells(&reopened).len(), 2);
+    *text.borrow_mut() = Ok(Some(
+        "/synthetic/a.jpg\n/synthetic/a.jpg\n/synthetic/b.jpg".into(),
+    ));
+    clipboard_import(&reopened);
+    let seeds = store.read(|c| queues::file_seeds(c, queue)).unwrap();
+    assert_eq!(seeds.len(), 4);
+    assert!(seeds[2..].iter().all(|s| s.seed_type == SeedType::Path));
+    reopened.invoke_close_window();
+}
+
+#[test]
+fn selected_url_search_opens_a_local_or_search_and_reaches_matching_files() {
+    use hydrus_core::pages::PageContent;
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    bound.current.borrow().borrow_mut().refresh();
+    let files = bound.current.borrow().borrow().files().clone();
+    assert!(files.len() >= 2);
+    let first = files[0];
+    let second = files[1];
+    let urls = vec![
+        "https://clipboard.example/a".to_owned(),
+        "https://clipboard.example/b".to_owned(),
+    ];
+    store
+        .write_content({
+            let urls = urls.clone();
+            move |writer| {
+                writer.add_urls(&[first], &urls[..1])?;
+                writer.add_urls(&[second], &urls[1..])
+            }
+        })
+        .unwrap();
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    ui.invoke_chooser_pressed(8);
+    let queue = bound.current.borrow().borrow().importer().unwrap().queue;
+    hydrus_gui::set_clipboard_reader({
+        let urls = urls.clone();
+        move || Ok(Some(urls.join("\n")))
+    });
+    ui.invoke_open_file_log();
+    let log = bound.file_log.borrow().as_ref().unwrap().clone_strong();
+    clipboard_import(&log);
+    log.invoke_row_clicked(0, false, false);
+    log.invoke_row_clicked(1, true, false);
+    let pages_before = bound.pages.borrow().open_pages().len();
+    log.invoke_row_menu(0, 20.0, 20.0);
+    choose(&log, 0, "search for URLs");
+    assert_eq!(bound.pages.borrow().open_pages().len(), pages_before + 1);
+    {
+        let pages = bound.pages.borrow();
+        assert_eq!(pages.shown().name, "url search");
+        let PageContent::Search { search, .. } = &pages.shown().content else {
+            panic!("a search page");
+        };
+        assert_eq!(search.predicates, hydrus_gui::file_log::url_search(&urls));
+        assert_eq!(
+            search.location,
+            hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+                hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec()
+            ))
+        );
+    }
+    let matches = bound.current.borrow().borrow().files().clone();
+    assert!(
+        matches.contains(&first) && matches.contains(&second),
+        "both OR branches reach local files: {matches:?}"
+    );
+    bound.pages.borrow_mut().save(123).unwrap();
+    let reopened = Pages::open(store.clone()).unwrap();
+    assert_eq!(reopened.shown().name, "url search");
+    assert_eq!(
+        store.read(|c| queues::file_seeds(c, queue)).unwrap().len(),
+        2
+    );
+    log.invoke_close_window();
+}
+
+fn png_import(log: &FileLogWindow) {
+    log.invoke_log_menu(10.0, 10.0);
+    choose(log, 0, "ADVANCED: import new sources");
+    choose(log, 1, "from png");
+}
+fn png_export(log: &FileLogWindow) {
+    log.invoke_log_menu(10.0, 10.0);
+    choose(log, 0, "export all sources");
+    choose(log, 1, "to png");
+}
+
+#[test]
+fn source_png_dialogs_cancel_validate_import_export_and_close_with_the_log() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    ui.invoke_chooser_pressed(8);
+    let queue = bound.current.borrow().borrow().importer().unwrap().queue;
+    ui.invoke_open_file_log();
+    let log = bound.file_log.borrow().as_ref().unwrap().clone_strong();
+    let picked = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::set_picker({
+        let picked = picked.clone();
+        move |_, title| {
+            assert_eq!(title, "select the png with the sources");
+            picked.borrow().clone()
+        }
+    });
+    png_import(&log);
+    assert_eq!(cells(&log).len(), 0, "cancelled picker changes nothing");
+    *picked.borrow_mut() = vec![hydrus_testkit::fixture_path("file_log_sources.png")];
+    png_import(&log);
+    png_import(&log);
+    assert_eq!(cells(&log).len(), 2, "imported Qt carrier deduplicates");
+    let persisted = store.read(|c| queues::file_seeds(c, queue)).unwrap();
+    let temp = tempfile::tempdir().unwrap();
+    let malformed = temp.path().join("bad.png");
+    std::fs::write(&malformed, b"not a PNG").unwrap();
+    *picked.borrow_mut() = vec![malformed];
+    png_import(&log);
+    assert_eq!(log.get_asking_title(), "Could not import!");
+    log.invoke_cancelled();
+    assert_eq!(
+        store.read(|c| queues::file_seeds(c, queue)).unwrap(),
+        persisted
+    );
+    png_export(&log);
+    let export = hydrus_gui::png_export_window::last().unwrap();
+    assert_eq!(export.get_window_title(), "export to png");
+    assert_eq!(export.get_png_width(), 512);
+    assert!(!export.get_can_export());
+    assert!(log.get_busy());
+    let output = temp.path().join("shared_sources");
+    export.set_path(output.to_string_lossy().as_ref().into());
+    export.set_png_title("".into());
+    export.invoke_action("update".into());
+    assert!(!export.get_can_export());
+    export.invoke_action("export".into());
+    assert!(!output.with_extension("png").exists());
+    assert!(export.get_error().contains("set a title"));
+    export.set_png_title("Synthetic source list".into());
+    export.set_description("Shared source lines".into());
+    export.set_png_width(256);
+    export.invoke_action("update".into());
+    assert!(export.get_can_export());
+    export.invoke_action("export".into());
+    assert!(export.get_done());
+    let expected = persisted
+        .iter()
+        .map(|s| s.data.as_str())
+        .collect::<Vec<_>>()
+        .join("\n");
+    let bytes = std::fs::read(output.with_extension("png")).unwrap();
+    assert_eq!(
+        hydrus_downloader_exchange::text_png::decode(&bytes).unwrap(),
+        expected
+    );
+    let directory = store
+        .read(hydrus_store::settings::get::<hydrus_gui_model::png_export::Directory>)
+        .unwrap();
+    assert_eq!(directory.0.as_deref(), temp.path().to_str());
+    export.invoke_action("close".into());
+    assert!(!log.get_busy());
+    png_export(&log);
+    let next = hydrus_gui::png_export_window::last().unwrap();
+    assert!(next.get_path().starts_with(temp.path().to_str().unwrap()));
+    let stale = temp.path().join("stale.png");
+    next.set_path(stale.to_string_lossy().as_ref().into());
+    log.invoke_close_window();
+    assert!(!next.window().is_visible());
+    next.invoke_action("export".into());
+    assert!(!stale.exists());
+}
+
+#[test]
+fn advanced_object_export_and_renormalisation_confirm_before_collapsing_later_duplicates() {
+    use hydrus_core::url::strings::{StringMatch, StringProcessor};
+    use hydrus_core::url::{DomainMask, UrlClass, UrlClassSettings, UrlParameter};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    ui.invoke_chooser_pressed(8);
+    let queue = bound.current.borrow().borrow().importer().unwrap().queue;
+    let sources = [
+        "https://renormalise.example/post?id=1&token=a",
+        "https://renormalise.example/post?id=1&token=b",
+        "https://renormalise.example/post?id=2&token=c",
+    ];
+    let seeds: Vec<NewFileSeed> = sources
+        .into_iter()
+        .map(|s| NewFileSeed {
+            seed_type: SeedType::Url,
+            data: s.into(),
+            data_for_comparison: s.into(),
+            source_time: Some(17),
+            referral_url: Some("https://renormalise.example/gallery".into()),
+            meta: FileSeedMeta {
+                request_headers: vec![("X-Synthetic".into(), "header".into())],
+                tags: std::collections::BTreeSet::from(["tag:one".into()]),
+                notes: vec![("note".into(), "metadata note".into())],
+                ..FileSeedMeta::default()
+            },
+        })
+        .collect();
+    store
+        .write(move |ctx| {
+            queues::add_file_seeds(ctx.conn(), queue, &seeds, false, 123)?;
+            let mut first = queues::file_seeds(ctx.conn(), queue)?.remove(0);
+            first.status = SeedStatus::Error;
+            first.note = "first failure 日本".into();
+            queues::update_file_seed(ctx.conn(), &first)
+        })
+        .unwrap();
+    let before = store.read(|c| queues::file_seeds(c, queue)).unwrap();
+    let copied: Rc<RefCell<Vec<Clip>>> = Rc::default();
+    set_clipper({
+        let copied = copied.clone();
+        move |c| copied.borrow_mut().push(c.clone())
+    });
+    ui.invoke_open_file_log();
+    let log = bound.file_log.borrow().as_ref().unwrap().clone_strong();
+    log.invoke_row_clicked(0, false, false);
+    log.invoke_row_clicked(1, true, false);
+    log.invoke_log_menu(10.0, 10.0);
+    choose(&log, 0, "advanced");
+    choose(&log, 1, "export selected import objects to clipboard");
+    let expected =
+        hydrus_gui::file_log::export_objects(&before[..2].iter().collect::<Vec<_>>()).unwrap();
+    assert_eq!(copied.borrow().last(), Some(&Clip::Text(expected)));
+    log.invoke_log_menu(10.0, 10.0);
+    choose(&log, 0, "advanced");
+    choose(&log, 1, "re-normalise all URLs");
+    assert_eq!(
+        log.get_asking_message(),
+        hydrus_gui::file_log::RENORMALISE_QUESTION
+    );
+    log.invoke_chosen(1);
+    assert_eq!(
+        store.read(|c| queues::file_seeds(c, queue)).unwrap(),
+        before
+    );
+    log.invoke_log_menu(10.0, 10.0);
+    choose(&log, 0, "advanced");
+    choose(&log, 1, "re-normalise all URLs");
+    let classes = UrlClassSettings {
+        url_classes: vec![UrlClass {
+            name: "synthetic changed class".into(),
+            domain_mask: DomainMask::new(vec!["renormalise.example".into()], vec![], false, false),
+            path_components: vec![(StringMatch::fixed("post"), None)],
+            parameters: vec![UrlParameter {
+                name: "id".into(),
+                value: StringMatch::any(),
+                ephemeral: false,
+                default: None,
+                default_processor: StringProcessor::default(),
+            }],
+            keep_extra_parameters_for_server: false,
+            ..UrlClass::default()
+        }],
+        ..UrlClassSettings::default()
+    };
+    store
+        .write_and_refresh(move |ctx| hydrus_store::settings::set(ctx.conn(), &classes))
+        .unwrap();
+    log.invoke_row_clicked(2, false, false);
+    log.invoke_delete_pressed();
+    assert_eq!(
+        log.get_asking_message(),
+        hydrus_gui::file_log::RENORMALISE_QUESTION,
+        "pending confirmation blocks other mutations"
+    );
+    log.invoke_chosen(0);
+    let after = store.read(|c| queues::file_seeds(c, queue)).unwrap();
+    assert_eq!(after.len(), 2);
+    assert_eq!(after[0].id, before[0].id);
+    assert_eq!(after[0].status, SeedStatus::Error);
+    assert_eq!(after[0].meta, before[0].meta);
+    assert_eq!(after[0].created, 123);
+    assert_eq!(after[0].modified, 123);
+    assert_eq!(after[0].data, "https://renormalise.example/post?id=1");
+    assert_eq!(after[1].data, "https://renormalise.example/post?id=2");
+    assert_eq!(cells(&log).len(), 2);
+    log.invoke_close_window();
+    log.invoke_chosen(0);
+    assert_eq!(store.read(|c| queues::file_seeds(c, queue)).unwrap(), after);
+    ui.invoke_open_file_log();
+    let reopened = bound.file_log.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(cells(&reopened).len(), 2);
+    reopened.invoke_close_window();
+}

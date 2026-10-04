@@ -205,3 +205,119 @@ fn changed_links_revalidate_current_class_capability_and_rollback_atomically() {
         }
     }
 }
+
+#[test]
+fn recorded_recursive_subsidiaries_preserve_context_documents_and_runtime_outputs() {
+    let cases = hydrus_testkit::fixture_json("parser_children.json");
+    let cases = cases.as_array().unwrap();
+    let defaults = &cases[0];
+    let child = editors::new_subsidiary();
+    assert_eq!(child.parser.name, defaults["name"].as_str().unwrap());
+    assert_eq!(
+        child.sort_by_source_time,
+        defaults["sort"].as_bool().unwrap()
+    );
+    let raw = "<div class=\"thumb\"><p>first\n\nnote</p></div><div class=\"thumb\"><p>second note</p></div>";
+    let context = TestContext::parse(
+        "https://children.example/post".into(),
+        "7",
+        "token=preserved",
+    )
+    .unwrap()
+    .values();
+    let object = SerialisableObject::from_tuple_str(&defaults["formula"].to_string()).unwrap();
+    let formula = parsers::formula(&object).unwrap();
+    assert_eq!(child.formula.kind, formula.kind);
+    assert_eq!(
+        serde_json::to_value(child.formula.parse(&context, raw, false).unwrap()).unwrap(),
+        defaults["separated"]
+    );
+    for case in cases.iter().filter(|case| case["case"] == "parent_action") {
+        let object = SerialisableObject::from_tuple_str(&case["tuple"].to_string()).unwrap();
+        let page = parsers::page_parser(&object).unwrap();
+        let posts = page.parse(&mut context.clone(), raw).unwrap();
+        let texts = posts
+            .iter()
+            .map(|post| {
+                post.contents
+                    .iter()
+                    .map(|content| content.text.clone())
+                    .collect::<Vec<_>>()
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(
+            serde_json::to_value(texts).unwrap(),
+            case["outputs"],
+            "{}",
+            case["action"]
+        );
+        for child in &page.subsidiary {
+            let details = editors::SubsidiaryEditor::new(child);
+            assert_eq!(details.value(child.parser.clone()), *child);
+            let inherited = page.converter.convert(raw).unwrap();
+            let test = FormulaTestData {
+                context: context.clone(),
+                text: inherited,
+                collapse_newlines: false,
+                ..FormulaTestData::default()
+            };
+            let data = details.child_test_data(&child.parser, &test).unwrap();
+            let expected = cases
+                .iter()
+                .find(|case| {
+                    case["case"] == "child_data"
+                        && case["name"].as_str() == Some(child.parser.name.as_str())
+                })
+                .unwrap();
+            assert_eq!(
+                serde_json::to_value(&data.examples).unwrap(),
+                expected["texts"]
+            );
+            assert_eq!(data.context, context);
+            assert!(
+                data.source_urls
+                    .iter()
+                    .all(|source| source.as_deref() == Some("https://children.example/post"))
+            );
+            assert!(!data.collapse_newlines);
+        }
+    }
+}
+
+#[test]
+fn recorded_subsidiary_queue_import_and_duplicate_preserve_keys_and_select_new_rows() {
+    let reference = hydrus_testkit::fixture_json("subsidiary_exchange.json");
+    let parsers =
+        hydrus_downloader_exchange::subsidiaries::decode_text(&reference["bundle"].to_string())
+            .unwrap();
+    let mut page = editors::new_page();
+    let added = editors::append_subsidiaries(&mut page, parsers.clone());
+    assert_eq!(added, [0, 1]);
+    assert_eq!(
+        serde_json::json!(
+            page.subsidiary
+                .iter()
+                .map(|p| &p.parser.name)
+                .collect::<Vec<_>>()
+        ),
+        reference["imported_names"]
+    );
+    let duplicated = editors::append_subsidiaries(&mut page, parsers.clone());
+    assert_eq!(duplicated, [1, 3]);
+    assert_eq!(
+        serde_json::json!(
+            page.subsidiary
+                .iter()
+                .map(|p| &p.parser.name)
+                .collect::<Vec<_>>()
+        ),
+        reference["duplicated_names"]
+    );
+    for (row, original) in duplicated.iter().zip(&parsers) {
+        assert_eq!(page.subsidiary[*row].parser.key, original.parser.key);
+        assert_eq!(
+            hydrus_downloader_exchange::subsidiaries::tuple(&page.subsidiary[*row]).unwrap(),
+            hydrus_downloader_exchange::subsidiaries::tuple(original).unwrap()
+        );
+    }
+}

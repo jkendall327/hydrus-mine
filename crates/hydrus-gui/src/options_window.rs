@@ -42,7 +42,7 @@ fn int(n: i64) -> i32 {
 const UNMATCHED: [&str; 2] = ["collect into one group", "leave separate"];
 
 /// A row as the window shows it (a sort's types are the store's).
-fn option_row(row: &Row<'_>, store: &Store) -> OptionRow {
+fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)]) -> OptionRow {
     let mut out = OptionRow::default();
     match row {
         Row::Title { title, depth } => {
@@ -112,6 +112,19 @@ fn option_row(row: &Row<'_>, store: &Store) -> OptionRow {
                     let items: Vec<SharedString> = items.iter().map(|&s| s.into()).collect();
                     out.items = ModelRc::new(VecModel::from(items));
                     out.index = int(*i as i64);
+                }
+                (Kind::SavedSession, Value::SavedSession(name)) => {
+                    out.kind = 5;
+                    out.items = ModelRc::new(VecModel::from(
+                        sessions
+                            .iter()
+                            .map(|(_, label)| SharedString::from(label.as_str()))
+                            .collect::<Vec<_>>(),
+                    ));
+                    out.index = sessions
+                        .iter()
+                        .position(|(value, _)| value == name)
+                        .map_or(-1, |index| int(index as i64));
                 }
                 (Kind::Text, Value::Text(text)) => {
                     out.kind = 6;
@@ -185,8 +198,13 @@ fn option_row(row: &Row<'_>, store: &Store) -> OptionRow {
                     // (as the reference's, a subtag sort doesn't group)
                     out.grouped = sort.sort_type != hydrus_core::tag_sort::TagSortType::Subtag;
                 }
-                (Kind::FavouriteTags, Value::FavouriteTags(_)) => {
+                (Kind::LocalLocation, Value::Location(location)) => {
                     out.kind = 16;
+                    out.text =
+                        crate::domains::location_label(&store.snapshot().services, location).into();
+                }
+                (Kind::FavouriteTags, Value::FavouriteTags(_)) => {
+                    out.kind = 17;
                     out.text = "edit favourite tags".into();
                 }
                 (Kind::RegexFavourites, Value::RegexFavourites(_)) => {
@@ -233,11 +251,17 @@ pub(crate) fn open(
         .read(Settings::load)
         .map_err(|e| format!("could not read the options: {e}"))?;
     let window = OptionsWindow::new().map_err(|e| e.to_string())?;
+    let session_choices = Rc::new(crate::options::session_choices(store));
     window.set_search_at_top(settings.options_preferences.search_at_top);
+    let resolved = settings
+        .search_defaults
+        .resolved_local_location(&store.snapshot().services);
     let mut editor = Editor::new(settings);
+    editor.set_local_location(resolved);
     editor.resolve_tag_services(store);
     let editor = Rc::new(RefCell::new(editor));
     let regex_slot: crate::regex_favourites_window::Slot = Rc::default();
+    let location_slot: Rc<RefCell<Option<crate::LocationsWindow>>> = Rc::default();
     let tag_slot: crate::write_tag_window::Slot = Rc::default();
     let active = Rc::new(Cell::new(true));
     let names: Vec<StandardListViewItem> = editor
@@ -250,6 +274,7 @@ pub(crate) fn open(
     // (the rows are made anew only as the page changes: an edit leaves its
     // control as the user left it)
     let show_page = {
+        let session_choices = session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
         let weak = window.as_weak();
@@ -262,7 +287,7 @@ pub(crate) fn open(
                 .enumerate()
                 .map(|(i, row)| OptionRow {
                     found: editor.found(i),
-                    ..option_row(row, &store)
+                    ..option_row(row, &store, &session_choices)
                 })
                 .collect();
             window.set_page(int(editor.page() as i64));
@@ -287,6 +312,7 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let slot = slot.clone();
         let regex_slot = regex_slot.clone();
+        let location_slot = location_slot.clone();
         let tag_slot = tag_slot.clone();
         let active = active.clone();
         move || {
@@ -300,6 +326,7 @@ pub(crate) fn open(
             if let Some(child) = child {
                 child.invoke_cancel();
             }
+            crate::locations_window::cancel(&location_slot);
             crate::regex_favourites_window::cancel(&regex_slot);
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
@@ -359,6 +386,37 @@ pub(crate) fn open(
                 window.set_search_text(SharedString::new());
                 window.set_matches(ModelRc::default());
                 window.set_match_highlighted(-1);
+            }
+        }
+    });
+    window.on_local_location_clicked({
+        let editor = editor.clone();
+        let store = store.clone();
+        let location_slot = location_slot.clone();
+        let show_page = show_page.clone();
+        move |row| {
+            let current = match editor.borrow().rows().get(at(row)) {
+                Some(Row::Opt {
+                    value: Value::Location(location),
+                    ..
+                }) => location.clone(),
+                _ => return,
+            };
+            let chosen = Rc::new({
+                let editor = editor.clone();
+                let show_page = show_page.clone();
+                move |location| {
+                    editor.borrow_mut().set_local_location(location);
+                    show_page();
+                }
+            });
+            if let Err(error) = crate::locations_window::open_importable(
+                &location_slot,
+                store.clone(),
+                &current,
+                chosen,
+            ) {
+                eprintln!("could not open default local location: {error}");
             }
         }
     });
@@ -464,6 +522,7 @@ pub(crate) fn open(
     // least times if the options have it on, as the reference's reads
     // them), what it applies kept for "apply"
     window.on_checker_clicked({
+        let session_choices = session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
         let checker_slot = checker_slot.clone();
@@ -484,6 +543,7 @@ pub(crate) fn open(
                 .read(hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>)
                 .is_ok_and(|a| a.0);
             let done: Rc<dyn Fn(hydrus_core::subscriptions::CheckerOptions)> = Rc::new({
+                let session_choices = session_choices.clone();
                 let editor = editor.clone();
                 let store = store.clone();
                 let weak = weak.clone();
@@ -496,7 +556,7 @@ pub(crate) fn open(
                             row,
                             OptionRow {
                                 found: editor.found(row),
-                                ..option_row(shown, &store)
+                                ..option_row(shown, &store, &session_choices)
                             },
                         );
                     }
@@ -509,10 +569,15 @@ pub(crate) fn open(
         }
     });
     window.on_choice_chosen({
+        let session_choices=session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
         move |i, index| {
             let mut editor = editor.borrow_mut();
+            if matches!(editor.rows().get(at(i)),Some(Row::Opt {option,..}) if matches!(option.kind,Kind::SavedSession)) {
+                if let Some((name,_))=session_choices.get(at(index)) {editor.saved_session(at(i),name.clone());}
+                return;
+            }
             let combined = match editor.rows().get(at(i)) {
                 Some(Row::Opt { option, .. }) => match option.kind {
                     Kind::TagService { combined } => Some(combined),
@@ -534,6 +599,7 @@ pub(crate) fn open(
     // a sort's type (in its default order, as the reference's control
     // sets it), or its order; the row shows the type's orders
     let sort_edited = {
+        let session_choices = session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
         let weak = window.as_weak();
@@ -559,7 +625,7 @@ pub(crate) fn open(
                     at(i),
                     OptionRow {
                         found: editor.found(at(i)),
-                        ..option_row(row, &store)
+                        ..option_row(row, &store, &session_choices)
                     },
                 );
             }
@@ -582,6 +648,7 @@ pub(crate) fn open(
     // a tag sort's type, order or grouping; the row shows the type's
     // orders, and grouping only where the type groups
     window.on_tag_sort_chosen({
+        let session_choices = session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
         let weak = window.as_weak();
@@ -594,7 +661,7 @@ pub(crate) fn open(
                     at(i),
                     OptionRow {
                         found: editor.found(at(i)),
-                        ..option_row(row, &store)
+                        ..option_row(row, &store, &session_choices)
                     },
                 );
             }
@@ -602,6 +669,7 @@ pub(crate) fn open(
     });
     // a collect's choice checked or not, or its unmatched files' choice
     let collect_edited = {
+        let session_choices = session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
         let weak = window.as_weak();
@@ -629,7 +697,7 @@ pub(crate) fn open(
                     at(i),
                     OptionRow {
                         found: editor.found(at(i)),
-                        ..option_row(row, &store)
+                        ..option_row(row, &store, &session_choices)
                     },
                 );
             }

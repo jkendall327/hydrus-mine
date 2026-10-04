@@ -268,6 +268,17 @@ pub(crate) fn keys(context: &LocationContext) -> Vec<String> {
     keys
 }
 
+/// A context's deleted-domain keys, retained independently of current domains.
+pub(crate) fn deleted_keys(context: &LocationContext) -> Vec<String> {
+    let mut keys: Vec<String> = context
+        .deleted
+        .iter()
+        .map(hydrus_core::ServiceKey::to_hex)
+        .collect();
+    keys.sort();
+    keys
+}
+
 /// Texts the reference keeps as a set (stored in arbitrary order), sorted.
 pub(crate) fn string_set(
     k: SerialisableType,
@@ -297,6 +308,7 @@ pub(crate) fn locations(object: &SerialisableObject) -> DecodeResult<LocationOpt
     ] = tuple::<6>(k, &info, "location options")?;
     Ok(LocationOptions {
         destinations: keys(&LocationContext::from_tuple(destination)?),
+        deleted_destinations: deleted_keys(&LocationContext::from_tuple(destination)?),
         automatically_archive: boolean(k, archive, "automatically archive")?,
         associate_primary_urls: boolean(k, primary, "associate primary urls")?,
         associate_source_urls: boolean(k, source, "associate source urls")?,
@@ -404,6 +416,11 @@ pub(crate) fn presentation(object: &SerialisableObject) -> DecodeResult<Presenta
     expect(object, k, &[1, 2])?;
     let info = object.info();
     let [location, status, inbox] = tuple::<3>(k, &info, "presentation options")?;
+    let deleted_location = if object.version == 1 {
+        Vec::new()
+    } else {
+        deleted_keys(&LocationContext::from_tuple(location)?)
+    };
     let location = if object.version == 1 {
         // (PRESENTATION_LOCATION_IN_TRASH_TOO, else in local files)
         let key = if int(k, location, "presentation location")? == 1 {
@@ -417,6 +434,7 @@ pub(crate) fn presentation(object: &SerialisableObject) -> DecodeResult<Presenta
     };
     Ok(PresentationOptions {
         location,
+        deleted_location,
         status: match int(k, status, "presentation status")? {
             0 => PresentationStatus::AnyGood,
             1 => PresentationStatus::NewOnly,

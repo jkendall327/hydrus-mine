@@ -1,0 +1,889 @@
+{
+  "schema_version": 1,
+  "agent": "parity-sessions",
+  "baseline": "d50df26beb3e45638b3a0ddb6d20cc1d108518a8",
+  "claims": [
+    {
+      "reference_id": "audit-options-tabs-context-action-2270-saved-session-name",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Append the freshest saved session as an independent notebook inside the frozen clicked tab row parent, retain background visible sibling and remember destination child selection; preserve files, selection and importer snapshot data independently of live source.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "b3472973",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1183,
+          "commit": "b3472973",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 299,
+          "commit": "b3472973",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_sessions.rs",
+          "line": 75,
+          "commit": "b3472973",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_sessions.rs",
+          "line": 244,
+          "commit": "b3472973",
+          "kind": "independent_state_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_notebook_sessions.py",
+          "line": 1,
+          "commit": "b3472973",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/notebook_sessions.json",
+          "line": 1,
+          "commit": "b3472973",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual popup labels/reserved-name exclusions, 7 save question/invalid/cancel outcomes, serialized children and background append selection."
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2287-non-reserved-session-name",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Save only clicked notebook children to selected existing non-reserved named session after exact overwrite question; cancellation writes nothing. Source notebook key remains fixed despite a different selected sibling, copied tree omits wrapper and rolling immutable snapshots retain media/importer state.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "b3472973",
+      "limits": [
+        "Reserved-name warnings use the existing inline native warning area instead of a separate Qt warning window.",
+        "A source notebook removed before acceptance reports an error instead of saving a detached closed Qt object."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1338,
+          "commit": "b3472973",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 299,
+          "commit": "b3472973",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_sessions.rs",
+          "line": 75,
+          "commit": "b3472973",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_sessions.rs",
+          "line": 244,
+          "commit": "b3472973",
+          "kind": "independent_state_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_notebook_sessions.py",
+          "line": 1,
+          "commit": "b3472973",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/notebook_sessions.json",
+          "line": 1,
+          "commit": "b3472973",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual popup labels/reserved-name exclusions, 7 save question/invalid/cancel outcomes, serialized children and background append selection."
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2290-create-a-new-session",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Create a named session from clicked notebook children, suggest notebook name, reject reserved names with retry, ask exact existing-name overwrite question, support choose-another-name/name cancellation/question closure; retain independent copied snapshots.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "b3472973",
+      "limits": [
+        "Reserved-name warnings use the existing inline native warning area instead of a separate Qt warning window.",
+        "A source notebook removed before acceptance reports an error instead of saving a detached closed Qt object."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1338,
+          "commit": "b3472973",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/tab_context.rs",
+          "line": 299,
+          "commit": "b3472973",
+          "kind": "source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_sessions.rs",
+          "line": 75,
+          "commit": "b3472973",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_sessions.rs",
+          "line": 244,
+          "commit": "b3472973",
+          "kind": "independent_state_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_notebook_sessions.py",
+          "line": 1,
+          "commit": "b3472973",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/notebook_sessions.json",
+          "line": 1,
+          "commit": "b3472973",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual popup labels/reserved-name exclusions, 7 save question/invalid/cancel outcomes, serialized children and background append selection."
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2052-page-weight-information-advanced",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Advanced-only copyable comma-formatted subtree weight counts each leaf independently, plus twenty per file or gallery seed, including repeated media across children.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "5720be94534067a39a2c793865901193c03ef0a5",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1664,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2185,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "consumer"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_refresh.rs",
+          "line": 138,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "gui_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_refresh.py",
+          "line": 1,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_refresh.json",
+          "line": 1,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "reference_fixture"
+        },
+        "observed": "Recursive initialized-page dispatch and search states, per-leaf and notebook weights, advanced visibility and clipboard output."
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2249-refresh-this-page",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Refresh clicked initialized leaf by stable key: paused search resumes, hash-locked search stays fixed, importer re-applies current sort retaining selected files and transfer pause state.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "5720be94534067a39a2c793865901193c03ef0a5",
+      "limits": [
+        "Duplicate sidebar numbers are read on active-page render rather than independent background sidebar jobs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1651,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2185,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "consumer"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_refresh.rs",
+          "line": 68,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "gui_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_refresh.py",
+          "line": 1,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_refresh.json",
+          "line": 1,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "reference_fixture"
+        },
+        "observed": "Recursive initialized-page dispatch and search states, per-leaf and notebook weights, advanced visibility and clipboard output."
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2253-refresh-all-this-page-s-pages",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Recursively refresh initialized notebook descendants, skipping unopened descendants; preserve selected outside sibling and notebook selection, omit action for empty notebook.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "5720be94534067a39a2c793865901193c03ef0a5",
+      "limits": [
+        "Duplicate sidebar numbers are read on active-page render rather than independent background sidebar jobs."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1651,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2185,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "consumer"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_refresh.rs",
+          "line": 68,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "gui_regression"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_refresh.py",
+          "line": 1,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_refresh.json",
+          "line": 1,
+          "commit": "5720be94534067a39a2c793865901193c03ef0a5",
+          "kind": "reference_fixture"
+        },
+        "observed": "Recursive initialized-page dispatch and search states, per-leaf and notebook weights, advanced visibility and clipboard output."
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2164-new-page",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Open real page chooser in frozen clicked row notebook; use current configured insertion position, preserve destination through selection changes, include unused-space right-click action, retain blank child when choosing page-of-pages.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 789,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "consumer"
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 166,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "typed_setting"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1446,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "option_registration"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_new_page.rs",
+          "line": 70,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_control_comparison"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_new_page.py",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_new_page.json",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual _ChooseNewPage11 cases: four default positions, explicit here overriding each position, cancellation, names/order/selection/blank children. Exact GUI Pages dropdown labels/default additionally from options_dialog.json."
+      }
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2168-new-page-here",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Open chooser with frozen parent and clicked sibling anchor; insert immediately before that sibling independently of default placement; cancellation changes no tree or selection and clears pending position; reject removed/moved destination before importer queue creation.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+      "limits": [
+        "Native cancellation clears the pending position, unlike reference retained _next_new_page_index, preventing stale placement on later creation."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 789,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "consumer"
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 166,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "typed_setting"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1446,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "option_registration"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_new_page.rs",
+          "line": 143,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_control_comparison"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_new_page.py",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_new_page.json",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual _ChooseNewPage11 cases: four default positions, explicit here overriding each position, cancellation, names/order/selection/blank children. Exact GUI Pages dropdown labels/default additionally from options_dialog.json."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-opening-and-closing-put-new-page-tabs-on",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Exact GUI Pages choice labels/order/value import for four insertion positions; cancelled edits and invalid choice leave persisted setting unchanged; apply changes real creation immediately and survives reopen, with explicit here anchor taking precedence.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1435,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "consumer"
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 166,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "typed_setting"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1446,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "option_registration"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_new_page.rs",
+          "line": 225,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_control_comparison"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_new_page.py",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_new_page.json",
+          "line": 1,
+          "commit": "642746dd1bf977e0059ac86b0e29071917ca84d2",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual _ChooseNewPage11 cases: four default positions, explicit here overriding each position, cancellation, names/order/selection/blank children. Exact GUI Pages dropdown labels/default additionally from options_dialog.json."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-sessions-sessions-if-last-session-above-autosave-it-how-often-minutes",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Exact1..1440-minute GUI Sessions control imports, cancels invalid/pending edits, applies to real historical timer; scheduled saves retain immutable media/importer history and reschedule current period while unchanged or selection-only data creates no new backup.",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+      "limits": [],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/session_autosave.rs",
+          "line": 84,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "timer_consumer"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1536,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "option_registration"
+        },
+        {
+          "path": "crates/hydrus-store/src/session_backups.rs",
+          "line": 87,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "snapshot_hash_consumer"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_autosave.rs",
+          "line": 51,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "gui_control_timer_archive_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_autosave.rs",
+          "line": 142,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "real_input_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/session_lifecycle.rs",
+          "line": 1,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "reference_model_replay"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_session_autosave.py",
+          "line": 1,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/session_autosave.json",
+          "line": 1,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual AutoSaveLastSession cadence/retry/stopping/serialized-hash suppression and independent backup timestamps; actual CurrentlyIdle boot, user, mouse, API and disabled-mode boundaries."
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-sessions-sessions-if-last-session-above-only-autosave-during-idle-time",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "exactBehavior": "Consume the applied idle-only checkbox on the historical autosave timer; active sessions retry after 60 seconds. Reference boot guard and independent user/mouse/API timeouts are driven by input across all native auxiliary/main windows and atomic timestamp-only IPC from every recognized API request before authentication or busy refusal. Rejected and read-only API requests also postpone idle saves.",
+      "countAsCompletedLeaf": false,
+      "implementationCommit": "4bdc7414",
+      "limits": [
+        "The reference polls global OS cursor position; mouse movement outside native application windows does not yet reset native mouse idle. The leaf remains partial and is not counted as completed."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui/src/session_autosave.rs",
+          "line": 84,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "timer_consumer"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1536,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "option_registration"
+        },
+        {
+          "path": "crates/hydrus-store/src/session_backups.rs",
+          "line": 87,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "snapshot_hash_consumer"
+        },
+        {
+          "path": "crates/hydrus-gui/src/session_autosave.rs",
+          "line": 14,
+          "commit": "c8039840",
+          "kind": "native_window_input"
+        },
+        {
+          "path": "crates/hydrus-api/src/server.rs",
+          "line": 85,
+          "commit": "4bdc7414",
+          "kind": "api_request_activity"
+        },
+        {
+          "path": "crates/hydrus-store/src/api_activity.rs",
+          "line": 10,
+          "commit": "4bdc7414",
+          "kind": "atomic_activity_ipc"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_autosave.rs",
+          "line": 51,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "gui_control_timer_archive_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_autosave.rs",
+          "line": 142,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "real_input_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/session_lifecycle.rs",
+          "line": 1,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "reference_model_replay"
+        },
+        {
+          "path": "crates/hydrus-api/tests/activity.rs",
+          "line": 38,
+          "commit": "4bdc7414",
+          "kind": "loopback_socket_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_autosave.rs",
+          "line": 259,
+          "commit": "4bdc7414",
+          "kind": "idle_consumer_regression"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/session_lifecycle.rs",
+          "line": 96,
+          "commit": "c8039840",
+          "kind": "reference_activity_replay"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_session_autosave.py",
+          "line": 1,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/session_autosave.json",
+          "line": 1,
+          "commit": "84e1c5a321842a6cb4940fdf9327b96641518f43",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual AutoSaveLastSession cadence/retry/stopping/serialized-hash suppression and independent backup timestamps; actual CurrentlyIdle boot, user, mouse, API and disabled-mode boundaries."
+      },
+      "additionalReferenceRecordings": [
+        {
+          "recorder": {
+            "path": "oracle/record_session_activity.py",
+            "line": 1,
+            "commit": "c8039840",
+            "kind": "reference_recorder"
+          },
+          "fixture": {
+            "path": "oracle/fixtures/session_activity.json",
+            "line": 1,
+            "commit": "c8039840",
+            "kind": "reference_fixture"
+          },
+          "observed": "Actual auxiliary Dialog constructor resets only user time; real global Qt cursor movement updates mouse, unchanged cursor does not, and real controller API action updates only API time."
+        }
+      ]
+    },
+    {
+      "reference_id": "audit-options-gui-sessions-sessions-default-session-on-startup",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "a9cde425",
+      "exactBehavior": "Select blank, last session or any frozen saved name in GUI Sessions; cancel and invalid choices retain persisted startup. Ordinary boot restores the selected saved tree with independent ordered media, selection and importer queues, falls back to blank for a missing name, and schedules the first configured autosave. After an interrupted native run, prompt only for an existing configured saved name using the exact reference title/message/buttons; yes or actual fifteen-second timeout loads the frozen displayed name, no/window-close opens blank without changing preferences. Resolve startup once, start main client workers after the choice, and clear running evidence only after clean shutdown.",
+      "limits": [
+        "The native loads before showing the main window instead of a quarter-second deferred Qt callback; empty named trees retain one native blank search page.",
+        "Native recovery uses its own running marker; the reference process marker is not copied during database import."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1558,
+          "commit": "4a81784b",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 174,
+          "commit": "4a81784b",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/main.rs",
+          "line": 129,
+          "commit": "4a81784b",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/mod.rs",
+          "line": 1248,
+          "commit": "97d9074b",
+          "kind": "import_named_identity"
+        },
+        {
+          "path": "crates/hydrus-gui/src/session_startup.rs",
+          "line": 27,
+          "commit": "a9cde425",
+          "kind": "run_lifecycle"
+        },
+        {
+          "path": "crates/hydrus-gui/src/session_startup.rs",
+          "line": 77,
+          "commit": "a9cde425",
+          "kind": "recovery_consumer"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 197,
+          "commit": "a9cde425",
+          "kind": "frozen_startup_name"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_startup.rs",
+          "line": 81,
+          "commit": "4a81784b",
+          "kind": "gui_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_startup.rs",
+          "line": 124,
+          "commit": "4a81784b",
+          "kind": "cancel_invalid_reopen"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_startup.rs",
+          "line": 192,
+          "commit": "4a81784b",
+          "kind": "independent_state_regression"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/mod.rs",
+          "line": 2027,
+          "commit": "97d9074b",
+          "kind": "legacy_import_snapshot_isolation"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_startup.rs",
+          "line": 303,
+          "commit": "a9cde425",
+          "kind": "reference_recovery_gui_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_startup.rs",
+          "line": 398,
+          "commit": "a9cde425",
+          "kind": "frozen_name_and_clean_bypass"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_startup.rs",
+          "line": 458,
+          "commit": "a9cde425",
+          "kind": "interrupt_clean_reopen_marker"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/session_lifecycle.rs",
+          "line": 155,
+          "commit": "a9cde425",
+          "kind": "exact_question_replay"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_session_startup.py",
+          "line": 1,
+          "commit": "4a81784b",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/session_startup.json",
+          "line": 1,
+          "commit": "4a81784b",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual _InitialiseSession with real controller/DB saved trees, clean shutdown: blank/missing/Last/named tree, shown child and initial 0.25-second load/300-second autosave callbacks. Exact selector labels/order/value compare against existing real Options Dialog fixture."
+      },
+      "additionalReferenceRecordings": [
+        {
+          "recorder": {
+            "path": "oracle/record_session_startup.py",
+            "line": 1,
+            "commit": "a9cde425",
+            "kind": "reference_recorder"
+          },
+          "fixture": {
+            "path": "oracle/fixtures/session_startup.json",
+            "line": 1,
+            "commit": "a9cde425",
+            "kind": "reference_fixture"
+          },
+          "observed": "Actual _InitialiseSession eight bad-shutdown cases with exact questions and yes/no/close outputs; real GetYesNo auto-yes modal waited fifteen seconds and loaded Last. Blank/missing bypass question. Ordinary startup outputs also retained."
+        }
+      ]
+    },
+    {
+      "reference_id": "audit-options-gui-sessions-sessions-show-warning-popup-if-session-size-exceeds-10-000-000",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "implementationCommit": "588e39f0",
+      "exactBehavior": "Apply the exact GUI Sessions warning preference to active Pages::session_weight; more than ten million triggers the exact reference message through the rendered native popup stack once per boot. Closed pages are excluded, seeds contribute twenty, disabled checks do not consume the allowance, and dismissal/re-enabling does not repeat the warning in the same boot.",
+      "limits": [
+        "The native checks active weight on its one-second monitor, while the reference checks when its page-count menu becomes dirty."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1589,
+          "commit": "588e39f0",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/session_lifecycle.rs",
+          "line": 90,
+          "commit": "588e39f0",
+          "kind": "source"
+        },
+        {
+          "path": "crates/hydrus-gui/src/session_autosave.rs",
+          "line": 175,
+          "commit": "588e39f0",
+          "kind": "popup_consumer"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 2390,
+          "commit": "588e39f0",
+          "kind": "active_weight_source"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/session_lifecycle.rs",
+          "line": 133,
+          "commit": "588e39f0",
+          "kind": "reference_replay"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session_autosave.rs",
+          "line": 315,
+          "commit": "588e39f0",
+          "kind": "cancel_apply_rendered_popup_dismiss_reopen"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_session_warning.py",
+          "line": 1,
+          "commit": "588e39f0",
+          "kind": "reference_recorder"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/session_warning.json",
+          "line": 1,
+          "commit": "588e39f0",
+          "kind": "reference_fixture"
+        },
+        "observed": "Actual _UpdateMenuPagesCountIfDirty on real Qt menu items with scripted counts: six threshold/disabled/closed-page/seed-weight/repeated/new-boot cases; exact ShowText message and warning latch outputs."
+      }
+    }
+  ],
+  "completedOriginalLeafCount": 12,
+  "validation": {
+    "reference": "Real-client recorder completed cleanly.",
+    "local": [
+      "cargo fmt --all",
+      "git diff --check",
+      "/workspace/parallel/parity-slint-syntax.sh /workspace/parallel/parity-sessions"
+    ],
+    "cargo": "Deferred to root hosted CI; no local builds or mutation tests."
+  },
+  "remaining": [
+    "Outside-application global OS cursor polling; idle-only claim remains partial.",
+    "Legacy historical GUI-session snapshot import.",
+    "Remaining page selector and drag workflows."
+  ]
+}

@@ -59,6 +59,26 @@ pub struct NetworkJob {
     pub obeys_bandwidth: bool,
 }
 
+/// Per-request control state, kept separate from the displayed transfer row.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct JobControl {
+    pub id: u64,
+    pub created: i64,
+    pub gallery: bool,
+    pub domain_ok: bool,
+    pub tokens_ok: bool,
+    pub auto_override: bool,
+}
+/// A recent failed request, retained even when a short request leaves the live list.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct JobError {
+    pub id: u64,
+    pub url: String,
+    pub contexts: Vec<NetworkContext>,
+    pub gallery: bool,
+    pub text: String,
+}
+
 /// Current daemon snapshot. It expires after five seconds without a heartbeat.
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Snapshot {
@@ -66,6 +86,10 @@ pub struct Snapshot {
     pub at: i64,
     pub jobs: Vec<NetworkJob>,
     pub usage: Vec<(NetworkContext, Tracker)>,
+    #[serde(default)]
+    pub controls: Vec<JobControl>,
+    #[serde(default)]
+    pub errors: Vec<JobError>,
 }
 impl Setting for Snapshot {
     const KEY: &'static str = "network_runtime";
@@ -82,6 +106,17 @@ impl Snapshot {
 pub enum JobAction {
     Cancel,
     OverrideBandwidth,
+    OverrideConnectionWait,
+    OverrideServerBandwidthWait,
+    OverrideGalleryWait,
+    ScrubDomainErrors,
+    /// Applies to this request only; the GUI control owns future-request policy.
+    AutoOverrideBandwidth(bool),
+    /// Independent control owners may watch the same request.
+    AutoOverrideBandwidthFor {
+        owner: u64,
+        enabled: bool,
+    },
 }
 
 /// Commands cannot affect a replacement daemon or a later request on one job.

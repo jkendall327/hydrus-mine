@@ -16,6 +16,40 @@ use hydrus_parse::sidecar::{Exporter, Importer, Router, Source, TagDisplay};
 use hydrus_store::Store;
 use serde_json::{Value, json};
 
+#[test]
+fn recorded_router_queue_restrictions_veto_wrong_direction_and_sources() {
+    let reference = hydrus_testkit::fixture_json("router_exchange.json");
+    let decode = |key: &str| {
+        reference[key]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|value| router(&object(value)).unwrap())
+            .collect::<Vec<_>>()
+    };
+    let imports = decode("imports");
+    let exports = decode("exports");
+    editors::validate_router_import(Context::Import, &imports).unwrap();
+    editors::validate_router_import(Context::Export, &exports).unwrap();
+    assert_eq!(
+        editors::validate_router_import(Context::Import, &exports).unwrap_err(),
+        reference["vetoes"][0]["error"]
+    );
+    assert_eq!(
+        editors::validate_router_import(Context::Export, &imports).unwrap_err(),
+        reference["vetoes"][1]["error"]
+    );
+    let mut wrong = exports[0].clone();
+    wrong.importers = imports[0].importers.clone();
+    assert_eq!(
+        editors::validate_router_import(Context::Export, &[wrong]).unwrap_err(),
+        reference["vetoes"][2]["error"]
+    );
+    let mut mixed = imports.clone();
+    mixed.extend(exports);
+    assert!(editors::validate_router_import(Context::Import, &mixed).is_err());
+}
+
 fn store() -> (tempfile::TempDir, std::sync::Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let dir = tempfile::tempdir().unwrap();
@@ -444,5 +478,107 @@ fn check_exporter(
             );
         }
         Err(error) => assert_eq!(error, theirs["value"]["error"], "{at}"),
+    }
+}
+
+#[test]
+fn recorded_router_tables_and_child_strings_use_real_sidecars_and_read_only_media() {
+    let directory = tempfile::tempdir().unwrap();
+    let store = Store::open(directory.path()).unwrap();
+    let files = tempfile::tempdir().unwrap();
+    for case in hydrus_testkit::fixture_json("sidecar_testing.json")
+        .as_array()
+        .unwrap()
+    {
+        for (name, text) in case["documents"].as_object().unwrap() {
+            std::fs::write(files.path().join(name), text.as_str().unwrap()).unwrap();
+        }
+        let object = SerialisableObject::from_tuple_str(&case["tuple"].to_string()).unwrap();
+        let value = router(&object).unwrap();
+        let objects = if let Some(media) = case["media"].as_array() {
+            media
+                .iter()
+                .map(|item| {
+                    let hash = item["hash"]
+                        .as_str()
+                        .unwrap()
+                        .parse::<hydrus_core::Sha256>()
+                        .unwrap();
+                    let id = store
+                        .write(move |ctx| hydrus_store::master::intern_hash(ctx.conn(), &hash))
+                        .unwrap();
+                    let urls = item["urls"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .map(|url| url.as_str().unwrap().to_owned())
+                        .collect::<Vec<_>>();
+                    let notes = item["notes"]
+                        .as_object()
+                        .unwrap()
+                        .iter()
+                        .map(|(name, text)| (name.clone(), text.as_str().unwrap().to_owned()))
+                        .collect::<Vec<_>>();
+                    store
+                        .write_content(move |writer| {
+                            writer.add_urls(&[id], &urls)?;
+                            for (name, text) in notes {
+                                writer.set_note(id, &name, &text)?;
+                            }
+                            Ok(())
+                        })
+                        .unwrap();
+                    editors::TestObject::Media(id)
+                })
+                .collect::<Vec<_>>()
+        } else if case["case"] == "no_examples" {
+            Vec::new()
+        } else {
+            ["one.png", "two.png", "missing.png"]
+                .into_iter()
+                .map(|name| {
+                    editors::TestObject::File(
+                        files.path().join(name).to_string_lossy().into_owned(),
+                    )
+                })
+                .collect()
+        };
+        let before = store.snapshot().revision;
+        for table in case["tables"].as_array().unwrap() {
+            let source = usize::try_from(table["source"].as_u64().unwrap()).unwrap();
+            let mut rows = editors::router_test_rows(&store, &value, source, &objects);
+            for row in &mut rows {
+                row[0] = row[0]
+                    .replace(files.path().to_str().unwrap(), "<examples>")
+                    .replace('\\', "/");
+            }
+            assert_eq!(
+                serde_json::to_value(rows).unwrap(),
+                table["rows"],
+                "{}",
+                case["case"]
+            );
+        }
+        for (source, input) in value
+            .importers
+            .iter()
+            .zip(case["source_inputs"].as_array().unwrap())
+        {
+            let strings = objects.first().map_or_else(Vec::new, |object| {
+                editors::test_importer_strings(&store, source, object, true)
+            });
+            assert_eq!(serde_json::to_value(strings).unwrap(), input["texts"]);
+            assert!(input["context"].as_object().unwrap().is_empty());
+        }
+        assert_eq!(
+            serde_json::to_value(editors::router_test_strings(&store, &value, &objects)).unwrap(),
+            case["processor_texts"]
+        );
+        assert_eq!(
+            store.snapshot().revision,
+            before,
+            "testing must not write media or export sidecars"
+        );
+        assert!(case["processor_context"].as_object().unwrap().is_empty());
     }
 }

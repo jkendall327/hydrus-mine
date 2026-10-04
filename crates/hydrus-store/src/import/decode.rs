@@ -191,7 +191,52 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             options.booleans.get("rename_page_of_pages_on_pick_new") == Some(&true)
         }),
     };
+    let insertion = options
+        .as_ref()
+        .and_then(|options| options.integers.get("default_new_page_goes"))
+        .and_then(|&code| crate::settings::PageInsertion::from_code(code))
+        .unwrap_or_default();
+    insert_setting(&mut input, &insertion)?;
     insert_setting(&mut input, &notebook_creation)?;
+    let mut lifecycle = crate::settings::GuiSessionSettings::default();
+    if let Some(value) = legacy_options.get("default_gui_session") {
+        lifecycle.startup = value
+            .as_str()
+            .filter(|&name| name != "just a blank page")
+            .map(str::to_owned);
+    }
+    if let Some(options) = &options {
+        if let Some(&period) = options.integers.get("last_session_save_period_minutes") {
+            lifecycle.autosave_minutes = u16::try_from(period.clamp(1, 1440)).unwrap_or(5);
+        }
+        if let Some(&only) = options.booleans.get("only_save_last_session_during_idle") {
+            lifecycle.only_during_idle = only;
+        }
+        if let Some(&warn) = options.booleans.get("show_session_size_warnings") {
+            lifecycle.warn_large_session = warn;
+        }
+    }
+    insert_setting(&mut input, &lifecycle)?;
+    let mut idle = crate::settings::GuiIdleSettings {
+        user_seconds: limit("idle_period"),
+        mouse_seconds: limit("idle_mouse_period"),
+        ..crate::settings::GuiIdleSettings::default()
+    };
+    if let Some(enabled) = legacy_options
+        .get("idle_normal")
+        .and_then(hydrus_legacy::objects::YamlValue::as_bool)
+    {
+        idle.enabled = enabled;
+    }
+    if let Some(options) = &options {
+        idle.api_seconds = options
+            .noneable_integers
+            .get("idle_mode_client_api_timeout")
+            .copied()
+            .flatten()
+            .and_then(|seconds| u64::try_from(seconds).ok());
+    }
+    insert_setting(&mut input, &idle)?;
     let mut backups = crate::session_backups::SessionBackupSettings::default();
     if let Some(options) = &options
         && let Some(value) = options.integers.get("number_of_gui_session_backups")
@@ -547,6 +592,127 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             );
         }
         insert_setting(&mut input, &search_defaults)?;
+        let mut file_search = crate::settings::FileSearchSettings::default();
+        file_search.search_immediately = options
+            .booleans
+            .get("default_search_synchronised")
+            .copied()
+            .unwrap_or(file_search.search_immediately);
+        file_search.show_system_everything = options
+            .booleans
+            .get("show_system_everything")
+            .copied()
+            .unwrap_or(file_search.show_system_everything);
+        file_search.float_autocomplete = options
+            .booleans
+            .get("autocomplete_float_main_gui")
+            .copied()
+            .unwrap_or(file_search.float_autocomplete);
+        if let Some(rows) = options
+            .integers
+            .get("active_search_predicates_height_num_chars")
+        {
+            file_search.active_predicate_rows = (*rows).clamp(1, 128) as u32;
+        }
+        if let Some(rows) = options.integers.get("ac_read_list_height_num_chars") {
+            file_search.autocomplete_rows = (*rows).clamp(1, 128) as u32;
+        }
+        if let Some(limit) = options.noneable_integers.get("forced_search_limit") {
+            file_search.implicit_limit = limit.map(|value| value.clamp(1, 100_000_000) as u64);
+        }
+        file_search.refresh_limited_sort = options
+            .booleans
+            .get("refresh_search_page_on_system_limited_sort_changed")
+            .copied()
+            .unwrap_or(file_search.refresh_limited_sort);
+        insert_setting(&mut input, &file_search)?;
+        let mut viewer_canvas = crate::settings::ViewerCanvasSettings::default();
+        for (key, field) in [
+            (
+                "media_viewer_recenter_media_on_window_resize",
+                &mut viewer_canvas.recenter_on_resize,
+            ),
+            (
+                "draw_transparency_checkerboard_media_canvas",
+                &mut viewer_canvas.transparency_checkerboard,
+            ),
+            (
+                "draw_transparency_checkerboard_as_greenscreen",
+                &mut viewer_canvas.transparency_greenscreen,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        if let Some(value) = options.integers.get("animated_scanbar_height") {
+            viewer_canvas.seek_height = (*value).clamp(1, 255) as u32;
+        }
+        if let Some(value) = options
+            .noneable_integers
+            .get("animated_scanbar_hide_height")
+        {
+            viewer_canvas.seek_hidden_height = value.map(|height| height.clamp(1, 255) as u32);
+        }
+        if let Some(value) = options.integers.get("animated_scanbar_nub_width") {
+            viewer_canvas.seek_nub_width = (*value).clamp(1, 63) as u32;
+        }
+        insert_setting(&mut input, &viewer_canvas)?;
+        let mut viewer_focus = crate::settings::ViewerFocusSettings::default();
+        for (key, field) in [
+            (
+                "animated_scanbar_pop_in_requires_focus",
+                &mut viewer_focus.seek_requires_focus,
+            ),
+            (
+                "hover_windows_need_window_focus_to_pop_in",
+                &mut viewer_focus.hovers_require_focus,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        insert_setting(&mut input, &viewer_focus)?;
+        let mut viewer_pointer = crate::settings::ViewerPointerSettings::default();
+        for (key, field) in [
+            (
+                "disallow_media_drags_on_duration_media",
+                &mut viewer_pointer.disallow_duration_drag,
+            ),
+            ("hide_canvas_drags", &mut viewer_pointer.hide_during_drag),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        insert_setting(&mut input, &viewer_pointer)?;
+        let mut viewer_hovers = crate::settings::ViewerHoverSettings::default();
+        for (key, field) in [
+            (
+                "disable_tags_hover_in_media_viewer",
+                &mut viewer_hovers.tags,
+            ),
+            (
+                "disable_top_right_hover_in_media_viewer",
+                &mut viewer_hovers.ratings,
+            ),
+            (
+                "disable_notes_hover_in_media_viewer",
+                &mut viewer_hovers.notes,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = !*value;
+            }
+        }
+        if let Some(value) = options
+            .booleans
+            .get("draw_bottom_right_index_in_media_viewer_background")
+        {
+            viewer_hovers.index_background = *value;
+        }
+        insert_setting(&mut input, &viewer_hovers)?;
         let mut summaries = hydrus_core::tag_summary::TagSummaries::default();
         for (name, field) in [
             ("thumbnail_top", &mut summaries.thumbnail_top),
@@ -2536,6 +2702,236 @@ mod tests {
                     [key(builtin_keys::MY_FILES), key(builtin_keys::TRASH)],
                     []
                 ),
+            }
+        );
+    }
+
+    #[test]
+    fn file_search_defaults_convert_user_values() {
+        use crate::settings::FileSearchSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<FileSearchSettings>(input.settings["file_search"].clone())
+                .unwrap()
+        };
+        assert_eq!(decoded(), FileSearchSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "default_search_synchronised"], [0, true]]"#,
+                    r#"[[0, "default_search_synchronised"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "show_system_everything"], [0, true]]"#,
+                    r#"[[0, "show_system_everything"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "autocomplete_float_main_gui"], [0, true]]"#,
+                    r#"[[0, "autocomplete_float_main_gui"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "active_search_predicates_height_num_chars"], [0, 6]]"#,
+                    r#"[[0, "active_search_predicates_height_num_chars"], [0, 9]]"#,
+                ),
+                (
+                    r#"[[0, "ac_read_list_height_num_chars"], [0, 22]]"#,
+                    r#"[[0, "ac_read_list_height_num_chars"], [0, 24]]"#,
+                ),
+                (
+                    r#"[[0, "forced_search_limit"], [0, null]]"#,
+                    r#"[[0, "forced_search_limit"], [0, 3]]"#,
+                ),
+                (
+                    r#"[[0, "refresh_search_page_on_system_limited_sort_changed"], [0, true]]"#,
+                    r#"[[0, "refresh_search_page_on_system_limited_sort_changed"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            FileSearchSettings {
+                search_immediately: false,
+                show_system_everything: false,
+                float_autocomplete: false,
+                active_predicate_rows: 9,
+                autocomplete_rows: 24,
+                implicit_limit: Some(3),
+                refresh_limited_sort: false,
+            }
+        );
+    }
+
+    #[test]
+    fn viewer_canvas_options_convert_user_values() {
+        use crate::settings::ViewerCanvasSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerCanvasSettings>(input.settings["viewer_canvas"].clone())
+                .unwrap()
+        };
+        assert_eq!(decoded(), ViewerCanvasSettings::default());
+        assert_eq!(
+            serde_json::from_value::<ViewerCanvasSettings>(serde_json::json!({})).unwrap(),
+            ViewerCanvasSettings::default()
+        );
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "media_viewer_recenter_media_on_window_resize"], [0, true]]"#,
+                    r#"[[0, "media_viewer_recenter_media_on_window_resize"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "draw_transparency_checkerboard_media_canvas"], [0, false]]"#,
+                    r#"[[0, "draw_transparency_checkerboard_media_canvas"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "draw_transparency_checkerboard_as_greenscreen"], [0, false]]"#,
+                    r#"[[0, "draw_transparency_checkerboard_as_greenscreen"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "animated_scanbar_height"], [0, 20]]"#,
+                    r#"[[0, "animated_scanbar_height"], [0, 37]]"#,
+                ),
+                (
+                    r#"[[0, "animated_scanbar_hide_height"], [0, 5]]"#,
+                    r#"[[0, "animated_scanbar_hide_height"], [0, null]]"#,
+                ),
+                (
+                    r#"[[0, "animated_scanbar_nub_width"], [0, 10]]"#,
+                    r#"[[0, "animated_scanbar_nub_width"], [0, 19]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerCanvasSettings {
+                recenter_on_resize: false,
+                transparency_checkerboard: true,
+                transparency_greenscreen: true,
+                seek_height: 37,
+                seek_hidden_height: None,
+                seek_nub_width: 19
+            }
+        );
+    }
+
+    #[test]
+    fn viewer_focus_options_import_independent_mouseover_gates() {
+        use crate::settings::ViewerFocusSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerFocusSettings>(input.settings["viewer_focus"].clone())
+                .unwrap()
+        };
+        assert_eq!(decoded(), ViewerFocusSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "animated_scanbar_pop_in_requires_focus"], [0, true]]"#,
+                    r#"[[0, "animated_scanbar_pop_in_requires_focus"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "hover_windows_need_window_focus_to_pop_in"], [0, true]]"#,
+                    r#"[[0, "hover_windows_need_window_focus_to_pop_in"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerFocusSettings {
+                seek_requires_focus: false,
+                hovers_require_focus: false
+            }
+        );
+    }
+
+    #[test]
+    fn viewer_pointer_options_import_both_drag_preferences() {
+        use crate::settings::ViewerPointerSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerPointerSettings>(
+                input.settings["viewer_pointer"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(
+            decoded(),
+            ViewerPointerSettings {
+                disallow_duration_drag: false,
+                hide_during_drag: true
+            }
+        );
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "disallow_media_drags_on_duration_media"], [0, false]]"#,
+                    r#"[[0, "disallow_media_drags_on_duration_media"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "hide_canvas_drags"], [0, true]]"#,
+                    r#"[[0, "hide_canvas_drags"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerPointerSettings {
+                disallow_duration_drag: true,
+                hide_during_drag: false
+            }
+        );
+        let fresh: ViewerPointerSettings = serde_json::from_str("{}").unwrap();
+        assert!(!fresh.disallow_duration_drag);
+        assert_eq!(fresh.hide_during_drag, !cfg!(target_os = "macos"));
+    }
+
+    #[test]
+    fn viewer_hover_options_migrate_disable_keys_as_enabled_controls() {
+        use crate::settings::ViewerHoverSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerHoverSettings>(input.settings["viewer_hovers"].clone())
+                .unwrap()
+        };
+        assert_eq!(decoded(), ViewerHoverSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "disable_tags_hover_in_media_viewer"], [0, false]]"#,
+                    r#"[[0, "disable_tags_hover_in_media_viewer"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "disable_top_right_hover_in_media_viewer"], [0, false]]"#,
+                    r#"[[0, "disable_top_right_hover_in_media_viewer"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "disable_notes_hover_in_media_viewer"], [0, false]]"#,
+                    r#"[[0, "disable_notes_hover_in_media_viewer"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "draw_bottom_right_index_in_media_viewer_background"], [0, true]]"#,
+                    r#"[[0, "draw_bottom_right_index_in_media_viewer_background"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerHoverSettings {
+                tags: false,
+                ratings: false,
+                notes: false,
+                index_background: false
             }
         );
     }

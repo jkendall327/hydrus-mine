@@ -1,0 +1,272 @@
+{
+ "cases": [
+  {
+   "name": "only-new",
+   "text": "﻿ https://gallery-exchange.example/a\r\n https://gallery-exchange.example/b\nhttps://gallery-exchange.example/b",
+   "answers": [
+    "yes",
+    "yes"
+   ],
+   "seeds": [
+    [
+     "https://gallery-exchange.example/a",
+     true,
+     4,
+     "old failure"
+    ],
+    [
+     "https://gallery-exchange.example/b",
+     false,
+     0,
+     ""
+    ]
+   ]
+  },
+  {
+   "name": "duplicates-no",
+   "text": "https://gallery-exchange.example/a\nhttps://gallery-exchange.example/c",
+   "answers": [
+    "no"
+   ],
+   "seeds": [
+    [
+     "https://gallery-exchange.example/a",
+     true,
+     4,
+     "old failure"
+    ]
+   ]
+  },
+  {
+   "name": "duplicate-cancel",
+   "text": "https://gallery-exchange.example/a\nhttps://gallery-exchange.example/c",
+   "answers": [
+    "cancel"
+   ],
+   "seeds": [
+    [
+     "https://gallery-exchange.example/a",
+     true,
+     4,
+     "old failure"
+    ]
+   ]
+  },
+  {
+   "name": "continue",
+   "text": "https://gallery-exchange.example/c",
+   "answers": [
+    "no"
+   ],
+   "seeds": [
+    [
+     "https://gallery-exchange.example/a",
+     true,
+     4,
+     "old failure"
+    ],
+    [
+     "https://gallery-exchange.example/c",
+     true,
+     0,
+     ""
+    ]
+   ]
+  },
+  {
+   "name": "continuation-cancel",
+   "text": "https://gallery-exchange.example/d",
+   "answers": [
+    "cancel"
+   ],
+   "seeds": [
+    [
+     "https://gallery-exchange.example/a",
+     true,
+     4,
+     "old failure"
+    ]
+   ]
+  },
+  {
+   "name": "equivalent-new",
+   "text": "https://gallery-exchange.example/b#one\nhttps://gallery-exchange.example/b#two",
+   "answers": [
+    "yes"
+   ],
+   "seeds": [
+    [
+     "https://gallery-exchange.example/a",
+     true,
+     4,
+     "old failure"
+    ],
+    [
+     "https://gallery-exchange.example/b",
+     false,
+     0,
+     ""
+    ]
+   ]
+  },
+  {
+   "name": "empty",
+   "text": "\n ",
+   "answers": [
+    "yes"
+   ],
+   "seeds": [
+    [
+     "https://gallery-exchange.example/a",
+     true,
+     4,
+     "old failure"
+    ]
+   ]
+  },
+  {
+   "name": "invalid-preserved",
+   "text": "not a valid URL",
+   "answers": [
+    "yes"
+   ],
+   "seeds": [
+    [
+     "https://gallery-exchange.example/a",
+     true,
+     4,
+     "old failure"
+    ],
+    [
+     "not a valid URL",
+     false,
+     0,
+     ""
+    ]
+   ]
+  },
+  {
+   "name": "png-cancel",
+   "seeds": []
+  },
+  {
+   "name": "png-import",
+   "seeds": [
+    [
+     "https://gallery-exchange.example/%E6%97%A5",
+     true,
+     0,
+     ""
+    ]
+   ]
+  },
+  {
+   "name": "png-invalid",
+   "seeds": []
+  }
+ ],
+ "questions": [
+  {
+   "title": "Are you sure?",
+   "text": "Of the 2 URLs you mean to add, 1 are already in the search log. Would you like to only add new URLs or add everything (which will force a re-check of the duplicates)?",
+   "choices": [
+    "only add new urls",
+    "add all urls, even duplicates"
+   ],
+   "answer": "yes"
+  },
+  {
+   "title": "Are you sure?",
+   "text": "Would you like these urls to only check for new files, or would you like them to also generate subsequent gallery pages, like a regular search would?",
+   "choices": [
+    "just check what I am adding",
+    "start a potential new search for every url added"
+   ],
+   "answer": "yes"
+  },
+  {
+   "title": "Are you sure?",
+   "text": "Of the 2 URLs you mean to add, 1 are already in the search log. Would you like to only add new URLs or add everything (which will force a re-check of the duplicates)?",
+   "choices": [
+    "only add new urls",
+    "add all urls, even duplicates"
+   ],
+   "answer": "no"
+  },
+  {
+   "title": "Are you sure?",
+   "text": "Of the 2 URLs you mean to add, 1 are already in the search log. Would you like to only add new URLs or add everything (which will force a re-check of the duplicates)?",
+   "choices": [
+    "only add new urls",
+    "add all urls, even duplicates"
+   ],
+   "answer": "cancel"
+  },
+  {
+   "title": "Are you sure?",
+   "text": "Would you like these urls to only check for new files, or would you like them to also generate subsequent gallery pages, like a regular search would?",
+   "choices": [
+    "just check what I am adding",
+    "start a potential new search for every url added"
+   ],
+   "answer": "no"
+  },
+  {
+   "title": "Are you sure?",
+   "text": "Would you like these urls to only check for new files, or would you like them to also generate subsequent gallery pages, like a regular search would?",
+   "choices": [
+    "just check what I am adding",
+    "start a potential new search for every url added"
+   ],
+   "answer": "cancel"
+  },
+  {
+   "title": "Are you sure?",
+   "text": "Would you like these urls to only check for new files, or would you like them to also generate subsequent gallery pages, like a regular search would?",
+   "choices": [
+    "just check what I am adding",
+    "start a potential new search for every url added"
+   ],
+   "answer": "yes"
+  },
+  {
+   "title": "Are you sure?",
+   "text": "Would you like these urls to only check for new files, or would you like them to also generate subsequent gallery pages, like a regular search would?",
+   "choices": [
+    "just check what I am adding",
+    "start a potential new search for every url added"
+   ],
+   "answer": "yes"
+  },
+  {
+   "title": "Are you sure?",
+   "text": "Would you like these urls to only check for new files, or would you like them to also generate subsequent gallery pages, like a regular search would?",
+   "choices": [
+    "just check what I am adding",
+    "start a potential new search for every url added"
+   ],
+   "answer": "yes"
+  },
+  {
+   "title": "Are you sure?",
+   "text": "Would you like these urls to only check for new files, or would you like them to also generate subsequent gallery pages, like a regular search would?",
+   "choices": [
+    "just check what I am adding",
+    "start a potential new search for every url added"
+   ],
+   "answer": "no"
+  }
+ ],
+ "objects": "[26, 3, [[2, [66, 4, [\"https://gallery-exchange.example/%E6%97%A5\", false, [\"filter:tag\"], [77, 1, [[\"1111111111111111111111111111111111111111111111111111111111111111\", [\"extra:tag\"]]]], 1700000000, 1700000100, 4, \"note \\u65e5\\u672c\", \"https://gallery-exchange.example/ref\", {\"X-Synthetic\": \"header\"}]]]]]",
+ "png": {
+  "payload": "https://gallery-exchange.example/%E6%97%A5",
+  "done": "done!",
+  "width": 256
+ },
+ "errors": [
+  [
+   "Could not import!",
+   "\"/tmp/tmpn0x0yjr3/bad.png\" did not appear to be a valid image!"
+  ]
+ ]
+}

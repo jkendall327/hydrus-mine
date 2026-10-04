@@ -1,0 +1,226 @@
+{
+  "steps": [
+    {
+      "startup": "last session",
+      "only_idle": true,
+      "idle": false,
+      "minutes": 5,
+      "add_notebook": null,
+      "now": 1700100060000,
+      "calls": [
+        {
+          "delay": 60,
+          "label": "auto session save wait loop"
+        }
+      ],
+      "saves": [],
+      "backups": []
+    },
+    {
+      "startup": "last session",
+      "only_idle": true,
+      "idle": true,
+      "minutes": 5,
+      "add_notebook": null,
+      "now": 1700100120000,
+      "calls": [
+        {
+          "delay": 300,
+          "label": "auto save session"
+        }
+      ],
+      "saves": [
+        {
+          "name": "last session",
+          "changed": true
+        }
+      ],
+      "backups": [
+        1700100000000
+      ]
+    },
+    {
+      "startup": "last session",
+      "only_idle": false,
+      "idle": true,
+      "minutes": 1,
+      "add_notebook": null,
+      "now": 1700100180000,
+      "calls": [
+        {
+          "delay": 60,
+          "label": "auto save session"
+        }
+      ],
+      "saves": [
+        {
+          "name": "last session",
+          "changed": false
+        }
+      ],
+      "backups": [
+        1700100000000
+      ]
+    },
+    {
+      "startup": "last session",
+      "only_idle": false,
+      "idle": true,
+      "minutes": 2,
+      "add_notebook": "changed autosave",
+      "now": 1700100240000,
+      "calls": [
+        {
+          "delay": 120,
+          "label": "auto save session"
+        }
+      ],
+      "saves": [
+        {
+          "name": "last session",
+          "changed": true
+        }
+      ],
+      "backups": [
+        1700100000000,
+        1700100120000
+      ]
+    },
+    {
+      "startup": "other startup",
+      "only_idle": true,
+      "idle": false,
+      "minutes": 7,
+      "add_notebook": null,
+      "now": 1700100300000,
+      "calls": [
+        {
+          "delay": 60,
+          "label": "auto session save wait loop"
+        }
+      ],
+      "saves": [],
+      "backups": [
+        1700100000000,
+        1700100120000
+      ]
+    },
+    {
+      "startup": "other startup",
+      "only_idle": true,
+      "idle": true,
+      "minutes": 7,
+      "add_notebook": null,
+      "now": 1700100360000,
+      "calls": [],
+      "saves": [],
+      "backups": [
+        1700100000000,
+        1700100120000
+      ]
+    }
+  ],
+  "default_minutes": 5,
+  "default_only_idle": false,
+  "idle_steps": [
+    {
+      "now": 120000,
+      "times": {
+        "last_user_action": 0,
+        "last_mouse_action": 0,
+        "last_client_api_action": 0
+      },
+      "api_seconds": null,
+      "enabled": true,
+      "eligible": false
+    },
+    {
+      "now": 120001,
+      "times": {
+        "last_user_action": 0,
+        "last_mouse_action": 0,
+        "last_client_api_action": 0
+      },
+      "api_seconds": null,
+      "enabled": true,
+      "eligible": true
+    },
+    {
+      "now": 130001,
+      "times": {
+        "last_user_action": 120001,
+        "last_mouse_action": 0,
+        "last_client_api_action": 0
+      },
+      "api_seconds": null,
+      "enabled": true,
+      "eligible": false
+    },
+    {
+      "now": 130002,
+      "times": {
+        "last_user_action": 120001,
+        "last_mouse_action": 0,
+        "last_client_api_action": 0
+      },
+      "api_seconds": null,
+      "enabled": true,
+      "eligible": true
+    },
+    {
+      "now": 135002,
+      "times": {
+        "last_user_action": 120001,
+        "last_mouse_action": 130002,
+        "last_client_api_action": 0
+      },
+      "api_seconds": null,
+      "enabled": true,
+      "eligible": false
+    },
+    {
+      "now": 135003,
+      "times": {
+        "last_user_action": 120001,
+        "last_mouse_action": 130002,
+        "last_client_api_action": 0
+      },
+      "api_seconds": null,
+      "enabled": true,
+      "eligible": true
+    },
+    {
+      "now": 137003,
+      "times": {
+        "last_user_action": 120001,
+        "last_mouse_action": 130002,
+        "last_client_api_action": 135003
+      },
+      "api_seconds": 2,
+      "enabled": true,
+      "eligible": false
+    },
+    {
+      "now": 137004,
+      "times": {
+        "last_user_action": 120001,
+        "last_mouse_action": 130002,
+        "last_client_api_action": 135003
+      },
+      "api_seconds": 2,
+      "enabled": true,
+      "eligible": true
+    },
+    {
+      "now": 140000,
+      "times": {
+        "last_user_action": 120001,
+        "last_mouse_action": 130002,
+        "last_client_api_action": 135003
+      },
+      "api_seconds": 2,
+      "enabled": false,
+      "eligible": false
+    }
+  ]
+}

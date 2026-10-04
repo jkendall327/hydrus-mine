@@ -199,6 +199,8 @@ pub struct BandwidthScope {
 /// A request in progress: what it is doing, and a way to cancel it.
 #[derive(Debug, Default, Clone)]
 pub struct Job {
+    /// Serialize request replacement against commands targeting this handle.
+    control: Arc<Mutex<()>>,
     state: Arc<Mutex<JobState>>,
     cancel: CancellationToken,
     override_bandwidth: Arc<AtomicBool>,
@@ -211,12 +213,20 @@ pub struct Job {
     cancel_reason: Arc<Mutex<Option<String>>>,
     /// Text returned by the last failed HTTP response, for parser test panels.
     error_text: Arc<Mutex<Option<String>>>,
+    skip_wait: Arc<Mutex<Option<WaitReason>>>,
+    override_gallery: Arc<AtomicBool>,
+    auto_override_at: Arc<std::sync::atomic::AtomicI64>,
+    auto_override_owners: Arc<Mutex<std::collections::HashSet<u64>>>,
 }
 
 /// What a job is doing.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct JobState {
     pub status: String,
+    pub created: i64,
+    pub gallery: bool,
+    pub tokens_ok: bool,
+    pub one_shot: bool,
     /// Typed runtime phase, independent of the displayed status wording.
     pub wait: WaitReason,
     /// Whether this request currently observes startup bandwidth limits.
@@ -334,6 +344,56 @@ impl Job {
         self.wake.notify_one();
     }
 
+    fn bandwidth_overridden(&self, at: i64) -> bool {
+        let deadline = self.auto_override_at.load(Ordering::Relaxed);
+        if deadline > 0 && at > deadline {
+            // The reference calls OverrideBandwidth, which remains set when
+            // its control later turns the automatic policy off.
+            self.override_bandwidth.store(true, Ordering::Relaxed);
+        }
+        self.override_bandwidth.load(Ordering::Relaxed)
+    }
+
+    /// Skip only the current connection/server retry delay, leaving future retries intact.
+    pub fn override_retry_wait(&self, reason: WaitReason) -> bool {
+        if !matches!(reason, WaitReason::Connection | WaitReason::ServerBandwidth)
+            || self.state.lock().wait != reason
+        {
+            return false;
+        }
+        *self.skip_wait.lock() = Some(reason);
+        self.wake.notify_one();
+        true
+    }
+    /// Force this request past the gallery token gate without consuming a token.
+    pub fn override_gallery_wait(&self) {
+        self.override_gallery.store(true, Ordering::Relaxed);
+        self.wake.notify_one();
+    }
+    /// Apply/remove the control's five-second policy for this active request.
+    pub fn auto_override_bandwidth(&self, enabled: bool) {
+        self.auto_override_bandwidth_for(0, enabled);
+    }
+    /// Turning off one control leaves another control's policy in effect.
+    pub fn auto_override_bandwidth_for(&self, owner: u64, enabled: bool) {
+        let mut owners = self.auto_override_owners.lock();
+        if enabled {
+            owners.insert(owner);
+        } else {
+            owners.remove(&owner);
+        }
+        self.auto_override_at.store(
+            if owners.is_empty() {
+                0
+            } else {
+                self.state.lock().created.saturating_add(5)
+            },
+            Ordering::Relaxed,
+        );
+        self.bandwidth_overridden(now());
+        self.wake.notify_one();
+    }
+
     fn set_wait(&self, reason: WaitReason) {
         self.state.lock().wait = reason;
     }
@@ -346,11 +406,23 @@ impl Job {
         if seconds <= 0.0 {
             return Ok(());
         }
-        let bandwidth_wait = self.state.lock().wait == WaitReason::Bandwidth;
-        tokio::select! {
-            () = tokio::time::sleep(Duration::from_secs_f64(seconds)) => Ok(()),
-            () = self.cancel.cancelled() => Err(NetError::Cancelled),
-            () = self.wake.notified(), if bandwidth_wait => Ok(()),
+        let reason = self.state.lock().wait;
+        let delay = tokio::time::sleep(Duration::from_secs_f64(seconds));
+        tokio::pin!(delay);
+        loop {
+            if self.skip_wait.lock().as_ref() == Some(&reason) {
+                self.skip_wait.lock().take();
+                return Ok(());
+            }
+            tokio::select! {
+                () = &mut delay => return Ok(()),
+                () = self.cancel.cancelled() => return Err(NetError::Cancelled),
+                () = self.wake.notified() => {
+                    // These gates re-check their predicates after every wake.
+                    // Retry sleeps require their own one-shot override flag.
+                    if matches!(reason, WaitReason::Bandwidth | WaitReason::Gallery | WaitReason::Domain) { return Ok(()); }
+                }
+            }
         }
     }
 }
@@ -380,6 +452,7 @@ pub struct NetEngine {
     session: Mutex<Tracker>,
     jobs: Mutex<std::collections::BTreeMap<u64, (Job, Vec<NetworkContext>)>>,
     next_job: AtomicU64,
+    recent_errors: Mutex<Vec<network_runtime::JobError>>,
     epoch: String,
 }
 
@@ -507,17 +580,34 @@ impl NetEngine {
                     bytes_total: state.bytes_total,
                     speed: state.speed,
                     contexts: contexts.clone(),
-                    obeys_bandwidth: state.obeys_bandwidth
-                        && !job.override_bandwidth.load(Ordering::Relaxed),
+                    obeys_bandwidth: state.obeys_bandwidth && !job.bandwidth_overridden(now()),
                 }
             })
             .collect();
         drop(handles);
+        let controls = self
+            .jobs
+            .lock()
+            .iter()
+            .map(|(id, (job, _))| {
+                let state = job.state();
+                network_runtime::JobControl {
+                    id: *id,
+                    created: state.created,
+                    gallery: state.gallery,
+                    domain_ok: state.one_shot || self.domain_ok(&state.url),
+                    tokens_ok: state.tokens_ok || job.override_gallery.load(Ordering::Relaxed),
+                    auto_override: job.auto_override_at.load(Ordering::Relaxed) > 0,
+                }
+            })
+            .collect();
         network_runtime::Snapshot {
             epoch: self.epoch.clone(),
             at: now(),
             jobs,
             usage: self.bandwidth.lock().0.all_trackers(),
+            controls,
+            errors: self.recent_errors.lock().clone(),
         }
     }
 
@@ -526,13 +616,39 @@ impl NetEngine {
         if command.epoch != self.epoch {
             return false;
         }
-        let jobs = self.jobs.lock();
-        let Some((job, _)) = jobs.get(&command.job) else {
+        let Some(job) = self
+            .jobs
+            .lock()
+            .get(&command.job)
+            .map(|(job, _)| job.clone())
+        else {
             return false;
         };
+        let _control = job.control.lock();
+        // The request may have finished between lookup and taking its handle.
+        // A replacement on the same reusable job cannot initialise under this guard.
+        if !self.jobs.lock().contains_key(&command.job) {
+            return false;
+        }
         match command.action {
             network_runtime::JobAction::Cancel => job.cancel(),
             network_runtime::JobAction::OverrideBandwidth => job.override_bandwidth(),
+            network_runtime::JobAction::OverrideConnectionWait => {
+                return job.override_retry_wait(WaitReason::Connection);
+            }
+            network_runtime::JobAction::OverrideServerBandwidthWait => {
+                return job.override_retry_wait(WaitReason::ServerBandwidth);
+            }
+            network_runtime::JobAction::OverrideGalleryWait => job.override_gallery_wait(),
+            network_runtime::JobAction::ScrubDomainErrors => {
+                self.scrub_domain_errors(&job.state().url);
+            }
+            network_runtime::JobAction::AutoOverrideBandwidth(enabled) => {
+                job.auto_override_bandwidth(enabled);
+            }
+            network_runtime::JobAction::AutoOverrideBandwidthFor { owner, enabled } => {
+                job.auto_override_bandwidth_for(owner, enabled);
+            }
         }
         true
     }
@@ -608,6 +724,7 @@ impl NetEngine {
             session: Mutex::new(Tracker::new(now)),
             jobs: Mutex::default(),
             next_job: AtomicU64::new(1),
+            recent_errors: Mutex::default(),
             epoch: format!("{}:{}", std::process::id(), now_ms()),
             options: RwLock::new(options),
         })
@@ -742,6 +859,29 @@ impl NetEngine {
         ok
     }
 
+    /// Clear errors for the registrable domain and its parents, as the reference does.
+    pub fn scrub_domain_errors(&self, url: &str) {
+        let Ok(domain) = hydrus_core::url::url_domain(url) else {
+            return;
+        };
+        let registrable = psl::second_level_domain(&domain);
+        let domains = psl::all_applicable_domains(&registrable);
+        {
+            let mut errors = self.domain_errors.lock();
+            for d in &domains {
+                errors.remove(d);
+            }
+        }
+        for (job, contexts) in self.jobs.lock().values() {
+            if contexts
+                .iter()
+                .any(|c| c.kind == 2 && domains.contains(&c.data))
+            {
+                job.wake.notify_one();
+            }
+        }
+    }
+
     /// Count a serious error against `url`'s domain and its parents.
     fn report_domain_error(&self, url: &str) {
         let Ok(domain) = hydrus_core::url::url_domain(url) else {
@@ -860,10 +1000,11 @@ impl NetEngine {
                 return Err(NetError::Cancelled);
             }
             let now = now();
+            let auto_at = job.auto_override_at.load(Ordering::Relaxed);
+            let override_at = override_at.or((auto_at > 0).then_some(auto_at));
             // POSTs and overridden requests go at once (but still count)
-            let obeys = obeys
-                && !job.override_bandwidth.load(Ordering::Relaxed)
-                && override_at.is_none_or(|at| now <= at);
+            let obeys =
+                obeys && !job.bandwidth_overridden(now) && override_at.is_none_or(|at| now <= at);
             job.state.lock().obeys_bandwidth = obeys;
             let wait = {
                 let mut b = self.bandwidth.lock();
@@ -978,6 +1119,11 @@ impl NetEngine {
             }
         };
         loop {
+            if job.override_gallery.load(Ordering::Relaxed) {
+                job.state.lock().tokens_ok = true;
+                job.set_status("gallery token overridden - starting soon");
+                return Ok(());
+            }
             let now = now();
             let result = self.bandwidth.lock().0.try_to_consume_gallery_token(
                 second_level_domain,
@@ -987,6 +1133,7 @@ impl NetEngine {
             );
             match result {
                 Ok(()) => {
+                    job.state.lock().tokens_ok = true;
                     job.set_status("gallery token ok - starting soon");
                     return Ok(());
                 }
@@ -1010,43 +1157,90 @@ impl NetEngine {
     /// Make a request, retrying as the reference does, and report progress
     /// on `job`.
     pub async fn fetch(&self, request: &Request, job: &Job) -> Result<Response, NetError> {
-        job.error_text.lock().take();
+        let id;
         {
-            let mut state = job.state.lock();
-            state.done = false;
-            state.error = false;
-            state.status = "initialising…".into();
-            state.bytes_read = 0;
-            state.bytes_total = None;
-            state.speed = 0;
-            state.url.clone_from(&request.url);
-            state.obeys_bandwidth =
-                self.options.read().obey_bandwidth && request.method == Method::Get;
-        }
-        *job.tracker.lock() = Some(Tracker::new(now()));
-        job.override_bandwidth.store(false, Ordering::Relaxed);
-        job.set_wait(WaitReason::Engine);
-        let id = self.next_job.fetch_add(1, Ordering::Relaxed);
-        let mut contexts = Self::contexts_for(&request.url);
-        for context in request.extra_contexts.iter().chain(&job.scope().contexts) {
-            if !contexts.contains(context) {
-                contexts.push(context.clone());
+            let _control = job.control.lock();
+            job.error_text.lock().take();
+            {
+                let mut state = job.state.lock();
+                state.done = false;
+                state.error = false;
+                state.created = now();
+                state.gallery = request.gallery_page;
+                state.one_shot = request.one_shot;
+                state.tokens_ok = !(request.gallery_page
+                    && self.options.read().obey_bandwidth
+                    && job.scope().gallery_token.is_some());
+                state.status = "initialising…".into();
+                state.bytes_read = 0;
+                state.bytes_total = None;
+                state.speed = 0;
+                state.url.clone_from(&request.url);
+                state.obeys_bandwidth =
+                    self.options.read().obey_bandwidth && request.method == Method::Get;
             }
-        }
-        for url in &request.bandwidth_urls {
-            for context in Self::contexts_for(url) {
-                if !contexts.contains(&context) {
-                    contexts.push(context);
+            *job.tracker.lock() = Some(Tracker::new(now()));
+            job.override_bandwidth.store(false, Ordering::Relaxed);
+            job.override_gallery.store(false, Ordering::Relaxed);
+            job.auto_override_at.store(0, Ordering::Relaxed);
+            job.auto_override_owners.lock().clear();
+            job.skip_wait.lock().take();
+            job.set_wait(WaitReason::Engine);
+            id = self.next_job.fetch_add(1, Ordering::Relaxed);
+            let mut contexts = Self::contexts_for(&request.url);
+            for context in request.extra_contexts.iter().chain(&job.scope().contexts) {
+                if !contexts.contains(context) {
+                    contexts.push(context.clone());
                 }
             }
+            for url in &request.bandwidth_urls {
+                for context in Self::contexts_for(url) {
+                    if !contexts.contains(&context) {
+                        contexts.push(context);
+                    }
+                }
+            }
+            self.jobs.lock().insert(id, (job.clone(), contexts));
         }
-        self.jobs.lock().insert(id, (job.clone(), contexts));
         let _registered = RegisteredJob { engine: self, id };
         let result = self.fetch_inner(request, job).await;
         if let Err(e) = &result
             && e.is_infrastructure()
         {
             self.report_domain_error(&request.url);
+        }
+        if let Err(error) = &result
+            && !matches!(error, NetError::Cancelled)
+        {
+            let contexts = self
+                .jobs
+                .lock()
+                .get(&id)
+                .map_or_else(Vec::new, |(_, contexts)| contexts.clone());
+            let text = match job.error_text() {
+                Some(body) if !body.is_empty() => body,
+                _ => error.to_string(),
+            };
+            let text = if text.chars().count() > 1024 {
+                tracing::debug!(error_text = %text.chars().take(512 * 1024).collect::<String>(), "server error detail");
+                format!(
+                    "The server's error text was too long to display. The first part follows, while a larger chunk has been written to the log.\n{}",
+                    text.chars().take(256).collect::<String>()
+                )
+            } else {
+                text
+            };
+            let mut errors = self.recent_errors.lock();
+            errors.push(network_runtime::JobError {
+                id,
+                url: request.url.clone(),
+                contexts,
+                gallery: request.gallery_page,
+                text,
+            });
+            if errors.len() > 128 {
+                errors.remove(0);
+            }
         }
         let mut state = job.state.lock();
         state.done = true;
@@ -1594,15 +1788,13 @@ impl NetEngine {
                     b.0.report_data(&a.contexts, bytes, now);
                 }
                 // (it won't have changed within the same second)
-                if last_failed != Some(now) {
-                    if a.job.override_bandwidth.load(Ordering::Relaxed)
-                        || b.0.can_continue_download(&a.contexts, now)
-                    {
-                        a.job.set_wait(WaitReason::Downloading);
-                        return Ok(());
-                    }
-                    last_failed = Some(now);
+                if a.job.bandwidth_overridden(now)
+                    || (last_failed != Some(now) && b.0.can_continue_download(&a.contexts, now))
+                {
+                    a.job.set_wait(WaitReason::Downloading);
+                    return Ok(());
                 }
+                last_failed = Some(now);
             }
             a.job.set_wait(WaitReason::Bandwidth);
             a.job.sleep(0.1).await?;
@@ -1790,6 +1982,90 @@ mod reload_tests {
         options.obey_bandwidth = false;
         let engine = NetEngine::new(Arc::clone(&store), options).unwrap();
         (dir, store, engine)
+    }
+
+    #[test]
+    fn automatic_control_override_has_strict_five_second_boundary_and_sticks() {
+        let job = Job::new();
+        job.auto_override_at.store(105, Ordering::Relaxed);
+        assert!(!job.bandwidth_overridden(105));
+        assert!(job.bandwidth_overridden(106));
+        job.auto_override_at.store(0, Ordering::Relaxed);
+        assert!(job.bandwidth_overridden(107));
+    }
+
+    #[test]
+    fn independent_auto_override_owners_do_not_disable_each_other() {
+        let job = Job::new();
+        job.state.lock().created = now();
+        job.auto_override_bandwidth_for(1, true);
+        job.auto_override_bandwidth_for(2, true);
+        job.auto_override_bandwidth_for(1, false);
+        assert!(job.auto_override_at.load(Ordering::Relaxed) > 0);
+        job.auto_override_bandwidth_for(2, false);
+        assert_eq!(job.auto_override_at.load(Ordering::Relaxed), 0);
+        assert!(!job.override_bandwidth.load(Ordering::Relaxed));
+    }
+
+    #[tokio::test]
+    async fn runtime_domain_scrub_wakes_a_registered_domain_gate_and_preserves_unrelated_errors() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::open(dir.path()).unwrap();
+        let engine = NetEngine::new(
+            store,
+            NetOptions {
+                domain_error_number: 1,
+                ..NetOptions::default()
+            },
+        )
+        .unwrap();
+        let url = "https://sub.example.com/controlled";
+        // The reference scrub clears a registrable domain and its parents,
+        // so a subdomain job is blocked by this parent's recorded error.
+        engine.report_domain_error("https://example.com/parent-error");
+        engine.report_domain_error("https://other.example.net/unrelated");
+        assert!(!engine.domain_ok(url));
+        let job = Job::new();
+        {
+            let mut state = job.state.lock();
+            state.url = url.into();
+            state.created = now();
+        }
+        let contexts = NetEngine::contexts_for(url);
+        engine.jobs.lock().insert(42, ((*job).clone(), contexts));
+        let mut waiting = Box::pin(engine.wait_for_domain(url, &job));
+        tokio::select! { _ = &mut waiting => panic!("domain gate unexpectedly passed"), () = tokio::time::sleep(Duration::from_millis(10)) => {} }
+        assert_eq!(job.state().wait, WaitReason::Domain);
+        assert!(engine.runtime_command(&network_runtime::Command {
+            epoch: engine.epoch.clone(),
+            job: 42,
+            action: network_runtime::JobAction::ScrubDomainErrors
+        }));
+        tokio::time::timeout(Duration::from_secs(1), waiting)
+            .await
+            .unwrap()
+            .unwrap();
+        assert!(engine.domain_ok(url));
+        assert!(!engine.domain_ok("https://other.example.net/unrelated"));
+    }
+
+    #[tokio::test]
+    async fn connection_retry_skip_is_consumed_once_and_unrelated_wakes_do_not_skip() {
+        let job = Job::new();
+        job.set_wait(WaitReason::Connection);
+        let mut sleep = Box::pin(job.sleep(60.0));
+        job.override_bandwidth();
+        tokio::select! { _ = &mut sleep => panic!("bandwidth override skipped connection delay"), () = tokio::time::sleep(Duration::from_millis(10)) => {} }
+        assert!(!job.override_retry_wait(WaitReason::ServerBandwidth));
+        assert!(job.override_retry_wait(WaitReason::Connection));
+        tokio::time::timeout(Duration::from_secs(1), sleep)
+            .await
+            .unwrap()
+            .unwrap();
+        let mut next = Box::pin(job.sleep(60.0));
+        tokio::select! { _ = &mut next => panic!("skip leaked to the next retry"), () = tokio::time::sleep(Duration::from_millis(10)) => {} }
+        job.cancel();
+        assert_eq!(next.await.unwrap_err(), NetError::Cancelled);
     }
 
     #[test]

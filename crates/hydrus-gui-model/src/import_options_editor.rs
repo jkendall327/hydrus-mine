@@ -21,6 +21,19 @@ pub enum Kind {
 }
 
 impl Kind {
+    pub fn code(self) -> u8 {
+        match self {
+            Self::Prefetch => 0,
+            Self::FileFiltering => 1,
+            Self::TagFiltering => 2,
+            Self::Locations => 3,
+            Self::Tags => 4,
+            Self::Notes => 5,
+            Self::Presentation => 6,
+            Self::ExternalPrograms => 7,
+        }
+    }
+
     pub const ALL: [Kind; 8] = [
         Kind::Prefetch,
         Kind::FileFiltering,
@@ -189,6 +202,27 @@ pub fn tab_label(kind: Kind, custom_summary: Option<&str>, source: &str) -> Stri
 /// What a kind's options in `slice` (which must set it) say they do, as
 /// the editor's list shows them for a downloader (`GetSummary`); `name`
 /// names a service by its key (hex).
+/// The container summary shown in subscription rows and favourites menus.
+pub fn container_summary(slice: &ImportOptionsSlice, name: &dyn Fn(&str) -> String) -> String {
+    let kinds = Kind::ALL
+        .into_iter()
+        .filter(|kind| kind.is_set(slice))
+        .collect::<Vec<_>>();
+    let names = kinds.iter().map(|kind| kind.name()).collect::<Vec<_>>();
+    let summaries = kinds
+        .iter()
+        .map(|kind| summary(*kind, slice, name))
+        .filter(|s| !s.is_empty())
+        .collect::<Vec<_>>();
+    if names.is_empty() {
+        String::new()
+    } else if names.len() <= 2 && (1..=2).contains(&summaries.len()) {
+        format!("{}: {}", names.join(", "), summaries.join(" | "))
+    } else {
+        names.join(", ")
+    }
+}
+
 pub fn summary(kind: Kind, slice: &ImportOptionsSlice, name: &dyn Fn(&str) -> String) -> String {
     use hydrus_core::import_options::PrefetchCheck as C;
     let mut parts: Vec<String> = Vec::new();

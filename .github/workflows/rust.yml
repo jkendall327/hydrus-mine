@@ -10,9 +10,9 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: rust-${{ github.ref }}-${{ github.head_ref == 'codex/overnight-gui-burndown' && github.event.pull_request.head.sha || 'latest' }}
+  group: rust-${{ github.ref }}-${{ (github.head_ref == 'codex/overnight-gui-burndown' || startsWith(github.head_ref, 'codex/parity-')) && github.event.pull_request.head.sha || 'latest' }}
   # Overnight implementation continues while earlier checkpoints validate.
-  cancel-in-progress: ${{ github.head_ref != 'codex/overnight-gui-burndown' && github.ref != 'refs/heads/codex/overnight-gui-burndown' }}
+  cancel-in-progress: ${{ github.head_ref != 'codex/overnight-gui-burndown' && github.ref != 'refs/heads/codex/overnight-gui-burndown' && !startsWith(github.head_ref, 'codex/parity-') && !startsWith(github.ref, 'refs/heads/codex/parity-') }}
 
 env:
   CARGO_TERM_COLOR: always
@@ -22,7 +22,7 @@ jobs:
   check:
     # This branch has an open PR: run once per checkpoint, rather than both
     # its push and pull_request events. Other branch pushes still validate.
-    if: github.event_name != 'push' || github.ref != 'refs/heads/codex/overnight-gui-burndown'
+    if: github.event_name != 'push' || (github.ref != 'refs/heads/codex/overnight-gui-burndown' && !startsWith(github.ref, 'refs/heads/codex/parity-'))
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -34,6 +34,9 @@ jobs:
         with:
           # Reuse compilation completed before a later diagnostic fails.
           cache-on-failure: true
+          # GUI fixture-only repairs can reuse the unchanged workspace libraries.
+          # Keep this experiment on Linux while measuring cache/storage cost.
+          cache-workspace-crates: true
       - name: install media tools, and fontconfig for the GUI
         run: sudo apt-get update && sudo apt-get install -y ffmpeg libfontconfig1-dev
       - name: fmt
@@ -44,14 +47,35 @@ jobs:
         # Slint's GUI library and test target together exceeded 16 GiB locally.
         env:
           CARGO_BUILD_JOBS: 1
-        run: cargo test --workspace --locked
+        run: cargo test --workspace --locked --no-fail-fast
       - name: parity ratchet
         run: cargo xtask ratchet --check
+
+  # Keep exact-reference backend/model replays moving when GUI compilation
+  # needs a repair. This lane is only for the owner's continuing parity work.
+  parity-models:
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'codex/parity-')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: '1.94'
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+          cache-workspace-crates: true
+      - name: install media tools
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: reference and backend tests
+        env:
+          CARGO_BUILD_JOBS: 2
+        run: cargo test -p hydrus-downloader-exchange -p hydrus-gui-model -p hydrus-net -p hydrus-search -p hydrus-store --locked --no-fail-fast
 
   # hydrus-rs should build and pass its tests on Windows and macOS too; the
   # Linux job above is the full check (lints and the parity ratchet).
   other-platforms:
-    if: github.event_name != 'push' || github.ref != 'refs/heads/codex/overnight-gui-burndown'
+    if: github.event_name != 'push' || (github.ref != 'refs/heads/codex/overnight-gui-burndown' && !startsWith(github.ref, 'refs/heads/codex/parity-'))
     strategy:
       fail-fast: false
       matrix:

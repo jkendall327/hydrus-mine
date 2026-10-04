@@ -18,6 +18,7 @@ pub mod import;
 pub mod import_folders;
 pub mod legacy;
 pub mod live;
+pub mod logins;
 pub mod maintenance;
 pub mod master;
 pub mod media;
@@ -55,4 +56,5 @@ pub use conn::{Db, Paused, WriteCtx};
 pub use error::{Result, StoreError};
 pub use store::{Snapshot, Store};
 
+pub mod api_activity;
 pub mod api_permissions;

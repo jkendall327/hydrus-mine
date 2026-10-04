@@ -50,6 +50,8 @@ pub struct AppState {
     /// Identifies this run of the client (`/client_info`).
     pub boot_id: [u8; 32],
     pub boot_time_ms: i64,
+    /// Last published request-start time; serializes the timestamp-only IPC.
+    pub api_activity: parking_lot::Mutex<i64>,
 }
 
 impl AppState {
@@ -95,6 +97,7 @@ impl AppState {
             keys_revision: parking_lot::Mutex::new(keys_revision),
             boot_id: rand::random(),
             boot_time_ms: hydrus_core::time::TimestampMs::now().millis(),
+            api_activity: parking_lot::Mutex::new(0),
         }))
     }
 
@@ -311,6 +314,10 @@ pub fn router(state: Arc<AppState>) -> Router {
         .route_layer(axum::middleware::from_fn_with_state(
             Arc::clone(&state),
             database::refuse_while_locked,
+        ))
+        .route_layer(axum::middleware::from_fn_with_state(
+            Arc::clone(&state),
+            server::note_activity,
         ))
         .fallback(|| async { request::no_such_resource() })
         .layer(DefaultBodyLimit::disable())

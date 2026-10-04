@@ -1,0 +1,2278 @@
+[
+ {
+  "name": "success",
+  "script": [
+   73,
+   "loopback login",
+   2,
+   [
+    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    [
+     21,
+     2,
+     [
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "session",
+          null,
+          null,
+          "session"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "ok",
+          null,
+          null,
+          "ok"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        72,
+        "username",
+        1,
+        [
+         0,
+         [
+          51,
+          1,
+          [
+           0,
+           "alice",
+           null,
+           null,
+           "alice"
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        72,
+        "password",
+        1,
+        [
+         1,
+         [
+          51,
+          1,
+          [
+           0,
+           "dummy + pass&=",
+           null,
+           null,
+           "dummy + pass&="
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        74,
+        "establish session",
+        2,
+        [
+         "http",
+         "GET",
+         null,
+         "/start",
+         {},
+         {
+          "lang": "en"
+         },
+         {},
+         [
+          21,
+          2,
+          []
+         ],
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             30,
+             7,
+             [
+              "csrf variable",
+              14,
+              [
+               27,
+               8,
+               [
+                [
+                 26,
+                 3,
+                 [
+                  [
+                   2,
+                   [
+                    62,
+                    3,
+                    [
+                     0,
+                     "input",
+                     {
+                      "name": "csrf"
+                     },
+                     null,
+                     null,
+                     false,
+                     [
+                      51,
+                      1,
+                      [
+                       3,
+                       "",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ],
+                0,
+                "value",
+                "",
+                [
+                 84,
+                 1,
+                 [
+                  26,
+                  3,
+                  []
+                 ]
+                ]
+               ]
+              ],
+              "csrf"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        74,
+        "send credentials",
+        2,
+        [
+         "http",
+         "POST",
+         null,
+         "/login",
+         {
+          "username": "user",
+          "password": "pass"
+         },
+         {
+          "mode": "login"
+         },
+         {
+          "csrf": "token"
+         },
+         [
+          21,
+          2,
+          [
+           [
+            [
+             2,
+             [
+              51,
+              1,
+              [
+               0,
+               "session",
+               null,
+               null,
+               "session"
+              ]
+             ]
+            ],
+            [
+             2,
+             [
+              51,
+              1,
+              [
+               0,
+               "ok",
+               null,
+               null,
+               "ok"
+              ]
+             ]
+            ]
+           ]
+          ]
+         ],
+         [
+          26,
+          3,
+          []
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     [
+      "127.0.0.1",
+      0,
+      "synthetic local fixture"
+     ]
+    ]
+   ]
+  ],
+  "credentials": {
+   "username": "alice",
+   "password": "dummy + pass&="
+  },
+  "results": [
+   [
+    "establish session",
+    "http://127.0.0.1/start?lang=en",
+    "",
+    "<input name=\"csrf\" value=\"loop-token\"><p>start</p>",
+    [
+     "csrf: loop-token"
+    ],
+    [
+     "preflight: ready | 127.0.0.1 | session"
+    ],
+    "OK!"
+   ],
+   [
+    "send credentials",
+    "http://127.0.0.1/login",
+    "mode=login&pass=dummy + pass&=&token=loop-token&user=alice",
+    "login response",
+    [],
+    [
+     "session: ok | 127.0.0.1 | session"
+    ],
+    "OK!"
+   ]
+  ],
+  "outcome": "Login OK!",
+  "requests": [
+   {
+    "method": "GET",
+    "path": "/start?lang=en",
+    "body": "",
+    "referer": null,
+    "origin": null,
+    "cookie": null
+   },
+   {
+    "method": "POST",
+    "path": "/login",
+    "body": "mode=login&user=alice&pass=dummy+%2B+pass%26%3D&token=loop-token",
+    "referer": "http://127.0.0.1/start?lang=en",
+    "origin": "http://127.0.0.1",
+    "cookie": "preflight=ready"
+   }
+  ],
+  "logged_in": true,
+  "reviews": [
+   {
+    "name": "establish session",
+    "url": "http://127.0.0.1/start?lang=en",
+    "body": "",
+    "data": "<input name=\"csrf\" value=\"loop-token\"><p>start</p>",
+    "variables": "csrf: loop-token",
+    "cookies": "preflight: ready | 127.0.0.1 | session",
+    "result": "OK!",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "<input name=\"csrf\" value=\"loop-token\"><p>start</p>"
+     ]
+    ]
+   },
+   {
+    "name": "send credentials",
+    "url": "http://127.0.0.1/login",
+    "body": "mode=login&pass=dummy + pass&=&token=loop-token&user=alice",
+    "data": "login response",
+    "variables": "",
+    "cookies": "session: ok | 127.0.0.1 | session",
+    "result": "OK!",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "login response"
+     ]
+    ]
+   }
+  ],
+  "long_review": {
+   "input": [
+    "establish session",
+    "http://127.0.0.1/start?lang=en",
+    "",
+    "α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂",
+    [
+     "csrf: loop-token"
+    ],
+    [
+     "preflight: ready | 127.0.0.1 | session"
+    ],
+    "OK!"
+   ],
+   "state": {
+    "name": "establish session",
+    "url": "http://127.0.0.1/start?lang=en",
+    "body": "",
+    "data": "α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂",
+    "variables": "csrf: loop-token",
+    "cookies": "preflight: ready | 127.0.0.1 | session",
+    "result": "OK!",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂α🙂"
+     ]
+    ]
+   }
+  }
+ },
+ {
+  "name": "missing_cookie",
+  "script": [
+   73,
+   "loopback login",
+   2,
+   [
+    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    [
+     21,
+     2,
+     [
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "session",
+          null,
+          null,
+          "session"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "ok",
+          null,
+          null,
+          "ok"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        72,
+        "username",
+        1,
+        [
+         0,
+         [
+          51,
+          1,
+          [
+           0,
+           "alice",
+           null,
+           null,
+           "alice"
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        72,
+        "password",
+        1,
+        [
+         1,
+         [
+          51,
+          1,
+          [
+           0,
+           "dummy + pass&=",
+           null,
+           null,
+           "dummy + pass&="
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        74,
+        "establish session",
+        2,
+        [
+         "http",
+         "GET",
+         null,
+         "/start",
+         {},
+         {
+          "lang": "en"
+         },
+         {},
+         [
+          21,
+          2,
+          []
+         ],
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             30,
+             7,
+             [
+              "csrf variable",
+              14,
+              [
+               27,
+               8,
+               [
+                [
+                 26,
+                 3,
+                 [
+                  [
+                   2,
+                   [
+                    62,
+                    3,
+                    [
+                     0,
+                     "input",
+                     {
+                      "name": "csrf"
+                     },
+                     null,
+                     null,
+                     false,
+                     [
+                      51,
+                      1,
+                      [
+                       3,
+                       "",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ],
+                0,
+                "value",
+                "",
+                [
+                 84,
+                 1,
+                 [
+                  26,
+                  3,
+                  []
+                 ]
+                ]
+               ]
+              ],
+              "csrf"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        74,
+        "send credentials",
+        2,
+        [
+         "http",
+         "POST",
+         null,
+         "/missing-cookie",
+         {
+          "username": "user",
+          "password": "pass"
+         },
+         {
+          "mode": "login"
+         },
+         {
+          "csrf": "token"
+         },
+         [
+          21,
+          2,
+          [
+           [
+            [
+             2,
+             [
+              51,
+              1,
+              [
+               0,
+               "session",
+               null,
+               null,
+               "session"
+              ]
+             ]
+            ],
+            [
+             2,
+             [
+              51,
+              1,
+              [
+               0,
+               "ok",
+               null,
+               null,
+               "ok"
+              ]
+             ]
+            ]
+           ]
+          ]
+         ],
+         [
+          26,
+          3,
+          []
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     [
+      "127.0.0.1",
+      0,
+      "synthetic local fixture"
+     ]
+    ]
+   ]
+  ],
+  "credentials": {
+   "username": "alice",
+   "password": "dummy + pass&="
+  },
+  "results": [
+   [
+    "establish session",
+    "http://127.0.0.1/start?lang=en",
+    "",
+    "<input name=\"csrf\" value=\"loop-token\"><p>start</p>",
+    [
+     "csrf: loop-token"
+    ],
+    [
+     "preflight: ready | 127.0.0.1 | session"
+    ],
+    "OK!"
+   ],
+   [
+    "send credentials",
+    "http://127.0.0.1/missing-cookie",
+    "mode=login&pass=dummy + pass&=&token=loop-token&user=alice",
+    "Did not download data.",
+    [],
+    [],
+    "Missing cookie \"session\" on step \"send credentials\"!"
+   ]
+  ],
+  "outcome": "Verification error: Missing cookie \"session\" on step \"send credentials\"!",
+  "requests": [
+   {
+    "method": "GET",
+    "path": "/start?lang=en",
+    "body": "",
+    "referer": null,
+    "origin": null,
+    "cookie": null
+   },
+   {
+    "method": "POST",
+    "path": "/missing-cookie",
+    "body": "mode=login&user=alice&pass=dummy+%2B+pass%26%3D&token=loop-token",
+    "referer": "http://127.0.0.1/start?lang=en",
+    "origin": "http://127.0.0.1",
+    "cookie": "preflight=ready"
+   }
+  ],
+  "logged_in": false,
+  "reviews": [
+   {
+    "name": "establish session",
+    "url": "http://127.0.0.1/start?lang=en",
+    "body": "",
+    "data": "<input name=\"csrf\" value=\"loop-token\"><p>start</p>",
+    "variables": "csrf: loop-token",
+    "cookies": "preflight: ready | 127.0.0.1 | session",
+    "result": "OK!",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "<input name=\"csrf\" value=\"loop-token\"><p>start</p>"
+     ]
+    ]
+   },
+   {
+    "name": "send credentials",
+    "url": "http://127.0.0.1/missing-cookie",
+    "body": "mode=login&pass=dummy + pass&=&token=loop-token&user=alice",
+    "data": "Did not download data.",
+    "variables": "",
+    "cookies": "",
+    "result": "Missing cookie \"session\" on step \"send credentials\"!",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "Did not download data."
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "name": "veto",
+  "script": [
+   73,
+   "loopback login",
+   2,
+   [
+    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    [
+     21,
+     2,
+     [
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "session",
+          null,
+          null,
+          "session"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "ok",
+          null,
+          null,
+          "ok"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        72,
+        "username",
+        1,
+        [
+         0,
+         [
+          51,
+          1,
+          [
+           0,
+           "alice",
+           null,
+           null,
+           "alice"
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        72,
+        "password",
+        1,
+        [
+         1,
+         [
+          51,
+          1,
+          [
+           0,
+           "dummy + pass&=",
+           null,
+           null,
+           "dummy + pass&="
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        74,
+        "establish session",
+        2,
+        [
+         "http",
+         "GET",
+         null,
+         "/start",
+         {},
+         {
+          "lang": "en"
+         },
+         {},
+         [
+          21,
+          2,
+          []
+         ],
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             30,
+             7,
+             [
+              "csrf variable",
+              14,
+              [
+               27,
+               8,
+               [
+                [
+                 26,
+                 3,
+                 [
+                  [
+                   2,
+                   [
+                    62,
+                    3,
+                    [
+                     0,
+                     "input",
+                     {
+                      "name": "csrf"
+                     },
+                     null,
+                     null,
+                     false,
+                     [
+                      51,
+                      1,
+                      [
+                       3,
+                       "",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ],
+                0,
+                "value",
+                "",
+                [
+                 84,
+                 1,
+                 [
+                  26,
+                  3,
+                  []
+                 ]
+                ]
+               ]
+              ],
+              "csrf"
+             ]
+            ]
+           ],
+           [
+            2,
+            [
+             30,
+             7,
+             [
+              "blocked response",
+              8,
+              [
+               136,
+               1,
+               [
+                "blocked",
+                1,
+                "",
+                [
+                 84,
+                 1,
+                 [
+                  26,
+                  3,
+                  []
+                 ]
+                ]
+               ]
+              ],
+              [
+               true,
+               [
+                51,
+                1,
+                [
+                 0,
+                 "blocked",
+                 null,
+                 null,
+                 "blocked"
+                ]
+               ]
+              ]
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        74,
+        "send credentials",
+        2,
+        [
+         "http",
+         "POST",
+         null,
+         "/login",
+         {
+          "username": "user",
+          "password": "pass"
+         },
+         {
+          "mode": "login"
+         },
+         {
+          "csrf": "token"
+         },
+         [
+          21,
+          2,
+          [
+           [
+            [
+             2,
+             [
+              51,
+              1,
+              [
+               0,
+               "session",
+               null,
+               null,
+               "session"
+              ]
+             ]
+            ],
+            [
+             2,
+             [
+              51,
+              1,
+              [
+               0,
+               "ok",
+               null,
+               null,
+               "ok"
+              ]
+             ]
+            ]
+           ]
+          ]
+         ],
+         [
+          26,
+          3,
+          []
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     [
+      "127.0.0.1",
+      0,
+      "synthetic local fixture"
+     ]
+    ]
+   ]
+  ],
+  "credentials": {
+   "username": "alice",
+   "password": "dummy + pass&="
+  },
+  "results": [
+   [
+    "establish session",
+    "http://127.0.0.1/start?lang=en",
+    "",
+    "<input name=\"csrf\" value=\"loop-token\"><p>start</p>",
+    [
+     "csrf: loop-token"
+    ],
+    [
+     "preflight: ready | 127.0.0.1 | session"
+    ],
+    "veto: blocked response"
+   ]
+  ],
+  "outcome": "Verification error: veto: blocked response",
+  "requests": [
+   {
+    "method": "GET",
+    "path": "/start?lang=en",
+    "body": "",
+    "referer": null,
+    "origin": null,
+    "cookie": null
+   }
+  ],
+  "logged_in": false,
+  "reviews": [
+   {
+    "name": "establish session",
+    "url": "http://127.0.0.1/start?lang=en",
+    "body": "",
+    "data": "<input name=\"csrf\" value=\"loop-token\"><p>start</p>",
+    "variables": "csrf: loop-token",
+    "cookies": "preflight: ready | 127.0.0.1 | session",
+    "result": "veto: blocked response",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "<input name=\"csrf\" value=\"loop-token\"><p>start</p>"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "name": "final_cookie",
+  "script": [
+   73,
+   "loopback login",
+   2,
+   [
+    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    [
+     21,
+     2,
+     [
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "session",
+          null,
+          null,
+          "session"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "wrong",
+          null,
+          null,
+          "wrong"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        72,
+        "username",
+        1,
+        [
+         0,
+         [
+          51,
+          1,
+          [
+           0,
+           "alice",
+           null,
+           null,
+           "alice"
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        72,
+        "password",
+        1,
+        [
+         1,
+         [
+          51,
+          1,
+          [
+           0,
+           "dummy + pass&=",
+           null,
+           null,
+           "dummy + pass&="
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        74,
+        "establish session",
+        2,
+        [
+         "http",
+         "GET",
+         null,
+         "/start",
+         {},
+         {
+          "lang": "en"
+         },
+         {},
+         [
+          21,
+          2,
+          []
+         ],
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             30,
+             7,
+             [
+              "csrf variable",
+              14,
+              [
+               27,
+               8,
+               [
+                [
+                 26,
+                 3,
+                 [
+                  [
+                   2,
+                   [
+                    62,
+                    3,
+                    [
+                     0,
+                     "input",
+                     {
+                      "name": "csrf"
+                     },
+                     null,
+                     null,
+                     false,
+                     [
+                      51,
+                      1,
+                      [
+                       3,
+                       "",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ],
+                0,
+                "value",
+                "",
+                [
+                 84,
+                 1,
+                 [
+                  26,
+                  3,
+                  []
+                 ]
+                ]
+               ]
+              ],
+              "csrf"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        74,
+        "send credentials",
+        2,
+        [
+         "http",
+         "POST",
+         null,
+         "/login",
+         {
+          "username": "user",
+          "password": "pass"
+         },
+         {
+          "mode": "login"
+         },
+         {
+          "csrf": "token"
+         },
+         [
+          21,
+          2,
+          [
+           [
+            [
+             2,
+             [
+              51,
+              1,
+              [
+               0,
+               "session",
+               null,
+               null,
+               "session"
+              ]
+             ]
+            ],
+            [
+             2,
+             [
+              51,
+              1,
+              [
+               0,
+               "ok",
+               null,
+               null,
+               "ok"
+              ]
+             ]
+            ]
+           ]
+          ]
+         ],
+         [
+          26,
+          3,
+          []
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     [
+      "127.0.0.1",
+      0,
+      "synthetic local fixture"
+     ]
+    ]
+   ]
+  ],
+  "credentials": {
+   "username": "alice",
+   "password": "dummy + pass&="
+  },
+  "results": [
+   [
+    "establish session",
+    "http://127.0.0.1/start?lang=en",
+    "",
+    "<input name=\"csrf\" value=\"loop-token\"><p>start</p>",
+    [
+     "csrf: loop-token"
+    ],
+    [
+     "preflight: ready | 127.0.0.1 | session"
+    ],
+    "OK!"
+   ],
+   [
+    "send credentials",
+    "http://127.0.0.1/login",
+    "mode=login&pass=dummy + pass&=&token=loop-token&user=alice",
+    "login response",
+    [],
+    [
+     "session: ok | 127.0.0.1 | session"
+    ],
+    "OK!"
+   ]
+  ],
+  "outcome": "Final cookie check failed: Cookie \"session\" failed: \"ok\" did not exactly match \"wrong\"!",
+  "requests": [
+   {
+    "method": "GET",
+    "path": "/start?lang=en",
+    "body": "",
+    "referer": null,
+    "origin": null,
+    "cookie": null
+   },
+   {
+    "method": "POST",
+    "path": "/login",
+    "body": "mode=login&user=alice&pass=dummy+%2B+pass%26%3D&token=loop-token",
+    "referer": "http://127.0.0.1/start?lang=en",
+    "origin": "http://127.0.0.1",
+    "cookie": "preflight=ready"
+   }
+  ],
+  "logged_in": false,
+  "reviews": [
+   {
+    "name": "establish session",
+    "url": "http://127.0.0.1/start?lang=en",
+    "body": "",
+    "data": "<input name=\"csrf\" value=\"loop-token\"><p>start</p>",
+    "variables": "csrf: loop-token",
+    "cookies": "preflight: ready | 127.0.0.1 | session",
+    "result": "OK!",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "<input name=\"csrf\" value=\"loop-token\"><p>start</p>"
+     ]
+    ]
+   },
+   {
+    "name": "send credentials",
+    "url": "http://127.0.0.1/login",
+    "body": "mode=login&pass=dummy + pass&=&token=loop-token&user=alice",
+    "data": "login response",
+    "variables": "",
+    "cookies": "session: ok | 127.0.0.1 | session",
+    "result": "OK!",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "login response"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "name": "network_401",
+  "script": [
+   73,
+   "loopback login",
+   2,
+   [
+    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    [
+     21,
+     2,
+     [
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "session",
+          null,
+          null,
+          "session"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "ok",
+          null,
+          null,
+          "ok"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        72,
+        "username",
+        1,
+        [
+         0,
+         [
+          51,
+          1,
+          [
+           0,
+           "alice",
+           null,
+           null,
+           "alice"
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        72,
+        "password",
+        1,
+        [
+         1,
+         [
+          51,
+          1,
+          [
+           0,
+           "dummy + pass&=",
+           null,
+           null,
+           "dummy + pass&="
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        74,
+        "denied request",
+        2,
+        [
+         "http",
+         "GET",
+         null,
+         "/unauthorised",
+         {},
+         {},
+         {},
+         [
+          21,
+          2,
+          []
+         ],
+         [
+          26,
+          3,
+          []
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     [
+      "127.0.0.1",
+      0,
+      "synthetic local fixture"
+     ]
+    ]
+   ]
+  ],
+  "credentials": {
+   "username": "alice",
+   "password": "dummy + pass&="
+  },
+  "results": [
+   [
+    "denied request",
+    "http://127.0.0.1/unauthorised",
+    "",
+    "Did not download data.",
+    [],
+    [],
+    "401: credentials denied"
+   ]
+  ],
+  "outcome": "Network error: 401 - login script or credentials may be invalid",
+  "requests": [
+   {
+    "method": "GET",
+    "path": "/unauthorised",
+    "body": "",
+    "referer": null,
+    "origin": null,
+    "cookie": null
+   }
+  ],
+  "logged_in": false,
+  "reviews": [
+   {
+    "name": "denied request",
+    "url": "http://127.0.0.1/unauthorised",
+    "body": "",
+    "data": "Did not download data.",
+    "variables": "",
+    "cookies": "",
+    "result": "401: credentials denied",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "Did not download data."
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "name": "missing_variable",
+  "script": [
+   73,
+   "loopback login",
+   2,
+   [
+    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    [
+     21,
+     2,
+     [
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "session",
+          null,
+          null,
+          "session"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "ok",
+          null,
+          null,
+          "ok"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        72,
+        "username",
+        1,
+        [
+         0,
+         [
+          51,
+          1,
+          [
+           0,
+           "alice",
+           null,
+           null,
+           "alice"
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        72,
+        "password",
+        1,
+        [
+         1,
+         [
+          51,
+          1,
+          [
+           0,
+           "dummy + pass&=",
+           null,
+           null,
+           "dummy + pass&="
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        74,
+        "establish session",
+        2,
+        [
+         "http",
+         "GET",
+         null,
+         "/start",
+         {},
+         {
+          "lang": "en"
+         },
+         {
+          "missing": "token"
+         },
+         [
+          21,
+          2,
+          []
+         ],
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             30,
+             7,
+             [
+              "csrf variable",
+              14,
+              [
+               27,
+               8,
+               [
+                [
+                 26,
+                 3,
+                 [
+                  [
+                   2,
+                   [
+                    62,
+                    3,
+                    [
+                     0,
+                     "input",
+                     {
+                      "name": "csrf"
+                     },
+                     null,
+                     null,
+                     false,
+                     [
+                      51,
+                      1,
+                      [
+                       3,
+                       "",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ],
+                0,
+                "value",
+                "",
+                [
+                 84,
+                 1,
+                 [
+                  26,
+                  3,
+                  []
+                 ]
+                ]
+               ]
+              ],
+              "csrf"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        74,
+        "send credentials",
+        2,
+        [
+         "http",
+         "POST",
+         null,
+         "/login",
+         {
+          "username": "user",
+          "password": "pass"
+         },
+         {
+          "mode": "login"
+         },
+         {
+          "csrf": "token"
+         },
+         [
+          21,
+          2,
+          [
+           [
+            [
+             2,
+             [
+              51,
+              1,
+              [
+               0,
+               "session",
+               null,
+               null,
+               "session"
+              ]
+             ]
+            ],
+            [
+             2,
+             [
+              51,
+              1,
+              [
+               0,
+               "ok",
+               null,
+               null,
+               "ok"
+              ]
+             ]
+            ]
+           ]
+          ]
+         ],
+         [
+          26,
+          3,
+          []
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     [
+      "127.0.0.1",
+      0,
+      "synthetic local fixture"
+     ]
+    ]
+   ]
+  ],
+  "credentials": {
+   "username": "alice",
+   "password": "dummy + pass&="
+  },
+  "results": [
+   [
+    "establish session",
+    "Did not make a url.",
+    null,
+    "Did not download data.",
+    [],
+    [],
+    "The temporary variable 'missing' was not found!"
+   ]
+  ],
+  "outcome": "Verification error: The temporary variable 'missing' was not found!",
+  "requests": [],
+  "logged_in": false,
+  "reviews": [
+   {
+    "name": "establish session",
+    "url": "Did not make a url.",
+    "body": "",
+    "data": "Did not download data.",
+    "variables": "",
+    "cookies": "",
+    "result": "The temporary variable 'missing' was not found!",
+    "read_only": [
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "copied": [
+     [
+      "text",
+      "Did not download data."
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "name": "cancel_before_start",
+  "script": [
+   73,
+   "loopback login",
+   2,
+   [
+    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    [
+     21,
+     2,
+     [
+      [
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "session",
+          null,
+          null,
+          "session"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          0,
+          "ok",
+          null,
+          null,
+          "ok"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        72,
+        "username",
+        1,
+        [
+         0,
+         [
+          51,
+          1,
+          [
+           0,
+           "alice",
+           null,
+           null,
+           "alice"
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        72,
+        "password",
+        1,
+        [
+         1,
+         [
+          51,
+          1,
+          [
+           0,
+           "dummy + pass&=",
+           null,
+           null,
+           "dummy + pass&="
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        74,
+        "establish session",
+        2,
+        [
+         "http",
+         "GET",
+         null,
+         "/start",
+         {},
+         {
+          "lang": "en"
+         },
+         {},
+         [
+          21,
+          2,
+          []
+         ],
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             30,
+             7,
+             [
+              "csrf variable",
+              14,
+              [
+               27,
+               8,
+               [
+                [
+                 26,
+                 3,
+                 [
+                  [
+                   2,
+                   [
+                    62,
+                    3,
+                    [
+                     0,
+                     "input",
+                     {
+                      "name": "csrf"
+                     },
+                     null,
+                     null,
+                     false,
+                     [
+                      51,
+                      1,
+                      [
+                       3,
+                       "",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ],
+                0,
+                "value",
+                "",
+                [
+                 84,
+                 1,
+                 [
+                  26,
+                  3,
+                  []
+                 ]
+                ]
+               ]
+              ],
+              "csrf"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        74,
+        "send credentials",
+        2,
+        [
+         "http",
+         "POST",
+         null,
+         "/login",
+         {
+          "username": "user",
+          "password": "pass"
+         },
+         {
+          "mode": "login"
+         },
+         {
+          "csrf": "token"
+         },
+         [
+          21,
+          2,
+          [
+           [
+            [
+             2,
+             [
+              51,
+              1,
+              [
+               0,
+               "session",
+               null,
+               null,
+               "session"
+              ]
+             ]
+            ],
+            [
+             2,
+             [
+              51,
+              1,
+              [
+               0,
+               "ok",
+               null,
+               null,
+               "ok"
+              ]
+             ]
+            ]
+           ]
+          ]
+         ],
+         [
+          26,
+          3,
+          []
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    [
+     [
+      "127.0.0.1",
+      0,
+      "synthetic local fixture"
+     ]
+    ]
+   ]
+  ],
+  "credentials": {
+   "username": "alice",
+   "password": "dummy + pass&="
+  },
+  "results": [],
+  "outcome": "User cancelled the login process.",
+  "requests": [],
+  "logged_in": false,
+  "reviews": []
+ }
+]

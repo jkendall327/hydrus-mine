@@ -1,0 +1,111 @@
+import { Button, LineEdit, ScrollView } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+export struct ImportFavouriteRow { name: string, label: string, edit-label: string, }
+
+component FavouriteSubmenu inherits Rectangle {
+    in property <string> label;
+    in property <[ImportFavouriteRow]> rows;
+    in property <bool> editing;
+    in property <bool> save-current-allowed: true;
+    callback selected(string);
+    callback add();
+    callback save();
+    width: 220px;
+    height: 28px;
+    Button { width: parent.width; height: parent.height; text: root.label + "  ›"; clicked => { entries.show(); } }
+    entries := PopupWindow {
+        x: parent.width;
+        width: 540px;
+        height: min(420px, root.rows.length * 30px + (root.editing ? 72px : 10px));
+        Rectangle {
+            background: Theme.panel;
+            border-width: 1px;
+            border-color: Theme.border;
+            ScrollView {
+                VerticalLayout {
+                    padding: 4px;
+                    spacing: 2px;
+                    for row in root.rows: Button { text: root.editing ? row.edit-label : row.label; clicked => { entries.close(); root.selected(row.name); } }
+                    if root.editing: Rectangle { height: 1px; background: Theme.border; }
+                    if root.editing: Button { text: "add new favourite"; clicked => { entries.close(); root.add(); } }
+                    if root.editing && root.save-current-allowed: Button { text: "save current value as new favourite"; clicked => { entries.close(); root.save(); } }
+                }
+            }
+        }
+    }
+}
+
+export component ImportFavouritesButton inherits Rectangle {
+    in property <[ImportFavouriteRow]> rows;
+    in property <bool> edit-allowed: true;
+    in property <bool> save-current-allowed: true;
+    in property <bool> enabled: true;
+    callback refresh();
+    // load, custom load, copy, edit, add, save current, delete
+    callback selected(int, string);
+    width: 30px;
+    height: 28px;
+    Button {
+        width: parent.width; height: parent.height;
+        text: "★";
+        enabled: root.enabled && (root.edit-allowed || root.rows.length > 0);
+        clicked => { root.refresh(); menu.show(); }
+    }
+    menu := PopupWindow {
+        y: parent.height;
+        width: 232px;
+        height: 38px + (root.rows.length > 0 ? 90px : 0px) + (root.edit-allowed ? 30px : 0px) + (root.edit-allowed && root.rows.length > 0 ? 30px : 0px);
+        Rectangle {
+            background: Theme.panel;
+            border-width: 1px;
+            border-color: Theme.border;
+            VerticalLayout {
+                padding: 4px;
+                spacing: 2px;
+                Text { text: "favourites/profiles"; color: Theme.text; font-weight: 700; }
+                Rectangle { height: 1px; background: Theme.border; }
+                if root.rows.length > 0: FavouriteSubmenu { label: "load"; rows: root.rows; selected(name) => { menu.close(); root.selected(0, name); } }
+                if root.rows.length > 0: FavouriteSubmenu { label: "custom load"; rows: root.rows; selected(name) => { menu.close(); root.selected(1, name); } }
+                if root.rows.length > 0: FavouriteSubmenu { label: "copy"; rows: root.rows; selected(name) => { menu.close(); root.selected(2, name); } }
+                if root.edit-allowed: FavouriteSubmenu {
+                    label: "edit/add"; rows: root.rows; editing: true; save-current-allowed: root.save-current-allowed;
+                    selected(name) => { menu.close(); root.selected(3, name); }
+                    add => { menu.close(); root.selected(4, ""); }
+                    save => { menu.close(); root.selected(5, ""); }
+                }
+                if root.edit-allowed && root.rows.length > 0: FavouriteSubmenu { label: "delete"; rows: root.rows; selected(name) => { menu.close(); root.selected(6, name); } }
+            }
+        }
+    }
+}
+
+export component ImportFavouritePromptWindow inherits Window {
+    title: root.asking-name ? "Enter Text" : "Are you sure?";
+    preferred-width: 520px;
+    background: Theme.window;
+    in property <string> message;
+    in property <bool> asking-name;
+    in-out property <string> name: "import options";
+    in property <string> error;
+    callback accepted(string);
+    callback cancelled();
+    forward-focus: name;
+    VerticalLayout {
+        padding: 10px; spacing: 8px;
+        Text { text: root.message; wrap: word-wrap; color: Theme.text; }
+        if root.error != "": Text { text: root.error; wrap: word-wrap; color: Theme.error; }
+        name := LineEdit {
+            visible: root.asking-name;
+            height: root.asking-name ? self.preferred-height : 0px;
+            text <=> root.name;
+            placeholder-text: "Name for import options favourite entry.";
+            accepted => { root.accepted(self.text); }
+        }
+        HorizontalLayout {
+            alignment: end; spacing: 6px;
+            Button { text: root.asking-name ? "apply" : "yes"; clicked => { root.accepted(root.name); } }
+            Button { text: root.asking-name ? "cancel" : "no"; clicked => { root.cancelled(); } }
+        }
+    }
+}

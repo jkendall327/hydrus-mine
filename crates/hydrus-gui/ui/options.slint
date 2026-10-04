@@ -128,6 +128,7 @@ export component OptionsWindow inherits Window {
     // (checker options' button clicked)
     callback checker-clicked(int);
     callback regex-favourites-clicked();
+    callback local-location-clicked(int);
     callback favourite-tags-clicked();
     callback apply();
     callback cancel();
@@ -282,6 +283,10 @@ export component OptionsWindow inherits Window {
                                 }
                             }
                             if row.kind == 16: Button {
+                                text: row.text;
+                                clicked => { root.local-location-clicked(i); }
+                            }
+                            if row.kind == 17: Button {
                                 text: row.text;
                                 clicked => { root.favourite-tags-clicked(); }
                             }

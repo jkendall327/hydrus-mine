@@ -6,7 +6,7 @@
 import { Button, CheckBox, ComboBox, LineEdit, SpinBox } from "std-widgets.slint";
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
 import { Theme } from "theme.slint";
-import { DownloadLine, ImporterBoxes } from "importing.slint";
+import { JobCogMenu, DownloadLine, ImporterBoxes } from "importing.slint";
 
 export struct GalleryData {
     // "3 queries - 12/40" and the total status, or "waiting for new queries"
@@ -80,6 +80,10 @@ export component GallerySidebar inherits VerticalLayout {
     callback gug-chosen(int);
     callback other-gugs(bool);
     callback limit-changed(bool, int);
+    in property <JobCogMenu> file-cog;
+    in property <JobCogMenu> search-cog;
+    callback control-action(bool, int);
+    callback control-menu(bool);
     callback cancel-download(bool);
     // the highlighted query's file log
     callback file-log();
@@ -252,6 +256,10 @@ export component GallerySidebar inherits VerticalLayout {
                 search-download: root.search-download;
                 pause-play-files => { root.pause-play(false, true); }
                 pause-play-search => { root.pause-play(true, true); }
+                file-cog: root.file-cog;
+                search-cog: root.search-cog;
+                control-action(gallery, id) => { root.control-action(gallery, id); }
+                        control-menu(gallery) => { root.control-menu(gallery); }
                 cancel-download(gallery) => { root.cancel-download(gallery); }
                 file-log => { root.file-log(); }
                 search-log => { root.search-log(); }

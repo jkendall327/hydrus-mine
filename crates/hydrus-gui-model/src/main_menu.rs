@@ -133,6 +133,24 @@ pub enum Command {
     NudgeSubscriptions,
     /// Close every page (asking first) and load the saved session.
     ClearAndLoadSession(String),
+    /// Refresh a clicked page or all initialized descendants of a notebook.
+    RefreshTab(PageKey),
+    /// Open the chooser in a frozen notebook, optionally before a clicked tab.
+    ChooseNotebookPage {
+        parent: Option<PageKey>,
+        before: Option<PageKey>,
+    },
+    /// Append a fresh named session into this notebook's sibling row.
+    AppendNotebookSession {
+        notebook: Option<PageKey>,
+        name: String,
+    },
+    /// Save only the clicked notebook's contents, with its own name suggestion.
+    SaveNotebookSession {
+        key: PageKey,
+        name: Option<String>,
+        suggested_name: String,
+    },
     /// Ask a new name for the clicked page/notebook.
     RenameTab {
         depth: usize,
@@ -236,6 +254,9 @@ pub enum Command {
     NetworkData(bool),
     /// Manage URL classes (true) or gallery URL generators (false).
     ManageDownloaderDefinitions(bool),
+    /// Manage native login script definitions.
+    ManageLoginScripts,
+    ManageLogins,
     ManageDownloaderDisplay,
     /// Parser definitions (`false`) or URL-class parser links (`true`).
     ManageParsers(bool),
@@ -994,9 +1015,9 @@ fn network_menu(facts: &Facts) -> Entry {
                     copy_label("THIS SYSTEM IS LEGACY"),
                     copy_label("TRY TO MIGRATE AWAY FROM IT"),
                     SEP,
-                    todo(dots("logins")),
+                    item(dots("logins"), Command::ManageLogins),
                     SEP,
-                    todo(dots("login scripts")),
+                    item(dots("login scripts"), Command::ManageLoginScripts),
                 ],
             ),
         ],

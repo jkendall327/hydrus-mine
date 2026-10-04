@@ -1,0 +1,40 @@
+{
+  "steps": [
+    {
+      "action": "auxiliary dialog",
+      "now": 1700200000000,
+      "times": {
+        "last_user_action": 1700200000000,
+        "last_mouse_action": 0,
+        "last_client_api_action": 0
+      }
+    },
+    {
+      "action": "unchanged cursor",
+      "now": 1700200001000,
+      "times": {
+        "last_user_action": 1700200000000,
+        "last_mouse_action": 0,
+        "last_client_api_action": 0
+      }
+    },
+    {
+      "action": "moved cursor",
+      "now": 1700200002000,
+      "times": {
+        "last_user_action": 1700200000000,
+        "last_mouse_action": 1700200002000,
+        "last_client_api_action": 0
+      }
+    },
+    {
+      "action": "API request",
+      "now": 1700200003000,
+      "times": {
+        "last_user_action": 1700200000000,
+        "last_mouse_action": 1700200002000,
+        "last_client_api_action": 1700200003000
+      }
+    }
+  ]
+}

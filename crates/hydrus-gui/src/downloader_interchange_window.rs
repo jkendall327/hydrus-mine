@@ -119,6 +119,111 @@ pub fn open_steps(
     )
 }
 
+/// Share a bounded reference login script package from its owning list draft.
+pub fn open_login_scripts(
+    slots: &Slots,
+    importing: bool,
+    scripts: Vec<hydrus_parse::login::LoginScript>,
+    preview: Preview<hydrus_parse::login::LoginScript>,
+    applied: Apply<hydrus_parse::login::LoginScript>,
+) -> Result<DownloaderExchangeWindow, String> {
+    use hydrus_downloader_exchange::logins;
+    let window = open_objects(
+        slots,
+        importing,
+        scripts,
+        preview,
+        applied,
+        Codec {
+            encode_text: logins::encode_text,
+            decode_text: logins::decode_text,
+            encode_png: logins::encode_png,
+            decode_png: logins::decode_png,
+            processing: false,
+        },
+    )?;
+    window.set_window_title(
+        if importing {
+            "import login scripts"
+        } else {
+            "export login scripts"
+        }
+        .into(),
+    );
+    window.set_instructions(if importing { "Paste reference login script text or open a hydrus PNG. Review the scripts before adding them." } else { "Copy selected login scripts or save a hydrus PNG to share them." }.into());
+    Ok(window)
+}
+
+/// Share selected subsidiary wrappers, including their formula and sort settings.
+pub fn open_subsidiaries(
+    slots: &Slots,
+    importing: bool,
+    parsers: Vec<hydrus_parse::content::SubsidiaryPageParser>,
+    preview: Preview<hydrus_parse::content::SubsidiaryPageParser>,
+    applied: Apply<hydrus_parse::content::SubsidiaryPageParser>,
+) -> Result<DownloaderExchangeWindow, String> {
+    use hydrus_downloader_exchange::subsidiaries;
+    let window = open_objects(
+        slots,
+        importing,
+        parsers,
+        preview,
+        applied,
+        Codec {
+            encode_text: subsidiaries::encode_text,
+            decode_text: subsidiaries::decode_text,
+            encode_png: subsidiaries::encode_png,
+            decode_png: subsidiaries::decode_png,
+            processing: false,
+        },
+    )?;
+    window.set_window_title(
+        if importing {
+            "import subsidiary parsers"
+        } else {
+            "export subsidiary parsers"
+        }
+        .into(),
+    );
+    window.set_instructions(if importing { "Paste reference subsidiary text or open a hydrus PNG. Review the recursive wrappers before adding them." } else { "Copy selected subsidiary parsers or save a hydrus PNG to share them." }.into());
+    Ok(window)
+}
+
+/// Share selected metadata routers through a caller's permitted migration context.
+pub fn open_routers(
+    slots: &Slots,
+    importing: bool,
+    routers: Vec<hydrus_parse::sidecar::Router>,
+    preview: Preview<hydrus_parse::sidecar::Router>,
+    applied: Apply<hydrus_parse::sidecar::Router>,
+) -> Result<DownloaderExchangeWindow, String> {
+    use hydrus_downloader_exchange::routers;
+    let window = open_objects(
+        slots,
+        importing,
+        routers,
+        preview,
+        applied,
+        Codec {
+            encode_text: routers::encode_text,
+            decode_text: routers::decode_text,
+            encode_png: routers::encode_png,
+            decode_png: routers::decode_png,
+            processing: false,
+        },
+    )?;
+    window.set_window_title(
+        if importing {
+            "import metadata routers"
+        } else {
+            "export metadata routers"
+        }
+        .into(),
+    );
+    window.set_instructions(if importing { "Paste reference router text or open a hydrus PNG. Review the permitted sources and destinations before adding them." } else { "Copy selected metadata routers or save a hydrus PNG to share them." }.into());
+    Ok(window)
+}
+
 fn open_objects<T: Clone + 'static>(
     slots: &Slots,
     importing: bool,

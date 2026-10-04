@@ -1,0 +1,57 @@
+{
+  "default_enabled": true,
+  "steps": [
+    {
+      "hashes": 9999999,
+      "seeds": 0,
+      "enabled": true,
+      "new_boot": false,
+      "messages": [],
+      "shown": false
+    },
+    {
+      "hashes": 10000000,
+      "seeds": 0,
+      "enabled": true,
+      "new_boot": false,
+      "messages": [],
+      "shown": false
+    },
+    {
+      "hashes": 10000001,
+      "seeds": 0,
+      "enabled": false,
+      "new_boot": false,
+      "messages": [],
+      "shown": false
+    },
+    {
+      "hashes": 1,
+      "seeds": 500000,
+      "enabled": true,
+      "new_boot": false,
+      "messages": [
+        "Your session weight is 10,000,001, which is pretty big! To keep your UI lag-free, please try to close some pages or clear some finished downloaders!"
+      ],
+      "shown": true
+    },
+    {
+      "hashes": 20000000,
+      "seeds": 0,
+      "enabled": true,
+      "new_boot": false,
+      "messages": [],
+      "shown": true
+    },
+    {
+      "hashes": 0,
+      "seeds": 500001,
+      "enabled": true,
+      "new_boot": true,
+      "messages": [
+        "Your session weight is 10,000,020, which is pretty big! To keep your UI lag-free, please try to close some pages or clear some finished downloaders!"
+      ],
+      "shown": true
+    }
+  ]
+}

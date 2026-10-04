@@ -33,6 +33,9 @@ pub(super) struct TestDocuments {
 }
 impl TestDocuments {
     pub fn start() -> Self {
+        Self::start_with_image(Vec::new())
+    }
+    pub(super) fn start_with_image(image: Vec<u8>) -> Self {
         use std::io::{Read as _, Write as _};
         let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
         let base = format!("http://{}", listener.local_addr().unwrap());
@@ -72,18 +75,26 @@ impl TestDocuments {
                     let request = String::from_utf8_lossy(&bytes[..count]).into_owned();
                     let hold = request.starts_with("GET /hold ");
                     let error = request.starts_with("GET /error ");
+                    let image_request = request.starts_with("GET /png ");
                     requests.lock().unwrap().push(request);
                     if hold {
                         held.push(stream);
                         continue;
                     }
-                    let (status, body): (&str, &[u8]) = if error {
+                    let (status, body): (&str, &[u8]) = if image_request {
+                        ("200 OK", &image)
+                    } else if error {
                         ("404 Not Found", b"missing")
                     } else {
                         ("200 OK", b"<p>fetched caf\xe9</p>")
                     };
+                    let content_type = if image_request {
+                        "image/png"
+                    } else {
+                        "text/html; charset=iso-8859-1"
+                    };
                     let response = format!(
-                        "HTTP/1.1 {status}\r\nContent-Type: text/html; charset=iso-8859-1\r\nContent-Length: {}\r\nSet-Cookie: test-document=saved; Path=/\r\nConnection: close\r\n\r\n",
+                        "HTTP/1.1 {status}\r\nContent-Type: {content_type}\r\nContent-Length: {}\r\nSet-Cookie: test-document=saved; Path=/\r\nConnection: close\r\n\r\n",
                         body.len()
                     );
                     let _ = stream.write_all(response.as_bytes());
@@ -271,6 +282,91 @@ fn fetched_page_examples_use_actual_network_headers_cookies_context_and_child_co
     reopened.invoke_force_close();
     list.invoke_action("cancel".into());
 }
+#[test]
+fn page_fetch_error_menu_retains_completed_failure_and_clears_at_next_request() {
+    use std::{cell::RefCell, rc::Rc};
+    let reference: serde_json::Value = serde_json::from_str(include_str!(
+        "../../../../oracle/fixtures/parser_fetch_errors.json"
+    ))
+    .unwrap();
+    assert_eq!(
+        reference["menus"][0],
+        serde_json::json!(["show error", "copy error"])
+    );
+    assert_eq!(reference["states"][2]["has_job"], false);
+    assert_eq!(reference["states"][2]["has_error"], true);
+    assert_eq!(reference["states"][3]["has_error"], false);
+    assert_eq!(reference["show_copy_identical"], true);
+    let server = TestDocuments::start();
+    let (_dir, store, slots) = setup();
+    let rendered = headless::init();
+    let original = definitions(&store);
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    let copies = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::set_clipper({
+        let copies = copies.clone();
+        move |clip| copies.borrow_mut().push(clip.clone())
+    });
+    page.set_test_url(format!("{}/error", server.base).into());
+    page.invoke_fetch();
+    assert!(!page.get_fetch_has_error());
+    until_fetch(|| !page.get_fetching());
+    assert!(page.get_fetch_has_error());
+    page.invoke_fetch_error_action(8);
+    let error = hydrus_gui::network_job_control::last_error().unwrap();
+    assert_eq!(error.get_error_text(), "404: missing\n\nmissing");
+    page.invoke_fetch_error_action(9);
+    assert_eq!(
+        copies.borrow().last().unwrap(),
+        &hydrus_gui::Clip::Text(error.get_error_text().to_string())
+    );
+    let pixels = headless::render(&rendered.get(rendered.count() - 1).unwrap(), 660, 370);
+    assert!(pixels.chunks_exact(4).any(|pixel| pixel != &pixels[..4]));
+    headless::save_png(
+        &std::path::PathBuf::from(env!("CARGO_TARGET_TMPDIR")).join("parser-fetch-error.png"),
+        &pixels,
+        660,
+        370,
+    )
+    .unwrap();
+    error.invoke_close_clicked();
+    page.set_test_url("".into());
+    page.invoke_fetch();
+    assert!(page.get_fetch_has_error());
+    page.set_test_url("invalid".into());
+    page.invoke_fetch();
+    assert!(page.get_fetch_has_error());
+    // A raw test-panel fetch has no NetworkJobControl owner in the reference.
+    page.set_fetch_url(format!("{}/document", server.base).into());
+    page.invoke_fetch_from_url();
+    until_fetch(|| !page.get_fetching());
+    assert!(page.get_fetch_has_error());
+    page.set_test_url(format!("{}/document", server.base).into());
+    page.invoke_fetch();
+    assert!(!page.get_fetch_has_error());
+    until_fetch(|| !page.get_fetching());
+    assert!(!page.get_fetch_has_error());
+    let count = copies.borrow().len();
+    page.invoke_fetch_error_action(9);
+    assert_eq!(copies.borrow().len(), count);
+    page.set_test_url(format!("{}/error", server.base).into());
+    page.invoke_fetch();
+    until_fetch(|| !page.get_fetching());
+    page.invoke_fetch_error_action(8);
+    let retained = hydrus_gui::network_job_control::last_error().unwrap();
+    page.invoke_force_close();
+    assert!(!retained.window().is_visible());
+    assert!(slots.page.borrow().is_none());
+    page.invoke_fetch_error_action(8);
+    page.invoke_fetch_error_action(9);
+    assert!(!retained.window().is_visible());
+    assert_eq!(copies.borrow().len(), count);
+    list.invoke_action("cancel".into());
+    assert_eq!(definitions(&store), original);
+}
 fn child(slot: &std::rc::Rc<std::cell::RefCell<Option<ParserEditWindow>>>) -> ParserEditWindow {
     slot.borrow().as_ref().unwrap().clone_strong()
 }
@@ -318,6 +414,68 @@ fn setup() -> (tempfile::TempDir, std::sync::Arc<Store>, Slots) {
 }
 fn definitions(store: &Store) -> Downloaders {
     store.read(settings::get).unwrap()
+}
+#[test]
+fn reusable_content_kinds_remap_restricted_choices_and_preserve_login_context() {
+    use hydrus_gui_model::formula_editors::FormulaTestData;
+    use std::{cell::RefCell, rc::Rc};
+    let (_dir, store, slots) = setup();
+    headless::init();
+    let mut parser = new_content();
+    parser.kind = ContentKind::Variable {
+        name: "token".into(),
+    };
+    parser.formula.kind = FormulaKind::ContextVariable {
+        variable: "csrf".into(),
+    };
+    let test = FormulaTestData {
+        context: [("csrf".into(), "synthetic login token".into())].into(),
+        ..FormulaTestData::default()
+    };
+    let accepted = Rc::new(RefCell::new(None));
+    let open = || {
+        windows::open_content(
+            &store,
+            &parser,
+            test.clone(),
+            &slots,
+            &[7, 8],
+            Rc::new({
+                let accepted = accepted.clone();
+                move |value| {
+                    *accepted.borrow_mut() = Some(value);
+                    Ok(())
+                }
+            }),
+        )
+        .unwrap()
+    };
+    let editor = open();
+    let options = editor.get_fields().row_data(1).unwrap().options;
+    assert_eq!(
+        (0..options.row_count())
+            .map(|i| options.row_data(i).unwrap().to_string())
+            .collect::<Vec<_>>(),
+        ["temporary variable", "veto"]
+    );
+    editor.invoke_action("test".into());
+    assert!(editor.get_preview().contains("synthetic login token"));
+    editor.invoke_choice_edited(1, 1);
+    editor.invoke_action("apply".into());
+    assert!(matches!(
+        accepted.borrow().as_ref().unwrap().kind,
+        ContentKind::Veto { .. }
+    ));
+    let editor = open();
+    editor.invoke_text_edited(0, "discarded".into());
+    editor.invoke_action("cancel".into());
+    editor.invoke_answered(true);
+    assert!(slots.content.borrow().is_none());
+    assert_eq!(parser.name, "new content parser");
+    assert!(matches!(
+        accepted.borrow().as_ref().unwrap().kind,
+        ContentKind::Veto { .. }
+    ));
 }
 fn screenshot(rendered: &headless::Windows, index: usize, name: &str, w: &ParserEditWindow) {
     let window = rendered.get(index).unwrap();
@@ -757,7 +915,7 @@ fn subsidiary_separator_uses_converted_data_preserves_newlines_and_saves() {
     let page = child(&slots.page);
     page.set_document(before["raw"].as_str().unwrap().into());
     assert_eq!(page.get_subsidiaries().row_count(), 1);
-    page.invoke_subsidiary_clicked(0);
+    page.invoke_subsidiary_clicked(0, false, false);
     assert!(page.get_subsidiary_sorted());
     page.invoke_action("separator".into());
     let formula = slots
@@ -959,4 +1117,452 @@ fn multiple_examples_restore_sources_and_propagate_converted_selected_child_data
     page.invoke_action("cancel".into());
     list.invoke_action("cancel".into());
     assert_eq!(definitions(&store), original);
+}
+
+fn recursive_child(slots: &Slots) -> (Slots, ParserEditWindow) {
+    let owned = (**slots.child.borrow().as_ref().unwrap()).clone();
+    let window = child(&owned.page);
+    (owned, window)
+}
+
+#[test]
+fn recursive_subsidiary_creation_is_staged_and_owner_cancels_descendants() {
+    let rendered = headless::init();
+    let (_dir, store, slots) = setup();
+    let before = definitions(&store);
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    let raw = "<div class=\"thumb\"><p>first\n\nnote</p></div><div class=\"thumb\"><p>second note</p></div>";
+    page.set_document(raw.into());
+    page.set_test_url("https://children.example/post".into());
+    page.set_variables("token=preserved".into());
+    page.invoke_action("add-subsidiary".into());
+    let (owned, subsidiary) = recursive_child(&slots);
+    assert!(subsidiary.get_subsidiary());
+    assert!(!subsidiary.get_own_sorted());
+    assert_eq!(subsidiary.get_document(), raw);
+    screenshot(&rendered, 2, "recursive-subsidiary.png", &subsidiary);
+    subsidiary.invoke_text_edited(0, "new child".into());
+    subsidiary.invoke_action("add-content".into());
+    let content = child(&owned.content);
+    assert_eq!(content.get_examples().row_count(), 2);
+    assert_eq!(
+        content.get_document(),
+        "<div class=\"thumb\"><p>first\n\nnote</p></div>"
+    );
+    assert_eq!(content.get_variables(), "token=preserved");
+    content.invoke_choice_edited(1, 2);
+    content.invoke_action("formula".into());
+    let formula = owned
+        .formula
+        .formula
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    formula.set_kind(5);
+    formula.invoke_type_chosen();
+    formula.set_static_text("child\n\nnote".into());
+    formula.invoke_changed();
+    formula.invoke_apply();
+    content.invoke_action("apply".into());
+    subsidiary.invoke_action("apply".into());
+    assert_eq!(page.get_subsidiaries().row_count(), 2);
+    assert_eq!(definitions(&store), before);
+    page.invoke_action("apply".into());
+    list.invoke_action("apply".into());
+    let saved = definitions(&store);
+    let added = saved.parsers[0]
+        .subsidiary
+        .iter()
+        .find(|s| s.parser.name == "new child")
+        .unwrap();
+    assert_eq!(added.parser.content_parsers.len(), 1);
+    assert!(matches!(
+        added.parser.content_parsers[0].kind,
+        ContentKind::Note { .. }
+    ));
+    let parsed = saved.parsers[0]
+        .parse(&mut ParsingContext::new(), raw)
+        .unwrap();
+    assert_eq!(parsed.len(), 2);
+    assert!(
+        parsed
+            .iter()
+            .all(|p| p.contents.iter().any(|c| c.text == "child\n\nnote"))
+    );
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    page.set_document(raw.into());
+    page.invoke_action("add-subsidiary".into());
+    let (owned, subsidiary) = recursive_child(&slots);
+    subsidiary.invoke_action("add-subsidiary".into());
+    let (grand_slots, grandchild) = recursive_child(&owned);
+    assert!(page.get_child_open());
+    page.invoke_action("delete-subsidiary".into());
+    assert_eq!(page.get_subsidiaries().row_count(), 2);
+    page.invoke_force_close();
+    assert!(slots.child.borrow().is_none());
+    assert!(owned.page.borrow().is_none());
+    assert!(grand_slots.page.borrow().is_none());
+    grandchild.invoke_action("apply".into());
+    subsidiary.invoke_action("apply".into());
+    list.invoke_action("cancel".into());
+    assert_eq!(definitions(&store), saved);
+}
+
+#[test]
+fn subsidiary_edits_preserve_nested_page_identity_and_cancel_metadata_without_prompt() {
+    headless::init();
+    let (_dir, store, slots) = setup();
+    let cases = hydrus_testkit::fixture_json("parser_children.json");
+    let recorded = cases
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["action"] == "add_nested")
+        .unwrap();
+    let object = hydrus_legacy::serialisable::SerialisableObject::from_tuple_str(
+        &recorded["tuple"].to_string(),
+    )
+    .unwrap();
+    let imported = hydrus_legacy::objects::parsers::page_parser(&object).unwrap();
+    store
+        .write_and_refresh(move |ctx| {
+            let mut definitions: Downloaders = settings::get(ctx.conn())?;
+            definitions.parsers[0] = imported;
+            settings::set(ctx.conn(), &definitions)
+        })
+        .unwrap();
+    let before = definitions(&store);
+    assert!(
+        before.parsers[0].subsidiary[0]
+            .parser
+            .reference_auxiliary
+            .is_some()
+    );
+    assert_eq!(before.parsers[0].subsidiary[0].parser.subsidiary.len(), 1);
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    page.invoke_subsidiary_clicked(0, false, false);
+    page.invoke_action("edit-subsidiary".into());
+    let (_, subsidiary) = recursive_child(&slots);
+    subsidiary.invoke_own_sort_changed(true);
+    subsidiary.invoke_action("cancel".into());
+    assert!(slots.child.borrow().is_none());
+    assert_eq!(subsidiary.get_question(), "");
+    page.invoke_action("edit-subsidiary".into());
+    let (_, subsidiary) = recursive_child(&slots);
+    subsidiary.invoke_text_edited(0, "edited subsidiary".into());
+    subsidiary.invoke_own_sort_changed(false);
+    subsidiary.invoke_action("apply".into());
+    page.invoke_action("apply".into());
+    list.invoke_action("apply".into());
+    let saved = definitions(&store);
+    let old = &before.parsers[0].subsidiary[0];
+    let new = &saved.parsers[0].subsidiary[0];
+    assert_eq!(new.parser.key, old.parser.key);
+    assert_eq!(
+        new.parser.reference_auxiliary,
+        old.parser.reference_auxiliary
+    );
+    assert_eq!(new.formula, old.formula);
+    assert_eq!(new.parser.subsidiary, old.parser.subsidiary);
+    assert_eq!(new.parser.name, "edited subsidiary");
+    assert!(!new.sort_by_source_time);
+}
+
+#[test]
+fn subsidiary_queue_exchange_is_staged_preserves_wrappers_and_reaches_saved_parser() {
+    use hydrus_downloader_exchange::subsidiaries as exchange;
+    use std::{cell::RefCell, rc::Rc};
+    let reference: serde_json::Value = serde_json::from_str(include_str!(
+        "../../../../oracle/fixtures/subsidiary_exchange.json"
+    ))
+    .unwrap();
+    let (dir, store, slots) = setup();
+    let rendered = headless::init();
+    let mut saved = definitions(&store);
+    saved.parsers[0].content_parsers.clear();
+    store
+        .write_and_refresh(move |ctx| settings::set(ctx.conn(), &saved))
+        .unwrap();
+    let original = definitions(&store);
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    page.invoke_action("import-subsidiary".into());
+    let import = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    import.set_text(reference["bundle"].to_string().into());
+    import.invoke_action("review".into());
+    assert!(import.get_ready());
+    page.invoke_action("apply".into());
+    assert!(slots.page.borrow().is_some());
+    import.invoke_action("accept".into());
+    assert_eq!(page.get_subsidiaries().row_count(), 2);
+    assert!(page.get_subsidiaries().iter().all(|row| row.selected));
+    assert!(!page.get_subsidiary_selected());
+    assert_eq!(definitions(&store), original);
+    page.invoke_action("export-subsidiary".into());
+    let export = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(
+        serde_json::from_str::<serde_json::Value>(export.get_text().as_str()).unwrap(),
+        reference["bundle"]
+    );
+    let copies = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::set_clipper({
+        let copies = copies.clone();
+        move |clip| copies.borrow_mut().push(clip.clone())
+    });
+    export.invoke_action("copy".into());
+    assert_eq!(
+        copies.borrow()[0],
+        hydrus_gui::Clip::Text(export.get_text().to_string())
+    );
+    let path = dir.path().join("subsidiaries.png");
+    export.set_path(path.to_string_lossy().as_ref().into());
+    export.invoke_action("save".into());
+    assert_eq!(
+        exchange::decode_png(&std::fs::read(path).unwrap()).unwrap(),
+        exchange::decode_text(&reference["bundle"].to_string()).unwrap()
+    );
+    export.invoke_action("cancel".into());
+    page.invoke_action("duplicate-subsidiary".into());
+    assert_eq!(page.get_subsidiaries().row_count(), 4);
+    page.invoke_action("delete-subsidiary".into());
+    assert_eq!(
+        page.get_question(),
+        reference["deletes"][0]["question"].as_str().unwrap()
+    );
+    page.invoke_answered(false);
+    assert_eq!(page.get_subsidiaries().row_count(), 4);
+    page.invoke_action("delete-subsidiary".into());
+    page.invoke_answered(true);
+    assert_eq!(page.get_subsidiaries().row_count(), 2);
+    screenshot(&rendered, 1, "subsidiary-exchange.png", &page);
+    page.invoke_subsidiary_clicked(0, false, false);
+    page.invoke_subsidiary_clicked(1, true, false);
+    page.invoke_action("export-subsidiary".into());
+    let export = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(
+        serde_json::from_str::<serde_json::Value>(export.get_text().as_str()).unwrap(),
+        reference["bundle"]
+    );
+    export.invoke_action("cancel".into());
+    page.invoke_action("apply".into());
+    list.invoke_action("apply".into());
+    let persisted = definitions(&store);
+    let texts = persisted.parsers[0]
+        .parse(&mut ParsingContext::new(), "parent document")
+        .unwrap()
+        .iter()
+        .map(|post| {
+            post.contents
+                .iter()
+                .map(|c| c.text.clone())
+                .collect::<Vec<_>>()
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(serde_json::json!(texts), reference["parsed"]);
+    assert_eq!(
+        exchange::tuple(&persisted.parsers[0].subsidiary[0]).unwrap(),
+        reference["single"]
+    );
+    // Wrong-type packages and stale accepted imports cannot change an owner draft.
+    let list = windows::open(&store, &slots, false).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let page = child(&slots.page);
+    page.invoke_action("import-subsidiary".into());
+    let import = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    import.set_text(r#"[136,1,["wrong",1,"",[84,1,[26,3,[]]]]]"#.into());
+    import.invoke_action("review".into());
+    assert!(!import.get_ready());
+    assert!(!import.get_error().is_empty());
+    assert_eq!(page.get_subsidiaries().row_count(), 2);
+    import.set_text(reference["single"].to_string().into());
+    import.invoke_action("review".into());
+    page.invoke_force_close();
+    assert!(!slots.exchange.has_open());
+    import.invoke_action("accept".into());
+    list.invoke_action("cancel".into());
+    assert_eq!(definitions(&store), persisted);
+}
+
+#[test]
+fn raw_content_preview_preserves_clipboard_context_and_detects_fetched_png_bytes() {
+    use hydrus_gui::{Clip, formula_window};
+    use hydrus_gui_model::formula_editors::FormulaTestData;
+    use std::{cell::RefCell, rc::Rc};
+    let reference = hydrus_testkit::fixture_json("parser_raw_preview.json");
+    let server = TestDocuments::start_with_image(
+        hex::decode(reference["png_hex"].as_str().unwrap()).unwrap(),
+    );
+    let (_dir, store, slots) = setup();
+    let rendered = headless::init();
+    let original = definitions(&store);
+    let mut test = FormulaTestData {
+        text: "original".into(),
+        ..FormulaTestData::default()
+    };
+    test.context
+        .insert("url".into(), "https://raw-preview.example/original".into());
+    test.context.insert("post_index".into(), "7".into());
+    test.context.insert("custom".into(), "kept".into());
+    let mut parser = new_content();
+    parser.formula = hydrus_parse::formula::Formula::new(FormulaKind::ContextVariable {
+        variable: "url".into(),
+    });
+    let content = windows::open_content(
+        &store,
+        &parser,
+        test.clone(),
+        &slots,
+        &[0, 1, 2, 3, 4, 5, 6, 7, 8],
+        Rc::new(|_| Ok(())),
+    )
+    .unwrap();
+    *slots.content.borrow_mut() = Some(content.clone_strong());
+    let pasted = reference["states"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|s| s["case"] == "paste")
+        .unwrap();
+    let raw = pasted["input"]["text"].as_str().unwrap().to_owned();
+    hydrus_gui::set_clipboard_reader({
+        let raw = raw.clone();
+        move || Ok(Some(raw.clone()))
+    });
+    content.invoke_raw_action("paste".into());
+    assert_eq!(content.get_document(), raw);
+    assert_eq!(
+        content.get_raw_description(),
+        pasted["description"].as_str().unwrap()
+    );
+    assert_eq!(
+        content.get_raw_preview(),
+        pasted["preview"].as_str().unwrap()
+    );
+    assert!(content.get_parse_enabled());
+    assert_eq!(content.get_post_index(), "7");
+    assert_eq!(content.get_variables(), "custom=kept");
+    assert_eq!(
+        content.get_test_url(),
+        "https://raw-preview.example/original"
+    );
+    let copied = Rc::new(RefCell::new(String::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| {
+            if let Clip::Text(text) = clip {
+                *copied.borrow_mut() = text.clone();
+            }
+        }
+    });
+    content.invoke_raw_action("copy".into());
+    assert_eq!(*copied.borrow(), raw);
+    assert_ne!(*copied.borrow(), content.get_raw_preview().as_str());
+    hydrus_gui::set_clipboard_reader(|| Err("synthetic clipboard error".into()));
+    content.invoke_raw_action("paste".into());
+    assert!(content.get_error().contains("Problem loading!"));
+    assert_eq!(content.get_document(), raw);
+    content.set_fetch_url(format!("{}/png", server.base).into());
+    content.invoke_fetch_from_url();
+    until_fetch(|| !content.get_fetching());
+    assert_eq!(content.get_raw_description(), "That looked like a png!");
+    assert_eq!(content.get_raw_preview(), "no preview");
+    assert!(!content.get_parse_enabled());
+    assert_eq!(content.get_test_url(), format!("{}/png", server.base));
+    assert_eq!(content.get_post_index(), "0");
+    assert_eq!(content.get_variables(), "custom=kept");
+    let before = content.get_preview();
+    content.invoke_action("test".into());
+    assert_eq!(content.get_preview(), before);
+    content.invoke_action("formula".into());
+    let child = slots
+        .formula
+        .formula
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    // Child inheritance is text-only in Qt; its own raw MIME inspection does not leak.
+    assert!(child.get_parse_enabled());
+    assert_eq!(child.get_document(), content.get_document());
+    child.invoke_cancel();
+    let pixels = headless::render(&rendered.get(0).unwrap(), 920, 700);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("parser_raw_preview.png"),
+        &pixels,
+        920,
+        700,
+    )
+    .unwrap();
+    let old = content.clone_strong();
+    slots.cancel();
+    hydrus_gui::set_clipboard_reader(|| Ok(Some("stale replacement".into())));
+    old.invoke_raw_action("paste".into());
+    assert_ne!(old.get_document(), "stale replacement");
+    assert_eq!(definitions(&store), original);
+    // The standalone formula owner detects bytes independently and restores examples.
+    let formula_slots = formula_window::Slots::default();
+    let formula = formula_window::open(
+        &store,
+        &parser.formula,
+        test,
+        &formula_slots,
+        Rc::new(|_| {}),
+    )
+    .unwrap();
+    *formula_slots.formula.borrow_mut() = Some(formula.clone_strong());
+    formula.set_fetch_url(format!("{}/png", server.base).into());
+    formula.invoke_fetch();
+    until_fetch(|| !formula.get_fetching());
+    assert_eq!(formula.get_raw_description(), "That looked like a png!");
+    assert!(!formula.get_parse_enabled());
+    assert_eq!(formula.get_results().row_count(), 0);
+    formula.set_example(0);
+    formula.invoke_example_chosen();
+    assert!(formula.get_parse_enabled());
+    assert_eq!(formula.get_document(), "original");
+    formula.set_example(1);
+    formula.invoke_example_chosen();
+    assert!(!formula.get_parse_enabled());
+    formula.invoke_test();
+    assert_eq!(formula.get_results().row_count(), 0);
+    hydrus_gui::set_clipboard_reader({
+        let raw = raw.clone();
+        move || Ok(Some(raw.clone()))
+    });
+    formula.invoke_raw_action("paste".into());
+    assert_eq!(formula.get_document(), raw);
+    assert_eq!(
+        formula.get_raw_preview(),
+        pasted["preview"].as_str().unwrap()
+    );
+    assert!(formula.get_parse_enabled());
+    assert_eq!(
+        formula
+            .get_results()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(0)
+            .unwrap(),
+        format!("{}/png", server.base)
+    );
+    formula.invoke_raw_action("copy".into());
+    assert_eq!(*copied.borrow(), raw);
+    formula_slots.cancel();
+    hydrus_gui::set_clipboard_reader(|| Ok(Some("stale replacement".into())));
+    formula.invoke_raw_action("paste".into());
+    assert_eq!(formula.get_document(), raw);
 }

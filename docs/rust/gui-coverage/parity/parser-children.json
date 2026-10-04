@@ -1,0 +1,565 @@
+{
+  "agent": "parity_parser_children",
+  "baseline": "d50df26b",
+  "implementation_commits": [
+    "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+    "671a6d8d1f32c9ed8043a15a1008740ee1874bb8",
+    "37affafb961b0146f229ff0c706cb8cb5c1a714e",
+    "2a7ad8aeddcb2752b2779a203636e664ce9df1b9",
+    "24fbb367ec67b29eca8c53b62905adf1ba8acf80",
+    "c55c726dc9f7ae91650ba00755299db47701b641",
+    "2b5015e642d20c1bd83450fe31ac63334735e8aa",
+    "449c0957e2b5b72dd5f20c527dde2264a707d09e",
+    "57e9248907ae4cbaf953421192e4d8ffd087cfc6"
+  ],
+  "validation": {
+    "reference_recording": "passed; 16 recursive subsidiary and seven sidecar example panel states; real router queues in import/export contexts, six node kinds, exact vetoes, duplication, PNG and sidecar worker output",
+    "formatting": "cargo fmt --all, git diff --check and Python recorder syntax check passed",
+    "rust_tests": "authored exact model reference replays, real-store GUI persistence, recursive/stale owner regressions and saved router consumer assertions; root asynchronous CI pending; no local Cargo builds",
+    "rendered_ui": "reference screenshot inspected; native headless render assertions authored and pending root CI",
+    "slint_source_check": "passed against merged ea4dc4f7 with cached compiler; no Cargo build"
+  },
+  "entries": [
+    {
+      "reference_id": "subsidiary-create",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Add/edit recursive subsidiary page parsers with reference HTML div.thumb separation defaults, source-time sorting and full child page/content/formula editors. Parent-converted documents become separated multiple examples with preserved source URLs/context/newlines for descendants. Apply stages upward, list Apply persists; cancellation discards and owner closure invalidates retained descendants. Name sorting and child keys, converters, recursive definitions and imported auxiliary data are retained. Metadata-only separator/sort cancellation follows the reference without a page-change prompt.",
+      "exactBehavior": "Add/edit recursive subsidiary page parsers with reference HTML div.thumb separation defaults, source-time sorting and full child page/content/formula editors. Parent-converted documents become separated multiple examples with preserved source URLs/context/newlines for descendants. Apply stages upward, list Apply persists; cancellation discards and owner closure invalidates retained descendants. Name sorting and child keys, converters, recursive definitions and imported auxiliary data are retained. Metadata-only separator/sort cancellation follows the reference without a page-change prompt.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_editors.rs",
+          "line": 218,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "new_subsidiary"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_editors.rs",
+          "line": 263,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "child_test_data"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
+          "line": 433,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "open_editor"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/parser_editors.rs",
+          "line": 210,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "recorded_recursive_subsidiaries_preserve_context_documents_and_runtime_outputs"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 1033,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "recursive_subsidiary_creation_is_staged_and_owner_cancels_descendants"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 1123,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "subsidiary_edits_preserve_nested_page_identity_and_cancel_metadata_without_prompt"
+        }
+      ],
+      "reference_evidence": {
+        "recorder": "oracle/record_parser_children.py",
+        "fixture": "oracle/fixtures/parser_children.json",
+        "visual_reference": "oracle/fixtures/parser_child_editor.png",
+        "actual_recording": "passed: 16 real Qt states; synthetic HTML and children.example; defaults/add/nested/edit/cancel/runtime outputs"
+      },
+      "limitations": [],
+      "limits": []
+    },
+    {
+      "reference_id": "subsidiary",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Recursive subsidiary add/edit/delete and extended selected queues support standalone wrapper clipboard/PNG import/export, key-preserving duplication and recorded Remove all selected? confirmation/cancel. Separators, sorting, descendant parsers, inert editor context and converter sample data survive exact reference tuple/PNG roundtrips. Edits stay staged until page/list Apply; saved parser consumers produce the recorded multiline notes, and forced owner close invalidates retained exchange/recursive callbacks.",
+      "exactBehavior": "Recursive subsidiary add/edit/delete and extended selected queues support standalone wrapper clipboard/PNG import/export, key-preserving duplication and recorded Remove all selected? confirmation/cancel. Separators, sorting, descendant parsers, inert editor context and converter sample data survive exact reference tuple/PNG roundtrips. Edits stay staged until page/list Apply; saved parser consumers produce the recorded multiline notes, and forced owner close invalidates retained exchange/recursive callbacks.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_editors.rs",
+          "line": 218,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "new_subsidiary"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_editors.rs",
+          "line": 263,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "child_test_data"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
+          "line": 433,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "open_editor"
+        },
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/src/subsidiaries.rs",
+          "line": 45,
+          "commit": "2a7ad8aeddcb2752b2779a203636e664ce9df1b9",
+          "symbol": "decode_text"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_editors.rs",
+          "line": 506,
+          "commit": "24fbb367ec67b29eca8c53b62905adf1ba8acf80",
+          "symbol": "append_subsidiaries"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_interchange_window.rs",
+          "line": 158,
+          "commit": "24fbb367ec67b29eca8c53b62905adf1ba8acf80",
+          "symbol": "open_subsidiaries"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/parser_editors.rs",
+          "line": 210,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "recorded_recursive_subsidiaries_preserve_context_documents_and_runtime_outputs"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 1033,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "recursive_subsidiary_creation_is_staged_and_owner_cancels_descendants"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 1123,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "subsidiary_edits_preserve_nested_page_identity_and_cancel_metadata_without_prompt"
+        },
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/tests/subsidiaries.rs",
+          "line": 6,
+          "commit": "2a7ad8aeddcb2752b2779a203636e664ce9df1b9",
+          "symbol": "real_reference_subsidiary_clipboard_and_png_preserve_recursive_wrappers"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/parser_editors.rs",
+          "line": 288,
+          "commit": "24fbb367ec67b29eca8c53b62905adf1ba8acf80",
+          "symbol": "recorded_subsidiary_queue_import_and_duplicate_preserve_keys_and_select_new_rows"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 1271,
+          "commit": "24fbb367ec67b29eca8c53b62905adf1ba8acf80",
+          "symbol": "subsidiary_queue_exchange_is_staged_preserves_wrappers_and_reaches_saved_parser"
+        }
+      ],
+      "reference_evidence": {
+        "recorder": "oracle/record_parser_children.py",
+        "fixture": "oracle/fixtures/parser_children.json",
+        "visual_reference": "oracle/fixtures/parser_child_editor.png",
+        "actual_recording": "passed: 16 real Qt states; synthetic HTML and children.example; defaults/add/nested/edit/cancel/runtime outputs; standalone real Qt clipboard/queue/duplicate/delete/PNG recordings passed",
+        "exchange_recorder": "oracle/record_subsidiary_exchange.py",
+        "exchange_fixture": "oracle/fixtures/subsidiary_exchange.json",
+        "exchange_png": "oracle/fixtures/subsidiary_exchange.png",
+        "exchange_visual": "oracle/fixtures/subsidiary_exchange_editor.png"
+      },
+      "limitations": [
+        "Mixed or unsupported packages reject atomically instead of partially accepting valid rows."
+      ],
+      "limits": [
+        "Mixed or unsupported packages reject atomically instead of partially accepting valid rows."
+      ]
+    },
+    {
+      "reference_id": "sidecar-test",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Reusable router example panel shows a source selector and per-object input path/media hash, sorted imported strings, and router-processed strings (literal no changes for inert processors). Actual TXT/JSON sidecar importers and read-only media metadata drive the results, including duplicates, missing sidecars, notes with preserved newlines, URLs, and exact HTML-in-JSON error text. Source processor and JSON formula children receive pre-source-processor texts from the first example; router processors receive every source output from that first example. Owner cancellation invalidates retained children; accepted processing is staged and reaches saved real-store router consumers.",
+      "exactBehavior": "Reusable router example panel shows a source selector and per-object input path/media hash, sorted imported strings, and router-processed strings (literal no changes for inert processors). Actual TXT/JSON sidecar importers and read-only media metadata drive the results, including duplicates, missing sidecars, notes with preserved newlines, URLs, and exact HTML-in-JSON error text. Source processor and JSON formula children receive pre-source-processor texts from the first example; router processors receive every source output from that first example. Owner cancellation invalidates retained children; accepted processing is staged and reaches saved real-store router consumers.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/sidecar_editors.rs",
+          "line": 1214,
+          "commit": "671a6d8d1f32c9ed8043a15a1008740ee1874bb8",
+          "symbol": "test_importer_strings"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/sidecar_editors.rs",
+          "line": 1256,
+          "commit": "671a6d8d1f32c9ed8043a15a1008740ee1874bb8",
+          "symbol": "router_test_rows"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/sidecars_window.rs",
+          "line": 758,
+          "commit": "671a6d8d1f32c9ed8043a15a1008740ee1874bb8",
+          "symbol": "open_router"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/sidecar_editors.rs",
+          "line": 451,
+          "commit": "671a6d8d1f32c9ed8043a15a1008740ee1874bb8",
+          "symbol": "recorded_router_tables_and_child_strings_use_real_sidecars_and_read_only_media"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 632,
+          "commit": "671a6d8d1f32c9ed8043a15a1008740ee1874bb8",
+          "symbol": "router_examples_follow_reference_source_tabs_and_processor_children_without_exports"
+        }
+      ],
+      "reference_evidence": {
+        "recorder": "oracle/record_sidecar_testing.py",
+        "fixture": "oracle/fixtures/sidecar_testing.json",
+        "visual_reference": "oracle/fixtures/sidecar_testing.png",
+        "actual_recording": "passed: seven real Qt source-table states; generated documents and synthetic sidecars.example media URLs/notes"
+      },
+      "limitations": [
+        "Uses a source selector and table instead of the reference notebook.",
+        "The export-folder parent update-test-example-files search button is not yet implemented; filename tagging, import folders and manual exports supply bounded owner examples.",
+        "General filesystem I/O errors include the operating-system error text; the recorded formula parse error is asserted exactly."
+      ],
+      "limits": [
+        "Uses a source selector and table instead of the reference notebook.",
+        "The export-folder parent update-test-example-files search button is not yet implemented; filename tagging, import folders and manual exports supply bounded owner examples.",
+        "General filesystem I/O errors include the operating-system error text; the recorded formula parse error is asserted exactly."
+      ]
+    },
+    {
+      "reference_id": "sidecar-source-processing",
+      "previous_status": "partial",
+      "before": "partial",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Source processing opens with the actual first example importer texts before its processor, including duplicate strings, parsed JSON values and exact recorded parse error samples. Accepted processing remains staged, refreshes the router example table and reaches persisted real-store router processing; cancel and parent close invalidate child callbacks.",
+      "exactBehavior": "Source processing opens with the actual first example importer texts before its processor, including duplicate strings, parsed JSON values and exact recorded parse error samples. Accepted processing remains staged, refreshes the router example table and reaches persisted real-store router processing; cancel and parent close invalidate child callbacks.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/sidecar_editors.rs",
+          "line": 1214,
+          "commit": "37affafb961b0146f229ff0c706cb8cb5c1a714e",
+          "symbol": "test_importer_strings"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/sidecars_window.rs",
+          "line": 758,
+          "commit": "37affafb961b0146f229ff0c706cb8cb5c1a714e",
+          "symbol": "open_router"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/sidecar_editors.rs",
+          "line": 451,
+          "commit": "37affafb961b0146f229ff0c706cb8cb5c1a714e",
+          "symbol": "recorded_router_tables_and_child_strings_use_real_sidecars_and_read_only_media"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 632,
+          "commit": "37affafb961b0146f229ff0c706cb8cb5c1a714e",
+          "symbol": "router_examples_follow_reference_source_tabs_and_processor_children_without_exports"
+        }
+      ],
+      "reference_evidence": {
+        "recorder": "oracle/record_sidecar_testing.py",
+        "fixture": "oracle/fixtures/sidecar_testing.json",
+        "visual_reference": "oracle/fixtures/sidecar_testing.png",
+        "actual_recording": "passed: seven real Qt states, actual source editor _GetExampleTestData and router processor inputs; generated sidecars and synthetic media"
+      },
+      "limitations": [],
+      "limits": []
+    },
+    {
+      "reference_id": "sidecar-router-processing",
+      "previous_status": "partial",
+      "before": "partial",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Router processing opens with all source outputs from the first example in source order; source processors execute before these starting strings are collected. Accepted human sort processing refreshes every example table and reaches the saved real-store router consumer. Cancel and parent close discard pending processing; empty examples supply empty starting strings.",
+      "exactBehavior": "Router processing opens with all source outputs from the first example in source order; source processors execute before these starting strings are collected. Accepted human sort processing refreshes every example table and reaches the saved real-store router consumer. Cancel and parent close discard pending processing; empty examples supply empty starting strings.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/sidecar_editors.rs",
+          "line": 1293,
+          "commit": "37affafb961b0146f229ff0c706cb8cb5c1a714e",
+          "symbol": "router_test_strings"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/sidecars_window.rs",
+          "line": 758,
+          "commit": "37affafb961b0146f229ff0c706cb8cb5c1a714e",
+          "symbol": "open_router"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/sidecar_editors.rs",
+          "line": 451,
+          "commit": "37affafb961b0146f229ff0c706cb8cb5c1a714e",
+          "symbol": "recorded_router_tables_and_child_strings_use_real_sidecars_and_read_only_media"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 632,
+          "commit": "37affafb961b0146f229ff0c706cb8cb5c1a714e",
+          "symbol": "router_examples_follow_reference_source_tabs_and_processor_children_without_exports"
+        }
+      ],
+      "reference_evidence": {
+        "recorder": "oracle/record_sidecar_testing.py",
+        "fixture": "oracle/fixtures/sidecar_testing.json",
+        "visual_reference": "oracle/fixtures/sidecar_testing.png",
+        "actual_recording": "passed: seven real Qt states, actual source editor _GetExampleTestData and router processor inputs; generated sidecars and synthetic media"
+      },
+      "limitations": [],
+      "limits": []
+    },
+    {
+      "reference_id": "sidecar-router",
+      "previous_status": "partial",
+      "before": "partial",
+      "proposed_status": "partial",
+      "proposedStatus": "partial",
+      "behavior": "Router queues support selected standalone clipboard/PNG import/export, append in queue order, duplicate with old/new selection retained and confirmed deletion. Import direction and permitted source/destination kinds produce exact recorded veto strings before the package enters the draft. All six node kinds, filename converter samples, source JSON formula auxiliary data, processors, note names and timestamp stubs round-trip. Child/question guards prevent concurrent owner mutations; forced owner close cancels descendants and invalidates stale exchange/source/router Apply. Accepted saved routers reach the actual manual-export worker and write the reference sidecar content.",
+      "exactBehavior": "Router queues support selected standalone clipboard/PNG import/export, append in queue order, duplicate with old/new selection retained and confirmed deletion. Import direction and permitted source/destination kinds produce exact recorded veto strings before the package enters the draft. All six node kinds, filename converter samples, source JSON formula auxiliary data, processors, note names and timestamp stubs round-trip. Child/question guards prevent concurrent owner mutations; forced owner close cancels descendants and invalidates stale exchange/source/router Apply. Accepted saved routers reach the actual manual-export worker and write the reference sidecar content.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/src/routers.rs",
+          "line": 121,
+          "commit": "c55c726dc9f7ae91650ba00755299db47701b641",
+          "symbol": "tuple"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/sidecar_editors.rs",
+          "line": 1331,
+          "commit": "2b5015e642d20c1bd83450fe31ac63334735e8aa",
+          "symbol": "validate_router_import"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/sidecars_window.rs",
+          "line": 1167,
+          "commit": "2b5015e642d20c1bd83450fe31ac63334735e8aa",
+          "symbol": "open_routers"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/sidecars_window.rs",
+          "line": 42,
+          "commit": "2b5015e642d20c1bd83450fe31ac63334735e8aa",
+          "symbol": "Slots::cancel"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_interchange_window.rs",
+          "line": 193,
+          "commit": "2b5015e642d20c1bd83450fe31ac63334735e8aa",
+          "symbol": "open_routers"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/tests/routers.rs",
+          "line": 6,
+          "commit": "c55c726dc9f7ae91650ba00755299db47701b641",
+          "symbol": "recorded_router_queues_preserve_editor_fields_and_reference_png"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/sidecar_editors.rs",
+          "line": 20,
+          "commit": "2b5015e642d20c1bd83450fe31ac63334735e8aa",
+          "symbol": "recorded_router_queue_restrictions_veto_wrong_direction_and_sources"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 805,
+          "commit": "2b5015e642d20c1bd83450fe31ac63334735e8aa",
+          "symbol": "router_queue_exchange_is_staged_context_checked_and_reaches_manual_export"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 1024,
+          "commit": "2b5015e642d20c1bd83450fe31ac63334735e8aa",
+          "symbol": "closing_manual_export_discards_its_pending_router_exchange"
+        }
+      ],
+      "reference_evidence": {
+        "recorder": "oracle/record_router_exchange.py",
+        "fixture": "oracle/fixtures/router_exchange.json",
+        "png": "oracle/fixtures/router_exchange.png",
+        "visual_reference": "oracle/fixtures/router_exchange_editor.png",
+        "actual_recording": "passed: real Qt queue controls and clipboard, all six node kinds, exact direction/source warnings, selected duplication, reference PNG decode, v2 upgrade and real generated sidecar write"
+      },
+      "limitations": [
+        "The sidecar-router parent remains partial here: no broad parent/descendant completion is inferred from queue exchange.",
+        "Unsupported mixed packages are rejected atomically rather than appending a permitted subset with a warning.",
+        "PNG exchange uses the existing shared review/path export UI; the separate reference title/description/width export panel is not connected to this owner yet.",
+        "Export-folder query results are still not provided as media examples; existing manual-export/import-folder/filename-tagging examples remain covered.",
+        "Non-stub timestamps and unsupported processors are rejected before staging so unrepresentable data is not silently lost."
+      ],
+      "limits": [
+        "The sidecar-router parent remains partial here: no broad parent/descendant completion is inferred from queue exchange.",
+        "Unsupported mixed packages are rejected atomically rather than appending a permitted subset with a warning.",
+        "PNG exchange uses the existing shared review/path export UI; the separate reference title/description/width export panel is not connected to this owner yet.",
+        "Export-folder query results are still not provided as media examples; existing manual-export/import-folder/filename-tagging examples remain covered.",
+        "Non-stub timestamps and unsupported processors are rejected before staging so unrepresentable data is not silently lost."
+      ]
+    },
+    {
+      "reference_id": "parser-test",
+      "previous_status": "first_pass",
+      "before": "first_pass",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Raw parser/formula test panels copy full documents, paste into the current example without changing context, display exact JSON/HTML descriptions and Python-style JSON formatting, clip displayed Unicode at 500,000 characters while retaining full input, and disable test parsing for MIME-detected fetched media. The HTTP worker inspects actual bytes through MediaTools off-thread, keeps detected MIME per selected unchanged example, clears it after paste/removal and preserves text-only inheritance to recursive children. Real loopback PNG GUI tests assert URL/post_index/custom-variable propagation, parse gates, actual parsed URL output, clipboard failures, selection restoration and stale owner cancellation.",
+      "exactBehavior": "Raw parser/formula test panels copy full documents, paste into the current example without changing context, display exact JSON/HTML descriptions and Python-style JSON formatting, clip displayed Unicode at 500,000 characters while retaining full input, and disable test parsing for MIME-detected fetched media. The HTTP worker inspects actual bytes through MediaTools off-thread, keeps detected MIME per selected unchanged example, clears it after paste/removal and preserves text-only inheritance to recursive children. Real loopback PNG GUI tests assert URL/post_index/custom-variable propagation, parse gates, actual parsed URL output, clipboard failures, selection restoration and stale owner cancellation.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_test_data.rs",
+          "line": 57,
+          "commit": "449c0957e2b5b72dd5f20c527dde2264a707d09e",
+          "symbol": "detect_mime"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_test_data.rs",
+          "line": 69,
+          "commit": "449c0957e2b5b72dd5f20c527dde2264a707d09e",
+          "symbol": "preview"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/formula_window.rs",
+          "line": 207,
+          "commit": "57e9248907ae4cbaf953421192e4d8ffd087cfc6",
+          "symbol": "open"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
+          "line": 446,
+          "commit": "57e9248907ae4cbaf953421192e4d8ffd087cfc6",
+          "symbol": "open_editor"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/parser_test_data.rs",
+          "line": 4,
+          "commit": "449c0957e2b5b72dd5f20c527dde2264a707d09e",
+          "symbol": "recorded_raw_data_previews_match_without_changing_the_parser_document"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/parser_test_data.rs",
+          "line": 44,
+          "commit": "449c0957e2b5b72dd5f20c527dde2264a707d09e",
+          "symbol": "fetched_media_detection_tracks_example_selection_and_clears_on_text_changes"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 1400,
+          "commit": "57e9248907ae4cbaf953421192e4d8ffd087cfc6",
+          "symbol": "raw_content_preview_preserves_clipboard_context_and_detects_fetched_png_bytes"
+        }
+      ],
+      "reference_evidence": {
+        "recorder": "oracle/record_parser_raw_preview.py",
+        "fixture": "oracle/fixtures/parser_raw_preview.json",
+        "visual_reference": "oracle/fixtures/parser_raw_preview.png",
+        "actual_recording": "passed: 13 actual Qt raw preview/clipboard/fetch states; locally generated PNG bytes, Unicode clipping and exact messages/context"
+      },
+      "limitations": [
+        "No new completions counted: these existing test/fetch entries were already first_pass; this slice closes remaining reference behavior gaps and strengthens evidence.",
+        "Clipboard errors use inline Problem loading! presentation and paste feedback persists until the next request, instead of Qt critical dialogs and temporary icon notifications.",
+        "Existing PyJson constraints for duplicate object keys and lone UTF-16 surrogates apply.",
+        "Read-only raw previews use the native layout instead of Qt tabs; post-conversion/separation preview tabs remain outside this slice."
+      ],
+      "limits": [
+        "No new completions counted: these existing test/fetch entries were already first_pass; this slice closes remaining reference behavior gaps and strengthens evidence.",
+        "Clipboard errors use inline Problem loading! presentation and paste feedback persists until the next request, instead of Qt critical dialogs and temporary icon notifications.",
+        "Existing PyJson constraints for duplicate object keys and lone UTF-16 surrogates apply.",
+        "Read-only raw previews use the native layout instead of Qt tabs; post-conversion/separation preview tabs remain outside this slice."
+      ]
+    },
+    {
+      "reference_id": "formula-test",
+      "previous_status": "first_pass",
+      "before": "first_pass",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Raw parser/formula test panels copy full documents, paste into the current example without changing context, display exact JSON/HTML descriptions and Python-style JSON formatting, clip displayed Unicode at 500,000 characters while retaining full input, and disable test parsing for MIME-detected fetched media. The HTTP worker inspects actual bytes through MediaTools off-thread, keeps detected MIME per selected unchanged example, clears it after paste/removal and preserves text-only inheritance to recursive children. Real loopback PNG GUI tests assert URL/post_index/custom-variable propagation, parse gates, actual parsed URL output, clipboard failures, selection restoration and stale owner cancellation.",
+      "exactBehavior": "Raw parser/formula test panels copy full documents, paste into the current example without changing context, display exact JSON/HTML descriptions and Python-style JSON formatting, clip displayed Unicode at 500,000 characters while retaining full input, and disable test parsing for MIME-detected fetched media. The HTTP worker inspects actual bytes through MediaTools off-thread, keeps detected MIME per selected unchanged example, clears it after paste/removal and preserves text-only inheritance to recursive children. Real loopback PNG GUI tests assert URL/post_index/custom-variable propagation, parse gates, actual parsed URL output, clipboard failures, selection restoration and stale owner cancellation.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_test_data.rs",
+          "line": 57,
+          "commit": "449c0957e2b5b72dd5f20c527dde2264a707d09e",
+          "symbol": "detect_mime"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_test_data.rs",
+          "line": 69,
+          "commit": "449c0957e2b5b72dd5f20c527dde2264a707d09e",
+          "symbol": "preview"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/formula_window.rs",
+          "line": 207,
+          "commit": "57e9248907ae4cbaf953421192e4d8ffd087cfc6",
+          "symbol": "open"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
+          "line": 446,
+          "commit": "57e9248907ae4cbaf953421192e4d8ffd087cfc6",
+          "symbol": "open_editor"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/parser_test_data.rs",
+          "line": 4,
+          "commit": "449c0957e2b5b72dd5f20c527dde2264a707d09e",
+          "symbol": "recorded_raw_data_previews_match_without_changing_the_parser_document"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/parser_test_data.rs",
+          "line": 44,
+          "commit": "449c0957e2b5b72dd5f20c527dde2264a707d09e",
+          "symbol": "fetched_media_detection_tracks_example_selection_and_clears_on_text_changes"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 1400,
+          "commit": "57e9248907ae4cbaf953421192e4d8ffd087cfc6",
+          "symbol": "raw_content_preview_preserves_clipboard_context_and_detects_fetched_png_bytes"
+        }
+      ],
+      "reference_evidence": {
+        "recorder": "oracle/record_parser_raw_preview.py",
+        "fixture": "oracle/fixtures/parser_raw_preview.json",
+        "visual_reference": "oracle/fixtures/parser_raw_preview.png",
+        "actual_recording": "passed: 13 actual Qt raw preview/clipboard/fetch states; locally generated PNG bytes, Unicode clipping and exact messages/context"
+      },
+      "limitations": [
+        "No new completions counted: these existing test/fetch entries were already first_pass; this slice closes remaining reference behavior gaps and strengthens evidence.",
+        "Clipboard errors use inline Problem loading! presentation and paste feedback persists until the next request, instead of Qt critical dialogs and temporary icon notifications.",
+        "Existing PyJson constraints for duplicate object keys and lone UTF-16 surrogates apply.",
+        "Read-only raw previews use the native layout instead of Qt tabs; post-conversion/separation preview tabs remain outside this slice."
+      ],
+      "limits": [
+        "No new completions counted: these existing test/fetch entries were already first_pass; this slice closes remaining reference behavior gaps and strengthens evidence.",
+        "Clipboard errors use inline Problem loading! presentation and paste feedback persists until the next request, instead of Qt critical dialogs and temporary icon notifications.",
+        "Existing PyJson constraints for duplicate object keys and lone UTF-16 surrogates apply.",
+        "Read-only raw previews use the native layout instead of Qt tabs; post-conversion/separation preview tabs remain outside this slice."
+      ]
+    }
+  ]
+}

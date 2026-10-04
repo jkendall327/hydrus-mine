@@ -1,0 +1,32 @@
+import { Button, LineEdit, TextEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+export component LoginTestResultWindow inherits Window {
+    title: "login test result";
+    preferred-width: 900px; preferred-height: 650px;
+    background: Theme.window;
+    in property <string> name;
+    in property <string> url;
+    in property <string> body;
+    in property <string> data;
+    in property <string> variables;
+    in property <string> cookies;
+    in property <string> result;
+    in property <bool> copied;
+    callback action(string);
+    callback closed();
+    VerticalLayout { padding: 12px; spacing: 6px;
+        Text { text: "name: " + root.name; color: Theme.text; }
+        HorizontalLayout { Text { text: "url: "; color: Theme.text; vertical-alignment: center; } LineEdit { text: root.url; read-only: true; horizontal-stretch: 1; } }
+        Text { text: "body (if set):"; color: Theme.text; }
+        TextEdit { text: root.body; read-only: true; vertical-stretch: 1; }
+        Text { text: "data:"; color: Theme.text; }
+        TextEdit { text: root.data; read-only: true; vertical-stretch: 2; }
+        HorizontalLayout { alignment: end; Button { text: root.copied ? "Copied!" : "copy data"; clicked => { root.action("copy"); } } }
+        Text { text: "new temp vars:"; color: Theme.text; }
+        TextEdit { text: root.variables; read-only: true; vertical-stretch: 1; }
+        Text { text: "new cookies:"; color: Theme.text; }
+        TextEdit { text: root.cookies; read-only: true; vertical-stretch: 1; }
+        Text { text: "result: " + root.result; color: Theme.text; wrap: word-wrap; }
+        HorizontalLayout { alignment: end; Button { text: "close"; clicked => { root.action("close"); } } }
+    }
+}

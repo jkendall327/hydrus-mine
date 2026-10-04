@@ -37,6 +37,8 @@ pub(crate) struct Hooks {
     pub manage_subscriptions: Rc<dyn Fn()>,
     /// Open URL class or gallery URL generator definition editors.
     pub manage_downloader_definitions: Rc<dyn Fn(bool)>,
+    pub manage_login_scripts: Rc<dyn Fn()>,
+    pub manage_logins: Rc<dyn Fn()>,
     pub manage_downloader_display: Rc<dyn Fn()>,
     /// Open native parser definitions or URL-class links.
     pub manage_parsers: Rc<dyn Fn(bool)>,
@@ -48,7 +50,7 @@ pub(crate) struct Hooks {
     /// Open the "review files to import" window.
     pub import_files: Rc<dyn Fn()>,
     /// Save the open pages as this session, or a new one (asking).
-    pub save_session: Rc<dyn Fn(Option<String>)>,
+    pub save_session: Rc<dyn Fn(Option<String>, crate::session_saving::Scope)>,
     /// The page shown's file (0) or tag (1) domain button's menu: none
     /// for a page without a search.
     pub domain_menu: Rc<dyn Fn(i32) -> Vec<main_menu::Entry>>,
@@ -243,10 +245,16 @@ pub(crate) fn bind(window: &MainWindow, hooks: Hooks) -> Rc<dyn Fn()> {
         let hooks = hooks.clone();
         let show = show.clone();
         move |depth, index, x, y| {
-            let (Ok(depth), Ok(index)) = (usize::try_from(depth), usize::try_from(index)) else {
+            let Ok(depth) = usize::try_from(depth) else {
                 return;
             };
-            let entries = hooks.pages.borrow().tab_menu(depth, index);
+            let entries = if index == -1 {
+                hooks.pages.borrow().tab_space_menu(depth)
+            } else if let Ok(index) = usize::try_from(index) {
+                hooks.pages.borrow().tab_menu(depth, index)
+            } else {
+                return;
+            };
             if !entries.is_empty() {
                 open.borrow_mut().open_popup(entries, x, y);
                 show();
@@ -627,7 +635,35 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
                 }),
             );
         }
-        Command::SaveSession(name) => (hooks.save_session)(name),
+        Command::RefreshTab(key) => {
+            change_pages(&|pages| {
+                pages.refresh_tab_tree(key);
+                Ok(())
+            });
+        }
+        Command::ChooseNotebookPage { parent, before } => {
+            window.invoke_tab_new_page_requested(
+                parent.map_or_else(String::new, |key| key.to_hex()).into(),
+                before.map_or_else(String::new, |key| key.to_hex()).into(),
+            );
+        }
+        Command::SaveSession(name) => (hooks.save_session)(name, crate::session_saving::Scope::All),
+        Command::SaveNotebookSession {
+            key,
+            name,
+            suggested_name,
+        } => {
+            (hooks.save_session)(
+                name,
+                crate::session_saving::Scope::Notebook {
+                    key,
+                    suggested_name,
+                },
+            );
+        }
+        Command::AppendNotebookSession { notebook, name } => {
+            change_pages(&|pages| pages.append_session_to_notebook(notebook, &name));
+        }
         Command::DeleteSession(name) => {
             let store = store.clone();
             let deleted = name.clone();
@@ -698,6 +734,8 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::TagDisplay(application) => (hooks.tag_display)(application),
         Command::TagRelationships(kind) => (hooks.tag_relationships)(kind),
         Command::TagMigrate => (hooks.tag_migrate)(),
+        Command::ManageLoginScripts => (hooks.manage_login_scripts)(),
+        Command::ManageLogins => (hooks.manage_logins)(),
         Command::ManageDownloaderDisplay => (hooks.manage_downloader_display)(),
         Command::ManageDownloaderDefinitions(classes) => {
             (hooks.manage_downloader_definitions)(classes);

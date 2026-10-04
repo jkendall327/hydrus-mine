@@ -8,6 +8,7 @@ license.workspace = true
 
 [dependencies]
 hydrus-core.workspace = true
+hydrus-parse.workspace = true
 hydrus-store.workspace = true
 thiserror.workspace = true
 tokio.workspace = true
@@ -23,6 +24,9 @@ chardetng = "1"
 httpdate = "1"
 
 [dev-dependencies]
+hydrus-legacy.workspace = true
+hydrus-testkit.workspace = true
+serde_json.workspace = true
 axum.workspace = true
 tempfile.workspace = true
 

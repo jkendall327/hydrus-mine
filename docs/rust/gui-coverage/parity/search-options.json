@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "agent": "search-options",
+  "baseline_git_head": "d50df26b",
+  "claims": [
+    {
+      "id": "audit-options-file-search-file-search-autocomplete-start-new-search-pages-in-searching-immediately",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Checkbox defaults true; Apply persists the initial synchronization state for newly created search pages, including the standalone constructor and notebook/session page factory. Existing pages retain their pause state. Paused searches stage predicates until resumed, then execute the query.",
+      "limits": [],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui/src/pages.rs::new_search_page_on; crates/hydrus-gui/src/page.rs::SearchPage::new/set_synchronised",
+        "crates/hydrus-store/src/settings.rs::FileSearchSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::file_search_boolean_controls_replay_reference_defaults_and_staged_edits",
+        "crates/hydrus-gui/tests/gui/options_window.rs::search_defaults_apply_to_new_pages_and_the_real_autocomplete",
+        "crates/hydrus-store/src/import/decode.rs::file_search_defaults_convert_user_values"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_file_search_defaults.py",
+        "fixture": "oracle/fixtures/file_search_defaults.json",
+        "executed": true
+      },
+      "implementationCommit": "d9dd265d19ba01011623471e12a15890c5f3b713"
+    },
+    {
+      "id": "audit-options-file-search-file-search-autocomplete-show-system-everything",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Checkbox defaults true; Apply governs whether read autocomplete offers system:everything in local and all-known-file domains. Counts and remaining predicates are preserved; users can still enter system:everything manually.",
+      "limits": [
+        "Native read autocomplete has no forced-system-everything caller; the reference forced override is recorded but is outside this checkbox editing path."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui-model/src/autocomplete.rs::Autocomplete::system_predicates",
+        "crates/hydrus-store/src/settings.rs::FileSearchSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::file_search_boolean_controls_replay_reference_defaults_and_staged_edits",
+        "crates/hydrus-gui/tests/gui/options_window.rs::search_defaults_apply_to_new_pages_and_the_real_autocomplete",
+        "crates/hydrus-store/src/import/decode.rs::file_search_defaults_convert_user_values"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_file_search_defaults.py",
+        "fixture": "oracle/fixtures/file_search_defaults.json",
+        "executed": true
+      },
+      "implementationCommit": "d9dd265d19ba01011623471e12a15890c5f3b713"
+    },
+    {
+      "id": "audit-options-file-search-file-search-autocomplete-default-fallback-local-file-search-location",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Transactional current-importable-domain selector supports empty/single/multiple locations. Options Apply persists, Cancel invalidates child callbacks. Blank pages and new notebooks use the default; all-known-files\u2192all-known-tags falls back to it. Missing domains are removed; empty contexts resolve to combined local file domains.",
+      "limits": [
+        "Native button opens the importable-domain tick selector directly; the reference additionally offers a menu of single-domain shortcuts before its multiple-location editor."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::Kind::LocalLocation/pages/Editor::set_local_location",
+        "crates/hydrus-gui/src/options_window.rs::open",
+        "crates/hydrus-gui/src/locations_window.rs::open_importable/cancel",
+        "crates/hydrus-store/src/settings.rs::SearchDefaults::resolved_local_location",
+        "crates/hydrus-gui/src/pages.rs::new_search_page",
+        "crates/hydrus-gui/src/page.rs::SearchPage::new/choose_tag_service"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::local_location_option_matches_reference_and_keeps_child_changes_staged",
+        "crates/hydrus-gui/tests/gui/options_window.rs::default_local_location_child_draft_drives_blank_pages_and_tag_fallback",
+        "crates/hydrus-store/src/import/decode.rs::the_search_defaults_convert"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_default_search_location.py",
+        "fixture": "oracle/fixtures/default_search_location.json",
+        "executed": true
+      },
+      "implementationCommit": "6f73f6253918b7f52312b56555e3e9415f95aa3b"
+    },
+    {
+      "id": "audit-options-file-search-file-search-autocomplete-active-search-predicates-list-height",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact integer editor defaults6, range1..128. New read autocomplete captures the configured active-predicate ideal height; active predicates render above the search input, reserve the selected number of native text rows and scroll overflow.",
+      "limits": [
+        "Native text rows use desktop22px spacing; Qt uses its platform font metric. Float overlay clips to available main-window height. Native result UI has the port's existing result list rather than the reference's extra autocomplete notebook tabs."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::FileSearchSettings",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui-model/src/autocomplete.rs::Autocomplete::new/presentation_settings",
+        "crates/hydrus-gui/src/lib.rs::refresh",
+        "crates/hydrus-gui/ui/main.slint::MainWindow/search-anchor/active-predicate-list/autocomplete-overlay-visible",
+        "crates/hydrus-gui/ui/read_suggestions.slint::ReadSuggestions"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::read_presentation_controls_match_reference_ranges_and_staged_values",
+        "crates/hydrus-gui/tests/gui/options_window.rs::read_list_sizes_and_float_policy_reach_rendered_new_pages",
+        "crates/hydrus-store/src/import/decode.rs::file_search_defaults_convert_user_values"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_file_search_presentation.py",
+        "fixture": "oracle/fixtures/file_search_presentation.json",
+        "executed": true
+      },
+      "implementationCommit": "d7a650c67e5cf80135064ec845aead619d2b6bbc",
+      "repairCommits": [
+        "d7a5a364"
+      ]
+    },
+    {
+      "id": "audit-options-file-search-file-search-autocomplete-autocomplete-list-height",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact integer editor defaults22, range1..128. New read autocomplete captures the configured results ideal height for both embedded and floating lists, with shared highlighted-item scrolling and selection.",
+      "limits": [
+        "Native text rows use desktop22px spacing; Qt uses its platform font metric. Float overlay clips to available main-window height. Native result UI has the port's existing result list rather than the reference's extra autocomplete notebook tabs."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::FileSearchSettings",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui-model/src/autocomplete.rs::Autocomplete::new/presentation_settings",
+        "crates/hydrus-gui/src/lib.rs::refresh",
+        "crates/hydrus-gui/ui/main.slint::MainWindow/search-anchor/active-predicate-list/autocomplete-overlay-visible",
+        "crates/hydrus-gui/ui/read_suggestions.slint::ReadSuggestions"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::read_presentation_controls_match_reference_ranges_and_staged_values",
+        "crates/hydrus-gui/tests/gui/options_window.rs::read_list_sizes_and_float_policy_reach_rendered_new_pages",
+        "crates/hydrus-store/src/import/decode.rs::file_search_defaults_convert_user_values"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_file_search_presentation.py",
+        "fixture": "oracle/fixtures/file_search_presentation.json",
+        "executed": true
+      },
+      "implementationCommit": "d7a650c67e5cf80135064ec845aead619d2b6bbc",
+      "repairCommits": [
+        "d7a5a364"
+      ]
+    },
+    {
+      "id": "audit-options-file-search-file-search-autocomplete-autocomplete-dropdown-floats-over-file-search-pages",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact checkbox defaults true. New pages capture the float policy; floating results overlay the page anchored below its search input while focused and hide for inactive input, modal question/menu/chooser. Embedded mode reserves sidebar layout space. Existing pages retain captured policy.",
+      "limits": [
+        "Native text rows use desktop22px spacing; Qt uses its platform font metric. Float overlay clips to available main-window height. Native result UI has the port's existing result list rather than the reference's extra autocomplete notebook tabs."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::FileSearchSettings",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui-model/src/autocomplete.rs::Autocomplete::new/presentation_settings",
+        "crates/hydrus-gui/src/lib.rs::refresh",
+        "crates/hydrus-gui/ui/main.slint::MainWindow/search-anchor/active-predicate-list/autocomplete-overlay-visible",
+        "crates/hydrus-gui/ui/read_suggestions.slint::ReadSuggestions"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::read_presentation_controls_match_reference_ranges_and_staged_values",
+        "crates/hydrus-gui/tests/gui/options_window.rs::read_list_sizes_and_float_policy_reach_rendered_new_pages",
+        "crates/hydrus-store/src/import/decode.rs::file_search_defaults_convert_user_values"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_file_search_presentation.py",
+        "fixture": "oracle/fixtures/file_search_presentation.json",
+        "executed": true
+      },
+      "implementationCommit": "d7a650c67e5cf80135064ec845aead619d2b6bbc",
+      "repairCommits": [
+        "d7a5a364"
+      ]
+    },
+    {
+      "id": "audit-options-file-search-file-search-implicit-system-limit-for-all-searches",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Noneable integer control defaults no limit, accepts1..100000000 and persists on Options Apply. Shared search execution uses the implicit limit only without an explicit top-level system:limit. Explicit limits override even when larger than the implicit value, preserving the executor's minimum-of-multiple-explicit-limits behavior.",
+      "limits": [
+        "Search execution retains existing executor-specific predicate conjunction behavior; this slice changes only effective limits and sort-refresh dispatch."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::FileSearchSettings",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-search/src/exec/mod.rs::search_with_strategy"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::file_search_limit_controls_stage_and_clamp_reference_values",
+        "crates/hydrus-gui/tests/gui/options_window.rs::implicit_limit_options_reach_queries_and_limited_sort_refresh",
+        "crates/hydrus-store/src/import/decode.rs::file_search_defaults_convert_user_values",
+        "crates/hydrus-search/tests/file_search_options.rs::implicit_limit_and_explicit_override_match_reference_database_queries"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_file_search_limits.py",
+        "fixture": "oracle/fixtures/file_search_limits.json",
+        "executed": true
+      },
+      "implementationCommit": "56eae057895bd6e09db1dcf1c4b1d99ef45941dd"
+    },
+    {
+      "id": "audit-options-file-search-file-search-if-explicit-system-limit-then-refresh-search-when-file-sort-changes",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Checkbox defaults true. Applied value is read on each page sort type/order change. Explicitly limited searches rerun only when synchronized, unlocked, a normal search page, local file context and reference-supported database sort. Paused/disabled/implicit-only/all-known/unsupported sorts only reorder the currently shown subset.",
+      "limits": [
+        "Search execution retains existing executor-specific predicate conjunction behavior; this slice changes only effective limits and sort-refresh dispatch."
+      ],
+      "source": [
+        "crates/hydrus-store/src/settings.rs::FileSearchSettings",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui/src/page.rs::SearchPage::sort_changed_search_or_resort",
+        "crates/hydrus-search/src/exec/sort.rs::SortBy::can_sort_at_database_level"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::file_search_limit_controls_stage_and_clamp_reference_values",
+        "crates/hydrus-gui/tests/gui/options_window.rs::implicit_limit_options_reach_queries_and_limited_sort_refresh",
+        "crates/hydrus-store/src/import/decode.rs::file_search_defaults_convert_user_values",
+        "crates/hydrus-search/tests/file_search_options.rs::database_sort_eligibility_matches_each_reference_system_sort_and_location"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_file_search_limits.py",
+        "fixture": "oracle/fixtures/file_search_limits.json",
+        "executed": true
+      },
+      "implementationCommit": "56eae057895bd6e09db1dcf1c4b1d99ef45941dd"
+    }
+  ],
+  "summary": {
+    "concrete_existing_reference_controls_completed": 8,
+    "parent_or_alias_completions": 0
+  },
+  "validation": "Formatting, diff checks and Python compile pass. Rust validation delegated to root GitHub CI; no local Cargo builds."
+}

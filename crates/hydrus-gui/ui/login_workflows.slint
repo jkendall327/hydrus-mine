@@ -1,0 +1,89 @@
+import { Button, LineEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { ListTable, TableRow } from "list_table.slint";
+export component LoginScriptsWindow inherits Window {
+    title: "manage login scripts";
+    preferred-width: 800px;
+    preferred-height: 520px;
+    background: Theme.window;
+    in property <[TableRow]> rows;
+    in property <bool> one-selected;
+    in property <bool> any-selected;
+    in property <bool> child-open;
+    in property <bool> deleting;
+    in property <string> error;
+    callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    callback action(string);
+    callback closed();
+    VerticalLayout { padding: 12px; spacing: 8px;
+        Text { text: "This system is very old and does not work well! Better to use a program like Hydrus Companion to sync cookies these days!"; color: Theme.error; wrap: word-wrap; }
+        ListTable { vertical-stretch: 1; columns: [{title: "name", width: 260px}, {title: "example domains", width: 440px, stretch: true}]; rows: root.rows; row-clicked(i, ctrl, shift) => { if !root.child-open && !root.deleting { root.row-clicked(i, ctrl, shift); } } row-activated(i) => { if !root.child-open && !root.deleting { root.row-activated(i); } } }
+        HorizontalLayout { spacing: 6px;
+            Button { text: "add"; enabled: !root.child-open && !root.deleting; clicked => { root.action("add"); } }
+            Button { text: "edit"; enabled: root.one-selected && !root.child-open && !root.deleting; clicked => { root.action("edit"); } }
+            Button { text: "delete"; enabled: root.any-selected && !root.child-open && !root.deleting; clicked => { root.action("delete"); } }
+            Button { text: "import"; enabled: !root.child-open && !root.deleting; clicked => { root.action("import"); } }
+            Button { text: "export selected"; enabled: root.any-selected && !root.child-open && !root.deleting; clicked => { root.action("export"); } }
+        }
+        if root.deleting: HorizontalLayout { spacing: 6px; Text { text: "Remove all selected?"; color: Theme.text; vertical-alignment: center; } Button { text: "yes"; clicked => { root.action("confirm-delete"); } } Button { text: "no"; clicked => { root.action("back"); } } }
+        if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+        HorizontalLayout { alignment: end; spacing: 6px; Button { text: "apply"; enabled: !root.child-open && !root.deleting; clicked => { root.action("apply"); } } Button { text: "cancel"; clicked => { root.action("cancel"); } } }
+    }
+}
+export component LoginScriptWindow inherits Window {
+    title: "edit login script";
+    preferred-width: 850px;
+    preferred-height: 820px;
+    background: Theme.window;
+    in-out property <string> name;
+    in property <[TableRow]> credentials;
+    in property <[TableRow]> steps;
+    in property <[TableRow]> cookies;
+    in property <[TableRow]> examples;
+    in property <bool> deleting;
+    in property <[TableRow]> results;
+    in property <bool> result-selected;
+    in property <bool> running;
+    in-out property <string> test-domain;
+    in property <string> progress;
+    in property <string> final-result;
+    callback result-clicked(int);
+    in property <bool> step-selected;
+    in property <bool> step-up;
+    in property <bool> step-down;
+    in property <bool> one-credential;
+    in property <bool> any-credential;
+    in property <bool> child-open;
+    in property <string> question;
+    in property <string> error;
+    in property <string> check-result;
+    callback step-clicked(int);
+    callback credential-clicked(int, bool, bool);
+    callback credential-activated(int);
+    callback action(string);
+    callback closed();
+    VerticalLayout { padding: 12px; spacing: 6px;
+        HorizontalLayout { Text { text: "name: "; color: Theme.text; vertical-alignment: center; } LineEdit { text <=> root.name; enabled: !root.running && !root.child-open && root.question == ""; } }
+        Text { text: "credential definitions"; color: Theme.text; font-weight: 700; }
+        ListTable { vertical-stretch: 1; columns: [{title: "name", width: 180px}, {title: "input type", width: 140px}, {title: "permitted input", width: 350px, stretch: true}]; rows: root.credentials; row-clicked(i, ctrl, shift) => { if !root.child-open && root.question == "" { root.credential-clicked(i, ctrl, shift); } } row-activated(i) => { if !root.child-open && root.question == "" { root.credential-activated(i); } } }
+        HorizontalLayout { spacing: 6px; Button { text: "add"; enabled: !root.running && !root.child-open && root.question == ""; clicked => { root.action("add-credential"); } } Button { text: "edit"; enabled: !root.running && root.one-credential && !root.child-open && root.question == ""; clicked => { root.action("edit-credential"); } } Button { text: "delete"; enabled: !root.running && root.any-credential && !root.child-open && root.question == ""; clicked => { root.action("delete-credential"); } } Button { text: "check credentials"; enabled: !root.running && !root.child-open && root.question == ""; clicked => { root.action("check-credentials"); } } }
+        Text { text: "login steps"; color: Theme.text; font-weight: 700; }
+        ListTable { vertical-stretch: 1; columns: [{title: "step", width: 700px, stretch: true}]; rows: root.steps; row-clicked(i,c,s) => { root.step-clicked(i); } row-activated(i) => { root.step-clicked(i); root.action("edit-step"); } }
+        HorizontalLayout { spacing: 6px; Button { text: "add"; enabled: !root.running && !root.child-open && root.question == ""; clicked => { root.action("add-step"); } } Button { text: "edit"; enabled: !root.running && root.step-selected && !root.child-open && root.question == ""; clicked => { root.action("edit-step"); } } Button { text: "delete"; enabled: !root.running && root.step-selected && !root.child-open && root.question == ""; clicked => { root.action("delete-step"); } } Button { text: "up"; enabled: !root.running && root.step-up && !root.child-open && root.question == ""; clicked => { root.action("step-up"); } } Button { text: "down"; enabled: !root.running && root.step-down && !root.child-open && root.question == ""; clicked => { root.action("step-down"); } } }
+        Text { text: "cookies required to consider session logged in"; color: Theme.text; font-weight: 700; }
+        ListTable { vertical-stretch: 1; columns: [{title: "cookie name", width: 280px}, {title: "permitted value", width: 400px, stretch: true}]; rows: root.cookies; }
+        Button { text: "edit required cookies"; enabled: !root.running && !root.child-open && root.question == ""; clicked => { root.action("cookies"); } }
+        Text { text: "example domains"; color: Theme.text; font-weight: 700; }
+        ListTable { vertical-stretch: 1; columns: [{title: "domain", width: 220px}, {title: "access", width: 120px}, {title: "description", width: 400px, stretch: true}]; rows: root.examples; }
+        HorizontalLayout { spacing: 6px; Text { text: "test domain: "; color: Theme.text; vertical-alignment: center; } LineEdit { text <=> root.test-domain; enabled: !root.running && !root.child-open && root.question == ""; } Button { text: "run test"; enabled: !root.running && !root.child-open && root.question == ""; clicked => { root.action("run-test"); } } Button { text: "cancel test"; enabled: root.running; clicked => { root.action("cancel-test"); } } }
+        if root.progress != "": Text { text: root.progress; color: Theme.text; wrap: word-wrap; }
+        ListTable { vertical-stretch: 1; columns: [{title: "name", width: 200px}, {title: "url", width: 350px, stretch: true}, {title: "result", width: 230px}]; rows: root.results; row-clicked(i,c,s) => { root.result-clicked(i); } row-activated(i) => { root.result-clicked(i); root.action("review-result"); } }
+        Button { text: "review test result"; enabled: root.result-selected && !root.child-open && root.question == ""; clicked => { root.action("review-result"); } }
+        if root.final-result != "": Text { text: root.final-result; color: Theme.text; wrap: word-wrap; }
+        if root.check-result != "": Text { text: root.check-result; color: Theme.text; wrap: word-wrap; }
+        if root.question != "": VerticalLayout { spacing: 4px; Text { text: root.question; color: Theme.text; wrap: word-wrap; } HorizontalLayout { alignment: end; spacing: 6px; Button { text: root.deleting ? "yes" : "ok as invalid"; clicked => { root.action("confirm"); } } Button { text: root.deleting ? "no" : "go back"; clicked => { root.action("back"); } } } }
+        if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+        HorizontalLayout { alignment: end; spacing: 6px; Button { text: "apply"; enabled: !root.running && !root.child-open && root.question == ""; clicked => { root.action("apply"); } } Button { text: "cancel"; clicked => { root.action("cancel"); } } }
+    }
+}

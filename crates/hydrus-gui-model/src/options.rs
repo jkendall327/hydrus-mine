@@ -29,9 +29,10 @@ use hydrus_store::regex_favourites::RegexFavourites;
 use hydrus_store::session_backups::SessionBackupSettings;
 use hydrus_store::sessions::NotebookSettings;
 use hydrus_store::settings::{
-    AdvancedMode, ExportSettings, FavouriteTags, FileHandlingSettings, FileViewingStatistics,
-    FolderSettings, GuiSettings, NotebookCreationSettings, OptionsPreferences, PageSettings,
-    SearchDefaults, TagAutocompleteTabs, ThumbnailLayout,
+    AdvancedMode, ExportSettings, FavouriteTags, FileHandlingSettings, FileSearchSettings,
+    FileViewingStatistics, FolderSettings, GuiSettings, NotebookCreationSettings,
+    OptionsPreferences, PageSettings, SearchDefaults, TagAutocompleteTabs, ThumbnailLayout,
+    ViewerCanvasSettings, ViewerFocusSettings, ViewerHoverSettings, ViewerPointerSettings,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::tag_editing::TagEditingSettings;
@@ -83,17 +84,20 @@ settings! {
     folders: FolderSettings,
     gallery: GalleryDefaults,
     gui: GuiSettings,
+    gui_sessions: hydrus_store::settings::GuiSessionSettings,
     info_line: InfoLineSettings,
     media_viewer: MediaViewerSettings,
     network: NetworkSettings,
     notebooks: NotebookSettings,
     notebook_creation: NotebookCreationSettings,
+    page_insertion: hydrus_store::settings::PageInsertion,
     options_preferences: OptionsPreferences,
     page_names: PageNameSettings,
     page_settings: PageSettings,
     regex_favourites: RegexFavourites => hydrus_store::regex_favourites::load,
     session_backups: SessionBackupSettings,
     search_defaults: SearchDefaults,
+    file_search: FileSearchSettings,
     tag_editing: TagEditingSettings,
     tag_autocomplete_tabs: TagAutocompleteTabs,
     favourite_tags: FavouriteTags,
@@ -107,6 +111,10 @@ settings! {
     trash: TrashSettings,
     url_classes: UrlClassSettings,
     windows: WindowSettings,
+    viewer_canvas: ViewerCanvasSettings,
+    viewer_hovers: ViewerHoverSettings,
+    viewer_pointer: ViewerPointerSettings,
+    viewer_focus: ViewerFocusSettings,
 }
 
 /// An option's value as its control holds it.
@@ -120,6 +128,7 @@ pub enum Value {
     Float(String),
     /// The index of the item chosen.
     Choice(usize),
+    SavedSession(Option<String>),
     Text(String),
     /// Text, or none (the reference's `NoneableTextCtrl`); the text is
     /// kept while none, as its text box keeps it.
@@ -145,6 +154,7 @@ pub enum Value {
     /// Shared favourite tags, staged until the parent options dialog applies.
     FavouriteTags(FavouriteTags),
     TagService(hydrus_core::ServiceKey),
+    Location(hydrus_core::search::context::LocationContext),
 }
 
 /// What kind of control an option has.
@@ -168,6 +178,8 @@ pub enum Kind {
         max: f64,
     },
     Choice(&'static [&'static str]),
+    /// Named GUI sessions plus the blank-page startup choice.
+    SavedSession,
     Text,
     NoneableText {
         none_phrase: &'static str,
@@ -196,6 +208,8 @@ pub enum Kind {
     Checker,
     /// A button opening the transactional favourites list editor.
     RegexFavourites,
+    /// Importable current file domains, edited in a child selector.
+    LocalLocation,
     /// A detached tag list editor sharing write autocomplete.
     FavouriteTags,
     /// Real tag services, optionally including all known tags.
@@ -907,6 +921,25 @@ fn signed(n: Option<u64>) -> Option<i64> {
     n.map(|n| i64::try_from(n).unwrap_or(i64::MAX))
 }
 
+/// Choice order from GUISessionsPanel: blank first, ensure last session exists.
+pub fn session_choices(store: &hydrus_store::Store) -> Vec<(Option<String>, String)> {
+    let mut names = store
+        .read(hydrus_store::sessions::names)
+        .unwrap_or_default()
+        .into_iter()
+        .map(|(name, _)| name)
+        .collect::<Vec<_>>();
+    if !names
+        .iter()
+        .any(|name| name == hydrus_store::sessions::LAST_SESSION)
+    {
+        names.insert(0, hydrus_store::sessions::LAST_SESSION.into());
+    }
+    let mut choices = vec![(None, "just a blank page".into())];
+    choices.extend(names.into_iter().map(|name| (Some(name.clone()), name)));
+    choices
+}
+
 fn unsigned(n: Option<i64>) -> Option<u64> {
     n.map(|n| u64::try_from(n).unwrap_or(0))
 }
@@ -1281,16 +1314,87 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         ),
         page(
             "file search",
-            vec![boxed(
-                "file search autocomplete",
-                vec![tag_service(
-                    "Default tag service in search pages:",
-                    true,
-                    |settings| settings.search_defaults.tag_service.clone(),
-                    |settings, service| settings.search_defaults.tag_service = service,
-                    |_| true,
-                )],
-            )],
+            vec![
+                boxed(
+                    "file search autocomplete",
+                    vec![
+                        int(
+                            "Active Search Predicates list height:",
+                            (1, 128),
+                            |settings| i64::from(settings.file_search.active_predicate_rows),
+                            |settings, value| {
+                                settings.file_search.active_predicate_rows = value as u32;
+                            },
+                        ),
+                        opt(
+                            "Default/Fallback local file search location:",
+                            Kind::LocalLocation,
+                            Rc::new(|settings| {
+                                Value::Location(settings.search_defaults.local_location.clone())
+                            }),
+                            Rc::new(|settings, value| match value {
+                                Value::Location(location) => {
+                                    settings.search_defaults.local_location = location.clone();
+                                    Ok(())
+                                }
+                                _ => Err(wrong("Default/Fallback local file search location:")),
+                            }),
+                        ),
+                        tag_service(
+                            "Default tag service in search pages:",
+                            true,
+                            |settings| settings.search_defaults.tag_service.clone(),
+                            |settings, service| settings.search_defaults.tag_service = service,
+                            |_| true,
+                        ),
+                        check(
+                            "Autocomplete dropdown floats over file search pages:",
+                            |settings| settings.file_search.float_autocomplete,
+                            |settings, value| settings.file_search.float_autocomplete = value,
+                        ),
+                        int(
+                            "Autocomplete list height:",
+                            (1, 128),
+                            |settings| i64::from(settings.file_search.autocomplete_rows),
+                            |settings, value| settings.file_search.autocomplete_rows = value as u32,
+                        ),
+                        check(
+                            "Start new search pages in 'searching immediately':",
+                            |settings| settings.file_search.search_immediately,
+                            |settings, value| settings.file_search.search_immediately = value,
+                        ),
+                        check(
+                            "Show system:everything:",
+                            |settings| settings.file_search.show_system_everything,
+                            |settings, value| settings.file_search.show_system_everything = value,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "file search",
+                    vec![
+                        noneable(
+                            "Implicit system:limit for all searches: ",
+                            none("no limit", 10_000, (1, 100_000_000), None),
+                            |settings| {
+                                settings
+                                    .file_search
+                                    .implicit_limit
+                                    .map(|value| value as i64)
+                            },
+                            |settings, value| {
+                                settings.file_search.implicit_limit =
+                                    value.map(|value| value as u64);
+                            },
+                        ),
+                        check(
+                            "If explicit system:limit, then refresh search when file sort changes: ",
+                            |settings| settings.file_search.refresh_limited_sort,
+                            |settings, value| settings.file_search.refresh_limited_sort = value,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "file sort/collect",
@@ -1448,6 +1552,28 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     "opening and closing",
                     vec![
                         choice(
+                            "Put new page tabs on: ",
+                            &[
+                                "the far left",
+                                "left of current page tab",
+                                "right of current page tab",
+                                "the far right",
+                            ],
+                            |s| match s.page_insertion {
+                                hydrus_store::settings::PageInsertion::FarLeft => 0,
+                                hydrus_store::settings::PageInsertion::LeftOfCurrent => 1,
+                                hydrus_store::settings::PageInsertion::RightOfCurrent => 2,
+                                hydrus_store::settings::PageInsertion::FarRight => 3,
+                            },
+                            |s, value| {
+                                s.page_insertion =
+                                    hydrus_store::settings::PageInsertion::from_code(
+                                        i64::try_from(value).unwrap_or(3),
+                                    )
+                                    .unwrap_or_default();
+                            },
+                        ),
+                        choice(
                             "When closing the current tab, move focus: ",
                             &[
                                 "left of the closed page tab",
@@ -1514,12 +1640,44 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             "gui sessions",
             vec![boxed(
                 "sessions",
-                vec![int(
-                    "Number of session backups to keep: ",
-                    (1, 32),
-                    |s| s.session_backups.keep as i64,
-                    |s, value| s.session_backups.keep = value as usize,
-                )],
+                vec![
+                    opt(
+                        "Default session on startup: ",
+                        Kind::SavedSession,
+                        Rc::new(|s| Value::SavedSession(s.gui_sessions.startup.clone())),
+                        Rc::new(|s, value| match value {
+                            Value::SavedSession(name) => {
+                                s.gui_sessions.startup.clone_from(name);
+                                Ok(())
+                            }
+                            _ => Err(wrong("Default session on startup: ")),
+                        }),
+                    ),
+                    int(
+                        "If 'last session' above, autosave it how often (minutes)?",
+                        (1, 1440),
+                        |s| i64::from(s.gui_sessions.autosave_minutes),
+                        |s, value| {
+                            s.gui_sessions.autosave_minutes = u16::try_from(value).unwrap_or(5);
+                        },
+                    ),
+                    check(
+                        "If 'last session' above, only autosave during idle time?",
+                        |s| s.gui_sessions.only_during_idle,
+                        |s, value| s.gui_sessions.only_during_idle = value,
+                    ),
+                    int(
+                        "Number of session backups to keep: ",
+                        (1, 32),
+                        |s| s.session_backups.keep as i64,
+                        |s, value| s.session_backups.keep = value as usize,
+                    ),
+                    check(
+                        "Show warning popup if session size exceeds 10,000,000: ",
+                        |s| s.gui_sessions.warn_large_session,
+                        |s, value| s.gui_sessions.warn_large_session = value,
+                    ),
+                ],
             )],
         ),
         page(
@@ -1642,119 +1800,225 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             },
                             |s, i| s.media_viewer.default_zoom_type = ZOOM_TYPE_ORDER[i],
                         ),
+                        check(
+                            "Re-center media on window resize:",
+                            |settings| settings.viewer_canvas.recenter_on_resize,
+                            |settings, value| settings.viewer_canvas.recenter_on_resize = value,
+                        ),
                     ],
                 ),
                 boxed(
                     "transparency",
-                    vec![choice(
-                        "Consider a file as \"having transparency\" when:",
-                        TRANSPARENCY,
-                        |s| {
-                            2_usize.saturating_sub(usize::from(
-                                s.file_handling.transparency_strictness,
-                            ))
-                        },
-                        |s, i| s.file_handling.transparency_strictness = 2 - i.min(2) as u8,
-                    )],
+                    vec![
+                        choice(
+                            "Consider a file as \"having transparency\" when:",
+                            TRANSPARENCY,
+                            |s| {
+                                2_usize.saturating_sub(usize::from(
+                                    s.file_handling.transparency_strictness,
+                                ))
+                            },
+                            |s, i| s.file_handling.transparency_strictness = 2 - i.min(2) as u8,
+                        ),
+                        check(
+                            "Draw image transparency as checkerboard:",
+                            |settings| settings.viewer_canvas.transparency_checkerboard,
+                            |settings, value| {
+                                settings.viewer_canvas.transparency_checkerboard = value;
+                            },
+                        ),
+                        check(
+                            "--Instead of checkerboard, use a bright greenscreen:",
+                            |settings| settings.viewer_canvas.transparency_greenscreen,
+                            |settings, value| {
+                                settings.viewer_canvas.transparency_greenscreen = value;
+                            },
+                        ),
+                    ],
                 ),
             ],
         ),
         page(
             "media viewer",
-            vec![boxed(
-                "slideshows",
-                vec![
-                    text(
-                        "Slideshow durations:",
-                        |s| numbers_text(&s.slideshow.durations),
-                        |s, t| {
-                            // (none above zero: left as they were)
-                            let durations = parse_numbers(t, "slideshow durations")?;
-                            if !durations.is_empty() {
-                                s.slideshow.durations = durations;
-                            }
-                            Ok(())
-                        },
-                    ),
-                    check(
-                        "Always play media once through before moving on:",
-                        |s| s.slideshow.once_through,
-                        |s, v| s.slideshow.once_through = v,
-                    ),
-                    noneable(
-                        "Slideshow short-media skip seconds threshold:",
-                        none("do not use", 10, (1, 86400), Some("s")),
-                        |s| s.slideshow.short_loop_seconds,
-                        |s, v| s.slideshow.short_loop_seconds = v,
-                    ),
-                    noneable(
-                        "Slideshow short-media skip percentage threshold:",
-                        none("do not use", 20, (1, 99), Some("%")),
-                        |s| s.slideshow.short_loop_percentage,
-                        |s, v| s.slideshow.short_loop_percentage = v,
-                    ),
-                    noneable(
-                        "Slideshow shorter-media cutoff percentage threshold:",
-                        none("do not use", 75, (1, 99), Some("%")),
-                        |s| s.slideshow.short_cutoff_percentage,
-                        |s, v| s.slideshow.short_cutoff_percentage = v,
-                    ),
-                    noneable(
-                        "Slideshow long-media allowed delay percentage threshold:",
-                        none("do not use", 50, (1, 500), Some("%")),
-                        |s| s.slideshow.long_overspill_percentage,
-                        |s, v| s.slideshow.long_overspill_percentage = v,
-                    ),
-                ],
-            )],
+            vec![
+                boxed(
+                    "mouse behaviour",
+                    vec![
+                        check(
+                            "Do not allow mouse media drag-panning when the media has duration:",
+                            |settings| settings.viewer_pointer.disallow_duration_drag,
+                            |settings, value| {
+                                settings.viewer_pointer.disallow_duration_drag = value;
+                            },
+                        ),
+                        check(
+                            "Hide mouse cursor during media viewer drags:",
+                            |settings| settings.viewer_pointer.hide_during_drag,
+                            |settings, value| settings.viewer_pointer.hide_during_drag = value,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "animation/audio seek bar",
+                    vec![
+                        int(
+                            "Seek bar height:",
+                            (1, 255),
+                            |settings| i64::from(settings.viewer_canvas.seek_height),
+                            |settings, value| settings.viewer_canvas.seek_height = value as u32,
+                        ),
+                        noneable(
+                            "Seek bar height when mouse away:",
+                            none("no, hide it completely", 5, (1, 255), Some("px")),
+                            |settings| settings.viewer_canvas.seek_hidden_height.map(i64::from),
+                            |settings, value| {
+                                settings.viewer_canvas.seek_hidden_height =
+                                    value.map(|height| height as u32);
+                            },
+                        ),
+                        check(
+                            "Seek bar full-height pop-in requires window focus:",
+                            |settings| settings.viewer_focus.seek_requires_focus,
+                            |settings, value| settings.viewer_focus.seek_requires_focus = value,
+                        ),
+                        int(
+                            "Seek bar nub width:",
+                            (1, 63),
+                            |settings| i64::from(settings.viewer_canvas.seek_nub_width),
+                            |settings, value| settings.viewer_canvas.seek_nub_width = value as u32,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "slideshows",
+                    vec![
+                        text(
+                            "Slideshow durations:",
+                            |s| numbers_text(&s.slideshow.durations),
+                            |s, t| {
+                                // (none above zero: left as they were)
+                                let durations = parse_numbers(t, "slideshow durations")?;
+                                if !durations.is_empty() {
+                                    s.slideshow.durations = durations;
+                                }
+                                Ok(())
+                            },
+                        ),
+                        check(
+                            "Always play media once through before moving on:",
+                            |s| s.slideshow.once_through,
+                            |s, v| s.slideshow.once_through = v,
+                        ),
+                        noneable(
+                            "Slideshow short-media skip seconds threshold:",
+                            none("do not use", 10, (1, 86400), Some("s")),
+                            |s| s.slideshow.short_loop_seconds,
+                            |s, v| s.slideshow.short_loop_seconds = v,
+                        ),
+                        noneable(
+                            "Slideshow short-media skip percentage threshold:",
+                            none("do not use", 20, (1, 99), Some("%")),
+                            |s| s.slideshow.short_loop_percentage,
+                            |s, v| s.slideshow.short_loop_percentage = v,
+                        ),
+                        noneable(
+                            "Slideshow shorter-media cutoff percentage threshold:",
+                            none("do not use", 75, (1, 99), Some("%")),
+                            |s| s.slideshow.short_cutoff_percentage,
+                            |s, v| s.slideshow.short_cutoff_percentage = v,
+                        ),
+                        noneable(
+                            "Slideshow long-media allowed delay percentage threshold:",
+                            none("do not use", 50, (1, 500), Some("%")),
+                            |s| s.slideshow.long_overspill_percentage,
+                            |s, v| s.slideshow.long_overspill_percentage = v,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "media viewer hovers",
-            vec![boxed(
-                "top hover file summary",
-                vec![
-                    check(
-                        "Show archived status: ",
-                        |s| s.info_line.archived_interesting,
-                        |s, v| s.info_line.archived_interesting = v,
-                    ),
-                    check(
-                        "Show archived time: ",
-                        |s| s.info_line.archived_time_interesting,
-                        |s, v| s.info_line.archived_time_interesting = v,
-                    ),
-                    check(
-                        "Show file services: ",
-                        |s| s.info_line.file_services_interesting,
-                        |s, v| s.info_line.file_services_interesting = v,
-                    ),
-                    check(
-                        "Show file service add times: ",
-                        |s| s.info_line.file_services_import_times_interesting,
-                        |s, v| s.info_line.file_services_import_times_interesting = v,
-                    ),
-                    check(
-                        "Show file trash times: ",
-                        |s| s.info_line.trash_time_interesting,
-                        |s, v| s.info_line.trash_time_interesting = v,
-                    ),
-                    check(
-                        "Show file trash reasons: ",
-                        |s| s.info_line.trash_reason_interesting,
-                        |s, v| s.info_line.trash_reason_interesting = v,
-                    ),
-                    check(
-                        "Hide uninteresting modified times: ",
-                        |s| s.info_line.hide_uninteresting_modified_time,
-                        |s, v| s.info_line.hide_uninteresting_modified_time = v,
-                    ),
-                    check(
-                        "Swap in common resolution labels:",
-                        |s| s.info_line.nice_resolutions,
-                        |s, v| s.info_line.nice_resolutions = v,
-                    ),
-                ],
-            )],
+            vec![
+                boxed(
+                    "background",
+                    vec![check(
+                        "Draw index text (bottom-right) in the viewer background:",
+                        |settings| settings.viewer_hovers.index_background,
+                        |settings, value| settings.viewer_hovers.index_background = value,
+                    )],
+                ),
+                boxed(
+                    "hover windows",
+                    vec![
+                        check(
+                            "Hover window pop-in requires window focus:",
+                            |settings| settings.viewer_focus.hovers_require_focus,
+                            |settings, value| settings.viewer_focus.hovers_require_focus = value,
+                        ),
+                        check(
+                            "Pop-in tags (left) hover window on mouseover:",
+                            |settings| settings.viewer_hovers.tags,
+                            |settings, value| settings.viewer_hovers.tags = value,
+                        ),
+                        check(
+                            "Pop-in ratings and locations (top-right) hover window on mouseover:",
+                            |settings| settings.viewer_hovers.ratings,
+                            |settings, value| settings.viewer_hovers.ratings = value,
+                        ),
+                        check(
+                            "Pop-in notes (right) hover window on mouseover:",
+                            |settings| settings.viewer_hovers.notes,
+                            |settings, value| settings.viewer_hovers.notes = value,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "top hover file summary",
+                    vec![
+                        check(
+                            "Show archived status: ",
+                            |s| s.info_line.archived_interesting,
+                            |s, v| s.info_line.archived_interesting = v,
+                        ),
+                        check(
+                            "Show archived time: ",
+                            |s| s.info_line.archived_time_interesting,
+                            |s, v| s.info_line.archived_time_interesting = v,
+                        ),
+                        check(
+                            "Show file services: ",
+                            |s| s.info_line.file_services_interesting,
+                            |s, v| s.info_line.file_services_interesting = v,
+                        ),
+                        check(
+                            "Show file service add times: ",
+                            |s| s.info_line.file_services_import_times_interesting,
+                            |s, v| s.info_line.file_services_import_times_interesting = v,
+                        ),
+                        check(
+                            "Show file trash times: ",
+                            |s| s.info_line.trash_time_interesting,
+                            |s, v| s.info_line.trash_time_interesting = v,
+                        ),
+                        check(
+                            "Show file trash reasons: ",
+                            |s| s.info_line.trash_reason_interesting,
+                            |s, v| s.info_line.trash_reason_interesting = v,
+                        ),
+                        check(
+                            "Hide uninteresting modified times: ",
+                            |s| s.info_line.hide_uninteresting_modified_time,
+                            |s, v| s.info_line.hide_uninteresting_modified_time = v,
+                        ),
+                        check(
+                            "Swap in common resolution labels:",
+                            |s| s.info_line.nice_resolutions,
+                            |s, v| s.info_line.nice_resolutions = v,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "ratings",
@@ -2180,6 +2444,9 @@ pub fn suggestions_with_values(pages: &[Page], values: &[Vec<Value>]) -> Vec<Sug
                         labels.push(*text);
                     }
                 }
+                (Kind::SavedSession, Value::SavedSession(name)) => {
+                    labels.push(name.as_deref().unwrap_or("just a blank page"));
+                }
                 (
                     Kind::Noneable {
                         none_phrase, unit, ..
@@ -2511,6 +2778,24 @@ impl Editor {
         }
     }
 
+    /// Accept the location selector's draft even if another page is now shown.
+    pub fn set_local_location(&mut self, location: hydrus_core::search::context::LocationContext) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::Location(_)) {
+                *value = Value::Location(location);
+                return;
+            }
+        }
+    }
+
+    pub fn saved_session(&mut self, row: usize, name: Option<String>) {
+        if let Some(index) = self.option_at(row)
+            && matches!(self.kind(index), Kind::SavedSession)
+        {
+            self.values[self.page][index] = Value::SavedSession(name);
+        }
+    }
+
     /// A service key chosen from the current editable dropdown.
     pub fn tag_service(&mut self, row: usize, service: hydrus_core::ServiceKey) {
         if !matches!(self.rows().get(row), Some(Row::Opt { enabled: true, .. })) {
@@ -2677,9 +2962,18 @@ mod tests {
         let pages = pages(&before);
         let mut values = values(&pages, &before);
         let viewer = pages.iter().position(|p| p.name == "media viewer").unwrap();
+        let option_index = |page: usize, label: &str| {
+            pages[page]
+                .options()
+                .iter()
+                .position(|option| option.label == label)
+                .unwrap()
+        };
+        let durations = option_index(viewer, "Slideshow durations:");
+        let once = option_index(viewer, "Always play media once through before moving on:");
         // (the rest is set regardless)
-        values[viewer][0] = Value::Text("1.0,soon".into());
-        values[viewer][1] = Value::Check(true);
+        values[viewer][durations] = Value::Text("1.0,soon".into());
+        values[viewer][once] = Value::Check(true);
         let (after, problems) = applied(&pages, &before, &values);
         assert_eq!(
             problems,
@@ -2688,12 +2982,12 @@ mod tests {
         assert_eq!(after.slideshow.durations, before.slideshow.durations);
         assert!(after.slideshow.once_through);
         // those above zero are kept; with none, they are left
-        values[viewer][0] = Value::Text("2.5, 7, 0".into());
+        values[viewer][durations] = Value::Text("2.5, 7, 0".into());
         assert_eq!(
             applied(&pages, &before, &values).0.slideshow.durations,
             [2.5, 7.0]
         );
-        values[viewer][0] = Value::Text("0".into());
+        values[viewer][durations] = Value::Text("0".into());
         assert_eq!(
             applied(&pages, &before, &values).0.slideshow.durations,
             before.slideshow.durations
@@ -2703,19 +2997,24 @@ mod tests {
             .iter()
             .position(|p| p.name == "media playback")
             .unwrap();
-        values[playback][1] = Value::Text("0.5,big".into());
+        let zooms = option_index(playback, "Media zooms:");
+        values[playback][zooms] = Value::Text("0.5,big".into());
         assert_eq!(
             applied(&pages, &before, &values).1,
             ["Could not parse those zooms, so they were not saved!"]
         );
-        values[playback][1] = Value::Text("0.5, 2".into());
+        values[playback][zooms] = Value::Text("0.5, 2".into());
         assert_eq!(
             applied(&pages, &before, &values).0.media_viewer.media_zooms,
             [0.5, 2.0]
         );
         let ratings = pages.iter().position(|p| p.name == "ratings").unwrap();
+        let rating_size = option_index(
+            ratings,
+            "Media viewer like/dislike and numerical rating icon size:",
+        );
         for bad in ["big", "300"] {
-            values[ratings][0] = Value::Float(bad.into());
+            values[ratings][rating_size] = Value::Float(bad.into());
             let (after, problems) = applied(&pages, &before, &values);
             assert_eq!(problems.len(), 1, "{bad}");
             assert_eq!(
@@ -2723,7 +3022,7 @@ mod tests {
                 before.media_viewer.rating_icon_size
             );
         }
-        values[ratings][0] = Value::Float("16.5".into());
+        values[ratings][rating_size] = Value::Float("16.5".into());
         assert_eq!(
             applied(&pages, &before, &values)
                 .0

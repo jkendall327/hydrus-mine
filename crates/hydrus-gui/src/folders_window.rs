@@ -345,6 +345,7 @@ pub(crate) fn open_import_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
         let weak = window.as_weak();
         let slots = slots.clone();
         move || {
+            slots.sidecars.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -635,10 +636,11 @@ fn open_import_folder(
         let log = slots.log.clone();
         let open_files = slots.open_files.clone();
         window.on_file_log(move || {
-            if let Some(old) = log.borrow_mut().take() {
-                let _ = old.hide();
+            let old = log.borrow_mut().take();
+            if let Some(old) = old {
+                old.invoke_close_window();
             }
-            match crate::file_log_window::open(&store, queue, &log, &open_files.0) {
+            match crate::file_log_window::open(&store, queue, &log, &open_files) {
                 Ok(window) => *log.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open the file log: {e}"),
             }
@@ -681,6 +683,12 @@ fn open_import_folder(
         let sidecars = slots.sidecars.clone();
         move || {
             let routers = state.borrow().folder.settings.routers.clone();
+            sidecars.set_test_objects(crate::sidecar_editors::folder_test_objects(
+                &weak
+                    .upgrade()
+                    .map(|window| window.get_path().to_string())
+                    .unwrap_or_default(),
+            ));
             let applied: Rc<dyn Fn(Vec<hydrus_parse::sidecar::Router>)> = {
                 let weak = weak.clone();
                 let state = state.clone();
@@ -725,7 +733,9 @@ fn open_import_folder(
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
+        let sidecars = slots.sidecars.clone();
         move || {
+            sidecars.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -1124,6 +1134,7 @@ pub(crate) fn open_export_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
         let weak = window.as_weak();
         let slots = slots.clone();
         move || {
+            slots.sidecars.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -1349,7 +1360,9 @@ fn open_export_folder(
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
+        let sidecars = sidecars.clone();
         move || {
+            sidecars.cancel();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }

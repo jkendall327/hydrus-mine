@@ -1,0 +1,244 @@
+{
+ "states": [
+  {
+   "case": "empty",
+   "input": {
+    "text": ""
+   },
+   "description": "no example data set yet",
+   "preview": "",
+   "preview_length": 0,
+   "preview_start": "",
+   "parse_enabled": false,
+   "raw_length": 0,
+   "context": {
+    "url": "https://raw-preview.example/original",
+    "post_index": "7",
+    "custom": "kept"
+   }
+  },
+  {
+   "case": "json",
+   "input": {
+    "text": "{\"z\":\"日本\",\"html\":\"<html>embedded</html>\",\"values\":[1,true,null]}"
+   },
+   "description": "64B total, looks like JSON",
+   "preview": "{\n    \"z\": \"\\u65e5\\u672c\",\n    \"html\": \"<html>embedded</html>\",\n    \"values\": [\n        1,\n        true,\n        null\n    ]\n}",
+   "preview_length": 125,
+   "preview_start": "{\n    \"z\": \"\\u65e5\\u672c\",\n    \"html\": \"<html>embedded</html>\",\n    \"values\": [\n        1,\n        t",
+   "parse_enabled": true,
+   "raw_length": 64,
+   "context": {
+    "url": "https://raw-preview.example/original",
+    "post_index": "7",
+    "custom": "kept"
+   }
+  },
+  {
+   "case": "html",
+   "input": {
+    "text": "<!DOCTYPE html><html><body>日本</body></html>"
+   },
+   "description": "43B total, looks like HTML",
+   "preview": "<!DOCTYPE html><html><body>日本</body></html>",
+   "preview_length": 43,
+   "preview_start": "<!DOCTYPE html><html><body>日本</body></html>",
+   "parse_enabled": true,
+   "raw_length": 43,
+   "context": {
+    "url": "https://raw-preview.example/original",
+    "post_index": "7",
+    "custom": "kept"
+   }
+  },
+  {
+   "case": "fragment",
+   "input": {
+    "text": "<p>fragment</p>"
+   },
+   "description": "That did not look like a full HTML document, nor JSON, but will try to show it anyway",
+   "preview": "<p>fragment</p>",
+   "preview_length": 15,
+   "preview_start": "<p>fragment</p>",
+   "parse_enabled": true,
+   "raw_length": 15,
+   "context": {
+    "url": "https://raw-preview.example/original",
+    "post_index": "7",
+    "custom": "kept"
+   }
+  },
+  {
+   "case": "plain",
+   "input": {
+    "text": "plain 日本 text"
+   },
+   "description": "That did not look like a full HTML document, nor JSON, but will try to show it anyway",
+   "preview": "plain 日本 text",
+   "preview_length": 13,
+   "preview_start": "plain 日本 text",
+   "parse_enabled": true,
+   "raw_length": 13,
+   "context": {
+    "url": "https://raw-preview.example/original",
+    "post_index": "7",
+    "custom": "kept"
+   }
+  },
+  {
+   "case": "json_scalar",
+   "input": {
+    "text": "\"日本\""
+   },
+   "description": "4B total, looks like JSON",
+   "preview": "\"\\u65e5\\u672c\"",
+   "preview_length": 14,
+   "preview_start": "\"\\u65e5\\u672c\"",
+   "parse_enabled": true,
+   "raw_length": 4,
+   "context": {
+    "url": "https://raw-preview.example/original",
+    "post_index": "7",
+    "custom": "kept"
+   }
+  },
+  {
+   "case": "non_finite",
+   "input": {
+    "text": "[NaN, Infinity, -Infinity]"
+   },
+   "description": "26B total, looks like JSON",
+   "preview": "[\n    NaN,\n    Infinity,\n    -Infinity\n]",
+   "preview_length": 40,
+   "preview_start": "[\n    NaN,\n    Infinity,\n    -Infinity\n]",
+   "parse_enabled": true,
+   "raw_length": 26,
+   "context": {
+    "url": "https://raw-preview.example/original",
+    "post_index": "7",
+    "custom": "kept"
+   }
+  },
+  {
+   "case": "clipped",
+   "input": {
+    "repeat": "日本",
+    "count": 250001
+   },
+   "description": "That did not look like a full HTML document, nor JSON, but will try to show it anyway\nThe data was more than 500,000 characters. Clipping what is shown.",
+   "preview": null,
+   "preview_length": 500000,
+   "preview_start": "日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本日本",
+   "parse_enabled": true,
+   "raw_length": 500002,
+   "context": {
+    "url": "https://raw-preview.example/original",
+    "post_index": "7",
+    "custom": "kept"
+   }
+  },
+  {
+   "case": "media",
+   "input": {
+    "text": "binary image text",
+    "mime": "png"
+   },
+   "description": "That looked like a png!",
+   "preview": "no preview",
+   "preview_length": 10,
+   "preview_start": "no preview",
+   "parse_enabled": false,
+   "raw_length": 17,
+   "context": {
+    "url": "https://raw-preview.example/original",
+    "post_index": "7",
+    "custom": "kept"
+   }
+  },
+  {
+   "case": "paste",
+   "input": {
+    "text": "{\"clipboard\":\"日本\"}"
+   },
+   "description": "18B total, looks like JSON",
+   "preview": "{\n    \"clipboard\": \"\\u65e5\\u672c\"\n}",
+   "preview_length": 35,
+   "preview_start": "{\n    \"clipboard\": \"\\u65e5\\u672c\"\n}",
+   "parse_enabled": true,
+   "raw_length": 18,
+   "context": {
+    "url": "https://raw-preview.example/original",
+    "post_index": "7",
+    "custom": "kept"
+   }
+  },
+  {
+   "case": "paste_error",
+   "input": {},
+   "description": "18B total, looks like JSON",
+   "preview": "{\n    \"clipboard\": \"\\u65e5\\u672c\"\n}",
+   "preview_length": 35,
+   "preview_start": "{\n    \"clipboard\": \"\\u65e5\\u672c\"\n}",
+   "parse_enabled": true,
+   "raw_length": 18,
+   "context": {
+    "url": "https://raw-preview.example/original",
+    "post_index": "7",
+    "custom": "kept"
+   }
+  },
+  {
+   "case": "fetch_media",
+   "input": {
+    "text": "binary image text",
+    "mime": "png"
+   },
+   "description": "That looked like a png!",
+   "preview": "no preview",
+   "preview_length": 10,
+   "preview_start": "no preview",
+   "parse_enabled": false,
+   "raw_length": 17,
+   "context": {
+    "url": "https://raw-preview.example/fetched",
+    "post_index": "0",
+    "custom": "kept"
+   }
+  },
+  {
+   "case": "fetch_cancelled",
+   "input": {
+    "text": "fetch cancelled"
+   },
+   "description": "That did not look like a full HTML document, nor JSON, but will try to show it anyway",
+   "preview": "fetch cancelled",
+   "preview_length": 15,
+   "preview_start": "fetch cancelled",
+   "parse_enabled": true,
+   "raw_length": 15,
+   "context": {
+    "url": "https://raw-preview.example/fetched",
+    "post_index": "0",
+    "custom": "kept"
+   }
+  }
+ ],
+ "copied": [
+  [
+   "clipboard",
+   "text",
+   "{\"clipboard\":\"日本\"}"
+  ]
+ ],
+ "messages": [
+  [
+   "Problem loading!",
+   "synthetic clipboard error"
+  ]
+ ],
+ "png_hex": "89504e470d0a1a0a0000000d4948445200000002000000020802000000fdd49a730000001649444154789c63143209636060606260606060600000073600a0b2acdb7c0000000049454e44ae426082",
+ "notifications": [
+  "Pasted!"
+ ],
+ "fetch_url": "https://raw-preview.example/fetched"
+}

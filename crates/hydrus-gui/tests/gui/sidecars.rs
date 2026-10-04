@@ -621,3 +621,464 @@ fn processing_exchange_reviews_append_and_parent_cancel_invalidates_children() {
     window.invoke_apply();
     assert!(accepted.borrow().is_none());
 }
+
+fn test_table(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> Vec<Vec<String>> {
+    rows.iter()
+        .map(|row| row.cells.iter().map(|cell| cell.to_string()).collect())
+        .collect()
+}
+
+#[test]
+fn router_examples_follow_reference_source_tabs_and_processor_children_without_exports() {
+    use hydrus_gui::sidecars_window::{self, Slots};
+    use hydrus_gui_model::sidecar_editors::{Context, TestObject};
+    use std::{cell::RefCell, rc::Rc};
+    let (_dirs, store) = store();
+    let rendered = headless::init();
+    let directory = tempfile::tempdir().unwrap();
+    let cases = hydrus_testkit::fixture_json("sidecar_testing.json");
+    let case = &cases.as_array().unwrap()[0];
+    for (name, text) in case["documents"].as_object().unwrap() {
+        std::fs::write(directory.path().join(name), text.as_str().unwrap()).unwrap();
+    }
+    let object =
+        hydrus_legacy::serialisable::SerialisableObject::from_tuple_str(&case["tuple"].to_string())
+            .unwrap();
+    let original = hydrus_legacy::objects::sidecars::router(&object).unwrap();
+    let slots = Slots::default();
+    slots.set_test_objects(
+        ["one.png", "two.png", "missing.png"]
+            .into_iter()
+            .map(|name| {
+                TestObject::File(directory.path().join(name).to_string_lossy().into_owned())
+            })
+            .collect(),
+    );
+    let accepted = Rc::new(RefCell::new(None));
+    let window = sidecars_window::open_router(
+        &store,
+        Context::Import,
+        original.clone(),
+        &slots,
+        Rc::new({
+            let accepted = accepted.clone();
+            let store = store.clone();
+            move |router| {
+                let persisted = hydrus_gui_model::export_files::Preferences {
+                    routers: vec![router.clone()],
+                    ..hydrus_gui_model::export_files::Preferences::default()
+                };
+                store
+                    .write(move |ctx| settings::set(ctx.conn(), &persisted))
+                    .unwrap();
+                *accepted.borrow_mut() = Some(router);
+            }
+        }),
+    )
+    .unwrap();
+    *slots.router.borrow_mut() = Some(window.clone_strong());
+    for source in 0..2 {
+        window.set_test_source(source);
+        window.invoke_test_source_chosen();
+        let mut rows = test_table(&window.get_test_rows());
+        for row in &mut rows {
+            row[0] = row[0]
+                .replace(directory.path().to_str().unwrap(), "<examples>")
+                .replace('\\', "/");
+        }
+        assert_eq!(
+            serde_json::to_value(rows).unwrap(),
+            case["tables"][usize::try_from(source).unwrap()]["rows"]
+        );
+    }
+    let pixels = headless::render(&rendered.get(0).unwrap(), 1000, 720);
+    assert!(pixels.iter().any(|pixel| *pixel > 100));
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("sidecar-examples.png"),
+        &pixels,
+        1000,
+        720,
+    )
+    .unwrap();
+    window.invoke_edit_processing();
+    let processor = slots
+        .strings
+        .processor
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(
+        serde_json::to_value(table(&processor.get_starting())).unwrap(),
+        case["processor_texts"]
+    );
+    assert!(window.get_child_open());
+    window.invoke_apply();
+    assert!(accepted.borrow().is_none());
+    processor.invoke_row_clicked(0, false, false);
+    processor.invoke_edit();
+    let step = slots.strings.step.borrow().as_ref().unwrap().clone_strong();
+    step.set_ascending(false);
+    step.invoke_changed();
+    step.invoke_apply();
+    processor.invoke_apply();
+    assert!(!window.get_child_open());
+    assert!(window.get_processing().contains("descending"));
+    window.invoke_apply();
+    let saved = accepted.borrow().clone().unwrap();
+    assert_ne!(saved.processor, original.processor);
+    let persisted: hydrus_gui_model::export_files::Preferences = store.read(settings::get).unwrap();
+    assert_eq!(persisted.routers, [saved.clone()]);
+    let inputs = hydrus_gui_model::sidecar_editors::router_test_strings(
+        &store,
+        &saved,
+        &slots.test_objects.borrow(),
+    );
+    assert_eq!(
+        persisted.routers[0].route(inputs),
+        ["source:item10", "source:item2", "json2", "json1"]
+    );
+    assert!(!directory.path().join("one.png.export.txt").exists());
+    // Source processors inherit their unprocessed first example; formula children
+    // inherit the reference source's parsed JSON texts with preserved newlines.
+    let window = sidecars_window::open_router(
+        &store,
+        Context::Import,
+        original.clone(),
+        &slots,
+        Rc::new({
+            let accepted = accepted.clone();
+            move |router| *accepted.borrow_mut() = Some(router)
+        }),
+    )
+    .unwrap();
+    *slots.router.borrow_mut() = Some(window.clone_strong());
+    window.invoke_row_clicked(0, false, false);
+    window.invoke_edit();
+    let source = slots.node.borrow().as_ref().unwrap().clone_strong();
+    source.invoke_edit_processing();
+    let processor = slots
+        .strings
+        .processor
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(
+        serde_json::to_value(table(&processor.get_starting())).unwrap(),
+        case["source_inputs"][0]["texts"]
+    );
+    window.invoke_cancel();
+    assert!(slots.node.borrow().is_none());
+    assert!(slots.strings.processor.borrow().is_none());
+    processor.invoke_apply();
+    source.invoke_apply();
+    window.invoke_apply();
+    assert_eq!(accepted.borrow().as_ref(), Some(&saved));
+    let persisted: hydrus_gui_model::export_files::Preferences = store.read(settings::get).unwrap();
+    assert_eq!(persisted.routers, [saved]);
+    let window =
+        sidecars_window::open_router(&store, Context::Import, original, &slots, Rc::new(|_| {}))
+            .unwrap();
+    *slots.router.borrow_mut() = Some(window.clone_strong());
+    window.invoke_row_clicked(1, false, false);
+    window.invoke_edit();
+    let source = slots.node.borrow().as_ref().unwrap().clone_strong();
+    source.invoke_edit_formula();
+    let formula = slots
+        .formula
+        .formula
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(
+        formula.get_document(),
+        case["source_inputs"][1]["texts"][0].as_str().unwrap()
+    );
+    assert_eq!(formula.get_examples().row_count(), 2);
+    assert!(!formula.get_allow_type_change());
+    window.invoke_cancel();
+    assert!(slots.formula.formula.borrow().is_none());
+}
+#[test]
+fn router_queue_exchange_is_staged_context_checked_and_reaches_manual_export() {
+    use hydrus_downloader_exchange::routers as exchange;
+    use hydrus_gui::{Clip, sidecars_window};
+    use hydrus_gui_model::{export_files, sidecar_editors::Context};
+    use serde_json::Value;
+    use std::{cell::RefCell, rc::Rc, sync::atomic::AtomicBool};
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let reference = hydrus_testkit::fixture_json("router_exchange.json");
+    let slots = sidecars_window::Slots::default();
+    let applied = Rc::new({
+        let store = store.clone();
+        move |routers| {
+            store
+                .write_and_refresh(move |ctx| {
+                    settings::set(
+                        ctx.conn(),
+                        &export_files::Preferences {
+                            routers,
+                            ..export_files::Preferences::default()
+                        },
+                    )
+                })
+                .unwrap();
+        }
+    });
+    let open = || {
+        let window = sidecars_window::open_routers(
+            &store,
+            Context::Export,
+            Vec::new(),
+            &slots,
+            applied.clone(),
+        )
+        .unwrap();
+        *slots.routers.borrow_mut() = Some(window.clone_strong());
+        window
+    };
+    let child = || slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    let selected = |window: &hydrus_gui::SidecarRoutersWindow| {
+        let rows = window.get_rows();
+        (0..rows.row_count())
+            .filter(|&row| rows.row_data(row).unwrap().selected)
+            .count()
+    };
+    let window = open();
+    window.invoke_exchange(true);
+    let import = child();
+    import.set_text(reference["imports"][0].to_string().into());
+    import.invoke_action("review".into());
+    assert!(!import.get_ready());
+    assert_eq!(
+        import.get_error(),
+        format!(
+            "The imported objects were wrong for this control:\n\n{}",
+            reference["vetoes"][1]["error"].as_str().unwrap()
+        )
+    );
+    assert_eq!(window.get_rows().row_count(), 0);
+    import.set_text(reference["queues"][1]["text"].to_string().into());
+    import.invoke_action("review".into());
+    assert!(import.get_ready(), "{}", import.get_error());
+    window.invoke_apply();
+    assert!(slots.routers.borrow().is_some());
+    assert!(
+        store
+            .read(settings::get::<export_files::Preferences>)
+            .unwrap()
+            .routers
+            .is_empty()
+    );
+    import.invoke_action("accept".into());
+    assert_eq!(window.get_rows().row_count(), 2);
+    assert_eq!(selected(&window), 2);
+    assert!(!window.get_child_open());
+    window.invoke_exchange(false);
+    let export = child();
+    assert_eq!(
+        serde_json::from_str::<Value>(&export.get_text()).unwrap(),
+        reference["queues"][1]["text"]
+    );
+    let copied = Rc::new(RefCell::new(String::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| {
+            if let Clip::Text(text) = clip {
+                *copied.borrow_mut() = text.clone();
+            }
+        }
+    });
+    export.invoke_action("copy".into());
+    assert_eq!(
+        serde_json::from_str::<Value>(&copied.borrow()).unwrap(),
+        reference["queues"][1]["text"]
+    );
+    let files = tempfile::tempdir().unwrap();
+    let png = files.path().join("routers.png");
+    export.set_path(png.to_string_lossy().into_owned().into());
+    export.invoke_action("save".into());
+    assert_eq!(
+        exchange::decode_png(&std::fs::read(&png).unwrap())
+            .unwrap()
+            .len(),
+        2
+    );
+    export.invoke_action("cancel".into());
+    window.invoke_duplicate();
+    assert_eq!(window.get_rows().row_count(), 4);
+    assert_eq!(selected(&window), 4);
+    assert_eq!(reference["queues"][1]["duplicate_selected"], 4);
+    window.invoke_row_clicked(2, false, false);
+    window.invoke_row_clicked(3, true, false);
+    window.invoke_delete();
+    assert_eq!(window.get_asking_message(), "Remove 2 selected?");
+    window.invoke_duplicate();
+    assert_eq!(window.get_rows().row_count(), 4);
+    window.invoke_chosen(1);
+    assert_eq!(window.get_rows().row_count(), 4);
+    window.invoke_delete();
+    window.invoke_chosen(0);
+    assert_eq!(window.get_rows().row_count(), 2);
+    let pixels = headless::render(&windows.get(0).unwrap(), 900, 450);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("router_queue_exchange.png"),
+        &pixels,
+        900,
+        450,
+    )
+    .unwrap();
+    window.invoke_row_clicked(1, false, false);
+    window.invoke_edit();
+    let router = slots.router.borrow().as_ref().unwrap().clone_strong();
+    assert!(window.get_child_open());
+    window.invoke_apply();
+    assert!(
+        store
+            .read(settings::get::<export_files::Preferences>)
+            .unwrap()
+            .routers
+            .is_empty()
+    );
+    router.invoke_cancel();
+    assert!(!window.get_child_open());
+    window.invoke_apply();
+    let saved = store
+        .read(settings::get::<export_files::Preferences>)
+        .unwrap()
+        .routers;
+    assert_eq!(saved.len(), 2);
+    assert_eq!(exchange::tuple(&saved[1]).unwrap(), reference["exports"][1]);
+    // An accepted queue reaches the actual export worker and its written sidecar.
+    let recorded = hydrus_testkit::fixture_json("export_files.json");
+    let file = hydrus_core::HashId(
+        u32::try_from(recorded["files"][0]["file_id"].as_u64().unwrap()).unwrap(),
+    );
+    let url = reference["consumer"]["url"].as_str().unwrap().to_owned();
+    store
+        .write_content(move |writer| writer.add_urls(&[file], &[url]))
+        .unwrap();
+    let plan = export_files::Plan {
+        directory: files.path().to_owned(),
+        rows: export_files::preview(&store, &[file], files.path().to_str().unwrap(), "{file_id}")
+            .unwrap(),
+        routers: vec![saved[1].clone()],
+        trash: false,
+        symlinks: false,
+    };
+    let Exporter::Txt { naming, .. } = &saved[1].exporter else {
+        panic!("TXT destination")
+    };
+    let path = naming.path(plan.rows[0].destination.to_str().unwrap(), "txt");
+    let result = export_files::run(&store, &plan, &AtomicBool::new(false), |_| {});
+    assert_eq!(result.completed, 1, "{:?}", result.error);
+    assert!(result.error.is_none());
+    assert_eq!(
+        std::fs::read_to_string(path).unwrap(),
+        reference["consumer"]["sidecar"]
+    );
+    // Owner cancellation discards a reviewed package and invalidates old handles.
+    let stale_owner = open();
+    stale_owner.invoke_exchange(true);
+    let stale_import = child();
+    stale_import.set_text(reference["queues"][1]["text"].to_string().into());
+    stale_import.invoke_action("review".into());
+    assert!(stale_import.get_ready());
+    slots.cancel();
+    assert!(slots.routers.borrow().is_none());
+    assert!(!slots.exchange.has_open());
+    stale_import.invoke_action("accept".into());
+    stale_owner.invoke_apply();
+    assert_eq!(
+        store
+            .read(settings::get::<export_files::Preferences>)
+            .unwrap()
+            .routers,
+        saved
+    );
+    let stale_owner = open();
+    stale_owner.invoke_add();
+    let stale_router = slots.router.borrow().as_ref().unwrap().clone_strong();
+    stale_router.invoke_add();
+    stale_router.invoke_chosen(2);
+    let stale_source = slots.node.borrow().as_ref().unwrap().clone_strong();
+    slots.cancel();
+    assert!(slots.router.borrow().is_none());
+    assert!(slots.node.borrow().is_none());
+    stale_source.invoke_apply();
+    stale_router.invoke_apply();
+    stale_owner.invoke_apply();
+    assert_eq!(
+        store
+            .read(settings::get::<export_files::Preferences>)
+            .unwrap()
+            .routers,
+        saved
+    );
+}
+
+#[test]
+fn closing_manual_export_discards_its_pending_router_exchange() {
+    use hydrus_gui::{export_files_window, sidecar_editors::Context};
+    use std::rc::Rc;
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let slots = export_files_window::Slots::default();
+    let owner = export_files_window::open(&store, Vec::new(), &slots, Rc::new(|| {})).unwrap();
+    *slots.window.borrow_mut() = Some(owner.clone_strong());
+    let original = store
+        .read(settings::get::<hydrus_gui_model::export_files::Preferences>)
+        .unwrap()
+        .routers;
+    owner.invoke_edit_sidecars();
+    let routers = slots
+        .sidecars
+        .routers
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    routers.invoke_exchange(true);
+    let exchange = slots
+        .sidecars
+        .exchange
+        .0
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let reference = hydrus_testkit::fixture_json("router_exchange.json");
+    exchange.set_text(reference["queues"][1]["text"].to_string().into());
+    exchange.invoke_action("review".into());
+    assert!(exchange.get_ready(), "{}", exchange.get_error());
+    owner.invoke_dismissed();
+    assert!(slots.window.borrow().is_none());
+    assert!(slots.sidecars.routers.borrow().is_none());
+    assert!(!slots.sidecars.exchange.has_open());
+    exchange.invoke_action("accept".into());
+    routers.invoke_apply();
+    assert_eq!(
+        store
+            .read(settings::get::<hydrus_gui_model::export_files::Preferences>)
+            .unwrap()
+            .routers,
+        original
+    );
+    // Reopening the concrete owner inherits its persisted choices, not the discarded draft.
+    let owner = export_files_window::open(&store, Vec::new(), &slots, Rc::new(|| {})).unwrap();
+    *slots.window.borrow_mut() = Some(owner.clone_strong());
+    owner.invoke_edit_sidecars();
+    let routers = slots
+        .sidecars
+        .routers
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(routers.get_rows().row_count(), original.len());
+    hydrus_gui_model::sidecar_editors::validate_router_import(Context::Export, &original).unwrap();
+    owner.invoke_dismissed();
+}

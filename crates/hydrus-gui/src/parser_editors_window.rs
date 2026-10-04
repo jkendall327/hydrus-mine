@@ -3,7 +3,7 @@ use crate::{DefinitionField, ParserEditWindow, ParserListWindow, TableColumn, Ta
 use hydrus_gui_model::formula_editors::FormulaTestData;
 use hydrus_gui_model::list_selection::ListSelection;
 use hydrus_gui_model::parser_editors::{self as model, ContentEditor, Draft, TestContext};
-use hydrus_parse::content::{ContentKind, PageParser};
+use hydrus_parse::content::{ContentKind, ContentParser, PageParser};
 use hydrus_store::Store;
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 use std::{
@@ -21,10 +21,34 @@ pub struct Slots {
     pub page: Rc<RefCell<Option<ParserEditWindow>>>,
     pub content: Rc<RefCell<Option<ParserEditWindow>>>,
     pub formula: crate::formula_window::Slots,
+    /// Every recursive child page owns separate page/content/formula slots.
+    pub child: Rc<RefCell<Option<Box<Slots>>>>,
 }
 impl std::fmt::Debug for Slots {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Slots").finish_non_exhaustive()
+    }
+}
+impl Slots {
+    /// Cancel every descendant when a caller closes its parser owner.
+    pub fn cancel(&self) {
+        let window = self
+            .page
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong)
+            .or_else(|| {
+                self.content
+                    .borrow()
+                    .as_ref()
+                    .map(slint::ComponentHandle::clone_strong)
+            });
+        if let Some(window) = window {
+            window.invoke_force_close();
+        } else {
+            self.formula.cancel();
+            self.exchange.cancel();
+        }
     }
 }
 fn strings(items: impl IntoIterator<Item = String>) -> ModelRc<SharedString> {
@@ -87,14 +111,20 @@ enum Value {
 }
 struct Editor {
     errors: std::collections::BTreeMap<i32, String>,
+    fetch_control: hydrus_gui_model::network_job_control::Control,
     value: Value,
     original: Value,
     selected: Option<usize>,
     subsidiary_selected: Option<usize>,
+    subsidiary_selection: ListSelection<usize>,
+    pending_subsidiary_delete: Option<Vec<(usize, hydrus_parse::content::SubsidiaryPageParser)>>,
     test: FormulaTestData,
+    raw_mimes: hydrus_gui_model::parser_test_data::ExampleMimes,
     example: usize,
+    permitted_types: Vec<usize>,
+    subsidiary: Option<Rc<RefCell<model::SubsidiaryEditor>>>,
 }
-fn fields(value: &Value) -> Vec<DefinitionField> {
+fn fields(value: &Value, permitted_types: &[usize]) -> Vec<DefinitionField> {
     match value {
         Value::Page(p) => vec![
             text(0, "name or description", &p.name),
@@ -109,9 +139,21 @@ fn fields(value: &Value) -> Vec<DefinitionField> {
             ),
         ],
         Value::Content(e) => {
+            let types = permitted_types
+                .iter()
+                .map(|i| model::CONTENT_TYPES[*i])
+                .collect::<Vec<_>>();
             let mut fields = vec![
                 text(0, "name or description", &e.parser.name),
-                choice(1, "content type", &model::CONTENT_TYPES, e.kind_index()),
+                choice(
+                    1,
+                    "content type",
+                    &types,
+                    permitted_types
+                        .iter()
+                        .position(|i| *i == e.kind_index())
+                        .unwrap_or(0),
+                ),
             ];
             match &e.parser.kind {
                 ContentKind::Url { url_type, priority } => {
@@ -187,11 +229,31 @@ fn fields(value: &Value) -> Vec<DefinitionField> {
     }
 }
 fn show_editor(w: &ParserEditWindow, e: &Editor) {
+    w.set_fetch_has_error(e.fetch_control.error().is_some());
+    w.set_subsidiary(e.subsidiary.is_some());
+    if let Some(details) = &e.subsidiary {
+        let details = details.borrow();
+        w.set_own_separator(
+            hydrus_gui_model::formula_editors::formula_summary(&details.formula).into(),
+        );
+        w.set_own_sorted(details.sort_by_source_time);
+    }
     w.set_examples(strings(e.test.examples.iter().enumerate().map(
         |(i, text)| format!("example {} ({} characters)", i + 1, text.chars().count()),
     )));
     w.set_example(i32::try_from(e.example).unwrap_or(0));
-    w.set_fields(ModelRc::new(VecModel::from(fields(&e.value))));
+    let raw = hydrus_gui_model::parser_test_data::preview(
+        &e.test.text,
+        e.raw_mimes.get(e.example, &e.test.text),
+    );
+    w.set_raw_description(raw.description.into());
+    w.set_raw_preview(raw.text.into());
+    w.set_parse_enabled(raw.parse_enabled);
+    let mut editor_fields = fields(&e.value, &e.permitted_types);
+    if e.subsidiary.is_some() {
+        editor_fields.retain(|field| field.id != 1);
+    }
+    w.set_fields(ModelRc::new(VecModel::from(editor_fields)));
     if let Value::Page(p) = &e.value {
         w.set_nodes(table(p.content_parsers.iter().enumerate().map(|(i, c)| {
             (
@@ -212,12 +274,13 @@ fn show_editor(w: &ParserEditWindow, e: &Editor) {
             )
         })));
         w.set_subsidiary_selected(e.subsidiary_selected.is_some());
+        w.set_subsidiary_exportable(!e.subsidiary_selection.is_empty());
         w.set_subsidiary_sorted(
             e.subsidiary_selected
                 .and_then(|i| p.subsidiary.get(i))
                 .is_some_and(|child| child.sort_by_source_time),
         );
-        w.set_subsidiary_note("Subsidiary separation formulae and source-time sorting are editable. Adding subsidiaries and editing their child page parsers remain deferred.".into());
+        w.set_subsidiary_note("Each subsidiary separates this page into documents and parses them with its own recursive page parser.".into());
     }
     w.set_selected(e.selected.is_some());
 }
@@ -236,6 +299,27 @@ fn test_data(
     test.collapse_newlines = collapse_newlines;
     test.remember_example(e.example, w.get_document().to_string());
     Ok(test.selected_first(e.example))
+}
+fn child_test_data(
+    w: &ParserEditWindow,
+    e: &Editor,
+    collapse: bool,
+) -> Result<FormulaTestData, String> {
+    let mut test = test_data(w, e, collapse)?;
+    if let Value::Page(page) = &e.value {
+        if let Some(details) = &e.subsidiary {
+            test = details.borrow().child_test_data(page, &test)?;
+        } else {
+            test.examples = test
+                .examples
+                .iter()
+                .map(|text| page.converter.convert(text).map_err(|e| e.to_string()))
+                .collect::<Result<Vec<_>, _>>()?;
+            test.text = test.examples.first().cloned().unwrap_or_default();
+        }
+    }
+    test.collapse_newlines = collapse;
+    Ok(test)
 }
 fn edit_text(value: &mut Value, id: i32, value_text: String) -> Result<(), String> {
     match value {
@@ -322,14 +406,51 @@ fn child_open(slots: &Slots, page: bool) -> bool {
         || slots.formula.formula.borrow().is_some()
         || slots.formula.strings.has_open()
         || slots.exchange.has_open()
+        || slots.child.borrow().is_some()
 }
 type Done = Rc<dyn Fn(Value) -> Result<(), String>>;
+/// Open a staged reusable content editor, restricting selectable kinds to the
+/// caller's `CONTENT_TYPES` indices. Formula context accepts arbitrary named
+/// variables. Cancel leaves the caller's parser untouched; Apply returns its draft.
+pub fn open_content(
+    store: &Arc<Store>,
+    parser: &ContentParser,
+    test: FormulaTestData,
+    slots: &Slots,
+    permitted_types: &[usize],
+    applied: Rc<dyn Fn(ContentParser) -> Result<(), String>>,
+) -> Result<ParserEditWindow, slint::PlatformError> {
+    let permitted = permitted_types.to_vec();
+    let done: Done = Rc::new(move |value| {
+        let Value::Content(content) = value else {
+            return Ok(());
+        };
+        let parser = content.value();
+        if !permitted.contains(&model::kind_index(&parser.kind)) {
+            return Err("This content type is not permitted here.".into());
+        }
+        applied(parser)
+    });
+    let window = open_editor(
+        store,
+        Value::Content(Box::new(ContentEditor::new(parser, test.clone()))),
+        test,
+        slots,
+        done,
+        Some(permitted_types),
+        None,
+    )?;
+    *slots.content.borrow_mut() = Some(window.clone_strong());
+    Ok(window)
+}
 fn open_editor(
     store: &Arc<Store>,
     value: Value,
     mut test: FormulaTestData,
     slots: &Slots,
     applied: Done,
+    permitted_types: Option<&[usize]>,
+    subsidiary: Option<Rc<RefCell<model::SubsidiaryEditor>>>,
 ) -> Result<ParserEditWindow, slint::PlatformError> {
     slots.formula.strings.set_store(store);
     test.prepare_examples();
@@ -357,15 +478,31 @@ fn open_editor(
     );
     let state = Rc::new(RefCell::new(Editor {
         errors: std::collections::BTreeMap::new(),
+        fetch_control: hydrus_gui_model::network_job_control::Control::default(),
+        raw_mimes: hydrus_gui_model::parser_test_data::ExampleMimes::default(),
         original: value.clone(),
         value,
         selected: None,
         subsidiary_selected: None,
+        subsidiary_selection: ListSelection::default(),
+        pending_subsidiary_delete: None,
         test,
         example: 0,
+        permitted_types: permitted_types.map_or_else(
+            || (0..model::CONTENT_TYPES.len()).collect(),
+            |types| {
+                types
+                    .iter()
+                    .copied()
+                    .filter(|i| *i < model::CONTENT_TYPES.len())
+                    .collect()
+            },
+        ),
+        subsidiary,
     }));
     let active = Rc::new(Cell::new(true));
     let fetch = crate::parser_test_fetch::Slot::default();
+    let fetch_errors = crate::network_job_control::Errors::default();
     let refresh: Rc<dyn Fn()> = Rc::new({
         let weak = w.as_weak();
         let state = state.clone();
@@ -383,7 +520,66 @@ fn open_editor(
         let active = active.clone();
         let slots = slots.clone();
         let fetch = fetch.clone();
-        move || !active.get() || child_open(&slots, page) || fetch.busy()
+        let weak = w.as_weak();
+        move || {
+            !active.get()
+                || child_open(&slots, page)
+                || fetch.busy()
+                || weak.upgrade().is_none_or(|w| !w.get_question().is_empty())
+        }
+    });
+    w.on_raw_action({
+        let weak = w.as_weak();
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        move |action| {
+            if blocked() {
+                return;
+            }
+            let Some(w) = weak.upgrade() else {
+                return;
+            };
+            match action.as_str() {
+                "copy" => crate::copy_to_clipboard(w.get_document().as_str()),
+                "paste" => match crate::from_clipboard() {
+                    Ok(text) => {
+                        let mut e = state.borrow_mut();
+                        let index = e.example;
+                        e.test.remember_example(index, text.clone());
+                        e.raw_mimes.remember(index, &text, None);
+                        w.set_document(text.into());
+                        w.set_fetch_status("Pasted!".into());
+                        drop(e);
+                        refresh();
+                    }
+                    Err(error) => {
+                        w.set_error(format!("Problem loading!\n\n{error}").into());
+                    }
+                },
+                _ => {}
+            }
+        }
+    });
+    w.on_fetch_error_action({
+        let state = state.clone();
+        let active = active.clone();
+        let fetch_errors = fetch_errors.clone();
+        move |action| {
+            if !active.get() || !page || state.borrow().subsidiary.is_some() {
+                return;
+            }
+            let error = state.borrow().fetch_control.error().map(str::to_owned);
+            if let Some(error) = error {
+                match action {
+                    8 => {
+                        let _ = fetch_errors.show(&error);
+                    }
+                    9 => crate::copy_to_clipboard(&error),
+                    _ => (),
+                }
+            }
+        }
     });
     w.on_cancel_fetch({
         let fetch = fetch.clone();
@@ -447,6 +643,10 @@ fn open_editor(
             request.one_shot = example_url;
             let referral = w.get_referral_url().trim().to_owned();
             request.referral_url = (example_url && !referral.is_empty()).then_some(referral);
+            // Only the page example-data owner has NetworkJobControl in Qt.
+            if example_url {
+                state.borrow_mut().fetch_control.clear_error();
+            }
             w.set_fetch_status("initialising…".into());
             w.set_error(SharedString::new());
             let progress = Rc::new({
@@ -473,10 +673,27 @@ fn open_editor(
                         return;
                     };
                     let mut editor = state.borrow_mut();
+                    if example_url
+                        && let hydrus_gui_model::formula_editors::FetchedDocument::Failed {
+                            error,
+                            text,
+                        } = &outcome.document
+                    {
+                        // Preserve native failure details after the live job is removed.
+                        let detail = if text.is_empty() {
+                            error.clone()
+                        } else {
+                            format!("{error}\n\n{text}")
+                        };
+                        editor.fetch_control.set_error(detail);
+                    }
                     editor.example =
                         editor
                             .test
                             .fetched(url.clone(), outcome.document, example_url);
+                    let index = editor.example;
+                    let text = editor.test.text.clone();
+                    editor.raw_mimes.remember(index, &text, outcome.mime);
                     w.set_document(editor.test.text.as_str().into());
                     w.set_test_url(url.as_str().into());
                     w.set_post_index("0".into());
@@ -538,6 +755,14 @@ fn open_editor(
             }
             if let Ok(index) = usize::try_from(index) {
                 let mut e = state.borrow_mut();
+                let index = if id == 1 && matches!(e.value, Value::Content(_)) {
+                    let Some(index) = e.permitted_types.get(index).copied() else {
+                        return;
+                    };
+                    index
+                } else {
+                    index
+                };
                 edit_choice(&mut e.value, id, index);
                 if id == 1 {
                     e.errors.clear();
@@ -626,7 +851,7 @@ fn open_editor(
         let state = state.clone();
         let refresh = refresh.clone();
         let blocked = blocked.clone();
-        move |row| {
+        move |row, ctrl, shift| {
             if blocked() {
                 return;
             }
@@ -635,7 +860,9 @@ fn open_editor(
                 if let Value::Page(page) = &e.value
                     && index < page.subsidiary.len()
                 {
-                    e.subsidiary_selected = Some(index);
+                    let order = (0..page.subsidiary.len()).collect::<Vec<_>>();
+                    e.subsidiary_selection.click(&order, index, ctrl, shift);
+                    e.subsidiary_selected = e.subsidiary_selection.one();
                 }
             }
             refresh();
@@ -660,16 +887,33 @@ fn open_editor(
             refresh();
         }
     });
+    w.on_own_sort_changed({
+        let state = state.clone();
+        let blocked = blocked.clone();
+        move |sorted| {
+            if !blocked()
+                && let Some(details) = &state.borrow().subsidiary
+            {
+                details.borrow_mut().sort_by_source_time = sorted;
+            }
+        }
+    });
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = w.as_weak();
         let active = active.clone();
         let slots = slots.clone();
         let fetch = fetch.clone();
+        let fetch_errors = fetch_errors.clone();
         move || {
             if !active.replace(false) {
                 return;
             }
             fetch.stop();
+            fetch_errors.cancel();
+            let child = slots.child.borrow_mut().take();
+            if let Some(child) = child {
+                child.cancel();
+            }
             if page {
                 let child = slots
                     .content
@@ -700,9 +944,40 @@ fn open_editor(
     w.on_answered({
         let weak = w.as_weak();
         let close = close.clone();
-        let blocked = blocked.clone();
+        let active = active.clone();
+        let slots = slots.clone();
+        let fetch = fetch.clone();
+        let state = state.clone();
+        let refresh = refresh.clone();
         move |yes| {
-            if blocked() {
+            if !active.get() || child_open(&slots, page) || fetch.busy() {
+                return;
+            }
+            let pending = state.borrow_mut().pending_subsidiary_delete.take();
+            if let Some(rows) = pending {
+                if yes {
+                    let mut e = state.borrow_mut();
+                    if let Value::Page(page) = &mut e.value {
+                        if rows
+                            .iter()
+                            .all(|(i, original)| page.subsidiary.get(*i) == Some(original))
+                        {
+                            for (i, _) in rows.into_iter().rev() {
+                                page.subsidiary.remove(i);
+                            }
+                            e.subsidiary_selection = ListSelection::default();
+                            e.subsidiary_selected = None;
+                        } else if let Some(w) = weak.upgrade() {
+                            w.set_error(
+                                "The subsidiary queue changed while deletion was pending.".into(),
+                            );
+                        }
+                    }
+                }
+                if let Some(w) = weak.upgrade() {
+                    w.set_question(SharedString::new());
+                }
+                refresh();
                 return;
             }
             if yes {
@@ -714,6 +989,7 @@ fn open_editor(
     });
     w.on_action({ let weak = w.as_weak(); let state = state.clone(); let slots = slots.clone(); let store = store.clone(); let refresh = refresh.clone(); let blocked = blocked.clone(); let active = active.clone(); let close = close.clone(); let fetch = fetch.clone(); move |action| {
         if blocked() && !(action == "cancel" && fetch.busy() && active.get()) { return; } let Some(w) = weak.upgrade() else { return; };
+        if !w.get_question().is_empty() { return; }
         let result = (|| -> Result<(),String> {
             match action.as_str() {
                 "apply" => { if !state.borrow().errors.is_empty() { return Err(state.borrow().errors.values().cloned().collect::<Vec<_>>().join("\n")); } let value = match &state.borrow().value { Value::Content(e) => Value::Content(Box::new(ContentEditor::new(&e.value(),e.test.clone()))), v @ Value::Page(_) => v.clone() }; applied(value)?; close(); }
@@ -722,40 +998,113 @@ fn open_editor(
                     use hydrus_gui_model::downloader_interchange::{Definition,Native};
                     let native=match &state.borrow().value{Value::Page(p)=>Native::Page((**p).clone()),Value::Content(c)=>Native::Content(c.value())};
                     let preview=Rc::new(move |definitions:Vec<Definition>| { if definitions.len()!=1 || !matches!((page,&definitions[0].native),(true,Native::Page(_))|(false,Native::Content(_))) { return Err("Import one matching page or content parser into this editor.".into()); } Ok(format!("Replace this draft with parser: {}",definitions[0].name())) });
-                    let applied=Rc::new({let state=state.clone();let refresh=refresh.clone();move |mut definitions:Vec<Definition>| {let definition=definitions.pop().ok_or("No parser to import.")?;let mut e=state.borrow_mut();match (page,definition.native){(true,Native::Page(p))=>e.value=Value::Page(Box::new(p)),(false,Native::Content(c))=>{let test=if let Value::Content(old)=&e.value{old.test.clone()}else{FormulaTestData::default()};e.value=Value::Content(Box::new(ContentEditor::new(&c,test)));},_=>return Err("Import one matching parser.".into())}e.errors.clear();e.selected=None;e.subsidiary_selected=None;drop(e);refresh();Ok(())}});
+                    let applied=Rc::new({let state=state.clone();let refresh=refresh.clone();move |mut definitions:Vec<Definition>| {let definition=definitions.pop().ok_or("No parser to import.")?;let mut e=state.borrow_mut();match (page,definition.native){(true,Native::Page(p))=>e.value=Value::Page(Box::new(p)),(false,Native::Content(c))=>{let test=if let Value::Content(old)=&e.value{old.test.clone()}else{FormulaTestData::default()};e.value=Value::Content(Box::new(ContentEditor::new(&c,test)));},_=>return Err("Import one matching parser.".into())}e.errors.clear();e.selected=None;e.subsidiary_selected=None;e.subsidiary_selection=ListSelection::default();drop(e);refresh();Ok(())}});
                     let child=crate::downloader_interchange_window::open(&slots.exchange,action=="import",vec![Definition::new(native)],preview,applied)?; let refresh=refresh.clone(); child.on_closed(move||refresh());
                 }
-                "test" => { let mut test = test_data(&w,&state.borrow(),true)?; let mut e = state.borrow_mut(); let parsed = match &mut e.value { Value::Page(p) => p.parse(&mut test.context,&test.text), Value::Content(c) => { c.test = test; c.preview().map(|p| vec![p]) } }; w.set_preview(match parsed { Ok(posts) => model::preview_text(&posts), Err(error) => error.to_string() }.into()); }
+                "test" => { if state.borrow().raw_mimes.get(state.borrow().example,w.get_document().as_str()).is_some() {return Ok(());} let mut test = test_data(&w,&state.borrow(),true)?; let mut e = state.borrow_mut();let subsidiary=e.subsidiary.clone();let parsed = match &mut e.value { Value::Page(p) => {if let Some(details)=subsidiary {test.context.insert("post_index".into(),"0".into());details.borrow().preview(p,&mut test.context,&test.text)}else{p.parse(&mut test.context,&test.text)}}, Value::Content(c) => { c.test = test; c.preview().map(|p| vec![p]) } }; w.set_preview(match parsed { Ok(posts) => model::preview_text(&posts), Err(error) => error.to_string() }.into()); }
                 "delete-content" => { let mut e = state.borrow_mut(); if let Some(index) = e.selected.take() && let Value::Page(p) = &mut e.value && index < p.content_parsers.len() { p.content_parsers.remove(index); } }
                 "add-content"|"edit-content" => {
-                    let test = test_data(&w,&state.borrow(),true)?;
-                    let (at, original, converted) = { let e = state.borrow(); let Value::Page(p) = &e.value else { return Ok(()); }; let at = if action == "edit-content" { e.selected } else { None }; if action == "edit-content" && at.is_none() { return Ok(()); } (at,at.and_then(|i| p.content_parsers.get(i).cloned()),p.converter.convert(&test.text).map_err(|e| e.to_string())?) };
+                    let test = child_test_data(&w,&state.borrow(),true)?;
+                    let (at, original) = { let e = state.borrow(); let Value::Page(p) = &e.value else { return Ok(()); }; let at = if action == "edit-content" { e.selected } else { None }; if action == "edit-content" && at.is_none() { return Ok(()); } (at,at.and_then(|i| p.content_parsers.get(i).cloned())) };
                     let parser = original.clone().unwrap_or_else(model::new_content);
-                    let examples = { let e = state.borrow(); let Value::Page(page) = &e.value else { return Ok(()); }; test.examples.iter().map(|text|page.converter.convert(text).map_err(|e|e.to_string())).collect::<Result<Vec<_>,_>>()? };
-                    let test = FormulaTestData { text: converted, examples,collapse_newlines: !matches!(parser.kind,ContentKind::Note { .. }), ..test };
+                    let test = FormulaTestData {collapse_newlines: !matches!(parser.kind,ContentKind::Note { .. }), ..test };
                     let done: Done = Rc::new({ let state = state.clone(); let active = active.clone(); move |v| { if !active.get() { return Ok(()); } let Value::Content(c) = v else { return Ok(()); }; let mut e = state.borrow_mut(); let Value::Page(p) = &mut e.value else { return Ok(()); }; if let Some(index) = at { if p.content_parsers.get(index) != original.as_ref() { return Err("The content parser changed while its editor was open.".into()); } p.content_parsers[index] = c.value(); } else { p.content_parsers.push(c.value()); } Ok(()) } });
-                    let child = open_editor(&store,Value::Content(Box::new(ContentEditor::new(&parser,test.clone()))),test,&slots,done).map_err(|e| e.to_string())?;
+                    let child = open_editor(&store,Value::Content(Box::new(ContentEditor::new(&parser,test.clone()))),test,&slots,done,None,None).map_err(|e| e.to_string())?;
                     let refresh = refresh.clone(); child.on_closed(move || refresh()); *slots.content.borrow_mut() = Some(child);
                 }
                 "add-example" | "remove-example" => {
                     let mut e = state.borrow_mut();
                     e.test.context.insert("url".into(),w.get_test_url().to_string());
                     let old = e.example;e.test.remember_example(old,w.get_document().to_string());
-                    e.example = if action == "add-example" { let url = e.test.context.get("url").cloned();e.test.add_example(String::new(),url) } else { e.test.remove_example(old) };
+                    e.example = if action == "add-example" { let url = e.test.context.get("url").cloned();e.test.add_example(String::new(),url) } else { if e.test.examples.len()>1 {e.raw_mimes.remove(old);} e.test.remove_example(old) };
                     w.set_document(e.test.text.as_str().into());
                     w.set_test_url(e.test.context.get("url").cloned().unwrap_or_default().into());
                 }
+                "import-subsidiary" | "export-subsidiary" => {
+                    let parsers = {
+                        let e = state.borrow(); let Value::Page(page) = &e.value else { return Ok(()); };
+                        let order = (0..page.subsidiary.len()).collect::<Vec<_>>();
+                        e.subsidiary_selection.in_order(&order).iter().map(|i| page.subsidiary[*i].clone()).collect::<Vec<_>>()
+                    };
+                    if action == "export-subsidiary" && parsers.is_empty() { return Ok(()); }
+                    let preview = Rc::new(|parsers: Vec<hydrus_parse::content::SubsidiaryPageParser>| Ok(format!("Add {} subsidiary parsers:\n{}\nChanges are saved only when you apply the owning parser.", parsers.len(), parsers.iter().map(|p| p.parser.name.as_str()).collect::<Vec<_>>().join("\n"))));
+                    let applied = Rc::new({ let state = state.clone(); let active = active.clone(); let refresh = refresh.clone(); move |parsers| {
+                        if !active.get() { return Ok(()); }
+                        let mut e = state.borrow_mut(); let Value::Page(page) = &mut e.value else { return Ok(()); };
+                        let added = model::append_subsidiaries(page, parsers);
+                        e.subsidiary_selection.select_many(&added); e.subsidiary_selected = e.subsidiary_selection.one();
+                        drop(e); refresh(); Ok(())
+                    }});
+                    let child = crate::downloader_interchange_window::open_subsidiaries(&slots.exchange, action == "import-subsidiary", parsers, preview, applied)?;
+                    let refresh = refresh.clone(); child.on_closed(move || refresh());
+                }
+                "duplicate-subsidiary" => {
+                    let mut e = state.borrow_mut();
+                    let Value::Page(page) = &e.value else { return Ok(()); };
+                    let order = (0..page.subsidiary.len()).collect::<Vec<_>>();
+                    let copies = e.subsidiary_selection.in_order(&order).into_iter().map(|i| page.subsidiary[i].clone()).collect::<Vec<_>>();
+                    let Value::Page(page) = &mut e.value else { return Ok(()); };
+                    let added = model::append_subsidiaries(page, copies);
+                    e.subsidiary_selection.select_many(&added); e.subsidiary_selected = e.subsidiary_selection.one();
+                }
+                "delete-subsidiary" => {
+                    let mut e = state.borrow_mut(); let Value::Page(page) = &e.value else { return Ok(()); };
+                    let order = (0..page.subsidiary.len()).collect::<Vec<_>>();
+                    let rows = e.subsidiary_selection.in_order(&order).into_iter().map(|i| (i, page.subsidiary[i].clone())).collect::<Vec<_>>();
+                    if !rows.is_empty() { e.pending_subsidiary_delete = Some(rows); w.set_question("Remove all selected?".into()); }
+                }
+                "add-subsidiary" | "edit-subsidiary" => {
+                    let test = child_test_data(&w,&state.borrow(),false)?;
+                    let (at,original) = {
+                        let e = state.borrow();let Value::Page(p) = &e.value else { return Ok(()); };
+                        let at = if action == "edit-subsidiary" { e.subsidiary_selected } else { None };
+                        if action == "edit-subsidiary" && at.is_none() { return Ok(()); }
+                        (at,at.and_then(|i|p.subsidiary.get(i).cloned()))
+                    };
+                    let parser = original.clone().unwrap_or_else(model::new_subsidiary);
+                    let details = Rc::new(RefCell::new(model::SubsidiaryEditor::new(&parser)));
+                    let done: Done = Rc::new({let state=state.clone();let active=active.clone();let details=details.clone();move |value| {
+                        if !active.get() { return Ok(()); }
+                        let Value::Page(child) = value else { return Ok(()); };
+                        let child = details.borrow().value(*child);
+                        let mut e=state.borrow_mut();let Value::Page(page)=&mut e.value else { return Ok(()); };
+                        let key=child.parser.key.clone();
+                        if let Some(index)=at {
+                            if page.subsidiary.get(index)!=original.as_ref() { return Err("The subsidiary parser changed while its editor was open.".into()); }
+                            page.subsidiary[index]=child;
+                        } else { page.subsidiary.push(child); }
+                        page.subsidiary.sort_by(|a,b|a.parser.name.cmp(&b.parser.name));
+                        e.subsidiary_selected=page.subsidiary.iter().position(|child|child.parser.key==key);
+                        let selected=e.subsidiary_selected;e.subsidiary_selection.select_only(selected);
+                        Ok(())
+                    }});
+                    let owned = Slots::default();
+                    let child = open_editor(&store,Value::Page(Box::new(parser.parser)),test,&owned,done,None,Some(details)).map_err(|e|e.to_string())?;
+                    *owned.page.borrow_mut()=Some(child.clone_strong());
+                    *slots.child.borrow_mut()=Some(Box::new(owned));
+                    let slots=slots.clone();let refresh=refresh.clone();
+                    child.on_closed(move || { slots.child.borrow_mut().take();refresh(); });
+                }
+                "own-separator" => {
+                    let test=test_data(&w,&state.borrow(),false)?;
+                    let Some(details)=state.borrow().subsidiary.clone() else { return Ok(()); };
+                    let formula=details.borrow().formula.clone();
+                    let done=Rc::new({let active=active.clone();let refresh=refresh.clone();move |formula| {
+                        if active.get() { details.borrow_mut().formula=formula;refresh(); }
+                    }});
+                    let child=crate::formula_window::open(&store,&formula,test,&slots.formula,done).map_err(|e|e.to_string())?;
+                    let refresh=refresh.clone();child.on_closed(move |_|refresh());
+                    *slots.formula.formula.borrow_mut()=Some(child);
+                }
                 "separator" => {
-                    let test = test_data(&w,&state.borrow(),false)?;
-                    let (index,original,text) = {
+                    let test = child_test_data(&w,&state.borrow(),false)?;
+                    let (index,original) = {
                         let e = state.borrow(); let Value::Page(page) = &e.value else { return Ok(()); };
                         let Some(index) = e.subsidiary_selected else { return Ok(()); };
                         let Some(child) = page.subsidiary.get(index) else { return Ok(()); };
-                        (index,child.clone(),page.converter.convert(&test.text).map_err(|e|e.to_string())?)
+                        (index,child.clone())
                     };
                     let formula = original.formula.clone();
-                    let examples = { let e = state.borrow(); let Value::Page(page) = &e.value else { return Ok(()); }; test.examples.iter().map(|text|page.converter.convert(text).map_err(|e|e.to_string())).collect::<Result<Vec<_>,_>>()? };
-                    let test = FormulaTestData { text,examples,collapse_newlines: false,..test };
                     let done = Rc::new({ let state = state.clone();let active = active.clone();let refresh = refresh.clone();move |formula| {
                         if !active.get() { return; }
                         let mut e = state.borrow_mut();
@@ -1126,9 +1475,16 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
                                 Ok(())
                             }
                         });
-                        let child =
-                            open_editor(&store, Value::Page(Box::new(page)), test, &slots, done)
-                                .map_err(|e| e.to_string())?;
+                        let child = open_editor(
+                            &store,
+                            Value::Page(Box::new(page)),
+                            test,
+                            &slots,
+                            done,
+                            None,
+                            None,
+                        )
+                        .map_err(|e| e.to_string())?;
                         let refresh = refresh.clone();
                         child.on_closed(move || refresh());
                         *slots.page.borrow_mut() = Some(child);

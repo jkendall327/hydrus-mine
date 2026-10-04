@@ -20,6 +20,7 @@ pub(crate) struct Slot(Rc<RefCell<Option<Running>>>);
 #[derive(Debug)]
 pub(crate) struct Outcome {
     pub document: FetchedDocument,
+    pub mime: Option<hydrus_core::Mime>,
     pub accounting_error: Option<String>,
 }
 impl std::fmt::Debug for Slot {
@@ -68,17 +69,28 @@ impl Slot {
                             .map_err(|e| e.to_string())?
                     };
                     let result = runtime.block_on(engine.fetch(&request, &job));
-                    let document = match result {
-                        Ok(response) => FetchedDocument::Text(response.text()),
-                        Err(NetError::Cancelled) => FetchedDocument::Cancelled,
-                        Err(error) => FetchedDocument::Failed {
-                            error: error.to_string(),
-                            text: job.error_text().unwrap_or_default(),
-                        },
+                    let (document, mime) = match result {
+                        Ok(response) => {
+                            let text = response.text();
+                            let mime = hydrus_gui_model::parser_test_data::detect_mime(
+                                &text,
+                                &response.body,
+                            );
+                            (FetchedDocument::Text(text), mime)
+                        }
+                        Err(NetError::Cancelled) => (FetchedDocument::Cancelled, None),
+                        Err(error) => (
+                            FetchedDocument::Failed {
+                                error: error.to_string(),
+                                text: job.error_text().unwrap_or_default(),
+                            },
+                            None,
+                        ),
                     };
                     let accounting_error = engine.save_bandwidth().err().map(|e| e.to_string());
                     Ok(Outcome {
                         document,
+                        mime,
                         accounting_error,
                     })
                 };
@@ -87,6 +99,7 @@ impl Slot {
                         error,
                         text: String::new(),
                     },
+                    mime: None,
                     accounting_error: None,
                 });
                 let _ = send.send(outcome);
@@ -112,6 +125,7 @@ impl Slot {
                                 error: "Network worker stopped before returning a document.".into(),
                                 text: String::new(),
                             },
+                            mime: None,
                             accounting_error: None,
                         });
                     }

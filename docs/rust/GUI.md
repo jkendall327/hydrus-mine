@@ -329,7 +329,22 @@ timestamp type (with its file service, viewer or domain), the forced
 note name, the JSON object names, the .txt separator, and the sidecar
 filename (remove the file's extension, a suffix, and the resulting
 sidecar for a test path). What they show and ask at each step is as
-`oracle/record_sidecar_editors.py` recorded the reference's.
+`oracle/record_sidecar_editors.py` recorded the reference's. Router editors also
+show one example-results table per source: file path or media hash, imported
+texts and router-processed texts. Filename tagging, import folders and manual
+exports supply up to 25 local files or media results; previews read their
+sidecars or metadata without exporting. Source/formula and router processor
+children inherit the reference's first-example strings. `oracle/record_sidecar_testing.py`
+records seven file/media, empty-input, processing and parse-error states.
+
+Router queues also import and export selected routers through clipboard text or
+reference PNGs, duplicate selected rows, and ask before deleting them. Imports
+check the owner's allowed direction, source and destination types before staging
+the package. Apply saves the queue with its owning import folder or export
+editor; Cancel closes recursive source, formula, processor and exchange children.
+`oracle/record_router_exchange.py` records both queue contexts, all six node kinds,
+exact rejection messages and duplication selection. The accepted URL-to-TXT router
+is also exercised through the native manual-export worker and its written sidecar.
 
 A router's or source's processing button (its steps, a line each) opens
 the string processor editor (`ui/string_processor.slint`,
@@ -520,7 +535,9 @@ selected components, and edit the substitution phrase. Every depth supports all
 six formula kinds. Parsed previews update when controls, documents, context,
 children or processors change. Parent edits and Apply wait for open descendants;
 owner cancellation invalidates every descendant callback. Saved page/content
-parsers use these formula edits in the live parser engine. Formula test panels fetch
+parsers use these formula edits in the live parser engine. Reusable content editor
+callers can restrict permitted content types while retaining staged Apply/Cancel
+and arbitrary named parsing context for formula previews. Formula test panels fetch
 URLs with live progress and cancellation. Page parser test panels fetch their page
 URL with an optional referral URL, using the stored network options, approved
 headers and cookies. Response charsets are decoded by the downloader engine;
@@ -1550,10 +1567,16 @@ regression proves an existing downloader follows an edited parser and link.
 Network > downloaders > parsers now opens the native named parser list
 (add/edit/duplicate/delete), and url class links opens staged direct parser
 associations. Page editors edit names, example URLs, pre-parsing converters and
-content nodes. Existing subsidiary rows expose separation-formula editing and
-source-time sorting. Their formula editors receive the parent's converted test
-document and preserve parsed newlines. Separation edits remain staged in the page
-draft and preserve each subsidiary's child parser. Content editors support URLs, tags, notes, hashes, timestamps,
+content nodes. Subsidiary rows support add, edit and delete, including recursive child pages,
+separation formulae and source-time sorting. The queue supports extended selection,
+duplicate, confirmed deletion and standalone wrapper clipboard/PNG import/export.
+Imported wrappers retain separator/sort settings, recursive pages, parser keys and
+reference editor context; changes stay staged until the owning page/list applies.
+Child content and recursive editors
+receive separated examples with their source URLs and context variables.
+Separation formula editors receive the raw inherited document and preserve
+parsed newlines. All edits stay staged until their page and parser list apply;
+closing an owner cancels every descendant. Content editors support URLs, tags, notes, hashes, timestamps,
 titles, headers, temporary variables and vetoes, reusing the six-kind formula
 and string-match editors. Test panels accept the document, page URL, post
 index and validated key=value context variables, and run the live parser engine.
@@ -1610,6 +1633,25 @@ suspends reads until a switch is toggled. Imported reference options carry both
 switches over. The real Qt watcher and URL-routing policy are recorded by
 `oracle/record_clipboard_urls.py`; native tests cover page routing, nested
 notebooks, menu persistence and failure recovery.
+
+Login definitions have typed script, step, credential, cookie and example-domain
+representations. The bounded interchange codec reads/writes reference login script
+JSON and compressed PNG, upgrades old fixed cookie names, and retains matcher
+and formula editor data. `oracle/record_login_editors.py` records the actual Qt
+credential panels, script-list import/rename and script validation. Network >
+logins > login scripts opens a staged script list with add/edit/delete, extended
+selection and JSON/PNG exchange. Script edits preserve their keys; additions and
+imports regenerate keys and make names unique. Credential definitions expose their
+name, normal/password presentation and shared permitted-input matcher. Credential
+entry masks passwords, validates live and reproduces the advisory acceptance
+question for blank or invalid values. Child edits wait for the owning script and
+script-list Apply; closing a parent cancels its children. The step queue supports add/edit/delete and order changes. Each step edits name,
+scheme, method, optional subdomain and path, with the reference subdomain/path
+cleanup. Its response content list supports extended selection, unique named
+VARIABLE/VETO nodes, shared formula/live preview, delete confirmation and reviewed
+JSON/PNG exchange. Parent cancellation discards every nested formula/parser.
+Request argument dictionaries, required-cookie matchers and script example-domain
+rows are preserved and shown, but remain read-only in this slice.
 
 ## Network sessions and HTTP headers
 
@@ -1813,6 +1855,29 @@ a manage-tags dialog remembers it immediately when enabled, even if the tag
 edits are later cancelled. New notebooks can separately prompt for a name after
 the page chooser creates them.
 
+File Search options can start new search pages paused or searching immediately,
+and show or hide `system:everything` in read autocomplete. Apply persists both
+preferences; Cancel discards edits. Existing pages retain their pause state, and
+resuming a paused page executes the query it has accumulated.
+
+Tab context menus now append a saved session inside the clicked tab row's
+notebook. Clicking a page of pages also offers saving its contents to an existing
+non-reserved session or creating a new one, with that notebook's name suggested.
+The overwrite, duplicate-name, reserved-name and cancellation steps follow the
+actual reference dialog recording in `oracle/record_notebook_sessions.py`.
+Saving targets the clicked notebook's key, independently of the selected sibling;
+its wrapper is omitted from the saved tree. Copies retain independent page media,
+selection and importer snapshots. Appending into a background notebook remembers
+its new child selection while preserving the visible sibling, and survives reopen.
+
+The network engine's local job-control protocol distinguishes connection retries, server bandwidth retries, domain errors and gallery waits. Commands validate the daemon epoch and live request identifier. A recent-error journal lets the owning control display a failure even after its request leaves the live list. The reference recording also establishes that the visible error menu contains only show and copy; clearing belongs to the control's owner.
+
+The File Search default/fallback local location button edits current importable
+file domains in a child selector, including multiple domains. Its Apply stages
+the location in Options; Options Apply persists it. Blank search pages and new
+notebooks use it, as does switching an all-known-file search to all known tags.
+Missing services are removed; an empty default resolves to all local file domains.
+
 Manage Tags now uses the shared write-autocomplete model: known zero-count tags
 stay available, typed tags and their ideal sibling are elevated, counts follow
 the configured write domain and tag service, and parent/sibling decorations use
@@ -1825,6 +1890,21 @@ without toggling existing tags off; its question and all staged tags are dropped
 when the owner is cancelled or closed. The running Qt client's synthetic corpus,
 rendered rows and paste decisions are in `write_tag_autocomplete.json`.
 
+Read autocomplete now captures the File Search active-predicate height (6 rows
+by default), results height (22 rows), and floating policy when each page is
+created. Both heights accept 1–128 text rows and scroll additional entries. The
+active predicates appear above the search input. Floating results overlay the
+page while the input is focused; embedded results reserve sidebar space.
+
+The tab popup refreshes a leaf or every initialized descendant of a notebook,
+without changing the selected page. Paused searches resume, locked searches stay
+fixed, and importer thumbnails reapply their current sort while retaining
+selection. Empty notebooks omit the refresh action. Advanced mode adds a copyable
+page-weight label for the clicked subtree: each child contributes its file count
+and each importer file or gallery seed contributes twenty, including repeated
+files shown in separate children. `oracle/record_tab_refresh.py` records the real
+recursive dispatch, search states, weights and clipboard text.
+
 The sibling and parent editors now share the same write input on both sides.
 Each service retains its own typed drafts, suggestions and highlighted result;
 keyboard entry and clicked suggestions use the selected tag, Ctrl+Space forces
@@ -1833,12 +1913,105 @@ side removes it from the original side. A pending paste cannot apply the
 relationship editor; closing its owner invalidates subsequent answers. The real
 Qt sibling/parent preview selections are recorded alongside write suggestions.
 
+Subscription import options can be copied as the reference JSON container,
+pasted into selected subscriptions and cleared after confirmation. Clipboard
+changes remain staged until Apply. The subscription popup preserves v688's
+observed callback routing: merge-paste replaces the slice, fill-in-gaps-paste
+merges incoming custom kinds, and replace-paste fills currently inherited kinds.
+The real Qt recording is `oracle/record_subscription_import_options.py`; native
+regressions cover clipboard output, all three modes, invalid input, declined
+clearing, reopening and callbacks retained after the owner closes.
+
+File Search can set an implicit search limit (none by default; 1–100,000,000).
+The shared query engine applies it only without an explicit `system:limit`, so an
+explicit larger limit overrides it. The sort-refresh preference defaults on:
+changing a supported database sort reruns a synchronized, explicitly limited
+local search to choose its new sorted subset. Paused searches, implicit-only
+limits, all-known-file locations, and unsupported sorts keep the current subset.
+
 Import options' additional-tags and file whitelist lists can also be edited in
 a detached shared write-tag window. It uses the additional-tags service or all
 known tags for whitelist suggestions. Typed entry toggles a listed tag, paste
 only adds, and Apply returns the accepted list to the parent options draft.
 Child Cancel/native close preserves the caller's list, unlocks the parent, and
 parent closure cancels the child and invalidates its pending answers.
+
+Tab popups offer “new page” for the clicked row's notebook and “new page here”
+before the clicked tab. The chooser keeps those destination keys when selection
+changes, and cancellation clears the pending insertion. Right-clicking a row's
+unused space also opens its new-page action. GUI Pages exposes “Put new page tabs
+on” with all four reference choices; legacy preferences import and applied changes
+reach new-page creation immediately, while an explicit “here” position overrides
+the preference. The real chooser outputs for all positions and cancellation are
+recorded in `oracle/record_tab_new_page.py`.
+
+The file and search download controls on URL, simple downloader, gallery and
+watcher pages now have the reference cog menu. Its decoded URL label copies the
+original URL, and its bandwidth-rules submenu opens the existing detached rule
+editor directly. Default contexts appear once; temporary page instances never
+get their own rule editor. Applicable actions reattempt a connection or a server
+bandwidth wait, scrub domain errors, override this job's bandwidth, or skip this
+job's gallery wait. The five-second automatic override belongs to that page's
+file/search control and survives changing the highlighted query. Closing a page
+retires its policy; accepted overrides remain in effect for the current job.
+
+A failed request leaves a last-error button on the owning page control. Its menu
+has only **show error** and **copy error**. The error window uses the reference
+**Network Error** title and preserves the text. Removing a finished job keeps its
+error; the owner's explicit clear hides the button and suppresses replay of the
+same stored failure. The page-parser example-fetch owner clears after validating
+a new URL and retains the completed failure after removing its live job. Empty
+URLs and raw test-panel fetches preserve the owner’s error; closing its editor
+closes the error window.
+
+Importer option editors now expose reference container copy/paste and the shared
+custom overwrite chooser. The chooser shows current, pasted/loaded and result
+columns, with merge, fill-in-gaps and replace presets plus per-kind checkboxes.
+Applying the child replaces only the parent draft; closing either owner cancels
+uncommitted edits and retained callbacks cannot apply twice. Non-full replacement
+of global options is rejected with the reference information message.
+
+When several controls review the same request, each automatic override has its
+own owner. Closing or unchecking one control leaves another control's policy
+intact. The override also skips a data-speed wait after five seconds and counts
+the transferred data normally.
+
+The current-network-jobs review shows the same selected-job control, including
+context rules, applicable retry/wait actions, and show/copy for a failure retained
+after the selected request disappears. Its automatic policy has an independent
+owner, so unchecking a page control does not disable the review's policy.
+
+Page parser example-data fetching retains its network failure after the job ends.
+The error menu shows the full native diagnostic or copies it unchanged; the next
+validated example request clears the retained failure. Closing the parser also
+closes its error popup and invalidates retained callbacks. Raw formula/content
+URL fetching uses its own test text, as in the reference.
+
+Parser and formula raw-data panels copy the complete document and paste into the
+current example while retaining its context. Read-only previews format JSON with
+the reference's four-space indentation, describe JSON/HTML character counts and
+clip display text at 500,000 characters without clipping parser input. Fetches
+inspect response bytes through the existing media engine; recognized media shows
+its type and **no preview**, with test parse disabled. Changing examples restores
+their detected type, while a pasted replacement clears it. Recursive children
+inherit the document and context, matching Qt's text-only child data contract.
+`oracle/record_parser_raw_preview.py` records these controls and exact wording.
+
+
+Network > logins > logins opens preserved or saved domain entries. Edit credentials
+uses the script's definition order and masks passwords, with the recorded live
+labels and advisory invalid/blank confirmation. Accepted values reset delays and
+validity, deactivate invalid credentials and ask before activating a valid inactive
+domain. Domain Apply saves its draft while preserving concurrent script edits;
+Cancel closes credential children and ignores stale handles. Flip active, scrub
+delays and scrub invalidity work on extended selection. Adding domains, changing
+scripts and logged-in cookie status/reset are still absent. Do login now filters
+selected active, non-invalid, existing-script domains whose required cookies are
+missing, asks the recorded confirmation, saves the domain draft and closes the
+manager before attempting its sorted queue. Attempts use the existing cookie store;
+key-guarded results update validity or network delays. Reopening the manager shows
+HTTP/final status and can cancel the queue. Canceling the application owner stops
+remaining attempts.
 
 Shared write-tag inputs now offer tags, favourites and children in Manage Tags,
 both sibling/parent inputs, and detached import additional-tags/whitelist
@@ -1849,6 +2022,36 @@ option limits children to 40 by default; a staged limit or “show all” reache
 open consumers only after Apply. `oracle/record_write_tag_autocomplete.py`
 drives the real Qt favourites decorator worker, children database query and
 noneable limit control; model and native-window regressions replay their output.
+GUI Sessions now applies the autosave period and idle-only preference to a
+historical save timer alongside live session synchronization. Active idle-only
+saves retry in sixty seconds; eligible saves use the configured one-to-1440-minute
+period. Unchanged session data, including selection-only changes, creates no new
+backup. Main-window key/pointer activity and page commands from the Client API
+feed the imported user/mouse/API idle timeouts, including the initial two-minute
+boot guard. Switching the startup preference away from last session stops the
+scheduled save chain after its next eligible tick. The real controller's cadence,
+unchanged hash suppression, history and idle boundaries are recorded in
+`oracle/record_session_autosave.py`.
+Media playback Options now control whether a resized viewer restores its default
+fit or keeps the current detail zoom and pan. Transparent media can show the
+reference's 16-pixel checkerboard or bright green background; opaque files keep
+the ordinary canvas background. Media viewer Options set the seek bar's full
+height (1–255 pixels), mouse-away height (1–255 pixels or completely hidden),
+and nub width (1–63 pixels). Apply refreshes an open viewer; Cancel discards the
+draft. The configured nub width also determines where clicks and drags seek.
+Legacy preferences migrate with the reference's defaults. These controls and
+native pixels/geometry are recorded in `viewer_canvas_options.json`.
+The file log’s **ADVANCED: import new sources > from clipboard** imports
+nonblank lines immediately, applies the active URL classes, and skips duplicate
+seeds without retrying failed ones. The first line determines URL or path type
+for the whole batch, as in the reference. Empty, unavailable, or inaccessible
+clipboard text displays an error and preserves the existing log. Closing or
+replacing a log invalidates its old callbacks.
+
+The selected-row **search for URLs** action opens a **url search** page in local
+file domains with one OR container of exact URL predicates. It uses the selected
+seeds’ request URLs and executes the search through the existing search engine;
+the page and its predicates can be saved in a session.
 
 Shared write-tag suggestion lists now have a right-click menu for copying raw
 tags, subtags, underscores, counts, all list tags and tags with parents. Parent
@@ -1862,6 +2065,50 @@ duplicate launcher. The real Qt menu actions, copy payloads, questions and page
 publications are recorded by `oracle/record_write_tag_autocomplete.py`; model
 replay and native-window lifecycle regressions cover these boundaries.
 
+The login HTTP module runs ordered GET/POST steps through NetEngine and the normal
+persisted cookie store. Static arguments, credentials and temporary variables
+follow the reference's precedence. POST sends form data and a previous-step
+Referer/Origin, response parsers transfer variables or veto, and step/final cookie
+matchers decide success. Results retain each raw URL/body preview, downloaded text,
+new variables/cookies and status. `oracle/record_login_execution.py` actually runs
+the reference HTTP jobs on a loopback-only dummy site and records success, missing
+cookies/variables, veto, final mismatch, HTTP 401 and cancellation. Native scoped
+HTTP regressions replay those results, inspect wire requests, reopen session cookies
+and cancel an active request. The native GUI test/run consumer is being connected.
+
+Import-option editors now have the reference favourites/profiles star menu:
+load, custom load, copy, edit/add and confirmed deletion. Favourite editors
+include their name and template description; they permit loading and copying
+other profiles while preventing recursive profile edits. Save-current prompts
+for a name, and collisions follow Hydrus's suffix rules. Saves and deletions
+persist immediately, preserving other owners' defaults. Custom load and profile
+editing lock the parent draft; Cancel or owner closure invalidates retained child
+callbacks. The real Qt menu tree, prompts, editor outputs and acceptance/cancel
+paths are recorded in `subscription_import_options.json`.
+
+GUI Sessions also selects the default session on startup: a blank page, last
+session or any saved name. Choices remain fixed while the options window is
+open, and Cancel leaves the startup preference unchanged. A missing session
+name falls back to a blank page. Named sessions restore their saved tree, ordered
+media, selection and independent importer state before the main window opens;
+`oracle/record_session_startup.py` records the four ordinary startup outcomes.
+File-log source PNG exchange now imports reference carriers through **from png**
+and exports the frozen source lines through **to png**. The shared **export to
+png** panel has title, payload description, description, width (100–4096) and
+path controls, validates the path/title before writing, appends `.png`, shows
+**done!** briefly, and remembers the successful export directory. Exports have a
+readable image header and compressed UTF-8 payload compatible with the reference.
+Cancelling an import picker or closing an export leaves the log unchanged;
+malformed or oversized input displays an error. The export child closes with its
+log and rejects callbacks through a retained old handle.
+
+Media viewer hovers Options now independently enable or disable the tags,
+ratings/locations, and notes pop-in panels. The passive bottom-right index
+preference draws the current zoom and index as “zoom - index”, three pixels from
+the canvas edge, underneath the media. All four checkboxes default enabled, as in
+hydrus; Apply updates the current viewer, while Cancel retains its settings.
+The reference recording `viewer_hover_options.json` covers the actual hover
+layout gates and background draw calls, including independent combinations.
 The shared suggestion menu also shows sibling ideals and parent/child lookups
 from all real tag services, grouped by common service membership with the
 reference's ten-item display cap. Add siblings/parents opens an owned relationship
@@ -1873,6 +2120,51 @@ recorder runs the actual relationship lookup and initialization workers and
 records all service seeds and preference changes; model and native child tests
 check graph publication, cancellation and owner lifetimes.
 
+Write-tag menus now open real search or duplicate-filter pages through the main
+window. The selected raw tag predicates, file domain, default tag service and
+reference page names reach their query consumers and persist in sessions.
+Parent decorations remain display text and are not silently added to searches.
+The launcher holds weak owner handles; closing a tag input invalidates its menu.
+
+Idle activity now also follows native input events in auxiliary windows. Mouse
+movement updates the mouse timer; keys, clicks, scrolling and opening/focusing
+an editor update the user timer. Rendering and losing focus do not reset either
+timer. The reference's independent dialog, mouse and API timestamp updates are
+recorded by `oracle/record_session_activity.py`.
+and cancel an active request. The script editor now has a domain field, run/cancel
+controls, current HTTP status, final result and a results table. Run asks for its
+credential values and uses a fresh cookie store, leaving the client sessions and
+staged definitions unchanged. Applying while a test runs is blocked. Review opens
+read-only URL/body/data/variable/cookie/result fields; the data preview contains
+at most 1024 Unicode characters, and copy transfers the complete response.
+Closing the owner cancels the run and its result review, and stale actions do nothing.
+
+Client API requests now publish an atomic timestamp-only activity marker before
+authentication, including rejected requests and database-busy responses. The GUI
+reads it when evaluating idle, so ordinary API reads also postpone idle-only
+session autosaves. This IPC remains available while the API's SQLite pool is
+paused and records no request paths, credentials or payloads.
+
+Importing a reference database whose startup preference selects a named session
+keeps that original name as an immutable snapshot as well as the native live
+last session. Startup can therefore load the configured name after conversion;
+its media and importer logs survive replacement of the initially staged pages.
+
+Media viewer mouse behaviour Options can reject mouse drag-panning on files
+with duration, while leaving still images, keyboard panning and seek bars
+available. The cursor-hiding preference blanks the native cursor on accepted
+drag movement; releasing retains the blank cursor until ordinary movement
+restores it. Both settings apply to the open viewer, persist on Apply and
+remain unchanged on Cancel. Duration drag blocking defaults off; cursor hiding
+defaults on except macOS, matching the reference. `viewer_pointer_options.json`
+records real Qt drag acceptance, geometry and cursor transitions.
+GUI Sessions exposes the large-session warning preference. When active page
+weight exceeds 10,000,000, the client adds the reference's warning text to the
+popup stack once per boot. The weight includes twenty per importer seed and
+excludes closed pages. Disabling the preference suppresses the warning without
+using that boot's allowance; dismissing a warning does not cause it to repeat.
+`oracle/record_session_warning.py` records the threshold, disabled state, seed
+weighting and exact popup messages from the reference's live menu-count updater.
 Every shared write input now has file/tag-domain buttons. Their checked menus
 follow the reference and always offer all known files; choosing that domain
 while searching all tags switches to the first local tag service. Choosing all
@@ -1884,3 +2176,69 @@ Cancel preserves the current input domains and owner close discards the child.
 The recorder drives the real Qt domain buttons and interlocks, and model/native
 regressions verify checked menus, labels, counts, no options writes and child
 cancellation.
+The file log’s **advanced** menu exports selected import objects as the reference
+SerialisableList/FileSeed JSON, including progress, headers, hashes, tags, source
+URLs and notes. **re-normalise all URLs** asks the reference’s full confirmation
+question in the log and downloader list menus. Yes reads current URL classes and
+atomically updates request/comparison URLs, discarding later duplicates while
+preserving the first seed’s identifier, status, timestamps and metadata. No or
+closing the log preserves the existing entries. The reference has no advanced
+object-import action.
+
+PNG export headers also render on installations without system fonts using a
+bundled Open Sans fallback with its Apache 2.0 licence and copyright notice.
+
+Login step request arguments are editable in the combined credential/static/temporary
+list. Add or edit selects the dictionary and stages its key/value pair; keys are
+nonblank and unique within that dictionary, while values can be blank. Rename,
+confirmed deletion, row Cancel and parent Cancel preserve the expected draft
+boundaries. The loopback consumer regression edits a static query argument through
+the native step window and observes it on the actual HTTP request.
+
+Subscription import-options favourites now use the shared star menu. Loading
+replaces the selected subscriptions' staged options; custom loading shows the
+reference's multiple-selection information before opening the shared three-column
+overwrite chooser. Cancel preserves the subscription draft, and Apply writes the
+chosen result to every selected subscription, including the reference's behavior
+after its topmost-selection warning. Profile edits persist independently of the
+subscription dialog. The list offers no save-current action, and closing it cancels
+its open profile/overwrite children and invalidates retained callbacks.
+
+Scripts and steps open a shared required-cookie editor with sorted name/value
+matcher rows, extended selection, add/edit and confirmed delete. Each matcher uses
+the existing live permitted-input editor. A row and its whole list can be canceled
+independently; accepted lists remain staged beneath their step/script/list owners.
+Matcher updates persist through reopening, and the HTTP consumer regression shows
+an edited cookie value rejecting the actual loopback response cookie.
+
+An interrupted native client boot now triggers the reference's startup recovery
+question when the configured session exists. It offers that session or a blank
+page and automatically chooses the session after fifteen seconds. Closing the
+question chooses blank; this does not change the saved startup preference. The
+question retains its displayed session name if preferences change while it is
+open. The native running marker clears only after saving and stopping owned work;
+cancelling the password gate also clears it without opening a session. The real
+recovery questions, outputs and a fifteen-second auto-yes dialog are recorded
+in `oracle/record_session_startup.py`.
+Search logs export all URLs through the reusable PNG panel, import new URL
+lines from the clipboard or PNG, and copy complete selected page objects as
+reference JSON. Imports ask the exact duplicate and continuation questions
+before committing and waking the queue. The current reference's duplicate
+“add all” answer ends the import; “only add new” proceeds to the continuation
+choice. Each imported page gets its own run token and the selected continuation
+flag. The standalone `SearchLogImportWindow` keeps the actual question text and
+button labels, handles invalid PNG/clipboard access errors, and cancels with its
+log owner. These actions also work directly from a downloader's search-log menu
+without opening the log editor.
+
+Seek-bar and hover pop-in focus preferences now consume actual desktop window
+activation through the shared native observer. Both default enabled and are
+independent: an inactive viewer keeps the seek bar at its configured away height,
+while an accepted scrub or existing volume popup keeps it full. The hover rule
+covers the top information, tags, ratings/locations and notes panels. With no
+active application window, an already-raised hover stays up while the pointer
+remains there; leaving hides it, and moving back cannot raise it until the viewer
+is active. Another active application window hides it. Apply updates the current
+viewer, Cancel retains the preferences, and legacy values migrate. The fresh
+`viewer_focus_options.json` recording includes real Qt activation and all four
+no-active-window transitions.

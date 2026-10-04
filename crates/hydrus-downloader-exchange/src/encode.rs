@@ -30,12 +30,12 @@ pub(crate) fn serialisable_list(values: Vec<Value>) -> Value {
         ),
     )
 }
-fn string_match(m: &StringMatch) -> Value {
+pub(crate) fn string_match(m: &StringMatch) -> Value {
     let (kind, value) = match &m.kind {
         MatchKind::Fixed(s) => (0, json!(s)),
         MatchKind::Flexible(f) => (1, json!(*f as i64)),
         MatchKind::Regex(r) => (2, json!(r.pattern())),
-        MatchKind::Any => (3, Value::Null),
+        MatchKind::Any => (3, json!("")),
     };
     object(
         51,
@@ -43,7 +43,7 @@ fn string_match(m: &StringMatch) -> Value {
         json!([kind, value, m.min_chars, m.max_chars, m.example]),
     )
 }
-fn converter(c: &StringConverter) -> Result<Value> {
+pub(crate) fn converter(c: &StringConverter) -> Result<Value> {
     let conversions = c
         .conversions
         .iter()
@@ -211,7 +211,7 @@ fn html_rule(r: &HtmlRule) -> Value {
         ]),
     )
 }
-fn formula(f: &Formula) -> Result<Value> {
+pub(crate) fn formula(f: &Formula) -> Result<Value> {
     let p = processor(&f.processor)?;
     let mut encoded = match &f.kind {
         FormulaKind::Html { rules, content } => {
@@ -273,7 +273,7 @@ fn formula(f: &Formula) -> Result<Value> {
     Ok(encoded)
 }
 
-fn content(c: &ContentParser) -> Result<Value> {
+pub(crate) fn content(c: &ContentParser) -> Result<Value> {
     let (kind, extra) = match &c.kind {
         ContentKind::Url { url_type, priority } => (7, json!([url_type, priority])),
         ContentKind::Tag { namespace } => (0, json!(namespace)),
@@ -297,7 +297,7 @@ fn content(c: &ContentParser) -> Result<Value> {
         json!([c.name, kind, formula(&c.formula)?, extra]),
     ))
 }
-fn page(p: &PageParser) -> Result<Value> {
+pub(crate) fn page(p: &PageParser) -> Result<Value> {
     valid_key(&p.key)?;
     let mut contents = p.content_parsers.iter().collect::<Vec<_>>();
     contents.sort_by_cached_key(|c| hydrus_core::casefold::casefold(&c.name));
@@ -336,7 +336,7 @@ fn page(p: &PageParser) -> Result<Value> {
     Ok(encoded)
 }
 
-fn valid_key(key: &str) -> Result<()> {
+pub(crate) fn valid_key(key: &str) -> Result<()> {
     let bytes = hex::decode(key)
         .map_err(|_| Error::Invalid("Definition key is not hexadecimal.".into()))?;
     if bytes.is_empty() || bytes.len() > 128 {

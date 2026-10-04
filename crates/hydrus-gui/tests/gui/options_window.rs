@@ -1406,6 +1406,1133 @@ fn removed_default_service_falls_back_in_options_and_waits_for_apply() {
 }
 
 #[test]
+fn search_defaults_apply_to_new_pages_and_the_real_autocomplete() {
+    use hydrus_core::ServiceKey;
+    use hydrus_core::service::builtin_keys;
+    use hydrus_gui::page_chooser::NewPage;
+    use hydrus_store::settings::{FileSearchSettings, get};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let fixture = hydrus_testkit::fixture_json("file_search_defaults.json");
+    let saved = || store.read(get::<FileSearchSettings>).unwrap();
+    assert_eq!(
+        saved().search_immediately,
+        fixture["initial"]["search_immediately"].as_bool().unwrap()
+    );
+    assert_eq!(
+        saved().show_system_everything,
+        fixture["initial"]["show_system_everything"]
+            .as_bool()
+            .unwrap()
+    );
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "file search");
+    let (sync_row, _) = row(
+        &window,
+        "Start new search pages in 'searching immediately':",
+    );
+    let (everything_row, _) = row(&window, "Show system:everything:");
+    window.invoke_check_toggled(sync_row, false);
+    window.invoke_check_toggled(everything_row, false);
+    window.invoke_cancel();
+    assert!(saved().search_immediately && saved().show_system_everything);
+
+    let mut first_page = None;
+    for event in fixture["events"].as_array().unwrap() {
+        let enabled = event["enabled"].as_bool().unwrap();
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "file search");
+        let (sync_row, _) = row(
+            &window,
+            "Start new search pages in 'searching immediately':",
+        );
+        let (everything_row, _) = row(&window, "Show system:everything:");
+        window.invoke_check_toggled(sync_row, enabled);
+        window.invoke_check_toggled(everything_row, enabled);
+        window.invoke_apply();
+        assert_eq!(saved().search_immediately, enabled);
+        assert_eq!(saved().show_system_everything, enabled);
+        bound
+            .pages
+            .borrow_mut()
+            .new_page(&NewPage::Search {
+                domain: ServiceKey::new(builtin_keys::MY_FILES.to_vec()),
+                name: "synthetic search default recording".into(),
+            })
+            .unwrap();
+        let page = bound.pages.borrow_mut().current();
+        let first = first_page.get_or_insert_with(|| page.clone());
+        assert_eq!(
+            page.borrow().synchronised(),
+            event["new_page_synchronised"].as_bool().unwrap()
+        );
+        assert_eq!(
+            first.borrow().synchronised(),
+            event["first_page_synchronised"].as_bool().unwrap()
+        );
+        for offered in event["offered"].as_array().unwrap() {
+            let mut autocomplete = hydrus_gui::autocomplete::Autocomplete::new(store.clone());
+            let location = hydrus_core::search::context::LocationContext::single(
+                ServiceKey::from_hex(offered["location"].as_str().unwrap()).unwrap(),
+            );
+            autocomplete.set_context(
+                &location,
+                &hydrus_core::search::context::TagContext::default(),
+            );
+            assert_eq!(
+                autocomplete
+                    .suggestions()
+                    .iter()
+                    .any(|item| item.predicate == "system:everything"),
+                offered["everything"].as_bool().unwrap()
+            );
+            assert!(
+                autocomplete
+                    .suggestions()
+                    .iter()
+                    .any(|item| item.predicate == "system:limit")
+            );
+        }
+        assert!(page.borrow_mut().add_predicate("system:everything"));
+        if !enabled {
+            assert!(
+                page.borrow().results().is_empty(),
+                "paused page must defer its query"
+            );
+            page.borrow_mut().set_synchronised(true);
+        }
+        assert!(
+            !page.borrow().results().is_empty(),
+            "resuming must execute the staged query"
+        );
+        // Keep the first page paused while the new-page default changes next.
+        page.borrow_mut().set_synchronised(enabled);
+    }
+    open(&ui);
+    let reopened = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&reopened, "file search");
+    assert!(row(&reopened, "Show system:everything:").1.checked);
+    reopened.invoke_cancel();
+}
+
+#[test]
+fn default_local_location_child_draft_drives_blank_pages_and_tag_fallback() {
+    use hydrus_core::ServiceKey;
+    use hydrus_core::search::context::LocationContext;
+    use hydrus_core::service::builtin_keys;
+    use hydrus_store::settings::{SearchDefaults, get};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let fixture = hydrus_testkit::fixture_json("default_search_location.json");
+    let defaults = || store.read(get::<SearchDefaults>).unwrap();
+    let before = defaults();
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "file search");
+    let (location_row, location) = row(&window, "Default/Fallback local file search location:");
+    assert_eq!(location.text, fixture["initial"]["label"].as_str().unwrap());
+    window.invoke_local_location_clicked(location_row);
+    let child = hydrus_gui::locations_window::last_opened().unwrap();
+    child.invoke_toggled(0, true);
+    window.invoke_cancel();
+    assert!(!child.window().is_visible());
+    child.invoke_apply();
+    assert_eq!(defaults(), before, "cancel invalidates child callbacks");
+
+    for event in fixture["events"].as_array().unwrap() {
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "file search");
+        let (location_row, _) = row(&window, "Default/Fallback local file search location:");
+        window.invoke_local_location_clicked(location_row);
+        let child = hydrus_gui::locations_window::last_opened().unwrap();
+        let choices = fixture["choices"].as_array().unwrap();
+        assert_eq!(child.get_ticks().row_count(), choices.len());
+        for (index, choice) in choices.iter().enumerate() {
+            assert_eq!(
+                child.get_ticks().row_data(index).unwrap().label,
+                choice["label"].as_str().unwrap()
+            );
+            let selected = event["selected"]["current"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|key| key == &choice["data"]);
+            child.invoke_toggled(index as i32, selected);
+        }
+        let unchanged = defaults();
+        child.invoke_apply();
+        assert_eq!(
+            defaults(),
+            unchanged,
+            "child Apply only changes parent draft"
+        );
+        window.invoke_apply();
+        let keys = |location: &LocationContext| {
+            location
+                .current()
+                .iter()
+                .map(ServiceKey::to_hex)
+                .collect::<Vec<_>>()
+        };
+        let expected = |field: &str| {
+            event[field]["current"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|value| value.as_str().unwrap().to_owned())
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(keys(&defaults().local_location), expected("selected"));
+        bound.pages.borrow_mut().new_search_page();
+        let page = bound.pages.borrow_mut().current();
+        assert_eq!(keys(page.borrow().location()), expected("new_page"));
+        page.borrow_mut()
+            .choose_location(LocationContext::single(ServiceKey::new(
+                builtin_keys::COMBINED_FILE.to_vec(),
+            )));
+        page.borrow_mut()
+            .choose_tag_service(ServiceKey::new(builtin_keys::COMBINED_TAG.to_vec()));
+        assert_eq!(keys(page.borrow().location()), expected("fallback"));
+        let standalone = hydrus_gui::SearchPage::new(store.clone());
+        assert_eq!(keys(standalone.location()), expected("resolved"));
+    }
+    store
+        .write(|ctx| {
+            let mut value = get::<SearchDefaults>(ctx.conn())?;
+            value.local_location =
+                LocationContext::single(ServiceKey::new(b"missing synthetic file domain".to_vec()));
+            hydrus_store::settings::set(ctx.conn(), &value)
+        })
+        .unwrap();
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "file search");
+    assert_eq!(
+        row(&window, "Default/Fallback local file search location:")
+            .1
+            .text,
+        fixture["missing"]["label"].as_str().unwrap()
+    );
+    window.invoke_apply();
+    assert_eq!(
+        defaults()
+            .local_location
+            .current()
+            .iter()
+            .map(ServiceKey::to_hex)
+            .collect::<Vec<_>>(),
+        fixture["missing"]["current"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|key| key.as_str().unwrap().to_owned())
+            .collect::<Vec<_>>()
+    );
+}
+
+#[test]
+fn read_list_sizes_and_float_policy_reach_rendered_new_pages() {
+    use hydrus_core::ServiceKey;
+    use hydrus_core::service::builtin_keys;
+    use hydrus_gui::page_chooser::NewPage;
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let fixture = hydrus_testkit::fixture_json("file_search_presentation.json");
+    ui.show().unwrap();
+    let main = windows.get(0).unwrap();
+    main.dispatch_event(slint::platform::WindowEvent::WindowActiveChanged(true));
+    let mut first = None;
+    let mut floated_tags_y = None;
+    for (index, event) in fixture["events"].as_array().unwrap().iter().enumerate() {
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "file search");
+        let (active_row, active) = row(&window, "Active Search Predicates list height:");
+        let (suggestion_row, suggestions) = row(&window, "Autocomplete list height:");
+        assert_eq!((active.minimum, active.maximum), (1, 128));
+        assert_eq!((suggestions.minimum, suggestions.maximum), (1, 128));
+        let (float_row, _) = row(
+            &window,
+            "Autocomplete dropdown floats over file search pages:",
+        );
+        window.invoke_number_edited(active_row, event["active_rows"].as_i64().unwrap() as i32);
+        window.invoke_number_edited(
+            suggestion_row,
+            event["autocomplete_rows"].as_i64().unwrap() as i32,
+        );
+        window.invoke_check_toggled(float_row, event["floating"].as_bool().unwrap());
+        window.invoke_apply();
+        (bound.open_page)(&NewPage::Search {
+            domain: ServiceKey::new(builtin_keys::MY_FILES.to_vec()),
+            name: "synthetic search presentation recording".into(),
+        });
+        let page = bound.pages.borrow_mut().current();
+        let original = first.get_or_insert_with(|| page.clone());
+        let config = original
+            .borrow()
+            .autocomplete()
+            .presentation_settings()
+            .clone();
+        assert_eq!(
+            config.active_predicate_rows,
+            event["first_view"]["active"]["rows"].as_u64().unwrap() as u32
+        );
+        assert_eq!(
+            config.autocomplete_rows,
+            event["first_view"]["autocomplete"]["rows"]
+                .as_u64()
+                .unwrap() as u32
+        );
+        assert_eq!(
+            config.float_autocomplete,
+            event["first_view"]["floating"].as_bool().unwrap()
+        );
+        assert_eq!(
+            ui.get_active_predicate_rows(),
+            event["view"]["active"]["rows"].as_i64().unwrap() as i32
+        );
+        assert_eq!(
+            ui.get_autocomplete_rows(),
+            event["view"]["autocomplete"]["rows"].as_i64().unwrap() as i32
+        );
+        assert_eq!(
+            !ui.get_float_autocomplete(),
+            event["view"]["embedded_in_layout"].as_bool().unwrap()
+        );
+        ui.set_search_focus_requests(ui.get_search_focus_requests() + 1);
+        // Layout publishes geometry from the conditional sidebar. Flush those
+        // change handlers, then render its correctly placed overlay.
+        headless::render(&main, 1100, 1500);
+        slint::platform::update_timers_and_animations();
+        let pixels = headless::render(&main, 1100, 1500);
+        assert!(pixels.iter().any(|pixel| *pixel != 0));
+        assert!(ui.get_active_predicate_list_height() >= 28.0);
+        assert!(
+            ui.get_active_predicate_list_height() <= ui.get_active_predicate_preferred_height()
+        );
+        if index == 0 {
+            assert!(ui.get_search_focused());
+            assert!(ui.get_autocomplete_overlay_visible());
+            floated_tags_y = Some(ui.get_search_tags_y());
+        } else if index == 1 {
+            assert!(!ui.get_autocomplete_overlay_visible());
+            assert!(
+                ui.get_search_tags_y() > floated_tags_y.unwrap() + 200.0,
+                "embedded results must occupy sidebar layout space; floating results overlay it"
+            );
+        }
+        ui.set_search_focused(false);
+        assert!(
+            !ui.get_autocomplete_overlay_visible(),
+            "floating results hide without input focus"
+        );
+    }
+}
+
+#[test]
+fn implicit_limit_options_reach_queries_and_limited_sort_refresh() {
+    use hydrus_search::{SortBy, SortOrder};
+    use hydrus_store::settings::{FileSearchSettings, get};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let fixture = hydrus_testkit::fixture_json("file_search_limits.json");
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "file search");
+    let (limit_row, limit) = row(&window, "Implicit system:limit for all searches: ");
+    assert_eq!((limit.minimum, limit.maximum), (1, 100_000_000));
+    assert_eq!(limit.none_phrase, "no limit");
+    assert_eq!(limit.is_none, fixture["initial"]["limit"].is_null());
+    window.invoke_none_toggled(limit_row, false);
+    window.invoke_number_edited(limit_row, 3);
+    window.invoke_cancel();
+    assert!(
+        store
+            .read(get::<FileSearchSettings>)
+            .unwrap()
+            .implicit_limit
+            .is_none()
+    );
+    for case in fixture["refreshes"].as_array().unwrap() {
+        let enabled = case["enabled"].as_bool().unwrap();
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "file search");
+        let (limit_row, _) = row(&window, "Implicit system:limit for all searches: ");
+        let (refresh_row, _) = row(
+            &window,
+            "If explicit system:limit, then refresh search when file sort changes: ",
+        );
+        window.invoke_none_toggled(limit_row, false);
+        window.invoke_number_edited(limit_row, 3);
+        window.invoke_check_toggled(refresh_row, enabled);
+        window.invoke_apply();
+        let saved = store.read(get::<FileSearchSettings>).unwrap();
+        assert_eq!(saved.implicit_limit, Some(3));
+        assert_eq!(saved.refresh_limited_sort, enabled);
+        let mut page = hydrus_gui::SearchPage::new(store.clone());
+        page.set_sort_by(SortBy::Hash);
+        page.set_sort_order(SortOrder::Ascending);
+        assert!(page.add_predicate("system:everything"));
+        assert_eq!(
+            page.results().len(),
+            3,
+            "implicit limit reaches the search engine"
+        );
+        if case["explicit"].as_bool().unwrap() {
+            assert!(page.add_predicate("system:limit is 3"));
+        }
+        let original = page
+            .results()
+            .iter()
+            .copied()
+            .collect::<std::collections::BTreeSet<_>>();
+        page.set_synchronised(case["sync"].as_bool().unwrap());
+        page.set_sort_by(SortBy::from_code(case["code"].as_i64().unwrap()).unwrap());
+        page.set_sort_order(SortOrder::Descending);
+        let after = page
+            .results()
+            .iter()
+            .copied()
+            .collect::<std::collections::BTreeSet<_>>();
+        if case["refresh_count"].as_u64().unwrap() > 0 {
+            assert_ne!(
+                after, original,
+                "rerun must choose the other end of the hash-sorted search"
+            );
+        } else {
+            assert_eq!(
+                after, original,
+                "guarded sort changes only reorder the current subset"
+            );
+        }
+    }
+    let mut page = hydrus_gui::SearchPage::new(store.clone());
+    assert!(page.add_predicate("system:everything"));
+    assert!(page.add_predicate("system:limit is 8"));
+    assert_eq!(
+        page.results().len(),
+        8,
+        "larger explicit limit overrides the implicit limit"
+    );
+}
+
+#[test]
+fn canvas_options_apply_to_the_open_viewer_and_cancel_discards_the_draft() {
+    use hydrus_store::media::FileFlags;
+    use hydrus_store::settings::{self, ViewerCanvasSettings};
+    let fixture = hydrus_testkit::fixture_json("viewer_canvas_options.json");
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    let basic = store
+        .read(|conn| hydrus_store::media::load_basic(conn, &files))
+        .unwrap();
+    let alpha = basic
+        .iter()
+        .position(|file| {
+            file.info.as_ref().is_some_and(|info| {
+                info.mime == hydrus_core::Mime::ImagePng && info.flags.has(FileFlags::TRANSPARENCY)
+            })
+        })
+        .unwrap();
+    let opaque = basic
+        .iter()
+        .position(|file| {
+            file.info
+                .as_ref()
+                .is_some_and(|info| info.mime == hydrus_core::Mime::ImageJpeg)
+        })
+        .unwrap();
+    ui.invoke_thumbnail_activated(i32::try_from(alpha).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    headless::render(&drawn, 800, 600);
+    assert_eq!(viewer.get_transparency_mode(), 0);
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media playback");
+    options.invoke_check_toggled(
+        row(&options, "Draw image transparency as checkerboard:").0,
+        true,
+    );
+    options.invoke_check_toggled(row(&options, "Re-center media on window resize:").0, false);
+    assert_eq!(viewer.get_transparency_mode(), 0, "draft does not repaint");
+    options.invoke_cancel();
+    assert_eq!(
+        store.read(settings::get::<ViewerCanvasSettings>).unwrap(),
+        ViewerCanvasSettings::default()
+    );
+    for event in fixture["backgrounds"].as_array().unwrap() {
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media playback");
+        let checker = event["checker"].as_bool().unwrap();
+        let green = event["green"].as_bool().unwrap();
+        options.invoke_check_toggled(
+            row(&options, "Draw image transparency as checkerboard:").0,
+            checker,
+        );
+        options.invoke_check_toggled(
+            row(
+                &options,
+                "--Instead of checkerboard, use a bright greenscreen:",
+            )
+            .0,
+            green,
+        );
+        options.invoke_apply();
+        assert_eq!(
+            viewer.get_transparency_mode(),
+            if checker {
+                if green { 2 } else { 1 }
+            } else {
+                0
+            }
+        );
+        // An empty transparent image isolates the background pixels while the
+        // real viewer's metadata and Options callback decide its brush mode.
+        viewer.set_media(slint::Image::default());
+        viewer.set_sharp_shown(false);
+        viewer.set_sharp(slint::Image::default());
+        viewer.set_media_x(0.0);
+        viewer.set_media_y(0.0);
+        viewer.set_media_width(800.0);
+        viewer.set_media_height(600.0);
+        let pixels = headless::render(&drawn, 800, 600);
+        for (reference, x, y) in [
+            ("0,0", 32_usize, 128_usize),
+            ("16,0", 48, 128),
+            ("0,16", 32, 144),
+            ("16,16", 48, 144),
+            ("32,0", 64, 128),
+        ] {
+            let at = (y * 800 + x) * 4;
+            let expected: Vec<u8> = if checker {
+                event["pixels"][reference]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|value| u8::try_from(value.as_u64().unwrap()).unwrap())
+                    .collect()
+            } else {
+                vec![32, 32, 32]
+            };
+            assert_eq!(
+                &pixels[at..at + 3],
+                expected.as_slice(),
+                "{event:?}: {reference}"
+            );
+        }
+    }
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media playback");
+    assert!(
+        row(&options, "Draw image transparency as checkerboard:")
+            .1
+            .checked
+    );
+    assert!(
+        row(
+            &options,
+            "--Instead of checkerboard, use a bright greenscreen:"
+        )
+        .1
+        .checked
+    );
+    options.invoke_check_toggled(
+        row(&options, "Draw image transparency as checkerboard:").0,
+        false,
+    );
+    options.invoke_cancel();
+    assert_eq!(viewer.get_transparency_mode(), 2);
+    viewer.invoke_close_requested();
+    ui.invoke_thumbnail_activated(i32::try_from(opaque).unwrap());
+    let opaque_viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(
+        opaque_viewer.get_transparency_mode(),
+        0,
+        "opaque metadata uses the ordinary canvas background"
+    );
+    opaque_viewer.invoke_close_requested();
+}
+
+#[test]
+#[allow(clippy::float_cmp)] // logical pixel geometry is exact
+fn resize_and_seek_options_reach_the_native_viewer_geometry() {
+    use hydrus_store::settings::{self, ViewerCanvasSettings};
+    use slint::{LogicalPosition, platform::WindowEvent};
+    let fixture = hydrus_testkit::fixture_json("viewer_canvas_options.json");
+    let (_dirs, store) = store();
+    let animation =
+        hydrus_import::FileImporter::new(store.clone(), hydrus_media::MediaTools::new())
+            .import_path(
+                &hydrus_testkit::fixture_path("media/webp_anim.webp"),
+                &hydrus_import::FileImportOptions::default(),
+            )
+            .unwrap()
+            .hash
+            .unwrap();
+    let animation_id = store
+        .read(|conn| hydrus_store::master::hash_id(conn, &animation))
+        .unwrap()
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    let basic = store
+        .read(|conn| hydrus_store::media::load_basic(conn, &files))
+        .unwrap();
+    let jpeg = basic
+        .iter()
+        .position(|file| {
+            file.info
+                .as_ref()
+                .is_some_and(|info| info.mime == hydrus_core::Mime::ImageJpeg)
+        })
+        .unwrap();
+    ui.invoke_thumbnail_activated(i32::try_from(jpeg).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    headless::render(&drawn, 1000, 750);
+    viewer.invoke_zoom(0, false, 0.0, 0.0);
+    viewer.invoke_zoom(1, false, 0.0, 0.0);
+    viewer.invoke_drag(37.0, -19.0);
+    let rect = || {
+        (
+            viewer.get_media_x(),
+            viewer.get_media_y(),
+            viewer.get_media_width(),
+            viewer.get_media_height(),
+        )
+    };
+    let before = rect();
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media playback");
+    options.invoke_check_toggled(row(&options, "Re-center media on window resize:").0, false);
+    options.invoke_apply();
+    headless::render(&drawn, 800, 600);
+    assert_eq!(rect(), before, "live resize policy preserves the zoom/pan");
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media playback");
+    options.invoke_check_toggled(row(&options, "Re-center media on window resize:").0, true);
+    options.invoke_apply();
+    headless::render(&drawn, 600, 450);
+    let info = basic[jpeg].info.as_ref().unwrap();
+    let expected = hydrus_gui::zoom::Zoom::new(
+        hydrus_core::media_viewer::MediaViewerSettings::default(),
+        info.mime,
+        Some((info.width.unwrap(), info.height.unwrap())),
+        (600, 450),
+        1.0,
+    )
+    .rect();
+    assert_eq!(
+        rect(),
+        (
+            expected.0 as f32,
+            expected.1 as f32,
+            expected.2 as f32,
+            expected.3 as f32
+        )
+    );
+    viewer.invoke_close_requested();
+    let index = files.iter().position(|file| *file == animation_id).unwrap();
+    ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    assert!(
+        viewer.get_scanbar_shown(),
+        "native animation has a seek bar"
+    );
+    viewer.invoke_toggle_pause();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    headless::render(&drawn, 800, 600);
+    for event in fixture["seek"].as_array().unwrap() {
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media viewer");
+        options.invoke_number_edited(
+            row(&options, "Seek bar height:").0,
+            event["height"].as_i64().unwrap() as i32,
+        );
+        let hidden = row(&options, "Seek bar height when mouse away:").0;
+        options.invoke_none_toggled(hidden, event["hidden_height"].is_null());
+        if let Some(height) = event["hidden_height"].as_i64() {
+            options.invoke_number_edited(hidden, height as i32);
+        }
+        options.invoke_number_edited(
+            row(&options, "Seek bar nub width:").0,
+            event["nub"].as_i64().unwrap() as i32,
+        );
+        options.invoke_apply();
+        let height = event["height"].as_u64().unwrap() as usize;
+        let hidden_height = event["hidden_height"].as_u64().unwrap_or(0) as usize;
+        let nub = event["nub"].as_u64().unwrap() as usize;
+        assert_eq!(viewer.get_seek_height(), height as f32);
+        assert_eq!(viewer.get_seek_hidden_height(), hidden_height as f32);
+        assert_eq!(viewer.get_seek_nub_width(), nub as f32);
+        assert_eq!(
+            event["hidden_visible"].as_bool().unwrap(),
+            hidden_height > 0
+        );
+        viewer.set_media(slint::Image::default());
+        viewer.set_sharp_shown(false);
+        viewer.set_media_x(0.0);
+        viewer.set_media_y(0.0);
+        viewer.set_media_width(128.0);
+        viewer.set_media_height(600.0);
+        viewer.set_scanbar_progress(0.5);
+        viewer.set_scanbar_text("".into());
+        viewer.window().dispatch_event(WindowEvent::PointerMoved {
+            position: LogicalPosition::new(120.0, (600 - height) as f32 + 0.5),
+        });
+        let full = headless::render(&drawn, 800, 600);
+        let pixel = |pixels: &[u8], x: usize, y: usize| {
+            pixels[(y * 800 + x) * 4..(y * 800 + x) * 4 + 3].to_vec()
+        };
+        assert_eq!(
+            pixel(&full, 120, 600 - height),
+            vec![96, 96, 96],
+            "full seek height {height}"
+        );
+        assert_ne!(pixel(&full, 120, 599 - height), vec![96, 96, 96]);
+        if height > 2 {
+            let left = event["nub_x"][2].as_u64().unwrap() as usize;
+            assert_eq!(pixel(&full, left, 600 - height + 1), vec![176, 176, 176]);
+            assert_eq!(
+                pixel(&full, left + nub - 1, 600 - height + 1),
+                vec![176, 176, 176]
+            );
+            assert_ne!(
+                pixel(&full, left + nub, 600 - height + 1),
+                vec![176, 176, 176]
+            );
+        }
+        viewer.window().dispatch_event(WindowEvent::PointerMoved {
+            position: LogicalPosition::new(799.0, 200.0),
+        });
+        let small = headless::render(&drawn, 800, 600);
+        assert_eq!(
+            pixel(&small, 120, 599 - hidden_height),
+            vec![32, 32, 32],
+            "outside collapsed bar"
+        );
+        if hidden_height > 0 {
+            assert_eq!(pixel(&small, 120, 600 - hidden_height), vec![96, 96, 96]);
+        } else {
+            assert_eq!(
+                pixel(&small, 120, 599),
+                vec![32, 32, 32],
+                "None hides the bar completely"
+            );
+        }
+    }
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media viewer");
+    assert_eq!(row(&options, "Seek bar height:").1.number, 37);
+    assert_eq!(row(&options, "Seek bar nub width:").1.number, 19);
+    options.invoke_number_edited(row(&options, "Seek bar height:").0, 255);
+    options.invoke_cancel();
+    assert_eq!(viewer.get_seek_height(), 37.0);
+    assert_eq!(
+        store
+            .read(settings::get::<ViewerCanvasSettings>)
+            .unwrap()
+            .seek_height,
+        37
+    );
+    viewer.invoke_close_requested();
+}
+
+#[test]
+fn hover_options_apply_to_actual_mouseover_panels_and_passive_index_text() {
+    use hydrus_store::settings::{self, ViewerHoverSettings};
+    use slint::{LogicalPosition, platform::WindowEvent};
+    let fixture = hydrus_testkit::fixture_json("viewer_hover_options.json");
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    let basic = store
+        .read(|conn| hydrus_store::media::load_basic(conn, &files))
+        .unwrap();
+    let index = basic
+        .iter()
+        .position(|file| {
+            file.info
+                .as_ref()
+                .is_some_and(|info| info.mime == hydrus_core::Mime::ImageJpeg)
+        })
+        .unwrap();
+    let id = files[index];
+    store
+        .write_content(move |writer| writer.set_note(id, "details", "synthetic viewer hover note"))
+        .unwrap();
+    let mut tags = hydrus_gui::manage_tags::ManageTags::new(store.clone(), vec![id]).unwrap();
+    let mine = tags
+        .service_names()
+        .iter()
+        .position(|name| name == "my tags")
+        .unwrap();
+    tags.choose_service(mine).unwrap();
+    tags.enter("synthetic viewer hover").unwrap();
+    tags.apply().unwrap();
+    ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    headless::render(&drawn, 1000, 750);
+    // Finish the initial asynchronous image before isolating background pixels.
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(20);
+    while !viewer.get_sharp_shown() && std::time::Instant::now() < deadline {
+        slint::platform::update_timers_and_animations();
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    }
+    assert!(viewer.get_sharp_shown(), "initial JPEG image arrived");
+    assert!(viewer.get_tags().row_count() > 0);
+    assert!(viewer.get_ratings().row_count() > 0);
+    assert!(viewer.get_notes().row_count() > 0);
+    let notes_y = (60..740)
+        .step_by(10)
+        .find(|&y| {
+            viewer.window().dispatch_event(WindowEvent::PointerMoved {
+                position: LogicalPosition::new(980.0, y as f32),
+            });
+            viewer.get_notes_showing()
+        })
+        .expect("notes hover has a reachable region below the ratings");
+    let labels = [
+        "Pop-in tags (left) hover window on mouseover:",
+        "Pop-in ratings and locations (top-right) hover window on mouseover:",
+        "Pop-in notes (right) hover window on mouseover:",
+        "Draw index text (bottom-right) in the viewer background:",
+    ];
+    let move_to = |x: f32, y: f32| {
+        viewer.window().dispatch_event(WindowEvent::PointerMoved {
+            position: LogicalPosition::new(x, y),
+        })
+    };
+    for event in fixture["events"].as_array().unwrap() {
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media viewer hovers");
+        for (i, label) in labels.iter().enumerate() {
+            options.invoke_check_toggled(
+                row(&options, label).0,
+                event["values"][i].as_bool().unwrap(),
+            );
+        }
+        options.invoke_apply();
+        let settings = store.read(settings::get::<ViewerHoverSettings>).unwrap();
+        assert_eq!(
+            serde_json::json!([
+                settings.tags,
+                settings.ratings,
+                settings.notes,
+                settings.index_background
+            ]),
+            event["values"]
+        );
+        // Reference disabled hover layouts have no hit region; native gates
+        // its existing panels at the same mouseover points.
+        for (i, (x, y)) in [(40.0, 300.0), (980.0, 5.0), (980.0, notes_y as f32)]
+            .into_iter()
+            .enumerate()
+        {
+            move_to(x, y);
+            let showing = [
+                viewer.get_tags_showing(),
+                viewer.get_ratings_showing(),
+                viewer.get_notes_showing(),
+            ][i];
+            assert_eq!(
+                showing,
+                event["ideals"][i]["size"][0].as_u64().unwrap() > 0,
+                "hover {i}: {event:?}"
+            );
+        }
+        // Isolate the passive index region from the real media and hovers.
+        // The current caption/zoom are controlled by recorded viewer values.
+        move_to(500.0, 400.0);
+        viewer.set_caption(event["index"].as_str().unwrap().into());
+        viewer.set_zoom_text(
+            hydrus_gui::viewer_menu::zoom_percentage(event["zoom"].as_f64().unwrap()).into(),
+        );
+        viewer.set_media(slint::Image::default());
+        viewer.set_sharp_shown(false);
+        viewer.set_media_x(350.0);
+        viewer.set_media_y(250.0);
+        viewer.set_media_width(100.0);
+        viewer.set_media_height(100.0);
+        let pixels = headless::render(&drawn, 1000, 750);
+        let expected = event["draws"]
+            .as_array()
+            .unwrap()
+            .first()
+            .and_then(|draw| draw["text"].as_str())
+            .unwrap_or("");
+        assert_eq!(viewer.get_index_background_text(), expected);
+        let ink = (700_usize..747)
+            .flat_map(|y| (700_usize..997).map(move |x| (y * 1000 + x) * 4))
+            .filter(|&at| pixels[at] > 100 && pixels[at + 1] > 100 && pixels[at + 2] > 100)
+            .count();
+        assert_eq!(
+            ink > 0,
+            !expected.is_empty(),
+            "passive index is painted only when enabled"
+        );
+        if !expected.is_empty() {
+            // It is canvas background text: opaque media painted over the
+            // same region covers it, as Qt child media cover their parent.
+            let mut image = slint::SharedPixelBuffer::<slint::Rgba8Pixel>::new(4, 3);
+            for pixel in image.make_mut_bytes().chunks_exact_mut(4) {
+                pixel.copy_from_slice(&[32, 32, 32, 255]);
+            }
+            viewer.set_media(slint::Image::from_rgba8(image));
+            viewer.set_media_x(0.0);
+            viewer.set_media_y(0.0);
+            viewer.set_media_width(1000.0);
+            viewer.set_media_height(750.0);
+            let covered = headless::render(&drawn, 1000, 750);
+            let ink = (700_usize..747)
+                .flat_map(|y| (700_usize..997).map(move |x| (y * 1000 + x) * 4))
+                .filter(|&at| covered[at] > 100 && covered[at + 1] > 100 && covered[at + 2] > 100)
+                .count();
+            assert_eq!(ink, 0, "media covers passive canvas text");
+        }
+    }
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media viewer hovers");
+    for label in labels {
+        options.invoke_check_toggled(row(&options, label).0, true);
+    }
+    options.invoke_cancel();
+    let settings = store.read(settings::get::<ViewerHoverSettings>).unwrap();
+    assert_eq!(
+        settings,
+        ViewerHoverSettings {
+            tags: false,
+            ratings: false,
+            notes: false,
+            index_background: true
+        }
+    );
+    assert!(!viewer.get_hover_tags_enabled());
+    assert!(!viewer.get_hover_ratings_enabled());
+    assert!(!viewer.get_hover_notes_enabled());
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media viewer hovers");
+    assert!(!row(&options, labels[0]).1.checked);
+    assert!(row(&options, labels[3]).1.checked);
+    options.invoke_cancel();
+    viewer.invoke_close_requested();
+}
+
+#[test]
+#[allow(clippy::float_cmp)] // exact integer pointer deltas in logical pixels
+fn pointer_options_change_real_drag_acceptance_and_cursor_transitions() {
+    use hydrus_store::settings::{self, ViewerPointerSettings};
+    use slint::{
+        LogicalPosition,
+        platform::{PointerEventButton, WindowEvent},
+    };
+    let fixture = hydrus_testkit::fixture_json("viewer_pointer_options.json");
+    let (_dirs, store) = store();
+    let animation =
+        hydrus_import::FileImporter::new(store.clone(), hydrus_media::MediaTools::new())
+            .import_path(
+                &hydrus_testkit::fixture_path("media/webp_anim.webp"),
+                &hydrus_import::FileImportOptions::default(),
+            )
+            .unwrap()
+            .hash
+            .unwrap();
+    let animation_id = store
+        .read(|conn| hydrus_store::master::hash_id(conn, &animation))
+        .unwrap()
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    let basic = store
+        .read(|conn| hydrus_store::media::load_basic(conn, &files))
+        .unwrap();
+    let jpeg = basic
+        .iter()
+        .position(|file| {
+            file.info
+                .as_ref()
+                .is_some_and(|info| info.mime == hydrus_core::Mime::ImageJpeg)
+        })
+        .unwrap();
+    let animation_index = files.iter().position(|id| *id == animation_id).unwrap();
+    let labels = [
+        "Do not allow mouse media drag-panning when the media has duration:",
+        "Hide mouse cursor during media viewer drags:",
+    ];
+    let mut showing_duration = false;
+    ui.invoke_thumbnail_activated(i32::try_from(jpeg).unwrap());
+    let mut drawn = windows.get(windows.count() - 1).unwrap();
+    for (case, event) in fixture["drags"].as_array().unwrap().iter().enumerate() {
+        let duration = event["has_duration"].as_bool().unwrap();
+        if duration != showing_duration {
+            bound
+                .viewer
+                .borrow()
+                .as_ref()
+                .unwrap()
+                .invoke_close_requested();
+            ui.invoke_thumbnail_activated(i32::try_from(animation_index).unwrap());
+            showing_duration = duration;
+            drawn = windows.get(windows.count() - 1).unwrap();
+        }
+        let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+        headless::render(&drawn, 1000, 750);
+        assert_eq!(
+            viewer.get_media_has_duration(),
+            duration,
+            "real file metadata"
+        );
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media viewer");
+        options.invoke_check_toggled(
+            row(&options, labels[0]).0,
+            event["disallow"].as_bool().unwrap(),
+        );
+        options.invoke_check_toggled(row(&options, labels[1]).0, event["hide"].as_bool().unwrap());
+        options.invoke_apply();
+        assert_eq!(
+            viewer.get_disallow_duration_drag(),
+            event["disallow"].as_bool().unwrap()
+        );
+        assert_eq!(
+            viewer.get_hide_during_drag(),
+            event["hide"].as_bool().unwrap()
+        );
+        // Distinct press points avoid synthesising a double click that closes
+        // the actual viewer. The media delta is independent of the origin.
+        let x = 400.0 + case as f32 * 35.0;
+        let at = |dx, dy| LogicalPosition::new(x + dx, 350.0 + dy);
+        let moved = |dx, dy| {
+            viewer.window().dispatch_event(WindowEvent::PointerMoved {
+                position: at(dx, dy),
+            })
+        };
+        moved(0.0, 0.0);
+        let before = (viewer.get_media_x(), viewer.get_media_y());
+        viewer.window().dispatch_event(WindowEvent::PointerPressed {
+            position: at(0.0, 0.0),
+            button: PointerEventButton::Left,
+        });
+        assert_eq!(
+            viewer.get_drag_accepted(),
+            event["accepted"].as_bool().unwrap()
+        );
+        let cursor_hidden =
+            |phase: &str| event["cursor"][phase] == fixture["cursor_values"]["blank"];
+        assert_eq!(viewer.get_drag_cursor_hidden(), cursor_hidden("pressed"));
+        moved(21.0, 7.0);
+        assert_eq!(
+            (
+                viewer.get_media_x() - before.0,
+                viewer.get_media_y() - before.1
+            ),
+            (
+                event["delta"][0].as_i64().unwrap() as f32,
+                event["delta"][1].as_i64().unwrap() as f32
+            )
+        );
+        assert_eq!(viewer.get_drag_cursor_hidden(), cursor_hidden("moved"));
+        viewer
+            .window()
+            .dispatch_event(WindowEvent::PointerReleased {
+                position: at(21.0, 7.0),
+                button: PointerEventButton::Left,
+            });
+        assert!(!viewer.get_drag_accepted());
+        assert_eq!(viewer.get_drag_cursor_hidden(), cursor_hidden("released"));
+        moved(30.0, 19.0);
+        assert_eq!(
+            viewer.get_drag_cursor_hidden(),
+            cursor_hidden("ordinary_move")
+        );
+    }
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let persisted = store.read(settings::get::<ViewerPointerSettings>).unwrap();
+    assert!(persisted.disallow_duration_drag && persisted.hide_during_drag);
+    let before = viewer.get_media_x();
+    viewer.invoke_pan(1, 0);
+    assert_ne!(
+        viewer.get_media_x(),
+        before,
+        "keyboard panning remains available for duration media"
+    );
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media viewer");
+    assert!(row(&options, labels[0]).1.checked && row(&options, labels[1]).1.checked);
+    options.invoke_check_toggled(row(&options, labels[0]).0, false);
+    options.invoke_check_toggled(row(&options, labels[1]).0, false);
+    options.invoke_cancel();
+    assert!(viewer.get_disallow_duration_drag() && viewer.get_hide_during_drag());
+    assert_eq!(
+        store.read(settings::get::<ViewerPointerSettings>).unwrap(),
+        persisted
+    );
+    viewer.invoke_close_requested();
+    ui.invoke_thumbnail_activated(i32::try_from(animation_index).unwrap());
+    let reopened = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    assert!(
+        reopened.get_media_has_duration()
+            && reopened.get_disallow_duration_drag()
+            && reopened.get_hide_during_drag()
+    );
+    reopened.invoke_close_requested();
+}
+
+#[test]
 fn favourite_tags_child_replays_reference_and_waits_for_parent_apply() {
     use hydrus_store::settings::{self, FavouriteTags};
     let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
@@ -1522,4 +2649,245 @@ fn favourite_tags_child_replays_reference_and_waits_for_parent_apply() {
     parent.invoke_apply();
     assert!(bound.options.borrow().is_none());
     assert_eq!(store.read(settings::get::<FavouriteTags>).unwrap(), saved);
+}
+
+#[test]
+#[allow(clippy::float_cmp)] // whole logical-pixel bar heights
+fn focus_options_reach_native_activity_and_actual_mouseover_gates() {
+    use hydrus_store::settings::{self, ViewerFocusSettings};
+    use slint::{
+        LogicalPosition,
+        platform::{PointerEventButton, WindowEvent},
+    };
+    let fixture = hydrus_testkit::fixture_json("viewer_focus_options.json");
+    let (_dirs, store) = store();
+    let animation =
+        hydrus_import::FileImporter::new(store.clone(), hydrus_media::MediaTools::new())
+            .import_path(
+                &hydrus_testkit::fixture_path("media/webp_anim.webp"),
+                &hydrus_import::FileImportOptions::default(),
+            )
+            .unwrap()
+            .hash
+            .unwrap();
+    let id = store
+        .read(|conn| hydrus_store::master::hash_id(conn, &animation))
+        .unwrap()
+        .unwrap();
+    store
+        .write_content(move |writer| writer.set_note(id, "details", "synthetic focus note"))
+        .unwrap();
+    let mut tags = hydrus_gui::manage_tags::ManageTags::new(store.clone(), vec![id]).unwrap();
+    let mine = tags
+        .service_names()
+        .iter()
+        .position(|name| name == "my tags")
+        .unwrap();
+    tags.choose_service(mine).unwrap();
+    tags.enter("synthetic focus tag").unwrap();
+    tags.apply().unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    let index = files.iter().position(|file| *file == id).unwrap();
+    ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    headless::render(&drawn, 1000, 750);
+    assert!(viewer.get_scanbar_shown());
+    assert!(
+        viewer.get_tags().row_count() > 0
+            && viewer.get_notes().row_count() > 0
+            && viewer.get_ratings().row_count() > 0
+    );
+    let focus = hydrus_gui::viewer_focus::NativeFocus::new(&viewer);
+    let identity = slint::winit_030::winit::window::WindowId::from(9_001);
+    focus.watch_id(identity);
+    let activate = |active| {
+        // Dispatch the native backend observer route used by ActivityHandler;
+        // headless Slint also receives its corresponding native activation.
+        hydrus_gui::session_autosave::observe_native_focus(identity, active);
+        if !active {
+            hydrus_gui::session_autosave::observe_native_focus(
+                slint::winit_030::winit::window::WindowId::from(9_002),
+                true,
+            );
+        }
+        viewer
+            .window()
+            .dispatch_event(WindowEvent::WindowActiveChanged(active));
+        headless::render(&drawn, 1000, 750);
+        assert_eq!(viewer.get_window_active(), active);
+    };
+    let move_to = |x, y| {
+        viewer.window().dispatch_event(WindowEvent::PointerMoved {
+            position: LogicalPosition::new(x, y),
+        });
+        headless::render(&drawn, 1000, 750);
+    };
+    activate(true);
+    let notes_y = (60..740)
+        .step_by(10)
+        .find(|&y| {
+            move_to(980.0, y as f32);
+            viewer.get_notes_showing()
+        })
+        .unwrap() as f32;
+    let labels = [
+        (
+            "media viewer",
+            "Seek bar full-height pop-in requires window focus:",
+        ),
+        (
+            "media viewer hovers",
+            "Hover window pop-in requires window focus:",
+        ),
+    ];
+    for event in fixture["events"].as_array().unwrap() {
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        for ((name, label), field) in labels
+            .iter()
+            .zip(["seek_requires_focus", "hover_requires_focus"])
+        {
+            show_page(&options, name);
+            options.invoke_check_toggled(row(&options, label).0, event[field].as_bool().unwrap());
+        }
+        options.invoke_apply();
+        activate(event["active"].as_bool().unwrap());
+        let bottom = viewer.get_media_y() + viewer.get_media_height() - 2.0;
+        move_to(
+            viewer.get_media_x() + viewer.get_media_width() / 2.0,
+            bottom,
+        );
+        assert_eq!(
+            viewer.get_seek_bar_full(),
+            event["seek_full"].as_bool().unwrap()
+        );
+        assert_eq!(
+            viewer.get_seek_bar_height(),
+            event["seek_height"].as_i64().unwrap() as f32
+        );
+        let states = [
+            {
+                move_to(500.0, 10.0);
+                viewer.get_info_showing()
+            },
+            {
+                move_to(20.0, 375.0);
+                viewer.get_tags_showing()
+            },
+            {
+                move_to(980.0, 15.0);
+                viewer.get_ratings_showing()
+            },
+            {
+                move_to(980.0, notes_y);
+                viewer.get_notes_showing()
+            },
+        ];
+        assert_eq!(serde_json::json!(states), event["hover_up"]);
+    }
+    for trace in fixture["transient"].as_array().unwrap() {
+        let hover = trace["hover"].as_str().unwrap();
+        let point = match hover {
+            "top" => (500.0, 10.0),
+            "tags" => (20.0, 375.0),
+            "ratings" => (980.0, 15.0),
+            "notes" => (980.0, notes_y),
+            name => panic!("unrecorded hover {name}"),
+        };
+        let showing = || match hover {
+            "top" => viewer.get_info_showing(),
+            "tags" => viewer.get_tags_showing(),
+            "ratings" => viewer.get_ratings_showing(),
+            "notes" => viewer.get_notes_showing(),
+            name => panic!("unrecorded hover {name}"),
+        };
+        move_to(500.0, 375.0);
+        activate(true);
+        move_to(point.0, point.1);
+        let mut states = vec![showing()];
+        hydrus_gui::session_autosave::observe_native_focus(identity, false);
+        viewer
+            .window()
+            .dispatch_event(WindowEvent::WindowActiveChanged(false));
+        headless::render(&drawn, 1000, 750);
+        assert!(!viewer.get_window_active() && !viewer.get_another_window_active());
+        states.push(showing());
+        move_to(500.0, 375.0);
+        states.push(showing());
+        move_to(point.0, point.1);
+        states.push(showing());
+        activate(true);
+        states.push(showing());
+        activate(false);
+        states.push(showing());
+        let expected: Vec<_> = trace["states"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|state| state["up"].as_bool().unwrap())
+            .collect();
+        assert_eq!(
+            states, expected,
+            "{} active→None retains existing only→other hides",
+            trace["hover"]
+        );
+    }
+    // An inactive viewer can still finish a seek: an actual held scrub keeps
+    // the bar full, independently of the mouseover focus requirement.
+    activate(false);
+    let position = LogicalPosition::new(
+        viewer.get_media_x() + viewer.get_media_width() / 2.0,
+        viewer.get_media_y() + viewer.get_media_height() - 2.0,
+    );
+    viewer
+        .window()
+        .dispatch_event(WindowEvent::PointerMoved { position });
+    assert!(!viewer.get_seek_bar_full());
+    viewer.window().dispatch_event(WindowEvent::PointerPressed {
+        position,
+        button: PointerEventButton::Left,
+    });
+    assert!(viewer.get_seek_bar_full());
+    viewer
+        .window()
+        .dispatch_event(WindowEvent::PointerReleased {
+            position,
+            button: PointerEventButton::Left,
+        });
+    assert!(!viewer.get_seek_bar_full());
+    let persisted = store.read(settings::get::<ViewerFocusSettings>).unwrap();
+    assert_eq!(persisted, ViewerFocusSettings::default());
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    for (name, label) in labels {
+        show_page(&options, name);
+        assert!(row(&options, label).1.checked);
+        options.invoke_check_toggled(row(&options, label).0, false);
+    }
+    options.invoke_cancel();
+    assert!(viewer.get_seek_requires_focus() && viewer.get_hovers_require_focus());
+    assert_eq!(
+        store.read(settings::get::<ViewerFocusSettings>).unwrap(),
+        persisted
+    );
+    // Focus for other native identities and stale released observers do not
+    // alter this viewer. The registry never extends the callback's lifetime.
+    hydrus_gui::session_autosave::observe_native_focus(
+        slint::winit_030::winit::window::WindowId::from(9_002),
+        true,
+    );
+    assert!(!viewer.get_window_active());
+    drop(focus);
+    hydrus_gui::session_autosave::observe_native_focus(identity, true);
+    assert!(!viewer.get_window_active());
+    viewer.invoke_close_requested();
 }

@@ -1,0 +1,35 @@
+import { Button } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { ListTable, TableRow } from "list_table.slint";
+export component LoginCookiesWindow inherits Window {
+    title: "edit required cookies";
+    preferred-width: 800px; preferred-height: 440px; background: Theme.window;
+    in property <[TableRow]> rows;
+    in property <bool> one-selected;
+    in property <bool> any-selected;
+    in property <bool> child-open;
+    in property <bool> editing;
+    in property <bool> deleting;
+    in property <string> name-match;
+    in property <string> value-match;
+    in property <string> error;
+    callback row-clicked(int,bool,bool);
+    callback action(string);
+    callback closed();
+    VerticalLayout { padding: 12px; spacing: 6px;
+        ListTable { vertical-stretch: 1; columns: [{title: "cookie name", width: 340px}, {title: "permitted value", width: 400px, stretch: true}]; rows: root.rows; row-clicked(i,c,s) => { root.row-clicked(i,c,s); } row-activated(i) => { root.row-clicked(i,false,false); root.action("edit"); } delete-pressed => { root.action("delete"); } }
+        HorizontalLayout { spacing: 6px;
+            Button { text: "add"; enabled: !root.editing && !root.child-open && !root.deleting; clicked => { root.action("add"); } }
+            Button { text: "edit"; enabled: root.one-selected && !root.editing && !root.child-open && !root.deleting; clicked => { root.action("edit"); } }
+            Button { text: "delete"; enabled: root.any-selected && !root.editing && !root.child-open && !root.deleting; clicked => { root.action("delete"); } }
+        }
+        if root.editing: VerticalLayout { spacing: 6px;
+            HorizontalLayout { Button { text: "cookie name matcher"; enabled: !root.child-open; clicked => { root.action("name-match"); } } Text { text: root.name-match; color: Theme.text; wrap: word-wrap; horizontal-stretch: 1; } }
+            HorizontalLayout { Button { text: "cookie value matcher"; enabled: !root.child-open; clicked => { root.action("value-match"); } } Text { text: root.value-match; color: Theme.text; wrap: word-wrap; horizontal-stretch: 1; } }
+            HorizontalLayout { alignment: end; Button { text: "save cookie"; enabled: !root.child-open; clicked => { root.action("save-row"); } } Button { text: "cancel cookie"; enabled: !root.child-open; clicked => { root.action("cancel-row"); } } }
+        }
+        if root.deleting: HorizontalLayout { Text { text: "Remove all selected?"; color: Theme.text; } Button { text: "yes"; clicked => { root.action("confirm-delete"); } } Button { text: "no"; clicked => { root.action("back"); } } }
+        if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+        HorizontalLayout { alignment: end; spacing: 6px; Button { text: "apply"; enabled: !root.editing && !root.child-open && !root.deleting; clicked => { root.action("apply"); } } Button { text: "cancel"; clicked => { root.action("cancel"); } } }
+    }
+}

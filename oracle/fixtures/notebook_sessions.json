@@ -1,0 +1,573 @@
+{
+  "existing_names": [
+    "existing work",
+    "exit session",
+    "last session",
+    "new work",
+    "other work"
+  ],
+  "menus": [
+    [
+      "close page",
+      "close other page",
+      "---",
+      {
+        "menu": "pages",
+        "entries": [
+          "inside one",
+          "inside two"
+        ]
+      },
+      {
+        "menu": "select",
+        "entries": [
+          "page to the left"
+        ]
+      },
+      "---",
+      "new page",
+      "new page here",
+      "---",
+      {
+        "menu": "move page",
+        "entries": [
+          "right"
+        ]
+      },
+      "rename page",
+      "duplicate page",
+      "---",
+      {
+        "menu": "sort pages",
+        "entries": [
+          "by most files first",
+          "by fewest files first",
+          "by largest total file size first",
+          "by smallest total file size first",
+          "by name a-z",
+          "by name z-a"
+        ]
+      },
+      "---",
+      {
+        "menu": "collapse to a single page",
+        "entries": [
+          "this page",
+          "pages from here to the right",
+          "pages to the right"
+        ]
+      },
+      {
+        "menu": "send down to a new page of pages",
+        "entries": [
+          "this page",
+          "pages from here to the right",
+          "pages to the right"
+        ]
+      },
+      "---",
+      "refresh all this page's pages",
+      "---",
+      {
+        "menu": "append session",
+        "entries": [
+          "existing work",
+          "exit session",
+          "last session"
+        ]
+      },
+      {
+        "menu": "save this page of pages to a session",
+        "entries": [
+          "existing work",
+          "create a new session"
+        ]
+      }
+    ],
+    [
+      "close page",
+      "close other page",
+      "---",
+      {
+        "menu": "pages",
+        "entries": [
+          "inside one",
+          "inside two",
+          "outside"
+        ]
+      },
+      {
+        "menu": "select",
+        "entries": [
+          "page to the left"
+        ]
+      },
+      "---",
+      "new page",
+      "new page here",
+      "---",
+      {
+        "menu": "move page",
+        "entries": [
+          "left"
+        ]
+      },
+      "rename page",
+      "duplicate page",
+      "---",
+      {
+        "menu": "sort pages",
+        "entries": [
+          "by most files first",
+          "by fewest files first",
+          "by largest total file size first",
+          "by smallest total file size first",
+          "by name a-z",
+          "by name z-a"
+        ]
+      },
+      "---",
+      {
+        "menu": "collapse to a single page",
+        "entries": [
+          "this page"
+        ]
+      },
+      {
+        "menu": "send down to a new page of pages",
+        "entries": [
+          "this page"
+        ]
+      },
+      "---",
+      "refresh this page",
+      "---",
+      {
+        "menu": "append session",
+        "entries": [
+          "existing work",
+          "exit session",
+          "last session"
+        ]
+      }
+    ]
+  ],
+  "steps": [
+    {
+      "name": "existing work",
+      "answers": [
+        false
+      ],
+      "asked": [
+        {
+          "kind": "yes/no",
+          "message": "Overwrite \"existing work\" session?",
+          "title": "Overwrite existing session?",
+          "yes": "yes, overwrite",
+          "no": "no",
+          "answer": false
+        }
+      ],
+      "saved": [],
+      "open_tree": [
+        {
+          "name": "source notebook",
+          "children": [
+            {
+              "name": "inside one"
+            },
+            {
+              "name": "nested",
+              "children": [
+                {
+                  "name": "inside two"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "outside"
+        }
+      ],
+      "shown": "outside"
+    },
+    {
+      "name": "existing work",
+      "answers": [
+        true
+      ],
+      "asked": [
+        {
+          "kind": "yes/no",
+          "message": "Overwrite \"existing work\" session?",
+          "title": "Overwrite existing session?",
+          "yes": "yes, overwrite",
+          "no": "no",
+          "answer": true
+        }
+      ],
+      "saved": [
+        {
+          "name": "existing work",
+          "children": [
+            {
+              "name": "inside one"
+            },
+            {
+              "name": "nested",
+              "children": [
+                {
+                  "name": "inside two"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "open_tree": [
+        {
+          "name": "source notebook",
+          "children": [
+            {
+              "name": "inside one"
+            },
+            {
+              "name": "nested",
+              "children": [
+                {
+                  "name": "inside two"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "outside"
+        }
+      ],
+      "shown": "outside"
+    },
+    {
+      "name": null,
+      "answers": [
+        null
+      ],
+      "asked": [
+        {
+          "kind": "text",
+          "message": "Enter a name for the new session.",
+          "default": "source notebook",
+          "answer": null
+        }
+      ],
+      "saved": [],
+      "open_tree": [
+        {
+          "name": "source notebook",
+          "children": [
+            {
+              "name": "inside one"
+            },
+            {
+              "name": "nested",
+              "children": [
+                {
+                  "name": "inside two"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "outside"
+        }
+      ],
+      "shown": "outside"
+    },
+    {
+      "name": null,
+      "answers": [
+        "last session",
+        "new work"
+      ],
+      "asked": [
+        {
+          "kind": "text",
+          "message": "Enter a name for the new session.",
+          "default": "source notebook",
+          "answer": "last session"
+        },
+        {
+          "kind": "warning",
+          "message": "Sorry, you cannot have that name! Try another."
+        },
+        {
+          "kind": "text",
+          "message": "Enter a name for the new session.",
+          "default": "source notebook",
+          "answer": "new work"
+        }
+      ],
+      "saved": [
+        {
+          "name": "new work",
+          "children": [
+            {
+              "name": "inside one"
+            },
+            {
+              "name": "nested",
+              "children": [
+                {
+                  "name": "inside two"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "open_tree": [
+        {
+          "name": "source notebook",
+          "children": [
+            {
+              "name": "inside one"
+            },
+            {
+              "name": "nested",
+              "children": [
+                {
+                  "name": "inside two"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "outside"
+        }
+      ],
+      "shown": "outside"
+    },
+    {
+      "name": null,
+      "answers": [
+        "existing work",
+        false,
+        "other work"
+      ],
+      "asked": [
+        {
+          "kind": "text",
+          "message": "Enter a name for the new session.",
+          "default": "source notebook",
+          "answer": "existing work"
+        },
+        {
+          "kind": "yes/no",
+          "message": "Session \"existing work\" already exists! Do you want to overwrite it?",
+          "title": "Overwrite existing session?",
+          "yes": "yes, overwrite",
+          "no": "no, choose another name",
+          "answer": false
+        },
+        {
+          "kind": "text",
+          "message": "Enter a name for the new session.",
+          "default": "source notebook",
+          "answer": "other work"
+        }
+      ],
+      "saved": [
+        {
+          "name": "other work",
+          "children": [
+            {
+              "name": "inside one"
+            },
+            {
+              "name": "nested",
+              "children": [
+                {
+                  "name": "inside two"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "open_tree": [
+        {
+          "name": "source notebook",
+          "children": [
+            {
+              "name": "inside one"
+            },
+            {
+              "name": "nested",
+              "children": [
+                {
+                  "name": "inside two"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "outside"
+        }
+      ],
+      "shown": "outside"
+    },
+    {
+      "name": null,
+      "answers": [
+        "existing work",
+        "closed"
+      ],
+      "asked": [
+        {
+          "kind": "text",
+          "message": "Enter a name for the new session.",
+          "default": "source notebook",
+          "answer": "existing work"
+        },
+        {
+          "kind": "yes/no",
+          "message": "Session \"existing work\" already exists! Do you want to overwrite it?",
+          "title": "Overwrite existing session?",
+          "yes": "yes, overwrite",
+          "no": "no, choose another name",
+          "answer": "closed"
+        }
+      ],
+      "saved": [],
+      "open_tree": [
+        {
+          "name": "source notebook",
+          "children": [
+            {
+              "name": "inside one"
+            },
+            {
+              "name": "nested",
+              "children": [
+                {
+                  "name": "inside two"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "outside"
+        }
+      ],
+      "shown": "outside"
+    },
+    {
+      "name": null,
+      "answers": [
+        "existing work",
+        true
+      ],
+      "asked": [
+        {
+          "kind": "text",
+          "message": "Enter a name for the new session.",
+          "default": "source notebook",
+          "answer": "existing work"
+        },
+        {
+          "kind": "yes/no",
+          "message": "Session \"existing work\" already exists! Do you want to overwrite it?",
+          "title": "Overwrite existing session?",
+          "yes": "yes, overwrite",
+          "no": "no, choose another name",
+          "answer": true
+        }
+      ],
+      "saved": [
+        {
+          "name": "existing work",
+          "children": [
+            {
+              "name": "inside one"
+            },
+            {
+              "name": "nested",
+              "children": [
+                {
+                  "name": "inside two"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "open_tree": [
+        {
+          "name": "source notebook",
+          "children": [
+            {
+              "name": "inside one"
+            },
+            {
+              "name": "nested",
+              "children": [
+                {
+                  "name": "inside two"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "outside"
+        }
+      ],
+      "shown": "outside"
+    }
+  ],
+  "appended": {
+    "tree": [
+      {
+        "name": "source notebook",
+        "children": [
+          {
+            "name": "inside one"
+          },
+          {
+            "name": "nested",
+            "children": [
+              {
+                "name": "inside two"
+              }
+            ]
+          },
+          {
+            "name": "existing work",
+            "children": [
+              {
+                "name": "inside one"
+              },
+              {
+                "name": "nested",
+                "children": [
+                  {
+                    "name": "inside two"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "outside"
+      }
+    ],
+    "shown": "outside"
+  }
+}

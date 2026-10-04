@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "agent": "root-import-options",
+  "baseline_git_head": "d50df26b",
+  "validation": {
+    "reference_recording": "Actual Qt recorder executed 2026-10-04 12:09 UTC; native/model/exchange tests authored, hosted CI pending.",
+    "local_cargo_builds_or_tests": false
+  },
+  "claims": [
+    {
+      "id": "subscriptions-copy-options",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Real selected subscription import-options clipboard copy, all four reference menu routing behaviors, invalid clipboard review, exact clear confirmation and favourite direct/custom loading. Changes remain staged until list Apply; Cancel/owner close invalidate children and stale callbacks. Serialized eight-kind container preserves current/deleted locations and custom external-program payloads. Shared profile actions persist independently, and subscription list suppresses save-current.",
+      "limits": [
+        "Native information questions use the existing panel and the overwrite chooser is an owned detached window.",
+        "The separate serialized subscription exchange leaf remains incomplete."
+      ],
+      "source": [
+        "crates/hydrus-gui/src/subscriptions_window.rs::open",
+        "crates/hydrus-gui-model/src/subscriptions_dialog.rs::paste_import_options",
+        "crates/hydrus-downloader-exchange/src/import_options.rs::decode_text"
+      ],
+      "tests": [
+        "crates/hydrus-gui/tests/gui/subscriptions.rs::subscription_option_clipboard_edits_stay_staged_and_closed_owners_cannot_apply",
+        "crates/hydrus-gui/tests/gui/subscriptions.rs::favourites_load_selected_subscriptions_and_custom_overwrite_obeys_owner_lifetime",
+        "crates/hydrus-gui-model/tests/model/subscription_import_options.rs::subscription_paste_modes_and_clear_match_recorded_reference_outputs"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_subscription_import_options.py",
+        "fixture": "oracle/fixtures/subscription_import_options.json",
+        "executed": true
+      },
+      "implementationCommit": "e92db283"
+    }
+  ]
+}

@@ -54,7 +54,10 @@ export component ParserListWindow inherits Window {
 }
 export component ParserEditWindow inherits Window {
     in property <bool> page;
-    title: root.page ? "edit page parser" : "edit content parser";
+    in property <bool> subsidiary;
+    in property <string> own-separator;
+    in-out property <bool> own-sorted;
+    title: root.subsidiary ? "edit sub page parser" : root.page ? "edit page parser" : "edit content parser";
     preferred-width: 1000px; preferred-height: 780px;
     background: Theme.window;
     in property <[DefinitionField]> fields;
@@ -64,8 +67,13 @@ export component ParserEditWindow inherits Window {
     in property <string> subsidiary-note;
     in property <[TableRow]> subsidiaries;
     in property <bool> subsidiary-selected;
+    in property <bool> subsidiary-exportable;
     in-out property <bool> subsidiary-sorted;
     in-out property <string> document;
+    in property <string> raw-description;
+    in property <string> raw-preview;
+    in property <bool> parse-enabled;
+    callback raw-action(string);
     in property <[string]> examples;
     in-out property <int> example;
     in-out property <string> test-url;
@@ -73,6 +81,8 @@ export component ParserEditWindow inherits Window {
     in-out property <string> referral-url;
     in property <bool> fetching;
     in property <string> fetch-status;
+    in property <bool> fetch-has-error;
+    callback fetch-error-action(int);
     in-out property <string> post-index: "0";
     in-out property <string> variables;
     in property <string> preview;
@@ -89,7 +99,8 @@ export component ParserEditWindow inherits Window {
     callback force-close();
     callback fetch(); callback fetch-from-url(); callback cancel-fetch();
     callback example-chosen();
-    callback subsidiary-clicked(int); callback subsidiary-sort-changed(bool);
+    callback subsidiary-clicked(int,bool,bool); callback subsidiary-sort-changed(bool);
+    callback own-sort-changed(bool);
     VerticalLayout {
         height: root.height - 52px; padding: 10px; spacing: 8px;
         ScrollView {
@@ -111,6 +122,11 @@ export component ParserEditWindow inherits Window {
                     row-activated(i) => { root.row-clicked(i,false,false); root.action("edit-content"); }
                     delete-pressed => { root.action("delete-content"); }
                 }
+                if root.subsidiary: HorizontalLayout {
+                    Text { text: root.own-separator; color: Theme.text; wrap: word-wrap; }
+                    Button { text: "edit this separation formula"; enabled: !root.child-open; clicked => { root.action("own-separator"); } }
+                    CheckBox { text: "sort posts by source time"; checked <=> root.own-sorted; enabled: !root.child-open; toggled => { root.own-sort-changed(self.checked); } }
+                }
                 HorizontalLayout {
                     spacing: 6px; alignment: start;
                     if root.page: Button { text: "add content parser"; enabled: !root.child-open; clicked => { root.action("add-content"); } }
@@ -118,8 +134,8 @@ export component ParserEditWindow inherits Window {
                     if root.page: Button { text: "delete content parser"; enabled: root.selected && !root.child-open; clicked => { root.action("delete-content"); } }
                     if root.page: Button { text: "edit pre-parsing converter"; enabled: !root.child-open; clicked => { root.action("converter"); } }
                     if !root.page: Button { text: "edit parsing formula"; enabled: !root.child-open; clicked => { root.action("formula"); } }
-                    Button { text: "import parser"; enabled: !root.child-open; clicked => { root.action("import"); } }
-                    Button { text: "export parser"; enabled: !root.child-open; clicked => { root.action("export"); } }
+                    if !root.subsidiary: Button { text: "import parser"; enabled: !root.child-open; clicked => { root.action("import"); } }
+                    if !root.subsidiary: Button { text: "export parser"; enabled: !root.child-open; clicked => { root.action("export"); } }
                     if !root.page: Button { text: "edit veto string match"; enabled: !root.child-open; clicked => { root.action("match"); } }
                 }
                 if root.page: VerticalLayout {
@@ -129,13 +145,23 @@ export component ParserEditWindow inherits Window {
                         height: 120px;
                         columns: [{ title: "name",width: 350px },{ title: "separation formula",width: 420px,stretch: true }];
                         rows: root.subsidiaries;
-                        row-clicked(i,c,s) => { root.subsidiary-clicked(i); }
-                        row-activated(i) => { root.subsidiary-clicked(i);root.action("separator"); }
+                        row-clicked(i,c,s) => { root.subsidiary-clicked(i,c,s); }
+                        row-activated(i) => { root.subsidiary-clicked(i,false,false);root.action("edit-subsidiary"); }
+                        delete-pressed => { root.action("delete-subsidiary"); }
                     }
                     HorizontalLayout {
                         spacing: 6px;
+                        Button { text: "add subsidiary parser"; enabled: !root.child-open; clicked => { root.action("add-subsidiary"); } }
+                        Button { text: "edit subsidiary parser"; enabled: root.subsidiary-selected && !root.child-open; clicked => { root.action("edit-subsidiary"); } }
+                        Button { text: "delete subsidiary parser"; enabled: root.subsidiary-exportable && !root.child-open; clicked => { root.action("delete-subsidiary"); } }
                         Button { text: "edit separation formula"; enabled: root.subsidiary-selected && !root.child-open; clicked => { root.action("separator"); } }
                         CheckBox { text: "sort posts by source time"; checked <=> root.subsidiary-sorted; enabled: root.subsidiary-selected && !root.child-open; toggled => { root.subsidiary-sort-changed(self.checked); } }
+                    }
+                    HorizontalLayout {
+                        spacing: 6px; alignment: start;
+                        Button { text: "import subsidiary parsers"; enabled: !root.child-open; clicked => { root.action("import-subsidiary"); } }
+                        Button { text: "export subsidiary parsers"; enabled: root.subsidiary-exportable && !root.child-open; clicked => { root.action("export-subsidiary"); } }
+                        Button { text: "duplicate subsidiary parsers"; enabled: root.subsidiary-exportable && !root.child-open; clicked => { root.action("duplicate-subsidiary"); } }
                     }
                 }
                 if root.subsidiary-note != "": Text { text: root.subsidiary-note; color: Theme.text; wrap: word-wrap; }
@@ -150,22 +176,38 @@ export component ParserEditWindow inherits Window {
                     Button { text: "add example"; enabled: !root.child-open; clicked => { root.action("add-example"); } }
                     Button { text: "remove example"; enabled: root.examples.length > 1 && !root.child-open; clicked => { root.action("remove-example"); } }
                 }
-                TextEdit { height: 130px; text <=> root.document; enabled: !root.child-open; }
+                HorizontalLayout {
+                    Button { text: "copy data"; enabled: !root.child-open; clicked => { root.raw-action("copy"); } }
+                    Button { text: "paste data"; enabled: !root.child-open; clicked => { root.raw-action("paste"); } }
+                }
+                Text { text: root.raw-description; color: Theme.text; wrap: word-wrap; }
+                TextEdit { height: 130px; text: root.raw-preview; read-only: true; }
                 HorizontalLayout {
                     Text { text: "page URL"; color: Theme.text; vertical-alignment: center; }
                     LineEdit { text <=> root.test-url; enabled: !root.child-open; }
                     Text { text: "post index"; color: Theme.text; vertical-alignment: center; }
                     LineEdit { width: 90px; text <=> root.post-index; enabled: !root.child-open; }
                 }
-                if root.page: HorizontalLayout {
+                if root.page && !root.subsidiary: HorizontalLayout {
                     Text { text: "referral URL"; color: Theme.text; vertical-alignment: center; }
                     LineEdit { text <=> root.referral-url; enabled: !root.child-open; }
                     Button { text: "fetch example data"; enabled: !root.child-open; clicked => { root.fetch(); } }
+                    if root.fetch-has-error: fetch-errors := ContextMenuArea {
+                        width: 30px;
+                        Menu {
+                            MenuItem { title: "show error"; activated => { root.fetch-error-action(8); } }
+                            MenuItem { title: "copy error"; activated => { root.fetch-error-action(9); } }
+                        }
+                        Button {
+                            width: 30px; icon: @image-url("../../../static/dump_fail.png");
+                            clicked => { fetch-errors.show({ x: 0px, y: self.height }); }
+                        }
+                    }
                 }
                 if root.fetch-status != "": Text { text: root.fetch-status; color: Theme.text; wrap: word-wrap; }
                 Text { text: "context variables (one key=value per line)"; color: Theme.text; }
                 TextEdit { height: 60px; text <=> root.variables; enabled: !root.child-open; }
-                Button { text: "test parse"; enabled: !root.child-open; clicked => { root.action("test"); } }
+                Button { text: "test parse"; enabled: root.parse-enabled && !root.child-open; clicked => { root.action("test"); } }
                 TextEdit { height: 140px; text: root.preview; read-only: true; }
             }
         }

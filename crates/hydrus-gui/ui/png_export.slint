@@ -1,0 +1,51 @@
+// Reusable reference PNGExportPanel parameters; payload bytes live in its owner.
+import { Button, LineEdit, SpinBox } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+export component PngExportWindow inherits Window {
+    in property <string> window-title: "export to png";
+    title: root.window-title;
+    preferred-width: 690px;
+    preferred-height: 310px;
+    background: Theme.window;
+    in-out property <string> path;
+    in-out property <string> png-title;
+    in property <string> payload-description;
+    in-out property <string> description;
+    in-out property <int> png-width: 512;
+    in property <string> error;
+    in property <bool> done;
+    in property <string> export-label: "select a path";
+    in property <bool> can-export;
+    callback action(string);
+    VerticalLayout {
+        padding: 12px;
+        spacing: 8px;
+        HorizontalLayout {
+            Text { text: "file:"; color: Theme.text; vertical-alignment: center; }
+            LineEdit { text <=> root.path; horizontal-stretch: 1; edited(text) => { root.action("update"); } }
+            Button { text: "browse…"; clicked => { root.action("browse"); } }
+        }
+        HorizontalLayout {
+            Text { text: "title:"; color: Theme.text; vertical-alignment: center; }
+            LineEdit { text <=> root.png-title; horizontal-stretch: 1; edited(text) => { root.action("update"); } }
+        }
+        HorizontalLayout {
+            Text { text: "payload description:"; color: Theme.text; vertical-alignment: center; }
+            LineEdit { text: root.payload-description; enabled: false; horizontal-stretch: 1; }
+        }
+        HorizontalLayout {
+            Text { text: "description:"; color: Theme.text; vertical-alignment: center; }
+            LineEdit { text <=> root.description; horizontal-stretch: 1; edited(text) => { root.action("update"); } }
+        }
+        HorizontalLayout {
+            Text { text: "width:"; color: Theme.text; vertical-alignment: center; }
+            SpinBox { minimum: 100; maximum: 4096; value <=> root.png-width; edited => { root.action("update"); } }
+        }
+        Text { text: root.error; color: Theme.text; wrap: word-wrap; }
+        HorizontalLayout {
+            alignment: end;
+            Button { text: root.done ? "done!" : root.export-label; enabled: root.can-export; clicked => { root.action("export"); } }
+            Button { text: "close"; clicked => { root.action("close"); } }
+        }
+    }
+}

@@ -1,0 +1,215 @@
+{
+  "initial": {
+    "disallow_duration_drag": false,
+    "hide_drag": true,
+    "start_percent": 0,
+    "start_bounds": [
+      0,
+      100
+    ]
+  },
+  "drags": [
+    {
+      "name": "jpeg_00.jpg",
+      "has_duration": false,
+      "disallow": false,
+      "hide": false,
+      "accepted": true,
+      "delta": [
+        21,
+        7
+      ],
+      "cursor": {
+        "pressed": 0,
+        "moved": 0,
+        "released": 0,
+        "ordinary_move": 0
+      }
+    },
+    {
+      "name": "jpeg_00.jpg",
+      "has_duration": false,
+      "disallow": false,
+      "hide": true,
+      "accepted": true,
+      "delta": [
+        21,
+        7
+      ],
+      "cursor": {
+        "pressed": 0,
+        "moved": 10,
+        "released": 10,
+        "ordinary_move": 0
+      }
+    },
+    {
+      "name": "jpeg_00.jpg",
+      "has_duration": false,
+      "disallow": true,
+      "hide": false,
+      "accepted": true,
+      "delta": [
+        21,
+        7
+      ],
+      "cursor": {
+        "pressed": 0,
+        "moved": 0,
+        "released": 0,
+        "ordinary_move": 0
+      }
+    },
+    {
+      "name": "jpeg_00.jpg",
+      "has_duration": false,
+      "disallow": true,
+      "hide": true,
+      "accepted": true,
+      "delta": [
+        21,
+        7
+      ],
+      "cursor": {
+        "pressed": 0,
+        "moved": 10,
+        "released": 10,
+        "ordinary_move": 0
+      }
+    },
+    {
+      "name": "gif_animated.gif",
+      "has_duration": true,
+      "disallow": false,
+      "hide": false,
+      "accepted": true,
+      "delta": [
+        21,
+        7
+      ],
+      "cursor": {
+        "pressed": 0,
+        "moved": 0,
+        "released": 0,
+        "ordinary_move": 0
+      }
+    },
+    {
+      "name": "gif_animated.gif",
+      "has_duration": true,
+      "disallow": false,
+      "hide": true,
+      "accepted": true,
+      "delta": [
+        21,
+        7
+      ],
+      "cursor": {
+        "pressed": 0,
+        "moved": 10,
+        "released": 10,
+        "ordinary_move": 0
+      }
+    },
+    {
+      "name": "gif_animated.gif",
+      "has_duration": true,
+      "disallow": true,
+      "hide": false,
+      "accepted": false,
+      "delta": [
+        0,
+        0
+      ],
+      "cursor": {
+        "pressed": 0,
+        "moved": 0,
+        "released": 0,
+        "ordinary_move": 0
+      }
+    },
+    {
+      "name": "gif_animated.gif",
+      "has_duration": true,
+      "disallow": true,
+      "hide": true,
+      "accepted": false,
+      "delta": [
+        0,
+        0
+      ],
+      "cursor": {
+        "pressed": 0,
+        "moved": 0,
+        "released": 0,
+        "ordinary_move": 0
+      }
+    }
+  ],
+  "starts": [
+    {
+      "percent": 0,
+      "fraction": 0.0,
+      "cold": {
+        "frame": 0,
+        "frames": 3
+      },
+      "warm": {
+        "frame": 0,
+        "frames": 5
+      }
+    },
+    {
+      "percent": 25,
+      "fraction": 0.25,
+      "cold": {
+        "frame": 0,
+        "frames": 3
+      },
+      "warm": {
+        "frame": 0,
+        "frames": 5
+      }
+    },
+    {
+      "percent": 50,
+      "fraction": 0.5,
+      "cold": {
+        "frame": 0,
+        "frames": 3
+      },
+      "warm": {
+        "frame": 1,
+        "frames": 5
+      }
+    },
+    {
+      "percent": 75,
+      "fraction": 0.75,
+      "cold": {
+        "frame": 0,
+        "frames": 3
+      },
+      "warm": {
+        "frame": 1,
+        "frames": 5
+      }
+    },
+    {
+      "percent": 100,
+      "fraction": 1.0,
+      "cold": {
+        "frame": 0,
+        "frames": 3
+      },
+      "warm": {
+        "frame": 2,
+        "frames": 5
+      }
+    }
+  ],
+  "cursor_values": {
+    "arrow": 0,
+    "blank": 10
+  }
+}

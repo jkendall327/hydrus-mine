@@ -13,6 +13,7 @@
 pub mod cookies;
 mod engine;
 mod error;
+pub mod login;
 pub mod text;
 
 pub use engine::{BandwidthScope, Job, JobState, Method, NetEngine, NetOptions, Request, Response};
