@@ -1,6 +1,8 @@
 //! The reference Incremental Tagging child: ordered additive tags and live text memory.
 use hydrus_core::{HashId, Tag};
 use hydrus_store::{Store, tag_editing::ManageTagsSettings};
+use num_bigint::BigUint;
+use num_traits::ToPrimitive as _;
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 
@@ -17,7 +19,8 @@ pub struct IncrementalTagging {
     pub reverse: bool,
 }
 impl IncrementalTagging {
-    pub(crate) fn new(
+    /// Construct from an ordered selection and its frozen storage-tag preview.
+    pub fn new(
         store: Arc<Store>,
         files: Vec<HashId>,
         current: BTreeMap<HashId, BTreeSet<String>>,
@@ -32,13 +35,17 @@ impl IncrementalTagging {
             .flatten()
             .filter_map(|tag| {
                 let (n, subtag) = split(tag);
-                (n == namespace && !subtag.is_empty() && subtag.chars().all(|c| c.is_ascii_digit()))
-                    .then(|| subtag.parse::<i32>().ok())
-                    .flatten()
+                if n != namespace {
+                    return None;
+                }
+                let number = decimal_integer(subtag)?;
+                Some((decimal_sort_key(subtag), number))
             })
-            .min()
-            .unwrap_or(1)
-            .clamp(-10_000_000, 10_000_000);
+            .min_by(|(left, _), (right, _)| left.cmp(right))
+            .map_or(1, |(_, number)| {
+                i32::try_from(number.to_u32().unwrap_or(u32::MAX).min(10_000_000))
+                    .expect("clamped to spinbox range")
+            });
         Self {
             store,
             files,
@@ -169,4 +176,38 @@ impl IncrementalTagging {
 }
 fn split(tag: &str) -> (&str, &str) {
     tag.split_once(':').unwrap_or(("", tag))
+}
+
+// HumanTextSortKey splits ASCII runs, then treats each complete Unicode decimal
+// chunk numerically. A mixed ASCII/Unicode set is not sorted by integer value.
+fn decimal_sort_key(text: &str) -> Vec<BigUint> {
+    let mut parts = Vec::new();
+    let mut chunk = String::new();
+    let mut ascii = false;
+    for c in text.chars() {
+        if c.is_ascii_digit() != ascii {
+            parts.push(decimal_integer(&chunk).unwrap_or_default());
+            chunk.clear();
+            ascii = c.is_ascii_digit();
+        }
+        chunk.push(c);
+    }
+    parts.push(decimal_integer(&chunk).unwrap_or_default());
+    if ascii {
+        parts.push(BigUint::default());
+    }
+    parts
+}
+fn decimal_integer(text: &str) -> Option<BigUint> {
+    if text.is_empty() {
+        return None;
+    }
+    let ascii: Option<String> = text
+        .chars()
+        .map(|c| {
+            hydrus_core::tag_presentation::decimal_digit(c)
+                .and_then(|digit| char::from_digit(digit, 10))
+        })
+        .collect();
+    ascii?.parse().ok()
 }

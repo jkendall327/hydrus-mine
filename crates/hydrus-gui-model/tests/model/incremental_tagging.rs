@@ -128,3 +128,74 @@ fn add_then_remove_retains_the_reference_deleted_mapping_in_private_preview() {
             .all(|tags| tags.iter().any(|tag| tag == "checkpoint:cycle"))
     );
 }
+
+#[test]
+fn initial_start_uses_actual_unicode_decimal_sorting_and_ignores_negative_subtags() {
+    let recorded = hydrus_testkit::fixture_json("manage_tag_counts_incremental.json");
+    let (_directory, store, files) = fixture::seed(&recorded);
+    let current =
+        recorded["incremental"].as_array().unwrap().last().unwrap()["reopened_tags"].clone();
+    store
+        .write(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::tag_editing::ManageTagsSettings {
+                    incremental_namespace: "page".into(),
+                    incremental_prefix: "v".into(),
+                    incremental_suffix: "x".into(),
+                    ..hydrus_store::tag_editing::ManageTagsSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    for case in recorded["initial_cases"].as_array().unwrap() {
+        let mut tags: std::collections::BTreeMap<_, std::collections::BTreeSet<String>> = files
+            .iter()
+            .enumerate()
+            .map(|(i, file)| {
+                (
+                    *file,
+                    current[i]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .map(|tag| tag.as_str().unwrap().to_owned())
+                        .collect(),
+                )
+            })
+            .collect();
+        tags.insert(
+            files[0],
+            case["subtags"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|subtag| format!("page:{}", subtag.as_str().unwrap()))
+                .collect(),
+        );
+        let mut editor = IncrementalTagging::new(store.clone(), files.clone(), tags);
+        assert_eq!(
+            i64::from(editor.start),
+            case["initial_start"].as_i64().unwrap(),
+            "{:?}",
+            case["subtags"]
+        );
+        assert_eq!(editor.summary(), case["summary"].as_str().unwrap());
+        editor.set_numbers(editor.start, 0, false).unwrap();
+        assert_eq!(
+            editor.summary(),
+            case["zero_step_summary"].as_str().unwrap()
+        );
+    }
+    for zero in recorded["decimal_zeros"].as_array().unwrap() {
+        let zero = u32::try_from(zero.as_u64().unwrap()).unwrap();
+        for value in 0..10 {
+            assert_eq!(
+                hydrus_core::tag_presentation::decimal_digit(char::from_u32(zero + value).unwrap()),
+                Some(value)
+            );
+        }
+    }
+    assert_eq!(hydrus_core::tag_presentation::decimal_digit('²'), None);
+    assert_eq!(hydrus_core::tag_presentation::decimal_digit('-'), None);
+}

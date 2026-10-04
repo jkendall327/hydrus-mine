@@ -106,8 +106,25 @@ def record(session):
             p.deleteLater()
             reopened=media()
             incremental.append({'input':scenario,'child':child_states,'staged':staged,'preferences':{key:c.new_options.GetString('last_incremental_tagging_'+key) for key in ('namespace','prefix','suffix')},'reopened_tags':[sorted(m.GetTagsManager().GetCurrent(local,0)) for m in reopened]})
+        from hydrus.client.gui.metadata.ClientGUIIncrementalTagging import IncrementalTaggingPanel
+        from hydrus.client.media import ClientMediaManagers
+        from hydrus.core import HydrusTags
+        initial_cases=[]
+        for subtags in [['١٢'], ['１２'], ['١2٣'], ['100','٢'], ['-4','١٢'], ['-4'], ['²','١٢'], ['0','١٢'], ['99999999'], ['𑽕𑽓'], ['𞓰𞓵']]:
+            medias=media()
+            raw_tags={'page:'+subtag for subtag in subtags}
+            statuses={status:(raw_tags if status==HC.CONTENT_STATUS_CURRENT else set()) for status in (HC.CONTENT_STATUS_CURRENT,HC.CONTENT_STATUS_PENDING,HC.CONTENT_STATUS_DELETED,HC.CONTENT_STATUS_PETITIONED)}
+            medias[0].GetMediaResult().SetTagsManager(ClientMediaManagers.TagsManager({local:statuses},{local:statuses}))
+            c.new_options.SetString('last_incremental_tagging_namespace','page')
+            editor=IncrementalTaggingPanel(c.gui,local,medias)
+            initial_cases.append({'subtags':subtags,'sorted':HydrusTags.SortNumericTags(subtags),'initial_start':editor._start.value(),'summary':editor._summary_st.text()})
+            editor._step.setValue(0)
+            initial_cases[-1]['zero_step_summary']=editor._summary_st.text()
+            editor.deleteLater()
+        import unicodedata
+        decimal_zeros=[i for i in range(0x110000) if chr(i).isdecimal() and unicodedata.decimal(chr(i))==0]
         W.DialogEdit.exec=old_exec;c.CallAfterQtSafe=old_after;ClientGUIDialogsQuick.GetYesNo=old_yes
-        return {'files':[h.hex() for h in hashes],'corpus':corpus,'deleted':deleted,'incremental':incremental,'fresh_cycle':fresh_cycle}
+        return {'files':[h.hex() for h in hashes],'corpus':corpus,'deleted':deleted,'incremental':incremental,'fresh_cycle':fresh_cycle,'initial_cases':initial_cases,'unicode_version':unicodedata.unidata_version,'decimal_zeros':decimal_zeros}
     return c.CallBlockingToQt(c.gui,work)
 
 def child(out):
