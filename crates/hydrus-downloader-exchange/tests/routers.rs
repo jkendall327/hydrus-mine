@@ -53,7 +53,7 @@ fn router_exchange_rejects_incompatible_or_lossy_packages_atomically() {
     unknown[2][1] = json!([84,1,[26,3,[[2,[999,1,{"essential":"preserve"}]]]]]);
     assert!(exchange::decode_text(&unknown.to_string()).is_err());
     let mut timestamp = reference["imports"][3].clone();
-    timestamp[2][2][2][2][2] = json!(123456789);
+    timestamp[2][2][2][2][2] = json!(123_456_789);
     assert!(exchange::decode_text(&timestamp.to_string()).is_err());
     let mut destination = reference["imports"][0].clone();
     destination[2][2][2] = json!(["unknown editor field"]);
