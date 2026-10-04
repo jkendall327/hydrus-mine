@@ -6,7 +6,8 @@
     "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
     "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
     "33e9b58f6226f10d8122313c5333c8f0d302df4f",
-    "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+    "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
+    "bf003dbe43e0c2f3682256849988f63dfb4502ec"
   ],
   "implementation_leaf_count": 7,
   "partial_improvements": 4,
@@ -106,7 +107,8 @@
         "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
         "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
         "33e9b58f6226f10d8122313c5333c8f0d302df4f",
-        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
+        "bf003dbe43e0c2f3682256849988f63dfb4502ec"
       ]
     },
     {
@@ -203,7 +205,8 @@
         "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
         "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
         "33e9b58f6226f10d8122313c5333c8f0d302df4f",
-        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
+        "bf003dbe43e0c2f3682256849988f63dfb4502ec"
       ]
     },
     {
@@ -300,7 +303,8 @@
         "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
         "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
         "33e9b58f6226f10d8122313c5333c8f0d302df4f",
-        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
+        "bf003dbe43e0c2f3682256849988f63dfb4502ec"
       ]
     },
     {
@@ -397,7 +401,8 @@
         "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
         "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
         "33e9b58f6226f10d8122313c5333c8f0d302df4f",
-        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
+        "bf003dbe43e0c2f3682256849988f63dfb4502ec"
       ]
     },
     {
@@ -494,7 +499,8 @@
         "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
         "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
         "33e9b58f6226f10d8122313c5333c8f0d302df4f",
-        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
+        "bf003dbe43e0c2f3682256849988f63dfb4502ec"
       ]
     },
     {
@@ -591,7 +597,8 @@
         "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
         "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
         "33e9b58f6226f10d8122313c5333c8f0d302df4f",
-        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
+        "bf003dbe43e0c2f3682256849988f63dfb4502ec"
       ]
     },
     {
@@ -599,8 +606,8 @@
       "previous_status": "partial",
       "proposed_status": "partial",
       "change_kind": "implementation",
-      "exact_behavior": "Replaced capped storage suggestions with shared zero-count aware, domain/service aware write search; raw/ideal elevation, counts, parent/sibling decorations, click/highlight entry, manual fetch, multiline/add-only clipboard questions and height controls. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs.",
-      "limits": "Full context menus remain outstanding; declined multiline paste leaves native input unchanged. Not a completed implementation leaf.",
+      "exact_behavior": "Replaced capped storage suggestions with shared zero-count aware, domain/service aware write search; raw/ideal elevation, counts, parent/sibling decorations, click/highlight entry, manual fetch, multiline/add-only clipboard questions and height controls. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs. Shared right-click native menus now copy raw tags/subtags/underscores/counts/parents/all rows, toggle per-widget/per-tab decorations, manage favourites and per-service most-used with exact removal questions and reread concurrent writes, and launch raw child predicates through a weak main-window hook. Pending menus block owner editing/Apply and owner close invalidates questions/callbacks.",
+      "limits": "Full reference relationship lookup/add-editor entries, maintenance/admin actions, multiple-tag selection menus and per-widget domain buttons remain outstanding. Native tab dropdown/layout differs from Qt. Existing parent leaf remains partial.",
       "implementation_commit": "1b81bd15fce1ab176660460c0d1524e744e82503",
       "anchors": [
         {
@@ -620,6 +627,30 @@
           "line": 8,
           "symbol": "fn paste_confirmation_skip",
           "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_tag_menu.rs",
+          "line": 8,
+          "symbol": "pub enum Action",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/write_tag_menu.rs",
+          "line": 25,
+          "symbol": "pub(crate) struct TagMenu",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 489,
+          "symbol": "fn tag_menu_copy_decorations_favourites_and_launch",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 454,
+          "symbol": "fn shared_tag_menu_favourites_questions_copy_launch",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
         }
       ],
       "reference_recording": [
@@ -628,10 +659,17 @@
           "line": 12,
           "symbol": "def record",
           "commit": "1b81bd15fce1ab176660460c0d1524e744e82503"
+        },
+        {
+          "relativepath": "oracle/record_write_tag_autocomplete.py",
+          "line": 122,
+          "symbol": "def context_menus",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
         }
       ],
       "consumer_commits": [
-        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
+        "bf003dbe43e0c2f3682256849988f63dfb4502ec"
       ]
     },
     {
@@ -639,8 +677,8 @@
       "previous_status": "missing",
       "proposed_status": "partial",
       "change_kind": "implementation",
-      "exact_behavior": "Both sides now use real count/domain/service-aware write autocomplete, typed/ideal elevation, parent and sibling decorations, visible-height preference, keyboard highlight/selected/click entry, manual fetch, confirmed or skipped multiline paste. Paste only adds and removes the entered tag from the opposite side; each service preserves independent input drafts. Closing owner invalidates pending paste answers and stale Apply. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs.",
-      "limits": "Full Qt context menus, per-widget domain buttons and service-tab default preference remain outstanding. This is a substantive missing-to-partial implementation, excluded from completion leaf count.",
+      "exact_behavior": "Both sides now use real count/domain/service-aware write autocomplete, typed/ideal elevation, parent and sibling decorations, visible-height preference, keyboard highlight/selected/click entry, manual fetch, confirmed or skipped multiline paste. Paste only adds and removes the entered tag from the opposite side; each service preserves independent input drafts. Closing owner invalidates pending paste answers and stale Apply. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs. Shared right-click native menus now copy raw tags/subtags/underscores/counts/parents/all rows, toggle per-widget/per-tab decorations, manage favourites and per-service most-used with exact removal questions and reread concurrent writes, and launch raw child predicates through a weak main-window hook. Pending menus block owner editing/Apply and owner close invalidates questions/callbacks.",
+      "limits": "Full reference relationship lookup/add-editor entries, maintenance/admin actions, multiple-tag selection menus and per-widget domain buttons remain outstanding. Native tab dropdown/layout differs from Qt. Existing parent leaf remains partial.",
       "implementation_commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
       "anchors": [
         {
@@ -672,6 +710,30 @@
           "line": 89,
           "symbol": "fn relationship_autocomplete",
           "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_tag_menu.rs",
+          "line": 8,
+          "symbol": "pub enum Action",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/write_tag_menu.rs",
+          "line": 25,
+          "symbol": "pub(crate) struct TagMenu",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 489,
+          "symbol": "fn tag_menu_copy_decorations_favourites_and_launch",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 454,
+          "symbol": "fn shared_tag_menu_favourites_questions_copy_launch",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
         }
       ],
       "reference_recording": [
@@ -686,10 +748,17 @@
           "line": 2,
           "symbol": "\"relationship_inputs\"",
           "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "oracle/record_write_tag_autocomplete.py",
+          "line": 122,
+          "symbol": "def context_menus",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
         }
       ],
       "consumer_commits": [
-        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
+        "bf003dbe43e0c2f3682256849988f63dfb4502ec"
       ]
     },
     {
@@ -697,8 +766,8 @@
       "previous_status": "missing",
       "proposed_status": "partial",
       "change_kind": "implementation",
-      "exact_behavior": "Both sides now use real count/domain/service-aware write autocomplete, typed/ideal elevation, parent and sibling decorations, visible-height preference, keyboard highlight/selected/click entry, manual fetch, confirmed or skipped multiline paste. Paste only adds and removes the entered tag from the opposite side; each service preserves independent input drafts. Closing owner invalidates pending paste answers and stale Apply. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs.",
-      "limits": "Full Qt context menus, per-widget domain buttons and service-tab default preference remain outstanding. This is a substantive missing-to-partial implementation, excluded from completion leaf count.",
+      "exact_behavior": "Both sides now use real count/domain/service-aware write autocomplete, typed/ideal elevation, parent and sibling decorations, visible-height preference, keyboard highlight/selected/click entry, manual fetch, confirmed or skipped multiline paste. Paste only adds and removes the entered tag from the opposite side; each service preserves independent input drafts. Closing owner invalidates pending paste answers and stale Apply. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs. Shared right-click native menus now copy raw tags/subtags/underscores/counts/parents/all rows, toggle per-widget/per-tab decorations, manage favourites and per-service most-used with exact removal questions and reread concurrent writes, and launch raw child predicates through a weak main-window hook. Pending menus block owner editing/Apply and owner close invalidates questions/callbacks.",
+      "limits": "Full reference relationship lookup/add-editor entries, maintenance/admin actions, multiple-tag selection menus and per-widget domain buttons remain outstanding. Native tab dropdown/layout differs from Qt. Existing parent leaf remains partial.",
       "implementation_commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906",
       "anchors": [
         {
@@ -730,6 +799,30 @@
           "line": 89,
           "symbol": "fn relationship_autocomplete",
           "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_tag_menu.rs",
+          "line": 8,
+          "symbol": "pub enum Action",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/write_tag_menu.rs",
+          "line": 25,
+          "symbol": "pub(crate) struct TagMenu",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 489,
+          "symbol": "fn tag_menu_copy_decorations_favourites_and_launch",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 454,
+          "symbol": "fn shared_tag_menu_favourites_questions_copy_launch",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
         }
       ],
       "reference_recording": [
@@ -744,10 +837,17 @@
           "line": 2,
           "symbol": "\"relationship_inputs\"",
           "commit": "d230522dabdfacf837a8d8895ea8ab1e80c8a906"
+        },
+        {
+          "relativepath": "oracle/record_write_tag_autocomplete.py",
+          "line": 122,
+          "symbol": "def context_menus",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
         }
       ],
       "consumer_commits": [
-        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
+        "bf003dbe43e0c2f3682256849988f63dfb4502ec"
       ]
     },
     {
@@ -755,8 +855,8 @@
       "previous_status": "partial",
       "proposed_status": "partial",
       "change_kind": "implementation",
-      "exact_behavior": "Per-service import additional tags open a detached write-tag child using that service; whitelist uses all known tags. Typed entry toggles, paste only adds, duplicate pastes retain existing tags. Accepted lists update only the captured parent draft field; cancelling child or owner discards edits, native child close unlocks parent, pending child blocks parent Apply. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs.",
-      "limits": "Native controls retain raw multiline fields and differ from Qt modal layout; full shared context menus remain outstanding. Whitelist is shared adjacent implementation, not counted as an invented standalone leaf.",
+      "exact_behavior": "Per-service import additional tags open a detached write-tag child using that service; whitelist uses all known tags. Typed entry toggles, paste only adds, duplicate pastes retain existing tags. Accepted lists update only the captured parent draft field; cancelling child or owner discards edits, native child close unlocks parent, pending child blocks parent Apply. Shared favourites/children tabs now use the configured count service for favourites decorators and descendant/display-count ordering for children; selected tags are excluded and applied limit/show-all feeds existing inputs. Shared right-click native menus now copy raw tags/subtags/underscores/counts/parents/all rows, toggle per-widget/per-tab decorations, manage favourites and per-service most-used with exact removal questions and reread concurrent writes, and launch raw child predicates through a weak main-window hook. Pending menus block owner editing/Apply and owner close invalidates questions/callbacks.",
+      "limits": "Full reference relationship lookup/add-editor entries, maintenance/admin actions, multiple-tag selection menus and per-widget domain buttons remain outstanding. Native tab dropdown/layout differs from Qt. Existing parent leaf remains partial.",
       "implementation_commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b",
       "anchors": [
         {
@@ -782,6 +882,30 @@
           "line": 237,
           "symbol": "fn import_whitelist_child",
           "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_tag_menu.rs",
+          "line": 8,
+          "symbol": "pub enum Action",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/write_tag_menu.rs",
+          "line": 25,
+          "symbol": "pub(crate) struct TagMenu",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/write_autocomplete.rs",
+          "line": 489,
+          "symbol": "fn tag_menu_copy_decorations_favourites_and_launch",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/write_autocomplete.rs",
+          "line": 454,
+          "symbol": "fn shared_tag_menu_favourites_questions_copy_launch",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
         }
       ],
       "reference_recording": [
@@ -796,10 +920,17 @@
           "line": 2,
           "symbol": "\"detached_inputs\"",
           "commit": "0e8fe75c3c2d6099f1e976b7faa99a92391ce01b"
+        },
+        {
+          "relativepath": "oracle/record_write_tag_autocomplete.py",
+          "line": 122,
+          "symbol": "def context_menus",
+          "commit": "bf003dbe43e0c2f3682256849988f63dfb4502ec"
         }
       ],
       "consumer_commits": [
-        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
+        "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b",
+        "bf003dbe43e0c2f3682256849988f63dfb4502ec"
       ]
     },
     {
@@ -873,6 +1004,9 @@
           "symbol": "\"children_control\"",
           "commit": "3a8aaaef08bf16cffdcd2b2ff19d5feefc02fd5b"
         }
+      ],
+      "consumer_commits": [
+        "bf003dbe43e0c2f3682256849988f63dfb4502ec"
       ]
     }
   ]
