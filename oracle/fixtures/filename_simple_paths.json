@@ -1,0 +1,169 @@
+{
+  "consumer": "FilenameTaggingOptions.GetTags with actual controller tag-display filtering",
+  "path_backends": [
+    "posixpath",
+    "ntpath"
+  ],
+  "directories": [
+    [
+      -1,
+      "series"
+    ],
+    [
+      -2,
+      "creator"
+    ]
+  ],
+  "cases": [
+    {
+      "platform": "posix",
+      "name": "rebased_with_srv",
+      "recorded_index": 0,
+      "path": "/tmp/filename-bridge/srv/import/artist/0012 - page 3.jpg",
+      "tags": [
+        "creator:import",
+        "series:artist"
+      ]
+    },
+    {
+      "platform": "posix",
+      "name": "rebased_without_srv",
+      "recorded_index": 0,
+      "path": "/tmp/filename-bridge/import/artist/0012 - page 3.jpg",
+      "tags": [
+        "creator:import",
+        "series:artist"
+      ]
+    },
+    {
+      "platform": "posix",
+      "name": "rebased_with_srv",
+      "recorded_index": 1,
+      "path": "/tmp/filename-bridge/srv/import/artist/0001.png",
+      "tags": [
+        "creator:import",
+        "series:artist"
+      ]
+    },
+    {
+      "platform": "posix",
+      "name": "rebased_without_srv",
+      "recorded_index": 1,
+      "path": "/tmp/filename-bridge/import/artist/0001.png",
+      "tags": [
+        "creator:import",
+        "series:artist"
+      ]
+    },
+    {
+      "platform": "posix",
+      "name": "rebased_with_srv",
+      "recorded_index": 2,
+      "path": "/tmp/filename-bridge/srv/import/Some_File (v2).webm",
+      "tags": [
+        "creator:srv",
+        "series:import"
+      ]
+    },
+    {
+      "platform": "posix",
+      "name": "rebased_without_srv",
+      "recorded_index": 2,
+      "path": "/tmp/filename-bridge/import/Some_File (v2).webm",
+      "tags": [
+        "creator:filename-bridge",
+        "series:import"
+      ]
+    },
+    {
+      "platform": "windows",
+      "name": "rebased_with_srv",
+      "recorded_index": 0,
+      "path": "C:\\Temp\\filename-bridge\\srv\\import\\artist\\0012 - page 3.jpg",
+      "tags": [
+        "creator:import",
+        "series:artist"
+      ]
+    },
+    {
+      "platform": "windows",
+      "name": "rebased_without_srv",
+      "recorded_index": 0,
+      "path": "C:\\Temp\\filename-bridge\\import\\artist\\0012 - page 3.jpg",
+      "tags": [
+        "creator:import",
+        "series:artist"
+      ]
+    },
+    {
+      "platform": "windows",
+      "name": "mixed_separator_tail",
+      "recorded_index": 0,
+      "path": "C:\\Temp\\filename-bridge\\import/artist/0012 - page 3.jpg",
+      "tags": [
+        "creator:filename-bridge",
+        "series:import/artist"
+      ]
+    },
+    {
+      "platform": "windows",
+      "name": "rebased_with_srv",
+      "recorded_index": 1,
+      "path": "C:\\Temp\\filename-bridge\\srv\\import\\artist\\0001.png",
+      "tags": [
+        "creator:import",
+        "series:artist"
+      ]
+    },
+    {
+      "platform": "windows",
+      "name": "rebased_without_srv",
+      "recorded_index": 1,
+      "path": "C:\\Temp\\filename-bridge\\import\\artist\\0001.png",
+      "tags": [
+        "creator:import",
+        "series:artist"
+      ]
+    },
+    {
+      "platform": "windows",
+      "name": "mixed_separator_tail",
+      "recorded_index": 1,
+      "path": "C:\\Temp\\filename-bridge\\import/artist/0001.png",
+      "tags": [
+        "creator:filename-bridge",
+        "series:import/artist"
+      ]
+    },
+    {
+      "platform": "windows",
+      "name": "rebased_with_srv",
+      "recorded_index": 2,
+      "path": "C:\\Temp\\filename-bridge\\srv\\import\\Some_File (v2).webm",
+      "tags": [
+        "creator:srv",
+        "series:import"
+      ]
+    },
+    {
+      "platform": "windows",
+      "name": "rebased_without_srv",
+      "recorded_index": 2,
+      "path": "C:\\Temp\\filename-bridge\\import\\Some_File (v2).webm",
+      "tags": [
+        "creator:filename-bridge",
+        "series:import"
+      ]
+    },
+    {
+      "platform": "windows",
+      "name": "mixed_separator_tail",
+      "recorded_index": 2,
+      "path": "C:\\Temp\\filename-bridge\\import/Some_File (v2).webm",
+      "tags": [
+        "creator:filename-bridge",
+        "series:import"
+      ]
+    }
+  ]
+}

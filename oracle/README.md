@@ -84,6 +84,7 @@ export QT_QPA_PLATFORM=offscreen
 | `record_search_predicate_undo.py` | `fixtures/search_predicate_undo.json`: actual Qt frame-global histories, QAction visible-page toggles, OR, editor cancellation, close/restore, clear confirmations, hidden locked query and empty notebook (20 events; executed 2026-10-04 19:44:59 UTC) |
 | `record_incremental_number_boundaries.py` | `fixtures/incremental_number_boundaries.json`: actual IncrementalTaggingPanel initial/clamp boundaries, long ASCII/Unicode leading-zero inputs, Qt signed-integer overflow and Python raw-preview digit-limit failures (executed 2026-10-04 21:00:55 UTC) |
 | `record_options_geometry_lifecycle.py` | `fixtures/options_geometry_lifecycle.json`: actual DialogManage + all Options pages on Cancel/X/unchanged Apply/own-frame reset; accepted geometry is saved before the frame table commits |
+| `record_filename_simple_paths.py` | `fixtures/filename_simple_paths.json`: actual FilenameTaggingOptions.GetTags with Python posixpath/ntpath backends and real controller filtering; records preserved/dropped `srv` prefixes and mixed Windows separators (path-backend evidence, no Windows Qt execution) |
 | `record_similar_files.py` | `fixtures/similar_files.json`: the similar-files search on generated near-duplicates |
 | `record_auto_resolution.py` | `fixtures/auto_resolution_run.json` + `legacy_db/auto_resolution.tar.gz`: auto-resolution rules run on generated files |
 | `record_downloads.py` | `fixtures/downloads.json`: the downloader against a local fake site |
