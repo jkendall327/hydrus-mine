@@ -1109,7 +1109,7 @@ fn runner_subscriptions(s: &Setup) -> Vec<i64> {
 
 fn runner_limit(s: &Setup, limit: u32) {
     s.store
-        .write(|ctx| {
+        .write(move |ctx| {
             let mut settings: hydrus_store::network::NetworkSettings =
                 hydrus_store::settings::get(ctx.conn())?;
             settings.max_simultaneous_subscriptions = limit;
