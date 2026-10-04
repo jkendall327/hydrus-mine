@@ -536,10 +536,10 @@ impl Subscriptions {
                 .into_iter()
                 .map(|mut q| {
                     if let Some(query) = &mut q.exchange {
-                        query.log_name = hydrus_core::pages::PageKey::random().to_hex();
-                        if let Some(log) = &mut query.log {
-                            log.name.clone_from(&query.log_name);
-                        }
+                        hydrus_downloader_exchange::subscriptions::rename_history(
+                            query,
+                            hydrus_core::pages::PageKey::random().to_hex(),
+                        );
                     }
                     DialogQuery {
                         queue: None,

@@ -1185,3 +1185,73 @@ fn subscription_missing_history_asks_original_question_before_staging_or_persist
     assert_eq!(rows(&dialog).len(), 1);
     dialog.invoke_cancel();
 }
+
+#[test]
+fn legacy_subscription_clipboard_import_reaches_saved_query_settings_and_full_histories() {
+    use hydrus_downloader_exchange::subscriptions as exchange;
+    let reference = hydrus_testkit::fixture_json("subscription_legacy_exchange.json");
+    let case = &reference["cases"][2];
+    let expected = exchange::decode_text(&case["normalised"].to_string())
+        .unwrap()
+        .remove(0);
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_exchange(true);
+    let child = bound
+        .subscription_exchange
+        .0
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let text = case["source"].to_string();
+    hydrus_gui::set_paster(move || text.clone());
+    child.invoke_action("paste".into());
+    child.invoke_action("review".into());
+    assert!(child.get_error().is_empty(), "{}", child.get_error());
+    child.invoke_action("accept".into());
+    assert_eq!(rows(&dialog)[0].0[0], "Legacy artist");
+    assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    dialog.invoke_apply();
+    let saved = store.read(subscriptions::subscriptions).unwrap();
+    assert_eq!(saved[0].settings, expected.settings);
+    let id = saved[0].id;
+    let queries = store
+        .read(move |conn| subscriptions::queries(conn, id))
+        .unwrap();
+    assert_eq!(queries[0].state, expected.queries[0].state);
+    let queue = queries[0].queue_id;
+    let file = store
+        .read(move |conn| queues::file_seeds(conn, queue))
+        .unwrap();
+    assert_eq!(file[0].meta.hashes, [("sha256".into(), "33".repeat(32))]);
+    let gallery = store
+        .read(move |conn| queues::gallery_seeds(conn, queue))
+        .unwrap();
+    assert_eq!(gallery[0].note, "gallery failure");
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_row_clicked(0, false, false);
+    dialog.invoke_exchange(false);
+    let child = bound
+        .subscription_exchange
+        .0
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let exported = exchange::decode_text(child.get_text().as_str()).unwrap();
+    assert_eq!(exported[0].settings, expected.settings);
+    assert_eq!(exported[0].queries[0].state, expected.queries[0].state);
+    assert_eq!(
+        exported[0].queries[0].log.as_ref().unwrap().file_seeds,
+        expected.queries[0].log.as_ref().unwrap().file_seeds
+    );
+    assert_eq!(
+        exported[0].queries[0].log.as_ref().unwrap().gallery_seeds,
+        expected.queries[0].log.as_ref().unwrap().gallery_seeds
+    );
+    dialog.invoke_cancel();
+}

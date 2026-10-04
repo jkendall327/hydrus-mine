@@ -115,6 +115,11 @@ impl CheckerOptions {
         (found, period)
     }
 
+    /// Raw cached header velocity, as `GetRawCurrentVelocity` returns it.
+    pub fn raw_current_velocity(&self, seeds: &[SeedTime], last_check_time: i64) -> (i64, i64) {
+        self.current_velocity(seeds, last_check_time)
+    }
+
     /// How fast files were appearing at the last check, as a watcher's
     /// box words it (`GetPrettyCurrentVelocity`): "at last check, found 5
     /// files in previous 1 day".

@@ -661,7 +661,9 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   `hydrus serve` within five minutes.**
 - **Full subscription exchange transport** supports modern reference container 90
   JSON and PNG without dropping query history or cached header metadata. Legacy
-  subscription type 3 and original list-popup placement remain pending.
+  subscription type3 versions8–10 now import through the actual list; versions1–7
+  and original list-popup placement remain pending. Older unsupported seed-cache
+  versions fail explicitly rather than losing history.
   Missing histories now ask the original message, title and decisions before
   staging; accepted missing logs are initialised empty directly on Apply. The list owner now stages modern imports and
   persists both histories. JSON file export/overwrite and multi-file JSON/PNG
