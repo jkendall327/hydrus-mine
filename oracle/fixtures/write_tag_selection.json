@@ -393,8 +393,8 @@
           "deleted": [],
           "predicates": [
             "parity:multi gamma",
-            "parity:multi alpha",
-            "parity:multi beta"
+            "parity:multi beta",
+            "parity:multi alpha"
           ]
         }
       ]
@@ -436,7 +436,7 @@
           ],
           "deleted": [],
           "predicates": [
-            "parity:multi alpha"
+            "parity:multi beta"
           ]
         },
         {
@@ -446,7 +446,7 @@
           ],
           "deleted": [],
           "predicates": [
-            "parity:multi beta"
+            "parity:multi alpha"
           ]
         }
       ]
@@ -463,8 +463,43 @@
           "deleted": [],
           "predicates": [
             "parity:multi gamma",
+            "parity:multi beta",
+            "parity:multi alpha"
+          ]
+        }
+      ]
+    },
+    {
+      "action": "regenerate",
+      "answer": false,
+      "asked": [
+        {
+          "message": "!!WARNING EXPERIMENTAL!!\n\nThis will delete and then regenerate all the display calculations for the selected tags and their siblings and parents, with the intention of fixing bad autocomplete counts or sibling/parent presentation. It is functionally similar to the 'tag storage mappings cache' regeneration job, but just for these tags.\n\nIt might take a while to run, perhaps many minutes for a heavily-siblinged/-parented/-mapped tag, during which the database will be locked. Doing it on a thousand tags is going to completely gonk you. Also, any sibling or parent rules will be reset, and they will have to be recalculated, which will probably occur in a few seconds in the background after the regeneration job completes.",
+          "title": "Regen tags?",
+          "yes_label": "let's go",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": []
+    },
+    {
+      "action": "regenerate",
+      "answer": true,
+      "asked": [
+        {
+          "message": "!!WARNING EXPERIMENTAL!!\n\nThis will delete and then regenerate all the display calculations for the selected tags and their siblings and parents, with the intention of fixing bad autocomplete counts or sibling/parent presentation. It is functionally similar to the 'tag storage mappings cache' regeneration job, but just for these tags.\n\nIt might take a while to run, perhaps many minutes for a heavily-siblinged/-parented/-mapped tag, during which the database will be locked. Doing it on a thousand tags is going to completely gonk you. Also, any sibling or parent rules will be reset, and they will have to be recalculated, which will probably occur in a few seconds in the background after the regeneration job completes.",
+          "title": "Regen tags?",
+          "yes_label": "let's go",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [
+        {
+          "name": "regenerate_tag_mappings_tags",
+          "tags": [
             "parity:multi alpha",
-            "parity:multi beta"
+            "parity:multi beta",
+            "parity:multi gamma"
           ]
         }
       ]

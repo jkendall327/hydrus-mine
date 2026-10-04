@@ -124,6 +124,31 @@ pub fn rebuild_caches(conn: &rusqlite::Connection) -> Result<()> {
     crate::counts::rebuild_all(conn)
 }
 
+/// Regenerate only the selected tags' connected display/storage caches from
+/// primary data. Native display graphs publish atomically with the repaired
+/// counts, so callers do not observe a temporary loss of relationships.
+pub fn regenerate_tag_display(store: &Store, tags: &[hydrus_core::Tag]) -> Result<()> {
+    let tags = tags.to_vec();
+    store.write_and_refresh(move |ctx| {
+        let conn = ctx.conn();
+        let registry = crate::services::ServiceRegistry::load(conn)?;
+        let graphs = crate::display::DisplayGraphs::load(conn, &registry)?;
+        let selected = tags.iter().filter_map(|tag| crate::master::tag_id(conn, tag).transpose()).collect::<Result<Vec<_>>>()?;
+        let affected = crate::counts::rebuild_tags(conn, &registry, &graphs, &selected)?;
+        let affected: Vec<_> = affected.into_iter().collect();
+        let subtags = conn.prepare(
+            "SELECT DISTINCT s.subtag_id,s.subtag FROM tags t JOIN subtags s USING (subtag_id) WHERE t.tag_id IN rarray(?1)"
+        )?.query_map([crate::master::id_array(&affected)], |row| Ok((row.get::<_,hydrus_core::SubtagId>(0)?,row.get::<_,String>(1)?)))?.collect::<rusqlite::Result<Vec<_>>>()?;
+        for (id, subtag) in subtags {
+            for table in ["cache_subtag_words", "cache_searchable_subtags", "cache_integer_subtags"] {
+                conn.execute(&format!("DELETE FROM {table} WHERE subtag_id=?1"), [id])?;
+            }
+            crate::master::index_subtag(conn,id,&subtag)?;
+        }
+        Ok(())
+    })
+}
+
 fn remove_if_present(path: &std::path::Path, recycle: bool) -> Result<bool> {
     match std::fs::symlink_metadata(path) {
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(false),
@@ -228,6 +253,193 @@ mod tests {
                 Ok(out)
             })
             .unwrap()
+    }
+
+    #[test]
+    fn selected_tag_regeneration_repairs_connected_counts_without_changing_primary_data() {
+        use crate::content::{
+            MappingAction,
+            tag_relations::{self, RelationAction, RelationUpdate},
+        };
+        use crate::display::RelationKind;
+        use crate::schema::MappingTables;
+        use hydrus_core::Tag;
+        let (_source, dest_dir, _db) = import_basic();
+        let store = Store::open(dest_dir.path()).unwrap();
+        let registry = store.snapshot().services.clone();
+        let service = registry.by_name("my tags").unwrap().id;
+        let second = registry.by_name("second tags").unwrap().id;
+        let all = registry
+            .of_type(hydrus_core::ServiceType::CombinedFile)
+            .next()
+            .unwrap()
+            .id;
+        let files: Vec<HashId> = store
+            .read(|conn| {
+                Ok(conn
+                    .prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT 2")?
+                    .query_map([], |row| row.get(0))?
+                    .collect::<rusqlite::Result<_>>()?)
+            })
+            .unwrap();
+        let ids = store
+            .write_content(move |writer| {
+                let mut ids = Vec::new();
+                for text in [
+                    "parity:repair old",
+                    "parity:repair ideal",
+                    "parity:repair parent",
+                    "parity:untouched",
+                ] {
+                    ids.push(crate::master::intern_tag(
+                        writer.conn(),
+                        &Tag::new(text).unwrap(),
+                    )?);
+                }
+                for tag in [ids[0], ids[1], ids[3]] {
+                    writer.update_mappings(service, &MappingAction::Add, tag, &files[..1])?;
+                }
+                writer.update_mappings(service, &MappingAction::Pend, ids[0], &files[1..])?;
+                writer.update_mappings(second, &MappingAction::Add, ids[0], &files[1..])?;
+                Ok(ids)
+            })
+            .unwrap();
+        for service in [service, second] {
+            for (kind, left, right) in [
+                (
+                    RelationKind::Siblings,
+                    "parity:repair old",
+                    "parity:repair ideal",
+                ),
+                (
+                    RelationKind::Parents,
+                    "parity:repair ideal",
+                    "parity:repair parent",
+                ),
+            ] {
+                tag_relations::apply(
+                    &store,
+                    kind,
+                    vec![RelationUpdate {
+                        service,
+                        left: Tag::new(left).unwrap(),
+                        right: Tag::new(right).unwrap(),
+                        action: RelationAction::Add,
+                    }],
+                )
+                .unwrap();
+            }
+        }
+        let before = derived_rows(&store);
+        let primary = |conn: &rusqlite::Connection| -> Result<Vec<String>> {
+            let mut out = Vec::new();
+            for service in [service, second] {
+                let tables = MappingTables::new(service);
+                for table in [tables.current, tables.pending] {
+                    out.extend(
+                        conn.prepare(&format!(
+                            "SELECT tag_id,hash_id FROM {table} ORDER BY tag_id,hash_id"
+                        ))?
+                        .query_map([], |row| {
+                            Ok(format!(
+                                "{table}:{}:{}",
+                                row.get::<_, u32>(0)?,
+                                row.get::<_, u32>(1)?
+                            ))
+                        })?
+                        .collect::<rusqlite::Result<Vec<_>>>()?,
+                    );
+                }
+            }
+            Ok(out)
+        };
+        let primary_before = store.read(primary).unwrap();
+        let ids_copy = ids.clone();
+        store
+            .write(move |ctx| {
+                for service in [service, second] {
+                    let tables = MappingTables::new(service);
+                    for table in [&tables.counts, &tables.display_counts] {
+                        ctx.conn().execute(
+                            &format!("DELETE FROM {table} WHERE tag_id IN rarray(?1)"),
+                            [crate::master::id_array(&ids_copy[..3])],
+                        )?;
+                    }
+                }
+                Ok(())
+            })
+            .unwrap();
+        regenerate_tag_display(
+            &store,
+            &[
+                Tag::new("parity:repair old").unwrap(),
+                Tag::new("parity:unknown repair").unwrap(),
+            ],
+        )
+        .unwrap();
+        assert_eq!(derived_rows(&store), before);
+        assert_eq!(store.read(primary).unwrap(), primary_before);
+        // Corrupt an unrelated count: a selected repair must deliberately leave it alone.
+        let tables = MappingTables::new(service);
+        let unrelated = ids[3];
+        store
+            .write(move |ctx| {
+                ctx.conn().execute(
+                    &format!(
+                        "UPDATE {} SET current=93 WHERE tag_id=?1 AND domain_id=?2",
+                        tables.counts
+                    ),
+                    params![unrelated, all],
+                )?;
+                Ok(())
+            })
+            .unwrap();
+        regenerate_tag_display(&store, &[Tag::new("parity:repair parent").unwrap()]).unwrap();
+        assert_eq!(
+            store
+                .read(|conn| crate::counts::count(conn, service, all, ids[3], false))
+                .unwrap()
+                .current,
+            93
+        );
+        assert_eq!(
+            store
+                .read(|conn| crate::counts::count(conn, service, all, ids[1], true))
+                .unwrap(),
+            crate::counts::TagCount {
+                current: 1,
+                pending: 1
+            }
+        );
+        assert_eq!(
+            store
+                .read(|conn| crate::counts::count(conn, second, all, ids[2], true))
+                .unwrap()
+                .current,
+            1
+        );
+        assert_eq!(store.read(primary).unwrap(), primary_before);
+        assert!(
+            store
+                .read(|conn| crate::master::tag_id(
+                    conn,
+                    &Tag::new("parity:unknown repair").unwrap()
+                ))
+                .unwrap()
+                .is_none()
+        );
+        drop(store);
+        let reopened = Store::open(dest_dir.path()).unwrap();
+        assert_eq!(
+            reopened
+                .read(|conn| crate::counts::count(conn, service, all, ids[1], true))
+                .unwrap(),
+            crate::counts::TagCount {
+                current: 1,
+                pending: 1
+            }
+        );
+        assert_eq!(reopened.read(primary).unwrap(), primary_before);
     }
 
     #[test]

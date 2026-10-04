@@ -99,6 +99,9 @@ export component WriteTagInput inherits FocusScope {
 export component TagMenuOverlay inherits Rectangle {
     in property <[MenuPane]> panes;
     in property <string> question;
+    in property <string> question-title;
+    in property <string> yes-label: "yes";
+    in property <string> no-label: "no";
     callback hovered(int,int,length,length,length);
     callback clicked(int,int,length,length,length);
     callback placed(int,length,length,length);
@@ -117,7 +120,13 @@ export component TagMenuOverlay inherits Rectangle {
         VerticalLayout {
             padding: 16px;
             alignment: center;
-            Question { text: root.question; answered(yes) => { root.answered(yes); } }
+            if root.question-title != "": Text { text: root.question-title; color: Theme.text; }
+            Text { text: root.question; color: Theme.text; wrap: word-wrap; }
+            HorizontalLayout {
+                alignment: end; spacing: 6px;
+                Button { text: root.yes-label; clicked => { root.answered(true); } }
+                Button { text: root.no-label; clicked => { root.answered(false); } }
+            }
         }
     }
 }
@@ -125,6 +134,9 @@ export component TagMenuOverlay inherits Rectangle {
 export component WriteTagsWindow inherits Window {
     in property <[MenuPane]> tag-menu-panes;
     in property <string> tag-menu-question;
+    in property <string> tag-menu-question-title;
+    in property <string> tag-menu-yes-label: "yes";
+    in property <string> tag-menu-no-label: "no";
     callback tag-menu-hovered(int,int,length,length,length);
     callback tag-menu-clicked(int,int,length,length,length);
     callback tag-menu-placed(int,length,length,length);
@@ -212,6 +224,7 @@ export component WriteTagsWindow inherits Window {
         if root.tag-menu-panes.length > 0 || root.tag-menu-question != "": TagMenuOverlay {
             width: root.width; height: root.height;
             panes: root.tag-menu-panes; question: root.tag-menu-question;
+            question-title: root.tag-menu-question-title; yes-label: root.tag-menu-yes-label; no-label: root.tag-menu-no-label;
             hovered(p,l,r,t,x) => { root.tag-menu-hovered(p,l,r,t,x); }
             clicked(p,l,r,t,x) => { root.tag-menu-clicked(p,l,r,t,x); }
             placed(p,x,y,w) => { root.tag-menu-placed(p,x,y,w); }

@@ -207,6 +207,116 @@ fn rebuild_display(
     Ok(())
 }
 
+/// Repair selected tags and their connected sibling/parent chains in every
+/// service. Unrelated cache rows are deliberately retained.
+pub(crate) fn rebuild_tags(
+    conn: &Connection,
+    registry: &ServiceRegistry,
+    graphs: &DisplayGraphs,
+    selected: &[TagId],
+) -> Result<std::collections::BTreeSet<TagId>> {
+    let domains = counted_domains(registry);
+    let all_known = registry
+        .of_type(hydrus_core::ServiceType::CombinedFile)
+        .next()
+        .map(|s| s.id);
+    let mut all_affected = std::collections::BTreeSet::new();
+    for service in registry.tag_services() {
+        let graph = graphs.get(service.id);
+        let mut affected: std::collections::BTreeSet<_> = selected.iter().copied().collect();
+        let mut pending = selected.to_vec();
+        while let Some(tag) = pending.pop() {
+            for related in graph
+                .chain(tag)
+                .into_iter()
+                .chain(graph.ancestors(tag).iter().copied())
+                .chain(graph.descendants(tag).iter().copied())
+            {
+                if affected.insert(related) {
+                    pending.push(related);
+                }
+            }
+        }
+        let tables = MappingTables::new(service.id);
+        for tag in &affected {
+            recount_tag(
+                conn,
+                &tables,
+                &tables.counts,
+                *tag,
+                &[*tag],
+                all_known,
+                &domains,
+            )?;
+            let sources = if graph.ideal(*tag) == *tag {
+                graph.stored_tags_for(*tag)
+            } else {
+                Vec::new()
+            };
+            recount_tag(
+                conn,
+                &tables,
+                &tables.display_counts,
+                *tag,
+                &sources,
+                all_known,
+                &domains,
+            )?;
+        }
+        all_affected.extend(affected);
+    }
+    Ok(all_affected)
+}
+
+fn recount_tag(
+    conn: &Connection,
+    tables: &MappingTables,
+    counts: &str,
+    tag: TagId,
+    sources: &[TagId],
+    all_known: Option<ServiceId>,
+    domains: &[ServiceId],
+) -> Result<()> {
+    let current = &tables.current;
+    let pending = &tables.pending;
+    conn.execute(&format!("DELETE FROM {counts} WHERE tag_id=?1"), [tag])?;
+    if sources.is_empty() {
+        return Ok(());
+    }
+    let sources = crate::master::id_array(sources);
+    if let Some(domain) = all_known {
+        conn.execute(
+            &format!(
+                "INSERT INTO {counts} (domain_id,tag_id,current,pending)
+             SELECT ?1,?2,sum(c),sum(p) FROM (
+                SELECT count(DISTINCT hash_id) AS c,0 AS p FROM {current} WHERE tag_id IN rarray(?3)
+                UNION ALL
+                SELECT 0,count(DISTINCT hash_id) FROM {pending} WHERE tag_id IN rarray(?3)
+             ) HAVING sum(c)+sum(p)>0"
+            ),
+            params![domain, tag, sources.clone()],
+        )?;
+    }
+    if !domains.is_empty() {
+        conn.execute(
+            &format!(
+                "INSERT INTO {counts} (domain_id,tag_id,current,pending)
+             SELECT domain_id,?1,sum(c),sum(p) FROM (
+                SELECT d.service_id AS domain_id,count(DISTINCT m.hash_id) AS c,0 AS p
+                FROM {current} m JOIN file_domain_current d ON d.hash_id=m.hash_id
+                WHERE m.tag_id IN rarray(?2) AND d.service_id IN rarray(?3) GROUP BY d.service_id
+                UNION ALL
+                SELECT d.service_id,0,count(DISTINCT m.hash_id)
+                FROM {pending} m JOIN file_domain_current d ON d.hash_id=m.hash_id
+                WHERE m.tag_id IN rarray(?2) AND d.service_id IN rarray(?3) GROUP BY d.service_id
+             ) GROUP BY domain_id"
+            ),
+            params![tag, sources, crate::master::id_array(domains)],
+        )?;
+    }
+    Ok(())
+}
+
 /// A tag's counts in one domain.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub struct TagCount {

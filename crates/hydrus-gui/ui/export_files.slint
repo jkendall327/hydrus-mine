@@ -33,6 +33,9 @@ export component ExportFilesWindow inherits Window {
     callback tag-select-all();
     in property <[MenuPane]> tag-menu-panes;
     in property <string> tag-menu-question;
+    in property <string> tag-menu-question-title;
+    in property <string> tag-menu-yes-label: "yes";
+    in property <string> tag-menu-no-label: "no";
     callback tag-menu-hovered(int,int,length,length,length);
     callback tag-menu-clicked(int,int,length,length,length);
     callback tag-menu-placed(int,length,length,length);
@@ -127,6 +130,7 @@ export component ExportFilesWindow inherits Window {
     TagMenuOverlay {
         width: root.width; height: root.height;
         panes: root.tag-menu-panes; question: root.tag-menu-question;
+            question-title: root.tag-menu-question-title; yes-label: root.tag-menu-yes-label; no-label: root.tag-menu-no-label;
         hovered(p,l,r,t,x) => {root.tag-menu-hovered(p,l,r,t,x);}
         clicked(p,l,r,t,x) => {root.tag-menu-clicked(p,l,r,t,x);}
         placed(p,x,y,w) => {root.tag-menu-placed(p,x,y,w);}

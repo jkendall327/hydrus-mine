@@ -1035,3 +1035,115 @@ fn batch_context_menu_copies_and_launches_real_and_or_each_and_duplicate_pages()
     assert_eq!(bound.pages.borrow().session().pages.len(), before);
     hydrus_gui::set_clipper(|_| {});
 }
+
+#[test]
+fn regeneration_question_repairs_counts_only_on_yes_and_invalidates_on_cancel() {
+    use hydrus_core::{HashId, Tag};
+    use hydrus_store::{content::MappingAction, schema::MappingTables};
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let snapshot = store.snapshot();
+    let service = snapshot.services.by_name("my tags").unwrap();
+    let key = service.key.clone();
+    let service_id = service.id;
+    let domain = snapshot
+        .services
+        .of_type(hydrus_core::ServiceType::CombinedFile)
+        .next()
+        .unwrap()
+        .id;
+    let tag = store
+        .write_content(move |writer| {
+            let tag = hydrus_store::master::intern_tag(
+                writer.conn(),
+                &Tag::new("parity:regen one").unwrap(),
+            )?;
+            let file: HashId =
+                writer
+                    .conn()
+                    .query_row("SELECT hash_id FROM files LIMIT 1", [], |row| row.get(0))?;
+            writer.update_mappings(service_id, &MappingAction::Add, tag, &[file])?;
+            Ok(tag)
+        })
+        .unwrap();
+    store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &settings::FavouriteTags(vec!["parity:regen one".into()]),
+            )
+        })
+        .unwrap();
+    let corrupt = |value| {
+        store
+            .write(move |ctx| {
+                let tables = MappingTables::new(service_id);
+                for table in [tables.counts, tables.display_counts] {
+                    ctx.conn().execute(
+                        &format!("UPDATE {table} SET current=?1 WHERE tag_id=?2 AND domain_id=?3"),
+                        rusqlite::params![value, tag, domain],
+                    )?;
+                }
+                Ok(())
+            })
+            .unwrap();
+    };
+    let count = || {
+        store
+            .read(|conn| hydrus_store::counts::count(conn, service_id, domain, tag, false))
+            .unwrap()
+            .current
+    };
+    corrupt(77_i64);
+    let slot = hydrus_gui::write_tag_window::Slot::default();
+    let child = hydrus_gui::write_tag_window::open(
+        &store,
+        key,
+        &[],
+        "repair tags",
+        &slot,
+        Rc::new(|_| {}),
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    child.invoke_tab_chosen(1);
+    let fixture = hydrus_testkit::fixture_json("write_tag_selection.json");
+    let asked = &fixture["menus"].as_array().unwrap().last().unwrap()["asked"][0];
+    child.invoke_context_menu(0, 10.0, 10.0);
+    choose_write_tag_menu(&child, &["maintenance", "regenerate tag display"]);
+    assert_eq!(
+        child.get_tag_menu_question(),
+        asked["message"].as_str().unwrap()
+    );
+    assert_eq!(
+        child.get_tag_menu_question_title(),
+        asked["title"].as_str().unwrap()
+    );
+    assert_eq!(
+        child.get_tag_menu_yes_label(),
+        asked["yes_label"].as_str().unwrap()
+    );
+    assert_eq!(
+        child.get_tag_menu_no_label(),
+        asked["no_label"].as_str().unwrap()
+    );
+    child.invoke_apply();
+    assert!(slot.borrow().is_some());
+    child.invoke_selection_clicked(0, true, false);
+    assert_eq!(child.get_selected().iter().collect::<Vec<_>>(), vec![true]);
+    child.invoke_tag_menu_answered(false);
+    assert_eq!(count(), 77);
+    child.invoke_context_menu(0, 10.0, 10.0);
+    choose_write_tag_menu(&child, &["maintenance", "regenerate tag display"]);
+    child.invoke_tag_menu_answered(true);
+    assert_eq!(count(), 1);
+    assert_eq!(child.get_tags().row_count(), 0); // Maintenance does not enter suggestions.
+    assert!(child.get_error().is_empty());
+    corrupt(99_i64);
+    child.invoke_context_menu(0, 10.0, 10.0);
+    choose_write_tag_menu(&child, &["maintenance", "regenerate tag display"]);
+    child.invoke_cancel();
+    child.invoke_tag_menu_answered(true);
+    assert_eq!(count(), 99);
+    assert!(slot.borrow().is_none());
+}

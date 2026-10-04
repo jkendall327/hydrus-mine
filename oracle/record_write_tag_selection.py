@@ -6,6 +6,8 @@ Ctrl+Shift hits drive Qt's existing reversible selection algorithm; inherited
 physical rows map to the originating logical tag. Activation calls the real
 list's handler and write-dropdown broadcast, including clearing its input. The
 real multi-tag menu records copy payloads and AND/OR/each-page/duplicate launches.
+Maintenance records the actual question and accepted/declined write dispatch;
+the database repair job is intercepted at dispatch, not run by this recorder.
 """
 import json,os,sys,tempfile
 HERE=os.path.dirname(os.path.abspath(__file__));sys.path.insert(0,HERE)
@@ -84,6 +86,21 @@ def record(session):
                     copied.clear();action.trigger();menus.append(dict(action='copy',label=path[-1],copied=list(copied)))
                 elif path[0]=='open':
                     launches.clear();action.trigger();menus.append(dict(action='launch',label=path[-1],launched=list(launches)))
+            from qtpy import QtWidgets
+            from hydrus.client.gui import ClientGUIDialogsQuick
+            old_yes_no=ClientGUIDialogsQuick.GetYesNo;old_write=c.Write
+            try:
+                for yes in (False,True):
+                    asked=[];writes=[]
+                    def question(parent,message,**kw):
+                        asked.append(dict(message=message,**kw));return QtWidgets.QDialog.DialogCode.Accepted if yes else QtWidgets.QDialog.DialogCode.Rejected
+                    def write(name,*args,**kw):
+                        if name=='regenerate_tag_mappings_tags':writes.append(dict(name=name,tags=sorted(args[0])))
+                        else:return old_write(name,*args,**kw)
+                    ClientGUIDialogsQuick.GetYesNo=question;c.Write=write
+                    next(action for path,action in actions if path==('maintenance','regenerate tag display')).trigger()
+                    menus.append(dict(action='regenerate',answer=yes,asked=asked,writes=writes))
+            finally:ClientGUIDialogsQuick.GetYesNo=old_yes_no;c.Write=old_write
         finally:
             CGC.core().PopupMenu=old_popup;c.pub=old_pub;ClientGUIAsync.AsyncQtJob.start=old_start
         activated=box._Activate(False,False);steps.append(dict(action='activate',activated=activated,entered=list(entered),text=ac._text_ctrl.text()))

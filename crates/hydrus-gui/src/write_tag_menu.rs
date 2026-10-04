@@ -212,9 +212,9 @@ impl TagMenu {
                     }
                 }
             }
-            Action::Favourite { .. } => {
+            Action::Favourite { .. } | Action::Regenerate { .. } => {
                 if let Err(e) = action.persist(&self.store) {
-                    (self.error)(&format!("could not update favourite tags: {e}"));
+                    (self.error)(&format!("could not complete tag action: {e}"));
                 }
             }
         }
@@ -236,8 +236,26 @@ macro_rules! bind {
         });
         $window.on_tag_menu_clicked({
             let menu = menu.clone();
+            let weak = $window.as_weak();
             move |p, l, r, t, x| {
                 let chosen = menu.popup.click(p, l, r, t, x);
+                let regeneration = matches!(
+                    &chosen,
+                    Some($crate::popup_menu::Chosen::Action(
+                        hydrus_gui_model::write_tag_menu::Action::Regenerate { .. }
+                    ))
+                );
+                if let Some(window) = weak.upgrade() {
+                    window.set_tag_menu_question_title(
+                        if regeneration { "Regen tags?" } else { "" }.into(),
+                    );
+                    window.set_tag_menu_yes_label(
+                        if regeneration { "let's go" } else { "yes" }.into(),
+                    );
+                    window.set_tag_menu_no_label(
+                        if regeneration { "forget it" } else { "no" }.into(),
+                    );
+                }
                 menu.choose(chosen);
             }
         });

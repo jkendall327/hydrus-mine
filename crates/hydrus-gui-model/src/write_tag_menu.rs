@@ -11,6 +11,8 @@ use hydrus_core::{
 };
 use hydrus_store::{Store, settings};
 
+pub const REGENERATE_QUESTION: &str = "!!WARNING EXPERIMENTAL!!\n\nThis will delete and then regenerate all the display calculations for the selected tags and their siblings and parents, with the intention of fixing bad autocomplete counts or sibling/parent presentation. It is functionally similar to the 'tag storage mappings cache' regeneration job, but just for these tags.\n\nIt might take a while to run, perhaps many minutes for a heavily-siblinged/-parented/-mapped tag, during which the database will be locked. Doing it on a thousand tags is going to completely gonk you. Also, any sibling or parent rules will be reset, and they will have to be recalculated, which will probably occur in a few seconds in the background after the regeneration job completes.";
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Decoration {
     Parents,
@@ -20,6 +22,9 @@ pub enum Decoration {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Action {
     Copy(String),
+    Regenerate {
+        tags: Vec<String>,
+    },
     Domain(crate::domains::Choice),
     Locations(LocationContext),
     Relationship {
@@ -51,6 +56,9 @@ pub enum Action {
 }
 impl Action {
     pub fn question(&self) -> Option<&str> {
+        if matches!(self, Self::Regenerate { .. }) {
+            return Some(REGENERATE_QUESTION);
+        }
         if let Self::Favourite { question, .. } = self {
             question.as_deref()
         } else {
@@ -59,6 +67,10 @@ impl Action {
     }
     /// Re-read inside the write: other windows' favourites must survive a delayed answer.
     pub fn persist(&self, store: &Store) -> hydrus_store::Result<()> {
+        if let Self::Regenerate { tags } = self {
+            let tags: Vec<_> = tags.iter().filter_map(|tag| Tag::new(tag)).collect();
+            return hydrus_store::maintenance::regenerate_tag_display(store, &tags);
+        }
         let Self::Favourite {
             tag,
             service,
@@ -338,6 +350,7 @@ impl WriteAutocomplete {
             ));
         }
         entries.push(Entry::Menu("favourites".into(), favourite_entries));
+        entries.push(maintenance_entry(vec![tag.clone()]));
         entries
     }
 }
@@ -448,7 +461,7 @@ fn batch_entries(
                 "add parents to selection",
                 Action::Relationship {
                     kind: hydrus_store::display::RelationKind::Parents,
-                    tags,
+                    tags: tags.clone(),
                 },
             )],
         ),
@@ -482,7 +495,15 @@ fn batch_entries(
                 ),
             ],
         ),
+        maintenance_entry(tags),
     ]
+}
+
+fn maintenance_entry(tags: Vec<String>) -> Entry {
+    Entry::Menu(
+        "maintenance".into(),
+        vec![item("regenerate tag display", Action::Regenerate { tags })],
+    )
 }
 
 fn spam(entries: &mut Vec<Entry>, labels: &[(String, String)]) {

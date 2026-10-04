@@ -2582,3 +2582,11 @@ selection as an AND or OR search, one search page per tag, or a duplicate-filter
 page, and seeds sibling/parent editors with the whole selection. All-tag copy
 actions appear when other results remain. Multi-tag menus omit single-tag
 favourite actions and relationship lookups, matching the recorded Qt menu.
+
+The write-tag context menu also offers “maintenance > regenerate tag display”.
+It asks the recorded experimental warning with “let's go” and “forget it”, then
+repairs the selected tags and their connected sibling/parent chains across tag
+services and file domains from primary mappings. Cancel changes nothing. Repair
+retains primary mappings and relations and leaves unrelated counts alone; it
+does not enter tags into the editor's draft. Closing the owner invalidates a
+pending repair answer. Native display graphs and repaired counts publish together.

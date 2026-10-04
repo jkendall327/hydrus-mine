@@ -1192,11 +1192,6 @@ fn check_recorded_batch_menu(input: &WriteAutocomplete, fixture: &Value) {
     leaves(&input.menu(index), &[], &mut actual);
     let expected_paths: Vec<Vec<String>> =
         serde_json::from_value(fixture["menus"][0]["paths"].clone()).unwrap();
-    // Local maintenance is the next implementation slice; this slice closes all batch actions.
-    let expected_paths: Vec<_> = expected_paths
-        .into_iter()
-        .filter(|path| path[0] != "maintenance")
-        .collect();
     assert_eq!(
         actual
             .iter()
@@ -1212,6 +1207,32 @@ fn check_recorded_batch_menu(input: &WriteAutocomplete, fixture: &Value) {
         })
         .collect();
     for event in fixture["menus"].as_array().unwrap().iter().skip(1) {
+        if event["action"] == "regenerate" {
+            let action = &actual
+                .iter()
+                .find(|(path, _)| {
+                    path == &[
+                        "maintenance".to_owned(),
+                        "regenerate tag display".to_owned(),
+                    ]
+                })
+                .unwrap()
+                .1;
+            assert_eq!(
+                action.question().unwrap(),
+                event["asked"][0]["message"].as_str().unwrap()
+            );
+            let Action::Regenerate { tags } = action else {
+                panic!("regeneration action")
+            };
+            assert_eq!(*tags, selected);
+            if event["answer"].as_bool().unwrap() {
+                assert_eq!(json!(tags), event["writes"][0]["tags"]);
+            } else {
+                assert!(event["writes"].as_array().unwrap().is_empty());
+            }
+            continue;
+        }
         let action = &actual
             .iter()
             .find(|(path, _)| path.last().unwrap() == event["label"].as_str().unwrap())
