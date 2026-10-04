@@ -2422,3 +2422,12 @@ stops its timer, and weak native registrations ignore other windows and release
 closed owners. Apply/Cancel and legacy migration reach this consumer. The fresh
 `viewer_cursor_options.json` recording captures actual Qt cursor shapes and
 timer intervals, including an actual QMenu nested execution loop.
+
+The downloading Options page's “Maximum number of subscriptions that can sync
+simultaneously” spin accepts 1–100, starting at one. Apply saves the limit for
+the subscription daemon; Cancel discards it. The daemon reads committed changes
+before admissions: raising the limit makes room for another due subscription,
+and lowering it lets current syncs finish before admitting more. Each active
+subscription has its own ID, status and cancellation; daemon shutdown cancels
+and joins every sync. The existing first-running status/cancel API remains
+available for callers that display one job.

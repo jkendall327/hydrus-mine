@@ -1127,6 +1127,15 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s| s.bandwidth.gallery_page_wait_subscriptions,
                             |s, v| s.bandwidth.gallery_page_wait_subscriptions = v,
                         ),
+                        int(
+                            "Maximum number of subscriptions that can sync simultaneously:",
+                            (1, 100),
+                            |s| i64::from(s.network.max_simultaneous_subscriptions),
+                            |s, value| {
+                                s.network.max_simultaneous_subscriptions =
+                                    u32::try_from(value).unwrap_or(1);
+                            },
+                        ),
                         noneable(
                             "If a subscription has this many failed file imports, stop and continue later:",
                             none("no limit", 5, (1, 1_000_000), Some("errors")),

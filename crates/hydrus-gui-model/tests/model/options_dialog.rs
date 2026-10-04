@@ -1723,3 +1723,71 @@ fn cursor_autohide_control_matches_reference_default_bounds_and_none() {
     assert_eq!(editor.applied().0.viewer_cursor.autohide_ms, Some(100000));
     assert_eq!(store.read(Settings::load).unwrap(), settings);
 }
+
+#[test]
+fn subscription_concurrency_replays_recorded_clamps_and_committed_parent_states() {
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    let fixture = hydrus_testkit::fixture_json("subscription_concurrency.json");
+    for state in fixture["options"]["states"].as_array().unwrap() {
+        let settings = store.read(Settings::load).unwrap();
+        assert_eq!(
+            serde_json::json!(settings.network.max_simultaneous_subscriptions),
+            state["saved_before"]
+        );
+        let mut editor = hydrus_gui_model::options::Editor::new(settings);
+        let page = editor
+            .page_names()
+            .iter()
+            .position(|name| *name == "downloading")
+            .unwrap();
+        editor.show_page(page);
+        let row = editor.rows().iter().position(|row| matches!(row, hydrus_gui_model::options::Row::Opt {option,..} if option.label == "Maximum number of subscriptions that can sync simultaneously:")).unwrap();
+        let hydrus_gui_model::options::Row::Opt { option, .. } = &editor.rows()[row] else {
+            unreachable!()
+        };
+        let Kind::Int { min, max } = option.kind else {
+            panic!("not an integer spin")
+        };
+        assert_eq!(serde_json::json!(min), fixture["options"]["minimum"]);
+        assert_eq!(serde_json::json!(max), fixture["options"]["maximum"]);
+        editor.number(row, state["given"].as_i64().unwrap());
+        let (after, before, errors) = editor.applied();
+        assert!(errors.is_empty());
+        assert_eq!(
+            serde_json::json!(after.network.max_simultaneous_subscriptions),
+            state["value"]
+        );
+        assert_eq!(
+            serde_json::json!(
+                store
+                    .read(Settings::load)
+                    .unwrap()
+                    .network
+                    .max_simultaneous_subscriptions
+            ),
+            state["saved_before"],
+            "draft edits do not reach the runner"
+        );
+        let before = before.clone();
+        store
+            .write(move |ctx| after.save(ctx.conn(), &before))
+            .unwrap();
+        assert_eq!(
+            serde_json::json!(
+                store
+                    .read(Settings::load)
+                    .unwrap()
+                    .network
+                    .max_simultaneous_subscriptions
+            ),
+            state["saved_after"]
+        );
+    }
+}

@@ -2666,6 +2666,22 @@ mod tests {
     }
 
     #[test]
+    fn subscription_concurrency_imports_nondefault_number() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "max_simultaneous_subscriptions"], [0, 1]]"#,
+                r#"[[0, "max_simultaneous_subscriptions"], [0, 37]]"#,
+            )],
+        );
+        let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        let settings: crate::network::NetworkSettings =
+            serde_json::from_value(input.settings["network"].clone()).unwrap();
+        assert_eq!(settings.max_simultaneous_subscriptions, 37);
+    }
+
+    #[test]
     fn subscription_file_failure_threshold_imports_none_and_number() {
         let source = hydrus_testkit::legacy_fixture("basic");
         let decoded = || {

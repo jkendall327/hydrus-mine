@@ -3669,3 +3669,68 @@ fn cursor_timeout_reaches_native_motion_timer_focus_and_actual_popup_lifecycle()
         "close stops timers and ignores late native input"
     );
 }
+
+#[test]
+fn subscription_concurrency_options_replay_bounds_parent_apply_cancel_and_reopen() {
+    use hydrus_store::network::NetworkSettings;
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let fixture = hydrus_testkit::fixture_json("subscription_concurrency.json");
+    let label = "Maximum number of subscriptions that can sync simultaneously:";
+    let saved = || {
+        store
+            .read(hydrus_store::settings::get::<NetworkSettings>)
+            .unwrap()
+            .max_simultaneous_subscriptions
+    };
+    for state in fixture["options"]["states"].as_array().unwrap() {
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "downloading");
+        let (at, control) = row(&window, label);
+        assert_eq!(control.kind, 2);
+        assert_eq!(
+            serde_json::json!(control.minimum),
+            fixture["options"]["minimum"]
+        );
+        assert_eq!(
+            serde_json::json!(control.maximum),
+            fixture["options"]["maximum"]
+        );
+        assert_eq!(serde_json::json!(saved()), state["saved_before"]);
+        window.invoke_number_edited(at, i32::try_from(state["given"].as_i64().unwrap()).unwrap());
+        show_page(&window, "downloading");
+        assert_eq!(
+            serde_json::json!(row(&window, label).1.number),
+            state["value"]
+        );
+        assert_eq!(serde_json::json!(saved()), state["saved_before"]);
+        window.invoke_apply();
+        assert_eq!(serde_json::json!(saved()), state["saved_after"]);
+    }
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "downloading");
+    let (at, control) = row(&window, label);
+    assert_eq!(control.number, 3);
+    window.invoke_number_edited(at, 99);
+    window.invoke_cancel();
+    window.invoke_apply();
+    assert_eq!(saved(), 3, "cancelled owner cannot apply stale values");
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "downloading");
+    assert_eq!(row(&window, label).1.number, 3);
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 820, 650);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("options_subscription_concurrency.png"),
+        &pixels,
+        820,
+        650,
+    )
+    .unwrap();
+    window.invoke_cancel();
+}
