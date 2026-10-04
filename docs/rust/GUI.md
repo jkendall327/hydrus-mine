@@ -2917,3 +2917,14 @@ never saved as file ratings. Child Apply stages only the service configuration;
 parent Apply persists it. Cancel, reopening and closed-owner callbacks leave
 samples and unapplied configuration behind. The actual three-kind Qt replay is
 `service_rating_preview.json`; hosted native coverage also saves a populated PNG.
+
+
+Options → ratings now stages independent Preview Window and Dialog square-icon
+sizes and counter heights. The four controls retain Qt's separate bounds, two
+decimal places and clamping; Apply persists them, Cancel discards them, and
+legacy import preserves the saved fractions. Newly opened Manage Ratings uses
+the Dialog preferences for like/numerical graphics, their outlines and counter
+height, with counter width expanding for long values. Held right-button movement
+clears without rating stars; held left movement rates the dialog's draft. All
+four service-editor examples read their corresponding saved sizing preferences.
+The Preview Window preferences have no native preview-canvas consumer yet.

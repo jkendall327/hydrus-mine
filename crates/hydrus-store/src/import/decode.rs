@@ -580,6 +580,32 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .map(legacy::ClientOptions::thumbnail_rating_settings)
             .unwrap_or_default(),
     )?;
+    let mut rating_sizes = crate::settings::RatingContextSizes::default();
+    if let Some(options) = &options {
+        for (key, field) in [
+            (
+                "preview_window_rating_icon_size_px",
+                &mut rating_sizes.preview_icon_size,
+            ),
+            (
+                "preview_window_rating_incdec_height_px",
+                &mut rating_sizes.preview_incdec_height,
+            ),
+            (
+                "dialog_rating_icon_size_px",
+                &mut rating_sizes.dialog_icon_size,
+            ),
+            (
+                "dialog_rating_incdec_height_px",
+                &mut rating_sizes.dialog_incdec_height,
+            ),
+        ] {
+            if let Some(value) = options.floats.get(key) {
+                *field = *value;
+            }
+        }
+    }
+    insert_setting(&mut input, &rating_sizes)?;
     insert_setting(
         &mut input,
         &crate::settings::CustomPredicateDefaults {
@@ -2938,6 +2964,60 @@ mod tests {
             [dump.into_bytes()],
         )
         .unwrap();
+    }
+
+    #[test]
+    fn preview_and_dialog_rating_sizes_import_exact_fractional_preferences() {
+        let recording = hydrus_testkit::fixture_json("rating_context_sizes.json");
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let edits = recording["keys"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .enumerate()
+            .map(|(index, key)| {
+                let key = key.as_str().unwrap();
+                (
+                    format!(r#"[[0, "{key}"], [0, 12]]"#),
+                    format!(
+                        r#"[[0, "{key}"], [0, {}]]"#,
+                        recording["events"][1]["saved"][index]
+                    ),
+                )
+            })
+            .collect::<Vec<_>>();
+        let edits = edits
+            .iter()
+            .map(|(from, to)| (from.as_str(), to.as_str()))
+            .collect::<Vec<_>>();
+        edit_client_options(source.path(), &edits);
+        let destination = tempfile::tempdir().unwrap();
+        crate::import::import_legacy(
+            source.path(),
+            &destination.path().join(crate::store::DB_FILE_NAME),
+        )
+        .unwrap();
+        let store = crate::Store::open(destination.path()).unwrap();
+        let sizes = store
+            .read(crate::settings::get::<crate::settings::RatingContextSizes>)
+            .unwrap();
+        assert_eq!(
+            serde_json::json!([
+                sizes.preview_icon_size,
+                sizes.preview_incdec_height,
+                sizes.dialog_icon_size,
+                sizes.dialog_incdec_height
+            ]),
+            recording["events"][1]["saved"]
+        );
+        drop(store);
+        let reopened = crate::Store::open(destination.path()).unwrap();
+        assert_eq!(
+            reopened
+                .read(crate::settings::get::<crate::settings::RatingContextSizes>)
+                .unwrap(),
+            sizes
+        );
     }
 
     #[test]

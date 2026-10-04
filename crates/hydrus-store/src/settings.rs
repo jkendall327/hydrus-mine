@@ -938,6 +938,29 @@ impl Setting for hydrus_core::thumbnail::ThumbnailRatingSettings {
     const KEY: &'static str = "thumbnail_ratings";
 }
 
+/// Saved icon sizes for preview-window and dialog rating controls.
+#[derive(Debug, Clone, PartialEq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct RatingContextSizes {
+    pub preview_icon_size: f64,
+    pub preview_incdec_height: f64,
+    pub dialog_icon_size: f64,
+    pub dialog_incdec_height: f64,
+}
+impl Default for RatingContextSizes {
+    fn default() -> Self {
+        Self {
+            preview_icon_size: 12.0,
+            preview_incdec_height: 12.0,
+            dialog_icon_size: 12.0,
+            dialog_incdec_height: 12.0,
+        }
+    }
+}
+impl Setting for RatingContextSizes {
+    const KEY: &'static str = "rating_context_sizes";
+}
+
 /// How a file's info lines read.
 impl Setting for hydrus_core::media_viewer::InfoLineSettings {
     const KEY: &'static str = "info_lines";

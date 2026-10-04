@@ -483,6 +483,8 @@ pub fn open(
             let viewer = hydrus_store::settings::get::<
                 hydrus_core::media_viewer::MediaViewerSettings,
             >(conn)?;
+            let contexts =
+                hydrus_store::settings::get::<hydrus_store::settings::RatingContextSizes>(conn)?;
             Ok([
                 (
                     thumbnails.icon_size.trunc(),
@@ -492,8 +494,14 @@ pub fn open(
                     viewer.rating_icon_size.trunc(),
                     viewer.rating_incdec_height.trunc(),
                 ),
-                (12.0, 12.0),
-                (12.0, 12.0),
+                (
+                    contexts.preview_icon_size.trunc(),
+                    contexts.preview_incdec_height.trunc(),
+                ),
+                (
+                    contexts.dialog_icon_size.trunc(),
+                    contexts.dialog_incdec_height.trunc(),
+                ),
             ])
         })
         .map_err(|e| e.to_string())?;

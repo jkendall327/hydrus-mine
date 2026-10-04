@@ -1957,9 +1957,15 @@ Unicode/mixed-script/zero boundaries and four sort-key equalities.
 
 The rating configuration example uses the existing native star/counter graphics
 and an owned inline counter-value prompt rather than a Qt modal child. Thumbnail
-and media-viewer samples use their actual typed sizing preferences; preview and
-dialog samples use the recorded 12px defaults, since their separate sizing
-preferences are not yet native settings. Named SVG rendering retains the existing
+and media-viewer samples use their actual typed sizing preferences. Preview and
+dialog samples now read their own saved preferences, also imported from the
+reference. Manage Ratings consumes the dialog sizes, integer pixel truncation,
+outline scaling and dynamic counter widths. Options exposes all four independent
+controls with the actual bounds and two decimal places; Qt's documented icon /
+counter ratio clamp is disabled in the reference, so no ratio clamp is applied.
+The native preview canvas remains absent, keeping both preview-size leaves
+Partial. The Ratings Options style selector and live example panel remain
+unimplemented; broader Ratings Options and service parents remain Partial. Named SVG rendering retains the existing
 fallback. Numerical examples retain the reference opening click conversion while
 star-count changes repaint the stored fraction; the allow-zero checkbox changes
 the saved service configuration, without changing the opening preview conversion.

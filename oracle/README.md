@@ -158,3 +158,16 @@ colour/shape/star-count/padding/fraction updates, opening numerical conversion,
 empty example persistence values and unchanged original services. The counter's
 real edit-value dialog receives scripted accept/cancel decisions. Qt example PNGs
 are saved beside `service_rating_preview.json`; no fixture service edits commit.
+
+
+`record_rating_context_sizes.py` drives the four real RatingsPanel double-spin
+boxes, their editingFinished consumers, UpdateOptions, reopened controls and
+actual option serialization. Five cases cover defaults, independent fractional
+values and both bounds. Real RatingLike/Numerical/IncDec dialog and preview
+controls capture pixel sizes, including five-digit counter widths; the actual
+Manage Ratings dialog captures all three sizes and held-right/left mouse moves.
+An abandoned detached Options draft preserves saved values. Executed successfully
+2026-10-04 22:36:53–22:36:55 UTC via the serialized `with-oracle` helper, on a
+freshly unpacked basic fixture with clean reference shutdown. The fixture and
+inspected PNG are `rating_context_sizes.json` and `rating_context_sizes.png`. No
+rating handlers or registered services were replaced; the dialog was cancelled.
