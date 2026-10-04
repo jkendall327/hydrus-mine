@@ -19,9 +19,12 @@
     "0124224a",
     "ef8edac0",
     "a6fc4a30",
-    "c9193ab9"
+    "c9193ab9",
+    "651f86d7b2acf3edc9c4183ef481c61856ffa2eb",
+    "b420919ba495b363d3c617019bc72ea8bda1bec5",
+    "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
   ],
-  "implementation_leaf_count": 8,
+  "implementation_leaf_count": 12,
   "partial_improvements": 4,
   "validation": "Real Qt TagsPanel/manual/paste/remove/natural-row-and-save-order recording plus explicit domain preferences rerun passed. Cached Slint source compilation, Python syntax, cargo fmt and git diff --check passed. Model/native tests authored for root asynchronous GitHub CI; no local Cargo builds/tests or mutation tests.",
   "claims": [
@@ -1412,6 +1415,406 @@
         "b5ebaf2b2748082ce100cc6b24c84bc8a198c922",
         "244c9da991fba59587a83e13ab8ffc150eee041f"
       ]
+    },
+    {
+      "reference_id": "audit-options-search-or-create",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Shift+Enter accumulates unique, human-sorted terms without changing the active search; the draft is a first results row skipped by initial selection when another result is available. Normal selection commits the OR, own one-term selection unwraps it. The OR button opens a fresh staged child in caller file/tag context; 0/1/many terms clear input/unwrap/create OR as recorded. The child reuses native read tabs, system editor and nested OR input. Accepted typed ORs reach actual file queries and favourite persistence.",
+      "limits": "Shared read-autocomplete and OR parent workflows remain partial. Basic child uses captured opening domains without Qt domain/favourite-search cog controls; read multiple selection, context menus and asynchronous result publication remain separate. Advanced input uses existing native system-parser vocabulary and caps expansion at 4,096 clauses. Native control topology differs from Qt.",
+      "implementation_commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/search_or.rs",
+          "line": 7,
+          "symbol": "pub struct Construction",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/search_or/advanced.rs",
+          "line": 237,
+          "symbol": "pub fn predicates",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 2127,
+          "symbol": "pub fn enter_or",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/search_or_window.rs",
+          "line": 136,
+          "symbol": "pub fn open",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/search_or.slint",
+          "line": 4,
+          "symbol": "export component SearchOrWindow",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 956,
+          "symbol": "window.on_search_or_action",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/search_or.rs",
+          "line": 6,
+          "symbol": "fn staged_or_replays",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/search_or.rs",
+          "line": 44,
+          "symbol": "fn advanced_boolean_preview",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 44,
+          "symbol": "fn native_or_keys",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 181,
+          "symbol": "fn actual_basic_and_advanced",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_read_or.py",
+          "line": 12,
+          "symbol": "def record",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "oracle/fixtures/read_or.json",
+          "line": 2,
+          "symbol": "\"events\"",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "oracle/record_read_or_editors.py",
+          "line": 14,
+          "symbol": "def record",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "oracle/fixtures/read_or_editors.json",
+          "line": 2,
+          "symbol": "\"dialogs\"",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        }
+      ],
+      "consumer_commits": [
+        "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+      ]
+    },
+    {
+      "reference_id": "audit-options-search-or-rewind",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Visible rewind with multiple terms removes the last sorted member and clears input without changing active search. Empty-input Escape rewinds, then cancels a one-term draft; nonempty input does not consume Escape as a rewind. Native keyboard and modal/caller guards keep drafts separate from committed searches.",
+      "limits": "Shared read-autocomplete and OR parent workflows remain partial. Basic child uses captured opening domains without Qt domain/favourite-search cog controls; read multiple selection, context menus and asynchronous result publication remain separate. Advanced input uses existing native system-parser vocabulary and caps expansion at 4,096 clauses. Native control topology differs from Qt.",
+      "implementation_commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/search_or.rs",
+          "line": 7,
+          "symbol": "pub struct Construction",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/search_or/advanced.rs",
+          "line": 237,
+          "symbol": "pub fn predicates",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 2127,
+          "symbol": "pub fn enter_or",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/search_or_window.rs",
+          "line": 136,
+          "symbol": "pub fn open",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/search_or.slint",
+          "line": 4,
+          "symbol": "export component SearchOrWindow",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 956,
+          "symbol": "window.on_search_or_action",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/search_or.rs",
+          "line": 6,
+          "symbol": "fn staged_or_replays",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/search_or.rs",
+          "line": 44,
+          "symbol": "fn advanced_boolean_preview",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 44,
+          "symbol": "fn native_or_keys",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 181,
+          "symbol": "fn actual_basic_and_advanced",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_read_or.py",
+          "line": 12,
+          "symbol": "def record",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "oracle/fixtures/read_or.json",
+          "line": 2,
+          "symbol": "\"events\"",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "oracle/record_read_or_editors.py",
+          "line": 14,
+          "symbol": "def record",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "oracle/fixtures/read_or_editors.json",
+          "line": 2,
+          "symbol": "\"dialogs\"",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        }
+      ],
+      "consumer_commits": [
+        "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+      ]
+    },
+    {
+      "reference_id": "audit-options-search-or-cancel",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Cancel discards OR construction and clears input while leaving active search and paused results intact. Cancel on basic or advanced child preserves the caller text and predicates; cancelled ancestors close descendants and invalidate retained callbacks. Hidden/stale callers cannot apply a child; reopening creates an empty independent editor.",
+      "limits": "Shared read-autocomplete and OR parent workflows remain partial. Basic child uses captured opening domains without Qt domain/favourite-search cog controls; read multiple selection, context menus and asynchronous result publication remain separate. Advanced input uses existing native system-parser vocabulary and caps expansion at 4,096 clauses. Native control topology differs from Qt.",
+      "implementation_commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/search_or.rs",
+          "line": 7,
+          "symbol": "pub struct Construction",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/search_or/advanced.rs",
+          "line": 237,
+          "symbol": "pub fn predicates",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 2127,
+          "symbol": "pub fn enter_or",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/search_or_window.rs",
+          "line": 136,
+          "symbol": "pub fn open",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/search_or.slint",
+          "line": 4,
+          "symbol": "export component SearchOrWindow",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 956,
+          "symbol": "window.on_search_or_action",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/search_or.rs",
+          "line": 6,
+          "symbol": "fn staged_or_replays",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/search_or.rs",
+          "line": 44,
+          "symbol": "fn advanced_boolean_preview",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 44,
+          "symbol": "fn native_or_keys",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 181,
+          "symbol": "fn actual_basic_and_advanced",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_read_or.py",
+          "line": 12,
+          "symbol": "def record",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "oracle/fixtures/read_or.json",
+          "line": 2,
+          "symbol": "\"events\"",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "oracle/record_read_or_editors.py",
+          "line": 14,
+          "symbol": "def record",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "oracle/fixtures/read_or_editors.json",
+          "line": 2,
+          "symbol": "\"dialogs\"",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        }
+      ],
+      "consumer_commits": [
+        "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+      ]
+    },
+    {
+      "reference_id": "audit-options-search-or-advanced",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Advanced mode exposes a staged Boolean input dialog, live preview and recorded invalid-input veto. The grammar implements not/and/or/implies/xor/xnor/nand/nor and symbolic aliases, parentheses, escaping, precedence, CNF distribution, duplicate-clause and tautology handling, namespaces/wildcards and supported system predicates. Negated system terms reject with the actual reference message. Accepted predicates reach real AND/OR file queries; Cancel and stale handles leave the caller intact.",
+      "limits": "Shared read-autocomplete and OR parent workflows remain partial. Basic child uses captured opening domains without Qt domain/favourite-search cog controls; read multiple selection, context menus and asynchronous result publication remain separate. Advanced input uses existing native system-parser vocabulary and caps expansion at 4,096 clauses. Native control topology differs from Qt.",
+      "implementation_commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/search_or.rs",
+          "line": 7,
+          "symbol": "pub struct Construction",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/search_or/advanced.rs",
+          "line": 237,
+          "symbol": "pub fn predicates",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 2127,
+          "symbol": "pub fn enter_or",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/search_or_window.rs",
+          "line": 136,
+          "symbol": "pub fn open",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/search_or.slint",
+          "line": 4,
+          "symbol": "export component SearchOrWindow",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 956,
+          "symbol": "window.on_search_or_action",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/search_or.rs",
+          "line": 6,
+          "symbol": "fn staged_or_replays",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/search_or.rs",
+          "line": 44,
+          "symbol": "fn advanced_boolean_preview",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 44,
+          "symbol": "fn native_or_keys",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 181,
+          "symbol": "fn actual_basic_and_advanced",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_read_or.py",
+          "line": 12,
+          "symbol": "def record",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "oracle/fixtures/read_or.json",
+          "line": 2,
+          "symbol": "\"events\"",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "oracle/record_read_or_editors.py",
+          "line": 14,
+          "symbol": "def record",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "oracle/fixtures/read_or_editors.json",
+          "line": 2,
+          "symbol": "\"dialogs\"",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        }
+      ],
+      "consumer_commits": [
+        "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+      ]
     }
   ],
   "continuations": [
@@ -1595,6 +1998,109 @@
         "oracle/fixtures/read_tag_tabs.json"
       ],
       "executed_validation": "Executed actual Qt read dropdown, favourite async-decoration lookup, children real query work/publish, BroadcastChoices, predicate removal and tag-context flag/service changes via shared with-oracle lock, 2026-10-04 18:43 UTC. Only GetPredicates set output sorted; visible row order exact. Cached Slint warning-free compilation, Python syntax, fmt and diff checks pass. Authored model/native regression awaits root hosted CI; no local Cargo/mutation tests."
+    },
+    {
+      "reference_ids": [
+        "audit-options-search-or-create",
+        "audit-options-search-or-rewind",
+        "audit-options-search-or-cancel",
+        "audit-options-search-or-advanced"
+      ],
+      "implementation_commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8",
+      "exact_behavior": "Real interactive OR, basic/advanced child dialogs and actual search consumer; only the four original concrete leaves are proposed first_pass, no parent/alias additions counted.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/search_or.rs",
+          "line": 7,
+          "symbol": "pub struct Construction",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/search_or/advanced.rs",
+          "line": 237,
+          "symbol": "pub fn predicates",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 2127,
+          "symbol": "pub fn enter_or",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/search_or_window.rs",
+          "line": 136,
+          "symbol": "pub fn open",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/search_or.slint",
+          "line": 4,
+          "symbol": "export component SearchOrWindow",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 956,
+          "symbol": "window.on_search_or_action",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/search_or.rs",
+          "line": 6,
+          "symbol": "fn staged_or_replays",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/search_or.rs",
+          "line": 44,
+          "symbol": "fn advanced_boolean_preview",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 44,
+          "symbol": "fn native_or_keys",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_or.rs",
+          "line": 181,
+          "symbol": "fn actual_basic_and_advanced",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_read_or.py",
+          "line": 12,
+          "symbol": "def record",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "oracle/fixtures/read_or.json",
+          "line": 2,
+          "symbol": "\"events\"",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "oracle/record_read_or_editors.py",
+          "line": 14,
+          "symbol": "def record",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        },
+        {
+          "relativepath": "oracle/fixtures/read_or_editors.json",
+          "line": 2,
+          "symbol": "\"dialogs\"",
+          "commit": "000ac150b02a4649fa924301d8a136d1c6e0a7a8"
+        }
+      ],
+      "executed_recording": "Qt v688 via shared with-oracle lock; read_or.json 2026-10-04 19:36 UTC; read_or_editors.json 2026-10-04 19:58 UTC: 6 actual dialog decisions, 27 grammar/validation cases, positive and rejecting real query outputs.",
+      "validation": "Python syntax, cargo fmt, git diff --check and warning-aware cached Slint source compiler passed. Native/model regressions authored, execution pending root hosted CI; no local Cargo build/tests or mutation tests.",
+      "limits": "No complete read-autocomplete or OR parent promotion. System editors reused rather than altered."
     }
   ]
 }
