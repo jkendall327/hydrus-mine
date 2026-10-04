@@ -7,7 +7,7 @@
       "previous_status": "missing",
       "proposed_status": "first_pass",
       "change_kind": "implementation",
-      "exact_behavior": "Tags > migrate opens the retained migration editor without a file restriction, choosing my tags or the first remaining local service. It uses the actual migration job/editor path, survives cancellation and reopening, and refreshes current pages and tag views on completion.",
+      "exact_behavior": "Tags > migrate opens the retained migration editor without a file restriction, choosing the configured or remembered default tag-dialog service, with the migration model fallback when that service is unavailable. It uses the actual migration job/editor path, survives cancellation and reopening, and refreshes current pages and tag views on completion.",
       "anchors": [
         {
           "relativepath": "crates/hydrus-gui/src/menu_bar.rs",
@@ -16,15 +16,19 @@
           "commit": "1733015432624620543529c3ed9ffe34019f95e0"
         },
         {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 1405,
+          "symbol": "let key = preferences.default_service;",
+          "commit": "7f1ded2a07a2f36fbcd0cc2e3c1955082063883c"
+        },
+        {
           "relativepath": "crates/hydrus-gui/tests/gui/tag_migration.rs",
           "line": 6,
           "symbol": "fn global_tags_menu_opens_unrestricted_migration_and_can_reopen_after_cancel",
           "commit": "1733015432624620543529c3ed9ffe34019f95e0"
         }
       ],
-      "limitations": [
-        "Configurable default tag service is a separate missing Options control."
-      ],
+      "limitations": [],
       "reference_recording": "oracle/fixtures/tag_migration.json",
       "validation": {
         "rust_tests": "Awaiting root asynchronous CI",

@@ -1089,9 +1089,10 @@ expiry disables stale controls and saved bandwidth history remains available.
 ## Service-to-service tag migration
 
 Migration opens from Tags > migrate, service review or Manage Tags. The global
-entry starts on "my tags" (or the first remaining real tag service), without a
-selected-file restriction. The configurable default tag-service tab is not yet
-exposed; reference users' alternate startup service preference is separate work.
+entry uses the configured or remembered default tag-dialog service, without a
+selected-file restriction; an unavailable service uses the migration editor's
+existing fallback. The Tag Editing options page exposes both default-service
+preferences.
 
 Service-to-service tag migration uses a stable WAL reader snapshot and bounded
 atomic destination batches rather than the reference's temporary source tables.
