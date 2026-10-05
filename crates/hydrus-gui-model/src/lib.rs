@@ -20,6 +20,7 @@ pub mod delete_files;
 pub mod domains;
 pub mod downloader_definitions;
 pub mod downloader_interchange;
+pub mod downloader_update_times;
 pub mod duplicate_colours;
 pub mod duplicate_filter;
 pub mod duplicates_page;

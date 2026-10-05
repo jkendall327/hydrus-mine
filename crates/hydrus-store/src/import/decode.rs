@@ -1146,6 +1146,9 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             layout.margin = margin;
         }
         insert_setting(&mut input, &layout)?;
+        let mut update_times = crate::downloader_update_times::Preferences::default();
+        update_times.apply_legacy(&options.integers);
+        insert_setting(&mut input, &update_times)?;
         let mut navigation = crate::settings::ThumbnailNavigation::default();
         if let Some(&value) = options
             .booleans
@@ -4783,8 +4786,73 @@ mod tests {
         assert!(decoded(source.path()));
     }
 
-    /// The tag lists' colours come across: hydrus's defaults, the user's,
-    /// and the namespace OR predicates take theirs from.
+    /// Import keeps raw timing fields; only explicit Options acceptance normalizes them.
+    #[test]
+    fn downloader_update_time_import_preserves_raw_fields_and_reopens() {
+        use crate::downloader_update_times::Preferences;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<Preferences>(input.settings["downloader_update_times"].clone())
+                .unwrap()
+        };
+        assert_eq!(decoded(), Preferences::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "gallery_page_status_update_time_minimum_ms"], [0, 1000]]"#,
+                    r#"[[0, "gallery_page_status_update_time_minimum_ms"], [0, 119]]"#,
+                ),
+                (
+                    r#"[[0, "gallery_page_status_update_time_ratio_denominator"], [0, 30]]"#,
+                    r#"[[0, "gallery_page_status_update_time_ratio_denominator"], [0, 0]]"#,
+                ),
+                (
+                    r#"[[0, "watcher_page_status_update_time_minimum_ms"], [0, 1000]]"#,
+                    r#"[[0, "watcher_page_status_update_time_minimum_ms"], [0, 60060]]"#,
+                ),
+                (
+                    r#"[[0, "watcher_page_status_update_time_ratio_denominator"], [0, 30]]"#,
+                    r#"[[0, "watcher_page_status_update_time_ratio_denominator"], [0, 100]]"#,
+                ),
+            ],
+        );
+        let expected = Preferences {
+            gallery_minimum_ms: 119,
+            gallery_denominator: 0,
+            watcher_minimum_ms: 60_060,
+            watcher_denominator: 100,
+        };
+        assert_eq!(decoded(), expected);
+        let destination = tempfile::tempdir().unwrap();
+        crate::import::import_legacy(
+            source.path(),
+            &destination.path().join(crate::store::DB_FILE_NAME),
+        )
+        .unwrap();
+        let store = crate::Store::open(destination.path()).unwrap();
+        assert_eq!(
+            store.read(crate::settings::get::<Preferences>).unwrap(),
+            expected
+        );
+        drop(store);
+        assert_eq!(
+            crate::Store::open(destination.path())
+                .unwrap()
+                .read(crate::settings::get::<Preferences>)
+                .unwrap(),
+            expected
+        );
+        let mut absent = Preferences::default();
+        absent.apply_legacy(&std::collections::BTreeMap::from([("unrelated".into(), 0)]));
+        assert_eq!(
+            absent,
+            Preferences::default(),
+            "missing keys retain independent defaults"
+        );
+    }
+
     #[test]
     fn thumbnail_cache_size_and_raw_timeout_import_as_independent_typed_preferences() {
         use crate::settings::ThumbnailCacheSettings;

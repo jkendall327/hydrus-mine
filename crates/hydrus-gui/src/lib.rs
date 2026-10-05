@@ -38,6 +38,7 @@ pub mod domain_mask_entry;
 pub mod downloader_definitions_window;
 pub mod downloader_display_window;
 pub mod downloader_interchange_window;
+pub mod downloader_update_times;
 mod drops;
 mod duplicates_sidebar;
 mod edit_subscription_window;
@@ -387,6 +388,7 @@ pub struct Bound {
     /// the pages and the media viewer in the store as they are, for it to
     /// answer from: the client runs this every half second.
     pub sync: Rc<dyn Fn()>,
+    pub downloader_updates: downloader_update_times::Binding,
     /// Shows thumbnails as they are decoded (held to keep it running).
     _thumbnails: Rc<slint::Timer>,
     /// Shows the menu bar's titles and the status bar's network part as
@@ -558,8 +560,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let duplicates = Rc::new(duplicates_sidebar::Sidebar::default());
     duplicates.show(window, &current.borrow().borrow());
 
+    let downloader_updates =
+        downloader_update_times::Binding::bind(window, current.clone(), binding_active.clone());
     // after a change to the page shown, show it; `true` if its files changed
     let shown = {
+        let downloader_updates = downloader_updates.clone();
         let sidebar_layout = sidebar_layout.clone();
         let preview = preview.clone();
         let current = current.clone();
@@ -568,6 +573,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let duplicates = duplicates.clone();
         move |files: bool| {
             if let Some(window) = weak.upgrade() {
+                downloader_updates.refresh();
                 refresh(&window, &current.borrow().borrow());
                 duplicates.show(&window, &current.borrow().borrow());
                 sidebar_layout.refresh();
@@ -4171,6 +4177,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // what the Client API asked of the pages, done, and the pages and media
     // viewer as they are, kept in the store for it
     let sync: Rc<dyn Fn()> = Rc::new({
+        let binding_active = binding_active.clone();
         let session_autosave = session_autosave.clone();
         let pages = pages.clone();
         let current = current.clone();
@@ -4180,6 +4187,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let labels_shown: Rc<RefCell<Vec<Vec<String>>>> = Rc::default();
         let weak = window.as_weak();
         move || {
+            if !binding_active.get() {
+                return;
+            }
             let store = pages.borrow().store().clone();
             let asked = store
                 .write(|ctx| sessions::take_commands(ctx.conn()))
@@ -4233,7 +4243,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         continue;
                     }
                 }
-                let refreshed = page.borrow_mut().refresh_import();
+                let refreshed = page.borrow_mut().refresh_import_details();
                 if !Rc::ptr_eq(&page, &current.borrow()) {
                     continue;
                 }
@@ -4243,8 +4253,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         if let Some(window) = weak.upgrade() {
                             let page = page.borrow();
                             show_importer(&window, &page);
-                            show_gallery(&window, &page);
-                            show_watchers(&window, &page);
+                            show_gallery_with_rows(&window, &page, false);
+                            show_watchers_with_rows(&window, &page, false);
                         }
                     }
                     page::ImportRefresh::Nothing => {}
@@ -4355,6 +4365,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         search_or,
         drop_files: review_files,
         sync,
+        downloader_updates,
         _thumbnails: thumbnails,
         _menu_titles: menu_titles,
         _popups: Rc::new(popup_timer),
@@ -6637,6 +6648,10 @@ fn table_row(cells: &[String], selected: bool) -> TableRow {
 /// A gallery page's sidebar: its searches' list, its totals, what its
 /// buttons can do, its downloader and file limit, and the search it shows.
 fn show_gallery(window: &MainWindow, page: &SearchPage) {
+    show_gallery_with_rows(window, page, true);
+}
+
+fn show_gallery_with_rows(window: &MainWindow, page: &SearchPage, refresh_rows: bool) {
     use hydrus_store::queues::SeedStatus;
     let Some(gallery) = page.gallery() else {
         return;
@@ -6646,23 +6661,25 @@ fn show_gallery(window: &MainWindow, page: &SearchPage) {
         .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX));
     let highlighted = gallery.state.highlighted;
     let formatting = hydrus_gui_model::gui_format::preferences(page.store());
-    let rows: Vec<TableRow> = gallery
-        .queries
-        .iter()
-        .map(|q| {
-            let cells = q.row_with_format(
-                highlighted == Some(q.queue),
-                &gallery.settings,
-                gallery.short_summary,
-                now,
-                &formatting,
-            );
-            table_row(&cells, gallery.selection.is_selected(q.queue))
-        })
-        .collect();
-    window.set_gallery_rows(ModelRc::new(VecModel::from(rows)));
-    window.set_gallery_sort_column(i32::try_from(gallery.sort.0.index()).unwrap_or(-1));
-    window.set_gallery_ascending(gallery.sort.1);
+    if refresh_rows {
+        let rows: Vec<TableRow> = gallery
+            .queries
+            .iter()
+            .map(|q| {
+                let cells = q.row_with_format(
+                    highlighted == Some(q.queue),
+                    &gallery.settings,
+                    gallery.short_summary,
+                    now,
+                    &formatting,
+                );
+                table_row(&cells, gallery.selection.is_selected(q.queue))
+            })
+            .collect();
+        window.set_gallery_rows(ModelRc::new(VecModel::from(rows)));
+        window.set_gallery_sort_column(i32::try_from(gallery.sort.0.index()).unwrap_or(-1));
+        window.set_gallery_ascending(gallery.sort.1);
+    }
     let (top_status, bottom_status) = gallery::totals(&gallery.queries);
     let selected: Vec<&gallery::GalleryQuery> = gallery
         .selected()
@@ -6693,7 +6710,7 @@ fn show_gallery(window: &MainWindow, page: &SearchPage) {
         });
         gug_names.len() - 1
     });
-    let shown = highlighted.and_then(|h| gallery.query(h));
+    let shown = page.highlighted_gallery();
     window.set_gallery_data(GalleryData {
         top_status: top_status.into(),
         bottom_status: bottom_status.into(),
@@ -6742,21 +6759,27 @@ fn show_gallery(window: &MainWindow, page: &SearchPage) {
 }
 
 fn show_watchers(window: &MainWindow, page: &SearchPage) {
+    show_watchers_with_rows(window, page, true);
+}
+
+fn show_watchers_with_rows(window: &MainWindow, page: &SearchPage, refresh_rows: bool) {
     use hydrus_store::queues::SeedStatus;
     let Some(view) = page.watchers() else {
         return;
     };
     let now = page::now();
     let formatting = hydrus_gui_model::gui_format::preferences(page.store());
-    let rows: Vec<TableRow> = view
-        .rows_with_format(now, &formatting)
-        .iter()
-        .zip(&view.watchers)
-        .map(|(cells, w)| table_row(cells, view.selection.is_selected(w.queue)))
-        .collect();
-    window.set_watcher_rows(ModelRc::new(VecModel::from(rows)));
-    window.set_watcher_sort_column(i32::try_from(view.sort.0.index()).unwrap_or(-1));
-    window.set_watcher_ascending(view.sort.1);
+    if refresh_rows {
+        let rows: Vec<TableRow> = view
+            .rows_with_format(now, &formatting)
+            .iter()
+            .zip(&view.watchers)
+            .map(|(cells, w)| table_row(cells, view.selection.is_selected(w.queue)))
+            .collect();
+        window.set_watcher_rows(ModelRc::new(VecModel::from(rows)));
+        window.set_watcher_sort_column(i32::try_from(view.sort.0.index()).unwrap_or(-1));
+        window.set_watcher_ascending(view.sort.1);
+    }
     let (top_status, bottom_status) = watcher::totals(&view.watchers);
     let highlighted = view.state.highlighted;
     let selected: Vec<&watcher::WatcherRow> = view
@@ -6770,7 +6793,7 @@ fn show_watchers(window: &MainWindow, page: &SearchPage) {
             .any(|w| w.files.get(&status).is_some_and(|&n| n > 0))
     };
     let one = view.selection.one();
-    let shown = highlighted.and_then(|h| view.watcher(h));
+    let shown = page.highlighted_watcher();
     window.set_watcher_data(WatcherData {
         top_status: top_status.into(),
         bottom_status: bottom_status.into(),

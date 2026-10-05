@@ -53,6 +53,11 @@ macro_rules! settings {
     (@save $conn:ident, $after:ident, $before:ident, page_layout) => {
         hydrus_store::page_layout::save_changed($conn, &$after.page_layout, &$before.page_layout)?;
     };
+    (@save $conn:ident, $after:ident, $before:ident, downloader_update_times) => {
+        if $after.downloader_update_times != $before.downloader_update_times {
+            $after.downloader_update_times.save_changed($conn, &$before.downloader_update_times, &crate::downloader_update_times::normalised(&$before.downloader_update_times))?;
+        }
+    };
     (@save $conn:ident, $after:ident, $before:ident, popup_width) => {
         hydrus_store::popup_width::save_changed($conn, &$after.popup_width, &$before.popup_width)?;
     };
@@ -285,6 +290,7 @@ settings! {
     thumbnails: ThumbnailSettings,
     thumbnail_layout: ThumbnailLayout,
     thumbnail_navigation: hydrus_store::settings::ThumbnailNavigation,
+    downloader_update_times: hydrus_store::downloader_update_times::Preferences,
     thumbnail_ratings: ThumbnailRatingSettings,
     rating_context_sizes: hydrus_store::settings::RatingContextSizes,
     note_preferences: hydrus_store::settings::NotePreferences,
@@ -3301,35 +3307,78 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         ),
         page(
             "speed and memory",
-            vec![Item::Box(
-                "thumbnail cache",
-                vec![
-                    opt(
-                        "Memory reserved for thumbnail cache:",
-                        Kind::Bytes,
-                        Rc::new(|s| {
-                            let (amount, unit) =
-                                crate::thumbnail_cache::raw_separated(s.thumbnail_cache.bytes);
-                            Value::Bytes { amount, unit }
-                        }),
-                        Rc::new(|s, v| {
-                            if let Value::Bytes { amount, unit } = v {
-                                s.thumbnail_cache.bytes =
-                                    crate::thumbnail_cache::combined(*amount, *unit);
-                                Ok(())
-                            } else {
-                                Err(wrong("thumbnail cache bytes"))
-                            }
-                        }),
-                    ),
-                    duration(
-                        "Thumbnail cache timeout:",
-                        time(&[Unit::Days, Unit::Hours, Unit::Minutes], 300.0),
-                        |s| s.thumbnail_cache.timeout as f64,
-                        |s, v| s.thumbnail_cache.timeout = v as u64,
-                    ),
-                ],
-            )],
+            vec![
+                Item::Box(
+                    "thumbnail cache",
+                    vec![
+                        opt(
+                            "Memory reserved for thumbnail cache:",
+                            Kind::Bytes,
+                            Rc::new(|s| {
+                                let (amount, unit) =
+                                    crate::thumbnail_cache::raw_separated(s.thumbnail_cache.bytes);
+                                Value::Bytes { amount, unit }
+                            }),
+                            Rc::new(|s, v| {
+                                if let Value::Bytes { amount, unit } = v {
+                                    s.thumbnail_cache.bytes =
+                                        crate::thumbnail_cache::combined(*amount, *unit);
+                                    Ok(())
+                                } else {
+                                    Err(wrong("thumbnail cache bytes"))
+                                }
+                            }),
+                        ),
+                        duration(
+                            "Thumbnail cache timeout:",
+                            time(&[Unit::Days, Unit::Hours, Unit::Minutes], 300.0),
+                            |s| s.thumbnail_cache.timeout as f64,
+                            |s, v| s.thumbnail_cache.timeout = v as u64,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "download pages update",
+                    vec![
+                        duration(
+                            "EXPERIMENTAL: Minimum gallery importer update time:",
+                            time(&[Unit::Seconds, Unit::Milliseconds], 0.25),
+                            |s| {
+                                crate::downloader_update_times::displayed_minimum(
+                                    s.downloader_update_times.gallery_minimum_ms,
+                                )
+                            },
+                            |s, v| {
+                                s.downloader_update_times.gallery_minimum_ms = (v * 1000.0) as i64
+                            },
+                        ),
+                        int(
+                            "EXPERIMENTAL: Gallery importer magic update time denominator:",
+                            (1, 99),
+                            |s| s.downloader_update_times.gallery_denominator,
+                            |s, v| s.downloader_update_times.gallery_denominator = v,
+                        ),
+                        duration(
+                            "EXPERIMENTAL: Minimum watcher importer update time:",
+                            time(&[Unit::Seconds, Unit::Milliseconds], 0.25),
+                            |s| {
+                                crate::downloader_update_times::displayed_minimum(
+                                    s.downloader_update_times.watcher_minimum_ms,
+                                )
+                            },
+                            |s, v| {
+                                s.downloader_update_times.watcher_minimum_ms = (v * 1000.0) as i64
+                            },
+                        ),
+                        int(
+                            "EXPERIMENTAL: Watcher importer magic update time denominator:",
+                            (1, 99),
+                            |s| s.downloader_update_times.watcher_denominator,
+                            |s, v| s.downloader_update_times.watcher_denominator = v,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "system",
@@ -3873,7 +3922,15 @@ pub fn applied(
     let mut problems = Vec::new();
     for (page, values) in pages.iter().zip(values) {
         for (option, value) in page.options().into_iter().zip(values) {
-            if (option.get)(settings) != *value
+            // These Qt TimeDeltaWidgets write their current fields on unchanged Apply.
+            // Their getters normalize imported bounds; replaying those fields once avoids
+            // truncating an explicitly entered fractional millisecond a second time.
+            let accept_displayed = matches!(
+                option.label,
+                "EXPERIMENTAL: Minimum gallery importer update time:"
+                    | "EXPERIMENTAL: Minimum watcher importer update time:"
+            );
+            if ((option.get)(settings) != *value || accept_displayed)
                 && let Err(why) = (option.set)(&mut out, value)
             {
                 problems.push(why);
