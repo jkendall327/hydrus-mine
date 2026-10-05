@@ -138,8 +138,8 @@ pub mod file_history;
 
 pub mod file_history_worker;
 
-pub mod window_rescue;
 pub mod viewer_drag;
+pub mod window_rescue;
 
-pub mod viewer_tag_wheel;
 pub mod gui_format;
+pub mod viewer_tag_wheel;

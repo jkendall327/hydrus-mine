@@ -135,8 +135,8 @@ mod related_weights;
 mod autocomplete_tabs;
 mod external_calls;
 
-mod window_rescue;
 mod viewer_drag;
+mod window_rescue;
 
-mod viewer_tag_wheel;
 mod gui_format;
+mod viewer_tag_wheel;
