@@ -1673,10 +1673,24 @@ preferences, cursor anchoring/touchscreen override and the independently scoped
 idle cursor timer. Drag cursor hiding preserves the reference's blank cursor
 after release until another movement; anchoring now uses the saved preference
 instead of assuming ordinary unanchored movement. Wider touch and mouse-control
-families remain independently scoped. The animation start percentage remains unimplemented: the
-fresh recording also captures v688's cold-start zero frame and warm-start
-previous-frame-count ordering, rather than treating the control's intended
-percentage of the new animation as proven behavior.
+families remain independently scoped. Media Playback's animation start percentage
+now stages and imports the old YAML fraction, preserving it on Cancel. Apply
+normalizes the spinbox's truncated/clamped0–100 value while retaining concurrent
+unrelated changes. Native WebP/ugoira viewers and the existing archive/duplicate
+filters seek their readers before the first decoded frame. As actually observed
+in v688, the index uses the previous widget's frame count: fresh/cleared widgets
+start at zero, and reused ones use `int((previous_count-1)*fraction)` before
+installing the next metadata count. Zero/missing metadata becomes1 afterward.
+An out-of-range initial request waits for an explicit seek rather than showing a
+clamped wrong frame; stopping releases that blocked reader. Negative/overflow raw
+fractions cannot be represented as a native unsigned frame index and therefore
+remain non-admitted until explicit seeking or accepted normalization. MPV and Qt's
+media-player reference consumers do not read this preference, so no percentage
+seek is added to native MPV. Broader player/per-filetype admission and preview
+animation controls remain Partial; this does not add GIF/APNG readers. Actual Qt
+recording includes paused WebP/ugoira pixels, control staging and42 metadata cases.
+Native reader/window regressions and two render artifacts are authored; execution
+and image inspection remain hosted-validation work.
 
 The large-session warning uses the native popup stack with the exact reference
 text and once-per-boot allowance. Active weight is checked by the one-second

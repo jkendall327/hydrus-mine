@@ -323,11 +323,14 @@ fn show(window: &DuplicateFilterWindow, state: &mut State) {
             },
         );
         let frame = window.as_weak();
-        state.animator.play(animation, move |image| {
-            if let Some(window) = frame.upgrade() {
-                window.set_media(image);
-            }
-        });
+        let (_, num_frames) = crate::viewer::timing(store, shown);
+        state
+            .animator
+            .play_with_metadata(animation, num_frames, false, move |image| {
+                if let Some(window) = frame.upgrade() {
+                    window.set_media(image);
+                }
+            });
     }
     window.set_index_text(state.model.index_text().into());
     // the file shown against the other: the fast statements, then the slow

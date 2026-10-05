@@ -2740,6 +2740,19 @@ Child Apply returns an Options draft; only the outer Apply saves it. Reopening
 retains the schemes, and new namespaces reach the page's real sort and collect
 controls. The recorded queue is in `oracle/fixtures/namespace_sorts.json`.
 
+Media Playback's “Start animations this % in” uses the actual reference0–100
+spinbox and preserves imported raw fractions until Apply. Cancel keeps the raw
+value; reopening shows its truncated/clamped percentage. Its owned Options
+callback rejects hidden or retired input, and saving merges just this preference.
+Retained old YAML options remain the fallback when no native preference exists.
+Native animated WebP/ugoira readers seek before first publication in the viewer,
+archive-delete and duplicate filters. Fresh/cleared widgets start at zero even at
+100%; reused widgets use the previous widget metadata count, matching recorded
+Qt ordering. A saved edit affects the next media admission while the current
+paused frame and seek generation remain intact. Impossible initial indices wait
+for explicit seek; close drops their reader ownership. MPV consumes no new seek.
+The broader playback and per-filetype policy families remain independently Partial.
+
 Media Playback's “Always Loop Animations” now reaches native animation players
 in the media viewer, archive/delete filter and duplicate filter. Unchecking it
 respects GIF, APNG and WebP stored play counts; missing GIF counts mean one play,

@@ -235,7 +235,8 @@ pub(crate) fn open(
                 },
             );
             let frame = weak.clone();
-            animator.play(animation, move |image| {
+            let (_, num_frames) = crate::viewer::timing(store, file);
+            animator.play_with_metadata(animation, num_frames, false, move |image| {
                 if let Some(window) = frame.upgrade() {
                     window.set_media(image);
                 }

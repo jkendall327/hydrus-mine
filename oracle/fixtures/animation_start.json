@@ -1,0 +1,553 @@
+{
+  "defaults": {
+    "raw": 0.0,
+    "display": 0,
+    "minimum": 0,
+    "maximum": 100,
+    "enabled": true
+  },
+  "controls": [
+    {
+      "raw": 0.119,
+      "typed": 72,
+      "apply": false,
+      "displayed": 11,
+      "saved": 0.119,
+      "reopened": 11
+    },
+    {
+      "raw": 0.119,
+      "typed": 72,
+      "apply": true,
+      "displayed": 11,
+      "saved": 0.72,
+      "reopened": 72
+    },
+    {
+      "raw": -0.1,
+      "typed": null,
+      "apply": true,
+      "displayed": 0,
+      "saved": 0.0,
+      "reopened": 0
+    },
+    {
+      "raw": 0,
+      "typed": null,
+      "apply": true,
+      "displayed": 0,
+      "saved": 0.0,
+      "reopened": 0
+    },
+    {
+      "raw": 0.119,
+      "typed": null,
+      "apply": true,
+      "displayed": 11,
+      "saved": 0.11,
+      "reopened": 11
+    },
+    {
+      "raw": 0.3333,
+      "typed": null,
+      "apply": true,
+      "displayed": 33,
+      "saved": 0.33,
+      "reopened": 33
+    },
+    {
+      "raw": 0.999,
+      "typed": null,
+      "apply": true,
+      "displayed": 99,
+      "saved": 0.99,
+      "reopened": 99
+    },
+    {
+      "raw": 1,
+      "typed": null,
+      "apply": true,
+      "displayed": 100,
+      "saved": 1.0,
+      "reopened": 100
+    },
+    {
+      "raw": 1.2,
+      "typed": null,
+      "apply": true,
+      "displayed": 100,
+      "saved": 1.0,
+      "reopened": 100
+    }
+  ],
+  "states": [
+    {
+      "fraction": 0,
+      "previous": null,
+      "previous_count": 1,
+      "new_count": 4,
+      "frames": 4,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0,
+      "previous": 4,
+      "previous_count": 4,
+      "new_count": 4,
+      "frames": 4,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0,
+      "previous": 3,
+      "previous_count": 3,
+      "new_count": 4,
+      "frames": 4,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0,
+      "previous": 0,
+      "previous_count": 1,
+      "new_count": 4,
+      "frames": 4,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0,
+      "previous": null,
+      "previous_count": 1,
+      "new_count": 0,
+      "frames": 1,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0,
+      "previous": null,
+      "previous_count": 1,
+      "new_count": null,
+      "frames": 1,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0,
+      "previous": 5,
+      "previous_count": 5,
+      "new_count": 2,
+      "frames": 2,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.119,
+      "previous": null,
+      "previous_count": 1,
+      "new_count": 4,
+      "frames": 4,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.119,
+      "previous": 4,
+      "previous_count": 4,
+      "new_count": 4,
+      "frames": 4,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.119,
+      "previous": 3,
+      "previous_count": 3,
+      "new_count": 4,
+      "frames": 4,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.119,
+      "previous": 0,
+      "previous_count": 1,
+      "new_count": 4,
+      "frames": 4,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.119,
+      "previous": null,
+      "previous_count": 1,
+      "new_count": 0,
+      "frames": 1,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.119,
+      "previous": null,
+      "previous_count": 1,
+      "new_count": null,
+      "frames": 1,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.119,
+      "previous": 5,
+      "previous_count": 5,
+      "new_count": 2,
+      "frames": 2,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.3333,
+      "previous": null,
+      "previous_count": 1,
+      "new_count": 4,
+      "frames": 4,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.3333,
+      "previous": 4,
+      "previous_count": 4,
+      "new_count": 4,
+      "frames": 4,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.3333,
+      "previous": 3,
+      "previous_count": 3,
+      "new_count": 4,
+      "frames": 4,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.3333,
+      "previous": 0,
+      "previous_count": 1,
+      "new_count": 4,
+      "frames": 4,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.3333,
+      "previous": null,
+      "previous_count": 1,
+      "new_count": 0,
+      "frames": 1,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.3333,
+      "previous": null,
+      "previous_count": 1,
+      "new_count": null,
+      "frames": 1,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.3333,
+      "previous": 5,
+      "previous_count": 5,
+      "new_count": 2,
+      "frames": 2,
+      "index": 1,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.5,
+      "previous": null,
+      "previous_count": 1,
+      "new_count": 4,
+      "frames": 4,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.5,
+      "previous": 4,
+      "previous_count": 4,
+      "new_count": 4,
+      "frames": 4,
+      "index": 1,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.5,
+      "previous": 3,
+      "previous_count": 3,
+      "new_count": 4,
+      "frames": 4,
+      "index": 1,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.5,
+      "previous": 0,
+      "previous_count": 1,
+      "new_count": 4,
+      "frames": 4,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.5,
+      "previous": null,
+      "previous_count": 1,
+      "new_count": 0,
+      "frames": 1,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.5,
+      "previous": null,
+      "previous_count": 1,
+      "new_count": null,
+      "frames": 1,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.5,
+      "previous": 5,
+      "previous_count": 5,
+      "new_count": 2,
+      "frames": 2,
+      "index": 2,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.999,
+      "previous": null,
+      "previous_count": 1,
+      "new_count": 4,
+      "frames": 4,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.999,
+      "previous": 4,
+      "previous_count": 4,
+      "new_count": 4,
+      "frames": 4,
+      "index": 2,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.999,
+      "previous": 3,
+      "previous_count": 3,
+      "new_count": 4,
+      "frames": 4,
+      "index": 1,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.999,
+      "previous": 0,
+      "previous_count": 1,
+      "new_count": 4,
+      "frames": 4,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.999,
+      "previous": null,
+      "previous_count": 1,
+      "new_count": 0,
+      "frames": 1,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.999,
+      "previous": null,
+      "previous_count": 1,
+      "new_count": null,
+      "frames": 1,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 0.999,
+      "previous": 5,
+      "previous_count": 5,
+      "new_count": 2,
+      "frames": 2,
+      "index": 3,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 1,
+      "previous": null,
+      "previous_count": 1,
+      "new_count": 4,
+      "frames": 4,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 1,
+      "previous": 4,
+      "previous_count": 4,
+      "new_count": 4,
+      "frames": 4,
+      "index": 3,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 1,
+      "previous": 3,
+      "previous_count": 3,
+      "new_count": 4,
+      "frames": 4,
+      "index": 2,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 1,
+      "previous": 0,
+      "previous_count": 1,
+      "new_count": 4,
+      "frames": 4,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 1,
+      "previous": null,
+      "previous_count": 1,
+      "new_count": 0,
+      "frames": 1,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 1,
+      "previous": null,
+      "previous_count": 1,
+      "new_count": null,
+      "frames": 1,
+      "index": 0,
+      "paused": true,
+      "timestamp": null
+    },
+    {
+      "fraction": 1,
+      "previous": 5,
+      "previous_count": 5,
+      "new_count": 2,
+      "frames": 2,
+      "index": 4,
+      "paused": true,
+      "timestamp": null
+    }
+  ],
+  "after_clear": {
+    "index": 0,
+    "frames": 4,
+    "paused": true
+  },
+  "rendered": {
+    "index": 1,
+    "status": [
+      1,
+      120,
+      true,
+      [
+        0,
+        2,
+        2
+      ]
+    ],
+    "paused": true,
+    "bytes": "52494646ba00000057454250565038580a00000002000000170000130000414e494d06000000000000000000414e4d462a000000000000000000170000130000780000025650384c110000002f17c00400075085c297a2ff8188e87f0000414e4d462a000000000000000000170000130000f00000005650384c110000002f17c004000750f82a94a2ff8188e87f0000414e4d462a000000000000000000170000130000680100005650384c110000002f17c0040007508a2a14beff8188e87f0000",
+    "pixel": [
+      10,
+      240,
+      20,
+      255
+    ]
+  },
+  "ugoira": {
+    "index": 2,
+    "status": [
+      2,
+      130,
+      true,
+      [
+        0,
+        4,
+        4
+      ]
+    ],
+    "paused": true,
+    "pixel": [
+      229,
+      48,
+      79,
+      255
+    ]
+  },
+  "legacy_yaml": "animation_start_position: 0.619\n",
+  "limits": "SetMedia samples previous widget frame count before replacing it; fresh/cleared widgets use1. Metadata0/None becomes1 afterward. The actual valid reused WebP decoded and stayed paused. MPV/Qt-media-player consumers do not read this setting. Hidden metadata edge cases do not drive invalid decoder requests."
+}
