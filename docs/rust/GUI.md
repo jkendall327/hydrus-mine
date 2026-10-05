@@ -3106,4 +3106,6 @@ default namespaced and unnamespaced colours are protected from deletion. New
 namespaces receive random RGB colours. Owned Enter Text and confirmation children
 block parent Apply, and Cancel discards the whole Options draft. Accepted colours
 persist across reopening and reach existing media tag and OR predicate rows.
-The OR-row namespace text preserves named, missing and empty namespace choices.
+The OR-row namespace text preserves named, missing and empty namespace choices;
+explicitly entering empty text selects the unnamespaced colour even when the
+saved legacy value was unset.

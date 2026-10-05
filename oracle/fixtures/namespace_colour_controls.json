@@ -2084,6 +2084,42 @@
   ],
   "colour_cases": [
     {
+      "input": "",
+      "saved": "",
+      "rows": [
+        [
+          [
+            "OR:",
+            [
+              0,
+              111,
+              250
+            ]
+          ]
+        ],
+        [
+          [
+            "    parity artists:alpha",
+            [
+              12,
+              34,
+              56
+            ]
+          ]
+        ],
+        [
+          [
+            "    series:beta",
+            [
+              170,
+              0,
+              170
+            ]
+          ]
+        ]
+      ]
+    },
+    {
       "input": "character",
       "saved": "character",
       "rows": [

@@ -223,6 +223,10 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
             || theirs["items"][0]["text"] != *path
             || theirs["items"][1]["button"] != "browse")
             .then(|| format!("directory {path:?}")),
+        (Kind::Text, Value::PlainNoneableText(text)) => {
+            let shown = text.as_deref().unwrap_or_default();
+            (theirs["text"] != shown).then(|| format!("text {shown:?}"))
+        }
         (Kind::Text, Value::Text(t)) => (theirs["text"] != *t).then(|| format!("text {t:?}")),
         (Kind::NoneableText { none_phrase }, Value::NoneableText { none, text }) => {
             let ours = (!none).then_some(text.as_str());
@@ -384,9 +388,11 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
         let Item::Opt(option) = item else { continue };
         // This reference page embeds the list; native opens the same transaction
         // in a child window, covered by dedicated regex/write-tag/gallery-source/import-options/namespace-queue recordings.
+        // The inline namespace RGB list has its own exact namespace_colour_controls replay.
         if matches!(
             option.kind,
             Kind::RegexFavourites
+                | Kind::NamespaceColours
                 | Kind::DeletionReasons
                 | Kind::FrameLocations
                 | Kind::FavouriteTags

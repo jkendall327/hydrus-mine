@@ -287,6 +287,20 @@ fn actual_namespace_questions_cancel_retired_owners_reopen_and_live_colours_repl
         added_colour,
         "accepted namespace reaches actual media tag list"
     );
+    // An explicit empty field starts from legacy None, but Cancel still preserves it.
+    let cancelled = open(&ui, &bound);
+    let index = cancelled
+        .get_rows()
+        .iter()
+        .position(|row| row.label == fixture["labels"][0].as_str().unwrap())
+        .unwrap();
+    cancelled.invoke_text_edited(i32::try_from(index).unwrap(), "".into());
+    cancelled.invoke_cancel();
+    cancelled.invoke_apply();
+    assert_eq!(
+        store.read::<NamespaceColours>(settings::get).unwrap(),
+        saved
+    );
     for case in fixture["colour_cases"].as_array().unwrap() {
         let options = open(&ui, &bound);
         let index = options
