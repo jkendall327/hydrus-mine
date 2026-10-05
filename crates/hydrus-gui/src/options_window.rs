@@ -429,7 +429,7 @@ pub(crate) fn open(
         }
     };
     show_page();
-    crate::sidebar_context_cog::bind_options(&window, &editor, &store, &active, show_page.clone());
+    crate::sidebar_context_cog::bind_options(&window, &editor, store, &active, show_page.clone());
     (reason_queue.show)();
     (frame_table.show)();
     (external_table.show)();
