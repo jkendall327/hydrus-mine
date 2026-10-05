@@ -541,11 +541,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let current = current.clone();
         let weak = window.as_weak();
         let rows = rows.clone();
-        let duplicates = duplicates.clone();
+        // The sidebar owns launchers that call `change_pages`/`shown` again.
+        // Window callbacks own the sidebar; this back-edge must stay weak.
+        let duplicates = Rc::downgrade(&duplicates);
         move |files: bool| {
             if let Some(window) = weak.upgrade() {
                 refresh(&window, &current.borrow().borrow());
-                duplicates.show(&window, &current.borrow().borrow());
+                if let Some(duplicates) = duplicates.upgrade() {
+                    duplicates.show(&window, &current.borrow().borrow());
+                }
                 preview.refresh();
                 if files {
                     rows.reset();

@@ -2548,6 +2548,10 @@ The main menu's page-change callback slot now holds a weak reference to its
 title callback: the title callback owns menu hooks which own that same slot.
 Live window callbacks and the menu timer retain the title callback, while the
 weak back-edge permits pages, rows and workers to retire with their owners.
+The refresh callback also refers weakly to the duplicates sidebar, whose
+file/viewer launch callbacks reach that same refresh callback. The window's
+duplicates-action callback owns the sidebar while the window is live; an
+ordinary search window installs these launchers too.
 Native regressions assert release before thread exit and retain the existing
 two-second Store-release deadline. Hosted execution is pending; no local Rust
 build or test was run. This ownership repair adds no original leaf proposal.
