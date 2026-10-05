@@ -1014,6 +1014,17 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &shortcuts)?;
+    if let Some(options) = &options {
+        insert_setting(
+            &mut input,
+            &crate::reference_options::ReferenceOptions::import(
+                &options.booleans,
+                &options.integers,
+                &options.strings,
+                &options.noneable_strings,
+            ),
+        )?;
+    }
     let mut thumbnail_cache = crate::settings::ThumbnailCacheSettings::default();
     if let Some(options) = &options {
         if let Some(&n) = options.integers.get("thumbnail_cache_size") {

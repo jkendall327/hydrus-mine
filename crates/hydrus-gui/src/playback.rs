@@ -94,6 +94,21 @@ impl Playback {
             }
         }
         if let Some(player) = player.as_ref() {
+            let options = self.store.as_ref().map_or_else(Default::default, |store| {
+                store
+                    .read(
+                        hydrus_store::settings::get::<
+                            hydrus_store::reference_options::ReferenceOptions,
+                        >,
+                    )
+                    .unwrap_or_default()
+            });
+            if let Err(e) = player.set_playback_options(
+                options.boolean("mpv_loop_playlist_instead_of_file"),
+                options.string("mpv_preferred_audio_device").as_deref(),
+            ) {
+                eprintln!("could not set mpv's options: {e}");
+            }
             if let Err(e) = player.load(path) {
                 eprintln!("mpv could not play {}: {e}", path.display());
             }

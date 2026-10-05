@@ -3448,6 +3448,23 @@ manual save-last-session action and wider debug GUI/style families remain unclai
   work to show: every service reads as synced and "work hard now!" never
   appears. Repository "waiting on" lines can't arise without repositories.
 
+## Options kept but not used
+
+- These Options rows are kept and edited, as the reference keeps them, but
+  nothing in hydrus-rs reads them yet: the preview window's own volume, the
+  REQUESTS_CA_BUNDLE switch (hydrus-rs uses its own TLS roots), drag-and-drop
+  export (no files can be dragged out yet), the Qt-only gui misc and frame
+  switches, the hide-page signal, the URL drop page switch, mpv's null audio,
+  legacy mediator, player reuse and setGeometry switches, every QtMediaPlayer
+  row, system FFMPEG, truncated images and PIL (hydrus-rs decodes images its
+  own way), the pinned duplicates hover, the preview window hovers, the
+  other-display popup freeze, the image tile cache and video buffer (hydrus-rs
+  renders whole images and leaves video to mpv), the file system wake wait,
+  the system tray page (there is no tray icon) and the petition reason count.
+- The mpv box lacks "Set a new mpv.conf on dialog ok?" and the audio device
+  fetch button; the QtMediaPlayer box lacks its device choice and fetch button.
+  The style page isn't offered: Slint has no Qt styles or stylesheets.
+
 ## Review vacuum data
 
 - hydrus-rs has one database file (listed as "main"), not the reference's

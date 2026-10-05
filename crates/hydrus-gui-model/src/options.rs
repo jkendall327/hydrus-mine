@@ -396,6 +396,7 @@ settings! {
     viewer_closing: ViewerClosingSettings,
     viewer_cursor: ViewerCursorSettings,
     viewer_playback: ViewerPlaybackSettings,
+    reference_options: hydrus_store::reference_options::ReferenceOptions,
 }
 
 /// An option's value as its control holds it.
@@ -1260,6 +1261,128 @@ fn whole(seconds: f64) -> u64 {
     seconds.round().max(0.0) as u64
 }
 
+/// A checkbox for a kept reference option (`reference_options`).
+fn kept_check(label: &'static str, name: &'static str) -> Item {
+    opt(
+        label,
+        Kind::Check,
+        Rc::new(move |s| Value::Check(s.reference_options.boolean(name))),
+        Rc::new(move |s, v| match v {
+            Value::Check(b) => {
+                s.reference_options.set_boolean(name, *b);
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+    )
+}
+
+/// [`kept_check`] for an option the checkbox shows inverted.
+fn kept_check_inverted(label: &'static str, name: &'static str) -> Item {
+    opt(
+        label,
+        Kind::Check,
+        Rc::new(move |s| Value::Check(!s.reference_options.boolean(name))),
+        Rc::new(move |s, v| match v {
+            Value::Check(b) => {
+                s.reference_options.set_boolean(name, !*b);
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+    )
+}
+
+fn kept_int(label: &'static str, name: &'static str, (min, max): (i64, i64)) -> Item {
+    opt(
+        label,
+        Kind::Int { min, max },
+        Rc::new(move |s| Value::Int(s.reference_options.integer(name))),
+        Rc::new(move |s, v| match v {
+            Value::Int(n) => {
+                s.reference_options.set_integer(name, (*n).clamp(min, max));
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+    )
+}
+
+fn kept_bytes(label: &'static str, name: &'static str) -> Item {
+    opt(
+        label,
+        Kind::Bytes,
+        Rc::new(move |s| {
+            let bytes = u64::try_from(s.reference_options.integer(name)).unwrap_or(0);
+            let (amount, unit) = crate::thumbnail_cache::raw_separated(bytes);
+            Value::Bytes { amount, unit }
+        }),
+        Rc::new(move |s, v| match v {
+            Value::Bytes { amount, unit } => {
+                let bytes = crate::thumbnail_cache::combined(*amount, *unit);
+                s.reference_options
+                    .set_integer(name, i64::try_from(bytes).unwrap_or(i64::MAX));
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+    )
+}
+
+fn kept_duration(label: &'static str, name: &'static str, kind: Kind) -> Item {
+    opt(
+        label,
+        kind,
+        #[allow(clippy::cast_precision_loss)] // (seconds)
+        Rc::new(move |s| Value::Duration(s.reference_options.integer(name) as f64)),
+        Rc::new(move |s, v| match v {
+            #[allow(clippy::cast_possible_truncation)] // (seconds)
+            Value::Duration(seconds) => {
+                s.reference_options.set_integer(name, *seconds as i64);
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+    )
+}
+
+fn kept_text(label: &'static str, name: &'static str) -> Item {
+    opt(
+        label,
+        Kind::Text,
+        Rc::new(move |s| Value::Text(s.reference_options.string(name).unwrap_or_default())),
+        Rc::new(move |s, v| match v {
+            Value::Text(t) => {
+                s.reference_options.set_string(name, Some(t.clone()));
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+    )
+}
+
+fn kept_noneable_text(label: &'static str, none_phrase: &'static str, name: &'static str) -> Item {
+    opt(
+        label,
+        Kind::NoneableText { none_phrase },
+        Rc::new(move |s| {
+            let value = s.reference_options.string(name);
+            Value::NoneableText {
+                none: value.is_none(),
+                text: value.unwrap_or_default(),
+            }
+        }),
+        Rc::new(move |s, v| match v {
+            Value::NoneableText { none, text } => {
+                s.reference_options
+                    .set_string(name, (!*none).then(|| text.clone()));
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+    )
+}
+
 fn boxed(title: &'static str, items: Vec<Item>) -> Item {
     Item::Box(title, items)
 }
@@ -1511,14 +1634,20 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
     let mut pages = vec![
         page(
             "audio",
-            vec![text(
-                "Label for files with audio: ",
-                |s| s.info_line.has_audio_label.clone(),
-                |s, t| {
-                    t.clone_into(&mut s.info_line.has_audio_label);
-                    Ok(())
-                },
-            )],
+            vec![
+                kept_check(
+                    "The preview window has its own volume: ",
+                    "preview_uses_its_own_audio_volume",
+                ),
+                text(
+                    "Label for files with audio: ",
+                    |s| s.info_line.has_audio_label.clone(),
+                    |s, t| {
+                        t.clone_into(&mut s.info_line.has_audio_label);
+                        Ok(())
+                    },
+                ),
+            ],
         ),
         Page {
             name: "colours",
@@ -1614,6 +1743,10 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             (1, if advanced { 100 } else { 5 }),
                             |s| s.network.max_jobs_per_domain as i64,
                             |s, v| s.network.max_jobs_per_domain = v as usize,
+                        ),
+                        kept_check(
+                            "DEBUG: set the REQUESTS_CA_BUNDLE env to certifi cacert.pem on program start:",
+                            "set_requests_ca_bundle_env",
                         ),
                         check(
                             "DEBUG: do not verify regular https traffic:",
@@ -1953,6 +2086,26 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             (16, 8192),
                             |s| s.export.filename_character_limit,
                             |s, v| s.export.filename_character_limit = v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "drag and drop",
+                    vec![
+                        kept_check(
+                            "Copy files to temp folder for drag-and-drop (works for <=50, <200MB file DnDs--fixes Discord!): ",
+                            "discord_dnd_fix",
+                        ),
+                        enabled(
+                            kept_check(
+                                "BUGFIX: Set drag-and-drops to have a \"move\" flag: ",
+                                "secret_discord_dnd_fix",
+                            ),
+                            |s| s.reference_options.boolean("discord_dnd_fix"),
+                        ),
+                        kept_text(
+                            "Drag-and-drop export filename pattern: ",
+                            "discord_dnd_filename_pattern",
                         ),
                     ],
                 ),
@@ -2456,6 +2609,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s| s.menu_choice_wheel.enabled,
                             |s, value| s.menu_choice_wheel.enabled = value,
                         ),
+                        kept_check("Use Native MenuBar (if available): ", "use_native_menubar"),
                         check(
                             "Remember last open options panel in this window: ",
                             |s| s.options_preferences.remember_panel,
@@ -2467,11 +2621,27 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s| usize::from(!s.options_preferences.search_at_top),
                             |s, v| s.options_preferences.search_at_top = v == 0,
                         ),
+                        kept_check(
+                            "TEST: Use your locale for integer rendering: ",
+                            "use_qt_locale_for_human_int",
+                        ),
                         int(
                             "EXPERIMENTAL: Bytes strings >1KB pseudo significant figures: ",
                             (1, 6),
                             |s| i64::from(s.gui_formatting.figures),
                             |s, v| s.gui_formatting.figures = u8::try_from(v).unwrap_or(3),
+                        ),
+                        kept_check_inverted(
+                            "BUGFIX: Set child windows as non-tool flagged: ",
+                            "make_child_frames_qt_tool",
+                        ),
+                        kept_check(
+                            "BUGFIX: If on macOS, show dialog menus in a debug menu: ",
+                            "do_macos_debug_dialog_menus",
+                        ),
+                        kept_check(
+                            "ANTI-CRASH BUGFIX: Use Qt file/directory selection dialogs, rather than OS native: ",
+                            "use_qt_file_dialogs",
                         ),
                     ],
                 ),
@@ -2487,6 +2657,10 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             "When rescuing, add top-left safety padding:",
                             |s| s.window_rescue.add_padding,
                             |s, v| s.window_rescue.add_padding = v,
+                        ),
+                        kept_check(
+                            "DEBUG: When rescuing resizing-to-media media viewer, add top-left safety padding:",
+                            "fuzzy_relocate_on_get_safe_position_test_only_for_self_sizing_media_viewer_canvas",
                         ),
                         int(
                             "DEBUG: top-left padding to use (px): ",
@@ -2591,6 +2765,10 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             "Confirm when closing a non-empty importer page: ",
                             |s| s.downloader_pages.confirm_non_empty_close,
                             |s, v| s.downloader_pages.confirm_non_empty_close = v,
+                        ),
+                        kept_check(
+                            "BUGFIX: Force 'hide page' signal when creating a new page: ",
+                            "force_hide_page_signal_on_new_page",
                         ),
                     ],
                 ),
@@ -2833,6 +3011,13 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s, v| s.import_work_slots.misc = v,
                         ),
                     ],
+                ),
+                boxed(
+                    "drag and drop",
+                    vec![kept_check(
+                        "When DnDing a URL onto the program, switch to the page where it lands:",
+                        "show_destination_page_when_dnd_url",
+                    )],
                 ),
             ],
         ),
@@ -3375,8 +3560,60 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     ],
                 ),
                 boxed(
+                    "mpv",
+                    vec![
+                        kept_noneable_text(
+                            "Preferred audio output device:",
+                            "use default",
+                            "mpv_preferred_audio_device",
+                        ),
+                        kept_check(
+                            "DEBUG: Set null audio device on silent media:",
+                            "mpv_null_audio_on_silent_media",
+                        ),
+                        kept_check(
+                            "DEBUG: Use legacy mpv communication method:",
+                            "use_legacy_mpv_mediator",
+                        ),
+                        kept_check(
+                            "DEBUG: Loop Playlist instead of Loop File in mpv:",
+                            "mpv_loop_playlist_instead_of_file",
+                        ),
+                        kept_check(
+                            "TEST: Use the same mpv player through media transitions:",
+                            "persist_media_window_mpv",
+                        ),
+                        kept_check(
+                            "TEST: Destroy/recreate mpv players instead of recycling them:",
+                            "mpv_destruction_test",
+                        ),
+                        kept_check(
+                            "LINUX DEBUG: Do not allow combined setGeometry on mpv window:",
+                            "do_not_setgeometry_on_an_mpv",
+                        ),
+                    ],
+                ),
+                boxed(
+                    "QtMediaPlayer",
+                    vec![
+                        kept_check(
+                            "DEBUG: Set null audio device on silent media:",
+                            "qt_media_player_null_audio_on_silent_media",
+                        ),
+                        kept_check(
+                            "DEBUG: Use the same QtMediaPlayer through media transitions:",
+                            "persist_media_window_qt_media_player",
+                        ),
+                        kept_check(
+                            "TEST: Use OpenGL Window in QtMediaPlayer:",
+                            "qt_media_player_opengl_test",
+                        ),
+                    ],
+                ),
+                boxed(
                     "system",
                     vec![
+                        kept_check("Prefer system FFMPEG:", "use_system_ffmpeg"),
                         int(
                             "FFMPEG call timeout:",
                             (1, 600),
@@ -3388,6 +3625,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |settings| settings.image_colour.normalise_icc,
                             |settings, value| settings.image_colour.normalise_icc = value,
                         ),
+                        kept_check(
+                            "Allow loading of truncated images:",
+                            "enable_truncated_images_pil",
+                        ),
+                        kept_check("Load images with PIL:", "load_images_with_pil"),
                     ],
                 ),
                 boxed(
@@ -3614,6 +3856,10 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |settings| settings.viewer_hovers.notes,
                             |settings, value| settings.viewer_hovers.notes = value,
                         ),
+                        kept_check(
+                            "Pin the duplicates (right, duplicates filter) hover window so it is always visible:",
+                            "hover_window_duplicates_always_on_top",
+                        ),
                         choice(
                             "Allow a mouse wheel scroll over the taglist to propagate to the main canvas:",
                             &[
@@ -3707,6 +3953,19 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             "Swap in common resolution labels:",
                             |s| s.info_line.nice_resolutions,
                             |s, v| s.info_line.nice_resolutions = v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "preview window hovers",
+                    vec![
+                        kept_check(
+                            "Draw ratings and locations (top-right) in preview window background: ",
+                            "draw_top_right_hover_in_preview_window_background",
+                        ),
+                        kept_check(
+                            "Pop-in this hover on mouseover: ",
+                            "preview_window_hover_top_right_shows_popup",
                         ),
                     ],
                 ),
@@ -3938,6 +4197,28 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     ],
                 ),
                 boxed(
+                    "image tile cache",
+                    vec![
+                        kept_bytes(
+                            "Memory reserved for image tile cache:",
+                            "image_tile_cache_size",
+                        ),
+                        kept_duration(
+                            "Image tile cache timeout:",
+                            "image_tile_cache_timeout",
+                            Kind::Duration {
+                                units: &[Unit::Hours, Unit::Minutes],
+                                min: 300.0,
+                            },
+                        ),
+                        kept_int(
+                            "Ideal tile width/height px:",
+                            "ideal_tile_dimension",
+                            (256, 4096),
+                        ),
+                    ],
+                ),
+                boxed(
                     "download pages update",
                     vec![
                         duration(
@@ -3978,6 +4259,10 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         ),
                     ],
                 ),
+                boxed(
+                    "video buffer",
+                    vec![kept_bytes("Memory for video buffer: ", "video_buffer_size")],
+                ),
             ],
         ),
         page(
@@ -3996,8 +4281,41 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         |s| s.network.wake_delay_period as i64,
                         |s, v| s.network.wake_delay_period = v as u64,
                     ),
+                    kept_check(
+                        "Include the file system in this wait: ",
+                        "file_system_waits_on_wakeup",
+                    ),
                 ],
             )],
+        ),
+        page(
+            "system tray",
+            vec![
+                kept_check(
+                    "Always show the hydrus system tray icon: ",
+                    "always_show_system_tray_icon",
+                ),
+                kept_check(
+                    "Minimise the main window to system tray: ",
+                    "minimise_client_to_system_tray",
+                ),
+                kept_check(
+                    "BUGFIX: Do minimise-hide using event-deferred state-prep tech: ",
+                    "minimise_client_to_system_tray_bugfix_deferred_state_set",
+                ),
+                kept_check(
+                    "BUGFIX: Do minimise-hide with post-show state restoration: ",
+                    "minimise_client_to_system_tray_bugfix_restore_after_show",
+                ),
+                kept_check(
+                    "Close the main window to system tray: ",
+                    "close_client_to_system_tray",
+                ),
+                kept_check(
+                    "Start the client minimised to system tray: ",
+                    "start_client_in_system_tray",
+                ),
+            ],
         ),
         page(
             "tag autocomplete tabs",
@@ -4050,6 +4368,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |settings| settings.tag_editing.default_service.clone(),
                             |settings, service| settings.tag_editing.default_service = service,
                             |settings| !settings.tag_editing.remember_service,
+                        ),
+                        kept_int(
+                            "Number of recent petition reasons to remember in dialogs: ",
+                            "num_recent_petition_reasons",
+                            (0, 100),
                         ),
                         check(
                             "Show parent info by default on edit/write taglists: ",

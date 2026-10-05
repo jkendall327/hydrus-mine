@@ -3600,6 +3600,21 @@ storage and inbox state. `local_transfer_confirmations.json` records actual Qt
 Options, the local action menu and real migration writes on a copied fixture DB;
 model/native regressions cover those decisions, persistence and stale owners.
 
+Options also has the reference's remaining rows on these pages, with its
+labels, positions, defaults and ranges: audio's "The preview window has its own
+volume"; connection's REQUESTS_CA_BUNDLE debug switch; exporting's "drag and
+drop" box (copy to the temp folder, the "move" flag, enabled with it, and the
+filename pattern); gui misc's native menubar, locale integers, non-tool child
+windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing
+viewer padding; gui pages' forced hide-page signal; importing's "drag and drop"
+page switch; media playback's mpv and QtMediaPlayer boxes and system's system
+FFMPEG, truncated images and PIL switches; hovers' pinned duplicates hover and
+the "preview window hovers" box; popups' other-display freeze; speed and
+memory's "image tile cache" and "video buffer" boxes; system sleep's file system
+wait; the "system tray" page; and tag editing's petition reason count. An
+imported client brings its values. mpv plays through the preferred audio
+device, and loops the playlist rather than the file when asked.
+
 Options > shortcuts stages the reference numpad-merge and primary/secondary
 mouse-label policies and opens an owned shortcut-set editor. Each command child
 keeps independent keyboard and mouse captures. Keyboard capture retains raw
