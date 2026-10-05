@@ -8,11 +8,12 @@
 
 use std::collections::BTreeSet;
 
-use hydrus_core::numbers::{human_bytes, human_int};
+use hydrus_core::numbers::human_int;
 use hydrus_core::time::duration_ms_to_pretty;
 use hydrus_core::{HashId, Mime};
 use hydrus_media::mimes;
 use hydrus_store::Store;
+use hydrus_store::settings::GuiFormatting;
 
 /// What the status bar knows of a file.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -108,12 +109,19 @@ pub fn filetype_summary(files: &[Facts], items: Items) -> String {
 
 /// `_GetPrettyTotalSize`.
 pub fn total_size(files: &[Facts]) -> String {
+    total_size_with_format(files, &GuiFormatting::default())
+}
+
+pub fn total_size_with_format(files: &[Facts], formatting: &GuiFormatting) -> String {
     let total: u64 = files.iter().filter_map(|f| f.size).sum();
     let unknown = files.iter().any(|f| f.size.is_none());
     match (total, unknown) {
         (0, true) => "unknown size".to_owned(),
-        (total, true) => format!("{} + some unknown size", human_bytes(total)),
-        (total, false) => human_bytes(total),
+        (total, true) => format!(
+            "{} + some unknown size",
+            crate::gui_format::bytes(formatting, total)
+        ),
+        (total, false) => crate::gui_format::bytes(formatting, total),
     }
 }
 
@@ -138,6 +146,22 @@ pub fn status(
     empty: Option<&str>,
     single_line: Option<&str>,
 ) -> String {
+    status_with_format(
+        (files, items),
+        (selected, selected_items),
+        empty,
+        single_line,
+        &GuiFormatting::default(),
+    )
+}
+
+pub fn status_with_format(
+    (files, items): (&[Facts], Items),
+    (selected, selected_items): (&[Facts], Items),
+    empty: Option<&str>,
+    single_line: Option<&str>,
+    formatting: &GuiFormatting,
+) -> String {
     if files.is_empty()
         && let Some(empty) = empty
     {
@@ -146,7 +170,7 @@ pub fn status(
     let mut s = filetype_summary(files, items);
     if selected.is_empty() {
         if !files.is_empty() {
-            s += &format!(" - totalling {}", total_size(files));
+            s += &format!(" - totalling {}", total_size_with_format(files, formatting));
             if let Some(duration) = total_duration(files) {
                 s += &format!(", {duration}");
             }
@@ -183,7 +207,10 @@ pub fn status(
             human_int((count - inbox) as u64)
         )
     };
-    s += &format!("{phrase}, totalling {}", total_size(selected));
+    s += &format!(
+        "{phrase}, totalling {}",
+        total_size_with_format(selected, formatting)
+    );
     if let Some(duration) = total_duration(selected) {
         s += &format!(", {duration}");
     }
@@ -199,9 +226,21 @@ pub fn bandwidth_status(
     per_second: u64,
     pauses: &hydrus_store::settings::Pauses,
 ) -> String {
-    let mut status = human_bytes(read);
+    bandwidth_status_with_format(read, per_second, pauses, &GuiFormatting::default())
+}
+
+pub fn bandwidth_status_with_format(
+    read: u64,
+    per_second: u64,
+    pauses: &hydrus_store::settings::Pauses,
+    formatting: &GuiFormatting,
+) -> String {
+    let mut status = crate::gui_format::bytes(formatting, read);
     if per_second > 0 {
-        status.push_str(&format!(" ({}/s)", human_bytes(per_second)));
+        status.push_str(&format!(
+            " ({}/s)",
+            crate::gui_format::bytes(formatting, per_second)
+        ));
     }
     if pauses.subscriptions {
         status.push_str(", subs paused");

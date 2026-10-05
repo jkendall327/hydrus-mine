@@ -5,8 +5,8 @@
 //! log's [`Entry`] trees. Recorded by `oracle/record_search_log.py`.
 
 use hydrus_core::numbers::human_int;
-use hydrus_core::time::timestamp_to_pretty_time_delta;
 use hydrus_store::queues::{GallerySeed, SeedStatus, StatusCounts};
+use hydrus_store::settings::GuiFormatting;
 
 use crate::file_log::{Entry, human_url, status_text};
 
@@ -15,12 +15,22 @@ pub const COLUMNS: [&str; 6] = ["#", "url", "status", "added", "last modified", 
 
 /// A page's row (`_ConvertGallerySeedToDisplayTuple`).
 pub fn row(seed: &GallerySeed, index: usize, now: i64) -> Vec<String> {
+    row_with_format(seed, index, now, &GuiFormatting::default())
+}
+
+/// The live client formatting preference, over an unchanged seed.
+pub fn row_with_format(
+    seed: &GallerySeed,
+    index: usize,
+    now: i64,
+    formatting: &GuiFormatting,
+) -> Vec<String> {
     vec![
         human_int(index as u64),
         human_url(&seed.url),
         status_text(seed.status).to_owned(),
-        timestamp_to_pretty_time_delta(seed.created, now, " ago"),
-        timestamp_to_pretty_time_delta(seed.modified, now, " ago"),
+        crate::gui_format::timestamp(formatting, Some(seed.created), now),
+        crate::gui_format::timestamp(formatting, Some(seed.modified), now),
         seed.note.lines().next().unwrap_or_default().to_owned(),
     ]
 }

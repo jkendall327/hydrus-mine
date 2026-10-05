@@ -142,3 +142,4 @@ pub mod window_rescue;
 pub mod viewer_drag;
 
 pub mod viewer_tag_wheel;
+pub mod gui_format;

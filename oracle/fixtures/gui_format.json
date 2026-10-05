@@ -1,0 +1,1124 @@
+{
+  "now": 1700000000,
+  "defaults": {
+    "iso": false,
+    "figures": 3
+  },
+  "seeds": {
+    "file": {
+      "data": "https://format.invalid/file",
+      "created": 1699913600,
+      "modified": 1699999910,
+      "source_time": 1699827200
+    },
+    "gallery": {
+      "url": "https://format.invalid/search",
+      "created": 1699913600,
+      "modified": 1700000090
+    }
+  },
+  "events": [
+    {
+      "input": [
+        false,
+        3
+      ],
+      "before": {
+        "iso": false,
+        "figures": 3
+      },
+      "draft": {
+        "iso": false,
+        "figures": 3
+      },
+      "staged": {
+        "iso": false,
+        "figures": 3
+      },
+      "saved": {
+        "iso": false,
+        "figures": 3
+      },
+      "round_trip": {
+        "iso": false,
+        "figures": 3
+      },
+      "reopened": {
+        "iso": false,
+        "figures": 3
+      },
+      "bytes": [
+        {
+          "size": 0,
+          "text": "0B"
+        },
+        {
+          "size": 512,
+          "text": "512B"
+        },
+        {
+          "size": 1023,
+          "text": "1,023B"
+        },
+        {
+          "size": 1024,
+          "text": "1 KB"
+        },
+        {
+          "size": 1536,
+          "text": "1.5 KB"
+        },
+        {
+          "size": 243200,
+          "text": "238 KB"
+        },
+        {
+          "size": 188213746,
+          "text": "179 MB"
+        },
+        {
+          "size": 1023999,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1024000,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1024001,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1236950581248,
+          "text": "1.12 TB"
+        }
+      ],
+      "timestamps": [
+        {
+          "timestamp": null,
+          "text": "at an unknown time"
+        },
+        {
+          "timestamp": 1700000000,
+          "text": "now"
+        },
+        {
+          "timestamp": 1699999997,
+          "text": "now"
+        },
+        {
+          "timestamp": 1699999996,
+          "text": "4 seconds ago"
+        },
+        {
+          "timestamp": 1699913600,
+          "text": "1 day ago"
+        },
+        {
+          "timestamp": 1700000004,
+          "text": "in 4 seconds"
+        },
+        {
+          "timestamp": 1700086400,
+          "text": "in 1 day"
+        },
+        {
+          "timestamp": 0,
+          "text": "53 years 10 months ago"
+        },
+        {
+          "timestamp": -1,
+          "text": "53 years 10 months ago"
+        },
+        {
+          "timestamp": 9223372036854775807,
+          "text": "in 292,271,022,991 years 5 months"
+        }
+      ],
+      "file_row": [
+        "0",
+        "https://format.invalid/file",
+        "",
+        "1 day ago",
+        "1 minute 30 seconds ago",
+        "2 days ago",
+        ""
+      ],
+      "gallery_row": [
+        "0",
+        "https://format.invalid/search",
+        "",
+        "1 day ago",
+        "in 1 minute 30 seconds",
+        ""
+      ]
+    },
+    {
+      "input": [
+        true,
+        1
+      ],
+      "before": {
+        "iso": false,
+        "figures": 3
+      },
+      "draft": {
+        "iso": true,
+        "figures": 1
+      },
+      "staged": {
+        "iso": false,
+        "figures": 3
+      },
+      "saved": {
+        "iso": true,
+        "figures": 1
+      },
+      "round_trip": {
+        "iso": true,
+        "figures": 1
+      },
+      "reopened": {
+        "iso": true,
+        "figures": 1
+      },
+      "bytes": [
+        {
+          "size": 0,
+          "text": "0B"
+        },
+        {
+          "size": 512,
+          "text": "512B"
+        },
+        {
+          "size": 1023,
+          "text": "1,023B"
+        },
+        {
+          "size": 1024,
+          "text": "1 KB"
+        },
+        {
+          "size": 1536,
+          "text": "2 KB"
+        },
+        {
+          "size": 243200,
+          "text": "238 KB"
+        },
+        {
+          "size": 188213746,
+          "text": "179 MB"
+        },
+        {
+          "size": 1023999,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1024000,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1024001,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1236950581248,
+          "text": "1 TB"
+        }
+      ],
+      "timestamps": [
+        {
+          "timestamp": null,
+          "text": "unknown time"
+        },
+        {
+          "timestamp": 1700000000,
+          "text": "2023-11-14 22:13:20"
+        },
+        {
+          "timestamp": 1699999997,
+          "text": "2023-11-14 22:13:17"
+        },
+        {
+          "timestamp": 1699999996,
+          "text": "2023-11-14 22:13:16"
+        },
+        {
+          "timestamp": 1699913600,
+          "text": "2023-11-13 22:13:20"
+        },
+        {
+          "timestamp": 1700000004,
+          "text": "2023-11-14 22:13:24"
+        },
+        {
+          "timestamp": 1700086400,
+          "text": "2023-11-15 22:13:20"
+        },
+        {
+          "timestamp": 0,
+          "text": "1970-01-01 00:00:00"
+        },
+        {
+          "timestamp": -1,
+          "text": "1969-12-31 23:59:59"
+        },
+        {
+          "timestamp": 9223372036854775807,
+          "text": "unparseable time 9223372036854775807"
+        }
+      ],
+      "file_row": [
+        "0",
+        "https://format.invalid/file",
+        "",
+        "2023-11-13 22:13:20",
+        "2023-11-14 22:11:50",
+        "2023-11-12 22:13:20",
+        ""
+      ],
+      "gallery_row": [
+        "0",
+        "https://format.invalid/search",
+        "",
+        "2023-11-13 22:13:20",
+        "2023-11-14 22:14:50",
+        ""
+      ]
+    },
+    {
+      "input": [
+        true,
+        2
+      ],
+      "before": {
+        "iso": true,
+        "figures": 1
+      },
+      "draft": {
+        "iso": true,
+        "figures": 2
+      },
+      "staged": {
+        "iso": true,
+        "figures": 1
+      },
+      "saved": {
+        "iso": true,
+        "figures": 2
+      },
+      "round_trip": {
+        "iso": true,
+        "figures": 2
+      },
+      "reopened": {
+        "iso": true,
+        "figures": 2
+      },
+      "bytes": [
+        {
+          "size": 0,
+          "text": "0B"
+        },
+        {
+          "size": 512,
+          "text": "512B"
+        },
+        {
+          "size": 1023,
+          "text": "1,023B"
+        },
+        {
+          "size": 1024,
+          "text": "1 KB"
+        },
+        {
+          "size": 1536,
+          "text": "1.5 KB"
+        },
+        {
+          "size": 243200,
+          "text": "238 KB"
+        },
+        {
+          "size": 188213746,
+          "text": "179 MB"
+        },
+        {
+          "size": 1023999,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1024000,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1024001,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1236950581248,
+          "text": "1.1 TB"
+        }
+      ],
+      "timestamps": [
+        {
+          "timestamp": null,
+          "text": "unknown time"
+        },
+        {
+          "timestamp": 1700000000,
+          "text": "2023-11-14 22:13:20"
+        },
+        {
+          "timestamp": 1699999997,
+          "text": "2023-11-14 22:13:17"
+        },
+        {
+          "timestamp": 1699999996,
+          "text": "2023-11-14 22:13:16"
+        },
+        {
+          "timestamp": 1699913600,
+          "text": "2023-11-13 22:13:20"
+        },
+        {
+          "timestamp": 1700000004,
+          "text": "2023-11-14 22:13:24"
+        },
+        {
+          "timestamp": 1700086400,
+          "text": "2023-11-15 22:13:20"
+        },
+        {
+          "timestamp": 0,
+          "text": "1970-01-01 00:00:00"
+        },
+        {
+          "timestamp": -1,
+          "text": "1969-12-31 23:59:59"
+        },
+        {
+          "timestamp": 9223372036854775807,
+          "text": "unparseable time 9223372036854775807"
+        }
+      ],
+      "file_row": [
+        "0",
+        "https://format.invalid/file",
+        "",
+        "2023-11-13 22:13:20",
+        "2023-11-14 22:11:50",
+        "2023-11-12 22:13:20",
+        ""
+      ],
+      "gallery_row": [
+        "0",
+        "https://format.invalid/search",
+        "",
+        "2023-11-13 22:13:20",
+        "2023-11-14 22:14:50",
+        ""
+      ]
+    },
+    {
+      "input": [
+        false,
+        4
+      ],
+      "before": {
+        "iso": true,
+        "figures": 2
+      },
+      "draft": {
+        "iso": false,
+        "figures": 4
+      },
+      "staged": {
+        "iso": true,
+        "figures": 2
+      },
+      "saved": {
+        "iso": false,
+        "figures": 4
+      },
+      "round_trip": {
+        "iso": false,
+        "figures": 4
+      },
+      "reopened": {
+        "iso": false,
+        "figures": 4
+      },
+      "bytes": [
+        {
+          "size": 0,
+          "text": "0B"
+        },
+        {
+          "size": 512,
+          "text": "512B"
+        },
+        {
+          "size": 1023,
+          "text": "1,023B"
+        },
+        {
+          "size": 1024,
+          "text": "1 KB"
+        },
+        {
+          "size": 1536,
+          "text": "1.5 KB"
+        },
+        {
+          "size": 243200,
+          "text": "237.5 KB"
+        },
+        {
+          "size": 188213746,
+          "text": "179.5 MB"
+        },
+        {
+          "size": 1023999,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1024000,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1024001,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1236950581248,
+          "text": "1.125 TB"
+        }
+      ],
+      "timestamps": [
+        {
+          "timestamp": null,
+          "text": "at an unknown time"
+        },
+        {
+          "timestamp": 1700000000,
+          "text": "now"
+        },
+        {
+          "timestamp": 1699999997,
+          "text": "now"
+        },
+        {
+          "timestamp": 1699999996,
+          "text": "4 seconds ago"
+        },
+        {
+          "timestamp": 1699913600,
+          "text": "1 day ago"
+        },
+        {
+          "timestamp": 1700000004,
+          "text": "in 4 seconds"
+        },
+        {
+          "timestamp": 1700086400,
+          "text": "in 1 day"
+        },
+        {
+          "timestamp": 0,
+          "text": "53 years 10 months ago"
+        },
+        {
+          "timestamp": -1,
+          "text": "53 years 10 months ago"
+        },
+        {
+          "timestamp": 9223372036854775807,
+          "text": "in 292,271,022,991 years 5 months"
+        }
+      ],
+      "file_row": [
+        "0",
+        "https://format.invalid/file",
+        "",
+        "1 day ago",
+        "1 minute 30 seconds ago",
+        "2 days ago",
+        ""
+      ],
+      "gallery_row": [
+        "0",
+        "https://format.invalid/search",
+        "",
+        "1 day ago",
+        "in 1 minute 30 seconds",
+        ""
+      ]
+    },
+    {
+      "input": [
+        true,
+        5
+      ],
+      "before": {
+        "iso": false,
+        "figures": 4
+      },
+      "draft": {
+        "iso": true,
+        "figures": 5
+      },
+      "staged": {
+        "iso": false,
+        "figures": 4
+      },
+      "saved": {
+        "iso": true,
+        "figures": 5
+      },
+      "round_trip": {
+        "iso": true,
+        "figures": 5
+      },
+      "reopened": {
+        "iso": true,
+        "figures": 5
+      },
+      "bytes": [
+        {
+          "size": 0,
+          "text": "0B"
+        },
+        {
+          "size": 512,
+          "text": "512B"
+        },
+        {
+          "size": 1023,
+          "text": "1,023B"
+        },
+        {
+          "size": 1024,
+          "text": "1 KB"
+        },
+        {
+          "size": 1536,
+          "text": "1.5 KB"
+        },
+        {
+          "size": 243200,
+          "text": "237.5 KB"
+        },
+        {
+          "size": 188213746,
+          "text": "179.49 MB"
+        },
+        {
+          "size": 1023999,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1024000,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1024001,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1236950581248,
+          "text": "1.125 TB"
+        }
+      ],
+      "timestamps": [
+        {
+          "timestamp": null,
+          "text": "unknown time"
+        },
+        {
+          "timestamp": 1700000000,
+          "text": "2023-11-14 22:13:20"
+        },
+        {
+          "timestamp": 1699999997,
+          "text": "2023-11-14 22:13:17"
+        },
+        {
+          "timestamp": 1699999996,
+          "text": "2023-11-14 22:13:16"
+        },
+        {
+          "timestamp": 1699913600,
+          "text": "2023-11-13 22:13:20"
+        },
+        {
+          "timestamp": 1700000004,
+          "text": "2023-11-14 22:13:24"
+        },
+        {
+          "timestamp": 1700086400,
+          "text": "2023-11-15 22:13:20"
+        },
+        {
+          "timestamp": 0,
+          "text": "1970-01-01 00:00:00"
+        },
+        {
+          "timestamp": -1,
+          "text": "1969-12-31 23:59:59"
+        },
+        {
+          "timestamp": 9223372036854775807,
+          "text": "unparseable time 9223372036854775807"
+        }
+      ],
+      "file_row": [
+        "0",
+        "https://format.invalid/file",
+        "",
+        "2023-11-13 22:13:20",
+        "2023-11-14 22:11:50",
+        "2023-11-12 22:13:20",
+        ""
+      ],
+      "gallery_row": [
+        "0",
+        "https://format.invalid/search",
+        "",
+        "2023-11-13 22:13:20",
+        "2023-11-14 22:14:50",
+        ""
+      ]
+    },
+    {
+      "input": [
+        false,
+        6
+      ],
+      "before": {
+        "iso": true,
+        "figures": 5
+      },
+      "draft": {
+        "iso": false,
+        "figures": 6
+      },
+      "staged": {
+        "iso": true,
+        "figures": 5
+      },
+      "saved": {
+        "iso": false,
+        "figures": 6
+      },
+      "round_trip": {
+        "iso": false,
+        "figures": 6
+      },
+      "reopened": {
+        "iso": false,
+        "figures": 6
+      },
+      "bytes": [
+        {
+          "size": 0,
+          "text": "0B"
+        },
+        {
+          "size": 512,
+          "text": "512B"
+        },
+        {
+          "size": 1023,
+          "text": "1,023B"
+        },
+        {
+          "size": 1024,
+          "text": "1 KB"
+        },
+        {
+          "size": 1536,
+          "text": "1.5 KB"
+        },
+        {
+          "size": 243200,
+          "text": "237.5 KB"
+        },
+        {
+          "size": 188213746,
+          "text": "179.495 MB"
+        },
+        {
+          "size": 1023999,
+          "text": "999.999 KB"
+        },
+        {
+          "size": 1024000,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1024001,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1236950581248,
+          "text": "1.125 TB"
+        }
+      ],
+      "timestamps": [
+        {
+          "timestamp": null,
+          "text": "at an unknown time"
+        },
+        {
+          "timestamp": 1700000000,
+          "text": "now"
+        },
+        {
+          "timestamp": 1699999997,
+          "text": "now"
+        },
+        {
+          "timestamp": 1699999996,
+          "text": "4 seconds ago"
+        },
+        {
+          "timestamp": 1699913600,
+          "text": "1 day ago"
+        },
+        {
+          "timestamp": 1700000004,
+          "text": "in 4 seconds"
+        },
+        {
+          "timestamp": 1700086400,
+          "text": "in 1 day"
+        },
+        {
+          "timestamp": 0,
+          "text": "53 years 10 months ago"
+        },
+        {
+          "timestamp": -1,
+          "text": "53 years 10 months ago"
+        },
+        {
+          "timestamp": 9223372036854775807,
+          "text": "in 292,271,022,991 years 5 months"
+        }
+      ],
+      "file_row": [
+        "0",
+        "https://format.invalid/file",
+        "",
+        "1 day ago",
+        "1 minute 30 seconds ago",
+        "2 days ago",
+        ""
+      ],
+      "gallery_row": [
+        "0",
+        "https://format.invalid/search",
+        "",
+        "1 day ago",
+        "in 1 minute 30 seconds",
+        ""
+      ]
+    },
+    {
+      "input": [
+        true,
+        0
+      ],
+      "before": {
+        "iso": false,
+        "figures": 6
+      },
+      "draft": {
+        "iso": true,
+        "figures": 1
+      },
+      "staged": {
+        "iso": false,
+        "figures": 6
+      },
+      "saved": {
+        "iso": true,
+        "figures": 1
+      },
+      "round_trip": {
+        "iso": true,
+        "figures": 1
+      },
+      "reopened": {
+        "iso": true,
+        "figures": 1
+      },
+      "bytes": [
+        {
+          "size": 0,
+          "text": "0B"
+        },
+        {
+          "size": 512,
+          "text": "512B"
+        },
+        {
+          "size": 1023,
+          "text": "1,023B"
+        },
+        {
+          "size": 1024,
+          "text": "1 KB"
+        },
+        {
+          "size": 1536,
+          "text": "2 KB"
+        },
+        {
+          "size": 243200,
+          "text": "238 KB"
+        },
+        {
+          "size": 188213746,
+          "text": "179 MB"
+        },
+        {
+          "size": 1023999,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1024000,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1024001,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1236950581248,
+          "text": "1 TB"
+        }
+      ],
+      "timestamps": [
+        {
+          "timestamp": null,
+          "text": "unknown time"
+        },
+        {
+          "timestamp": 1700000000,
+          "text": "2023-11-14 22:13:20"
+        },
+        {
+          "timestamp": 1699999997,
+          "text": "2023-11-14 22:13:17"
+        },
+        {
+          "timestamp": 1699999996,
+          "text": "2023-11-14 22:13:16"
+        },
+        {
+          "timestamp": 1699913600,
+          "text": "2023-11-13 22:13:20"
+        },
+        {
+          "timestamp": 1700000004,
+          "text": "2023-11-14 22:13:24"
+        },
+        {
+          "timestamp": 1700086400,
+          "text": "2023-11-15 22:13:20"
+        },
+        {
+          "timestamp": 0,
+          "text": "1970-01-01 00:00:00"
+        },
+        {
+          "timestamp": -1,
+          "text": "1969-12-31 23:59:59"
+        },
+        {
+          "timestamp": 9223372036854775807,
+          "text": "unparseable time 9223372036854775807"
+        }
+      ],
+      "file_row": [
+        "0",
+        "https://format.invalid/file",
+        "",
+        "2023-11-13 22:13:20",
+        "2023-11-14 22:11:50",
+        "2023-11-12 22:13:20",
+        ""
+      ],
+      "gallery_row": [
+        "0",
+        "https://format.invalid/search",
+        "",
+        "2023-11-13 22:13:20",
+        "2023-11-14 22:14:50",
+        ""
+      ]
+    },
+    {
+      "input": [
+        false,
+        7
+      ],
+      "before": {
+        "iso": true,
+        "figures": 1
+      },
+      "draft": {
+        "iso": false,
+        "figures": 6
+      },
+      "staged": {
+        "iso": true,
+        "figures": 1
+      },
+      "saved": {
+        "iso": false,
+        "figures": 6
+      },
+      "round_trip": {
+        "iso": false,
+        "figures": 6
+      },
+      "reopened": {
+        "iso": false,
+        "figures": 6
+      },
+      "bytes": [
+        {
+          "size": 0,
+          "text": "0B"
+        },
+        {
+          "size": 512,
+          "text": "512B"
+        },
+        {
+          "size": 1023,
+          "text": "1,023B"
+        },
+        {
+          "size": 1024,
+          "text": "1 KB"
+        },
+        {
+          "size": 1536,
+          "text": "1.5 KB"
+        },
+        {
+          "size": 243200,
+          "text": "237.5 KB"
+        },
+        {
+          "size": 188213746,
+          "text": "179.495 MB"
+        },
+        {
+          "size": 1023999,
+          "text": "999.999 KB"
+        },
+        {
+          "size": 1024000,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1024001,
+          "text": "1000 KB"
+        },
+        {
+          "size": 1236950581248,
+          "text": "1.125 TB"
+        }
+      ],
+      "timestamps": [
+        {
+          "timestamp": null,
+          "text": "at an unknown time"
+        },
+        {
+          "timestamp": 1700000000,
+          "text": "now"
+        },
+        {
+          "timestamp": 1699999997,
+          "text": "now"
+        },
+        {
+          "timestamp": 1699999996,
+          "text": "4 seconds ago"
+        },
+        {
+          "timestamp": 1699913600,
+          "text": "1 day ago"
+        },
+        {
+          "timestamp": 1700000004,
+          "text": "in 4 seconds"
+        },
+        {
+          "timestamp": 1700086400,
+          "text": "in 1 day"
+        },
+        {
+          "timestamp": 0,
+          "text": "53 years 10 months ago"
+        },
+        {
+          "timestamp": -1,
+          "text": "53 years 10 months ago"
+        },
+        {
+          "timestamp": 9223372036854775807,
+          "text": "in 292,271,022,991 years 5 months"
+        }
+      ],
+      "file_row": [
+        "0",
+        "https://format.invalid/file",
+        "",
+        "1 day ago",
+        "1 minute 30 seconds ago",
+        "2 days ago",
+        ""
+      ],
+      "gallery_row": [
+        "0",
+        "https://format.invalid/search",
+        "",
+        "1 day ago",
+        "in 1 minute 30 seconds",
+        ""
+      ]
+    }
+  ],
+  "cancel_before": {
+    "iso": false,
+    "figures": 6
+  },
+  "cancel_after": {
+    "iso": false,
+    "figures": 6
+  },
+  "radio_return": [
+    {
+      "force": false,
+      "accepted": 1,
+      "checked": true,
+      "visible": false
+    },
+    {
+      "force": true,
+      "accepted": 1,
+      "checked": true,
+      "visible": false
+    }
+  ]
+}

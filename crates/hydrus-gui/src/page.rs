@@ -2724,11 +2724,12 @@ impl SearchPage {
             [file] => self.single_file_line(file),
             _ => None,
         };
-        crate::status::status(
+        crate::status::status_with_format(
             (&all, shown),
             (&selected, self.selected_counts()),
             self.empty_status.get(),
             single_line.as_deref(),
+            &hydrus_gui_model::gui_format::preferences(&self.store),
         )
     }
 
@@ -2747,11 +2748,12 @@ impl SearchPage {
             .ok()?
             .results
             .pop()?;
-        Some(crate::info_lines::status_line(
+        Some(crate::info_lines::status_line_with_format(
             &media,
             &snapshot.services,
             &settings,
             hydrus_core::TimestampMs::now().0,
+            &hydrus_gui_model::gui_format::preferences(&self.store),
         ))
     }
 

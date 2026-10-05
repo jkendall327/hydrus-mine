@@ -233,11 +233,12 @@ pub(crate) fn shown(store: &Store, id: HashId) -> Shown {
         .ok()
         .and_then(|batch| batch.results.into_iter().next())
         .map(|media| {
-            let line = crate::info_lines::top_line(
+            let line = crate::info_lines::top_line_with_format(
                 &media,
                 &snapshot.services,
                 &settings,
                 hydrus_core::TimestampMs::now().0,
+                &hydrus_gui_model::gui_format::preferences(store),
             );
             let trashed =
                 of_type(ServiceType::LocalFileTrashDomain).any(|t| media.is_current_in(t));

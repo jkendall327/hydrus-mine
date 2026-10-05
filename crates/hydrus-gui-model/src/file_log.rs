@@ -6,8 +6,8 @@
 //! `oracle/record_file_log.py`.
 
 use hydrus_core::numbers::human_int;
-use hydrus_core::time::timestamp_to_pretty_time_delta;
 use hydrus_store::queues::{FileSeed, SeedStatus, SeedType, StatusCounts};
+use hydrus_store::settings::GuiFormatting;
 
 /// The file log's column titles.
 pub const COLUMNS: [&str; 7] = [
@@ -61,6 +61,16 @@ pub fn status_text(status: SeedStatus) -> &'static str {
 /// its source, status, when it was added and last changed, when it was
 /// posted, and its note's first line.
 pub fn row(seed: &FileSeed, index: usize, now: i64) -> Vec<String> {
+    row_with_format(seed, index, now, &GuiFormatting::default())
+}
+
+/// The live client formatting preference, over an unchanged seed.
+pub fn row_with_format(
+    seed: &FileSeed,
+    index: usize,
+    now: i64,
+    formatting: &GuiFormatting,
+) -> Vec<String> {
     let source = if seed.seed_type == SeedType::Url {
         human_url(&seed.data_for_comparison)
     } else {
@@ -70,11 +80,11 @@ pub fn row(seed: &FileSeed, index: usize, now: i64) -> Vec<String> {
         human_int(index as u64),
         source,
         status_text(seed.status).to_owned(),
-        timestamp_to_pretty_time_delta(seed.created, now, " ago"),
-        timestamp_to_pretty_time_delta(seed.modified, now, " ago"),
+        crate::gui_format::timestamp(formatting, Some(seed.created), now),
+        crate::gui_format::timestamp(formatting, Some(seed.modified), now),
         seed.source_time.map_or_else(
             || "unknown".to_owned(),
-            |t| timestamp_to_pretty_time_delta(t, now, " ago"),
+            |t| crate::gui_format::timestamp(formatting, Some(t), now),
         ),
         seed.note.lines().next().unwrap_or_default().to_owned(),
     ]

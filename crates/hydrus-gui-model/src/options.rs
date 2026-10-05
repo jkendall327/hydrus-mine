@@ -179,6 +179,7 @@ settings! {
     folders: FolderSettings,
     gallery: GalleryDefaults,
     gui: GuiSettings,
+    gui_formatting: hydrus_store::settings::GuiFormatting,
     gui_sessions: hydrus_store::settings::GuiSessionSettings,
     info_line: InfoLineSettings,
     import_options: hydrus_core::import_options::ImportOptionsManager,
@@ -2105,6 +2106,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     "misc",
                     vec![
                         check(
+                            "Prefer ISO time (\"2018-03-01 12:40:23\") to \"5 days ago\": ",
+                            |s| s.gui_formatting.iso,
+                            |s, v| s.gui_formatting.iso = v,
+                        ),
+                        check(
                             "Remember last open options panel in this window: ",
                             |s| s.options_preferences.remember_panel,
                             |s, v| s.options_preferences.remember_panel = v,
@@ -2114,6 +2120,12 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             &["top of this window", "bottom of this window"],
                             |s| usize::from(!s.options_preferences.search_at_top),
                             |s, v| s.options_preferences.search_at_top = v == 0,
+                        ),
+                        int(
+                            "EXPERIMENTAL: Bytes strings >1KB pseudo significant figures: ",
+                            (1, 6),
+                            |s| i64::from(s.gui_formatting.figures),
+                            |s, v| s.gui_formatting.figures = u8::try_from(v).unwrap_or(3),
                         ),
                     ],
                 ),

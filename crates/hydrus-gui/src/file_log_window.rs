@@ -16,7 +16,8 @@ use hydrus_store::Store;
 use hydrus_store::queues::{self, FileSeed, SeedStatus, SeedType, StatusCounts};
 
 use crate::file_log::{
-    Action, Entry, LogFacts, OPEN_MANY_QUESTION, delete_question, log_menu, row, row_menu,
+    Action, Entry, LogFacts, OPEN_MANY_QUESTION, delete_question, log_menu, row_menu,
+    row_with_format,
 };
 use crate::list_selection::ListSelection;
 use crate::main_menu::{PopupNode, popup};
@@ -58,6 +59,7 @@ impl Source {
 }
 
 struct State {
+    store: Arc<Store>,
     source: Source,
     queue: i64,
     seeds: Vec<FileSeed>,
@@ -165,12 +167,16 @@ fn read(state: &mut State) {
 
 fn show(window: &FileLogWindow, state: &State) {
     let now = now();
+    let formatting = hydrus_gui_model::gui_format::preferences(&state.store);
     let rows: Vec<TableRow> = state
         .seeds
         .iter()
         .enumerate()
         .map(|(i, seed)| {
-            let cells: Vec<SharedString> = row(seed, i, now).into_iter().map(Into::into).collect();
+            let cells: Vec<SharedString> = row_with_format(seed, i, now, &formatting)
+                .into_iter()
+                .map(Into::into)
+                .collect();
             TableRow {
                 cells: ModelRc::new(VecModel::from(cells)),
                 selected: state.selection.is_selected(seed.id),
@@ -408,6 +414,7 @@ pub(crate) fn act_on_queue(
     open_files: &OpenFiles,
 ) -> Option<String> {
     let mut state = State {
+        store: store.clone(),
         source: Source::Live(store.clone()),
         queue,
         seeds: Vec::new(),
@@ -489,6 +496,7 @@ fn open_source(
     let alive = Rc::new(Cell::new(true));
     window.set_staged(applied.is_some());
     let state = Rc::new(RefCell::new(State {
+        store: store.clone(),
         source,
         queue,
         seeds: Vec::new(),

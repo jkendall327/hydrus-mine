@@ -1221,6 +1221,25 @@ impl Setting for WindowRescueSettings {
     const KEY: &'static str = "window_rescue";
 }
 
+/// Shared GUI timestamp/byte presentation; callers own formatting, not globals.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct GuiFormatting {
+    pub iso: bool,
+    pub figures: u8,
+}
+impl Default for GuiFormatting {
+    fn default() -> Self {
+        Self {
+            iso: false,
+            figures: 3,
+        }
+    }
+}
+impl Setting for GuiFormatting {
+    const KEY: &'static str = "gui_formatting";
+}
+
 /// How a file's info lines read.
 impl Setting for hydrus_core::media_viewer::InfoLineSettings {
     const KEY: &'static str = "info_lines";
