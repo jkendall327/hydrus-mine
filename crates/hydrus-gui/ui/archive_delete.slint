@@ -9,6 +9,7 @@
 // pointer over the window's left fifth, the file's tags show there; near
 // its top, the file's info line.
 
+import { Button } from "std-widgets.slint";
 import { ListText, Theme } from "theme.slint";
 
 export component ArchiveDeleteWindow inherits Window {
@@ -23,6 +24,10 @@ export component ArchiveDeleteWindow inherits Window {
     in property <[ListText]> tags;
     // what committing would do, while asking
     in property <string> question;
+    in property <[string]> commit-labels;
+    in property <string> finish-header;
+    in property <bool> commit-ready: true;
+    in property <bool> forget-question;
     // where the file is drawn: its box at its zoom
     in property <length> media-x;
     in property <length> media-y;
@@ -49,6 +54,8 @@ export component ArchiveDeleteWindow inherits Window {
     callback skip();
     callback close-requested();
     callback commit();
+    callback commit-choice(int);
+    callback forget-answered(bool);
     callback forget();
     callback resume();
     callback toggle-pause();
@@ -67,8 +74,13 @@ export component ArchiveDeleteWindow inherits Window {
     keys := FocusScope {
         key-pressed(event) => {
             if (root.question != "") {
+                if root.forget-question {
+                    if event.text == Key.Return {root.forget-answered(true);}
+                    else if event.text == Key.Escape {root.forget-answered(false);}
+                    return accept;
+                }
                 if (event.text == Key.Return) {
-                    root.commit();
+                    if root.commit-ready { root.commit(); }
                 } else if (event.text == "f" || event.text == "F") {
                     root.forget();
                 } else if (event.text == Key.Escape) {
@@ -174,25 +186,31 @@ export component ArchiveDeleteWindow inherits Window {
             }
         }
         if root.question != "": Rectangle {
-            width: min(root.width - 40px, 480px);
-            height: 100px;
-            background: #303030;
+            x: (root.width - self.width)/2;
+            y: (root.height - self.height)/2;
+            width: min(root.width - 40px, 520px);
+            height: finish-content.preferred-height+24px;
+            background: Theme.panel;
             border-width: 1px;
-            border-color: #606060;
+            border-color: Theme.border;
             border-radius: 4px;
-            VerticalLayout {
-                padding: 12px;
-                spacing: 8px;
-                Text {
-                    text: root.question;
-                    color: #f0f0f0;
-                    wrap: word-wrap;
-                    horizontal-alignment: center;
+            finish-content := VerticalLayout {
+                padding:12px;spacing:8px;
+                if root.forget-question: Text {text:"Quit filtering now and forget your work?";color:Theme.text;wrap:word-wrap;horizontal-alignment:center;}
+                if root.forget-question: HorizontalLayout {
+                    Button {text:"yes";clicked=>{root.forget-answered(true);}}
+                    Button {text:"no";clicked=>{root.forget-answered(false);}}
                 }
-                Text {
-                    text: "enter: commit, f: forget, escape: back to filtering";
-                    color: #a0a0a0;
-                    horizontal-alignment: center;
+                if !root.forget-question: VerticalLayout {
+                    spacing:8px;
+                    if root.finish-header!="": Text {text:root.finish-header;color:Theme.text;wrap:word-wrap;horizontal-alignment:center;}
+                    for label[index] in root.commit-labels: VerticalLayout {
+                        Text {text:label;color:Theme.text;wrap:word-wrap;horizontal-alignment:center;}
+                        Button {text:"commit";enabled:root.commit-ready;clicked=>{root.commit-choice(index);}}
+                    }
+                    Button {text:"forget";clicked=>{root.forget();}}
+                    Text {text:"-or-";color:Theme.text;horizontal-alignment:center;}
+                    Button {text:"back to filtering";clicked=>{root.resume();}}
                 }
             }
         }

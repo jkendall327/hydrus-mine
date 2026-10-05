@@ -4,6 +4,7 @@
 
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::time::{Duration, Instant};
 
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 
@@ -21,6 +22,7 @@ pub(crate) fn open(
     return_to: Rc<dyn Fn(hydrus_core::HashId)>,
 ) -> Result<ArchiveDeleteWindow, slint::PlatformError> {
     let window = ArchiveDeleteWindow::new()?;
+    let parent_guard = guard.clone();
     let guard: Rc<dyn Fn() -> bool> = Rc::new({
         let weak = window.as_weak();
         let slot = Rc::downgrade(slot);
@@ -60,22 +62,97 @@ pub(crate) fn open(
         .unwrap_or_default();
     let zoomed = crate::zoom_window!(window, settings);
     let colour_watch = crate::image_colour_watch::Watch::new(model.borrow().store().clone());
+    let finish_choices = Rc::new(RefCell::new(
+        None::<(Vec<crate::archive_delete::DeletionChoice>, Instant, bool)>,
+    ));
+    let finish_timer = Rc::new(slint::Timer::default());
+    let ask_finish: Rc<dyn Fn()> = Rc::new({
+        let model = model.clone();
+        let weak = window.as_weak();
+        let choices = finish_choices.clone();
+        let timer = finish_timer.clone();
+        let slot = Rc::downgrade(slot);
+        let parent_guard = parent_guard.clone();
+        let viewing_stats = viewing_stats.clone();
+        move || {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if !viewing_stats.active() {
+                return;
+            }
+            timer.stop();
+            let model = model.borrow();
+            let options = model.deletion_choices();
+            let delayed = model.delay_multiple_choices();
+            let labels = if options.len() > 1 {
+                options
+                    .iter()
+                    .map(|choice| format!("{}?", choice.label).into())
+                    .collect()
+            } else {
+                vec![model.question().into()]
+            };
+            window.set_commit_labels(ModelRc::new(VecModel::from(labels)));
+            window.set_finish_header(if options.len() > 1 {
+                model
+                    .kept_label()
+                    .map_or_else(SharedString::new, |label| format!("{label}\n-and-").into())
+            } else {
+                SharedString::new()
+            });
+            window.set_question(model.question().into());
+            window.set_forget_question(false);
+            window.set_commit_ready(!delayed);
+            *choices.borrow_mut() = Some((options, Instant::now(), delayed));
+            if delayed {
+                let weak = weak.clone();
+                let slot = slot.clone();
+                let parent_guard = parent_guard.clone();
+                let viewing_stats = viewing_stats.clone();
+                timer.start(
+                    slint::TimerMode::SingleShot,
+                    Duration::from_millis(1200),
+                    move || {
+                        if viewing_stats.active()
+                            && parent_guard()
+                            && let Some(window) = weak.upgrade()
+                            && slot.upgrade().is_some_and(|slot| {
+                                slot.borrow().as_ref().is_some_and(|current| {
+                                    std::ptr::eq(current.window(), window.window())
+                                })
+                            })
+                        {
+                            window.set_commit_ready(true);
+                        }
+                    },
+                );
+            }
+        }
+    });
     let close = {
         let viewing_stats = viewing_stats.clone();
         let colour_watch = colour_watch.clone();
         let weak = window.as_weak();
-        let slot = slot.clone();
+        let slot = Rc::downgrade(slot);
+        let finish_choices = finish_choices.clone();
+        let finish_timer = finish_timer.clone();
         let playback = playback.clone();
         let animator = animator.clone();
         let zoomed = zoomed.clone();
         move || {
             let Some(window) = weak.upgrade() else { return };
+            finish_timer.stop();
+            finish_choices.borrow_mut().take();
             viewing_stats.close();
             colour_watch.close();
             playback.close();
             animator.stop();
             zoomed.close();
             let _ = window.hide();
+            let Some(slot) = slot.upgrade() else {
+                return;
+            };
             if !slot
                 .borrow()
                 .as_ref()
@@ -91,6 +168,7 @@ pub(crate) fn open(
         let viewing_stats = viewing_stats.clone();
         let model = model.clone();
         let weak = window.as_weak();
+        let ask_finish = ask_finish.clone();
         let playback = playback.clone();
         let animator = animator.clone();
         let zoomed = zoomed.clone();
@@ -107,7 +185,8 @@ pub(crate) fn open(
             let Some(file) = model.current() else {
                 playback.stop();
                 animator.stop();
-                window.set_question(model.question().into());
+                drop(model);
+                ask_finish();
                 return;
             };
             let store = model.store();
@@ -201,13 +280,19 @@ pub(crate) fn open(
     // after a decision: the next file, or, when done, ask (or, with
     // nothing to commit, close)
     let decided = {
+        let weak = window.as_weak();
         let guard = guard.clone();
         let viewing_stats = viewing_stats.clone();
         let model = model.clone();
         let show = show.clone();
         let close = close.clone();
         move |decide: fn(&mut ArchiveDeleteFilter)| {
-            if !viewing_stats.active() || !guard() {
+            if !viewing_stats.active()
+                || !guard()
+                || weak
+                    .upgrade()
+                    .is_none_or(|window| !window.get_question().is_empty())
+            {
                 return;
             }
             decide(&mut model.borrow_mut());
@@ -232,12 +317,19 @@ pub(crate) fn open(
     });
     window.on_skip(move || decided(ArchiveDeleteFilter::skip));
     window.on_back({
+        let weak = window.as_weak();
         let guard = guard.clone();
         let viewing_stats = viewing_stats.clone();
         let model = model.clone();
         let show = show.clone();
         move || {
             if !viewing_stats.active() || !guard() {
+                return;
+            }
+            if weak
+                .upgrade()
+                .is_none_or(|window| !window.get_question().is_empty())
+            {
                 return;
             }
             model.borrow_mut().back();
@@ -249,20 +341,31 @@ pub(crate) fn open(
         let model = model.clone();
         let weak = window.as_weak();
         let close = close.clone();
+        let ask_finish = ask_finish.clone();
+        let guard = guard.clone();
         move || {
             if !viewing_stats.active() {
+                return;
+            }
+            if !guard() {
+                close();
                 return;
             }
             let model = model.borrow();
             match weak.upgrade() {
                 Some(window) if model.has_decisions() => {
-                    window.set_question(model.question().into());
+                    if window.get_question().is_empty() {
+                        drop(model);
+                        ask_finish();
+                    }
                 }
                 _ => close(),
             }
         }
     });
     window.on_resume({
+        let finish_choices = finish_choices.clone();
+        let finish_timer = finish_timer.clone();
         let guard = guard.clone();
         let viewing_stats = viewing_stats.clone();
         let model = model.clone();
@@ -273,7 +376,13 @@ pub(crate) fn open(
                 return;
             }
             if let Some(window) = weak.upgrade() {
+                if window.get_forget_question() {
+                    return;
+                }
                 window.set_question(SharedString::new());
+                window.set_forget_question(false);
+                finish_timer.stop();
+                finish_choices.borrow_mut().take();
             }
             // (finished, back to the last file)
             if model.borrow().is_done() {
@@ -283,15 +392,44 @@ pub(crate) fn open(
         }
     });
     window.on_forget({
-        let close = close.clone();
-        move || close()
+        let weak = window.as_weak();
+        let guard = guard.clone();
+        let viewing_stats = viewing_stats.clone();
+        move || {
+            if viewing_stats.active()
+                && guard()
+                && let Some(window) = weak.upgrade()
+                && !window.get_question().is_empty()
+            {
+                window.set_forget_question(true);
+            }
+        }
     });
-    window.on_commit({
+    window.on_forget_answered({
+        let close = close.clone();
+        let guard = guard.clone();
+        let viewing_stats = viewing_stats.clone();
+        let weak = window.as_weak();
+        move |yes| {
+            if viewing_stats.active()
+                && guard()
+                && let Some(window) = weak.upgrade()
+                && window.get_forget_question()
+            {
+                window.set_forget_question(false);
+                if yes {
+                    close();
+                }
+            }
+        }
+    });
+    let commit: Rc<dyn Fn(i32)> = Rc::new({
         let weak = window.as_weak();
         let viewing_stats = viewing_stats.clone();
         let model = model.clone();
         let close = close.clone();
-        move || {
+        let finish_choices = finish_choices.clone();
+        move |index| {
             if !viewing_stats.active()
                 || !guard()
                 || weak
@@ -300,8 +438,27 @@ pub(crate) fn open(
             {
                 return;
             }
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if window.get_question().is_empty() || window.get_forget_question() {
+                return;
+            }
+            let choices = finish_choices.borrow();
+            let Some((options, started, delayed)) = choices.as_ref() else {
+                return;
+            };
+            if *delayed && started.elapsed() < Duration::from_millis(1200) {
+                return;
+            }
+            let Ok(index) = usize::try_from(index) else {
+                return;
+            };
+            if index >= options.len().max(1) {
+                return;
+            }
             let model = model.borrow();
-            let affected = match model.commit_changed() {
+            let affected = match model.commit_choice_changed(options.get(index)) {
                 Ok(affected) => affected,
                 Err(e) => {
                     eprintln!("could not commit the archive/delete filter: {e}");
@@ -319,6 +476,7 @@ pub(crate) fn open(
             gone.dedup();
             let returned = model.return_file();
             drop(model);
+            drop(choices);
             removed(&gone);
             if let Some(file) = returned {
                 return_to(file);
@@ -326,6 +484,11 @@ pub(crate) fn open(
             close();
         }
     });
+    window.on_commit({
+        let commit = commit.clone();
+        move || commit(0)
+    });
+    window.on_commit_choice(move |index| commit(index));
     window.on_toggle_pause(move || {
         playback.toggle_pause();
         animator.toggle_pause();

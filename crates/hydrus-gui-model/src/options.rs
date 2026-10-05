@@ -60,6 +60,9 @@ macro_rules! settings {
             hydrus_store::settings::set($conn, &latest)?;
         }
     };
+    (@save $conn:ident, $after:ident, $before:ident, archive_delete_finish) => {
+        $after.archive_delete_finish.save_changed($conn, &$before.archive_delete_finish)?;
+    };
     (@save $conn:ident, $after:ident, $before:ident, gui_colours) => {
         $after.gui_colours.save_changed($conn, &$before.gui_colours)?;
     };
@@ -256,6 +259,7 @@ macro_rules! settings {
 }
 
 settings! {
+    archive_delete_finish: hydrus_store::archive_delete_preferences::Preferences => hydrus_store::archive_delete_preferences::load,
     gui_colours: hydrus_store::gui_colours::Settings => hydrus_store::gui_colours::load,
     shortcuts: hydrus_core::shortcuts::Settings,
     external_calls: hydrus_core::external_calls::Manager,
@@ -2212,6 +2216,16 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     "When physically deleting files or folders, send them to the OS's recycle bin: ",
                     |s| s.folders.delete_to_recycle_bin,
                     |s, v| s.folders.delete_to_recycle_bin = v,
+                ),
+                check(
+                    "When finishing archive/delete filtering, always delete from all possible domains: ",
+                    |s| s.archive_delete_finish.all_domains,
+                    |s, v| s.archive_delete_finish.all_domains = v,
+                ),
+                check(
+                    "When finishing archive/delete filtering, delay activation of multiple deletion choice buttons: ",
+                    |s| s.archive_delete_finish.delay_multiple,
+                    |s, v| s.archive_delete_finish.delay_multiple = v,
                 ),
                 check(
                     "Remove files from view when they are archive/delete filtered: ",

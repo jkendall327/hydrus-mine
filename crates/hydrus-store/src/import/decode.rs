@@ -953,6 +953,13 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &thumbnail_cache)?;
+    insert_setting(
+        &mut input,
+        &options.as_ref().map_or_else(
+            crate::archive_delete_preferences::Preferences::default,
+            crate::archive_delete_preferences::Preferences::from_legacy,
+        ),
+    )?;
     let mut view_removal = crate::settings::FileViewRemoval::default();
     if let Some(value) = legacy_options
         .get("remove_filtered_files")

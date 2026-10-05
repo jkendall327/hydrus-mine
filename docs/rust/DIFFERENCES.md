@@ -2886,3 +2886,14 @@ The new native tests/three native PNG artifacts are authored and unexecuted here
 no local Cargo/Rust tests/builds or canonical status writes were performed.
 
 The combined colour/thumbnail integration copies all eight saved local/remote and selected/unselected fill/border roles into each owned paint snapshot. Current physical storage membership selects the palette, including collection membership. A colour change clears both old and current copied cells before repaint; the viewport background keeps its saved grid colour behind the clipped image. This integration remains source-only until exact hosted native execution and PNG inspection.
+
+The two archive/delete finish policies now reach selectable deletion scopes and
+an owned 1.2-second multiple-button guard. The native finish and Forget questions
+are modal layers within the existing filter canvas; Qt creates separate dialogs.
+Secondary local-domain choices follow deterministic native service order, while
+Qt obtains those secondary choices from set iteration; the page/all-local priority,
+labels, scope counts and selected transaction remain equivalent. Arbitrary broader
+archive/delete viewer/shortcut topology is not claimed. Stale replaced service keys
+reject the entire transaction instead of selecting a replacement domain. Actual
+Qt controls and 32 finish paths were recorded; source checks and authored tests
+are separate from pending hosted Rust and exact-source native PNG review.

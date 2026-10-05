@@ -7,11 +7,10 @@
 use std::collections::BTreeSet;
 use std::sync::Arc;
 
-use hydrus_core::{HashId, ServiceId};
+use hydrus_core::{HashId, ServiceId, ServiceKey};
 use hydrus_search::LocationContext;
 use hydrus_store::Store;
 use hydrus_store::content::DomainRoles;
-use hydrus_store::services::ServiceRegistry;
 
 /// The reason the filter's deletions record.
 pub const DELETE_REASON: &str = "Deleted in Archive/Delete filter.";
@@ -22,6 +21,13 @@ pub enum Decision {
     Keep,
     Delete,
     Skip,
+}
+
+/// One reference finish-button label and its captured deletion service identities.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct DeletionChoice {
+    pub label: String,
+    domains: Vec<(ServiceId, ServiceKey)>,
 }
 
 pub struct ArchiveDeleteFilter {
@@ -203,70 +209,149 @@ impl ArchiveDeleteFilter {
             .any(|d| matches!(d, Some(Decision::Keep | Decision::Delete)))
     }
 
-    /// The domains deletions take the deleted files from: the first
-    /// choice the reference's "filtering done?" dialog offers. The page's
-    /// local domains, if it searches any; else the files' own (all local
-    /// domains together, if they are in more than one).
-    fn deletion_domains(&self, services: &ServiceRegistry) -> (Vec<ServiceId>, bool) {
-        let Ok(roles) = DomainRoles::new(services) else {
-            return (Vec::new(), false);
+    /// Real finish-dialog alternatives, deduped by the complete current context.
+    /// Each captured key is checked again inside the committing transaction.
+    pub fn deletion_choices(&self) -> Vec<DeletionChoice> {
+        let snapshot = self.store.snapshot();
+        let Ok(roles) = DomainRoles::new(&snapshot.services) else {
+            return Vec::new();
         };
+        let deleted = self.deleted();
+        if deleted.is_empty() {
+            return Vec::new();
+        }
+        let memberships = local_domains(&self.store, &deleted);
+        let preferences = self
+            .store
+            .read(hydrus_store::archive_delete_preferences::load)
+            .unwrap_or_default();
         let page: Vec<ServiceId> = self
             .location
             .current()
             .iter()
-            .filter_map(|key| services.by_key(key).ok().map(|s| s.id))
+            .filter_map(|key| snapshot.services.by_key(key).ok().map(|s| s.id))
             .filter(|id| roles.local.contains(id) || *id == roles.combined_local_media)
             .collect();
-        if !page.is_empty() {
-            let combined = page == [roles.combined_local_media];
-            return (page, combined);
-        }
-        let deleted = self.deleted();
-        let theirs: BTreeSet<ServiceId> = local_domains(&self.store, &deleted)
-            .into_iter()
-            .flatten()
-            .collect();
-        if theirs.len() > 1 {
-            (vec![roles.combined_local_media], true)
+        let own: BTreeSet<ServiceId> = memberships.iter().flatten().copied().collect();
+        let mut contexts = Vec::new();
+        if preferences.all_domains {
+            contexts.push(vec![roles.combined_local_media]);
         } else {
-            (theirs.into_iter().collect(), false)
+            if own.len() > 1 {
+                contexts.push(vec![roles.combined_local_media]);
+            }
+            if !page.is_empty() {
+                contexts.push(page);
+            }
+            contexts.extend(own.into_iter().map(|domain| vec![domain]));
         }
+        let mut seen = BTreeSet::new();
+        contexts
+            .into_iter()
+            .filter_map(|mut domains| {
+                domains.sort();
+                domains.dedup();
+                if !seen.insert(domains.clone()) {
+                    return None;
+                }
+                let combined = domains == [roles.combined_local_media];
+                let count = memberships
+                    .iter()
+                    .filter(|current| {
+                        if combined {
+                            !current.is_empty()
+                        } else {
+                            domains.iter().any(|domain| current.contains(domain))
+                        }
+                    })
+                    .count();
+                if count == 0 {
+                    return None;
+                }
+                let captured: Vec<(ServiceId, ServiceKey)> = domains
+                    .iter()
+                    .filter_map(|id| {
+                        snapshot
+                            .services
+                            .get(*id)
+                            .ok()
+                            .map(|service| (*id, service.key.clone()))
+                    })
+                    .collect();
+                let mut names: Vec<String> = domains
+                    .iter()
+                    .filter_map(|id| {
+                        snapshot
+                            .services
+                            .get(*id)
+                            .ok()
+                            .map(|service| service.name.clone())
+                    })
+                    .collect();
+                names.sort();
+                let location = if names.len() > 2 {
+                    format!(
+                        "{} services",
+                        hydrus_core::numbers::human_int(names.len() as u64)
+                    )
+                } else {
+                    names.join(", ")
+                };
+                let number = hydrus_core::numbers::human_int(count as u64);
+                let label = if combined {
+                    format!(
+                        "delete {} from {location}, sending directly to trash",
+                        if count == 1 {
+                            number
+                        } else {
+                            format!("all {number}")
+                        }
+                    )
+                } else {
+                    format!("delete {number} from {location}")
+                };
+                Some(DeletionChoice {
+                    label,
+                    domains: captured,
+                })
+            })
+            .collect()
+    }
+    /// The delay is applied only to a genuinely multiple-choice finish panel.
+    pub fn delay_multiple_choices(&self) -> bool {
+        self.deletion_choices().len() > 1
+            && self
+                .store
+                .read(hydrus_store::archive_delete_preferences::load)
+                .unwrap_or_default()
+                .delay_multiple
+    }
+    /// The optional kept-file caption shown above multiple deletion choices.
+    pub fn kept_label(&self) -> Option<String> {
+        let count = self.kept().len();
+        (count > 0).then(|| format!("keep {}", hydrus_core::numbers::human_int(count as u64)))
     }
 
     /// What committing would do, as the reference's dialog asks it:
     /// `keep 3 and delete 2 from my files?`.
     pub fn question(&self) -> String {
-        let snapshot = self.store.snapshot();
-        let (kept, deleted) = (self.kept().len(), self.deleted().len());
-        let keep =
-            (kept > 0).then(|| format!("keep {}", hydrus_core::numbers::human_int(kept as u64)));
-        let delete = (deleted > 0).then(|| {
-            let (domains, combined) = self.deletion_domains(&snapshot.services);
-            let names: Vec<String> = domains
-                .iter()
-                .filter_map(|d| snapshot.services.get(*d).ok().map(|s| s.name.clone()))
-                .collect();
-            let names = names.join(", ");
-            if combined {
-                let n = if deleted == 1 {
-                    "1".to_owned()
-                } else {
-                    format!("all {}", hydrus_core::numbers::human_int(deleted as u64))
-                };
-                format!("delete {n} from {names}, sending directly to trash")
-            } else {
-                format!(
-                    "delete {} from {names}",
-                    hydrus_core::numbers::human_int(deleted as u64)
-                )
-            }
-        });
+        let keep = self.kept_label();
+        let delete = self
+            .deletion_choices()
+            .into_iter()
+            .next()
+            .map(|choice| choice.label);
         match (keep, delete) {
             (Some(k), Some(d)) => format!("{k} and {d}?"),
             (Some(k), None) => format!("{k}?"),
             (None, Some(d)) => format!("{d}?"),
-            (None, None) => String::new(),
+            (None, None) => {
+                if self.has_decisions() {
+                    "ERROR: do not seem to have any actions at all!?".into()
+                } else {
+                    String::new()
+                }
+            }
         }
     }
 
@@ -280,18 +365,36 @@ impl ArchiveDeleteFilter {
 
     /// Report only deletees whose domain membership actually changed, for content-event pruning.
     pub fn commit_changed(&self) -> hydrus_store::Result<Vec<HashId>> {
-        let snapshot = self.store.snapshot();
-        let (domains, _) = self.deletion_domains(&snapshot.services);
+        let choice = self.deletion_choices().into_iter().next();
+        self.commit_choice_changed(choice.as_ref())
+    }
+    /// Commit one captured finish choice, validating service identity before any write.
+    pub fn commit_choice_changed(
+        &self,
+        choice: Option<&DeletionChoice>,
+    ) -> hydrus_store::Result<Vec<HashId>> {
+        let domains = choice.map_or_else(Vec::new, |choice| choice.domains.clone());
         let deleted = self.deleted();
         let kept = self.kept();
         self.store.write_content(move |w| {
+            let registry = hydrus_store::services::ServiceRegistry::load(w.conn())?;
+            let roles = DomainRoles::new(&registry)?;
+            for (id, key) in &domains {
+                if registry.by_key(key)?.id != *id
+                    || (!roles.local.contains(id) && *id != roles.combined_local_media)
+                {
+                    return Err(hydrus_store::error::StoreError::Invalid(
+                        "The deletion domain was replaced; reopen the finish choices.".into(),
+                    ));
+                }
+            }
             let lock: hydrus_store::delete_lock::DeleteLock =
                 hydrus_store::settings::get(w.conn())?;
             if lock.archived && lock.reinbox_after_archive_delete {
                 w.inbox(&deleted)?;
             }
             let mut changed = std::collections::BTreeSet::new();
-            for domain in domains {
+            for (domain, _) in domains {
                 // (only those in it, as the reference deletes them)
                 let current = w.filter_current(domain, &deleted)?;
                 w.delete_files(domain, &current, Some(DELETE_REASON))?;
