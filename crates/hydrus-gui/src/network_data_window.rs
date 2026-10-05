@@ -204,6 +204,7 @@ struct Edit {
     window: EditBandwidthRulesWindow,
 }
 struct Bandwidth {
+    store: Arc<Store>,
     window: BandwidthWindow,
     owner: std::rc::Weak<RefCell<Option<Rc<Bandwidth>>>>,
     worker: Worker,
@@ -222,6 +223,7 @@ struct Bandwidth {
 }
 impl Bandwidth {
     fn show(&self) {
+        let formatting = hydrus_gui_model::gui_format::preferences(&self.store);
         let review = self.review.borrow();
         let Some(review) = review.as_ref() else {
             return;
@@ -254,7 +256,7 @@ impl Bandwidth {
         let mut rows: Vec<_> = order
             .drain(..)
             .map(|c| {
-                let mut cells = review.row(&c, history, now());
+                let mut cells = review.row_with_format(&c, history, now(), &formatting);
                 if self.window.get_history() == 2 && !self.window.get_show_all() {
                     let (history, month) = cells.split_at_mut(5);
                     history[4].clone_from(&month[0]);
@@ -315,7 +317,7 @@ impl Bandwidth {
                     .into_iter()
                     .map(|bar| MonthlyBandwidthBar {
                         month: bar.month.into(),
-                        usage: hydrus_core::numbers::human_bytes(bar.bytes).into(),
+                        usage: hydrus_gui_model::gui_format::bytes(&formatting, bar.bytes).into(),
                         fraction: bar.fraction,
                     })
                     .collect::<Vec<_>>(),
@@ -325,14 +327,14 @@ impl Bandwidth {
                 .rules()
                 .iter()
                 .map(|r| {
-                    let cells = model::rule_row(*r);
+                    let cells = model::rule_row_with_format(*r, &formatting);
                     let used = tracker.usage(r.kind, r.time_delta, now());
                     format!(
                         "{} every {} ({} used)",
                         cells[0],
                         cells[1],
                         if r.kind == BandwidthType::Data {
-                            hydrus_core::numbers::human_bytes(used)
+                            hydrus_gui_model::gui_format::bytes(&formatting, used)
                         } else {
                             hydrus_core::numbers::human_int(used)
                         }
@@ -349,7 +351,7 @@ impl Bandwidth {
                     } else {
                         "has its own rules"
                     },
-                    model::all_usage_text(&tracker),
+                    model::all_usage_text_with_format(&tracker, &formatting),
                     rules
                 )
                 .into(),
@@ -435,11 +437,13 @@ impl Bandwidth {
         let draft = Rc::new(RefCell::new(RulesDraft::new(review, context)));
         let selection = Rc::new(RefCell::new(ListSelection::default()));
         let show: Rc<dyn Fn()> = Rc::new({
+            let store = self.store.clone();
             let weak = window.as_weak();
             let draft = draft.clone();
             let selection = selection.clone();
             move || {
                 if let Some(w) = weak.upgrade() {
+                    let formatting = hydrus_gui_model::gui_format::preferences(&store);
                     w.set_rows(ModelRc::new(VecModel::from(
                         draft
                             .borrow()
@@ -447,7 +451,10 @@ impl Bandwidth {
                             .iter()
                             .enumerate()
                             .map(|(i, r)| {
-                                row(model::rule_row(*r), selection.borrow().is_selected(i))
+                                row(
+                                    model::rule_row_with_format(*r, &formatting),
+                                    selection.borrow().is_selected(i),
+                                )
                             })
                             .collect::<Vec<_>>(),
                     )));
@@ -635,6 +642,7 @@ pub fn open_bandwidth(store: Arc<Store>, slots: &Slots) -> Result<BandwidthWindo
     }
     window.set_status("Loading bandwidth usage…".into());
     let state = Rc::new(Bandwidth {
+        store: store.clone(),
         window: window.clone_strong(),
         owner: Rc::downgrade(&slots.bandwidth),
         worker: Worker::start(store),
@@ -879,6 +887,7 @@ struct Jobs {
 }
 impl Jobs {
     fn show(&self) {
+        let formatting = hydrus_gui_model::gui_format::preferences(&self.store);
         let review = self.review.borrow();
         let Some(review) = review.as_ref() else {
             return;
@@ -904,7 +913,12 @@ impl Jobs {
         }
         self.window.set_rows(ModelRc::new(VecModel::from(
             jobs.iter()
-                .map(|j| row(model::job_row(j), self.selection.borrow().is_selected(j.id)))
+                .map(|j| {
+                    row(
+                        model::job_row_with_format(j, &formatting),
+                        self.selection.borrow().is_selected(j.id),
+                    )
+                })
                 .collect::<Vec<_>>(),
         )));
         self.window

@@ -172,6 +172,20 @@ fn staged_controls_reopen_and_reach_real_log_rows_and_page_size_status() {
             ui.get_status()
         );
         ui.invoke_select_none();
+        let png_slots = hydrus_gui::png_export_window::Slots::default();
+        let png = hydrus_gui::png_export_window::open(
+            &png_slots,
+            &store,
+            "x".repeat(1536),
+            std::rc::Rc::new(|| {}),
+        )
+        .unwrap();
+        assert_eq!(
+            png.get_payload_description(),
+            format!("String - {expected}")
+        );
+        png.invoke_action("close".into());
+        assert!(!png_slots.has_open());
         ui.invoke_open_file_log();
         let log = bound.file_log.borrow().as_ref().unwrap().clone_strong();
         if saved.iso {

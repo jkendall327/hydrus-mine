@@ -9,9 +9,10 @@ use std::collections::{HashSet, VecDeque};
 use std::time::{Duration, Instant};
 
 use hydrus_core::Mime;
-use hydrus_core::numbers::{human_bytes, human_int, value_range};
+use hydrus_core::numbers::{human_int, value_range};
 use hydrus_import::paths;
 use hydrus_media::MediaTools;
+use hydrus_store::settings::GuiFormatting;
 
 /// What parsing found a path to be (`ClientImportLocalFileParse.RESULT_*`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -53,9 +54,13 @@ impl Parsed {
     /// The list's row (`_ConvertPathToDisplayTuple`): #, path, filetype,
     /// size ("-" for a file missing or in use).
     pub fn row(&self) -> [String; 4] {
+        self.row_with_format(&GuiFormatting::default())
+    }
+
+    pub fn row_with_format(&self, formatting: &GuiFormatting) -> [String; 4] {
         let size = match self.result {
             Parse::Missing | Parse::Occupied => "-".to_owned(),
-            _ => human_bytes(self.size),
+            _ => crate::gui_format::bytes(formatting, self.size),
         };
         [
             human_int(self.index as u64),
