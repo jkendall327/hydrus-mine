@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "agent": "manage-ratings-incdec-middle-click",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 1,
+  "claims": [
+    {
+      "id": "audit-media-ratings-missing-count",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Manage Ratings: middle-clicking an inc/dec control opens edit value with a 0-1,000,000 spin box on its count; apply sets that count (RatingIncDec.mousePressEvent).",
+      "source": [
+        "crates/hydrus-gui/ui/edit_value.slint",
+        "crates/hydrus-gui/ui/manage_ratings.slint",
+        "crates/hydrus-gui/src/manage_ratings_window.rs",
+        "crates/hydrus-gui-model/src/ratings_editor.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/ratings_editor.rs::a_middle_click_count_sets_an_inc_dec_control_and_nothing_else"
+      ],
+      "limits": [
+        "No recording of the dialog; the viewer's own hover inc/dec middle click is a separate surface."
+      ]
+    }
+  ]
+}

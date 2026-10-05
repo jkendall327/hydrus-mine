@@ -142,6 +142,91 @@ impl<'c> RelationshipWriter<'c> {
         Ok(())
     }
 
+    /// Take `hash_id` out of its duplicate group and search it again
+    /// (`RemoveMediaIdFromDuplicateGroup`); a king takes the group apart.
+    pub fn remove_from_duplicate_group(&self, hash_id: HashId) -> Result<()> {
+        super::cache::changed(self.conn)?;
+        self.remove_group_member(hash_id)
+    }
+
+    /// Take `hash_id`'s duplicate group out of its alternates group and
+    /// search it again (`RemoveMediaIdFromAlternateGroup`).
+    pub fn remove_from_alternate_group(&self, hash_id: HashId) -> Result<()> {
+        if let Some(group) = super::group_of(self.conn, hash_id)? {
+            super::cache::changed(self.conn)?;
+            self.remove_alternate_member(group)?;
+        }
+        Ok(())
+    }
+
+    /// Dissolve the alternates groups of `hash_ids`, and every duplicate
+    /// group in them (`DissolveAlternatesGroupIdFromHashes`).
+    pub fn dissolve_alternate_groups_of(&self, hash_ids: &[HashId]) -> Result<()> {
+        super::cache::changed(self.conn)?;
+        for &hash_id in hash_ids {
+            if let Some(group) = super::group_of(self.conn, hash_id)?
+                && let Some(alt) = super::alternates_group_of(self.conn, group)?
+            {
+                self.dissolve_alt_group(alt)?;
+            }
+        }
+        Ok(())
+    }
+
+    /// Forget the false-positive relationships of `hash_ids`' alternates
+    /// groups: with any group, or (`internal`) only between each other
+    /// (`ClearAllFalsePositiveRelations` / `ClearInternalFalsePositiveRelations`);
+    /// the files involved are searched again.
+    pub fn clear_false_positives(&self, hash_ids: &[HashId], internal: bool) -> Result<()> {
+        let mut alts = BTreeSet::new();
+        for &hash_id in hash_ids {
+            if let Some(group) = super::group_of(self.conn, hash_id)?
+                && let Some(alt) = super::alternates_group_of(self.conn, group)?
+            {
+                alts.insert(alt);
+            }
+        }
+        if alts.is_empty() {
+            return Ok(());
+        }
+        super::cache::changed(self.conn)?;
+        let pairs: Vec<(AltGroupId, AltGroupId)> = {
+            let mut stmt = self.conn.prepare_cached(
+                "SELECT smaller_alt_group_id, larger_alt_group_id FROM false_positive_pairs",
+            )?;
+            let rows = stmt.query_map([], |r| Ok((r.get(0)?, r.get(1)?)))?;
+            rows.collect::<rusqlite::Result<_>>()?
+        };
+        let mut touched = BTreeSet::new();
+        let mut delete = self.conn.prepare_cached(
+            "DELETE FROM false_positive_pairs WHERE smaller_alt_group_id = ? AND larger_alt_group_id = ?",
+        )?;
+        for (a, b) in pairs {
+            let hit = if internal {
+                alts.contains(&a) && alts.contains(&b)
+            } else {
+                alts.contains(&a) || alts.contains(&b)
+            };
+            if hit {
+                delete.execute(params![a, b])?;
+                touched.insert(a);
+                touched.insert(b);
+            }
+        }
+        for alt in touched {
+            for group in super::groups_in_alternates_group(self.conn, alt)? {
+                self.reset_search(&super::members_of(self.conn, group)?)?;
+            }
+        }
+        Ok(())
+    }
+
+    /// Search `hash_ids` for similar files again, keeping what was found
+    /// (`ResetPotentialSearchStatus`).
+    pub fn reset_potential_search(&self, hash_ids: &[HashId]) -> Result<()> {
+        self.reset_search(hash_ids)
+    }
+
     /// Drop every potential pair involving `hash_id`'s duplicate group.
     pub fn remove_potentials(&self, hash_id: HashId) -> Result<()> {
         if let Some(group) = super::group_of(self.conn, hash_id)? {

@@ -55,6 +55,7 @@ export { ManageTagsWindow } from "manage_tags.slint";
 export { ManageNotesWindow } from "manage_notes.slint";
 export { ManageUrlsWindow } from "manage_urls.slint";
 export { ManageRatingsWindow } from "manage_ratings.slint";
+export { EditValueWindow } from "edit_value.slint";
 export { DateTimeEditorWindow, ManageTimesWindow, TimeRow } from "manage_times.slint";
 export { ExportFilesWindow } from "export_files.slint";
 export { EmbeddedMetadataWindow } from "embedded_metadata.slint";
@@ -1632,6 +1633,99 @@ export component MainWindow inherits Window {
                             for row in root.thumbnail-menu.manage: MenuItem {
                                 title: row.label;
                                 activated => { root.menu-chosen(row.id); }
+                            }
+                            if root.thumbnail-menu.has-relationships: Menu {
+                                title: "file relationships";
+                                for row in root.thumbnail-menu.rel-b1: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                if root.thumbnail-menu.rel-b2.length > 0: MenuSeparator { }
+                                for row in root.thumbnail-menu.rel-b2: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                if root.thumbnail-menu.rel-b3.length > 0: MenuSeparator { }
+                                for row in root.thumbnail-menu.rel-b3: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                if root.thumbnail-menu.rel-b4.length > 0: MenuSeparator { }
+                                for row in root.thumbnail-menu.rel-b4: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                if root.thumbnail-menu.rel-merge.length > 0: MenuSeparator { }
+                                if root.thumbnail-menu.rel-merge.length > 0: Menu {
+                                    title: "edit default duplicate metadata merge options";
+                                    for row in root.thumbnail-menu.rel-merge: MenuItem {
+                                        title: row.label;
+                                        activated => { root.menu-chosen(row.id); }
+                                    }
+                                }
+                                if root.thumbnail-menu.rel-after.length > 0: MenuSeparator { }
+                                for row in root.thumbnail-menu.rel-after: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                if root.thumbnail-menu.rel-remove-one.length > 0: Menu {
+                                    title: "remove for this file";
+                                    for row in root.thumbnail-menu.rel-remove-one: MenuItem {
+                                        title: row.label;
+                                        activated => { root.menu-chosen(row.id); }
+                                    }
+                                }
+                                if root.thumbnail-menu.rel-reset-one-a.length + root.thumbnail-menu.rel-reset-one-b.length > 0: Menu {
+                                    title: "reset for this file";
+                                    for row in root.thumbnail-menu.rel-reset-one-a: MenuItem {
+                                        title: row.label;
+                                        activated => { root.menu-chosen(row.id); }
+                                    }
+                                    if root.thumbnail-menu.rel-reset-one-b.length > 0: MenuSeparator { }
+                                    for row in root.thumbnail-menu.rel-reset-one-b: MenuItem {
+                                        title: row.label;
+                                        activated => { root.menu-chosen(row.id); }
+                                    }
+                                }
+                                if root.thumbnail-menu.rel-remove-all.length > 0: Menu {
+                                    title: "remove for all selected";
+                                    for row in root.thumbnail-menu.rel-remove-all: MenuItem {
+                                        title: row.label;
+                                        activated => { root.menu-chosen(row.id); }
+                                    }
+                                }
+                                if root.thumbnail-menu.rel-reset-all-a.length > 0: Menu {
+                                    title: "advanced: reset for all selected";
+                                    for row in root.thumbnail-menu.rel-reset-all-a: MenuItem {
+                                        title: row.label;
+                                        activated => { root.menu-chosen(row.id); }
+                                    }
+                                    if root.thumbnail-menu.rel-reset-all-b.length > 0: MenuSeparator { }
+                                    for row in root.thumbnail-menu.rel-reset-all-b: MenuItem {
+                                        title: row.label;
+                                        activated => { root.menu-chosen(row.id); }
+                                    }
+                                    if root.thumbnail-menu.rel-reset-all-c.length > 0: MenuSeparator { }
+                                    for row in root.thumbnail-menu.rel-reset-all-c: MenuItem {
+                                        title: row.label;
+                                        activated => { root.menu-chosen(row.id); }
+                                    }
+                                }
+                            }
+                            if root.thumbnail-menu.manage-maintenance.length > 0: Menu {
+                                title: "maintenance";
+                                for row in root.thumbnail-menu.manage-maintenance: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                            }
+                            if root.thumbnail-menu.manage-viewing.length > 0: Menu {
+                                title: "viewing stats";
+                                for row in root.thumbnail-menu.manage-viewing: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
                             }
                         }
                         if root.thumbnail-menu.locations-current.length + root.thumbnail-menu.locations-copy.length + root.thumbnail-menu.locations-move.length + root.thumbnail-menu.locations-merge.length > 0: Menu {

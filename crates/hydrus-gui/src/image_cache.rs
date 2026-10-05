@@ -150,6 +150,15 @@ impl Handle {
             .clone();
         clock.map_or_else(|| self.0.started.elapsed(), |clock| clock())
     }
+    /// Forget every entry (Help > debug > clear all rendering caches).
+    pub(crate) fn clear(&self) {
+        self.0
+            .data
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .cache
+            .clear();
+    }
     pub(crate) fn retire(&self) {
         let mut data = self
             .0
@@ -581,6 +590,10 @@ impl Control {
     /// Read saved settings and maintain this live cache without changing presentation.
     pub fn refresh(&self) {
         self.0.refresh();
+    }
+    /// Forget every cached image, keeping the cache live.
+    pub fn clear(&self) {
+        self.0.cache.clear();
     }
     /// Permanently release entries and prevent retained handles from admitting decodes.
     pub fn retire(&self) {

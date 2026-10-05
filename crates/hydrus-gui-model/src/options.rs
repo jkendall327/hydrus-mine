@@ -3929,6 +3929,12 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s| s.viewer_prefetch.next as i64,
                             |s, v| s.viewer_prefetch.next = v as u64,
                         ),
+                        int(
+                            "Num pairs to prefetch in Duplicate Filter:",
+                            (0, 25),
+                            |s| s.viewer_prefetch.duplicate_pairs.min(25) as i64,
+                            |s, v| s.viewer_prefetch.duplicate_pairs = v as u64,
+                        ),
                     ],
                 ),
                 boxed(

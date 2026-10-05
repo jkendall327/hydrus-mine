@@ -168,6 +168,51 @@ pub(crate) fn open(
             refresh();
         }
     });
+    // an inc/dec control's middle click: "edit value", its count typed
+    let editing: Rc<RefCell<Option<crate::EditValueWindow>>> = Rc::default();
+    window.on_rating_middle({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let editing = editing.clone();
+        move |row| {
+            let Ok(row) = usize::try_from(row) else {
+                return;
+            };
+            let Some(count) = state.borrow().editor.count(row) else {
+                return;
+            };
+            let Ok(edit) = crate::EditValueWindow::new() else {
+                return;
+            };
+            edit.set_value(i32::try_from(count).unwrap_or(i32::MAX));
+            edit.on_apply({
+                let weak = edit.as_weak();
+                let state = state.clone();
+                let refresh = refresh.clone();
+                move || {
+                    if let Some(edit) = weak.upgrade() {
+                        state
+                            .borrow_mut()
+                            .editor
+                            .set_count(row, i64::from(edit.get_value()));
+                        let _ = edit.hide();
+                        refresh();
+                    }
+                }
+            });
+            edit.on_cancel({
+                let weak = edit.as_weak();
+                move || {
+                    if let Some(edit) = weak.upgrade() {
+                        let _ = edit.hide();
+                    }
+                }
+            });
+            if edit.show().is_ok() {
+                *editing.borrow_mut() = Some(edit);
+            }
+        }
+    });
     window.on_copy({
         let state = state.clone();
         let refresh = refresh.clone();

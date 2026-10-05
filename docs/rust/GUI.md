@@ -4071,8 +4071,9 @@ question PNG are authored; hosted Rust execution and rendered inspection remain
 pending. This covers the selected thumbnail action only.
 
 Options → speed and memory now stages the per-viewer image-cache percentage
-(default 25%, 10–50%) and previous/next image-prefetch counts (defaults 2/3,
-0–50), with the reference pixel estimate and over-budget warning. Cancel,
+(default 25%, 10–50%), previous/next image-prefetch counts (defaults 2/3,
+0–50) and the duplicate filter's pairs to prefetch (default 3, 0–25), with the
+reference pixel estimate and over-budget warning. Cancel,
 reopen, imported ClientOptions, typed native precedence and per-field concurrent
 saves apply to these controls. A passive normalization does not overwrite a
 concurrent explicit setting. Retained hidden Options or a parent with an owned
@@ -4215,6 +4216,9 @@ sync processing" (whether to work in idle and normal time, and idle, normal
 and work-hard timings) and "deferred table delete" (idle, normal and
 work-hard timings) boxes, with the reference's defaults and ranges, saved
 with Options.
+Tags > sync's "sync tag display during idle time" and "during normal time"
+switch the same sibling/parent sync settings, and "sync now" says "Seems
+like we are all synced already!", as the reference does with no work left.
 
 ## Thumbnail manage > maintenance and viewing stats
 
@@ -4276,3 +4280,46 @@ all of these. "quick and dirty processing" shows a random potential group in the
 page and sets the shown files as same quality, alternates or false positives
 after the reference's questions, then shows another group.
 `tests/model/duplicates_filtering.rs` covers the model.
+
+## Help > debug actions
+
+Help > debug now also has profiling > "what is this?" (the reference's
+explanation), gui actions > "make a modal popup in five seconds" and its
+non-cancellable twin (a "debug modal job" popup counting down ten seconds),
+"make a QMessageBox" (its warning), "make some popups" (the reference's test
+popups: six numbered messages, the very long message and title, a client API
+file popup, two mergeable file popups, the unicode one, a pausable and
+cancellable job with a gauge, an error, then three delayed messages),
+"reset multi-column list settings to default" (its question) and "save 'last
+session' gui session"; data actions > "flush log", "force database commit",
+"show env" (every environment variable in a popup and the log) and "simulate
+program exit signal" (leaves the event loop at once); and memory actions >
+"clear all rendering caches" (the image cache and thumbnails).
+`tests/model/debug_actions.rs` checks the texts and popups;
+`tests/model/main_menu.rs` the menu against the recording.
+
+## Pages > weight report
+
+Pages > weight > "total session weight: N" now explains the number as the
+reference does: the open pages' count and total, their file and URL weights
+(a file 1, a URL 20), and the closed pages' (in the undo list) total, file
+and URL weights. `tests/model/session_weight.rs` checks the wording.
+
+## Thumbnail manage > file relationships
+
+A thumbnail's manage menu now has the reference's "file relationships"
+submenu for the focused file: whether it is in a duplicate group and is its
+best file (with "show the best quality file of this file's group"), "view N
+duplicates / alternates / not related/false positive / potential duplicates"
+(each opening a page of them), in the page's domain and, where it differs,
+hydrus local file storage's. It sets the focused file as its group's best;
+with several selected, sets it better than the others, all as same quality,
+all as alternates or all pair combinations as potential duplicates, and edits
+the default merge options. "remove for this file" and "reset for this file"
+take the file out of its duplicate or alternate group, dissolve them, clear
+false positives, search it again or drop its potentials; "remove for all
+selected" and "advanced: reset for all selected" do so for the selection.
+The manage menu's maintenance and viewing stats submenus now show in the
+thumbnail menu too (they were dropped by its template before).
+`tests/model/file_relationships.rs` checks the menu and its store actions.
+

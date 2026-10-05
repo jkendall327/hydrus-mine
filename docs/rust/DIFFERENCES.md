@@ -423,8 +423,9 @@ search.
   A numerical rating pasted as a whole number (`1`) is copied back as a
   float (`1.0`), and an inc/dec count pasted as a fraction is ignored
   (the reference keeps it). Its controls are a fixed size, not the
-  options' dialog rating size, and an inc/dec control's middle click
-  (typing a count) isn't there; its shortcut to apply isn't bound.
+  options' dialog rating size; its shortcut to apply isn't bound. An inc/dec
+  control's middle click opens "edit value" with a spin box (0 to
+  1,000,000) as the reference does.
 - **The "manage times" dialog**'s date-time editor takes the date and
   time typed ("yyyy-MM-dd", "hh:mm:ss.zzz") rather than from a calendar
   and a time box, and the cascading step as milliseconds rather than
@@ -872,6 +873,10 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   rather than in background work. Their boxes lack the reference's one-line
   explanations, aren't collapsible, and aren't imported from a legacy
   client's options.
+- **Tags > sync**: hydrus-rs applies siblings and parents as it writes, so
+  "sync now" always finds nothing to do, and its idle/normal switches are
+  kept without a consumer. "review current sibling/parent sync" isn't
+  there yet.
 - **The duplicates page's preparation tab**'s "regenerate search tree"
   and "regenerate search numbers" ask the reference's questions but then
   only refresh: hydrus-rs builds its search index afresh and counts
@@ -3466,3 +3471,27 @@ manual save-last-session action and wider debug GUI/style families remain unclai
 - Setting the shown files' relationship applies each pair once with the default
   merge options; the reference runs its merges twice so content propagates
   between all files.
+
+## Help > debug actions
+
+- "make some popups" leaves out the reference's popups whose buttons call
+  back into the client (user call test, auto-account creation, gap
+  downloader) and its network-job popup, and the test job's subjob doesn't
+  start pulsing after two seconds.
+- The "modal" popups are ordinary popups: hydrus-rs has no modal popup
+  dialog.
+- "reset multi-column list settings to default" asks, then has nothing to
+  reset: hydrus-rs doesn't save list column widths.
+- "force database commit" checkpoints SQLite's write-ahead log (hydrus-rs
+  commits each write as it happens); "flush log" writes its line to
+  standard error.
+
+## Thumbnail manage > file relationships
+
+- "set a relationship with custom metadata merge options" and "set selected
+  collections as groups of alternates" aren't offered yet. The viewer's
+  menu doesn't have the submenu yet.
+- A group's "best quality file" is offered when the group has other files in
+  the page's domain; the reference counts its members per domain the same
+  way, but hydrus-rs doesn't distinguish a king outside the domain.
+

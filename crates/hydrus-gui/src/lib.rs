@@ -34,6 +34,7 @@ pub mod client_exit;
 pub mod clipboard_monitor;
 pub mod command_palette_window;
 pub mod daemon;
+mod debug_actions;
 pub mod debug_fetch;
 pub mod debug_long_popup;
 pub mod debug_session_reload;
@@ -2884,6 +2885,24 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     }
                 })
             },
+            debug: {
+                let context = debug_actions::Context {
+                    pages: pages.clone(),
+                    ask: {
+                        let ask = ask.clone();
+                        Rc::new(move |question, then| ask(Asked::Then(question, then)))
+                    },
+                    clear_caches: Rc::new({
+                        let image_cache = image_cache.clone();
+                        let rows = rows.clone();
+                        move || {
+                            image_cache.clear();
+                            rows.clear_thumbnail_cache();
+                        }
+                    }),
+                };
+                Rc::new(move |action| debug_actions::run(&context, action))
+            },
             clear_thumbnail_cache: Rc::new({
                 let rows = rows.clone();
                 let weak = window.as_weak();
@@ -4504,7 +4523,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 .map(|i| page.results()[i])
                 .and_then(|f| page.store().read(|c| hydrus_store::media::notes(c, f)).ok())
                 .map(|n| n.len());
-            let entries = thumbnail_menu::menu(
+            let mut entries = thumbnail_menu::menu(
                 &snapshot.services,
                 &files,
                 &selected,
@@ -4515,6 +4534,35 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 rearrange,
                 notes,
             );
+            // manage > file relationships, for the focused file
+            if let Some(focused) = page.focused().map(|i| page.results()[i])
+                && !selected.is_empty()
+            {
+                use hydrus_gui_model::file_relationships as relationships;
+                let scope = relationships::scope_of(page.store(), page.location());
+                match relationships::read(page.store(), &scope, focused) {
+                    Ok((here, local)) => {
+                        let advanced = page
+                            .store()
+                            .read(
+                                hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>,
+                            )
+                            .is_ok_and(|a| a.0);
+                        let menu = relationships::menu(
+                            &here,
+                            local.as_ref().map(|l| (l, "hydrus local file storage")),
+                            thumbnail_menu::can_be_searched(page.store(), focused),
+                            selected.len(),
+                            advanced,
+                        );
+                        thumbnail_menu::add_relationships(
+                            &mut entries,
+                            thumbnail_menu::relationships_entry(&menu),
+                        );
+                    }
+                    Err(e) => eprintln!("could not read the file's relationships: {e}"),
+                }
+            }
             let slots = thumbnail_menu::Slots::new(&entries);
             let mut actions = Vec::new();
             let window_menu = thumbnail_menu_rows(&slots, &mut actions);
@@ -4526,7 +4574,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    let relationship_merge_options: merge_options_window::Slot = Rc::default();
     window.on_menu_chosen({
+        let relationship_merge_options = relationship_merge_options.clone();
         let selected_delete_epoch = selected_delete_epoch.clone();
         let selected_delete_menu_epoch = selected_delete_menu_epoch.clone();
         let delete_files = Rc::downgrade(&delete_files);
@@ -4877,6 +4927,61 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         page.store(),
                         page.selected_files(),
                     );
+                }
+                Action::Relationship(act) => {
+                    use hydrus_gui_model::file_relationships::{self as relationships, Act};
+                    let page_ref = page.borrow();
+                    let Some(focused) = page_ref.focused().map(|i| page_ref.results()[i]) else {
+                        return;
+                    };
+                    let store = page_ref.store().clone();
+                    match act {
+                        Act::Label => {}
+                        Act::MergeOptions(relationship) => {
+                            merge_options_window::edit_default(
+                                &store,
+                                relationship,
+                                &relationship_merge_options,
+                            );
+                        }
+                        Act::ShowKing { .. } | Act::View { .. } => {
+                            let scope = relationships::scope_of(&store, page_ref.location());
+                            match relationships::files_to_show(&store, &scope, focused, act) {
+                                Ok(files) if !files.is_empty() => {
+                                    let location = match act {
+                                        Act::ShowKing { local: true }
+                                        | Act::View { local: true, .. } => {
+                                            hydrus_search::LocationContext::single(
+                                                hydrus_core::ServiceKey::new(
+                                                    hydrus_core::service::builtin_keys::HYDRUS_LOCAL_FILE_STORAGE,
+                                                ),
+                                            )
+                                        }
+                                        _ => page_ref.location().clone(),
+                                    };
+                                    drop(page_ref);
+                                    change_pages(&|pages| {
+                                        pages.open_files(location.clone(), files.clone(), None, None);
+                                        Ok(())
+                                    });
+                                }
+                                Ok(_) => {}
+                                Err(e) => eprintln!("could not find the files: {e}"),
+                            }
+                        }
+                        _ => {
+                            let selected = page_ref.selected_files();
+                            let advanced = store
+                                .read(hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>)
+                                .is_ok_and(|a| a.0);
+                            drop(page_ref);
+                            if let Err(e) =
+                                relationships::run(&store, act, focused, &selected, advanced)
+                            {
+                                eprintln!("could not change the files' relationships: {e}");
+                            }
+                        }
+                    }
                 }
                 _ => {
                     let page = page.borrow();
@@ -5385,6 +5490,8 @@ fn thumbnail_menu_rows(
     let share = slots.share.clone().unwrap_or_default();
     let (share_hashes_title, share_hashes) = share.hashes.clone().unwrap_or_default();
     let (share_hash_title, share_hash) = share.hash.clone().unwrap_or_default();
+    let manage_menus = thumbnail_menu::ManageMenus::new(&slots.manage_menus);
+    let relationships = manage_menus.relationships.clone().unwrap_or_default();
     let local_rows = |title: &str| {
         let entries = slots
             .locations
@@ -5452,6 +5559,61 @@ fn thumbnail_menu_rows(
         delete_menu,
         trash: rows(&slots.trash),
         manage: rows(&slots.manage),
+        manage_maintenance: rows(&manage_menus.maintenance),
+        manage_viewing: rows(&manage_menus.viewing),
+        has_relationships: manage_menus.relationships.is_some(),
+        rel_b1: rows(relationships.before.first().map_or(&[][..], Vec::as_slice)),
+        rel_b2: rows(relationships.before.get(1).map_or(&[][..], Vec::as_slice)),
+        rel_b3: rows(relationships.before.get(2).map_or(&[][..], Vec::as_slice)),
+        rel_b4: rows(
+            &relationships
+                .before
+                .iter()
+                .skip(3)
+                .flatten()
+                .cloned()
+                .collect::<Vec<_>>(),
+        ),
+        rel_merge: rows(&relationships.merge),
+        rel_after: rows(&relationships.after),
+        rel_remove_one: rows(&relationships.remove_one),
+        rel_reset_one_a: rows(
+            relationships
+                .reset_one
+                .first()
+                .map_or(&[][..], Vec::as_slice),
+        ),
+        rel_reset_one_b: rows(
+            &relationships
+                .reset_one
+                .iter()
+                .skip(1)
+                .flatten()
+                .cloned()
+                .collect::<Vec<_>>(),
+        ),
+        rel_remove_all: rows(&relationships.remove_all),
+        rel_reset_all_a: rows(
+            relationships
+                .reset_all
+                .first()
+                .map_or(&[][..], Vec::as_slice),
+        ),
+        rel_reset_all_b: rows(
+            relationships
+                .reset_all
+                .get(1)
+                .map_or(&[][..], Vec::as_slice),
+        ),
+        rel_reset_all_c: rows(
+            &relationships
+                .reset_all
+                .iter()
+                .skip(2)
+                .flatten()
+                .cloned()
+                .collect::<Vec<_>>(),
+        ),
         has_urls: slots.urls.is_some(),
         urls_manage: id(Action::ManageUrls, "manage"),
         has_url_lists: urls.lists,

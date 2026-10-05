@@ -2984,13 +2984,31 @@ impl Pages {
         self.weight_for_pages(self.session.pages.clone())
     }
 
-    fn weight_for_pages(&self, mut pages: Vec<Page>) -> u64 {
-        fn walk(me: &Pages, pages: &[Page], files: &mut u64, queues: &mut Vec<i64>) {
+    fn weight_for_pages(&self, pages: Vec<Page>) -> u64 {
+        let (files, seeds) = self.hashes_and_seeds(pages, &[]);
+        files + 20 * seeds
+    }
+
+    /// The files the pages show and the URLs (file and gallery seeds) their
+    /// downloaders hold (`GetTotalNumHashesAndSeeds`), the pages opened
+    /// being those open or among `also` (a closed page's).
+    fn hashes_and_seeds(
+        &self,
+        mut pages: Vec<Page>,
+        also: &[(PageKey, Rc<RefCell<SearchPage>>)],
+    ) -> (u64, u64) {
+        fn walk(
+            me: &Pages,
+            pages: &[Page],
+            also: &[(PageKey, Rc<RefCell<SearchPage>>)],
+            files: &mut u64,
+            queues: &mut Vec<i64>,
+        ) {
             for page in pages {
                 match &page.content {
-                    PageContent::Pages(children) => walk(me, children, files, queues),
+                    PageContent::Pages(children) => walk(me, children, also, files, queues),
                     content => {
-                        *files += me.file_summary(page).0 as u64;
+                        *files += me.file_summary_with(page, also).0 as u64;
                         if let PageContent::Downloader { queues: q, .. } = content {
                             queues.extend(q);
                         }
@@ -2999,8 +3017,10 @@ impl Pages {
             }
         }
         refresh_contents(&mut pages, &self.open);
+        let closed_open: HashMap<PageKey, Rc<RefCell<SearchPage>>> = also.iter().cloned().collect();
+        refresh_contents(&mut pages, &closed_open);
         let (mut files, mut queues) = (0, Vec::new());
-        walk(self, &pages, &mut files, &mut queues);
+        walk(self, &pages, also, &mut files, &mut queues);
         let seeds: u64 = self
             .store
             .read(|conn| {
@@ -3018,7 +3038,23 @@ impl Pages {
                 Ok(seeds)
             })
             .unwrap_or(0);
-        files + 20 * seeds
+        (files, seeds)
+    }
+
+    /// Pages > weight > "total session weight"'s information
+    /// (`_ShowPageWeightInfo`): the open pages' and the closed ones'.
+    pub fn weight_report(&self) -> String {
+        let active = self.hashes_and_seeds(self.session.pages.clone(), &[]);
+        let closed = self.closed.iter().fold((0, 0), |(f, s), closed| {
+            let (cf, cs) = self.hashes_and_seeds(vec![closed.page.clone()], &closed.open);
+            (f + cf, s + cs)
+        });
+        hydrus_gui_model::session_weight::report(
+            self.page_count(),
+            active,
+            self.closed.len(),
+            closed,
+        )
     }
 
     /// Note the page shown in the history (the reference's

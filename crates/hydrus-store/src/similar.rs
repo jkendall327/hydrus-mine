@@ -425,7 +425,9 @@ impl crate::settings::Setting for SimilarFilesSettings {
 /// the search is on; how many were searched.
 pub fn run_search(store: &crate::Store, batch: usize) -> Result<usize> {
     let settings: SimilarFilesSettings = store.read(crate::settings::get)?;
-    // (there is no "idle" without a GUI: either switch runs it)
+    // (the daemon chooses idle or normal time's switch and pace from the
+    // GUI's idle state before calling; this only stops a search no switch
+    // allows)
     if !settings.during_active && !settings.during_idle && !settings.work_hard {
         return Ok(0);
     }

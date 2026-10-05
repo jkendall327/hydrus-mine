@@ -117,6 +117,8 @@ pub enum Action {
     Rearrange(Rearrange),
     /// One of the media viewer's own entries.
     Viewer(crate::viewer_menu::ViewerAction),
+    /// A manage > file relationships entry.
+    Relationship(hydrus_gui_model::file_relationships::Act),
 }
 
 /// Where rearranging moves the selected thumbnails (`MOVE_HOME`,
@@ -641,6 +643,12 @@ pub fn open_menu(store: &Store, focused: Option<HashId>, num_selected: usize) ->
 
 /// The sha256 hashes of those of `files` with perceptual hashes (still
 /// images), in their order.
+/// Whether a file can be searched for similar files (it has a perceptual
+/// hash: `FILES_THAT_HAVE_PERCEPTUAL_HASH`).
+pub fn can_be_searched(store: &Store, file: HashId) -> bool {
+    !perceptual_hashed(store, &[file]).is_empty()
+}
+
 fn perceptual_hashed(store: &Store, files: &[HashId]) -> Vec<hydrus_core::Sha256> {
     let Ok(basic) = store.read(|c| hydrus_store::media::load_basic(c, files)) else {
         return Vec::new();
@@ -819,6 +827,74 @@ pub fn maintenance_entries() -> Vec<Entry> {
             vec![Entry::Item("clear".into(), Action::ClearViewingStats)],
         ),
     ]
+}
+
+/// The manage > "file relationships" submenu of `menu` (hydrus-gui-model's
+/// `file_relationships`): its runs between separators and its submenus.
+pub fn relationships_entry(menu: &hydrus_gui_model::file_relationships::Menu) -> Entry {
+    let item = |(label, act): &(String, hydrus_gui_model::file_relationships::Act)| match act {
+        hydrus_gui_model::file_relationships::Act::Label => Entry::Label(label.clone()),
+        act => Entry::Item(label.clone(), Action::Relationship(*act)),
+    };
+    let runs = |runs: &[Vec<(String, hydrus_gui_model::file_relationships::Act)>]| {
+        let mut out = Vec::new();
+        for run in runs.iter().filter(|r| !r.is_empty()) {
+            separate(&mut out);
+            out.extend(run.iter().map(item));
+        }
+        out
+    };
+    let mut entries = runs(&menu.before);
+    if !menu.merge.is_empty() {
+        separate(&mut entries);
+        entries.push(Entry::Menu(
+            "edit default duplicate metadata merge options".into(),
+            menu.merge.iter().map(item).collect(),
+        ));
+    }
+    let after = runs(&menu.after);
+    if !after.is_empty() {
+        separate(&mut entries);
+        entries.extend(after);
+    }
+    separate(&mut entries);
+    for (title, inner) in [
+        (
+            "remove for this file",
+            menu.remove_one.iter().map(item).collect(),
+        ),
+        ("reset for this file", runs(&menu.reset_one)),
+        (
+            "remove for all selected",
+            menu.remove_all.iter().map(item).collect(),
+        ),
+        ("advanced: reset for all selected", runs(&menu.reset_all)),
+    ] {
+        if !inner.is_empty() {
+            entries.push(Entry::Menu(title.into(), inner));
+        }
+    }
+    while entries.last() == Some(&Entry::Separator) {
+        entries.pop();
+    }
+    Entry::Menu("file relationships".into(), entries)
+}
+
+/// Put `relationships` into the manage submenu of `entries`, before its
+/// maintenance submenu, as the reference orders them.
+pub fn add_relationships(entries: &mut [Entry], relationships: Entry) {
+    for entry in entries.iter_mut() {
+        if let Entry::Menu(title, inner) = entry
+            && title == "manage"
+        {
+            let at = inner
+                .iter()
+                .position(|e| matches!(e, Entry::Menu(t, _) if t == "maintenance"))
+                .unwrap_or(inner.len());
+            inner.insert(at, relationships);
+            return;
+        }
+    }
 }
 
 /// The urls menu (`AddKnownURLsViewCopyMenu`), less forcing a metadata
@@ -1317,10 +1393,114 @@ pub struct Slots {
     /// Deleting physically and undeleting.
     pub trash: Vec<SlotItem>,
     pub manage: Vec<SlotItem>,
+    /// The manage menu's submenus (maintenance, viewing stats, file
+    /// relationships).
+    pub manage_menus: Vec<Entry>,
     pub locations: Vec<Entry>,
     pub urls: Option<UrlsSlots>,
     pub open: Option<OpenSlots>,
     pub share: Option<ShareSlots>,
+}
+
+/// The manage menu's submenus in the template: maintenance's and viewing
+/// stats' items, and file relationships' parts.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct ManageMenus {
+    pub maintenance: Vec<SlotItem>,
+    pub viewing: Vec<SlotItem>,
+    pub relationships: Option<RelationshipSlots>,
+}
+
+/// The file relationships submenu in the template: the runs before the
+/// merge options submenu, that submenu, the run after it, and the remove
+/// and reset submenus (theirs between separators).
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct RelationshipSlots {
+    pub before: Vec<Vec<SlotItem>>,
+    pub merge: Vec<SlotItem>,
+    pub after: Vec<SlotItem>,
+    pub remove_one: Vec<SlotItem>,
+    pub reset_one: Vec<Vec<SlotItem>>,
+    pub remove_all: Vec<SlotItem>,
+    pub reset_all: Vec<Vec<SlotItem>>,
+}
+
+/// An item or label as a slot item (a label copies itself).
+fn slot_item(entry: &Entry) -> Option<SlotItem> {
+    match entry {
+        Entry::Item(label, action) => Some((label.clone(), *action)),
+        Entry::Label(label) => Some((label.clone(), Action::Copy)),
+        _ => None,
+    }
+}
+
+/// A submenu's runs between separators, labels kept.
+fn runs(entries: &[Entry]) -> Vec<Vec<SlotItem>> {
+    let mut out = vec![Vec::new()];
+    for entry in entries {
+        if *entry == Entry::Separator {
+            out.push(Vec::new());
+        } else if let (Some(item), Some(run)) = (slot_item(entry), out.last_mut()) {
+            run.push(item);
+        }
+    }
+    out.retain(|run| !run.is_empty());
+    out
+}
+
+impl ManageMenus {
+    pub fn new(menus: &[Entry]) -> Self {
+        let mut out = Self::default();
+        for menu in menus {
+            let Entry::Menu(title, inner) = menu else {
+                continue;
+            };
+            match title.as_str() {
+                "maintenance" => out.maintenance = items(inner),
+                "viewing stats" => out.viewing = items(inner),
+                "file relationships" => out.relationships = Some(RelationshipSlots::new(inner)),
+                _ => {}
+            }
+        }
+        out
+    }
+}
+
+impl RelationshipSlots {
+    fn new(entries: &[Entry]) -> Self {
+        let mut out = Self::default();
+        let mut run: Vec<Entry> = Vec::new();
+        let mut merged = false;
+        let flush = |run: &mut Vec<Entry>, out: &mut Self, merged: bool| {
+            if merged {
+                out.after.extend(run.iter().filter_map(slot_item));
+            } else {
+                out.before.extend(runs(run));
+            }
+            run.clear();
+        };
+        for entry in entries {
+            match entry {
+                Entry::Menu(title, inner) => {
+                    flush(&mut run, &mut out, merged);
+                    let flat = || inner.iter().filter_map(slot_item).collect::<Vec<_>>();
+                    match title.as_str() {
+                        "edit default duplicate metadata merge options" => {
+                            out.merge = flat();
+                            merged = true;
+                        }
+                        "remove for this file" => out.remove_one = flat(),
+                        "reset for this file" => out.reset_one = runs(inner),
+                        "remove for all selected" => out.remove_all = flat(),
+                        _ => out.reset_all = runs(inner),
+                    }
+                }
+                other => run.push(other.clone()),
+            }
+        }
+        flush(&mut run, &mut out, merged);
+        out
+    }
 }
 
 /// The urls menu in the template: manage, then, if there are URLs to
@@ -1686,7 +1866,14 @@ impl Slots {
                     "select" => slots.select = groups(inner),
                     "remove" => slots.remove = groups(inner),
                     "rearrange" => slots.rearrange = items(inner),
-                    "manage" => slots.manage = items(inner),
+                    "manage" => {
+                        slots.manage = items(inner);
+                        slots.manage_menus = inner
+                            .iter()
+                            .filter(|e| matches!(e, Entry::Menu(..)))
+                            .cloned()
+                            .collect();
+                    }
                     "locations" => slots.locations.clone_from(inner),
                     "urls" => slots.urls = Some(UrlsSlots::new(inner)),
                     "open" => slots.open = Some(OpenSlots::new(inner)),
@@ -1760,10 +1947,9 @@ impl Slots {
         out.extend(self.trash.iter().map(item));
         separate(&mut out);
         if !self.manage.is_empty() {
-            out.push(Entry::Menu(
-                "manage".into(),
-                self.manage.iter().map(item).collect(),
-            ));
+            let mut manage: Vec<Entry> = self.manage.iter().map(item).collect();
+            manage.extend(self.manage_menus.iter().cloned());
+            out.push(Entry::Menu("manage".into(), manage));
         }
         if !self.locations.is_empty() {
             out.push(Entry::Menu("locations".into(), self.locations.clone()));

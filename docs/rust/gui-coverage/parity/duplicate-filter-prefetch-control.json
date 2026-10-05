@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "agent": "duplicate-filter-prefetch-control",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 1,
+  "claims": [
+    {
+      "id": "audit-options-speed-and-memory-image-prefetch-num-pairs-to-prefetch-in-duplicate-filter",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > speed and memory > image prefetch has Num pairs to prefetch in Duplicate Filter (0-25, default 3), saved per field like its siblings and read by the duplicate filter's prefetch.",
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs",
+        "crates/hydrus-store/src/viewer_prefetch.rs",
+        "crates/hydrus-gui/src/filter_window.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/viewer_prefetch.rs",
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No new recording; range and label from SpeedAndMemoryPanel."
+      ]
+    }
+  ]
+}

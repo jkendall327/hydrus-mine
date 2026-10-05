@@ -16,7 +16,6 @@ use slint::{ModelRc, SharedString, VecModel};
 use hydrus_store::Store;
 use hydrus_store::duplicates::PairRelationship;
 use hydrus_store::duplicates::auto::{self, AutoResolutionSettings, PairStatus, Rule};
-use hydrus_store::duplicates::merge::{DuplicateMergeSettings, MergeOptions};
 use hydrus_store::settings;
 use hydrus_store::similar::{self, SimilarFilesSettings};
 
@@ -301,36 +300,11 @@ impl Sidebar {
                     1 => PairRelationship::SameQuality,
                     _ => PairRelationship::Alternate,
                 };
-                let current: DuplicateMergeSettings = store.read(settings::get).unwrap_or_default();
-                let options = current
-                    .for_relationship(relationship)
-                    .cloned()
-                    .unwrap_or_default();
-                let applied: Rc<dyn Fn(MergeOptions)> = {
-                    let store = store.clone();
-                    Rc::new(move |options| {
-                        write(&store, move |conn| {
-                            let mut s: DuplicateMergeSettings = settings::get(conn)?;
-                            match relationship {
-                                PairRelationship::Better => s.better = options,
-                                PairRelationship::SameQuality => s.same_quality = options,
-                                _ => s.alternate = options,
-                            }
-                            settings::set(conn, &s)
-                        });
-                    })
-                };
-                match crate::merge_options_window::open(
+                crate::merge_options_window::edit_default(
                     &store,
                     relationship,
-                    &options,
-                    false,
                     &self.merge_options,
-                    applied,
-                ) {
-                    Ok(window) => *self.merge_options.borrow_mut() = Some(window),
-                    Err(e) => eprintln!("could not open the merge options: {e}"),
-                }
+                );
             }
             "edit rules" => {
                 crate::auto_resolution_review_window::close_all(&self.reviews);
@@ -381,7 +355,6 @@ impl Sidebar {
                         // tree is built from the hashes for each search, and
                         // the counts read from source, so there is nothing to
                         // regenerate; the numbers are shown again below)
-                        Some(Asking::RegenerateTree | Asking::RegenerateNumbers) => {}
                         Some(Asking::Resync) => write(&store, |conn| {
                             let cleared = similar::resync_potentials_to_local_storage(conn)?;
                             let now = std::time::SystemTime::now()
@@ -403,7 +376,7 @@ impl Sidebar {
                             }
                             Ok(())
                         }),
-                        None => {}
+                        Some(Asking::RegenerateTree | Asking::RegenerateNumbers) | None => {}
                     }
                 }
             }

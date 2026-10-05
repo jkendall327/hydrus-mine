@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "agent": "idle-scheduling-consumers",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 3,
+  "claims": [
+    {
+      "id": "audit-media-menu-database-work-file-jobs-during-idle-time",
+      "before": "partial",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database > file maintenance > work file jobs during idle time, the duplicates preparation tab's search during idle/normal time, and the auto-resolution idle/normal switches now reach a consumer that tells idle from normal time: hydrus serve reads the client's published idle state (idle_state marker) and paces each loop with its idle or normal setting (Pace::choose), so idle-only work no longer runs during normal use.",
+      "source": [
+        "crates/hydrus-cli/src/main.rs",
+        "crates/hydrus-store/src/idle_state.rs",
+        "crates/hydrus-gui/src/maintenance_runtime.rs"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/idle_state.rs"
+      ],
+      "limits": [
+        "Idle state comes from the GUI's published marker; a server without a client is never idle."
+      ]
+    },
+    {
+      "id": "audit-media-preparation-scheduling",
+      "before": "partial",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database > file maintenance > work file jobs during idle time, the duplicates preparation tab's search during idle/normal time, and the auto-resolution idle/normal switches now reach a consumer that tells idle from normal time: hydrus serve reads the client's published idle state (idle_state marker) and paces each loop with its idle or normal setting (Pace::choose), so idle-only work no longer runs during normal use.",
+      "source": [
+        "crates/hydrus-cli/src/main.rs",
+        "crates/hydrus-store/src/idle_state.rs",
+        "crates/hydrus-gui/src/maintenance_runtime.rs"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/idle_state.rs"
+      ],
+      "limits": [
+        "Idle state comes from the GUI's published marker; a server without a client is never idle."
+      ]
+    },
+    {
+      "id": "audit-media-rule-sidebar-scheduling",
+      "before": "partial",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database > file maintenance > work file jobs during idle time, the duplicates preparation tab's search during idle/normal time, and the auto-resolution idle/normal switches now reach a consumer that tells idle from normal time: hydrus serve reads the client's published idle state (idle_state marker) and paces each loop with its idle or normal setting (Pace::choose), so idle-only work no longer runs during normal use.",
+      "source": [
+        "crates/hydrus-cli/src/main.rs",
+        "crates/hydrus-store/src/idle_state.rs",
+        "crates/hydrus-gui/src/maintenance_runtime.rs"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/idle_state.rs"
+      ],
+      "limits": [
+        "Idle state comes from the GUI's published marker; a server without a client is never idle."
+      ]
+    }
+  ]
+}

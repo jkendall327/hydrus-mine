@@ -85,6 +85,8 @@ pub(crate) struct Hooks {
     pub set_password: Rc<dyn Fn()>,
     pub how_boned: Rc<dyn Fn()>,
     pub clear_thumbnail_cache: Rc<dyn Fn()>,
+    /// Run a Help > debug action.
+    pub debug: Rc<dyn Fn(hydrus_gui_model::debug_actions::Action)>,
     pub file_history: Rc<dyn Fn()>,
     pub file_maintenance: Rc<dyn Fn()>,
     /// Toggle watcher or other recognised clipboard URL imports.
@@ -788,6 +790,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::ManageFileMaintenance => (hooks.file_maintenance)(),
         Command::RepairArchiveTimes => (hooks.repair_archive_times)(),
         Command::ClearThumbnailCache => (hooks.clear_thumbnail_cache)(),
+        Command::Debug(action) => (hooks.debug)(action),
         Command::DebugFetchUrl => hooks.debug_fetch.open(),
         Command::DebugLongTextPopup => hooks.debug_long_popup.start(),
         Command::DebugForceIdleMode => {
@@ -802,6 +805,35 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::DatabaseMaintenance(job) => (hooks.database_maintenance)(job),
         Command::SetPassword => (hooks.set_password)(),
         Command::HowBoned => (hooks.how_boned)(),
+        Command::TagDisplaySync(idle) => {
+            flip::<hydrus_store::settings::BackgroundWork>(&store, move |w| {
+                let field = if idle {
+                    &mut w.tag_display_during_idle
+                } else {
+                    &mut w.tag_display_during_active
+                };
+                *field = !*field;
+            });
+        }
+        // (hydrus-rs applies siblings and parents as it writes: there is
+        // never work left)
+        Command::SessionWeightReport => {
+            let report = hooks.pages.borrow().weight_report();
+            crate::debug_actions::message("Information", &report);
+        }
+        Command::TagDisplaySyncNow => {
+            let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
+            #[allow(clippy::cast_precision_loss)] // (seconds)
+            let popup = hydrus_store::popups::Job::text(
+                "Seems like we are all synced already!",
+                now as f64,
+            );
+            if let Err(e) =
+                store.write(move |ctx| hydrus_store::popups::add(ctx.conn(), &popup, now))
+            {
+                eprintln!("could not say so: {e}");
+            }
+        }
         Command::FileMaintenance(idle) => {
             flip::<hydrus_store::file_maintenance::FileMaintenanceSettings>(&store, move |m| {
                 let field = if idle {

@@ -283,6 +283,12 @@ pub enum Command {
     DebugForceIdleMode,
     /// Publish the actual delayed message after five seconds.
     DebugDelayedTextPopup,
+    Debug(crate::debug_actions::Action),
+    /// Tags > sync's idle (`true`) or normal time switch.
+    TagDisplaySync(bool),
+    TagDisplaySyncNow,
+    /// Pages > weight > "total session weight"'s information.
+    SessionWeightReport,
     /// Freeze the Help menu's default location for a delayed real query page.
     DebugDelayedNewPage(hydrus_core::search::context::LocationContext),
     CullViewingStatistics,
@@ -369,6 +375,8 @@ pub struct Facts {
     /// The default local file location captured when this menu is constructed.
     pub default_location: hydrus_core::search::context::LocationContext,
     pub maintenance: FileMaintenanceSettings,
+    /// Whether sibling/parent sync works in idle and normal time.
+    pub tag_display_sync: (bool, bool),
     pub pauses: Pauses,
     pub network_boot_pause: hydrus_store::settings::NetworkBootPause,
     pub clipboard_urls: hydrus_store::settings::ClipboardUrls,
@@ -444,6 +452,10 @@ impl Facts {
                 default_location: settings::get::<settings::SearchDefaults>(conn)?
                     .resolved_local_location(services),
                 maintenance: settings::get(conn)?,
+                tag_display_sync: {
+                    let work: settings::BackgroundWork = settings::get(conn)?;
+                    (work.tag_display_during_idle, work.tag_display_during_active)
+                },
                 pauses: settings::get(conn)?,
                 network_boot_pause: settings::get(conn)?,
                 clipboard_urls: settings::get(conn)?,
@@ -494,7 +506,7 @@ pub fn menubar(facts: &Facts) -> Vec<Entry> {
         database_menu(facts),
         network_menu(facts),
         services_menu(),
-        tags_menu(),
+        tags_menu(facts),
     ];
     if let Some(pending) = &facts.pending {
         menus.push(pending_menu(pending));
@@ -730,10 +742,10 @@ fn pages_menu(facts: &Facts) -> Entry {
         "weight",
         vec![
             copy_label(format!("{} pages open", human_int(facts.page_count as u64))),
-            todo(format!(
-                "total session weight: {}",
-                human_int(facts.session_weight)
-            )),
+            item(
+                format!("total session weight: {}", human_int(facts.session_weight)),
+                Command::SessionWeightReport,
+            ),
         ],
     );
     let history = match &facts.history {
@@ -1192,7 +1204,7 @@ fn services_menu() -> Entry {
 }
 
 /// `_InitialiseMenuInfoTags`.
-fn tags_menu() -> Entry {
+fn tags_menu(facts: &Facts) -> Entry {
     menu(
         "&tags",
         vec![
@@ -1220,10 +1232,18 @@ fn tags_menu() -> Entry {
                 vec![
                     todo("review current sibling/parent sync"),
                     SEP,
-                    todo("sync now"),
+                    item("sync now", Command::TagDisplaySyncNow),
                     SEP,
-                    check("sync tag display during idle time", None, true),
-                    check("sync tag display during normal time", None, true),
+                    check(
+                        "sync tag display during idle time",
+                        Some(Command::TagDisplaySync(true)),
+                        facts.tag_display_sync.0,
+                    ),
+                    check(
+                        "sync tag display during normal time",
+                        Some(Command::TagDisplaySync(false)),
+                        facts.tag_display_sync.1,
+                    ),
                 ],
             ),
         ],
@@ -1258,6 +1278,8 @@ fn pending_menu(pending: &[Pending]) -> Entry {
 
 /// `_InitialiseMenuInfoHelp`, with implemented debug GUI and thumbnail-memory actions.
 fn help_menu(facts: &Facts) -> Entry {
+    use crate::debug_actions::Action as DebugAction;
+    let debug = Command::Debug;
     let link = |label: &str, url: &'static str| item(label, Command::OpenUrl(url));
     menu(
         "&help",
@@ -1311,6 +1333,10 @@ fn help_menu(facts: &Facts) -> Entry {
                         )],
                     ),
                     menu(
+                        "profiling",
+                        vec![item("what is this?", debug(DebugAction::ProfileInfo))],
+                    ),
+                    menu(
                         "gui actions",
                         vec![
                             item(
@@ -1319,18 +1345,52 @@ fn help_menu(facts: &Facts) -> Entry {
                             ),
                             item("make a long text popup", Command::DebugLongTextPopup),
                             item(
+                                "make a modal popup in five seconds",
+                                debug(DebugAction::ModalPopup { cancellable: true }),
+                            ),
+                            item(
                                 "make a new page in five seconds",
                                 Command::DebugDelayedNewPage(facts.default_location.clone()),
+                            ),
+                            item(
+                                "make a non-cancellable modal popup in five seconds",
+                                debug(DebugAction::ModalPopup { cancellable: false }),
                             ),
                             item(
                                 "make a popup in five seconds",
                                 Command::DebugDelayedTextPopup,
                             ),
+                            item("make a QMessageBox", debug(DebugAction::MessageBox)),
+                            item("make some popups", debug(DebugAction::SomePopups)),
+                            item(
+                                "reset multi-column list settings to default",
+                                debug(DebugAction::ResetColumns),
+                            ),
+                            item(
+                                "save 'last session' gui session",
+                                debug(DebugAction::SaveLastSession),
+                            ),
+                        ],
+                    ),
+                    menu(
+                        "data actions",
+                        vec![
+                            item("flush log", debug(DebugAction::FlushLog)),
+                            item("force database commit", debug(DebugAction::ForceCommit)),
+                            item("show env", debug(DebugAction::ShowEnv)),
+                            SEP,
+                            item("simulate program exit signal", debug(DebugAction::Exit)),
                         ],
                     ),
                     menu(
                         "memory actions",
-                        vec![item("clear thumbnail cache", Command::ClearThumbnailCache)],
+                        vec![
+                            item(
+                                "clear all rendering caches",
+                                debug(DebugAction::ClearRenderingCaches),
+                            ),
+                            item("clear thumbnail cache", Command::ClearThumbnailCache),
+                        ],
                     ),
                     menu(
                         "network actions",
