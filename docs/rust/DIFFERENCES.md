@@ -2949,3 +2949,19 @@ archive/delete viewer/shortcut topology is not claimed. Stale replaced service k
 reject the entire transaction instead of selecting a replacement domain. Actual
 Qt controls and 48 finish paths were recorded; source checks and authored tests
 are separate from pending hosted Rust and exact-source native PNG review.
+
+## Owned debug long-text producer
+
+The finite Help/debug/gui-actions “make a long text popup” action now reproduces
+both reference JobStatus publications, its five random words, 124 scheduled
+text/title updates and 200 ms cadence. It uses Store popup jobs and the ordinary
+native toaster rather than a separate debug display. The native producer is
+owned by one main binding: accepted exit, rebind and owner destruction cancel
+its timer and pending strings; dismissed cards release their future updates at
+the next live boundary. Qt schedules independent CallLater setters that may
+outlive a dismissed popup. Existing hidden-window backend updates continue,
+matching Qt, and hidden owners cannot launch new sequences. Slint uses the
+existing native font-derived popup width policy; Qt pixel geometry is recorded
+without claiming identical font metrics. Other debug actions and broader popup
+freeze/monitor/API families remain Partial. No MIME-mode reassessment or parent
+completion is claimed. Native regressions are authored; hosted execution is pending.

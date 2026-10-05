@@ -3751,3 +3751,18 @@ successor's buttons. Actual Qt recorded 48 finish cases and both independent
 controls; Rust/native regressions and finish PNGs await hosted validation.
 
 Repeated main F12 brings the same active filter and its finish/Forget question forward; it never replaces an unanswered owner. Retired source pages are discarded before opening a fresh filter. Mixed current/deleted search scopes retain their complete context identity and exact label, so their current-only deletion alternatives and activation delay are not collapsed.
+
+## Debug long-text popup
+
+Help > debug > gui actions > make a long text popup publishes two ordinary,
+finished popup jobs to the real Store/toaster. The first body gains a random word
+from the reference's five-word vocabulary every 200 ms for 62 updates; the second
+keeps its “test long title” body while its title grows for the next 62 updates.
+The two jobs are immediately dismissible. Repeated invocations own independent
+sequences. Merely hiding the main window preserves already published backend
+updates, while refusing new launches. Dismissal releases pending updates at the
+next live boundary; accepted exit, binding retirement and owner destruction
+release the producer's timer and queue. Exit Cancel preserves the live sequence.
+The actual Qt recorder captures every setter deadline and presents real popup
+widgets; authored native regressions replay the genuine menu, Store and toaster
+with an owner-local deterministic clock. Hosted Rust execution remains pending.

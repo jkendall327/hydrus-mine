@@ -221,12 +221,16 @@ fn data(
 }
 
 pub(crate) struct Binding {
+    refresh: std::rc::Rc<dyn Fn()>,
     timer: std::rc::Rc<slint::Timer>,
     active: std::rc::Rc<std::cell::Cell<bool>>,
     store: std::sync::Arc<hydrus_store::Store>,
     gui_owner: [u8; 32],
 }
 impl Binding {
+    pub(crate) fn refresh(&self) {
+        (self.refresh)();
+    }
     pub(crate) fn retire_callback(&self) -> std::rc::Rc<dyn Fn()> {
         let active = self.active.clone();
         let timer = self.timer.clone();
@@ -516,9 +520,15 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> Binding {
     timer.start(
         slint::TimerMode::Repeated,
         std::time::Duration::from_millis(250),
-        move || refresh(),
+        {
+            let refresh = refresh.clone();
+            move || {
+                refresh();
+            }
+        },
     );
     let binding = Binding {
+        refresh,
         timer,
         active,
         store: owned_store,

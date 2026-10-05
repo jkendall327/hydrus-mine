@@ -259,6 +259,8 @@ pub enum Command {
     ClearViewingStatistics,
     /// Clear only this GUI incarnation's thumbnail cache and redraw its current grid.
     ClearThumbnailCache,
+    /// Publish two real cards and grow their text/title at the recorded cadence.
+    DebugLongTextPopup,
     CullViewingStatistics,
     FileHistory,
     /// Forget a repository's pending content, asking first.
@@ -1203,7 +1205,7 @@ fn pending_menu(pending: &[Pending]) -> Entry {
     }
 }
 
-/// `_InitialiseMenuInfoHelp`, with the implemented thumbnail-only debug memory action.
+/// `_InitialiseMenuInfoHelp`, with implemented debug GUI and thumbnail-memory actions.
 fn help_menu(facts: &Facts) -> Entry {
     let link = |label: &str, url: &'static str| item(label, Command::OpenUrl(url));
     menu(
@@ -1248,10 +1250,16 @@ fn help_menu(facts: &Facts) -> Entry {
             SEP,
             menu(
                 "debug",
-                vec![menu(
-                    "memory actions",
-                    vec![item("clear thumbnail cache", Command::ClearThumbnailCache)],
-                )],
+                vec![
+                    menu(
+                        "gui actions",
+                        vec![item("make a long text popup", Command::DebugLongTextPopup)],
+                    ),
+                    menu(
+                        "memory actions",
+                        vec![item("clear thumbnail cache", Command::ClearThumbnailCache)],
+                    ),
+                ],
             ),
             SEP,
             item("about", Command::About),
