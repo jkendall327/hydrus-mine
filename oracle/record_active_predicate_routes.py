@@ -72,6 +72,8 @@ def record(session):
              ('hashes', [hashes, inbox], [hashes]),
              ('similar_files', [P.Predicate(P.PREDICATE_TYPE_SYSTEM_SIMILAR_TO_FILES, ((bytes([3])*32,), 4)), inbox], None),
              ('similar_data', [P.Predicate(P.PREDICATE_TYPE_SYSTEM_SIMILAR_TO_DATA, ((bytes([4])*32,), (bytes([5])*8,), 3)), inbox], None),
+             ('pixel_only', [P.Predicate(P.PREDICATE_TYPE_SYSTEM_SIMILAR_TO_DATA, ((bytes([6])*32,), (), 7)), inbox], None),
+             ('perceptual_only', [P.Predicate(P.PREDICATE_TYPE_SYSTEM_SIMILAR_TO_DATA, ((), (bytes([7])*8,), 7)), inbox], None),
              ('two_tags_raise', [alpha, beta, inbox], [alpha, beta])]
     cases, consumer_event = [], None
     def replay():
