@@ -615,6 +615,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let image_cache =
         image_cache::Control::bind(window, first.borrow().store(), binding_active.clone());
     let current = Rc::new(RefCell::new(first.clone()));
+    // A selected-clear menu/answer may never regain validity after its page
+    // departs, even when that same page is shown again.
+    let selected_delete_epoch = Rc::new(Cell::new(0u64));
     gui_colours::bind(
         window.global::<Theme<'_>>(),
         first.borrow().store(),
@@ -808,6 +811,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     let change_pages = {
+        let selected_delete_epoch = selected_delete_epoch.clone();
         let local_transfer = local_transfer.clone();
         let viewer_exit_scrolls = viewer_exit_scrolls.clone();
         let scrolls = scrolls.clone();
@@ -837,6 +841,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 after();
             }
             if !Rc::ptr_eq(&opened, &current.borrow()) {
+                selected_delete_epoch.set(selected_delete_epoch.get().wrapping_add(1));
                 local_transfer_window::cancel(&local_transfer);
                 // Background pages pick up current tag presentation when activated.
                 opened.borrow_mut().refresh_tags();
@@ -896,6 +901,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     };
     // Tag-list menus publish through weak main-window/page handles.
     let tag_search_launcher: write_tag_menu::SearchLauncher = Rc::new({
+        let selected_delete_epoch = selected_delete_epoch.clone();
         let binding_active = binding_active.clone();
         let local_transfer = Rc::downgrade(&local_transfer);
         let pages = Rc::downgrade(&pages);
@@ -978,10 +984,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             if let Some(after) = after {
                 after();
             }
-            if !Rc::ptr_eq(&opened, &current.borrow())
-                && let Some(local_transfer) = local_transfer.upgrade()
-            {
-                local_transfer_window::cancel(&local_transfer);
+            if !Rc::ptr_eq(&opened, &current.borrow()) {
+                selected_delete_epoch.set(selected_delete_epoch.get().wrapping_add(1));
+                if let Some(local_transfer) = local_transfer.upgrade() {
+                    local_transfer_window::cancel(&local_transfer);
+                }
             }
             *current.borrow_mut() = opened.clone();
             rows.set_page(opened);
@@ -4268,7 +4275,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let palette_media_items: Rc<RefCell<Vec<hydrus_gui_model::command_palette::MenuItem>>> =
         Rc::default();
     let transfer_target = Rc::new(RefCell::new(None));
+    let selected_delete_menu_epoch = Rc::new(Cell::new(0u64));
     window.on_thumbnail_menu_requested({
+        let selected_delete_epoch = selected_delete_epoch.clone();
+        let selected_delete_menu_epoch = selected_delete_menu_epoch.clone();
         let transfer_target = transfer_target.clone();
         let page = page.clone();
         let reselect = reselect.clone();
@@ -4284,6 +4294,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
             let page = page();
             let owner = page.clone();
+            selected_delete_menu_epoch.set(selected_delete_epoch.get());
             let page = page.borrow();
             let files = thumbnail_menu::facts(page.store(), &page.files());
             let selected: std::collections::HashSet<HashId> =
@@ -4362,6 +4373,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     window.on_menu_chosen({
+        let selected_delete_epoch = selected_delete_epoch.clone();
+        let selected_delete_menu_epoch = selected_delete_menu_epoch.clone();
+        let delete_files = Rc::downgrade(&delete_files);
+        let ask = ask.clone();
         let transfer_target = transfer_target.clone();
         let local_transfer = local_transfer.clone();
         let remove_from = remove_from.clone();
@@ -4465,6 +4480,74 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     delete(files, media_actions::Deletion::Physically);
                 }
                 Action::Undelete => window.invoke_undelete_selected(),
+                Action::ClearDeletionRecords => {
+                    // The QAction belongs to its emitting page. At dispatch Qt
+                    // reads that page's current flat selection, then captures
+                    // clearable identities before entering its question.
+                    let owner = transfer_target
+                        .borrow()
+                        .as_ref()
+                        .map(|(owner, _, _)| owner.clone());
+                    let Some(owner) = owner.filter(|owner| Rc::ptr_eq(owner, &page)) else {
+                        return;
+                    };
+                    if !binding_active.get()
+                        || selected_delete_menu_epoch.get() != selected_delete_epoch.get()
+                        || !window.window().is_visible()
+                        || !window.get_question().is_empty()
+                        || !window.get_warning().is_empty()
+                        || delete_files
+                            .upgrade()
+                            .is_none_or(|slot| slot.borrow().is_some())
+                    {
+                        return;
+                    }
+                    let store = owner.borrow().store().clone();
+                    let plan = match hydrus_gui_model::selected_deletion_records::Plan::capture(
+                        &store,
+                        &owner.borrow().selected_files(),
+                    ) {
+                        Ok(plan) if !plan.files.is_empty() => plan,
+                        Ok(_) => return,
+                        Err(error) => {
+                            window.set_warning(error.to_string().into());
+                            return;
+                        }
+                    };
+                    let question = plan.question();
+                    let active = binding_active.clone();
+                    let epoch = selected_delete_epoch.get();
+                    let selected_delete_epoch = selected_delete_epoch.clone();
+                    let delete_files = delete_files.clone();
+                    let current = current.clone();
+                    let weak = weak.clone();
+                    let shown = shown.clone();
+                    ask(Asked::Then(
+                        question,
+                        Rc::new(move || {
+                            // This native ownership boundary is separate from the
+                            // reference's captured eligibility: never retarget a
+                            // pending answer to a successor binding/page.
+                            let Some(window) = weak.upgrade() else {
+                                return;
+                            };
+                            if !active.get()
+                                || epoch != selected_delete_epoch.get()
+                                || !window.window().is_visible()
+                                || !Rc::ptr_eq(&owner, &current.borrow())
+                                || delete_files
+                                    .upgrade()
+                                    .is_none_or(|slot| slot.borrow().is_some())
+                            {
+                                return;
+                            }
+                            match plan.apply(&store) {
+                                Ok(()) => shown(true),
+                                Err(error) => window.set_warning(error.to_string().into()),
+                            }
+                        }),
+                    ));
+                }
                 Action::Transfer(kind, destination, source) => {
                     let Some((owner, files, services)) = transfer_target.borrow().clone() else {
                         return;
@@ -6720,6 +6803,8 @@ fn open_viewer(
                 Action::Archive => change_file(media_actions::archive, file),
                 Action::Inbox => change_file(media_actions::inbox, file),
                 Action::Undelete => change_file(media_actions::undelete, file),
+                // Only the thumbnail panels offer this reference action.
+                Action::ClearDeletionRecords => {}
                 Action::ManageTags => manage_tags_of(file),
                 Action::ManageNotes => {
                     let store = model.borrow().store().clone();

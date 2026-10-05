@@ -58,6 +58,8 @@ pub enum Action {
     DeleteTrashPhysically,
     DeletePhysically,
     Undelete,
+    /// Forget selected files' physical-storage deletion records.
+    ClearDeletionRecords,
     ManageTags,
     Transfer(
         hydrus_store::content::TransferKind,
@@ -408,17 +410,22 @@ pub struct FileFacts {
     pub inbox: bool,
     /// The file domains it is current in.
     pub current: Vec<ServiceId>,
+    pub storage_deleted: bool,
 }
 
 /// The facts of `files`, in their order.
 pub fn facts(store: &Store, files: &[HashId]) -> Vec<FileFacts> {
+    let Ok(roles) = DomainRoles::new(&store.snapshot().services) else {
+        return Vec::new();
+    };
     let read = store.read(|conn| {
         Ok((
             hydrus_store::media::current_domains(conn, files)?,
             hydrus_store::media::inboxed(conn, files)?,
+            hydrus_store::media::deleted_from(conn, files, roles.local_file_storage)?,
         ))
     });
-    let Ok((mut current, inbox)) = read else {
+    let Ok((mut current, inbox, deleted)) = read else {
         return Vec::new();
     };
     files
@@ -427,6 +434,7 @@ pub fn facts(store: &Store, files: &[HashId]) -> Vec<FileFacts> {
             file,
             inbox: inbox.contains(&file),
             current: current.remove(&file).unwrap_or_default(),
+            storage_deleted: deleted.contains(&file),
         })
         .collect()
 }
@@ -1154,6 +1162,15 @@ pub fn menu(
             Action::Undelete,
         ));
     }
+    if chosen.iter().any(|file| file.storage_deleted) {
+        entries.push(Entry::Item(
+            phrase(
+                "clear deletion record",
+                "clear deletion record for selected",
+            ),
+            Action::ClearDeletionRecords,
+        ));
+    }
     separate(&mut entries);
     if num_selected > 0 {
         entries.push(Entry::Menu(
@@ -1635,7 +1652,8 @@ impl Slots {
                         Action::DeleteFrom(_) => &mut slots.delete,
                         Action::DeleteTrashPhysically
                         | Action::DeletePhysically
-                        | Action::Undelete => &mut slots.trash,
+                        | Action::Undelete
+                        | Action::ClearDeletionRecords => &mut slots.trash,
                         _ => &mut slots.filter,
                     };
                     slot.push((label.clone(), *action));
