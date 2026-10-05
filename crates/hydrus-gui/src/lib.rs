@@ -133,6 +133,7 @@ mod unlock;
 mod viewer;
 pub mod viewer_closing;
 pub mod viewer_cursor;
+mod viewer_drag;
 mod viewer_eye_menu;
 pub mod viewer_focus;
 pub mod viewer_menu;
@@ -5103,6 +5104,7 @@ fn open_viewer(
     };
     show();
     bind_zoom!(window, zoomed);
+    viewer_drag::bind(&window, slot);
     window.on_zoom_switch_requested({
         let zoomed = zoomed.clone();
         // The reference captures this command when the top hover is built.

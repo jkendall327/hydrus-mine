@@ -136,3 +136,4 @@ mod autocomplete_tabs;
 mod external_calls;
 
 mod window_rescue;
+mod viewer_drag;

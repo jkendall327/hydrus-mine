@@ -28,6 +28,8 @@ pub(crate) fn refresh(window: &crate::MediaViewerWindow, store: &Store, file: Ha
     let pointer: ViewerPointerSettings = store.read(settings::get).unwrap_or_default();
     window.set_disallow_duration_drag(pointer.disallow_duration_drag);
     window.set_hide_during_drag(pointer.hide_during_drag);
+    window.set_anchor_drag(pointer.anchor_drag);
+    window.set_touch_drag_unanchor(pointer.touch_unanchors);
     let (transparent, has_duration) = store
         .read(|conn| {
             let (flags, duration): (u32, Option<i64>) = conn.query_row(

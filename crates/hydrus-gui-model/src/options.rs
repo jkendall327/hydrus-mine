@@ -2609,9 +2609,23 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             },
                         ),
                         check(
+                            "Anchor mouse cursor during media viewer drags:",
+                            |settings| settings.viewer_pointer.anchor_drag,
+                            |settings, value| {
+                                settings.viewer_pointer.anchor_drag = value;
+                            },
+                        ),
+                        check(
                             "Hide mouse cursor during media viewer drags:",
                             |settings| settings.viewer_pointer.hide_during_drag,
                             |settings, value| settings.viewer_pointer.hide_during_drag = value,
+                        ),
+                        check(
+                            "If set to anchor drags, undo on apparent touchscreen drag:",
+                            |settings| settings.viewer_pointer.touch_unanchors,
+                            |settings, value| {
+                                settings.viewer_pointer.touch_unanchors = value;
+                            },
                         ),
                     ],
                 ),

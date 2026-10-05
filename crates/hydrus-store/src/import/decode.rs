@@ -1226,6 +1226,11 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
                 &mut viewer_pointer.disallow_duration_drag,
             ),
             ("hide_canvas_drags", &mut viewer_pointer.hide_during_drag),
+            ("anchor_canvas_drags", &mut viewer_pointer.anchor_drag),
+            (
+                "touchscreen_canvas_drags_unanchor",
+                &mut viewer_pointer.touch_unanchors,
+            ),
         ] {
             if let Some(value) = options.booleans.get(key) {
                 *field = *value;
@@ -4191,7 +4196,9 @@ mod tests {
             decoded(),
             ViewerPointerSettings {
                 disallow_duration_drag: false,
-                hide_during_drag: true
+                hide_during_drag: true,
+                anchor_drag: true,
+                touch_unanchors: false,
             }
         );
         edit_client_options(
@@ -4205,18 +4212,30 @@ mod tests {
                     r#"[[0, "hide_canvas_drags"], [0, true]]"#,
                     r#"[[0, "hide_canvas_drags"], [0, false]]"#,
                 ),
+                (
+                    r#"[[0, "anchor_canvas_drags"], [0, true]]"#,
+                    r#"[[0, "anchor_canvas_drags"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "touchscreen_canvas_drags_unanchor"], [0, false]]"#,
+                    r#"[[0, "touchscreen_canvas_drags_unanchor"], [0, true]]"#,
+                ),
             ],
         );
         assert_eq!(
             decoded(),
             ViewerPointerSettings {
                 disallow_duration_drag: true,
-                hide_during_drag: false
+                hide_during_drag: false,
+                anchor_drag: false,
+                touch_unanchors: true,
             }
         );
         let fresh: ViewerPointerSettings = serde_json::from_str("{}").unwrap();
         assert!(!fresh.disallow_duration_drag);
         assert_eq!(fresh.hide_during_drag, !cfg!(target_os = "macos"));
+        assert_eq!(fresh.anchor_drag, !cfg!(target_os = "macos"));
+        assert!(!fresh.touch_unanchors);
     }
 
     #[test]

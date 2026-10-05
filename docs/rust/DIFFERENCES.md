@@ -2234,3 +2234,12 @@ groups, full reference output/error presentation and OS default-launch tests are
 not claimed. Ordinary executable arguments use the process API; batch/shell
 interpreters retain their own quoting semantics. Harmless owned Unicode fixtures
 are authored for hosted CI; no local Rust execution is represented as evidence.
+Viewer drag anchoring uses the existing winit window's cursor-position API.
+Physical cursor warping depends on the platform/window manager, as Qt's cursor
+warping does. Headless native replays assert actual pointer-to-media movement,
+live Options updates, Cancel/reopen and stale-owner rejection; the model replay
+asserts exact Qt warp requests and the strict 50/51-pixel boundary. They do not
+prove that an OS compositor permits the physical warp. Actual Qt was executed
+on 2026-10-05 at 01:54:44–46 UTC with synthetic pointer coordinates and captured
+warp requests; no local Rust build, test or mutation run was performed. Broader
+touch input and the other mouse controls remain independently scoped.

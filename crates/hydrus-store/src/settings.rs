@@ -985,12 +985,16 @@ impl Setting for ViewerFocusSettings {
 pub struct ViewerPointerSettings {
     pub disallow_duration_drag: bool,
     pub hide_during_drag: bool,
+    pub anchor_drag: bool,
+    pub touch_unanchors: bool,
 }
 impl Default for ViewerPointerSettings {
     fn default() -> Self {
         Self {
             disallow_duration_drag: false,
             hide_during_drag: !cfg!(target_os = "macos"),
+            anchor_drag: !cfg!(target_os = "macos"),
+            touch_unanchors: false,
         }
     }
 }

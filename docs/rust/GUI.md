@@ -3152,3 +3152,10 @@ partial: legacy executable-manager import and missing OS-call regeneration,
 per-type launch routing, OS-launch test execution, rule clipboard controls,
 full process output/error handling and some command/dialog interactions are not
 ported. The complete scope is recorded in the external-call parity proposal.
+Options > media viewer > mouse behaviour now stages cursor anchoring and its
+apparent-touchscreen override. Apply updates an already-open viewer; Cancel
+discards the draft. Anchored drags pan about the press position and request a
+cursor warp back through that viewer's native window. The optional override
+unanchors after a single movement exceeds 50 pixels of Manhattan distance and
+stays unanchored until the next press. Both preferences survive import and
+reopening. The actual Qt replay is `viewer_anchor_options.json`.
