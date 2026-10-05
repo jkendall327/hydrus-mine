@@ -2183,3 +2183,15 @@ selection, scroll, Options and rate decision handlers remain unchanged; preview
 playback is not recorded. Native real pointer/key/wheel replays and the
 `thumbnail-navigation.png` capture are authored for hosted CI. No local Cargo
 builds/tests or mutation runs were performed.
+
+The namespace-colour Add/Delete and OR-row namespace preferences now have staged
+Options controls and real list consumers. Native warnings appear in the Options
+error area after its owned Enter Text child closes; Qt uses a warning dialog.
+The broader namespace-colour editor stays Partial: colour-picker editing,
+inherited list menus, and keyboard navigation are not added here. Native active
+OR predicates retain their existing single-line layout and use the configured
+OR header colour for that row; Qt decorates an OR header plus independently
+coloured child rows. Qt's "OR connecting string (on one line)" currently has no
+active renderer consumer; this slice does not change that inactive preference.
+Authored native replays and namespace-colours-draft.png await hosted CI; no local
+Cargo builds, tests or mutation runs were performed.

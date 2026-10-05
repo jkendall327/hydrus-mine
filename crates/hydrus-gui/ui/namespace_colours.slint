@@ -1,0 +1,32 @@
+import { Button, ScrollView } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+export struct NamespaceColourRow { label: string, colour: color, selected: bool }
+export component NamespaceColourList inherits Rectangle {
+    in property <[NamespaceColourRow]> rows;
+    in property <bool> child-open;
+    in property <bool> enabled;
+    in property <bool> can-delete;
+    callback clicked(int,bool,bool);
+    callback action(string);
+    min-height:220px;
+    min-width:360px;
+    VerticalLayout {
+        spacing:4px;
+        ScrollView {
+            VerticalLayout {
+                for row[index] in root.rows: Rectangle {
+                    height:24px;
+                    background:row.selected ? Theme.highlight : Theme.panel;
+                    Text { x:6px; text:row.label; color:row.selected ? Theme.highlight-text : row.colour; vertical-alignment:center; }
+                    TouchArea {
+                        pointer-event(event)=>{if root.enabled && !root.child-open && event.kind == PointerEventKind.down && event.button == PointerEventButton.left {root.clicked(index,event.modifiers.control,event.modifiers.shift);}}
+                    }
+                }
+            }
+        }
+        HorizontalLayout {
+            Button {text:"add";enabled:root.enabled && !root.child-open;clicked=>{root.action("add");}}
+            Button {text:"delete";enabled:root.enabled && !root.child-open && root.can-delete;clicked=>{root.action("delete");}}
+        }
+    }
+}

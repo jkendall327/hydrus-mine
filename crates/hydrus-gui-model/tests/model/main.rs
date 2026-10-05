@@ -33,6 +33,7 @@ mod main_menu;
 mod manage_notes;
 mod merge_options_editor;
 mod merge_summaries;
+mod namespace_colours;
 mod notes_preferences;
 mod options_dialog;
 mod page_chooser_options;

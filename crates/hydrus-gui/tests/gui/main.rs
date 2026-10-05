@@ -47,6 +47,7 @@ mod media_sort;
 mod menu_bar;
 mod merge_options;
 mod mpv;
+mod namespace_colours;
 mod notebook_new_page;
 mod notebook_refresh;
 mod notebook_sessions;

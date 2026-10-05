@@ -3099,3 +3099,11 @@ a different page, a changed control or a hidden owner. The Default collect cog i
 Options uses the same service choices, staged until Apply, preserved after
 reopening, and discarded by Cancel. Both controls preserve the full tag-context
 metadata independently from the page’s search context.
+
+Options > tag presentation now stages namespace-colour additions and confirmed
+multi-row deletion. Add uses the reference's namespace cleanup and exact warnings;
+default namespaced and unnamespaced colours are protected from deletion. New
+namespaces receive random RGB colours. Owned Enter Text and confirmation children
+block parent Apply, and Cancel discards the whole Options draft. Accepted colours
+persist across reopening and reach existing media tag and OR predicate rows.
+The OR-row namespace text preserves named, missing and empty namespace choices.

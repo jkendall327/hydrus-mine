@@ -244,6 +244,9 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                     out.text =
                         crate::domains::location_label(&store.snapshot().services, location).into();
                 }
+                (Kind::NamespaceColours, Value::NamespaceColours(_)) => {
+                    out.kind = 31;
+                }
                 (Kind::FavouriteTags, Value::FavouriteTags(_)) => {
                     out.kind = 17;
                     out.text = "edit favourite tags".into();
@@ -328,6 +331,7 @@ pub(crate) fn open(
     slot: &Rc<RefCell<Option<OptionsWindow>>>,
     checker_slot: &Rc<RefCell<Option<CheckerOptionsWindow>>>,
     reason_slot: &crate::options_deletion::Slot,
+    colour_slot: &crate::options_namespace_colours::Slot,
     frame_slot: &crate::options_frames::Slot,
     banner_slot: &crate::tag_banner_window::Slot,
     suggested_slot: &crate::tag_suggestions_window::Slots,
@@ -370,10 +374,13 @@ pub(crate) fn open(
     window.set_pages(ModelRc::new(VecModel::from(names)));
     let show_providers = crate::options_palette::bind(&window, &editor, &active);
     let reason_queue = crate::options_deletion::bind(&window, &editor, &active, reason_slot);
+    let colour_list =
+        crate::options_namespace_colours::bind(&window, &editor, &active, colour_slot);
     let frame_table = crate::options_frames::bind(&window, &editor, &active, frame_slot);
     // (the rows are made anew only as the page changes: an edit leaves its
     // control as the user left it)
     let show_page = {
+        let show_colours = colour_list.show.clone();
         let cog_target = cog_target.clone();
         let session_choices = session_choices.clone();
         let editor = editor.clone();
@@ -395,6 +402,7 @@ pub(crate) fn open(
             window.set_page(int(editor.page() as i64));
             window.set_rows(ModelRc::new(VecModel::from(rows)));
             show_providers();
+            show_colours();
             if let Some(name) = editor.remembered_panel()
                 && let Err(error) = store.write(move |ctx| {
                     let mut preferences: hydrus_store::settings::OptionsPreferences =
@@ -426,6 +434,7 @@ pub(crate) fn open(
         let location_slot = location_slot.clone();
         let tag_slot = tag_slot.clone();
         let active = active.clone();
+        let cancel_colours = colour_list.cancel.clone();
         let cancel_reasons = reason_queue.cancel.clone();
         let cancel_frames = frame_table.cancel.clone();
         move || {
@@ -439,6 +448,7 @@ pub(crate) fn open(
             if let Some(child) = child {
                 child.invoke_cancel();
             }
+            cancel_colours();
             cancel_reasons();
             cancel_frames();
             crate::import_options_panel_window::cancel(&import_slot);
@@ -802,10 +812,12 @@ pub(crate) fn open(
         let editor = editor.clone();
         let weak = window.as_weak();
         let active = active.clone();
+        let colours_open = colour_list.has_open.clone();
         let reasons_open = reason_queue.has_open.clone();
         let frames_open = frame_table.has_open.clone();
         move |i, checked| {
             if !active.get()
+                || colours_open()
                 || reasons_open()
                 || frames_open()
                 || !matches!(
@@ -1175,6 +1187,7 @@ pub(crate) fn open(
     });
     window.on_apply({
         let suggested_slot = suggested_slot.clone();
+        let colours_open = colour_list.has_open.clone();
         let reasons_open = reason_queue.has_open.clone();
         let frames_open = frame_table.has_open.clone();
         let import_slot = import_slot.clone();
@@ -1187,6 +1200,7 @@ pub(crate) fn open(
         let close = close.clone();
         move || {
             if !active.get()
+                || colours_open()
                 || reasons_open()
                 || frames_open()
                 || tag_slot.borrow().is_some()

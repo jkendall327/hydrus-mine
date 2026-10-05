@@ -89,6 +89,12 @@ fn strip_gumpf(t: &str) -> String {
     collapse_whitespace(&t).trim().to_owned()
 }
 
+/// Clean namespace-editor text without adding colon escapes or requiring a subtag.
+/// This is the shared control/whitespace/leading-garbage part of tag cleaning.
+pub fn strip_tag_text_of_gumpf(text: &str) -> String {
+    strip_gumpf(text)
+}
+
 /// Normalise a tag to its canonical stored form.
 ///
 /// The result may be empty or have an empty subtag (e.g. `"series:"`); use
