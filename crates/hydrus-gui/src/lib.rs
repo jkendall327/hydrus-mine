@@ -393,7 +393,7 @@ pub struct Bound {
     /// they change (held likewise).
     _menu_titles: Rc<slint::Timer>,
     /// Shows the popup messages (held likewise).
-    _popups: popups::Binding,
+    _popups: Rc<popups::Binding>,
     /// Automatic recognised URL imports while this desktop window is bound.
     pub clipboard_monitor: clipboard_monitor::Monitor,
     /// Historical autosaves, with real input activity and a bounded timer.
@@ -4357,7 +4357,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         sync,
         _thumbnails: thumbnails,
         _menu_titles: menu_titles,
-        _popups: popup_timer,
+        _popups: Rc::new(popup_timer),
         clipboard_monitor,
         _header_approval: header_approval,
     }
@@ -5937,6 +5937,7 @@ fn open_viewer(
         let viewer_delete = viewer_delete.clone();
         let viewer_slot = slot.clone();
         let remove_file = remove_file.clone();
+        let removed = removed.clone();
         let show_info = show_info.clone();
         let external_launches = external_launches.clone();
         move |asked: ViewerAsked| {
