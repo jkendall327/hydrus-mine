@@ -28,6 +28,9 @@ export component LoginStepWindow inherits Window {
     in-out property <int> variable-kind;
     callback variable-clicked(int);
     in property <[TableRow]> cookies;
+    in property <bool> cookie-one;
+    in property <bool> cookie-any;
+    callback cookie-clicked(int,bool,bool);
     in property <[TableRow]> content;
     in property <bool> one-selected;
     in property <bool> any-selected;
@@ -71,8 +74,16 @@ export component LoginStepWindow inherits Window {
             Button { text: "delete"; enabled: root.temporary-any && !root.child-open && !root.deleting; clicked => { root.action("delete-temporary"); } }
         }
         Text { text: "cookies required to consider step successful"; color: Theme.text; font-weight: 700; }
-        ListTable { height: 120px; columns: [{title: "cookie name", width: 350px}, {title: "permitted value", width: 450px, stretch: true}]; rows: root.cookies; }
-        Button { text: "edit required cookies"; enabled: !root.child-open && !root.deleting; clicked => { root.action("cookies"); } }
+        ListTable { height: 120px; columns: [{title: "key", width: 350px}, {title: "matching", width: 450px, stretch: true}]; rows: root.cookies;
+            row-clicked(i,c,s) => { root.cookie-clicked(i,c,s); }
+            row-activated(i) => { if !root.child-open && !root.deleting { root.cookie-clicked(i,false,false); root.action("edit-cookie"); } }
+            delete-pressed => { root.action("delete-cookie"); }
+        }
+        HorizontalLayout { spacing: 6px;
+            Button { text: "add"; enabled: !root.child-open && !root.deleting; clicked => { root.action("add-cookie"); } }
+            Button { text: "edit"; enabled: root.cookie-one && !root.child-open && !root.deleting; clicked => { root.action("edit-cookie"); } }
+            Button { text: "delete"; enabled: root.cookie-any && !root.child-open && !root.deleting; clicked => { root.action("delete-cookie"); } }
+        }
         Text { text: "content parsers"; color: Theme.text; font-weight: 700; }
         ListTable { height: 120px; columns: [{title: "name", width: 350px}, {title: "produces", width: 450px, stretch: true}]; rows: root.content; row-clicked(i,c,s) => { if !root.child-open && !root.deleting { root.content-clicked(i,c,s); } } row-activated(i) => { if !root.child-open && !root.deleting { root.content-activated(i); } } delete-pressed => { if !root.child-open && !root.deleting { root.action("delete-content"); } } }
         HorizontalLayout { spacing: 6px;

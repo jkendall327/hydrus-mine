@@ -190,6 +190,8 @@ pub fn script_warning(script: &LoginScript) -> Option<String> {
 #[derive(Debug, Clone)]
 pub struct StepEditor {
     pub step: hydrus_parse::login::LoginStep,
+    /// Cookie matcher rows and selection embedded in this step's draft.
+    pub cookies: CookiesEditor,
     pub selection: ListSelection<usize>,
     pub argument_selection: [ListSelection<usize>; 3],
 }
@@ -197,6 +199,7 @@ impl StepEditor {
     pub fn new(step: &hydrus_parse::login::LoginStep) -> Self {
         Self {
             step: step.clone(),
+            cookies: CookiesEditor::new(&step.required_cookies),
             selection: ListSelection::default(),
             argument_selection: std::array::from_fn(|_| ListSelection::default()),
         }
@@ -274,6 +277,7 @@ impl StepEditor {
     }
     pub fn value(&self) -> hydrus_parse::login::LoginStep {
         let mut step = self.step.clone();
+        step.required_cookies = self.cookies.value();
         step.content_parsers = self
             .order()
             .into_iter()

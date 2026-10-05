@@ -2774,6 +2774,11 @@ Login required-cookie Add/Edit now opens the name matcher followed by the value
 matcher, using the reference titles and initial rules. Cancel at either stage
 leaves the pair intact; accepted pairs are sorted and selected. Independent
 matcher objects with identical descriptions remain separate entries.
+The step editor embeds its cookie matcher list with direct Add/Edit/Delete,
+row activation and independent extended selection, as Qt does. Confirmed bulk
+deletion and sequential matcher cancellation replay `login_step_cookies.json`.
+Step Cancel closes matcher descendants and discards the draft; accepted step
+rules reach the existing script persistence and real login executor.
 
 Write autocomplete keyboard selection now follows the result list: arrows wrap,
 Shift and Ctrl+Shift extend or reverse a selection, Home/End select endpoints,
