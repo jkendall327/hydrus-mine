@@ -18,6 +18,7 @@ component NotebookTab inherits Rectangle {
     in property <bool> vertical;
     in property <bool> clockwise;
     in property <length> cap;
+    callback wheel(int);
     callback chosen();
     callback context-menu(length,length);
     callback close();
@@ -61,6 +62,7 @@ component NotebookTab inherits Rectangle {
     touch := TouchArea {
         property <bool> hover: self.has-hover;
         changed hover => { root.hovered(root.full-name,self.absolute-position.x,self.absolute-position.y + self.height,self.hover); }
+        scroll-event(event) => { if event.delta-y != 0px { root.wheel(event.delta-y > 0px ? -1 : 1); } return accept; }
         clicked => { root.chosen(); }
         pointer-event(event) => {
             if event.button == PointerEventButton.right && event.kind == PointerEventKind.up {
@@ -76,6 +78,17 @@ component NotebookStrip inherits Rectangle {
     in property <bool> vertical;
     in property <bool> clockwise;
     in property <bool> elide;
+    in property <bool> wheel-scroll;
+    callback wheel(int);
+    callback scrolled(float);
+    function scroll-wheel(step: int) {
+        if root.wheel-scroll {
+            if root.vertical { vertical-scroll.content-y = max(min(0px,root.height - vertical-scroll.content-height),min(0px,vertical-scroll.content-y - step * 120px)); }
+            else { horizontal-scroll.content-x = max(min(0px,root.width - horizontal-scroll.content-width),min(0px,horizontal-scroll.content-x - step * 120px)); }
+        } else { root.wheel(step); }
+    }
+    out property <length> scroll-offset: root.vertical ? vertical-scroll.content-y : horizontal-scroll.content-x;
+    changed scroll-offset => { root.scrolled(root.scroll-offset / 1px); }
     callback chosen(int);
     callback measured(float,float,float);
     callback context-menu(int,length,length);
@@ -104,6 +117,7 @@ component NotebookStrip inherits Rectangle {
             for name[index] in root.data.names: NotebookTab {
                 text: name; full-name: root.data.full-names[index]; selected: index == root.data.selected;
                 cap: root.cap;
+                wheel(step) => { root.scroll-wheel(step); }
                 chosen => { root.chosen(index); }
                 context-menu(x,y) => { root.context-menu(index,x,y); }
                 close => { root.close(index); }
@@ -111,6 +125,7 @@ component NotebookStrip inherits Rectangle {
             }
             TouchArea {
                 horizontal-stretch: 1; min-width: 40px;
+                scroll-event(event) => { if event.delta-y != 0px { root.scroll-wheel(event.delta-y > 0px ? -1 : 1); } return accept; }
                 pointer-event(event) => {
                     if event.kind == PointerEventKind.down && event.button == PointerEventButton.right { root.context-menu(-1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y); }
                     if event.kind == PointerEventKind.down && (event.button == PointerEventButton.left || event.button == PointerEventButton.middle) { root.space-pressed(event.button == PointerEventButton.middle); }
@@ -129,6 +144,7 @@ component NotebookStrip inherits Rectangle {
             for name[index] in root.data.names: NotebookTab {
                 text: name; full-name: root.data.full-names[index]; selected: index == root.data.selected;
                 vertical: true; clockwise: root.clockwise; cap: root.cap;
+                wheel(step) => { root.scroll-wheel(step); }
                 chosen => { root.chosen(index); }
                 context-menu(x,y) => { root.context-menu(index,x,y); }
                 close => { root.close(index); }
@@ -136,6 +152,7 @@ component NotebookStrip inherits Rectangle {
             }
             TouchArea {
                 vertical-stretch: 1; min-height: 40px;
+                scroll-event(event) => { if event.delta-y != 0px { root.scroll-wheel(event.delta-y > 0px ? -1 : 1); } return accept; }
                 pointer-event(event) => {
                     if event.kind == PointerEventKind.down && event.button == PointerEventButton.right { root.context-menu(-1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y); }
                     if event.kind == PointerEventKind.down && (event.button == PointerEventButton.left || event.button == PointerEventButton.middle) { root.space-pressed(event.button == PointerEventButton.middle); }
@@ -175,6 +192,9 @@ export component NotebookNavigation inherits Rectangle {
     in property <bool> clockwise;
     in property <bool> reverse-levels;
     in property <bool> elide: true;
+    in property <bool> wheel-scroll;
+    callback wheel(int,int);
+    callback scrolled(int,float);
     callback chosen(int,int);
     callback measured(int,float,float,float);
     callback context-menu(int,int,length,length);
@@ -186,7 +206,9 @@ export component NotebookNavigation inherits Rectangle {
         y: root.vertical ? 0px : (root.reverse-levels ? root.rows.length - level - 1 : level) * 28px;
         width: root.vertical ? 28px : parent.width;
         height: root.vertical ? parent.height : 28px;
-        data: row; vertical: root.vertical; clockwise: root.clockwise; elide: root.elide;
+        data: row; vertical: root.vertical; clockwise: root.clockwise; elide: root.elide; wheel-scroll: root.wheel-scroll;
+        wheel(step) => { root.wheel(level,step); }
+        scrolled(offset) => { root.scrolled(level,offset); }
         chosen(index) => { root.chosen(level,index); }
         measured(needed,available,cap) => { root.measured(level,needed,available,cap); }
         context-menu(index,x,y) => { root.context-menu(level,index,x,y); }

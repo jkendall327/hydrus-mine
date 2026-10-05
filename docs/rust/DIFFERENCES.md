@@ -2112,3 +2112,9 @@ stylesheet palettes and the broader colour Options editor remain Partial, as
 do other duplicate-filter presentation/actions. This slice does not claim
 those parent rows. Actual Qt recording ran on 2026-10-05; Rust regression
 source was authored but awaits hosted CI (no local Cargo execution).
+The tab-wheel option now consumes real wheel input in native notebook bars.
+Scroll increments use native120px steps instead of Qt's scroll-button/tab geometry;
+selection and scroll directions agree with the recording. The additional five
+drag checkboxes are staged/persisted at this checkpoint, but their source/drop
+consumers and reference-specific no-chase selection are still being implemented;
+registration alone is not a completion claim.

@@ -3051,3 +3051,9 @@ greenscreen brush only within their image box. Imported active override canvas
 colours are preserved. `duplicate_colours.json` records actual Qt controls,
 143 QColor adjustment cases and eight A/B painter outcomes; model, Options
 owner and native filter painter regressions replay those outputs.
+GUI Pages navigation now stages the six drag/wheel preference checkboxes with
+independent ordinary/Shift choices. The wheel preference reaches the actual
+notebook bars: default wheel input selects the adjacent tab and clamps at either
+end; enabled scrolling moves the overflowing bar's viewport and preserves page
+selection. This works on horizontal and vertical notebook rows; Apply refreshes
+the live bars and Cancel leaves saved settings unchanged.

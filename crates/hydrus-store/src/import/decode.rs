@@ -369,6 +369,22 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &page_chooser)?;
+    let mut drag = crate::settings::TabDragSettings::default();
+    if let Some(options) = &options {
+        for (key, target) in [
+            ("page_drop_chase_normally", &mut drag.chase),
+            ("page_drop_chase_with_shift", &mut drag.chase_shift),
+            ("page_drag_change_tab_normally", &mut drag.navigate),
+            ("page_drag_change_tab_with_shift", &mut drag.navigate_shift),
+            ("wheel_scrolls_tab_bar", &mut drag.wheel_scroll),
+            ("disable_page_tab_dnd", &mut drag.disabled),
+        ] {
+            if let Some(&value) = options.booleans.get(key) {
+                *target = value;
+            }
+        }
+    }
+    insert_setting(&mut input, &drag)?;
     let mut tabs = crate::settings::TabPresentationSettings::default();
     if let Some(options) = &options {
         if let Some(&value) = options.integers.get("notebook_tab_alignment") {

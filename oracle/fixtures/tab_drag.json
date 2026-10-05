@@ -1,0 +1,495 @@
+{
+  "keys": [
+    "page_drop_chase_normally",
+    "page_drop_chase_with_shift",
+    "page_drag_change_tab_normally",
+    "page_drag_change_tab_with_shift",
+    "wheel_scrolls_tab_bar",
+    "disable_page_tab_dnd"
+  ],
+  "labels": [
+    "Selection chases dropped page after drag and drop: ",
+    "  With shift held down?: ",
+    "Navigate tabs during drag and drop: ",
+    "  With shift held down?: ",
+    "EXPERIMENTAL: Mouse wheel scrolls tab bar, not page selection: ",
+    "BUGFIX: Disable all page tab drag and drop: "
+  ],
+  "defaults": {
+    "page_drop_chase_normally": true,
+    "page_drop_chase_with_shift": false,
+    "page_drag_change_tab_normally": true,
+    "page_drag_change_tab_with_shift": true,
+    "wheel_scrolls_tab_bar": false,
+    "disable_page_tab_dnd": false
+  },
+  "cancelled": {
+    "page_drop_chase_normally": true,
+    "page_drop_chase_with_shift": false,
+    "page_drag_change_tab_normally": true,
+    "page_drag_change_tab_with_shift": true,
+    "wheel_scrolls_tab_bar": false,
+    "disable_page_tab_dnd": false
+  },
+  "saved": {
+    "page_drop_chase_normally": false,
+    "page_drop_chase_with_shift": true,
+    "page_drag_change_tab_normally": false,
+    "page_drag_change_tab_with_shift": false,
+    "wheel_scrolls_tab_bar": true,
+    "disable_page_tab_dnd": true
+  },
+  "reopened": {
+    "page_drop_chase_normally": false,
+    "page_drop_chase_with_shift": true,
+    "page_drag_change_tab_normally": false,
+    "page_drag_change_tab_with_shift": false,
+    "wheel_scrolls_tab_bar": true,
+    "disable_page_tab_dnd": true
+  },
+  "navigation": [
+    {
+      "shift": false,
+      "enabled": false,
+      "after": {
+        "order": [
+          "alpha",
+          "beta",
+          "gamma",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "alpha",
+        "shown": "alpha",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      }
+    },
+    {
+      "shift": false,
+      "enabled": true,
+      "after": {
+        "order": [
+          "alpha",
+          "beta",
+          "gamma",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "omega",
+        "shown": "omega",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      }
+    },
+    {
+      "shift": true,
+      "enabled": false,
+      "after": {
+        "order": [
+          "alpha",
+          "beta",
+          "gamma",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "alpha",
+        "shown": "alpha",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      }
+    },
+    {
+      "shift": true,
+      "enabled": true,
+      "after": {
+        "order": [
+          "alpha",
+          "beta",
+          "gamma",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "omega",
+        "shown": "omega",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      }
+    }
+  ],
+  "wheels": [
+    {
+      "scroll": false,
+      "delta": 120,
+      "after": {
+        "order": [
+          "alpha",
+          "beta",
+          "gamma",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "beta",
+        "shown": "beta",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      },
+      "accepted": true
+    },
+    {
+      "scroll": false,
+      "delta": -120,
+      "after": {
+        "order": [
+          "alpha",
+          "beta",
+          "gamma",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "gamma",
+        "shown": "gamma",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      },
+      "accepted": true
+    },
+    {
+      "scroll": false,
+      "delta": -120,
+      "after": {
+        "order": [
+          "alpha",
+          "beta",
+          "gamma",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "omega",
+        "shown": "omega",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      },
+      "accepted": true
+    },
+    {
+      "scroll": true,
+      "delta": 120,
+      "after": {
+        "order": [
+          "alpha",
+          "beta",
+          "gamma",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "gamma",
+        "shown": "gamma",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      },
+      "accepted": true
+    },
+    {
+      "scroll": true,
+      "delta": -120,
+      "after": {
+        "order": [
+          "alpha",
+          "beta",
+          "gamma",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "gamma",
+        "shown": "gamma",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      },
+      "accepted": true
+    },
+    {
+      "scroll": true,
+      "delta": -120,
+      "after": {
+        "order": [
+          "alpha",
+          "beta",
+          "gamma",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "gamma",
+        "shown": "gamma",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      },
+      "accepted": true
+    }
+  ],
+  "drops": [
+    {
+      "shift": false,
+      "chase": false,
+      "source_index": 2,
+      "target": "alpha",
+      "before": {
+        "order": [
+          "alpha",
+          "beta",
+          "gamma",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "gamma",
+        "shown": "gamma",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      },
+      "after": {
+        "order": [
+          "gamma",
+          "alpha",
+          "beta",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "alpha",
+        "shown": "alpha",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      },
+      "accepted": true
+    },
+    {
+      "shift": false,
+      "chase": true,
+      "source_index": 0,
+      "target": "alpha",
+      "before": {
+        "order": [
+          "gamma",
+          "alpha",
+          "beta",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "gamma",
+        "shown": "gamma",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      },
+      "after": {
+        "order": [
+          "alpha",
+          "gamma",
+          "beta",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "gamma",
+        "shown": "gamma",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      },
+      "accepted": true
+    },
+    {
+      "shift": true,
+      "chase": false,
+      "source_index": 1,
+      "target": "alpha",
+      "before": {
+        "order": [
+          "alpha",
+          "gamma",
+          "beta",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "gamma",
+        "shown": "gamma",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      },
+      "after": {
+        "order": [
+          "gamma",
+          "alpha",
+          "beta",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "beta",
+        "shown": "beta",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      },
+      "accepted": true
+    },
+    {
+      "shift": true,
+      "chase": true,
+      "source_index": 0,
+      "target": "alpha",
+      "before": {
+        "order": [
+          "gamma",
+          "alpha",
+          "beta",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "gamma",
+        "shown": "gamma",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      },
+      "after": {
+        "order": [
+          "alpha",
+          "gamma",
+          "beta",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "gamma",
+        "shown": "gamma",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      },
+      "accepted": true
+    }
+  ],
+  "overflow": [
+    {
+      "delta": -120,
+      "before": [
+        0,
+        45,
+        90,
+        135,
+        180,
+        225,
+        270,
+        315
+      ],
+      "after": [
+        -6,
+        39,
+        84,
+        129,
+        174,
+        219,
+        264,
+        309
+      ],
+      "selected": 0
+    },
+    {
+      "delta": -120,
+      "before": [
+        -6,
+        39,
+        84,
+        129,
+        174,
+        219,
+        264,
+        309
+      ],
+      "after": [
+        -51,
+        -6,
+        39,
+        84,
+        129,
+        174,
+        219,
+        264
+      ],
+      "selected": 0
+    },
+    {
+      "delta": 120,
+      "before": [
+        -51,
+        -6,
+        39,
+        84,
+        129,
+        174,
+        219,
+        264
+      ],
+      "after": [
+        -37,
+        8,
+        53,
+        98,
+        143,
+        188,
+        233,
+        278
+      ],
+      "selected": 0
+    }
+  ],
+  "limits": [
+    "synthetic QDropEvent source bar seam; native OS drag loop not recorded"
+  ]
+}
