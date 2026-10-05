@@ -46,8 +46,8 @@ impl Layout {
             width.saturating_sub(self.vpos)
         };
         (
-            sidebar.clamp(0, width.saturating_sub(80)) as i32,
-            preview.clamp(0, height.saturating_sub(80)) as i32,
+            sidebar.clamp(0, width.saturating_sub(80).max(0)) as i32,
+            preview.clamp(0, height.saturating_sub(80).max(0)) as i32,
         )
     }
     /// Save hidden sidebar zero and keep the prior preview default while hidden.
