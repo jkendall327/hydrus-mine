@@ -59,6 +59,21 @@ fn kept(entries: &[Value]) -> Vec<Value> {
         }
         let mut entry = entry.clone();
         if entry.get("menu").is_some_and(|menu| menu == "debug") {
+            let mut gui = entry["entries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| e.get("menu").is_some_and(|name| name == "gui actions"))
+                .unwrap()
+                .clone();
+            let long_text = gui["entries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| *e == "make a long text popup")
+                .unwrap()
+                .clone();
+            gui["entries"] = serde_json::json!([long_text]);
             let mut memory = entry["entries"]
                 .as_array()
                 .unwrap()
@@ -74,7 +89,7 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                 .unwrap()
                 .clone();
             memory["entries"] = serde_json::json!([clear]);
-            entry["entries"] = serde_json::json!([memory]);
+            entry["entries"] = serde_json::json!([gui, memory]);
         }
 
         if let Some(inner) = entry.get("entries").and_then(Value::as_array) {

@@ -3706,3 +3706,18 @@ and showing the closed component cannot restore it. Cancelling exit keeps the
 current bitmap, while a fresh binding can load the still-saved path.
 
 The combined colour/thumbnail integration copies all eight saved local/remote and selected/unselected fill/border roles into each owned paint snapshot. Current physical storage membership selects the palette, including collection membership. A colour change clears both old and current copied cells before repaint; the viewport background keeps its saved grid colour behind the clipped image. This integration remains source-only until exact hosted native execution and PNG inspection.
+
+## Debug long-text popup
+
+Help > debug > gui actions > make a long text popup publishes two ordinary,
+finished popup jobs to the real Store/toaster. The first body gains a random word
+from the reference's five-word vocabulary every 200 ms for 62 updates; the second
+keeps its “test long title” body while its title grows for the next 62 updates.
+The two jobs are immediately dismissible. Repeated invocations own independent
+sequences. Merely hiding the main window preserves already published backend
+updates, while refusing new launches. Dismissal releases pending updates at the
+next live boundary; accepted exit, binding retirement and owner destruction
+release the producer's timer and queue. Exit Cancel preserves the live sequence.
+The actual Qt recorder captures every setter deadline and presents real popup
+widgets; authored native regressions replay the genuine menu, Store and toaster
+with an owner-local deterministic clock. Hosted Rust execution remains pending.

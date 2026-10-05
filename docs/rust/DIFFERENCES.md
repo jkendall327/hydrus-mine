@@ -2905,3 +2905,19 @@ exit Cancel/accept/re-show/fresh-binding coverage is authored; hosted execution
 remains pending. This correction adds no completion credit or renderer fidelity.
 
 The combined colour/thumbnail integration copies all eight saved local/remote and selected/unselected fill/border roles into each owned paint snapshot. Current physical storage membership selects the palette, including collection membership. A colour change clears both old and current copied cells before repaint; the viewport background keeps its saved grid colour behind the clipped image. This integration remains source-only until exact hosted native execution and PNG inspection.
+
+## Owned debug long-text producer
+
+The finite Help/debug/gui-actions “make a long text popup” action now reproduces
+both reference JobStatus publications, its five random words, 124 scheduled
+text/title updates and 200 ms cadence. It uses Store popup jobs and the ordinary
+native toaster rather than a separate debug display. The native producer is
+owned by one main binding: accepted exit, rebind and owner destruction cancel
+its timer and pending strings; dismissed cards release their future updates at
+the next live boundary. Qt schedules independent CallLater setters that may
+outlive a dismissed popup. Existing hidden-window backend updates continue,
+matching Qt, and hidden owners cannot launch new sequences. Slint uses the
+existing native font-derived popup width policy; Qt pixel geometry is recorded
+without claiming identical font metrics. Other debug actions and broader popup
+freeze/monitor/API families remain Partial. No MIME-mode reassessment or parent
+completion is claimed. Native regressions are authored; hosted execution is pending.

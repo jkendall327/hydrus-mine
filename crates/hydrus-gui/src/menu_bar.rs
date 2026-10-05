@@ -20,6 +20,7 @@ type ShownLines = Rc<RefCell<Vec<(Vec<MenuLine>, ModelRc<MenuLine>)>>>;
 
 /// What the menu bar works with.
 pub(crate) struct Hooks {
+    pub debug_long_popup: crate::debug_long_popup::Control,
     pub quick_export_directory: crate::quick_export_directory::Control,
     pub darkmode: Rc<dyn Fn()>,
     pub sidebar_layout: Rc<dyn Fn(hydrus_gui_model::page_layout::Action)>,
@@ -752,6 +753,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::FileHistory => (hooks.file_history)(),
         Command::RepairArchiveTimes => (hooks.repair_archive_times)(),
         Command::ClearThumbnailCache => (hooks.clear_thumbnail_cache)(),
+        Command::DebugLongTextPopup => hooks.debug_long_popup.start(),
         Command::ClearViewingStatistics => (hooks.viewing_maintenance)(false),
         Command::CullViewingStatistics => (hooks.viewing_maintenance)(true),
         Command::FileMaintenance(idle) => {

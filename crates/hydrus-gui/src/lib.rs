@@ -33,6 +33,7 @@ mod client_exit;
 pub mod clipboard_monitor;
 pub mod command_palette_window;
 pub mod daemon;
+pub mod debug_long_popup;
 pub mod delete_files_window;
 pub mod domain_mask_entry;
 pub mod downloader_definitions_window;
@@ -323,6 +324,8 @@ pub struct Bound {
     pub options_open_externally: options_open_externally::Slots,
     pub external_launches: open_externally_launch::Launcher,
     pub quick_export_directory: quick_export_directory::Control,
+    pub debug_long_popup: debug_long_popup::Control,
+    _debug_long_popup_owner: debug_long_popup::Owner,
     pub options_suggested_tags_slot: tag_suggestions_window::Slots,
     /// The Ctrl+P command palette while open.
     pub command_palette: command_palette_window::Slot,
@@ -551,6 +554,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let pages = Rc::new(RefCell::new(pages));
     let session_autosave = session_autosave::bind(window, &pages);
     let first = pages.borrow_mut().current();
+    let debug_long_popup = debug_long_popup::Control::new(
+        window,
+        first.borrow().store().clone(),
+        binding_active.clone(),
+    );
     main_identity::bind(
         window,
         first.borrow().store().clone(),
@@ -597,6 +605,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         binding_active.clone(),
     );
     window.on_retire_external_launches({
+        let debug_long_popup = debug_long_popup.clone();
         let options = options.clone();
         let manage_tags = manage_tags.clone();
         let rows = rows.clone();
@@ -606,6 +615,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let weak = window.as_weak();
         move || {
             binding_active.set(false);
+            debug_long_popup.retire();
             retire_colours();
             launcher.cancel();
             rows.retire();
@@ -2209,6 +2219,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
+            debug_long_popup: debug_long_popup.clone(),
             quick_export_directory: quick_export_directory.clone(),
             darkmode: gui_colour_actions.callback(),
             sidebar_layout: Rc::new({
@@ -2883,13 +2894,21 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         },
     );
     // popup messages, the daemon's and the Client API's
-    let popup_timer = popups::bind(
+    let popup_timer = Rc::new(popups::bind(
         window,
         popups::Hooks {
             pages: pages.clone(),
             change_pages: Rc::new(change_pages.clone()),
         },
-    );
+    ));
+    debug_long_popup.set_published(Rc::new({
+        let popups = Rc::downgrade(&popup_timer);
+        move || {
+            if let Some(popups) = popups.upgrade() {
+                popups.refresh();
+            }
+        }
+    }));
     client_exit::bind(
         window,
         page().borrow().store().clone(),
@@ -2911,9 +2930,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let sidebar_layout = sidebar_layout.clone();
             let binding_active = binding_active.clone();
             let weak = window.as_weak();
+            let debug_long_popup = debug_long_popup.clone();
             move || {
                 sidebar_layout.accepted_exit();
                 binding_active.set(false);
+                debug_long_popup.retire();
                 retire_colours();
                 rows.retire();
                 if let Some(window) = weak.upgrade() {
@@ -4537,6 +4558,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    let debug_long_popup_owner = debug_long_popup.owner();
     Bound {
         _gui_colour_actions: gui_colour_actions,
         preview,
@@ -4570,6 +4592,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         options_open_externally,
         external_launches,
         quick_export_directory,
+        debug_long_popup,
+        _debug_long_popup_owner: debug_long_popup_owner,
         command_palette,
         about,
         services_review,
@@ -4614,7 +4638,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         downloader_updates,
         _thumbnails: thumbnails,
         _menu_titles: menu_titles,
-        _popups: Rc::new(popup_timer),
+        _popups: popup_timer,
         clipboard_monitor,
         _header_approval: header_approval,
     }
