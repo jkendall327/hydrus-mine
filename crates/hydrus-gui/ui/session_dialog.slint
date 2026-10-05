@@ -41,57 +41,68 @@ export component SessionDialog inherits Window {
     callback name-entered(string);
     callback cancelled();
     callback answered(bool);
-    forward-focus: name;
+    forward-focus: keyboard;
 
-    VerticalLayout {
-        padding: 10px;
-        spacing: 8px;
-        if root.asking-name && root.warning != "": Text {
-            text: root.warning;
-            wrap: word-wrap;
-            color: Theme.error;
+    keyboard := FocusScope {
+        forward-focus: name;
+        capture-key-pressed(event) => {
+            if root.notice-only && (event.text == Key.Return || event.text == Key.Escape) {
+                root.cancelled();
+                return accept;
+            }
+            reject
         }
-        Text {
-            text: root.message;
-            wrap: word-wrap;
-            color: Theme.text;
-        }
-        name := LineEdit {
-            visible: root.asking-name;
-            // (no room taken while a question is asked)
-            height: root.asking-name ? self.preferred-height : 0px;
-            text <=> root.text;
-            placeholder-text: root.placeholder;
-            enabled: !root.child-open;
-            edited => { if root.regex-mode { root.regex-changed(); } }
-            accepted => { root.name-entered(self.text); }
-        }
-        if root.regex-mode: HorizontalLayout {
-            RegexTools { components: root.regex-components; show-groups: false; enabled: !root.child-open; selected(c,i) => { root.regex-tool(c,i); } }
-            favourite := Button { text: "favourites"; enabled: !root.child-open; clicked => { root.favourite-menu(favourite.x / 1px, (favourite.y + favourite.height) / 1px); } }
-            Text { text: root.regex-validity; color: Theme.text; wrap: word-wrap; }
-        }
-        HorizontalLayout {
-            alignment: end;
-            spacing: 6px;
-            if root.notice-only: Button { text: root.notice-ok-label; clicked => { root.cancelled(); } }
-            if root.asking-name: Button {
+
+        VerticalLayout {
+            padding: 10px;
+            spacing: 8px;
+            if root.asking-name && root.warning != "": Text {
+                text: root.warning;
+                wrap: word-wrap;
+                color: Theme.error;
+            }
+            Text {
+                text: root.message;
+                wrap: word-wrap;
+                color: Theme.text;
+            }
+            name := LineEdit {
+                visible: root.asking-name;
+                // (no room taken while a question is asked)
+                height: root.asking-name ? self.preferred-height : 0px;
+                text <=> root.text;
+                placeholder-text: root.placeholder;
                 enabled: !root.child-open;
-                text: root.name-ok-label;
-                clicked => { root.name-entered(root.text); }
+                edited => { if root.regex-mode { root.regex-changed(); } }
+                accepted => { root.name-entered(self.text); }
             }
-            if root.asking-name: Button {
-                enabled: !root.child-open;
-                text: "cancel";
-                clicked => { root.cancelled(); }
+            if root.regex-mode: HorizontalLayout {
+                RegexTools { components: root.regex-components; show-groups: false; enabled: !root.child-open; selected(c,i) => { root.regex-tool(c,i); } }
+                favourite := Button { text: "favourites"; enabled: !root.child-open; clicked => { root.favourite-menu(favourite.x / 1px, (favourite.y + favourite.height) / 1px); } }
+                Text { text: root.regex-validity; color: Theme.text; wrap: word-wrap; }
             }
-            if !root.asking-name && !root.notice-only: Button {
-                text: root.yes-label;
-                clicked => { root.answered(true); }
-            }
-            if !root.asking-name && !root.notice-only: Button {
-                text: root.no-label;
-                clicked => { root.answered(false); }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                if root.notice-only: Button { text: root.notice-ok-label; clicked => { root.cancelled(); } }
+                if root.asking-name: Button {
+                    enabled: !root.child-open;
+                    text: root.name-ok-label;
+                    clicked => { root.name-entered(root.text); }
+                }
+                if root.asking-name: Button {
+                    enabled: !root.child-open;
+                    text: "cancel";
+                    clicked => { root.cancelled(); }
+                }
+                if !root.asking-name && !root.notice-only: Button {
+                    text: root.yes-label;
+                    clicked => { root.answered(true); }
+                }
+                if !root.asking-name && !root.notice-only: Button {
+                    text: root.no-label;
+                    clicked => { root.answered(false); }
+                }
             }
         }
     }

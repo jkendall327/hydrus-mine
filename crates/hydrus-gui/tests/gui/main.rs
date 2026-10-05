@@ -34,6 +34,7 @@ mod import_options_panel;
 mod importer_list_menu;
 mod info_lines;
 mod list_drag;
+mod login_script_controls;
 mod login_workflows;
 mod main_shortcuts;
 mod manage_notes;

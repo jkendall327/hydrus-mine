@@ -699,7 +699,34 @@ fn script_editor_runs_real_http_with_fresh_cookies_and_reviews_without_saving() 
         fixture[0]["reviews"][0]["data"].as_str().unwrap()
     );
     first_review.invoke_action("close".into());
-    until_login(|| !window.get_running());
+    until_login(|| {
+        slots
+            .test_control
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .information_window()
+            .is_some()
+    });
+    let information = slots
+        .test_control
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .information_window()
+        .unwrap();
+    assert!(
+        window.get_running(),
+        "Qt keeps testing active while Information is visible"
+    );
+    assert!(window.get_child_open());
+    assert!(window.get_final_result().is_empty());
+    assert_eq!(
+        information.get_message(),
+        fixture[0]["outcome"].as_str().unwrap()
+    );
+    information.invoke_cancelled();
+    assert!(!window.get_running());
     assert_eq!(
         window.get_final_result(),
         fixture[0]["outcome"].as_str().unwrap()
@@ -1988,7 +2015,26 @@ fn script_test_domain_prompt_replays_memory_cancel_clear_timing_and_real_http() 
         assert_eq!(window.get_running(), started);
         if started {
             assert_eq!(window.get_results().row_count(), 0);
-            until_login(|| !window.get_running());
+            until_login(|| {
+                slots
+                    .test_control
+                    .borrow()
+                    .as_ref()
+                    .unwrap()
+                    .information_window()
+                    .is_some()
+            });
+            let information = slots
+                .test_control
+                .borrow()
+                .as_ref()
+                .unwrap()
+                .information_window()
+                .unwrap();
+            assert!(window.get_running());
+            assert_eq!(information.get_message(), "Login OK!");
+            information.invoke_cancelled();
+            assert!(!window.get_running());
             assert_eq!(window.get_results().row_count(), 1);
         } else {
             assert_eq!(string_table(&window.get_results()), previous);

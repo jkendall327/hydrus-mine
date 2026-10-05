@@ -1,0 +1,411 @@
+{
+  "now": 1770000000,
+  "menus": {
+    "empty": [
+      {
+        "label": "auto-override bandwidth rules for all jobs here after five seconds",
+        "separator": false,
+        "checked": false,
+        "children": []
+      }
+    ],
+    "running": [
+      {
+        "label": "https://example.com/login step",
+        "separator": false,
+        "checked": null,
+        "children": []
+      },
+      {
+        "label": "",
+        "separator": true,
+        "checked": null,
+        "children": []
+      },
+      {
+        "label": "edit bandwidth rules",
+        "separator": false,
+        "checked": null,
+        "children": [
+          {
+            "label": "global",
+            "separator": false,
+            "checked": null,
+            "children": []
+          },
+          {
+            "label": "web domain default",
+            "separator": false,
+            "checked": null,
+            "children": []
+          },
+          {
+            "label": "set rules for web domain: example.com",
+            "separator": false,
+            "checked": null,
+            "children": []
+          }
+        ]
+      },
+      {
+        "label": "",
+        "separator": true,
+        "checked": null,
+        "children": []
+      },
+      {
+        "label": "override bandwidth rules for this job",
+        "separator": false,
+        "checked": null,
+        "children": []
+      },
+      {
+        "label": "",
+        "separator": true,
+        "checked": null,
+        "children": []
+      },
+      {
+        "label": "auto-override bandwidth rules for all jobs here after five seconds",
+        "separator": false,
+        "checked": false,
+        "children": []
+      }
+    ],
+    "login": [
+      {
+        "label": "https://example.com/login step",
+        "separator": false,
+        "checked": null,
+        "children": []
+      },
+      {
+        "label": "",
+        "separator": true,
+        "checked": null,
+        "children": []
+      },
+      {
+        "label": "edit bandwidth rules",
+        "separator": false,
+        "checked": null,
+        "children": [
+          {
+            "label": "global",
+            "separator": false,
+            "checked": null,
+            "children": []
+          },
+          {
+            "label": "web domain default",
+            "separator": false,
+            "checked": null,
+            "children": []
+          },
+          {
+            "label": "set rules for web domain: example.com",
+            "separator": false,
+            "checked": null,
+            "children": []
+          }
+        ]
+      },
+      {
+        "label": "",
+        "separator": true,
+        "checked": null,
+        "children": []
+      },
+      {
+        "label": "auto-override bandwidth rules for all jobs here after five seconds",
+        "separator": false,
+        "checked": false,
+        "children": []
+      }
+    ],
+    "auto": [
+      {
+        "label": "https://example.com/second",
+        "separator": false,
+        "checked": null,
+        "children": []
+      },
+      {
+        "label": "",
+        "separator": true,
+        "checked": null,
+        "children": []
+      },
+      {
+        "label": "edit bandwidth rules",
+        "separator": false,
+        "checked": null,
+        "children": [
+          {
+            "label": "global",
+            "separator": false,
+            "checked": null,
+            "children": []
+          },
+          {
+            "label": "web domain default",
+            "separator": false,
+            "checked": null,
+            "children": []
+          },
+          {
+            "label": "set rules for web domain: example.com",
+            "separator": false,
+            "checked": null,
+            "children": []
+          }
+        ]
+      },
+      {
+        "label": "",
+        "separator": true,
+        "checked": null,
+        "children": []
+      },
+      {
+        "label": "auto-override bandwidth rules for all jobs here after five seconds",
+        "separator": false,
+        "checked": true,
+        "children": []
+      }
+    ],
+    "error": [
+      {
+        "label": "show error",
+        "separator": false,
+        "checked": null,
+        "children": []
+      },
+      {
+        "label": "copy error",
+        "separator": false,
+        "checked": null,
+        "children": []
+      }
+    ]
+  },
+  "actions": {
+    "login_obeys_bandwidth": false,
+    "obeys_after_override": false,
+    "after_context_exit": {
+      "error": null,
+      "error_hidden": true,
+      "has_job": false,
+      "cancel_enabled": false,
+      "left": "",
+      "running": false,
+      "run_enabled": true,
+      "final": ""
+    },
+    "auto_at_five": true,
+    "auto_after_five": false,
+    "cancelled": true,
+    "failed_job": {
+      "error": null,
+      "error_hidden": true,
+      "has_job": true,
+      "cancel_enabled": true,
+      "left": "error!",
+      "running": false,
+      "run_enabled": true,
+      "final": ""
+    },
+    "after_explicit_error": {
+      "error": "explicit owner error\nserver detail",
+      "error_hidden": false,
+      "has_job": false,
+      "cancel_enabled": false,
+      "left": "",
+      "running": false,
+      "run_enabled": true,
+      "final": ""
+    },
+    "clear_job_keeps_error": {
+      "error": "explicit owner error\nserver detail",
+      "error_hidden": false,
+      "has_job": false,
+      "cancel_enabled": false,
+      "left": "",
+      "running": false,
+      "run_enabled": true,
+      "final": ""
+    },
+    "clear_error": {
+      "error": null,
+      "error_hidden": true,
+      "has_job": false,
+      "cancel_enabled": false,
+      "left": "",
+      "running": false,
+      "run_enabled": true,
+      "final": ""
+    }
+  },
+  "completion": [
+    {
+      "input": "Login OK!",
+      "raises": false,
+      "before": {
+        "error": null,
+        "error_hidden": true,
+        "has_job": false,
+        "cancel_enabled": false,
+        "left": "",
+        "running": true,
+        "run_enabled": false,
+        "final": ""
+      },
+      "visible": {
+        "title": "Information",
+        "message": "Login OK!",
+        "buttons": [
+          "OK"
+        ],
+        "parent_is_panel": true,
+        "state": {
+          "error": null,
+          "error_hidden": true,
+          "has_job": false,
+          "cancel_enabled": false,
+          "left": "",
+          "running": true,
+          "run_enabled": false,
+          "final": ""
+        }
+      },
+      "after": {
+        "error": null,
+        "error_hidden": true,
+        "has_job": false,
+        "cancel_enabled": false,
+        "left": "",
+        "running": false,
+        "run_enabled": true,
+        "final": "Login OK!"
+      }
+    },
+    {
+      "input": "User cancelled the login process.",
+      "raises": false,
+      "before": {
+        "error": null,
+        "error_hidden": true,
+        "has_job": false,
+        "cancel_enabled": false,
+        "left": "",
+        "running": true,
+        "run_enabled": false,
+        "final": "Login OK!"
+      },
+      "visible": {
+        "title": "Information",
+        "message": "User cancelled the login process.",
+        "buttons": [
+          "OK"
+        ],
+        "parent_is_panel": true,
+        "state": {
+          "error": null,
+          "error_hidden": true,
+          "has_job": false,
+          "cancel_enabled": false,
+          "left": "",
+          "running": true,
+          "run_enabled": false,
+          "final": "Login OK!"
+        }
+      },
+      "after": {
+        "error": null,
+        "error_hidden": true,
+        "has_job": false,
+        "cancel_enabled": false,
+        "left": "",
+        "running": false,
+        "run_enabled": true,
+        "final": "User cancelled the login process."
+      }
+    },
+    {
+      "input": "synthetic unexpected failure",
+      "raises": true,
+      "before": {
+        "error": null,
+        "error_hidden": true,
+        "has_job": false,
+        "cancel_enabled": false,
+        "left": "",
+        "running": true,
+        "run_enabled": false,
+        "final": "User cancelled the login process."
+      },
+      "visible": {
+        "title": "Information",
+        "message": "synthetic unexpected failure",
+        "buttons": [
+          "OK"
+        ],
+        "parent_is_panel": true,
+        "state": {
+          "error": null,
+          "error_hidden": true,
+          "has_job": false,
+          "cancel_enabled": false,
+          "left": "",
+          "running": true,
+          "run_enabled": false,
+          "final": "User cancelled the login process."
+        }
+      },
+      "after": {
+        "error": null,
+        "error_hidden": true,
+        "has_job": false,
+        "cancel_enabled": false,
+        "left": "",
+        "running": false,
+        "run_enabled": true,
+        "final": "synthetic unexpected failure"
+      }
+    }
+  ],
+  "clipboard": [
+    [
+      "clipboard",
+      "text",
+      "explicit owner error\nserver detail"
+    ]
+  ],
+  "errors": [
+    {
+      "title": "Network Error",
+      "message": "explicit owner error\nserver detail",
+      "parent_is_control": true
+    }
+  ],
+  "help_menu": [
+    {
+      "label": "open the login scripts help",
+      "separator": false,
+      "checked": null,
+      "children": []
+    }
+  ],
+  "help_launches": [],
+  "help_missing_html": [
+    {
+      "message": "You do not have a local help! Are you running from source? Would you like to open the online help or see a guide on how to build your own?",
+      "choices": [
+        "open online help",
+        "open how to build guide"
+      ],
+      "cancel": "forget it",
+      "parent_is_panel": true
+    }
+  ]
+}

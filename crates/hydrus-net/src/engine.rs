@@ -1221,8 +1221,9 @@ impl NetEngine {
                 state.bytes_total = None;
                 state.speed = 0;
                 state.url.clone_from(&request.url);
-                state.obeys_bandwidth =
-                    self.options.read().obey_bandwidth && request.method == Method::Get;
+                state.obeys_bandwidth = self.options.read().obey_bandwidth
+                    && request.method == Method::Get
+                    && !request.for_login;
             }
             *job.tracker.lock() = Some(Tracker::new(now()));
             job.override_bandwidth.store(false, Ordering::Relaxed);
@@ -1604,7 +1605,7 @@ impl NetEngine {
                 .map(|s| now().saturating_add(i64::try_from(s).unwrap_or(i64::MAX)));
             self.wait_for_bandwidth(
                 &attempt.contexts,
-                request.method == Method::Get,
+                request.method == Method::Get && !request.for_login,
                 override_at,
                 job,
             )

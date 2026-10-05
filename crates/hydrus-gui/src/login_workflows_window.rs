@@ -23,6 +23,7 @@ pub struct Slots {
     pub script: Rc<RefCell<Option<LoginScriptWindow>>>,
     pub step: crate::login_step_window::Slots,
     pub run: crate::login_test_window::RunSlot,
+    pub test_control: Rc<RefCell<Option<crate::login_script_controls::Binding>>>,
     pub result: crate::login_test_window::ResultSlot,
     pub test_domain: crate::login_test_window::DomainSlot,
     pub cookies: crate::login_cookies_window::Slots,
@@ -59,6 +60,9 @@ impl Slots {
             window.invoke_action("cancel".into());
         }
         self.run.stop();
+        if let Some(control) = self.test_control.borrow_mut().take() {
+            control.cancel();
+        }
         crate::login_test_window::cancel_result(&self.result);
         crate::login_test_window::cancel_domain(&self.test_domain);
         self.domains.cancel();
@@ -278,6 +282,39 @@ pub fn open_script(
     }));
     show_script(&window, &state.borrow());
     let active = Rc::new(Cell::new(true));
+    let controls = crate::login_script_controls::bind(
+        &window,
+        store,
+        &slots.run,
+        &active,
+        Rc::new({
+            let result = Rc::downgrade(&slots.result);
+            let domain = Rc::downgrade(&slots.test_domain);
+            let credentials = Rc::downgrade(&slots.credentials);
+            let definition = Rc::downgrade(&slots.definition);
+            let step = Rc::downgrade(&slots.step.step);
+            let cookies = Rc::downgrade(&slots.cookies.window);
+            let example = Rc::downgrade(&slots.example);
+            move || {
+                result.upgrade().is_some_and(|slot| slot.borrow().is_some())
+                    || domain.upgrade().is_some_and(|slot| slot.borrow().is_some())
+                    || credentials
+                        .upgrade()
+                        .is_some_and(|slot| slot.borrow().is_some())
+                    || definition
+                        .upgrade()
+                        .is_some_and(|slot| slot.borrow().is_some())
+                    || step.upgrade().is_some_and(|slot| slot.borrow().is_some())
+                    || cookies
+                        .upgrade()
+                        .is_some_and(|slot| slot.borrow().is_some())
+                    || example
+                        .upgrade()
+                        .is_some_and(|slot| slot.borrow().is_some())
+            }
+        }),
+    );
+    *slots.test_control.borrow_mut() = Some(controls.clone());
     let deleting = Rc::new(Cell::new(0_u8));
     let test_requested = Rc::new(Cell::new(false));
     window.set_test_domain(
@@ -292,6 +329,8 @@ pub fn open_script(
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let slot = Rc::downgrade(&slots.script);
+        let controls = controls.clone();
+        let control_slot = Rc::downgrade(&slots.test_control);
         let definition = slots.definition.clone();
         let run = slots.run.clone();
         let test_domain = slots.test_domain.clone();
@@ -307,6 +346,10 @@ pub fn open_script(
                 return;
             }
             run.stop();
+            controls.cancel();
+            if let Some(slot) = control_slot.upgrade() {
+                slot.borrow_mut().take();
+            }
             crate::login_test_window::cancel_domain(&test_domain);
             crate::login_test_window::cancel_result(&result);
             step.cancel();
@@ -512,6 +555,7 @@ pub fn open_script(
         }
     });
     let begin_test: Rc<dyn Fn()> = Rc::new({
+        let controls = controls.clone();
         let weak = window.as_weak();
         let state = state.clone();
         let run = slots.run.clone();
@@ -538,9 +582,9 @@ pub fn open_script(
             };
             script.name = window.get_name().to_string();
             window.set_running(true);
-            window.set_final_result("".into());
             window.set_progress("starting login test".into());
             let progress: crate::login_test_window::Progress = Rc::new({
+                let controls = controls.clone();
                 let weak = weak.clone();
                 let active = active.clone();
                 move |text| {
@@ -548,10 +592,12 @@ pub fn open_script(
                         && let Some(window) = weak.upgrade()
                     {
                         window.set_progress(text.into());
+                        controls.poll();
                     }
                 }
             });
             let completed: crate::login_test_window::Completed = Rc::new({
+                let controls = controls.clone();
                 let weak = weak.clone();
                 let state = state.clone();
                 let active = active.clone();
@@ -560,11 +606,29 @@ pub fn open_script(
                         return;
                     }
                     if let Some(window) = weak.upgrade() {
-                        window.set_running(false);
+                        controls.poll();
                         window.set_progress("".into());
-                        window.set_final_result(execution.outcome.text().into());
+                        let text = execution.outcome.text();
                         state.borrow_mut().results = execution.results;
                         show_results(&window, &state.borrow());
+                        let acknowledged: Rc<dyn Fn()> = Rc::new({
+                            let weak = weak.clone();
+                            let active = active.clone();
+                            let text = text.clone();
+                            move || {
+                                if active.get()
+                                    && let Some(window) = weak.upgrade()
+                                {
+                                    window.set_running(false);
+                                    window.set_progress("".into());
+                                    window.set_final_result(text.as_str().into());
+                                }
+                            }
+                        });
+                        if let Err(error) = controls.information(&text, acknowledged.clone()) {
+                            window.set_error(error.into());
+                            acknowledged();
+                        }
                     }
                 }
             });
@@ -649,6 +713,7 @@ pub fn open_script(
         }
     });
     window.on_action({
+        let controls = controls.clone();
         let weak = window.as_weak();
         let state = state.clone();
         let credentials_slot = slots.credentials.clone();
@@ -678,6 +743,15 @@ pub fn open_script(
             }
             if action == "cancel-test" {
                 run.cancel();
+                return;
+            }
+            if action == "help" {
+                if window.window().is_visible()
+                    && !window.get_child_open()
+                    && let Err(error) = crate::login_script_controls::help()
+                {
+                    window.set_error(error.into());
+                }
                 return;
             }
             if run.busy() && action != "review-result" {
@@ -811,9 +885,10 @@ pub fn open_script(
                             Ok(child) => {
                                 window.set_child_open(true);
                                 let weak = weak.clone();
+                                let controls = controls.clone();
                                 child.on_closed(move || {
                                     if let Some(window) = weak.upgrade() {
-                                        window.set_child_open(false);
+                                        window.set_child_open(controls.children_open());
                                     }
                                 });
                             }

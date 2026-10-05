@@ -71,6 +71,7 @@ pub mod login_credential_window;
 pub mod login_domain_entry;
 pub mod login_domains_window;
 pub mod login_example_window;
+pub mod login_script_controls;
 pub mod login_step_window;
 pub mod login_test_window;
 pub mod login_workflows_window;

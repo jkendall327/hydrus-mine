@@ -1856,6 +1856,19 @@ replacement semantics and Netscape fields; widget tests exercise these controls,
 cancellation and errors. An existing engine test sends imported cookies on its
 next request and suppresses expired, wrong-path and HTTPS-only cookies on HTTP.
 
+The login-script test panel now uses the shared network-job control for its live
+isolated request, with URL copy, context bandwidth-rule editors, phase-specific
+retry commands, cancellation and a retained five-second auto-override policy.
+Login requests bypass request-admission bandwidth limits immediately while still
+counting usage; response-body throttling still applies.
+An explicitly supplied control error can be shown or copied and survives clearing
+the job; a failed login alone does not invent a control error. Completion opens
+an owned Information notice with the exact result and an OK button before the
+run button is re-enabled and the final label changes. Parent Cancel retires the
+notice and any rules draft; retained actions cannot reach a later request or run.
+The help menu opens the existing local `docs/downloader_login.md` page through
+the ordinary OS launcher.
+
 Network > data > manage http headers stages global and domain header names,
 values, approval and reasons, with filter, sorting, duplicate and confirmed
 delete. When a live daemon request waits for pending headers, the desktop opens
