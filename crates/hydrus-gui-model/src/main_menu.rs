@@ -263,6 +263,8 @@ pub enum Command {
     DebugLongTextPopup,
     /// Publish the actual delayed message after five seconds.
     DebugDelayedTextPopup,
+    /// Freeze the Help menu's default location for a delayed real query page.
+    DebugDelayedNewPage(hydrus_core::search::context::LocationContext),
     CullViewingStatistics,
     FileHistory,
     /// Forget a repository's pending content, asking first.
@@ -342,6 +344,8 @@ pub struct Facts {
     /// File search pages offered: the local file domains, the trash and
     /// the file repositories.
     pub search_domains: Vec<(ServiceKey, String)>,
+    /// The default local file location captured when this menu is constructed.
+    pub default_location: hydrus_core::search::context::LocationContext,
     pub maintenance: FileMaintenanceSettings,
     pub pauses: Pauses,
     pub network_boot_pause: hydrus_store::settings::NetworkBootPause,
@@ -409,6 +413,8 @@ impl Facts {
                 page_navigation: settings::get(conn)?,
                 page_layout: hydrus_store::page_layout::load(conn)?,
                 search_domains,
+                default_location: settings::get::<settings::SearchDefaults>(conn)?
+                    .resolved_local_location(services),
                 maintenance: settings::get(conn)?,
                 pauses: settings::get(conn)?,
                 network_boot_pause: settings::get(conn)?,
@@ -1257,6 +1263,10 @@ fn help_menu(facts: &Facts) -> Entry {
                         "gui actions",
                         vec![
                             item("make a long text popup", Command::DebugLongTextPopup),
+                            item(
+                                "make a new page in five seconds",
+                                Command::DebugDelayedNewPage(facts.default_location.clone()),
+                            ),
                             item(
                                 "make a popup in five seconds",
                                 Command::DebugDelayedTextPopup,

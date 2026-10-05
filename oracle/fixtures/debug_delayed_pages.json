@@ -1,0 +1,122 @@
+{
+  "menu_path": [
+    "help",
+    "debug",
+    "gui actions",
+    "make a new page in five seconds"
+  ],
+  "schedule": [
+    {
+      "at_ms": 0.119,
+      "delay_seconds": 5,
+      "callback": "pub",
+      "topic": "new_page_query",
+      "location": {
+        "current": [
+          "6c6f63616c2066696c6573"
+        ],
+        "deleted": []
+      }
+    },
+    {
+      "at_ms": 1010.212,
+      "delay_seconds": 5,
+      "callback": "pub",
+      "topic": "new_page_query",
+      "location": {
+        "current": [
+          "7472617368"
+        ],
+        "deleted": []
+      }
+    }
+  ],
+  "published": [
+    {
+      "at_ms": 5103.729,
+      "location": {
+        "current": [
+          "6c6f63616c2066696c6573"
+        ],
+        "deleted": []
+      }
+    },
+    {
+      "at_ms": 6155.191,
+      "location": {
+        "current": [
+          "7472617368"
+        ],
+        "deleted": []
+      }
+    }
+  ],
+  "trace": [
+    {
+      "at_ms": 1000.329,
+      "requested_ms": 1000,
+      "published": 0,
+      "visible": true,
+      "minimized": false
+    },
+    {
+      "at_ms": 4900.277,
+      "requested_ms": 4900,
+      "published": 0,
+      "visible": false,
+      "minimized": false
+    },
+    {
+      "at_ms": 5400.607,
+      "requested_ms": 5400,
+      "published": 1,
+      "visible": false,
+      "minimized": false
+    },
+    {
+      "at_ms": 5900.324,
+      "requested_ms": 5900,
+      "published": 1,
+      "visible": true,
+      "minimized": true
+    },
+    {
+      "at_ms": 6401.204,
+      "requested_ms": 6400,
+      "published": 2,
+      "visible": true,
+      "minimized": true
+    }
+  ],
+  "pages": [
+    {
+      "name": "files",
+      "location": {
+        "current": [
+          "6c6f63616c2066696c6573"
+        ],
+        "deleted": []
+      },
+      "tag_service": "646f776e6c6f616465722074616773",
+      "predicates": [],
+      "selected": true,
+      "in_delivery_notebook": true
+    },
+    {
+      "name": "files",
+      "location": {
+        "current": [
+          "7472617368"
+        ],
+        "deleted": []
+      },
+      "tag_service": "646f776e6c6f616465722074616773",
+      "predicates": [],
+      "selected": true,
+      "in_root_notebook": true
+    }
+  ],
+  "location_snapshot": "Help menu construction, before trigger and deadline",
+  "scheduler": "actual controller CallLater/background SingleJob",
+  "clock": "unmodified real monotonic observer"
+}

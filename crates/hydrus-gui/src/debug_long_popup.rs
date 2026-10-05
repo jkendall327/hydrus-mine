@@ -1,4 +1,4 @@
-//! Real Help > Debug popup producers, owned by one main-window binding.
+//! Real Help > Debug popup/query producers, owned by one main-window binding.
 use std::{
     cell::{Cell, RefCell},
     collections::BTreeSet,
@@ -18,6 +18,11 @@ const DELAY: Duration = Duration::from_secs(5);
 const WORDS: [&str; 5] = ["test", "a", "longish", "statictext", "m8"];
 type Clock = Rc<dyn Fn() -> Duration>;
 type Word = Rc<dyn Fn() -> usize>;
+type NewPage = Rc<dyn Fn(hydrus_core::search::context::LocationContext)>;
+struct PageRequest {
+    due: Duration,
+    location: hydrus_core::search::context::LocationContext,
+}
 
 #[derive(Clone)]
 struct Update {
@@ -36,6 +41,8 @@ struct State {
     word: RefCell<Word>,
     pending: RefCell<Vec<Update>>,
     delayed: RefCell<Vec<Duration>>,
+    pages: RefCell<Vec<PageRequest>>,
+    new_page: RefCell<NewPage>,
     published: RefCell<Rc<dyn Fn()>>,
 }
 impl State {
@@ -47,9 +54,11 @@ impl State {
         self.timer.stop();
         self.pending.borrow_mut().clear();
         self.delayed.borrow_mut().clear();
+        self.pages.borrow_mut().clear();
+        *self.new_page.borrow_mut() = Rc::new(|_| {});
     }
     // One weak single-shot timer follows the earliest owned deadline across
-    // both producers; admitting another launch never postpones existing work.
+    // all producers; admitting another launch never postpones existing work.
     // Preserve the long producer's 200 ms liveness/dismissal poll even when
     // its only remaining update is a future title (or MainWindow disappears).
     fn arm(self: &Rc<Self>) {
@@ -63,6 +72,7 @@ impl State {
             .iter()
             .map(|update| update.due)
             .chain(self.delayed.borrow().iter().copied())
+            .chain(self.pages.borrow().iter().map(|request| request.due))
             .min();
         let Some(next) = next else {
             self.timer.stop();
@@ -113,6 +123,25 @@ impl State {
                 .into_iter()
                 .partition(|due| *due <= now);
         *self.delayed.borrow_mut() = delayed_pending;
+        let (mut pages_due, pages_pending): (Vec<_>, Vec<_>) =
+            std::mem::take(&mut *self.pages.borrow_mut())
+                .into_iter()
+                .partition(|request| request.due <= now);
+        *self.pages.borrow_mut() = pages_pending;
+        pages_due.sort_by_key(|request| request.due);
+        let new_page = self.new_page.borrow().clone();
+        for request in pages_due {
+            if !self.live() {
+                self.retire();
+                return;
+            }
+            new_page(request.location);
+        }
+        // A consumer callback can retire/rebind this owner synchronously.
+        if !self.live() {
+            self.retire();
+            return;
+        }
         if due.is_empty() && delayed_due.is_empty() {
             self.arm();
             return;
@@ -209,15 +238,23 @@ impl Control {
             word: RefCell::new(Rc::new(|| rand::random_range(0..WORDS.len()))),
             pending: RefCell::default(),
             delayed: RefCell::default(),
+            pages: RefCell::default(),
+            new_page: RefCell::new(Rc::new(|_| {})),
             published: RefCell::new(Rc::new(|| {})),
         }))
     }
     pub(crate) fn set_published(&self, published: Rc<dyn Fn()>) {
         *self.0.published.borrow_mut() = published;
     }
+    pub(crate) fn set_new_page(&self, new_page: NewPage) {
+        *self.0.new_page.borrow_mut() = new_page;
+    }
     /// Replace this owner's monotonic clock before starting a sequence.
     pub fn set_clock(&self, clock: Clock) {
-        if self.0.live() && self.0.pending.borrow().is_empty() && self.0.delayed.borrow().is_empty()
+        if self.0.live()
+            && self.0.pending.borrow().is_empty()
+            && self.0.delayed.borrow().is_empty()
+            && self.0.pages.borrow().is_empty()
         {
             *self.0.clock.borrow_mut() = clock;
         }
@@ -248,6 +285,28 @@ impl Control {
         let now = (self.0.clock.borrow().clone())();
         self.0.delayed.borrow_mut().push(now + DELAY);
         self.0.arm();
+    }
+    /// Queue a real query page without raising a hidden owner at delivery.
+    pub fn start_delayed_page(&self, location: hydrus_core::search::context::LocationContext) {
+        if !self.0.live()
+            || !self
+                .0
+                .window
+                .upgrade()
+                .is_some_and(|window| window.window().is_visible())
+        {
+            return;
+        }
+        let due = (self.0.clock.borrow().clone())() + DELAY;
+        self.0
+            .pages
+            .borrow_mut()
+            .push(PageRequest { due, location });
+        self.0.arm();
+    }
+    /// The requests retained by this binding, not pages created prematurely.
+    pub fn pending_pages(&self) -> usize {
+        self.0.pages.borrow().len()
     }
     pub fn timer_running(&self) -> bool {
         self.0.timer.running()

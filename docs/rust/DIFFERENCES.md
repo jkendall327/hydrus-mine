@@ -3092,3 +3092,13 @@ Control remain retained. A dropped MainWindow is detected by its weak-owner time
 or the next poll; callbacks never substitute a successor window. An authored
 held-wait regression keeps the emitting main and Control alive, drops Bound,
 checks the remaining queue and lets only a fresh binding consume its next pair.
+
+The delayed new-page debug action preserves Qt’s Help-menu-construction location
+snapshot (rather than rereading it at trigger or delivery), current notebook at
+delivery, and current default tag service. Actual Qt scheduler observations and
+PNG are separate from native deterministic-clock regressions, which have not run
+locally. Native binding retirement disposes pending work permanently. The
+separate “refresh pages menu in five seconds” action remains absent and unclaimed:
+the native Pages menu already regenerates Store/page facts on each opening, so
+this slice does not invent a refresh callback or promote that action, its parent,
+or broader diagnostics families.

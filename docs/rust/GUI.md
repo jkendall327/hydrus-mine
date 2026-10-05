@@ -3908,3 +3908,14 @@ Control remain retained. A dropped MainWindow is detected by its weak-owner time
 or the next poll; callbacks never substitute a successor window. An authored
 held-wait regression keeps the emitting main and Control alive, drops Bound,
 checks the remaining queue and lets only a fresh binding consume its next pair.
+
+Help → debug → gui actions now includes “make a new page in five seconds”.
+Its real menu captures the saved default file location when constructed, then an
+owned monotonic deadline creates and selects a blank search page in the notebook
+current at delivery. The page reads the current default tag service and uses the
+existing query/autocomplete path. Hidden Main refuses new launches but existing
+work continues without raising it; rebind, accepted exit and owner destruction
+permanently retire queued page requests. Overlaps share the existing popup timer
+without changing its dismissal pruning or delayed/long-text publications.
+Actual Qt hidden/minimized delivery is recorded in `debug_delayed_pages.json`;
+authored native query and lifecycle regressions await hosted execution.

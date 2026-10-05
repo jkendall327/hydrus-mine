@@ -755,6 +755,9 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::ClearThumbnailCache => (hooks.clear_thumbnail_cache)(),
         Command::DebugLongTextPopup => hooks.debug_long_popup.start(),
         Command::DebugDelayedTextPopup => hooks.debug_long_popup.start_delayed_popup(),
+        Command::DebugDelayedNewPage(location) => {
+            hooks.debug_long_popup.start_delayed_page(location)
+        }
         Command::ClearViewingStatistics => (hooks.viewing_maintenance)(false),
         Command::CullViewingStatistics => (hooks.viewing_maintenance)(true),
         Command::FileMaintenance(idle) => {
