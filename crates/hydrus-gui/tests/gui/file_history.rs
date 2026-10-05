@@ -98,7 +98,7 @@ fn history_frame_consumes_times_filters_and_ranges_without_touching_main_query_o
     assert_eq!(window.get_max_count(), 1);
     window.invoke_toggle(0);
     assert!(
-        window.get_paths().row_data(0).unwrap().contains("L"),
+        window.get_paths().row_data(0).unwrap().contains('L'),
         "history must include both matching import times despite implicit cap one"
     );
     assert_eq!(bound.pages.borrow().session().pages, tree);
