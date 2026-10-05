@@ -537,7 +537,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             binding_active.set(false);
             launcher.cancel();
             rows.retire();
-            let child = options.borrow().as_ref().map(|child| child.clone_strong());
+            let child = options
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
             if let Some(child) = child {
                 child.invoke_cancel();
             }
@@ -1566,11 +1569,17 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let current = current.clone();
         let shown = shown.clone();
         move |owner| {
+            // A delayed consumer identifies its page without keeping a destroyed
+            // panel alive through a viewer or confirmation callback.
+            let owner = Rc::downgrade(&owner);
             let binding_active = binding_active.clone();
             let pages = pages.clone();
             let current = current.clone();
             let shown = shown.clone();
             Rc::new(move |files| {
+                let Some(owner) = owner.upgrade() else {
+                    return;
+                };
                 if !binding_active.get()
                     || !pages
                         .borrow()
@@ -2754,7 +2763,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 sidebar_layout.accepted_exit();
                 binding_active.set(false);
                 rows.retire();
-                let child = options.borrow().as_ref().map(|child| child.clone_strong());
+                let child = options
+                    .borrow()
+                    .as_ref()
+                    .map(slint::ComponentHandle::clone_strong);
                 if let Some(child) = child {
                     child.invoke_cancel();
                 }

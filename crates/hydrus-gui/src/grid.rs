@@ -555,10 +555,8 @@ mod cache_regressions {
             ThumbnailRows::new(Rc::new(RefCell::new(SearchPage::new(store)))),
         )
     }
-    fn pixels() -> Option<crate::thumbnails::Pixels> {
-        Some(crate::thumbnails::Pixels::Rgb(
-            SharedPixelBuffer::<Rgb8Pixel>::new(3, 4),
-        ))
+    fn pixels() -> crate::thumbnails::Pixels {
+        crate::thumbnails::Pixels::Rgb(SharedPixelBuffer::<Rgb8Pixel>::new(3, 4))
     }
     #[test]
     fn clear_scale_roundtrip_settings_and_retirement_reject_held_decodes() {
@@ -566,32 +564,32 @@ mod cache_regressions {
         let file = HashId(1);
         let old = rows.generation.get();
         rows.pending.borrow_mut().insert(file, 0);
-        rows.show(vec![(file, 1., old, pixels())]);
+        rows.show(vec![(file, 1., old, Some(pixels()))]);
         assert_eq!(rows.cached_bytes(), 36);
         rows.clear_thumbnail_cache();
         assert_eq!(rows.cached(), 0);
         rows.pending.borrow_mut().insert(file, 0);
-        rows.show(vec![(file, 1., old, pixels())]);
+        rows.show(vec![(file, 1., old, Some(pixels()))]);
         assert!(rows.pending.borrow().contains_key(&file));
         assert_eq!(rows.cached(), 0);
         let before_roundtrip = rows.generation.get();
         rows.set_scale(2.);
         rows.set_scale(1.);
         rows.pending.borrow_mut().insert(file, 0);
-        rows.show(vec![(file, 1., before_roundtrip, pixels())]);
+        rows.show(vec![(file, 1., before_roundtrip, Some(pixels()))]);
         assert!(rows.pending.borrow().contains_key(&file));
         assert_eq!(rows.cached(), 0);
         let before_settings = rows.generation.get();
         rows.thumbnails_changed();
         rows.pending.borrow_mut().insert(file, 0);
-        rows.show(vec![(file, 1., before_settings, pixels())]);
+        rows.show(vec![(file, 1., before_settings, Some(pixels()))]);
         assert!(rows.pending.borrow().contains_key(&file));
-        rows.show(vec![(file, 1., rows.generation.get(), pixels())]);
+        rows.show(vec![(file, 1., rows.generation.get(), Some(pixels()))]);
         assert!(rows.pending.borrow().is_empty());
         assert_eq!(rows.cached_bytes(), 36);
         let retired_generation = rows.generation.get();
         rows.retire();
-        rows.show(vec![(file, 1., retired_generation, pixels())]);
+        rows.show(vec![(file, 1., retired_generation, Some(pixels()))]);
         assert_eq!(rows.cached_bytes(), 0);
         assert!(rows.pending.borrow().is_empty());
         assert_eq!(rows.image(file, 0).size().width, 0);

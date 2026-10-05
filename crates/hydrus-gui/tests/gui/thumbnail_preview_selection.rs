@@ -105,9 +105,10 @@ fn staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retiremen
     let mut initial = super::common::all_local_page(store.clone());
     initial.enter();
     let ids = initial.results()[..3].to_vec();
+    let saved_ids = ids.clone();
     store
-        .write(|ctx| {
-            for (index, id) in ids.iter().enumerate() {
+        .write(move |ctx| {
+            for (index, id) in saved_ids.iter().enumerate() {
                 ctx.conn().execute(
                     "UPDATE files SET mime=2,width=16,height=16,duration_ms=?1 WHERE hash_id=?2",
                     rusqlite::params![if index == 1 { Some(0_i64) } else { None }, id.0],
@@ -340,14 +341,13 @@ fn live_store_collection_gate_uses_all_members_and_preserves_zero_duration_disti
     original.enter();
     let files = original.results().to_vec();
     assert!(files.len() > 3);
+    let last = *files.last().unwrap();
     store
-        .write(|ctx| {
+        .write(move |ctx| {
             ctx.conn()
                 .execute("UPDATE files SET duration_ms=NULL", [])?;
-            ctx.conn().execute(
-                "UPDATE files SET duration_ms=1 WHERE hash_id=?1",
-                [files.last().unwrap().0],
-            )?;
+            ctx.conn()
+                .execute("UPDATE files SET duration_ms=1 WHERE hash_id=?1", [last.0])?;
             settings::set(
                 ctx.conn(),
                 &Preferences {

@@ -706,3 +706,67 @@ fn retained_delete_and_transfer_children_cannot_mutate_a_rebound_main_window() {
         ui.hide().unwrap();
     }
 }
+
+#[test]
+fn viewer_deletion_never_prunes_an_externally_retained_forgotten_source_or_successor() {
+    let _windows = headless::init();
+    let (_dir, store) = store();
+    let files = ids(&store);
+    reset(&store, &files);
+    super::common::remove_trashed_from_view(&store);
+    store
+        .write(|ctx| {
+            let mut preferences: settings::DeletionPreferences = settings::get(ctx.conn())?;
+            preferences.advanced = false;
+            preferences.confirm_trash = true;
+            settings::set(ctx.conn(), &preferences)
+        })
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let owner = bound.current.borrow().clone();
+    let before_owner = owner.borrow().files();
+    let file = files[0];
+    let index = owner
+        .borrow()
+        .results()
+        .iter()
+        .position(|&id| id == file)
+        .unwrap();
+    ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    viewer.invoke_delete();
+    assert!(!viewer.get_question().is_empty());
+    bound
+        .pages
+        .borrow_mut()
+        .save_session("retained deletion source", 1_700_000_000)
+        .unwrap();
+    bound
+        .pages
+        .borrow_mut()
+        .clear_and_load("retained deletion source")
+        .unwrap();
+    ui.invoke_tab_chosen(0, 0);
+    let successor = bound.current.borrow().clone();
+    assert!(!Rc::ptr_eq(&owner, &successor));
+    let before_successor = successor.borrow().files();
+    viewer.invoke_answer(true);
+    assert_eq!(owner.borrow().files(), before_owner);
+    assert_eq!(successor.borrow().files(), before_successor);
+    let roles = DomainRoles::new(&store.snapshot().services).unwrap();
+    assert!(
+        store
+            .read(|conn| hydrus_store::media::current_domains(conn, &[file]))
+            .unwrap()[&file]
+            .contains(&roles.trash),
+        "the live viewer deleted its file while the forgotten page and successor retained rows"
+    );
+    viewer.invoke_close_requested();
+}

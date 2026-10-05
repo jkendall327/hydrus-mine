@@ -652,7 +652,7 @@ fn live_local_membership_restore_reaches_the_same_launcher_after_store_reopen() 
         .unwrap();
     assert_eq!(
         hydrus_gui::thumbnail_menu::paths(&store, &[file]),
-        [path.clone()]
+        std::slice::from_ref(&path)
     );
     assert!(!launcher.file(&store, file));
     assert_eq!(observed.borrow().as_slice(), std::slice::from_ref(&path));

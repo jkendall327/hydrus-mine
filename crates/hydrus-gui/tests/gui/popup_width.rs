@@ -59,6 +59,31 @@ fn same_sizes(ui: &MainWindow, i: usize, expected: (f32, f32)) {
     assert!((actual.1 - expected.1).abs() < 0.001);
 }
 
+// Advance actual item-owned measurement timers until every current card has
+// reported its laid-out frame. No fixed sleep or fabricated dimensions.
+pub(crate) fn render_settled(
+    ui: &MainWindow,
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    width: u32,
+    height: u32,
+) -> Vec<u8> {
+    let deadline = std::time::Instant::now() + Duration::from_secs(1);
+    loop {
+        let pixels = headless::render(native, width, height);
+        if (0..ui.get_popups().row_count()).all(|index| {
+            let (width, cap) = sizes(ui, index);
+            width > 0.0 && cap > 0.0
+        }) {
+            return pixels;
+        }
+        assert!(
+            std::time::Instant::now() < deadline,
+            "current popup cards must report their actual initial frames"
+        );
+        std::thread::yield_now();
+    }
+}
+
 #[test]
 fn options_cancel_apply_successor_stale_callbacks_and_real_popup_geometry() {
     let legacy = hydrus_testkit::legacy_fixture("basic");
@@ -74,10 +99,7 @@ fn options_cancel_apply_successor_stale_callbacks_and_real_popup_geometry() {
     ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let native = windows.get(0).unwrap();
-    let render = || {
-        headless::render(&native, 2400, 1200);
-        headless::render(&native, 2400, 1200)
-    };
+    let render = || render_settled(&ui, &native, 2400, 1200);
     let tick = || {
         std::thread::sleep(Duration::from_millis(300));
         slint::platform::update_timers_and_animations();
@@ -221,8 +243,7 @@ fn real_cards_follow_qt_min_max_fixed_gauge_and_wrapped_text_boundaries() {
         }
         std::thread::sleep(Duration::from_millis(300));
         slint::platform::update_timers_and_animations();
-        headless::render(&native, 2400, 1600);
-        headless::render(&native, 2400, 1600);
+        render_settled(&ui, &native, 2400, 1600);
         for (i, sample) in event["samples"].as_array().unwrap().iter().enumerate() {
             let (width, cap) = sizes(&ui, i);
             assert!(
@@ -270,6 +291,7 @@ fn pending_eleventh_card_snapshots_on_admission_and_row_removal_keeps_old_polici
             )
         })
         .unwrap();
+    let displaced = ui.get_popups().row_data(0).unwrap();
     ui.invoke_popup_dismiss(0);
     let rows: Vec<_> = ui.get_popups().iter().collect();
     assert_eq!(rows.len(), 10);
@@ -293,13 +315,41 @@ fn pending_eleventh_card_snapshots_on_admission_and_row_removal_keeps_old_polici
         "queued job snapshots at first display, not creation"
     );
     let native = windows.get(0).unwrap();
-    headless::render(&native, 2400, 1200);
-    headless::render(&native, 2400, 1200);
+    render_settled(&ui, &native, 2400, 1200);
     let (width, cap) = sizes(&ui, 9);
     assert!((width - cap).abs() <= 1.0);
     let oldcap = sizes(&ui, 0).1;
     assert!(
         oldcap < cap,
         "mixed-policy row geometry followed its surviving job"
+    );
+    let measurements = || {
+        (0..ui.get_popups().row_count())
+            .map(|index| sizes(&ui, index))
+            .collect::<Vec<_>>()
+    };
+    let settled = measurements();
+    ui.invoke_popup_card_measured(0, displaced.key, displaced.gui_owner, 1.0, 2.0);
+    assert_eq!(
+        measurements(),
+        settled,
+        "displaced row cannot report into its successor"
+    );
+    let current = ui.get_popups().row_data(0).unwrap();
+    drop(_bound);
+    ui.invoke_popup_card_measured(0, current.key.clone(), current.gui_owner.clone(), 1.0, 2.0);
+    assert_eq!(
+        measurements(),
+        settled,
+        "retired binding cannot report measurements"
+    );
+    let _successor = bind(&ui, Pages::open(store.clone()).unwrap());
+    render_settled(&ui, &native, 2400, 1200);
+    let successor = measurements();
+    ui.invoke_popup_card_measured(0, current.key, current.gui_owner, 1.0, 2.0);
+    assert_eq!(
+        measurements(),
+        successor,
+        "prior GUI owner cannot report into a rebound card"
     );
 }
