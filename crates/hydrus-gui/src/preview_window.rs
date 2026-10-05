@@ -9,7 +9,10 @@ use slint::{ComponentHandle as _, Timer, TimerMode};
 use std::{
     cell::{Cell, RefCell},
     rc::Rc,
-    sync::Arc,
+    sync::{
+        Arc,
+        atomic::{AtomicBool, Ordering},
+    },
     time::Duration,
 };
 
@@ -23,7 +26,83 @@ struct Pending {
     file: HashId,
     started_ms: i64,
     generation: u128,
+}
+struct Request {
+    file: HashId,
+    generation: u128,
+    decoder: Decoder,
+}
+// One held obsolete decode must not block its successor's presentation. Two
+// workers preserve that behavior, with only the latest queued request retained.
+struct Workers {
+    requests: crossbeam_channel::Sender<Request>,
+    queued: crossbeam_channel::Receiver<Request>,
     pixels: crossbeam_channel::Receiver<(u128, Option<Pixels>)>,
+    alive: Arc<AtomicBool>,
+}
+impl Workers {
+    fn new(store: &Arc<Store>) -> std::io::Result<Self> {
+        let (requests, queued) = crossbeam_channel::bounded::<Request>(1);
+        let (send, pixels) = crossbeam_channel::bounded(2);
+        let workers = Self {
+            requests,
+            queued,
+            pixels,
+            alive: Arc::new(AtomicBool::new(true)),
+        };
+        for index in 0..2 {
+            let receive = workers.queued.clone();
+            let send = send.clone();
+            let alive = workers.alive.clone();
+            let store = Arc::downgrade(store);
+            let thread = std::thread::Builder::new()
+                .name(format!("preview-image-{index}"))
+                .spawn(move || {
+                    while let Ok(request) = receive.recv() {
+                        if !alive.load(Ordering::Acquire) {
+                            break;
+                        }
+                        let Some(store) = store.upgrade() else { break };
+                        let pixels = (request.decoder)(&store, request.file)
+                            .as_ref()
+                            .map(Pixels::new);
+                        drop(store);
+                        if !alive.load(Ordering::Acquire)
+                            || send.send((request.generation, pixels)).is_err()
+                        {
+                            break;
+                        }
+                    }
+                })?;
+            // The channel/retirement flag owns exit; GUI close must not join
+            // a synchronous decoder that is still finishing.
+            drop(thread);
+        }
+        Ok(workers)
+    }
+    fn clear_queued(&self) {
+        while self.queued.try_recv().is_ok() {}
+    }
+    fn submit(&self, mut request: Request) -> bool {
+        loop {
+            match self.requests.try_send(request) {
+                Ok(()) => return true,
+                Err(crossbeam_channel::TrySendError::Full(latest)) => {
+                    self.clear_queued();
+                    request = latest;
+                }
+                Err(crossbeam_channel::TrySendError::Disconnected(_)) => return false,
+            }
+        }
+    }
+}
+impl Drop for Workers {
+    fn drop(&mut self) {
+        self.alive.store(false, Ordering::Release);
+        self.clear_queued();
+        // Dropping both endpoints releases idle receivers and blocked replies.
+        // An in-progress synchronous decode exits without publishing afterward.
+    }
 }
 struct State {
     window: slint::Weak<MainWindow>,
@@ -36,6 +115,7 @@ struct State {
     blocked: Cell<Option<Target>>,
     splitter_hidden: Cell<bool>,
     pending: RefCell<Option<Pending>>,
+    workers: RefCell<Option<Workers>>,
     alive: Cell<bool>,
     timer: Timer,
 }
@@ -53,6 +133,9 @@ impl State {
     }
     fn clear(&self, window: &MainWindow) {
         self.pending.borrow_mut().take();
+        if let Some(workers) = self.workers.borrow().as_ref() {
+            workers.clear_queued();
+        }
         self.requested.set(None);
         self.track(None);
         window.set_preview_media(Default::default());
@@ -118,41 +201,58 @@ impl State {
             if let Some((_, file)) = target.filter(|(_, file)| self.eligible(*file)) {
                 window.set_preview_loading(true);
                 let generation = rand::random();
-                let (send, receive) = crossbeam_channel::bounded(1);
                 *self.pending.borrow_mut() = Some(Pending {
                     file,
                     started_ms: self.time(),
                     generation,
-                    pixels: receive,
                 });
-                let store = self.store.clone();
                 let decoder = self.decoder.borrow().clone();
-                let spawned = std::thread::Builder::new()
-                    .name("preview-image".into())
-                    .spawn(move || {
-                        let pixels = decoder(&store, file).as_ref().map(Pixels::new);
-                        let _ = send.send((generation, pixels));
-                    });
-                if let Err(error) = spawned {
+                let mut workers = self.workers.borrow_mut();
+                if workers.is_none() {
+                    match Workers::new(&self.store) {
+                        Ok(created) => *workers = Some(created),
+                        Err(error) => {
+                            self.pending.borrow_mut().take();
+                            window.set_preview_loading(false);
+                            eprintln!("could not load preview: {error}");
+                        }
+                    }
+                }
+                if let Some(workers) = workers.as_ref()
+                    && !workers.submit(Request {
+                        file,
+                        generation,
+                        decoder,
+                    })
+                {
                     self.pending.borrow_mut().take();
                     window.set_preview_loading(false);
-                    eprintln!("could not load preview: {error}");
                 }
             }
         }
-        let ready =
-            self.pending
-                .borrow()
-                .as_ref()
-                .and_then(|pending| match pending.pixels.try_recv() {
-                    Ok((generation, pixels)) if generation == pending.generation => {
-                        Some((pending.file, pending.started_ms, pixels))
+        let mut ready = None;
+        if let Some(workers) = self.workers.borrow().as_ref() {
+            loop {
+                match workers.pixels.try_recv() {
+                    Ok((generation, pixels)) => {
+                        if let Some(pending) = self.pending.borrow().as_ref()
+                            && generation == pending.generation
+                        {
+                            ready = Some((pending.file, pending.started_ms, pixels));
+                        }
                     }
                     Err(crossbeam_channel::TryRecvError::Disconnected) => {
-                        Some((pending.file, pending.started_ms, None))
+                        if ready.is_none()
+                            && let Some(pending) = self.pending.borrow().as_ref()
+                        {
+                            ready = Some((pending.file, pending.started_ms, None));
+                        }
+                        break;
                     }
-                    _ => None,
-                });
+                    Err(crossbeam_channel::TryRecvError::Empty) => break,
+                }
+            }
+        }
         if let Some((file, started_ms, pixels)) = ready {
             self.pending.borrow_mut().take();
             window.set_preview_loading(false);
@@ -171,6 +271,7 @@ impl State {
         }
         self.timer.stop();
         self.pending.borrow_mut().take();
+        self.workers.borrow_mut().take();
         if let Err(error) = self.tracker.borrow_mut().close(self.time()) {
             eprintln!("could not save preview viewing statistics: {error}");
         }
@@ -214,6 +315,7 @@ impl Monitor {
             blocked: Cell::new(None),
             splitter_hidden: Cell::new(false),
             pending: RefCell::new(None),
+            workers: RefCell::new(None),
             alive: Cell::new(true),
             timer: Timer::default(),
         });
@@ -264,5 +366,83 @@ impl Monitor {
     /// Finish the displayed interval once after an accepted client close.
     pub fn close(&self) {
         self.0.close();
+    }
+}
+
+#[cfg(test)]
+mod worker_tests {
+    use super::*;
+
+    #[test]
+    fn idle_preview_workers_do_not_retain_the_store() {
+        let directory = tempfile::tempdir().unwrap();
+        let store = Store::open(directory.path()).unwrap();
+        let weak = Arc::downgrade(&store);
+        let workers = Workers::new(&store).unwrap();
+        drop(store);
+        assert!(
+            weak.upgrade().is_none(),
+            "idle workers own only a weak store"
+        );
+        drop(workers);
+    }
+
+    #[test]
+    fn retiring_pool_drops_queued_decoder_and_releases_running_store_after_decode() {
+        let directory = tempfile::tempdir().unwrap();
+        let store = Store::open(directory.path()).unwrap();
+        let weak_store = Arc::downgrade(&store);
+        let workers = Workers::new(&store).unwrap();
+        let (entered, entries) = crossbeam_channel::bounded(2);
+        let (release, released) = crossbeam_channel::bounded(2);
+        let held: Decoder = Arc::new(move |_, _| {
+            entered.send(()).unwrap();
+            released.recv_timeout(Duration::from_secs(5)).unwrap();
+            None
+        });
+        for generation in 1..=2 {
+            assert!(workers.submit(Request {
+                file: HashId(1),
+                generation,
+                decoder: held.clone(),
+            }));
+            entries.recv_timeout(Duration::from_secs(5)).unwrap();
+        }
+        let queued_resource = Arc::new(AtomicBool::new(false));
+        let weak_resource = Arc::downgrade(&queued_resource);
+        let queued_calls = Arc::new(AtomicBool::new(false));
+        assert!(workers.submit(Request {
+            file: HashId(2),
+            generation: 3,
+            decoder: Arc::new({
+                let called = queued_calls.clone();
+                move |_, _| {
+                    queued_resource.store(true, Ordering::Release);
+                    called.store(true, Ordering::Release);
+                    None
+                }
+            }),
+        }));
+        drop(store);
+        assert!(
+            weak_store.upgrade().is_some(),
+            "two held decodes own the store"
+        );
+        drop(workers);
+        assert!(
+            weak_resource.upgrade().is_none(),
+            "queued decoder is dropped on retirement"
+        );
+        release.send(()).unwrap();
+        release.send(()).unwrap();
+        let started = std::time::Instant::now();
+        while weak_store.upgrade().is_some() {
+            assert!(started.elapsed() < Duration::from_secs(5));
+            std::thread::sleep(Duration::from_millis(2));
+        }
+        assert!(
+            !queued_calls.load(Ordering::Acquire),
+            "retired queued work never executes"
+        );
     }
 }

@@ -2855,7 +2855,10 @@ hidden preview splitter waits for a fresh focus change; restoring a page restore
 its focused file. Settings are read at finish, with cap-before-minimum and the
 duration-times-five extension, and Preview rows persist independently of media
 viewer rows. Late frames and callbacks cannot reach a replacement page/request
-or rebound owner. Actual Qt Options, manager and CanvasPanel transitions are
+or rebound owner. A lazy owner pool caps still decoding at two workers and
+retains only the latest queued target. A held obsolete decode therefore permits
+one successor to display; idle workers retain no Store, and close discards queued
+work and retires running replies. Actual Qt Options, manager and CanvasPanel transitions are
 recorded in `preview_viewing_intervals.json`; native model/display/store regressions
 are authored for hosted CI. Preview playback, audio, zoom and hover/rating controls
 remain Partial.
