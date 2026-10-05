@@ -5,7 +5,10 @@ use hydrus_store::{
     settings,
 };
 use slint::{ComponentHandle as _, Model as _};
-use std::{cell::Cell, rc::Rc};
+use std::{
+    cell::{Cell, RefCell},
+    rc::Rc,
+};
 const SAVE: &str = "save current page's sidebar/preview size now";
 const EXIT: &str = "save current page's sidebar/preview size on client exit";
 const RESTORE: &str = "restore all pages' sidebar/preview sizes to saved value";
@@ -588,4 +591,124 @@ fn pressed_old_handle_cannot_resize_same_key_successor_binding_or_same_session_r
     ui.window().dispatch_event(E::CloseRequested);
     assert!(!ui.window().is_visible());
     assert_eq!(store.read(page_layout::load).unwrap().hpos, 400);
+}
+
+#[test]
+fn rebind_retires_preview_under_predecessor_splitter_before_successor_hides_it() {
+    let (_directories, store) = crate::subscriptions::store();
+    store
+        .write(|ctx| {
+            ctx.conn()
+                .execute("DELETE FROM file_viewing_stats WHERE canvas_type=1", [])?;
+            let mut stats: settings::FileViewingStatistics = settings::get(ctx.conn())?;
+            stats.active = true;
+            stats.preview_min_ms = None;
+            stats.preview_max_ms = None;
+            settings::set(ctx.conn(), &stats)?;
+            settings::set(ctx.conn(), &PageLayout::default())
+        })
+        .unwrap();
+    let fixture = hydrus_testkit::fixture_json("sidebar_layout.json");
+    let hash: hydrus_core::Sha256 = fixture["preview_consumer"][0]["shown"]
+        .as_str()
+        .unwrap()
+        .parse()
+        .unwrap();
+    let file = store
+        .read(|conn| hydrus_store::master::hash_id(conn, &hash))
+        .unwrap()
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let first = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    render(&windows.get(0).unwrap());
+    assert!(!ui.get_preview_splitter_hidden());
+    let now = Rc::new(Cell::new(1000));
+    let observed_splitters = Rc::new(RefCell::new(Vec::new()));
+    first.preview.set_clock(Rc::new({
+        let now = now.clone();
+        let observed_splitters = observed_splitters.clone();
+        let weak = ui.as_weak();
+        move || {
+            let window = weak.upgrade().unwrap();
+            observed_splitters
+                .borrow_mut()
+                .push(window.get_preview_splitter_hidden());
+            now.get()
+        }
+    }));
+    first.preview.set_decoder(std::sync::Arc::new(|_, _| {
+        Some(hydrus_media::Raster::new(1, 1, 3, vec![10, 20, 30]).unwrap())
+    }));
+    let index = first
+        .current
+        .borrow()
+        .borrow()
+        .results()
+        .iter()
+        .position(|id| *id == file)
+        .unwrap();
+    ui.invoke_thumbnail_clicked(i32::try_from(index).unwrap(), false, false);
+    let started = std::time::Instant::now();
+    while !ui.get_preview_has_media() {
+        first.preview.refresh();
+        assert!(
+            started.elapsed() < std::time::Duration::from_secs(5),
+            "actual owned decode must publish its accepted frame"
+        );
+        std::thread::yield_now();
+    }
+    assert_eq!(first.preview.displayed_file(), Some(file));
+    now.set(2000);
+    observed_splitters.borrow_mut().clear();
+    store
+        .write(|ctx| {
+            let mut saved: PageLayout = page_layout::load(ctx.conn())?;
+            saved.hpos = 0;
+            settings::set(ctx.conn(), &saved)
+        })
+        .unwrap();
+    // Persisting a successor's default has not changed the predecessor's splitter.
+    assert!(!ui.get_preview_splitter_hidden());
+    let successor = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    assert!(ui.get_preview_splitter_hidden());
+    assert_eq!(
+        *observed_splitters.borrow(),
+        [false],
+        "retirement samples predecessor geometry before any successor splitter setter/presentation callback"
+    );
+    assert!(!ui.get_preview_has_media());
+    assert_eq!(successor.preview.displayed_file(), None);
+    let stats = store
+        .read(|conn| hydrus_store::media::viewing_stats(conn, &[file]))
+        .unwrap()
+        .into_iter()
+        .find(|row| row.canvas == hydrus_core::CanvasType::Preview)
+        .unwrap();
+    assert_eq!((stats.views, stats.viewtime_ms), (1, 1000));
+    first.preview.refresh();
+    first.preview.close();
+    assert_eq!(
+        *observed_splitters.borrow(),
+        [false],
+        "retired monitor cannot observe or clear successor state"
+    );
+    let stats = store
+        .read(|conn| hydrus_store::media::viewing_stats(conn, &[file]))
+        .unwrap()
+        .into_iter()
+        .find(|row| row.canvas == hydrus_core::CanvasType::Preview)
+        .unwrap();
+    assert_eq!(
+        (stats.views, stats.viewtime_ms),
+        (1, 1000),
+        "replayed old close cannot duplicate the durable interval"
+    );
 }
