@@ -1022,6 +1022,7 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
                 &options.integers,
                 &options.strings,
                 &options.noneable_strings,
+                &options.string_lists,
             ),
         )?;
     }

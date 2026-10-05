@@ -1,0 +1,41 @@
+// The media viewer top hover's keyboard button: edit shortcuts, and turn
+// custom shortcut sets on for this viewer or for every new one.
+export component ViewerShortcutButton inherits ContextMenuArea {
+    in property <image> icon;
+    in property <[string]> names;
+    in property <[bool]> current;
+    in property <[bool]> defaults;
+    callback requested();
+    // (0, _): edit shortcuts; (1, i): flip set i for this viewer; (2, i):
+    // flip set i by default
+    callback chosen(int, int);
+    width: 24px; height: 24px;
+    Menu {
+        MenuItem { title: "edit shortcuts"; activated => { root.chosen(0, 0); } }
+        if root.names.length > 0: Menu {
+            title: "set current shortcuts";
+            for name[i] in root.names: MenuItem {
+                title: name; checkable: true; checked: root.current[i];
+                activated => { root.chosen(1, i); }
+            }
+        }
+        if root.names.length > 0: Menu {
+            title: "set default shortcuts";
+            for name[i] in root.names: MenuItem {
+                title: name; checkable: true; checked: root.defaults[i];
+                activated => { root.chosen(2, i); }
+            }
+        }
+    }
+    Image {
+        width: 16px; height: 16px;
+        x: (parent.width - self.width) / 2; y: (parent.height - self.height) / 2;
+        source: root.icon;
+    }
+    TouchArea {
+        clicked => {
+            root.requested();
+            root.show({ x: 0px, y: root.height });
+        }
+    }
+}

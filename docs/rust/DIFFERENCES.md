@@ -2682,7 +2682,7 @@ Tag and rating shortcuts: only local tag services take tags (no pending or
 petitioning to repositories); the tag is typed rather than chosen with an
 autocomplete, and the rating typed rather than clicked on a rating control.
 They run in the media viewer only (not on thumbnails), from the "media" and
-"media_viewer" sets; custom sets can't be turned on there yet. The
+"media_viewer" sets and the custom sets turned on in the viewer. The
 interactive "popup ... entry dialog" commands and file domain commands
 aren't offered.
 
@@ -2690,8 +2690,8 @@ Options > shortcuts' set lists: the command editor still offers only the
 commands with a native executor (three for the main window, six for the
 viewers), so editing a default binding for another command replaces it with
 one of those, and only those run. Default bindings with data are shown, not
-run. Custom sets are kept and edited but nothing turns them on in the media
-viewer yet. A custom set can't take a built-in set's name (the reference only
+run. The viewer's "edit shortcuts" opens the whole options dialog rather
+than a shortcuts dialog of its own. A custom set can't take a built-in set's name (the reference only
 keeps custom names apart from each other). "restore defaults" chooses from
 buttons rather than a list, and the help shows in a message window.
 

@@ -3640,6 +3640,11 @@ stars"). In the media viewer, such shortcuts in the "media" and
 added where the file lacks it, else flipped off; a rating is set, else
 flipped off; increment and decrement move a numerical rating a star (from
 none to its lowest or highest) or an inc/dec count by one.
+The media viewer's top hover has the reference's keyboard button: "edit
+shortcuts" opens the options, and with custom sets, "set current shortcuts"
+turns them on or off for this viewer and "set default shortcuts" for every
+new one (kept as `default_media_viewer_custom_shortcuts`). A viewer's
+custom sets' shortcuts run after its own set's.
 
 The page lists the sets as the reference does. "built-in hydrus shortcut sets"
 shows each built-in set the client has, by its pretty name in the reference's

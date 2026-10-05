@@ -76,6 +76,9 @@ pub const STRINGS: &[(&str, Option<&str>)] = &[
     ("qt_stylesheet_name", None),
 ];
 
+/// The string lists kept (all empty by default).
+pub const STRING_LISTS: &[&str] = &["default_media_viewer_custom_shortcuts"];
+
 /// The values set, by name; anything unset reads as its default.
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(default)]
@@ -83,6 +86,7 @@ pub struct ReferenceOptions {
     pub booleans: BTreeMap<String, bool>,
     pub integers: BTreeMap<String, i64>,
     pub strings: BTreeMap<String, Option<String>>,
+    pub string_lists: BTreeMap<String, Vec<String>>,
 }
 
 impl crate::settings::Setting for ReferenceOptions {
@@ -145,14 +149,36 @@ impl ReferenceOptions {
         self.strings.insert(name.to_owned(), value);
     }
 
+    /// `name`'s string list (`GetStringList`).
+    ///
+    /// # Panics
+    /// If `name` isn't one kept.
+    pub fn string_list(&self, name: &str) -> Vec<String> {
+        assert!(
+            STRING_LISTS.contains(&name),
+            "{name} isn't a kept string list"
+        );
+        self.string_lists.get(name).cloned().unwrap_or_default()
+    }
+
+    pub fn set_string_list(&mut self, name: &str, value: Vec<String>) {
+        self.string_lists.insert(name.to_owned(), value);
+    }
+
     /// The kept values an imported client's options set.
     pub fn import(
         booleans: &BTreeMap<String, bool>,
         integers: &BTreeMap<String, i64>,
         strings: &BTreeMap<String, String>,
         noneable_strings: &BTreeMap<String, Option<String>>,
+        string_lists: &BTreeMap<String, Vec<String>>,
     ) -> Self {
         let mut out = Self::default();
+        for name in STRING_LISTS {
+            if let Some(value) = string_lists.get(*name) {
+                out.set_string_list(name, value.clone());
+            }
+        }
         for (name, _) in BOOLEANS {
             if let Some(&value) = booleans.get(*name) {
                 out.set_boolean(name, value);

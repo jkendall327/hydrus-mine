@@ -185,6 +185,7 @@ mod gui_colours;
 mod gui_format;
 mod popup_width;
 mod preview_default_zoom;
+mod viewer_shortcut_menu;
 mod viewer_tag_wheel;
 
 mod idle_timeout_options;

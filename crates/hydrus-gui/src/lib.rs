@@ -2487,6 +2487,78 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         binding_active.clone(),
     );
     let palette_dispatcher: command_palette_window::MainDispatcher = Rc::default();
+    let open_options: Rc<dyn Fn()> = {
+        let image_cache = image_cache.clone();
+        let binding_active = binding_active.clone();
+        let pages = pages.clone();
+        let slot = options.clone();
+        let reason_slot = options_reason_child.clone();
+        let colour_slot = options_colour_child.clone();
+        let frame_slot = options_frame_child.clone();
+        let banner_slot = options_banner_child.clone();
+        let external_slots = options_external_calls.clone();
+        let routing_slots = options_open_externally.clone();
+        let suggested_slot = options_suggested_tags_slot.clone();
+        let checker_slot = checker_options.clone();
+        let viewer = viewer.clone();
+        let change_pages = change_pages.clone();
+        let rows = rows.clone();
+        let weak = window.as_weak();
+        Rc::new(move || {
+            if !binding_active.get() || slot.borrow().is_some() {
+                return;
+            }
+            let store = pages.borrow().store().clone();
+            let thumbnails_before = store.snapshot().thumbnails;
+            let applied: Rc<dyn Fn()> = Rc::new({
+                let image_cache = image_cache.clone();
+                let viewer = viewer.clone();
+                let pages = pages.clone();
+                let change_pages = change_pages.clone();
+                let rows = rows.clone();
+                let weak = weak.clone();
+                let store = store.clone();
+                move || {
+                    image_cache.refresh();
+                    rows.set_cache_policy(
+                        store.read(hydrus_store::settings::get).unwrap_or_default(),
+                    );
+                    pages.borrow_mut().reload_settings();
+                    if let Some(window) = viewer.borrow().as_ref() {
+                        window.invoke_presentation_settings_changed();
+                    }
+                    // (the cells as the options now have them; and
+                    // thumbnails of another size, every one again)
+                    if let Some(window) = weak.upgrade() {
+                        lay_out_thumbnails(&window, &store, &rows);
+                    }
+                    if store.snapshot().thumbnails != thumbnails_before {
+                        rows.thumbnails_changed();
+                    }
+                    change_pages(&|pages| {
+                        pages.current().borrow_mut().refresh_tags();
+                        Ok(())
+                    });
+                }
+            });
+            match options_window::open(
+                &store,
+                &slot,
+                &checker_slot,
+                &reason_slot,
+                &colour_slot,
+                &frame_slot,
+                &banner_slot,
+                &suggested_slot,
+                &external_slots,
+                &routing_slots,
+                applied,
+            ) {
+                Ok(window) => *slot.borrow_mut() = Some(window),
+                Err(e) => eprintln!("could not open the options: {e}"),
+            }
+        })
+    };
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
@@ -2629,78 +2701,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             },
             // file > options; once applied, what the options change is
             // shown again
-            options: {
-                let image_cache = image_cache.clone();
-                let binding_active = binding_active.clone();
-                let pages = pages.clone();
-                let slot = options.clone();
-                let reason_slot = options_reason_child.clone();
-                let colour_slot = options_colour_child.clone();
-                let frame_slot = options_frame_child.clone();
-                let banner_slot = options_banner_child.clone();
-                let external_slots = options_external_calls.clone();
-                let routing_slots = options_open_externally.clone();
-                let suggested_slot = options_suggested_tags_slot.clone();
-                let checker_slot = checker_options.clone();
-                let viewer = viewer.clone();
-                let change_pages = change_pages.clone();
-                let rows = rows.clone();
-                let weak = window.as_weak();
-                Rc::new(move || {
-                    if !binding_active.get() || slot.borrow().is_some() {
-                        return;
-                    }
-                    let store = pages.borrow().store().clone();
-                    let thumbnails_before = store.snapshot().thumbnails;
-                    let applied: Rc<dyn Fn()> = Rc::new({
-                        let image_cache = image_cache.clone();
-                        let viewer = viewer.clone();
-                        let pages = pages.clone();
-                        let change_pages = change_pages.clone();
-                        let rows = rows.clone();
-                        let weak = weak.clone();
-                        let store = store.clone();
-                        move || {
-                            image_cache.refresh();
-                            rows.set_cache_policy(
-                                store.read(hydrus_store::settings::get).unwrap_or_default(),
-                            );
-                            pages.borrow_mut().reload_settings();
-                            if let Some(window) = viewer.borrow().as_ref() {
-                                window.invoke_presentation_settings_changed();
-                            }
-                            // (the cells as the options now have them; and
-                            // thumbnails of another size, every one again)
-                            if let Some(window) = weak.upgrade() {
-                                lay_out_thumbnails(&window, &store, &rows);
-                            }
-                            if store.snapshot().thumbnails != thumbnails_before {
-                                rows.thumbnails_changed();
-                            }
-                            change_pages(&|pages| {
-                                pages.current().borrow_mut().refresh_tags();
-                                Ok(())
-                            });
-                        }
-                    });
-                    match options_window::open(
-                        &store,
-                        &slot,
-                        &checker_slot,
-                        &reason_slot,
-                        &colour_slot,
-                        &frame_slot,
-                        &banner_slot,
-                        &suggested_slot,
-                        &external_slots,
-                        &routing_slots,
-                        applied,
-                    ) {
-                        Ok(window) => *slot.borrow_mut() = Some(window),
-                        Err(e) => eprintln!("could not open the options: {e}"),
-                    }
-                })
-            },
+            options: open_options.clone(),
             manage_network_sessions: {
                 let pages = pages.clone();
                 let slots = network_sessions.clone();
@@ -4235,6 +4236,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let viewer_deletion = viewer_deletion.clone();
         let viewing = viewing.clone();
         let change_pages: ChangePages = Rc::new(change_pages.clone());
+        let open_options = open_options.clone();
         let open_manage_notes = open_manage_notes.clone();
         let open_manage_urls = open_manage_urls.clone();
         let open_manage_ratings = open_manage_ratings.clone();
@@ -4275,6 +4277,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 export_files: open_export_files.clone(),
                 embedded_metadata: open_embedded_metadata.clone(),
                 change_pages: change_pages.clone(),
+                edit_shortcuts: open_options.clone(),
             };
             match open_viewer(model, &viewer, hooks) {
                 Ok(window) => *viewer.borrow_mut() = Some(window),
@@ -4293,6 +4296,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let viewer_deletion = viewer_deletion.clone();
         let viewing = viewing.clone();
         let change_pages: ChangePages = Rc::new(change_pages.clone());
+        let open_options = open_options.clone();
         let open_manage_tags = open_manage_tags_viewer.clone();
         let open_manage_notes = open_manage_notes.clone();
         let open_manage_urls = open_manage_urls.clone();
@@ -4345,6 +4349,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 export_files: open_export_files.clone(),
                 embedded_metadata: open_embedded_metadata.clone(),
                 change_pages: change_pages.clone(),
+                edit_shortcuts: open_options.clone(),
             };
             match open_viewer(model, &viewer, hooks) {
                 Ok(window) => *viewer.borrow_mut() = Some(window),
@@ -6173,6 +6178,8 @@ struct ViewerHooks {
     embedded_metadata: OpenOnFiles,
     /// Opens pages (from the menu's open and urls entries).
     change_pages: ChangePages,
+    /// Opens the options (the keyboard button's "edit shortcuts").
+    edit_shortcuts: Rc<dyn Fn()>,
 }
 
 /// The media viewer while one is open, as the Client API's
@@ -6221,6 +6228,7 @@ fn open_viewer(
         export_files,
         embedded_metadata,
         change_pages,
+        edit_shortcuts,
     } = hooks;
     delete_files_window::cancel(&viewer_delete);
     let window = MediaViewerWindow::new()?;
@@ -7566,6 +7574,86 @@ fn open_viewer(
         }
     });
     windows::place(window.window(), &settings_frame);
+    // the keyboard button: custom shortcut sets turned on for this viewer
+    // (from the defaults) and by default
+    let active_custom: Rc<RefCell<Vec<String>>> = Rc::new(RefCell::new({
+        let store = model.borrow().store().clone();
+        store
+            .read(hydrus_store::settings::get::<hydrus_store::reference_options::ReferenceOptions>)
+            .unwrap_or_default()
+            .string_list(hydrus_gui_model::viewer_shortcut_menu::DEFAULTS_OPTION)
+    }));
+    let show_shortcut_menu: Rc<dyn Fn()> = Rc::new({
+        let weak = window.as_weak();
+        let store = model.borrow().store().clone();
+        let active_custom = active_custom.clone();
+        move || {
+            use hydrus_gui_model::viewer_shortcut_menu as menu;
+            let Some(window) = weak.upgrade() else { return };
+            let settings: hydrus_core::shortcuts::Settings =
+                store.read(hydrus_store::settings::get).unwrap_or_default();
+            let names = menu::custom_names(&settings);
+            let defaults =
+                store
+                    .read(
+                        hydrus_store::settings::get::<
+                            hydrus_store::reference_options::ReferenceOptions,
+                        >,
+                    )
+                    .unwrap_or_default()
+                    .string_list(menu::DEFAULTS_OPTION);
+            window.set_shortcut_current(ModelRc::new(VecModel::from(menu::checks(
+                &names,
+                &active_custom.borrow(),
+            ))));
+            window.set_shortcut_defaults(ModelRc::new(VecModel::from(menu::checks(
+                &names, &defaults,
+            ))));
+            window.set_shortcut_names(ModelRc::new(VecModel::from(
+                names
+                    .into_iter()
+                    .map(SharedString::from)
+                    .collect::<Vec<_>>(),
+            )));
+        }
+    });
+    show_shortcut_menu();
+    window.on_shortcut_menu_requested({
+        let show_shortcut_menu = show_shortcut_menu.clone();
+        move || show_shortcut_menu()
+    });
+    window.on_shortcut_menu_chosen({
+        let show_shortcut_menu = show_shortcut_menu.clone();
+        let active_custom = active_custom.clone();
+        let store = model.borrow().store().clone();
+        move |kind, i| {
+            use hydrus_gui_model::viewer_shortcut_menu as menu;
+            let settings: hydrus_core::shortcuts::Settings =
+                store.read(hydrus_store::settings::get).unwrap_or_default();
+            let name = usize::try_from(i)
+                .ok()
+                .and_then(|i| menu::custom_names(&settings).get(i).cloned());
+            match (kind, name) {
+                (0, _) => edit_shortcuts(),
+                (1, Some(name)) => menu::flip(&mut active_custom.borrow_mut(), &name),
+                (2, Some(name)) => {
+                    let done = store.write(move |ctx| {
+                        let mut options: hydrus_store::reference_options::ReferenceOptions =
+                            hydrus_store::settings::get(ctx.conn())?;
+                        let mut defaults = options.string_list(menu::DEFAULTS_OPTION);
+                        menu::flip(&mut defaults, &name);
+                        options.set_string_list(menu::DEFAULTS_OPTION, defaults);
+                        hydrus_store::settings::set(ctx.conn(), &options)
+                    });
+                    if let Err(e) = done {
+                        eprintln!("could not save the default shortcuts: {e}");
+                    }
+                }
+                _ => {}
+            }
+            show_shortcut_menu();
+        }
+    });
     // tag and rating shortcuts apply to the file shown
     let content: Rc<dyn Fn(&hydrus_core::shortcuts::ContentCommand) -> bool> = Rc::new({
         let model = model.clone();
@@ -7594,6 +7682,7 @@ fn open_viewer(
         model.borrow().store().clone(),
         viewing_stats.clone(),
         content,
+        active_custom,
     );
     windows::watch_named_events(
         window.window(),
