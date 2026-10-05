@@ -2492,11 +2492,28 @@ build, Rust test or mutation run was performed. This closes only the original
 `import-existing-tags-filter` action; broader service/import-option parents
 remain Partial, including other unimplemented controls.
 
+The four original Files and Trash removal controls now have staged typed settings,
+legacy migration and live archive/delete-filter, thumbnail/viewer deletion and
+thumbnail strict/merge move consumers. Removal is a page effect independent of
+physical storage changes. Default false retains trashed rows; enabled trash removal
+intersects actual current trash membership and excludes the one-domain trash view.
+Filter removal includes keep/delete decisions, optionally skips, and returns focus
+to the surviving skipped file. Page identity is captured before asynchronous user
+answers, so switching or closing a page cannot redirect a removal to its successor.
+Hidden/retired filters and retired viewers reject removal callbacks. Existing
+physical migration semantics are unchanged. General out-of-process/API content
+updates are not yet broadcast to all native open pages; these proposals cover the
+reachable owned native actions, and the broader Files and Trash parent remains
+Partial. Actual Qt recordings execute filter close and MediaList pruning; authored
+model/store/native regressions await hosted CI, with no local Cargo/Rust/mutation
+execution.
+
 Local transfer confirmation parity is limited to the two Files and Trash
 checkboxes and thumbnail local-domain add/strict/merge commands with explicit
 sources. The broader locations and Files and Trash parents remain Partial:
-remote locations, viewer locations, shortcut source selection, importer and file
-removal-from-view preferences are outside this slice. Native transfers use one
+remote locations, viewer locations, shortcut source selection and importer
+transfers are outside this slice. The four removal-from-view preferences are
+covered in a separate finite Options slice. Native transfers use one
 transaction and revalidate live memberships/service keys after confirmation;
 the reference schedules a block worker using captured media. An unavailable
 source is skipped, a replaced service is rejected, and a strict destination that

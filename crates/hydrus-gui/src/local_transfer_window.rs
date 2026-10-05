@@ -26,13 +26,23 @@ pub fn open(
     guard: Rc<dyn Fn() -> bool>,
     applied: Rc<dyn Fn()>,
 ) -> Result<Option<LocalTransferWindow>, String> {
+    open_with_result(slot, store, transfer, guard, Rc::new(move |_| applied()))
+}
+/// Report only successfully migrated identities to the captured source page.
+pub fn open_with_result(
+    slot: &Slot,
+    store: &Arc<Store>,
+    transfer: Transfer,
+    guard: Rc<dyn Fn() -> bool>,
+    applied: Rc<dyn Fn(&[hydrus_core::HashId])>,
+) -> Result<Option<LocalTransferWindow>, String> {
     cancel(slot);
     if !guard() {
         return Ok(None);
     }
     if !transfer.confirm {
-        transfer.apply(store).map_err(|e| e.to_string())?;
-        applied();
+        let files = transfer.apply(store).map_err(|e| e.to_string())?;
+        applied(&files);
         return Ok(None);
     }
     let window = LocalTransferWindow::new().map_err(|e| e.to_string())?;
@@ -72,9 +82,9 @@ pub fn open(
                 return;
             }
             match transfer.apply(&store) {
-                Ok(_) => {
+                Ok(files) => {
                     close();
-                    applied();
+                    applied(&files);
                 }
                 Err(error) => {
                     if let Some(window) = weak.upgrade() {

@@ -484,9 +484,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 .is_some_and(|window| window.window().is_visible())
         }
     }));
+    let binding_active = Rc::new(Cell::new(true));
     window.on_retire_external_launches({
         let launcher = external_launches.clone();
-        move || launcher.cancel()
+        let binding_active = binding_active.clone();
+        move || {
+            binding_active.set(false);
+            launcher.cancel();
+        }
     });
     let pages = Rc::new(RefCell::new(pages));
     let session_autosave = session_autosave::bind(window, &pages);
@@ -1499,6 +1504,34 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             shown(true);
         }
     });
+    // Delayed file actions retain their source page; switching never retargets a removal.
+    let remove_from: RemoveFrom = Rc::new({
+        let binding_active = binding_active.clone();
+        let pages = pages.clone();
+        let current = current.clone();
+        let shown = shown.clone();
+        move |owner| {
+            let binding_active = binding_active.clone();
+            let pages = pages.clone();
+            let current = current.clone();
+            let shown = shown.clone();
+            Rc::new(move |files| {
+                if !binding_active.get()
+                    || !pages
+                        .borrow()
+                        .open_pages()
+                        .iter()
+                        .any(|page| Rc::ptr_eq(page, &owner))
+                {
+                    return;
+                }
+                owner.borrow_mut().remove_files(files);
+                if Rc::ptr_eq(&owner, &current.borrow()) {
+                    shown(true);
+                }
+            })
+        }
+    });
     // F3: manage tags; once applied, the tags are counted again
     let manage_tags: Rc<RefCell<Option<ManageTagsWindow>>> = Rc::default();
     let incremental_tags = incremental_tagging_window::Slot::default();
@@ -1682,16 +1715,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     };
     let delete_files: delete_files_window::Slot = Rc::default();
     let exit_confirmation = Rc::new(slint::Timer::default());
-    let pending: Rc<RefCell<Option<Asked>>> = Rc::default();
+    let pending: Rc<RefCell<Option<(Asked, Removed)>>> = Rc::default();
     let ask = {
         let pending = pending.clone();
         let weak = window.as_weak();
         let page = page.clone();
-        let removed = removed.clone();
+        let remove_from = remove_from.clone();
         let shown = shown.clone();
         let delete_files = delete_files.clone();
         move |asked: Asked| {
-            let store = page().borrow().store().clone();
+            let owner = page();
+            let removed = remove_from(owner.clone());
+            let store = owner.borrow().store().clone();
             if let Asked::Delete(files, deletion, location) = &asked
                 && store
                     .read(
@@ -1707,25 +1742,19 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     let weak = weak.clone();
                     move || weak.upgrade().is_some() && Rc::ptr_eq(&owner, &page())
                 });
-                let applied = Rc::new({
+                let applied: delete_files_window::AppliedChoice = Rc::new({
                     let store = store.clone();
-                    let files = files.clone();
                     let location = location.clone();
-                    let owner = owner.clone();
-                    let shown = shown.clone();
-                    move || {
-                        let remaining = media_actions::still_in(&store, &location, &files);
-                        let gone = files
-                            .iter()
-                            .copied()
-                            .filter(|f| !remaining.contains(f))
-                            .collect::<Vec<_>>();
-                        owner.borrow_mut().remove_files(&gone);
-                        shown(false);
+                    let removed = removed.clone();
+                    move |choice| {
+                        let gone = hydrus_gui_model::file_view_removal::advanced(
+                            &store, &location, choice,
+                        );
+                        removed(&gone);
                     }
                 });
                 let suggested = media_actions::suggested_action(&store, deletion);
-                if let Err(error) = delete_files_window::open(
+                if let Err(error) = delete_files_window::open_with_choice(
                     &delete_files,
                     &store,
                     files,
@@ -1747,7 +1776,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
             if let Some(window) = weak.upgrade() {
                 window.set_question(asked.question().into());
-                *pending.borrow_mut() = Some(asked);
+                *pending.borrow_mut() = Some((asked, removed));
             }
         }
     };
@@ -1763,7 +1792,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let preview = preview.clone();
             let shortcuts = shortcuts.clone();
             let launcher = external_launches.clone();
+            let binding_active = binding_active.clone();
             move || {
+                binding_active.set(false);
                 preview.close();
                 shortcuts.retire();
                 launcher.cancel();
@@ -1832,7 +1863,6 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let exit_confirmation = exit_confirmation.clone();
         let page = page.clone();
         let weak = window.as_weak();
-        let removed = removed.clone();
         let shown = shown.clone();
         let change_pages = change_pages.clone();
         move |yes| {
@@ -1841,7 +1871,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             if let Some(window) = weak.upgrade() {
                 window.set_question(SharedString::new());
             }
-            if let Some(asked) = asked.filter(|_| yes) {
+            if let Some((asked, removed)) = asked.filter(|_| yes) {
                 if let Asked::LockSearch(_) = asked {
                     page().borrow_mut().lock_search();
                     shown(false);
@@ -3359,10 +3389,59 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     window.on_archive_delete_filter({
         let page = page.clone();
         let archive_delete = archive_delete.clone();
-        let removed = removed.clone();
+        let binding_active = binding_active.clone();
+        let remove_from = remove_from.clone();
+        let pages = pages.clone();
+        let current = current.clone();
+        let shown = shown.clone();
         move || {
-            let page = page();
-            let page = page.borrow();
+            let previous = archive_delete
+                .borrow()
+                .as_ref()
+                .map(ComponentHandle::clone_strong);
+            if let Some(previous) = previous {
+                previous.invoke_forget();
+            }
+            let owner = page();
+            let removed = remove_from(owner.clone());
+            let guard: Rc<dyn Fn() -> bool> = Rc::new({
+                let binding_active = binding_active.clone();
+                let pages = pages.clone();
+                let owner = owner.clone();
+                move || {
+                    binding_active.get()
+                        && pages
+                            .borrow()
+                            .open_pages()
+                            .iter()
+                            .any(|page| Rc::ptr_eq(page, &owner))
+                }
+            });
+            let return_to: Rc<dyn Fn(HashId)> = Rc::new({
+                let binding_active = binding_active.clone();
+                let owner = owner.clone();
+                let pages = pages.clone();
+                let current = current.clone();
+                let shown = shown.clone();
+                move |file| {
+                    if !binding_active.get()
+                        || !pages
+                            .borrow()
+                            .open_pages()
+                            .iter()
+                            .any(|page| Rc::ptr_eq(page, &owner))
+                    {
+                        return;
+                    }
+                    if owner.borrow().files().contains(&file) {
+                        owner.borrow_mut().select_files(&[file]);
+                    }
+                    if Rc::ptr_eq(&owner, &current.borrow()) {
+                        shown(false);
+                    }
+                }
+            });
+            let page = owner.borrow();
             let files = match page.selected_files() {
                 selected if selected.is_empty() => page.files(),
                 selected => selected,
@@ -3378,7 +3457,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 model,
                 page.location().clone(),
                 &archive_delete,
-                removed.clone(),
+                removed,
+                guard,
+                return_to,
             ) {
                 Ok(window) => *archive_delete.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open the archive/delete filter: {e}"),
@@ -3458,8 +3539,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let open_export_files = open_export_files.clone();
         let open_embedded_metadata = open_embedded_metadata.clone();
         let files_changed = files_changed.clone();
+        let remove_from = remove_from.clone();
         move |index| {
             let source_page = page();
+            let removed = remove_from(source_page.clone());
             let original_key = origin_pages.borrow().shown().key;
             let closing_owner = viewer_closing::Owner::new(
                 Some((original_key, Rc::downgrade(&source_page))),
@@ -3739,6 +3822,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     window.on_menu_chosen({
         let transfer_target = transfer_target.clone();
         let local_transfer = local_transfer.clone();
+        let remove_from = remove_from.clone();
         let current = current.clone();
         let page = page.clone();
         let menu_state = menu_state.clone();
@@ -3877,8 +3961,38 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                                         && Rc::ptr_eq(&owner, &current.borrow())
                                 }
                             });
-                            let applied = files_changed.clone();
-                            if let Err(error) = local_transfer_window::open(
+                            let applied: Rc<dyn Fn(&[HashId])> = Rc::new({
+                                let source = transfer.source.clone();
+                                let kind = transfer.kind;
+                                let location = owner.borrow().location().clone();
+                                let removed = remove_from(owner.clone());
+                                let store = store.clone();
+                                let files_changed = files_changed.clone();
+                                move |files| {
+                                    if kind != hydrus_store::content::TransferKind::Copy
+                                        && let Some(source) = source.as_ref().and_then(|key| {
+                                            store
+                                                .snapshot()
+                                                .services
+                                                .by_key(key)
+                                                .ok()
+                                                .map(|service| service.id)
+                                        })
+                                    {
+                                        let gone = hydrus_gui_model::file_view_removal::removed(
+                                            &store,
+                                            &location,
+                                            files,
+                                            hydrus_gui_model::file_view_removal::Change::Moved(
+                                                source,
+                                            ),
+                                        );
+                                        removed(&gone);
+                                    }
+                                    files_changed();
+                                }
+                            });
+                            if let Err(error) = local_transfer_window::open_with_result(
                                 &local_transfer,
                                 &store,
                                 transfer,
@@ -4333,6 +4447,7 @@ fn shared_menu_action(
 
 /// Called with files a viewer deleted out of the page's domains.
 pub(crate) type Removed = Rc<dyn Fn(&[HashId])>;
+type RemoveFrom = Rc<dyn Fn(Rc<RefCell<SearchPage>>) -> Removed>;
 
 /// The window's menu template filled from `slots`, each entry's action
 /// put in `actions` at its id.
@@ -4877,16 +4992,11 @@ impl Asked {
             Self::Archive(files) => media_actions::archive(store, files),
             Self::Inbox(files) => media_actions::inbox(store, files),
             Self::Delete(files, deletion, location) => {
-                media_actions::delete(store, files, deletion).map(|()| {
-                    let still = media_actions::still_in(store, location, files);
-                    let gone: Vec<HashId> = files
-                        .iter()
-                        .copied()
-                        .filter(|f| !still.contains(f))
-                        .collect();
-                    if !gone.is_empty() {
-                        removed(&gone);
-                    }
+                media_actions::delete_changed(store, files, deletion).map(|affected| {
+                    let gone = hydrus_gui_model::file_view_removal::deleted(
+                        store, location, &affected, deletion,
+                    );
+                    removed(&gone);
                 })
             }
             // (the page locks itself; the pages close it)
@@ -4987,7 +5097,7 @@ fn open_viewer(
     } = hooks;
     delete_files_window::cancel(&viewer_delete);
     let window = MediaViewerWindow::new()?;
-    let external_launches = open_externally_launch::Launcher::new(Rc::new({
+    let owner_valid: Rc<dyn Fn() -> bool> = Rc::new({
         let weak = window.as_weak();
         let slot = Rc::downgrade(slot);
         move || {
@@ -5000,7 +5110,8 @@ fn open_viewer(
                     })
             })
         }
-    }));
+    });
+    let external_launches = open_externally_launch::Launcher::new(owner_valid.clone());
     let viewing_stats = viewing_tracking::CanvasTracker::new(
         model.store().clone(),
         hydrus_core::CanvasType::MediaViewer,
@@ -5664,11 +5775,15 @@ fn open_viewer(
     // a file leaves the viewer and its page: the next is shown if it was
     // shown; with none left, the viewer closes
     let remove_file: Rc<dyn Fn(HashId)> = Rc::new({
+        let owner_valid = owner_valid.clone();
         let model = model.clone();
         let show = show.clone();
         let removed = removed.clone();
         let weak = window.as_weak();
         move |file| {
+            if !owner_valid() {
+                return;
+            }
             removed(&[file]);
             let shown = model.borrow().current() == file;
             let any_left = model.borrow_mut().remove(file);
@@ -5770,23 +5885,29 @@ fn open_viewer(
                                 })
                             }
                         });
-                        let applied = Rc::new({
+                        let applied: delete_files_window::AppliedChoice = Rc::new({
                             let file = *file;
                             let store = store.clone();
                             let model = model.clone();
+                            let removed = removed.clone();
                             let remove_file = remove_file.clone();
                             let show_info = show_info.clone();
-                            move || {
+                            move |choice| {
                                 let location = model.borrow().location().clone();
-                                if media_actions::still_in(&store, &location, &[file]).is_empty() {
+                                if !hydrus_gui_model::file_view_removal::advanced(
+                                    &store, &location, choice,
+                                )
+                                .is_empty()
+                                {
                                     remove_file(file);
                                 } else {
+                                    removed(&[]);
                                     show_info();
                                 }
                             }
                         });
                         let suggested = media_actions::suggested_action(&store, deletion);
-                        if let Err(error) = delete_files_window::open(
+                        if let Err(error) = delete_files_window::open_with_choice(
                             &viewer_delete,
                             &store,
                             &[*file],
@@ -6105,11 +6226,16 @@ fn open_viewer(
         }
     });
     window.on_answer({
+        let owner_valid = owner_valid.clone();
+        let removed = removed.clone();
         let model = model.clone();
         let show_info = show_info.clone();
         let weak = window.as_weak();
         let external_launches = external_launches.clone();
         move |yes| {
+            if !owner_valid() {
+                return;
+            }
             let asked = pending.borrow_mut().take();
             let Some(window) = weak.upgrade() else {
                 return;
@@ -6128,15 +6254,23 @@ fn open_viewer(
                 let model = model.borrow();
                 (model.store().clone(), model.location().clone())
             };
-            if let Err(e) = media_actions::delete(&store, &[file], &deletion) {
-                eprintln!("could not delete the file: {e}");
-                return;
-            }
+            let affected = match media_actions::delete_changed(&store, &[file], &deletion) {
+                Ok(files) => files,
+                Err(e) => {
+                    eprintln!("could not delete the file: {e}");
+                    return;
+                }
+            };
             // (out of the page's domains, it leaves the page and the viewer;
             // else, trashed say, its hover frame says so)
-            if media_actions::still_in(&store, &location, &[file]).is_empty() {
+            if !hydrus_gui_model::file_view_removal::deleted(
+                &store, &location, &affected, &deletion,
+            )
+            .is_empty()
+            {
                 remove_file(file);
             } else {
+                removed(&[]);
                 show_info();
             }
         }

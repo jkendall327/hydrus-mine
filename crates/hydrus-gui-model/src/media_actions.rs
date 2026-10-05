@@ -153,6 +153,14 @@ pub fn inbox(store: &Store, files: &[HashId]) -> hydrus_store::Result<()> {
 /// Delete files as `deletion` says. Deleting for good leaves those the
 /// delete lock holds.
 pub fn delete(store: &Store, files: &[HashId], deletion: &Deletion) -> hydrus_store::Result<()> {
+    delete_changed(store, files, deletion).map(|_| ())
+}
+/// Successful identities only: locked or already-absent rows are not a view removal.
+pub fn delete_changed(
+    store: &Store,
+    files: &[HashId],
+    deletion: &Deletion,
+) -> hydrus_store::Result<Vec<HashId>> {
     let files = files.to_vec();
     let deletion = deletion.clone();
     store.write_content(move |w| {
@@ -162,7 +170,20 @@ pub fn delete(store: &Store, files: &[HashId], deletion: &Deletion) -> hydrus_st
             Deletion::ToTrash => roles.combined_local_media,
             Deletion::Physically => roles.local_file_storage,
         };
-        w.delete_files(domain, &files, Some(DELETE_REASON))
+        let before = hydrus_store::media::current_domains(w.conn(), &files)?;
+        w.delete_files(domain, &files, Some(DELETE_REASON))?;
+        let after = hydrus_store::media::current_domains(w.conn(), &files)?;
+        Ok(files
+            .into_iter()
+            .filter(|file| {
+                before
+                    .get(file)
+                    .is_some_and(|domains| domains.contains(&domain))
+                    && after
+                        .get(file)
+                        .is_none_or(|domains| !domains.contains(&domain))
+            })
+            .collect())
     })
 }
 

@@ -899,6 +899,32 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &shortcuts)?;
+    let mut view_removal = crate::settings::FileViewRemoval::default();
+    if let Some(value) = legacy_options
+        .get("remove_filtered_files")
+        .and_then(hydrus_legacy::objects::YamlValue::as_bool)
+    {
+        view_removal.filtered = value;
+    }
+    if let Some(value) = legacy_options
+        .get("remove_trashed_files")
+        .and_then(hydrus_legacy::objects::YamlValue::as_bool)
+    {
+        view_removal.trashed = value;
+    }
+    if let Some(options) = &options {
+        view_removal.skipped = options
+            .booleans
+            .get("remove_filtered_files_even_when_skipped")
+            .copied()
+            .unwrap_or(false);
+        view_removal.moved = options
+            .booleans
+            .get("remove_local_domain_moved_files")
+            .copied()
+            .unwrap_or(false);
+    }
+    insert_setting(&mut input, &view_removal)?;
     let mut handling = crate::settings::FileHandlingSettings::default();
     if let Some(options) = &options {
         let boolean = |key: &str| options.booleans.get(key).copied();
@@ -4690,6 +4716,55 @@ mod tests {
 
     /// The tag lists' colours come across: hydrus's defaults, the user's,
     /// and the namespace OR predicates take theirs from.
+    #[test]
+    fn file_view_removal_imports_legacy_and_typed_flags_independently() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<crate::settings::FileViewRemoval>(
+                input.settings["file_view_removal"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(decoded(), crate::settings::FileViewRemoval::default());
+        let conn = rusqlite::Connection::open(source.path().join("client.db")).unwrap();
+        let yaml: String = conn
+            .query_row("SELECT options FROM options", [], |row| row.get(0))
+            .unwrap();
+        let changed = yaml
+            .replace(
+                "remove_filtered_files: false",
+                "remove_filtered_files: true",
+            )
+            .replace("remove_trashed_files: false", "remove_trashed_files: true");
+        assert_ne!(yaml, changed);
+        conn.execute("UPDATE options SET options=?1", [changed])
+            .unwrap();
+        drop(conn);
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "remove_filtered_files_even_when_skipped"], [0, false]]"#,
+                    r#"[[0, "remove_filtered_files_even_when_skipped"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "remove_local_domain_moved_files"], [0, false]]"#,
+                    r#"[[0, "remove_local_domain_moved_files"], [0, true]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            crate::settings::FileViewRemoval {
+                filtered: true,
+                skipped: true,
+                trashed: true,
+                moved: true
+            }
+        );
+    }
+
     #[test]
     fn namespace_colours_convert() {
         use hydrus_core::tag_presentation::NamespaceColours;

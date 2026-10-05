@@ -745,6 +745,19 @@ impl Setting for DeletionPreferences {
     const KEY: &'static str = "deletion_preferences";
 }
 
+/// FilesAndTrash view policy; content writes and physical file lifetimes are independent.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct FileViewRemoval {
+    pub filtered: bool,
+    pub skipped: bool,
+    pub trashed: bool,
+    pub moved: bool,
+}
+impl Setting for FileViewRemoval {
+    const KEY: &'static str = "file_view_removal";
+}
+
 /// How files are read and written. As in the reference, these hold for the
 /// whole process, set when an importer is made for the store.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
