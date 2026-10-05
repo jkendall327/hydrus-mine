@@ -50,6 +50,7 @@ pub mod external_call_window;
 pub mod favourites_window;
 pub mod file_history_window;
 mod file_log_window;
+pub mod file_maintenance_current;
 mod filename_regex_menu;
 mod filename_tagging_window;
 mod filter_window;
@@ -353,6 +354,8 @@ pub struct Bound {
     pub viewing_maintenance: viewing_maintenance_window::Slot,
     /// Independent global file-history frame.
     pub file_history: file_history_window::Slot,
+    pub file_maintenance: Option<file_maintenance_current::Control>,
+    _file_maintenance_owner: Option<Rc<file_maintenance_current::Owner>>,
     /// The checker options editor while one is open (from the options
     /// window).
     pub checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>>,
@@ -564,6 +567,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     }));
     let binding_active = Rc::new(Cell::new(true));
+    let file_maintenance_binding: Rc<RefCell<Option<file_maintenance_current::Control>>> =
+        Rc::default();
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
     let manage_tags: Rc<RefCell<Option<ManageTagsWindow>>> = Rc::default();
     let predicate_editor: Rc<RefCell<Option<PredicateEditorWindow>>> = Rc::default();
@@ -657,6 +662,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     );
     window.on_retire_external_launches({
         let maintenance = maintenance.clone();
+        let file_maintenance_binding = file_maintenance_binding.clone();
         let force_idle = force_idle.clone();
         let debug_long_popup = debug_long_popup.clone();
         let image_cache = image_cache.clone();
@@ -671,6 +677,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         move || {
             binding_active.set(false);
             maintenance.retire();
+            if let Some(control) = file_maintenance_binding.borrow().as_ref() {
+                control.retire();
+            }
             force_idle.retire();
             debug_long_popup.retire();
             image_cache.retire();
@@ -2341,6 +2350,63 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let archive_repair = archive_repair_window::Slot::default();
     let viewing_maintenance = viewing_maintenance_window::Slot::default();
     let file_history = file_history_window::Slot::default();
+    let file_maintenance = file_maintenance_current::Control::bind(
+        pages.borrow().store().clone(),
+        Rc::new({
+            let active = binding_active.clone();
+            let weak = window.as_weak();
+            move || active.get() && weak.upgrade().is_some()
+        }),
+        Rc::new({
+            let weak = window.as_weak();
+            move || {
+                weak.upgrade().is_some_and(|window| {
+                    window.window().is_visible() && window.get_question().is_empty()
+                })
+            }
+        }),
+        Rc::new({
+            let shown = shown.clone();
+            let rows = Rc::downgrade(&rows);
+            move |thumbnails| {
+                if let Some(rows) = rows.upgrade() {
+                    rows.forget_files();
+                    if thumbnails {
+                        rows.clear_thumbnail_cache();
+                    }
+                    shown(false);
+                }
+            }
+        }),
+        Rc::new({
+            let pages = Rc::downgrade(&pages);
+            let changed = Rc::downgrade(&after_change);
+            move |urls| {
+                if let Some(pages) = pages.upgrade() {
+                    let result = pages.borrow_mut().import_maintenance_urls(&urls);
+                    if let Err(error) = result {
+                        let store = pages.borrow().store().clone();
+                        let now = std::time::SystemTime::now()
+                            .duration_since(std::time::UNIX_EPOCH)
+                            .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX));
+                        let job = hydrus_store::popups::Job::text(error, now as f64);
+                        let _ = store
+                            .write(move |ctx| hydrus_store::popups::add(ctx.conn(), &job, now));
+                    }
+                    if let Some(slot) = changed.upgrade() {
+                        let after = slot.borrow().as_ref().and_then(std::rc::Weak::upgrade);
+                        if let Some(after) = after {
+                            after();
+                        }
+                    }
+                }
+            }
+        }),
+    )
+    .map_err(|error| eprintln!("Could not initialise file maintenance: {error}"))
+    .ok();
+    *file_maintenance_binding.borrow_mut() = file_maintenance.clone();
+
     let network_data = network_data_window::Slots::default();
     let checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>> = Rc::default();
     let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
@@ -2722,6 +2788,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     }
                 })
             },
+            file_maintenance: {
+                let control = file_maintenance.clone();
+                Rc::new(move || {
+                    if let Some(control) = &control
+                        && let Err(error) = control.open()
+                    {
+                        eprintln!("Could not open file maintenance: {error}");
+                    }
+                })
+            },
             file_history: {
                 let pages = pages.clone();
                 let slot = file_history.clone();
@@ -3095,6 +3171,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let binding_active = binding_active.clone();
             let weak = window.as_weak();
             let maintenance = maintenance.clone();
+            let file_maintenance_binding = file_maintenance_binding.clone();
             let force_idle = force_idle.clone();
             let debug_long_popup = debug_long_popup.clone();
             let image_cache = image_cache.clone();
@@ -3102,6 +3179,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 sidebar_layout.accepted_exit();
                 binding_active.set(false);
                 maintenance.retire();
+                if let Some(control) = file_maintenance_binding.borrow().as_ref() {
+                    control.retire();
+                }
                 force_idle.retire();
                 debug_long_popup.retire();
                 image_cache.retire();
@@ -4758,6 +4838,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let debug_long_popup_owner = Rc::new(debug_long_popup.owner());
     let force_idle_owner = Rc::new(force_idle.owner());
     Bound {
+        _file_maintenance_owner: file_maintenance
+            .as_ref()
+            .map(|control| Rc::new(control.owner())),
+        file_maintenance,
         _image_cache_owner: image_cache.owner(),
         image_cache,
         _gui_colour_actions: gui_colour_actions,

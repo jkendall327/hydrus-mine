@@ -1,0 +1,57 @@
+import { Button } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { ListTable, TableRow } from "list_table.slint";
+
+export component FileMaintenanceWindow inherits Window {
+    title: "file maintenance";
+    preferred-width: 950px;
+    preferred-height: 480px;
+    min-width: 580px;
+    background: Theme.window;
+    in property <[TableRow]> rows;
+    in property <string> explanation;
+    in property <string> error;
+    in property <string> question;
+    in property <bool> can-clear;
+    in property <bool> can-work;
+    in property <bool> can-all;
+    in property <bool> ascending: true;
+    in property <int> sort-column;
+    callback clicked(int, bool, bool);
+    callback sorted(int, bool);
+    callback clear-clicked();
+    callback work-clicked(bool);
+    callback refresh-clicked();
+    callback answered(bool);
+    callback close-clicked();
+    VerticalLayout {
+        padding: 12px;
+        spacing: 10px;
+        Text { text: "scheduled work"; color: Theme.text; font-weight: 700; }
+        Text { text: root.explanation; wrap: word-wrap; color: Theme.text; }
+        ListTable {
+            columns: [{title: "job type", width: 400px, stretch: true}, {title: "due jobs", width: 180px, stretch: false}];
+            rows: root.rows;
+            sort-column: root.sort-column;
+            ascending: root.ascending;
+            row-clicked(i, ctrl, shift) => { root.clicked(i, ctrl, shift); }
+            sort(c, asc) => { root.sorted(c, asc); }
+            delete-pressed => { root.clear-clicked(); }
+        }
+        HorizontalLayout {
+            Button { text: "clear"; enabled: root.can-clear && root.question == ""; clicked => { root.clear-clicked(); } }
+            Button { text: "do work"; enabled: root.can-work && root.question == ""; clicked => { root.work-clicked(false); } }
+            Button { text: "do all work"; enabled: root.can-all && root.question == ""; clicked => { root.work-clicked(true); } }
+            Button { text: "refresh"; enabled: root.question == ""; clicked => { root.refresh-clicked(); } }
+        }
+        if root.question != "": VerticalLayout {
+            Text { text: root.question; color: Theme.text; wrap: word-wrap; }
+            HorizontalLayout {
+                Button { text: "yes"; clicked => { root.answered(true); } }
+                Button { text: "no"; clicked => { root.answered(false); } }
+            }
+        }
+        if root.error != "": Text { text: root.error; wrap: word-wrap; color: Theme.error; }
+        Button { text: "close"; clicked => { root.close-clicked(); } }
+    }
+}

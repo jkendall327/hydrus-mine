@@ -1476,6 +1476,111 @@ impl Pages {
         Ok(())
     }
 
+    /// Integrity maintenance uses a named URL importer without selecting it.
+    /// Reuse the current matching page, otherwise the first open matching page.
+    pub fn import_maintenance_urls(&mut self, urls: &[String]) -> Result<(), String> {
+        const NAME: &str = hydrus_import::maintenance::REDOWNLOAD_PAGE_NAME;
+        fn matching(pages: &[Page], out: &mut Vec<PageKey>, named: bool) {
+            for page in pages {
+                match &page.content {
+                    PageContent::Downloader {
+                        kind: DownloaderKind::Urls,
+                        ..
+                    } if !named || page.name == NAME => out.push(page.key),
+                    PageContent::Pages(children) => matching(children, out, named),
+                    _ => {}
+                }
+            }
+        }
+        if urls.is_empty() {
+            return Ok(());
+        }
+        let snapshot = self.store.snapshot();
+        let mut normalised = Vec::new();
+        for url in urls {
+            hydrus_core::url::functions::check_full_url(url).map_err(|e| e.to_string())?;
+            let encoded = hydrus_core::url::functions::ensure_url_is_encoded(
+                url,
+                false,
+                snapshot.url_classes.settings().collapse_leading_slashes,
+            );
+            let url = snapshot
+                .url_classes
+                .normalise(&encoded, true)
+                .map_err(|e| e.to_string())?;
+            let capability = snapshot.url_classes.parse_capability(&url);
+            if matches!(
+                capability.url_type,
+                hydrus_core::url::UrlType::Post
+                    | hydrus_core::url::UrlType::Gallery
+                    | hydrus_core::url::UrlType::Watchable
+            ) && capability.parser.is_err()
+            {
+                return Err(format!(
+                    "This URL was recognised as a \"{}\" but it cannot be parsed: {}\n\nSince this URL cannot be parsed, a downloader cannot be created for it! Please check your url class links under the 'networking' menu.",
+                    capability.match_name,
+                    capability.parser.unwrap_err()
+                ));
+            }
+            normalised.push(url);
+        }
+        let mut candidates = Vec::new();
+        matching(&self.session.pages, &mut candidates, true);
+        let shown = self.shown().key;
+        let (key, created) = if candidates.contains(&shown) {
+            (shown, false)
+        } else if let Some(key) = candidates.first() {
+            (*key, false)
+        } else {
+            let mut existing = Vec::new();
+            matching(&self.session.pages, &mut existing, false);
+            let target = self.new_page_target.take();
+            let depth = self.new_page_depth.take();
+            let result = self.new_page_selected(&NewPage::Urls, false);
+            self.new_page_target = target;
+            self.new_page_depth = depth;
+            result?;
+            // The new page has not been renamed yet; find its previously absent key.
+            fn new_url(pages: &[Page], existing: &[PageKey]) -> Option<PageKey> {
+                for page in pages {
+                    match &page.content {
+                        PageContent::Downloader {
+                            kind: DownloaderKind::Urls,
+                            ..
+                        } if !existing.contains(&page.key) => return Some(page.key),
+                        PageContent::Pages(children) => {
+                            if let Some(key) = new_url(children, existing) {
+                                return Some(key);
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+                None
+            }
+            let key = new_url(&self.session.pages, &existing)
+                .ok_or("Could not create the missing files redownloader page.")?;
+            self.rename_key(&key, NAME);
+            (key, true)
+        };
+        let page = self
+            .page(&key)
+            .ok_or("Could not find the missing files redownloader page.")?;
+        let queue = page
+            .borrow()
+            .importer()
+            .ok_or("The maintenance destination is not an importer.")?
+            .queue;
+        self.store
+            .write(move |ctx| {
+                if created {
+                    hydrus_store::queues::rename_queue(ctx.conn(), queue, NAME)?;
+                }
+                hydrus_store::queues::request_urls(ctx.conn(), queue, &normalised)
+            })
+            .map_err(|e| e.to_string())
+    }
+
     /// Append the saved session `name` as a page of pages named after it,
     /// at the far right of the current notebook, and show it (the
     /// reference's "append session"). Its pages are copies, with their

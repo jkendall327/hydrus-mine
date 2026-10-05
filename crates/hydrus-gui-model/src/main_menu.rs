@@ -254,6 +254,7 @@ pub enum Command {
     ClearWatcherHighlights,
     /// Switch file maintenance during idle (false: normal) time.
     FileMaintenance(bool),
+    ManageFileMaintenance,
     /// Scan and optionally fill missing global archive times.
     RepairArchiveTimes,
     ClearViewingStatistics,
@@ -915,7 +916,10 @@ fn database_menu(facts: &Facts) -> Entry {
             menu(
                 "file maintenance",
                 vec![
-                    todo(dots("manage scheduled jobs")),
+                    item(
+                        dots("manage scheduled jobs"),
+                        Command::ManageFileMaintenance,
+                    ),
                     SEP,
                     check(
                         "work file jobs during idle time",

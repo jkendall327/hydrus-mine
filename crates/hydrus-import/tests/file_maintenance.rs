@@ -16,6 +16,65 @@ use hydrus_store::file_maintenance::JobType;
 /// md5, sha1 and sha512.
 type Digests = (Option<Vec<u8>>, Option<Vec<u8>>, Option<Vec<u8>>);
 
+#[test]
+fn controlled_runner_cancels_after_one_committed_file_without_consuming_the_next() {
+    use std::sync::{
+        Arc,
+        atomic::{AtomicBool, Ordering},
+    };
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    hydrus_store::import::import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Arc::new(Store::open(native.path()).unwrap());
+    let files = store
+        .read(|conn| {
+            let mut query = conn.prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT 2")?;
+            Ok(query
+                .query_map([], |row| row.get(0))?
+                .collect::<rusqlite::Result<Vec<i64>>>()?)
+        })
+        .unwrap();
+    let captured = files.clone();
+    store
+        .write(move |ctx| {
+            hydrus_store::file_maintenance::cancel_jobs(ctx.conn(), &JobType::ALL)?;
+            hydrus_store::file_maintenance::add_jobs(ctx.conn(), &captured, JobType::HasExif, 0)
+        })
+        .unwrap();
+    let importer = FileImporter::new(store.clone(), MediaTools::new());
+    let active = AtomicBool::new(true);
+    let mut progress = Vec::new();
+    let result = importer
+        .run_file_maintenance_controlled(
+            u64::MAX,
+            u64::MAX,
+            &|_| true,
+            &|| active.load(Ordering::Acquire),
+            &mut |report| {
+                progress.push(report.total());
+                active.store(false, Ordering::Release);
+            },
+        )
+        .unwrap();
+    assert_eq!(result.total(), 1);
+    assert_eq!(progress, [1]);
+    assert_eq!(
+        store
+            .read(|conn| hydrus_store::file_maintenance::job_counts(conn, i64::MAX))
+            .unwrap()[&JobType::HasExif],
+        (1, 0)
+    );
+    assert!(
+        hydrus_store::store::lock_file_maintenance(store.dir())
+            .unwrap()
+            .is_some()
+    );
+}
+
 /// (flags, pixel hash, md5, sha1, sha512, perceptual hashes, in the search)
 type Facts = (
     i64,

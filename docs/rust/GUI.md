@@ -4035,3 +4035,24 @@ APIs; GUI owners supply configured tools. Borrowed Store callers can obtain the
 same weak handle without keeping a Store or read connection alive. Authored real
 FIFO transport regressions exercise review metadata and duplicate PSD decoding
 under a preference changed after those consumers were constructed.
+
+
+Database → file maintenance → manage scheduled jobs now opens the scheduled-work
+review. Rows show real job types, due counts and future counts; type identities
+survive refresh and sorting. Clear asks “Clear all the selected scheduled work?”
+and cancels both due and future jobs of the captured types. Selected/all work
+runs the existing physical maintenance runners off the UI, with a real
+cancellable file-maintenance toaster, committed progress and five-second finish.
+A crash-safe file lease excludes the daemon's simultaneous physical pass.
+Integrity redownload results reach a named URL-import page without selecting it;
+matching named pages are reused and URL requests feed the existing importer.
+Closing the review leaves accepted work with its Main binding; accepted exit,
+rebind and final binding drop cancel admission at the next file boundary. Hidden
+input and retained callbacks cannot target a successor review or Main binding.
+The actual Qt recording is file_maintenance_current.json; native/model/Store
+regressions and file-maintenance-current.png are authored and hosted execution
+and final rendered review remain pending. New scheduling/search and the parent
+maintenance family remain incomplete.
+This current-work leaf remains Partial with zero completion credit because Clear
+waits behind an accepted forced pass and progress follows committed file work,
+rather than the reference's batch interleaving and pre-work gauge.

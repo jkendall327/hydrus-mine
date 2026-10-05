@@ -179,6 +179,7 @@ mod tab_presentation;
 mod archive_repair;
 
 mod file_history;
+mod file_maintenance_current;
 
 mod autocomplete_tabs;
 mod gui_colours;

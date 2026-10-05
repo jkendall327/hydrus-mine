@@ -40,6 +40,11 @@ pub fn lock_login(dir: &Path) -> std::io::Result<Option<std::fs::File>> {
     lock(dir, "login.lock")
 }
 
+/// Serialize physical file-maintenance passes across GUI and daemon processes.
+pub fn lock_file_maintenance(dir: &Path) -> std::io::Result<Option<std::fs::File>> {
+    lock(dir, "file-maintenance.lock")
+}
+
 /// Changes to snapshot-backed state, shared between independently opened stores.
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
 struct SnapshotRevision(u64);
