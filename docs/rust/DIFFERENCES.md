@@ -2097,3 +2097,11 @@ intercepts only QDrag.exec_ to observe whether a native source drag is offered;
 it does not replace reference decision handlers or claim platform drag behavior.
 Native pointer/Shift/Cancel/media/reopen replays and the saved transfer PNG are
 authored for hosted CI; no local Cargo builds or tests were run.
+The native router rejects captured pointer releases outside the live bar viewport,
+including clipped tab rectangles and its reserved arrow area. The Qt overflow
+probe records that raw `QTabBar.tabAt` can return a clipped tab index for an
+off-viewport coordinate; this is a lookup probe, not proof of OS drop dispatch
+there. Native viewport rejection is an explicit capture boundary, with platform
+drop routing still outside the claim. Real Slint Move-event replays also retain
+the press across `pointer-event(Move)` followed by `moved`, and preserve ordinary
+unpressed tooltip hover.

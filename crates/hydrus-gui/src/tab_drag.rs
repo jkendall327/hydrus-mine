@@ -35,6 +35,14 @@ impl Rect {
     fn contains(&self, x: f32, y: f32) -> bool {
         x >= self.x && y >= self.y && x < self.x + self.w && y < self.y + self.h
     }
+    fn viewport_contains(&self, x: f32, y: f32, vertical: bool) -> bool {
+        self.contains(x, y)
+            && if vertical {
+                y < self.y + self.h - 40.0
+            } else {
+                x < self.x + self.w - 40.0
+            }
+    }
 }
 #[derive(Default)]
 struct State {
@@ -45,12 +53,22 @@ struct State {
 impl State {
     fn hit(&mut self, window: &MainWindow, x: f32, y: f32) -> Option<Rect> {
         let rows = window.get_tab_rows();
+        let vertical = matches!(window.get_tab_alignment(), 1 | 2);
         self.tabs.retain(|_, rect| rect.live(&rows));
         self.spaces.retain(|_, rect| rect.live(&rows));
         self.tabs
             .values()
-            .chain(self.spaces.values())
-            .find(|rect| rect.contains(x, y))
+            .find(|rect| {
+                rect.contains(x, y)
+                    && self.spaces.get(&rect.depth).is_some_and(|viewport| {
+                        viewport.parent == rect.parent && viewport.viewport_contains(x, y, vertical)
+                    })
+            })
+            .or_else(|| {
+                self.spaces
+                    .values()
+                    .find(|viewport| viewport.viewport_contains(x, y, vertical))
+            })
             .cloned()
     }
 }
@@ -214,6 +232,8 @@ pub(crate) fn bind(window: &MainWindow, pages: &Rc<RefCell<Pages>>, change: Chan
                 _ => {
                     state.borrow_mut().pointer.cancel();
                     window.set_tab_drag_active(false);
+                    window.set_tab_drag_hover_key("".into());
+                    window.invoke_tab_drag_hovered("".into(), x, y, false);
                 }
             }
         }

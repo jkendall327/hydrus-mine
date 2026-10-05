@@ -247,8 +247,15 @@ export component NotebookNavigation inherits Rectangle {
         scroll-event(event) => { return reject; }
         moved => { root.pointer(2,-1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y,root.shift); }
         pointer-event(event) => {
-            root.pointer(event.kind == PointerEventKind.down ? 0 : event.kind == PointerEventKind.up ? 1 : 3,event.button == PointerEventButton.left ? 0 : event.button == PointerEventButton.right ? 1 : event.button == PointerEventButton.middle ? 2 : -1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y,event.modifiers.shift);
+            // Slint calls pointer-event(move) before moved: it must retain the grab.
+            if event.kind == PointerEventKind.down || event.kind == PointerEventKind.up || event.kind == PointerEventKind.cancel {
+                root.pointer(event.kind == PointerEventKind.down ? 0 : event.kind == PointerEventKind.up ? 1 : 3,event.button == PointerEventButton.left ? 0 : event.button == PointerEventButton.right ? 1 : event.button == PointerEventButton.middle ? 2 : -1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y,event.modifiers.shift);
+            } else if event.kind == PointerEventKind.move && !self.pressed {
+                // Unpressed hover has no moved() callback in Slint.
+                root.pointer(2,-1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y,event.modifiers.shift);
+            }
         }
+        changed has-hover => { if !self.has-hover { root.hovered("",0px,0px,false); } }
     }
 }
 

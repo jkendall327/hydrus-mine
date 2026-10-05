@@ -147,6 +147,7 @@ fn real_wheel_replays_qt_selection_and_staged_scroll_overflow_without_changing_s
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     ui.show().unwrap();
     let native = windows.get(windows.count() - 1).unwrap();
+    let rects = geometry(&ui);
     let offsets = Rc::new(RefCell::new(Vec::new()));
     ui.on_tab_scrolled({
         let offsets = offsets.clone();
@@ -162,6 +163,22 @@ fn real_wheel_replays_qt_selection_and_staged_scroll_overflow_without_changing_s
     headless::render(&native, 500, 500);
     assert!(*offsets.borrow().last().unwrap() > first);
     assert_eq!(bound.pages.borrow().session(), &original);
+    // A captured Move/Up can be delivered beyond the bar. The laid-out last tab
+    // exists outside the clipping viewport, but must not be navigated or dropped.
+    let visible = tab_rect(&rects, original.pages[0].key);
+    let clipped = tab_rect(&rects, original.pages[7].key);
+    assert!(clipped.x > ui.get_tab_navigation_x() + ui.get_tab_navigation_width());
+    pointer(&native, visible, 2);
+    assert_eq!(ui.get_tab_tooltip(), original.pages[0].name.as_str());
+    pointer(&native, visible, 0);
+    std::thread::sleep(std::time::Duration::from_millis(110));
+    pointer(&native, clipped, 2);
+    assert!(ui.get_tab_drag_active());
+    assert_eq!(bound.pages.borrow().shown().key, original.pages[0].key);
+    pointer(&native, clipped, 1);
+    assert!(!ui.get_tab_drag_active());
+    assert_eq!(bound.pages.borrow().session(), &original);
+    assert_eq!(bound.pages.borrow().shown().key, original.pages[0].key);
     ui.hide().unwrap();
     drop(bound);
     drop(ui);
@@ -364,8 +381,15 @@ fn real_pointer_drag_replays_shift_chase_hover_transfer_disable_and_cancel_with_
         settle(&native);
         shift(&native, held);
         pointer(&native, tab_rect(&rects, alpha), 0);
+        // Dispatch through Slint: pointer-event(Move) runs before moved().
+        // An early Move must preserve the original press for the next Move.
+        pointer(&native, tab_rect(&rects, alpha), 2);
         std::thread::sleep(std::time::Duration::from_millis(110));
         pointer(&native, tab_rect(&rects, named(&session, "omega")), 2);
+        assert!(
+            ui.get_tab_drag_active(),
+            "real Move retains the pressed tab"
+        );
         settle(&native);
         assert_eq!(
             bound.pages.borrow().shown().name,
@@ -440,12 +464,15 @@ fn real_pointer_drag_replays_shift_chase_hover_transfer_disable_and_cancel_with_
         pointer(&native, tab_rect(&rects, gamma), 0);
         std::thread::sleep(std::time::Duration::from_millis(110));
         pointer(&native, tab_rect(&rects, nested), 2);
+        assert!(ui.get_tab_drag_active(), "hover keeps capture across rows");
         settle(&native);
         expected(&bound, &step["before"]);
         let child = named(&session, "inner one");
         pointer(&native, tab_rect(&rects, child), 2);
+        assert!(ui.get_tab_drag_active(), "new child Move keeps capture");
         settle(&native);
         pointer(&native, tab_rect(&rects, child), 1);
+        assert!(!ui.get_tab_drag_active(), "release ends exactly one drag");
         settle(&native);
         expected(&bound, &step["after"]);
     }

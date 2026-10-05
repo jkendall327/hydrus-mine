@@ -578,6 +578,19 @@
       "selected": 0
     }
   ],
+  "clipped_hit": {
+    "point": [
+      300,
+      12
+    ],
+    "viewport": [
+      250,
+      26
+    ],
+    "inside": false,
+    "tab_at": 7,
+    "selected": 0
+  },
   "limits": [
     "synthetic QDropEvent source bar seam; native OS drag loop not recorded",
     "QDrag exec instrumentation records offered drag MIME while preserving real source-start decisions"
