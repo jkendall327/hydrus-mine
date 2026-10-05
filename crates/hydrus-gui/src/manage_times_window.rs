@@ -6,7 +6,7 @@
 //! times changed (and a changed file modified time to the files on disk),
 //! as the reference's `EditFileTimestampsPanel` does.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -200,8 +200,14 @@ pub(crate) fn open(
     files: &[HashId],
     slot: &Rc<RefCell<Option<ManageTimesWindow>>>,
     editing: &Rc<RefCell<Option<DateTimeEditorWindow>>>,
+    jobs: &crate::metadata_file_jobs::Jobs,
     applied: Rc<dyn Fn()>,
 ) -> Result<ManageTimesWindow, String> {
+    let previous = slot.borrow().as_ref().map(ComponentHandle::clone_strong);
+    if let Some(previous) = previous {
+        previous.invoke_cancel();
+    }
+    let active = Rc::new(Cell::new(true));
     let snapshot = store.snapshot();
     let services = snapshot.services.clone();
     let mut loaded = store
@@ -284,7 +290,15 @@ pub(crate) fn open(
         let slot = slot.clone();
         let editing = editing.clone();
         let weak = window.as_weak();
+        let active = active.clone();
         Rc::new(move || {
+            if !active.replace(false) {
+                return;
+            }
+            let child = editing.borrow().as_ref().map(ComponentHandle::clone_strong);
+            if let Some(child) = child {
+                child.invoke_cancel();
+            }
             if let Some(editing) = editing.borrow_mut().take() {
                 let _ = editing.hide();
             }
@@ -300,8 +314,13 @@ pub(crate) fn open(
         let editing = editing.clone();
         let tz = tz.clone();
         let tell = tell.clone();
+        let active = active.clone();
         Rc::new(
             move |value: TimeRange, done: Box<dyn Fn(TimeRange, bool)>| {
+                if !active.get() || editing.borrow().is_some() {
+                    return;
+                }
+                let alive = Rc::new(Cell::new(true));
                 let Ok(dialog) = DateTimeEditorWindow::new() else {
                     return;
                 };
@@ -431,7 +450,11 @@ pub(crate) fn open(
                 let finish = {
                     let editing = editing.clone();
                     let weak = dialog.as_weak();
+                    let alive = alive.clone();
                     move || {
+                        if !alive.replace(false) {
+                            return;
+                        }
                         if let Some(dialog) = weak.upgrade() {
                             let _ = dialog.hide();
                         }
@@ -441,7 +464,12 @@ pub(crate) fn open(
                 dialog.on_apply({
                     let editor = editor.clone();
                     let finish = finish.clone();
+                    let alive = alive.clone();
+                    let active = active.clone();
                     move || {
+                        if !alive.get() || !active.get() {
+                            return;
+                        }
                         let (value, changed) = {
                             let editor = editor.borrow();
                             (editor.value(), editor.has_changes())
@@ -450,7 +478,11 @@ pub(crate) fn open(
                         done(value, changed);
                     }
                 });
-                dialog.on_cancel(finish);
+                dialog.on_cancel(finish.clone());
+                dialog.window().on_close_requested(move || {
+                    finish();
+                    slint::CloseRequestResponse::HideWindow
+                });
                 draw(true);
                 if let Err(e) = dialog.show() {
                     tell(vec![Said::Critical("Error".into(), e.to_string())]);
@@ -743,7 +775,13 @@ pub(crate) fn open(
         let state = state.clone();
         let store = store.clone();
         let close = close.clone();
+        let active = active.clone();
+        let editing = editing.clone();
+        let jobs = jobs.clone();
         Rc::new(move || {
+            if !active.get() || editing.borrow().is_some() {
+                return;
+            }
             let (updates, modified) = {
                 let state = state.borrow();
                 (state.editor.updates(), state.editor.file_modified_update())
@@ -768,30 +806,30 @@ pub(crate) fn open(
                 });
                 if let Err(e) = written {
                     eprintln!("could not write the times: {e}");
+                    return;
                 }
                 // (and the files' modified times on disk)
                 if let Some((files, ms, step)) = modified {
-                    let storage = &store.snapshot().storage;
-                    for (n, &i) in files.iter().enumerate() {
-                        let Some(result) = results.get(i) else {
-                            continue;
-                        };
-                        let Some(path) = result
-                            .info
-                            .as_ref()
-                            .and_then(|info| storage.file_path(&result.hash, info.mime))
-                        else {
-                            continue;
-                        };
-                        let at = ms + i64::try_from(n).unwrap_or(0) * step;
-                        let Ok(at) = u64::try_from(at) else {
-                            continue;
-                        };
-                        let when = std::time::UNIX_EPOCH + std::time::Duration::from_millis(at);
-                        let _ = std::fs::File::options()
-                            .write(true)
-                            .open(&path)
-                            .and_then(|f| f.set_modified(when));
+                    let files = files
+                        .iter()
+                        .filter_map(|&i| {
+                            let result = results.get(i)?;
+                            let info = result.info.as_ref()?;
+                            Some(hydrus_store::metadata_jobs::File {
+                                id: result.hash_id,
+                                hash: result.hash,
+                                mime: info.mime,
+                                original_mime: info.original_mime.unwrap_or(info.mime),
+                            })
+                        })
+                        .collect();
+                    let request = hydrus_store::metadata_jobs::Request::Modified {
+                        files,
+                        milliseconds: ms,
+                        step,
+                    };
+                    if let Err(error) = jobs.start(store.clone(), request, applied.clone()) {
+                        eprintln!("{error}");
                     }
                 }
                 applied();
@@ -803,7 +841,12 @@ pub(crate) fn open(
         let state = state.clone();
         let ask = ask.clone();
         let write = write.clone();
+        let active = active.clone();
+        let editing = editing.clone();
         move || {
+            if !active.get() || editing.borrow().is_some() {
+                return;
+            }
             let question = state.borrow().editor.ok_question();
             match question {
                 Some(q) => ask(Question::ManyChanges, "Are you sure?", q),
