@@ -307,9 +307,11 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                     out.text =
                         crate::domains::location_label(&store.snapshot().services, location).into();
                 }
-                (Kind::NamespaceColours, Value::NamespaceColours(_))
-                | (Kind::OpenExternally, Value::OpenExternally(_)) => {
+                (Kind::NamespaceColours, Value::NamespaceColours(_)) => {
                     out.kind = 31;
+                }
+                (Kind::OpenExternally, Value::OpenExternally(_)) => {
+                    out.kind = 34;
                 }
                 (Kind::FavouriteTags, Value::FavouriteTags(_)) => {
                     out.kind = 17;

@@ -550,7 +550,7 @@ export component OptionsWindow inherits Window {
                                 }
                             }
                           }
-                            if row.kind == 31: OpenExternallyTable {
+                            if row.kind == 34: OpenExternallyTable {
                                 urls:root.routing-url-rows;files:root.routing-file-rows;url-selected:root.routing-url-selected;file-single:root.routing-file-single;file-delete:root.routing-file-delete;child-open:root.routing-child-open;error:root.routing-error;
                                 url-clicked(i,c,s)=>{root.routing-url-clicked(i,c,s);}url-activated(i)=>{root.routing-url-activated(i);}url-action(a)=>{root.routing-url-action(a);}
                                 file-clicked(i,c,s)=>{root.routing-file-clicked(i,c,s);}file-activated(i)=>{root.routing-file-activated(i);}file-action(a)=>{root.routing-file-action(a);}

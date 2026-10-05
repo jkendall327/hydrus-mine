@@ -68,6 +68,19 @@ fn open(ui: &MainWindow, bound: &Bound) -> OptionsWindow {
         .find(|&index| pages.row_data(index).unwrap().text == "open externally")
         .unwrap();
     window.invoke_page_chosen(i32::try_from(index).unwrap());
+    assert_eq!(
+        window
+            .get_rows()
+            .iter()
+            .filter(|row| row.kind == 34)
+            .count(),
+        1,
+        "routing renders its own table once"
+    );
+    assert!(
+        window.get_rows().iter().all(|row| row.kind != 31),
+        "routing does not render the unrelated namespace colour editor"
+    );
     window
 }
 fn choice(bound: &Bound) -> hydrus_gui::ExternalRoutingChoiceWindow {

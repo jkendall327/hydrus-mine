@@ -2674,3 +2674,9 @@ the consumer; this adds no animation, fade, blurhash or renderer-family parity.
 Actual Qt recordings cover all sixteen Boolean policies and 192 selection steps,
 plus five private real-media duration shapes. Native rendering and Rust regressions
 are authored for hosted execution; no local Cargo or Rust tests were run.
+
+Open Externally routing and namespace colours now have distinct native Options
+row kinds. Their former shared value rendered both unrelated editors on each
+page. Existing native workflows assert the correct page family and keep their
+routing and namespace render captures for hosted review. This integration repair
+adds no original leaf proposal; runtime and rendered verification remain pending.

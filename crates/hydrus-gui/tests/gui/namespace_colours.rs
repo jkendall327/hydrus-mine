@@ -23,6 +23,19 @@ fn open(ui: &MainWindow, bound: &hydrus_gui::Bound) -> OptionsWindow {
         .position(|page| page.text == "tag presentation")
         .unwrap();
     options.invoke_page_chosen(i32::try_from(page).unwrap());
+    assert_eq!(
+        options
+            .get_rows()
+            .iter()
+            .filter(|row| row.kind == 31)
+            .count(),
+        1,
+        "namespace colours renders its own editor once"
+    );
+    assert!(
+        options.get_rows().iter().all(|row| row.kind != 34),
+        "namespace colours does not render the unrelated routing table"
+    );
     options
 }
 fn labels(options: &OptionsWindow) -> Value {
