@@ -366,7 +366,7 @@ fn live_store_collection_gate_uses_all_members_and_preserves_zero_duration_disti
             namespaces: vec!["synthetic-no-namespace".into()],
             ratings: Vec::new(),
             collect_unmatched: true,
-            tag_context: Default::default(),
+            tag_context: hydrus_core::search::context::TagContext::default(),
         });
         assert_eq!(page.results().len(), 1);
         assert_eq!(
