@@ -80,7 +80,7 @@ fn refresh_byte_row(
     }
 }
 
-fn tag_sort_row(out: &mut OptionRow, sort: &hydrus_core::tag_sort::TagSort) {
+fn tag_sort_row(out: &mut OptionRow, sort: hydrus_core::tag_sort::TagSort) {
     out.kind = 12;
     let strings = |items: &[&str]| {
         ModelRc::new(VecModel::from(
@@ -96,7 +96,7 @@ fn tag_sort_row(out: &mut OptionRow, sort: &hydrus_core::tag_sort::TagSort) {
         .iter()
         .position(|(_, t)| *t == sort.sort_type)
         .unwrap_or(0) as i64);
-    let (orders, order) = tag_sort_orders(sort);
+    let (orders, order) = tag_sort_orders(&sort);
     out.orders = strings(&orders);
     out.order_index = int(order as i64);
     let groups: Vec<&str> = TAG_SORT_GROUPS.iter().map(|(name, _)| *name).collect();
@@ -308,9 +308,9 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                         out.order_index = i32::from(!sort.ascending);
                     }
                 }
-                (Kind::TagSort, Value::TagSort(sort)) => tag_sort_row(&mut out, sort),
+                (Kind::TagSort, Value::TagSort(sort)) => tag_sort_row(&mut out, *sort),
                 (Kind::ManageTagsSort, Value::ManageTagsSort(control)) => {
-                    tag_sort_row(&mut out, &control.value.order);
+                    tag_sort_row(&mut out, control.value.order);
                     out.kind = 35;
                     out.sibling_sort_visible =
                         control.value.order.sort_type != hydrus_core::tag_sort::TagSortType::Count;
