@@ -9,6 +9,7 @@ mod about;
 mod active_predicates;
 mod animation;
 mod animation_start;
+mod api_update_toasts;
 mod archive_delete;
 mod auto_resolution_preview;
 mod auto_resolution_review;

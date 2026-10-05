@@ -3908,3 +3908,20 @@ Control remain retained. A dropped MainWindow is detected by its weak-owner time
 or the next poll; callbacks never substitute a successor window. An authored
 held-wait regression keeps the emitting main and Control alive, drops each Bound clone,
 checks the remaining queue and lets only a fresh binding consume its next pair.
+
+
+Options → popup notifications now stages “Make a short-lived popup on cookie/header
+updates through the Client API”. It defaults off. Apply saves the preference;
+Cancel, hidden editors and retired bindings cannot change it. Previously imported
+ClientOptions supply the value until a native preference has been saved.
+Authenticated cookie/header update routes publish real finished popup jobs when
+this preference is enabled. Domain/header categories are deduplicated and sorted;
+repeated cookie sets still notify, while identical header values and missing-header
+removals do not. These jobs use the existing owned toaster and expire after five
+seconds, with the reference’s strict passed-deadline boundary. Exit Cancel keeps
+the consumer live; accepted exit and rebind retire its GUI incarnation.
+
+`oracle/record_api_update_toasts.py` records eight real Qt Options paths and twenty
+authenticated resource-handler requests, including late-error partial header
+acceptance and exact messages. Store, model, API-router and native toaster/render
+regressions are authored; Rust execution and native PNG inspection await hosted CI.

@@ -1,4 +1,4 @@
-//! The two PopupPanel width controls, using the shared staged Options editor.
+//! The PopupPanel width and API notification controls, using the shared staged Options editor.
 use super::{Page, boxed, check, int};
 
 pub(super) fn page() -> Page {
@@ -17,6 +17,11 @@ pub(super) fn page() -> Page {
                     "BUGFIX: Force this width as the fixed width for all popup messages: ",
                     |s| s.popup_width.fixed,
                     |s, v| s.popup_width.fixed = v,
+                ),
+                check(
+                    "Make a short-lived popup on cookie/header updates through the Client API: ",
+                    |s| s.api_update_toasts.enabled,
+                    |s, value| s.api_update_toasts.enabled = value,
                 ),
             ],
         )],

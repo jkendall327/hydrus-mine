@@ -3092,3 +3092,20 @@ Control remain retained. A dropped MainWindow is detected by its weak-owner time
 or the next poll; callbacks never substitute a successor window. An authored
 held-wait regression keeps the emitting main and Control alive, drops each Bound clone,
 checks the remaining queue and lets only a fresh binding consume its next pair.
+
+
+The cookie/header Client API notification preference reaches the actual native
+routes and ordinary finished Store jobs, without adding a second popup scheduler.
+It preserves the recorded reference quirk: an altered-only header request shows
+“Headers sent from API:” without altered details; altered lines appear only when
+a newly set header is also present. Failed or no-op requests do not publish a
+success notification; accepted preceding header changes survive a later missing
+entry error. Existing network request validation remains unchanged.
+The Qt recording invokes genuine access-key establishment, permissions and
+resource handlers on a copied client, rather than an HTTP socket; native authored
+regressions exercise the real authenticated Axum router and owned Slint toaster.
+Natural five-second strict expiry is replayed at Store/API level; the native
+refresh regression advances persisted deadlines to verify live removal without
+waiting on wall time. Broader toaster freeze/monitor/position and network backend
+families remain Partial. Hosted exact-source Rust/Clippy/native execution and
+three authored PNG inspections are pending; no local Rust validation was run.
