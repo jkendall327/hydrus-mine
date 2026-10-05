@@ -320,3 +320,76 @@ fn accepted_close_and_rebinding_retire_queued_calls_even_with_retained_windows_a
     assert_eq!(called.load(Ordering::SeqCst), 1);
     drop((old_bound, rebound, latest));
 }
+
+#[test]
+fn long_question_and_action_controls_render_with_fixed_and_narrow_popup_caps() {
+    // This integration regression also uses the separately implemented width
+    // preferences and live geometry observers; those APIs are in the combined tree.
+    let (_directories, store) = crate::subscriptions::store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let question = "Continue this synthetic worker with its current settings? ".repeat(4);
+    let mut previous_cap = None;
+    for (characters, fixed, filename) in [
+        (32, true, "popup_job_question_fixed32.png"),
+        (16, false, "popup_job_question_narrow16.png"),
+    ] {
+        store
+            .write(move |ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &hydrus_store::popup_width::PopupWidth { characters, fixed },
+                )
+            })
+            .unwrap();
+        let producer = Working::new(&store, "question and actions", true);
+        producer.set_question(Some(question.clone()));
+        producer.set_clipboard(Some((
+            "copy payload".into(),
+            "full synthetic payload".into(),
+        )));
+        producer.set_user_callable("run command", {
+            let store = store.clone();
+            move || hydrus_download::popups::show_text(&store, "synthetic command completed")
+        });
+        producer.show();
+        let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+        let row = ui.get_popups().row_data(0).unwrap();
+        assert!(row.has_question && row.has_clipboard && row.has_callable);
+        assert_eq!(row.question, question);
+        assert_eq!(i64::from(row.width_characters), characters);
+        assert_eq!(row.fixed_width, fixed);
+        let native = windows.get(0).unwrap();
+        headless::render(&native, 1280, 1200);
+        let pixels = headless::render(&native, 1280, 1200);
+        let width = ui.get_popup_card_widths().row_data(0).unwrap();
+        let cap = ui.get_popup_card_caps().row_data(0).unwrap();
+        assert!(
+            width > 0.0 && cap > 0.0 && width <= cap + 1.0,
+            "question/action card {width} exceeds cap {cap}"
+        );
+        if fixed {
+            assert!(
+                (width - cap).abs() <= 1.0,
+                "fixed question card {width} differs from cap {cap}"
+            );
+        }
+        if let Some(previous) = previous_cap {
+            assert!(
+                cap < previous,
+                "narrow successor must consume its smaller saved cap"
+            );
+        }
+        previous_cap = Some(cap);
+        headless::save_png(
+            &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(filename),
+            &pixels,
+            1280,
+            1200,
+        )
+        .unwrap();
+        producer.finish_and_dismiss();
+        drop(bound);
+    }
+}
