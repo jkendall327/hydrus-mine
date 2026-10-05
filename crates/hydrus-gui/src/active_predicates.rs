@@ -6,7 +6,7 @@ use hydrus_gui_model::{
     predicate_editors::{Context, Editor},
 };
 use hydrus_search::Predicate;
-use slint::{ComponentHandle as _, ModelRc, VecModel};
+use slint::{ComponentHandle as _, Model as _, ModelRc, VecModel};
 use std::{
     cell::{Cell, RefCell},
     rc::{Rc, Weak},
@@ -75,6 +75,12 @@ fn context(page: &SearchPage) -> Context {
         hydrus_search::Clock::system().today(),
     )
 }
+fn permits_input(window: &MainWindow) -> bool {
+    window.window().is_visible()
+        && window.get_question().is_empty()
+        && !window.get_search_or_open()
+        && window.get_chooser_labels().row_count() == 0
+}
 
 /// Install the active list without owning the MainWindow or a page back-edge.
 pub(crate) fn bind(
@@ -92,9 +98,7 @@ pub(crate) fn bind(
         let slot = Rc::downgrade(slot);
         move || {
             active.get()
-                && weak
-                    .upgrade()
-                    .is_some_and(|w| w.window().is_visible() && w.get_question().is_empty())
+                && weak.upgrade().is_some_and(|w| permits_input(&w))
                 && slot.upgrade().is_some_and(|slot| slot.borrow().is_none())
                 && page().borrow().lock().is_none()
                 && page().borrow().note().is_none()
@@ -222,9 +226,7 @@ pub(crate) fn bind(
                                     .iter()
                                     .all(|p| original.borrow().active_predicates().contains(p))
                         })
-                        && weak
-                            .upgrade()
-                            .is_some_and(|w| w.window().is_visible() && w.get_question().is_empty())
+                        && weak.upgrade().is_some_and(|w| permits_input(&w))
                 }
             });
             let chosen: Rc<dyn Fn(Vec<Predicate>)> = Rc::new({
