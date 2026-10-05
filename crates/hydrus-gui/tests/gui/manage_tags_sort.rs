@@ -380,3 +380,71 @@ fn rebind_and_accepted_exit_retire_visible_sort_children_and_old_viewer_launcher
         "local sorts never overwrite saved opening policies"
     );
 }
+
+#[test]
+fn hidden_main_cannot_launch_or_reshow_child_but_visible_viewer_keeps_its_own_route() {
+    let recorded = hydrus_testkit::fixture_json("manage_tags_sort.json");
+    let (_directory, store, files) = fixture::seed_owned(&recorded);
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(SearchPage::fixed(
+            store.clone(),
+            "emitter ownership",
+            None,
+            files,
+        )),
+    );
+    ui.invoke_select_all();
+    ui.invoke_manage_tags_selected();
+    assert!(
+        bound.manage_tags.borrow().is_none(),
+        "hidden main cannot create its selection dialog"
+    );
+    ui.show().unwrap();
+    ui.invoke_manage_tags_selected();
+    let child = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    child.invoke_sort_chosen(0, 1);
+    child.hide().unwrap();
+    ui.hide().unwrap();
+    ui.invoke_manage_tags_selected();
+    assert!(
+        !child.window().is_visible(),
+        "hidden main cannot re-show its retained child"
+    );
+    assert_eq!(child.get_sort_type(), 1);
+    assert!(bound.manage_tags.borrow().is_some());
+    ui.show().unwrap();
+    ui.invoke_manage_tags_selected();
+    assert!(
+        child.window().is_visible(),
+        "visible live main reuses its existing child"
+    );
+    assert_eq!(child.get_sort_type(), 1);
+    child.invoke_cancel();
+    ui.invoke_thumbnail_activated(0);
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    assert!(viewer.window().is_visible());
+    ui.hide().unwrap();
+    viewer.invoke_manage_tags();
+    let child = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    assert!(
+        child.window().is_visible(),
+        "visible viewer owns its route independently of hidden main"
+    );
+    assert_eq!(child.get_window_title(), "manage tags");
+    child.hide().unwrap();
+    ui.invoke_manage_tags_selected();
+    assert!(
+        !child.window().is_visible(),
+        "main emitter guard applies before shared existing-slot show"
+    );
+    viewer.invoke_manage_tags();
+    assert!(child.window().is_visible());
+    child.invoke_cancel();
+    assert_eq!(
+        store.read::<Settings>(settings::get).unwrap(),
+        Settings::default()
+    );
+}

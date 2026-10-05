@@ -23,6 +23,7 @@ fn real_incremental_child_replays_cancel_apply_memory_and_blocks_parent_mutation
     prior.apply().unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(
         &ui,
         Pages::single(SearchPage::fixed(

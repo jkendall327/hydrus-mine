@@ -1752,10 +1752,19 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     window.on_manage_tags_selected({
         let page = page.clone();
+        let binding_active = binding_active.clone();
+        let weak = window.as_weak();
         let manage_tags = manage_tags.clone();
         let open_manage_tags = open_manage_tags.clone();
         let tags_changed = tags_changed.clone();
         move || {
+            if !binding_active.get()
+                || !weak
+                    .upgrade()
+                    .is_some_and(|window| window.window().is_visible())
+            {
+                return;
+            }
             if let Some(window) = manage_tags.borrow().as_ref() {
                 let _ = window.show();
                 return;
