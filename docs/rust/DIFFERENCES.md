@@ -1425,6 +1425,12 @@ existing pages retain the values captured at construction, as in the reference.
 Native list rows use the desktop client's 22-pixel text-row spacing rather than
 Qt's platform font-metric size hint. Floating results share their highlighting,
 scrolling and selection behavior with embedded results.
+Read-list scroll bounds derive directly from the current model's row count;
+highlight reveal is reapplied after row-count and viewport-height changes, so a
+replaced list cannot retain the previous list's scroll extent. Native regression
+source checks the dense selected mask, viewport bounds and rendered first/last
+rows through the real selection callbacks. Literal-parent Qt replays show their
+native owners before activation and separately assert hidden-owner rejection.
 
 Subscription import-option clipboard commands preserve the reference custom-paste
 callback, which replaces directly; the favourites custom-overwrite chooser and
