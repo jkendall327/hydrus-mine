@@ -32,6 +32,7 @@ pub mod external_calls;
 pub mod external_command;
 pub mod favourites;
 pub mod file_log;
+pub mod file_maintenance_current;
 pub mod file_view_removal;
 pub mod filename_rules;
 pub mod filename_tagging;

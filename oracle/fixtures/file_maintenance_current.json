@@ -1,0 +1,372 @@
+{
+  "events": [
+    {
+      "name": "opened_due_and_equal_deadline",
+      "now": 2000000000,
+      "rows": [
+        {
+          "code": 20,
+          "display": [
+            "determine if the file has EXIF metadata",
+            "2"
+          ],
+          "sort": [
+            "determine if the file has EXIF metadata",
+            2
+          ]
+        },
+        {
+          "code": 16,
+          "display": [
+            "determine if the file has an icc profile",
+            "0 (1 is not yet due)"
+          ],
+          "sort": [
+            "determine if the file has an icc profile",
+            0
+          ]
+        }
+      ],
+      "selected": [],
+      "do_work": false,
+      "do_all": true,
+      "questions": []
+    },
+    {
+      "name": "future_only_selection",
+      "now": 2000000000,
+      "rows": [
+        {
+          "code": 20,
+          "display": [
+            "determine if the file has EXIF metadata",
+            "2"
+          ],
+          "sort": [
+            "determine if the file has EXIF metadata",
+            2
+          ]
+        },
+        {
+          "code": 16,
+          "display": [
+            "determine if the file has an icc profile",
+            "0 (1 is not yet due)"
+          ],
+          "sort": [
+            "determine if the file has an icc profile",
+            0
+          ]
+        }
+      ],
+      "selected": [
+        16
+      ],
+      "do_work": false,
+      "do_all": true,
+      "questions": []
+    },
+    {
+      "name": "due_selection",
+      "now": 2000000000,
+      "rows": [
+        {
+          "code": 20,
+          "display": [
+            "determine if the file has EXIF metadata",
+            "2"
+          ],
+          "sort": [
+            "determine if the file has EXIF metadata",
+            2
+          ]
+        },
+        {
+          "code": 16,
+          "display": [
+            "determine if the file has an icc profile",
+            "0 (1 is not yet due)"
+          ],
+          "sort": [
+            "determine if the file has an icc profile",
+            0
+          ]
+        }
+      ],
+      "selected": [
+        16,
+        20
+      ],
+      "do_work": true,
+      "do_all": true,
+      "questions": []
+    },
+    {
+      "name": "clear_cancel",
+      "now": 2000000000,
+      "rows": [
+        {
+          "code": 20,
+          "display": [
+            "determine if the file has EXIF metadata",
+            "2"
+          ],
+          "sort": [
+            "determine if the file has EXIF metadata",
+            2
+          ]
+        },
+        {
+          "code": 16,
+          "display": [
+            "determine if the file has an icc profile",
+            "0 (1 is not yet due)"
+          ],
+          "sort": [
+            "determine if the file has an icc profile",
+            0
+          ]
+        }
+      ],
+      "selected": [
+        16,
+        20
+      ],
+      "do_work": true,
+      "do_all": true,
+      "questions": [
+        {
+          "message": "Clear all the selected scheduled work?"
+        }
+      ]
+    },
+    {
+      "name": "selected_work_finished_future_retained",
+      "now": 2000000000,
+      "rows": [
+        {
+          "code": 16,
+          "display": [
+            "determine if the file has an icc profile",
+            "0 (1 is not yet due)"
+          ],
+          "sort": [
+            "determine if the file has an icc profile",
+            0
+          ]
+        }
+      ],
+      "selected": [
+        16
+      ],
+      "do_work": false,
+      "do_all": false,
+      "questions": [
+        {
+          "message": "Clear all the selected scheduled work?"
+        }
+      ]
+    },
+    {
+      "name": "past_deadline_due",
+      "now": 2000000001,
+      "rows": [
+        {
+          "code": 16,
+          "display": [
+            "determine if the file has an icc profile",
+            "1"
+          ],
+          "sort": [
+            "determine if the file has an icc profile",
+            1
+          ]
+        }
+      ],
+      "selected": [
+        16
+      ],
+      "do_work": true,
+      "do_all": true,
+      "questions": [
+        {
+          "message": "Clear all the selected scheduled work?"
+        }
+      ]
+    },
+    {
+      "name": "all_work_finished",
+      "now": 2000000001,
+      "rows": [],
+      "selected": [],
+      "do_work": false,
+      "do_all": false,
+      "questions": [
+        {
+          "message": "Clear all the selected scheduled work?"
+        }
+      ]
+    },
+    {
+      "name": "future_added",
+      "now": 2000000001,
+      "rows": [
+        {
+          "code": 20,
+          "display": [
+            "determine if the file has EXIF metadata",
+            "0 (3 is not yet due)"
+          ],
+          "sort": [
+            "determine if the file has EXIF metadata",
+            0
+          ]
+        }
+      ],
+      "selected": [],
+      "do_work": false,
+      "do_all": false,
+      "questions": [
+        {
+          "message": "Clear all the selected scheduled work?"
+        }
+      ]
+    },
+    {
+      "name": "clear_accepted_removes_future_too",
+      "now": 2000000001,
+      "rows": [],
+      "selected": [],
+      "do_work": false,
+      "do_all": false,
+      "questions": [
+        {
+          "message": "Clear all the selected scheduled work?"
+        },
+        {
+          "message": "Clear all the selected scheduled work?"
+        }
+      ]
+    },
+    {
+      "name": "cancel_work_queued",
+      "now": 2000000001,
+      "rows": [
+        {
+          "code": 20,
+          "display": [
+            "determine if the file has EXIF metadata",
+            "2"
+          ],
+          "sort": [
+            "determine if the file has EXIF metadata",
+            2
+          ]
+        }
+      ],
+      "selected": [],
+      "do_work": false,
+      "do_all": true,
+      "questions": [
+        {
+          "message": "Clear all the selected scheduled work?"
+        },
+        {
+          "message": "Clear all the selected scheduled work?"
+        }
+      ]
+    },
+    {
+      "name": "cancel_at_file_boundary",
+      "now": 2000000001,
+      "rows": [
+        {
+          "code": 20,
+          "display": [
+            "determine if the file has EXIF metadata",
+            "1"
+          ],
+          "sort": [
+            "determine if the file has EXIF metadata",
+            1
+          ]
+        }
+      ],
+      "selected": [],
+      "do_work": false,
+      "do_all": true,
+      "questions": [
+        {
+          "message": "Clear all the selected scheduled work?"
+        },
+        {
+          "message": "Clear all the selected scheduled work?"
+        }
+      ]
+    }
+  ],
+  "gauges": [
+    {
+      "done": 1,
+      "total": 2,
+      "text": "1/2"
+    },
+    {
+      "done": 2,
+      "total": 2,
+      "text": "2/2"
+    },
+    {
+      "done": 1,
+      "total": 1,
+      "text": "1/1"
+    },
+    {
+      "done": 1,
+      "total": 2,
+      "text": "1/2"
+    }
+  ],
+  "progress": [
+    {
+      "title": "file maintenance",
+      "text": "done!",
+      "done": true,
+      "cancellable": false,
+      "dismissed": false
+    },
+    {
+      "title": "file maintenance",
+      "text": "done!",
+      "done": true,
+      "cancellable": false,
+      "dismissed": false
+    },
+    {
+      "title": "file maintenance",
+      "text": "done!",
+      "done": true,
+      "cancellable": false,
+      "dismissed": false
+    },
+    {
+      "title": null,
+      "text": "No file maintenance due!",
+      "done": true,
+      "cancellable": false,
+      "dismissed": false
+    }
+  ],
+  "redownload": {
+    "url": "https://maintenance.synthetic.example/repair.png",
+    "before_current": "75b91ae6fe0f4f8110c49f77f8d7df339de3752aaa9f24640dca5a51293ae3be",
+    "after_current": "75b91ae6fe0f4f8110c49f77f8d7df339de3752aaa9f24640dca5a51293ae3be",
+    "destinations": [
+      {
+        "name": "missing files redownloader",
+        "key": "7947ae4e24743f7e9de61a276f3ebd46d74a4918eba0974749409b8335076df6",
+        "count": 1
+      }
+    ]
+  }
+}

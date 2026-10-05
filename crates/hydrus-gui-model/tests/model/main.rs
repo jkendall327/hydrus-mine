@@ -151,6 +151,7 @@ mod tab_presentation;
 mod archive_repair;
 
 mod file_history;
+mod file_maintenance_current;
 mod related_weights;
 
 mod autocomplete_tabs;

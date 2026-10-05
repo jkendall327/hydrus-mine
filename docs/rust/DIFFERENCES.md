@@ -3329,3 +3329,19 @@ CI step runs the three lifetime tests with uncaptured progress before the full
 default-parallel suite. The obsolete Windows run's last completed test does not
 identify its blocked test, and this source risk is not proof of that run's exact
 cause. No local Rust execution, mutation run or completion credit is claimed.
+
+
+The scheduled file-maintenance review implements its current-work tab using the
+existing 27 native runners. New-work search, quick selection and scheduling are
+still missing. The native review uses an inline owned yes/no confirmation; Qt
+uses its modal question dialog. Progress is published after each file commits,
+where Qt increments its gauge just before that file's work. Native GUI commands
+currently serialize Clear behind an accepted forced pass; Qt can clear between
+_RunJob batches. The native physical lease is shared across GUI and daemon and
+is released on process exit; no UI disk work or joins are introduced. Broader
+backend notification/error presentation and scheduler policy are not claimed.
+This finite source is not a runtime attestation: native execution, exact PNG
+inspection remain pending. Exactly one original Missing leaf is recorded as
+Partial with zero completion credit; no parent, scheduling or search claim is
+made. Batch URL validation currently rejects the batch on an invalid URL,
+where Qt calls ImportURL separately for each reported URL.

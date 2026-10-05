@@ -81,6 +81,7 @@ pub(crate) struct Hooks {
     pub viewing_maintenance: Rc<dyn Fn(bool)>,
     pub clear_thumbnail_cache: Rc<dyn Fn()>,
     pub file_history: Rc<dyn Fn()>,
+    pub file_maintenance: Rc<dyn Fn()>,
     /// Toggle watcher or other recognised clipboard URL imports.
     pub watch_clipboard: Rc<dyn Fn(bool)>,
 }
@@ -759,6 +760,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             (hooks.reshow)();
         }
         Command::FileHistory => (hooks.file_history)(),
+        Command::ManageFileMaintenance => (hooks.file_maintenance)(),
         Command::RepairArchiveTimes => (hooks.repair_archive_times)(),
         Command::ClearThumbnailCache => (hooks.clear_thumbnail_cache)(),
         Command::DebugFetchUrl => hooks.debug_fetch.open(),

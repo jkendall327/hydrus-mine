@@ -85,6 +85,30 @@ impl FileImporter {
         max_weight: u64,
         wanted: &dyn Fn(JobType) -> bool,
     ) -> Result<MaintenanceReport> {
+        self.run_file_maintenance_controlled(limit, max_weight, wanted, &|| true, &mut |_| {})
+    }
+
+    /// A forced GUI pass. Cancellation is checked between files, as `_RunJob`
+    /// does; progress is published after each file's results are committed.
+    pub fn run_file_maintenance_controlled(
+        &self,
+        limit: u64,
+        max_weight: u64,
+        wanted: &dyn Fn(JobType) -> bool,
+        continue_work: &dyn Fn() -> bool,
+        progress: &mut dyn FnMut(&MaintenanceReport),
+    ) -> Result<MaintenanceReport> {
+        // File work happens outside the writer. The crash-safe file lease also
+        // excludes the independent daemon's ordinary maintenance pass.
+        let _lease = loop {
+            if !continue_work() {
+                return Ok(MaintenanceReport::default());
+            }
+            if let Some(lease) = hydrus_store::store::lock_file_maintenance(self.store.dir())? {
+                break lease;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(20));
+        };
         let ownership: hydrus_store::transfer::MediaOwnership =
             self.store.read(hydrus_store::settings::get)?;
         let mut pass = Pass {
@@ -108,6 +132,11 @@ impl FileImporter {
                 .map(|m| (m.hash_id, m))
                 .collect();
             for (hash_id, jobs) in due {
+                if !continue_work() {
+                    report.bad_files = pass.bad_files;
+                    report.redownload = pass.redownload;
+                    return Ok(report);
+                }
                 let mut results = Vec::new();
                 let mut weight = report.weight;
                 for job in jobs {
@@ -139,6 +168,9 @@ impl FileImporter {
                     }
                     Ok(())
                 })?;
+                report.bad_files = pass.bad_files;
+                report.redownload.clone_from(&pass.redownload);
+                progress(&report);
             }
         }
         report.bad_files = pass.bad_files;
