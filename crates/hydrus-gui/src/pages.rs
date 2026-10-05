@@ -1021,6 +1021,15 @@ impl Pages {
         self.add(new_search_page(&self.store));
     }
 
+    /// Open a blank query in the notebook current at delivery, with a frozen
+    /// file location and the current saved default tag service.
+    pub fn new_query_page(&mut self, location: hydrus_search::LocationContext) {
+        // A deferred query is not a retained page-chooser insertion request.
+        self.new_page_target = None;
+        self.new_page_depth = None;
+        self.add(new_search_page_on(&self.store, location));
+    }
+
     /// Open `files` in a new page searching `location` (the reference's
     /// "open in a new page", `ShowFilesInNewPage`), at the far right of
     /// the current notebook, and show it. Its search is locked to a

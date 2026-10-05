@@ -3885,3 +3885,14 @@ controls and entry/shutdown paths are recorded; model, Store, daemon and native
 regressions are authored and await hosted execution.
 
 Help → Debug → GUI actions now offers “make a popup in five seconds”. Each activation queues the exact reference message without publishing early; overlapping activations keep separate deadlines and independent dismissible jobs. Existing delayed work progresses while Main is hidden, while new hidden-window launches are refused. The existing debug producer owns the timer and permanently cancels pending work on accepted exit, rebind and owner destruction; Exit Cancel preserves it. Authored native deadline/Store/toaster/ownership regressions await hosted CI.
+
+Help → debug → gui actions now includes “make a new page in five seconds”.
+Its real menu captures the saved default file location when constructed, then an
+owned monotonic deadline creates and selects a blank search page in the notebook
+current at delivery. The page reads the current default tag service and uses the
+existing query/autocomplete path. Hidden Main refuses new launches but existing
+work continues without raising it; rebind, accepted exit and owner destruction
+permanently retire queued page requests. Overlaps share the existing popup timer
+without changing its dismissal pruning or delayed/long-text publications.
+Actual Qt hidden/minimized delivery is recorded in `debug_delayed_pages.json`;
+authored native query and lifecycle regressions await hosted execution.

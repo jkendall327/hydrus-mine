@@ -88,7 +88,29 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                     .unwrap()
                     < recorded.iter().position(|entry| entry == &delayed).unwrap()
             );
-            gui["entries"] = serde_json::json!([long_text, delayed]);
+            let new_page = recorded
+                .iter()
+                .find(|entry| *entry == "make a new page in five seconds")
+                .unwrap()
+                .clone();
+            assert!(
+                recorded
+                    .iter()
+                    .position(|entry| entry == &long_text)
+                    .unwrap()
+                    < recorded
+                        .iter()
+                        .position(|entry| entry == &new_page)
+                        .unwrap()
+            );
+            assert!(
+                recorded
+                    .iter()
+                    .position(|entry| entry == &new_page)
+                    .unwrap()
+                    < recorded.iter().position(|entry| entry == &delayed).unwrap()
+            );
+            gui["entries"] = serde_json::json!([long_text, new_page, delayed]);
             let mut memory = entry["entries"]
                 .as_array()
                 .unwrap()
