@@ -64,9 +64,12 @@ unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in
 [gui-coverage/README.md](gui-coverage/README.md).
 
-Continuous source work now proposes 58 further original leaf completions over
-that validated 240 checkpoint: 53 on `codex/parity-more-controls`, with five
-more on the dependent `codex/parity-next-details` branch. It includes tab
+Continuous source work now proposes 71 further original leaf completions over
+that validated 240 checkpoint: 53 on `codex/parity-more-controls`, five more
+on the dependent `codex/parity-next-details` branch, and 13 more on
+`codex/parity-preview-and-launching`. The last branch adds two preview viewing-time
+controls, two saved formatting controls with backend consumers, one keyboard
+capture control, and eight ordered Open Externally routing controls. It includes tab
 appearance/drag, notebook tree, notes, rating sizes, archive repair, duplicate
 colours, tag suggestions/weights, autocomplete panes, sidebar cogs, thumbnail
 navigation, namespace colour actions, external-call list and command controls,
@@ -78,8 +81,9 @@ and global viewing-statistics clear/cull actions. Historical subscription
 seed-cache compatibility, direct ordered subscription imports and login editor
 controls are further parent/Partial improvements with zero leaf credit.
 These remain proposals while exact hosted CI
-runs and rendered review are pending. Window rescue and GUI formatting are
-explicitly Partial improvements with zero completion credit. Owned asynchronous
+runs and rendered review are pending. Window rescue remains a Partial
+improvement with zero completion credit; GUI formatting now has two conditional
+original control proposals after its backend waits and diagnostics were ported. Owned asynchronous
 metadata filesystem jobs also retain their two original Partial assessments,
 and mouse idle tracking remains Partial because it observes application windows.
 Broader external
