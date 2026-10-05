@@ -46,6 +46,9 @@ fn several_thumbnails_are_selected_and_acted_on() {
     assert!(files.len() > 12);
     let main_window = windows.get(0).unwrap();
     headless::render(&main_window, 1100, 700);
+    // Keep the original grid viewport, independently of the sidebar width.
+    let width = ui.get_grid_origin_x().round() as u32 + 800;
+    headless::render(&main_window, width, 700);
     let columns = usize::try_from(ui.get_grid_columns()).unwrap();
     assert_eq!(columns, 5);
 
@@ -68,8 +71,8 @@ fn several_thumbnails_are_selected_and_acted_on() {
     let click = |index: usize, modifier: Option<Key>| {
         let (row, column) = (index / columns, index % columns);
         let position = slint::LogicalPosition::new(
-            300.0 + 4.0 + 156.0 * column as f32 + 76.0,
-            4.0 + 131.0 * row as f32 + 63.0,
+            ui.get_grid_origin_x() + 4.0 + 156.0 * column as f32 + 76.0,
+            ui.get_grid_origin_y() + 4.0 + 131.0 * row as f32 + 63.0,
         );
         with(modifier, &|| {
             for event in [
@@ -117,9 +120,9 @@ fn several_thumbnails_are_selected_and_acted_on() {
     assert_eq!(drawn(), [0, 2, 3, 4]);
     // the tags listed are the selection's, counted
     assert!(ui.get_tags().row_count() >= one_file_tags);
-    let pixels = headless::render(&main_window, 1100, 700);
+    let pixels = headless::render(&main_window, width, 700);
     let shots = std::path::Path::new(env!("CARGO_TARGET_TMPDIR"));
-    headless::save_png(&shots.join("thumbnail_selection.png"), &pixels, 1100, 700).unwrap();
+    headless::save_png(&shots.join("thumbnail_selection.png"), &pixels, width, 700).unwrap();
     // ctrl+a selects all, escape none; the arrows move (shift selecting)
     with(Some(Key::Control), &|| type_text("a".into()));
     assert_eq!(selected().len(), files.len());
@@ -134,7 +137,8 @@ fn several_thumbnails_are_selected_and_acted_on() {
     assert_eq!(selected(), [6, 7, 8]);
     assert_eq!(page.borrow().focused(), Some(6));
     // a click on a gap between thumbnails selects nothing
-    let gap = slint::LogicalPosition::new(300.0 + 2.0, 80.0);
+    let gap =
+        slint::LogicalPosition::new(ui.get_grid_origin_x() + 2.0, ui.get_grid_origin_y() + 80.0);
     for event in [
         WindowEvent::PointerPressed {
             position: gap,
@@ -251,6 +255,11 @@ fn borders_and_margins_lay_the_grid_out() {
     let page = bound.current.borrow().clone();
     let main_window = windows.get(0).unwrap();
     headless::render(&main_window, 1100, 700);
+    // Preserve four custom cells in the original 800px grid viewport.
+    let width = ui.get_grid_origin_x().round() as u32 + 800;
+    headless::render(&main_window, width, 700);
+    let grid_left = ui.get_grid_origin_x().round() as i32;
+    let grid_top = ui.get_grid_origin_y().round() as i32;
     // (the default box, 150 by 125, and its border)
     let (cell_width, cell_height) = (150 + 2 * 3, 125 + 2 * 3);
     assert_eq!(ui.get_thumbnail_width(), cell_width as f32);
@@ -287,9 +296,9 @@ fn borders_and_margins_lay_the_grid_out() {
         }
         runs
     };
-    // across the first row (the grid starts at 300; 74 is in its first
-    // row whatever is above it)
-    let across = runs(&|x| at(x, 74.0), 300, 1100);
+    // Across the first row, relative to the measured grid origin.
+    let scan_y = grid_top as f32 + cell_height as f32 / 2.0;
+    let across = runs(&|x| at(x, scan_y), grid_left, width as i32);
     let columns = usize::try_from(ui.get_grid_columns()).unwrap();
     // (the window's 800 or so across fit four spans of 176, not five)
     assert_eq!(columns, 4);
@@ -317,8 +326,8 @@ fn borders_and_margins_lay_the_grid_out() {
     assert_eq!(none, None);
     assert_eq!(before, 10 + 1, "{across:?}");
     // and down the first column
-    let middle = 300.0 + 10.0 + cell_width as f32 / 2.0;
-    let down = runs(&|y| at(middle, y), 0, 700);
+    let middle = grid_left as f32 + 10.0 + cell_width as f32 / 2.0;
+    let down = runs(&|y| at(middle, y), grid_top, 700);
     let files: Vec<(Option<usize>, i32)> = down
         .iter()
         .copied()
@@ -336,12 +345,12 @@ fn borders_and_margins_lay_the_grid_out() {
 
     // drawn so: each cell's border 3 pixels wide, from its margin on
     // (nothing selected, so every border is the same)
-    assert_eq!(at(305.0, 74.0), None);
-    let pixels = headless::render(&main_window, 1100, 700);
-    let pixel = |x: usize| &pixels[(74 * 1100 + x) * 4..][..4];
-    let border = pixel(310);
+    assert_eq!(at(grid_left as f32 + 5.0, scan_y), None);
+    let pixels = headless::render(&main_window, width, 700);
+    let pixel = |x: usize| &pixels[(scan_y as usize * width as usize + x) * 4..][..4];
+    let border = pixel(grid_left as usize + 10);
     for column in 0..columns {
-        let left = 300 + 176 * column + 10;
+        let left = grid_left as usize + 176 * column + 10;
         assert_ne!(pixel(left - 1), border, "column {column}'s margin");
         for x in left..left + 3 {
             assert_eq!(pixel(x), border, "column {column}'s border at {x}");
