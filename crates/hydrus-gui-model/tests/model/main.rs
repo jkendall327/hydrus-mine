@@ -24,11 +24,11 @@ mod filename_rules;
 mod filename_simple;
 mod filename_tagging;
 mod filesize_predicate;
-mod hash_predicate;
 mod filetype_tree;
 mod folders;
 mod force_filetype;
 mod formula_editors;
+mod hash_predicate;
 mod import_options_editor;
 mod import_options_overwrite;
 mod import_options_panel;
@@ -177,3 +177,5 @@ mod duplicates_progress;
 mod quick_export_directory;
 
 mod archive_delete_policies;
+
+mod radio_return;

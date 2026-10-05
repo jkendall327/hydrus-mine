@@ -52,6 +52,7 @@ component FieldView {
     callback number-edited(int);
     callback text-edited(string);
     callback accepted();
+    callback force-radio-ok() -> bool;
     callback pressed();
     callback tree-ticked(int, int, bool);
     callback expanded(int, bool);
@@ -88,6 +89,7 @@ component FieldView {
             enabled: root.field.enabled && !root.blocked;
             focus-request: root.comparison-focus;
             chose(option) => { root.chose(option); }
+            force-dialog-ok => { root.force-radio-ok() }
             accepted => { root.accepted(); }
         }
         if root.field.kind == 2: VerticalLayout {
@@ -230,6 +232,8 @@ export component PredicateEditorWindow inherits Window {
     in property <[string]> defaults-actions;
     callback defaults-menu(int);
     callback defaults-action(int, string);
+    callback force-radio-ok(int) -> bool;
+    in-out property <int> radio-default-panel: -1;
     callback ok(int);
     callback cancel();
     callback closed();
@@ -244,6 +248,10 @@ export component PredicateEditorWindow inherits Window {
                     return accept;
                 }
                 root.cancel();
+                return accept;
+            }
+            if event.text == Key.Return && root.radio-default-panel >= 0 && root.question == "" {
+                root.ok(root.radio-default-panel);
                 return accept;
             }
             reject
@@ -348,6 +356,7 @@ export component PredicateEditorWindow inherits Window {
                                         enabled: root.question == "" && !root.notice-open;
                                         focus-request: root.hash-focus;
                                         chose(option) => { root.chose(p, 1, option); }
+                                        force-dialog-ok => { root.force-radio-ok(p) }
                                         accepted => { root.ok(p); }
                                     }
                                 }
@@ -374,6 +383,7 @@ export component PredicateEditorWindow inherits Window {
                                         chosen: panel.fields[5].chosen;
                                         enabled: root.question == "" && !root.notice-open;
                                         chose(option) => { root.chose(p, 5, option); }
+                                        force-dialog-ok => { root.force-radio-ok(p) }
                                         accepted => { root.ok(p); }
                                     }
                                 }
@@ -392,6 +402,7 @@ export component PredicateEditorWindow inherits Window {
                                 for field[f] in panel.fields: FieldView {
                                     field: field;
                                     comparison-focus: root.comparison-focus;
+                                    force-radio-ok => { root.force-radio-ok(p) }
                                     blocked: root.question != "" || root.notice-open;
                                     here: field.shown && field.line == 0;
                                     chose(option) => { root.chose(p, f, option); }
@@ -417,6 +428,7 @@ export component PredicateEditorWindow inherits Window {
                                 for field[f] in panel.fields: FieldView {
                                     field: field;
                                     comparison-focus: root.comparison-focus;
+                                    force-radio-ok => { root.force-radio-ok(p) }
                                     blocked: root.question != "" || root.notice-open;
                                     here: field.shown && field.line == 1;
                                     chose(option) => { root.chose(p, f, option); }

@@ -101,6 +101,7 @@ pub fn open_with_choice(
     let window = DeleteFilesWindow::new().map_err(|e| e.to_string())?;
     window.set_custom(draft.custom.as_str().into());
     show(&window, &draft);
+    window.set_radio_focus(if draft.choices.len() > 1 { 0 } else { 1 });
     let draft = Rc::new(RefCell::new(draft));
     let active = Rc::new(Cell::new(true));
     let close: Rc<dyn Fn()> = Rc::new({
@@ -116,6 +117,25 @@ pub fn open_with_choice(
             }
             if let Some(slot) = slot.upgrade() {
                 slot.borrow_mut().take();
+            }
+        }
+    });
+    window.on_force_radio_ok({
+        let active = active.clone();
+        let guard = guard.clone();
+        let weak = window.as_weak();
+        let store = store.clone();
+        move || {
+            if !active.get() || !guard() || weak.upgrade().is_none_or(|w| !w.window().is_visible())
+            {
+                return false;
+            }
+            match store.read(hydrus_store::radio_return::load) {
+                Ok(policy) => policy.force_dialog_ok,
+                Err(error) => {
+                    eprintln!("Could not read the radio Return preference: {error}");
+                    false
+                }
             }
         }
     });
@@ -173,6 +193,9 @@ pub fn open_with_choice(
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            if !window.window().is_visible() {
+                return;
+            }
             draft.borrow_mut().custom = window.get_custom().to_string();
             match draft.borrow().apply_with_choice(&store) {
                 Ok(choice) => {

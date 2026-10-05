@@ -30,11 +30,11 @@ mod file_view_removal;
 mod filename_rules;
 mod filename_simple;
 mod filesize_predicate;
-mod hash_predicate;
 mod folder_manager_lifecycle;
 mod folders;
 mod force_filetype;
 mod formula_editors;
+mod hash_predicate;
 mod import_files;
 mod import_folder_log;
 mod import_options;
@@ -204,3 +204,5 @@ mod duplicates_progress;
 mod quick_export_directory;
 
 mod archive_delete_policies;
+
+mod radio_return;

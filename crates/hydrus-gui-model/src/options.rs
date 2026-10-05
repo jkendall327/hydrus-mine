@@ -288,6 +288,7 @@ settings! {
     folders: FolderSettings,
     gallery: GalleryDefaults,
     gui: GuiSettings,
+    radio_return: hydrus_store::radio_return::RadioReturn => hydrus_store::radio_return::load,
     tag_search_activation: hydrus_store::settings::TagSearchActivation,
     gui_formatting: hydrus_store::settings::GuiFormatting,
     gui_sessions: hydrus_store::settings::GuiSessionSettings,
@@ -2382,6 +2383,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             "Prefer ISO time (\"2018-03-01 12:40:23\") to \"5 days ago\": ",
                             |s| s.gui_formatting.iso,
                             |s, v| s.gui_formatting.iso = v,
+                        ),
+                        check(
+                            "Force that hitting Enter/Return on radio button lists triggers a dialog ok: ",
+                            |s| s.radio_return.force_dialog_ok,
+                            |s, value| s.radio_return.force_dialog_ok = value,
                         ),
                         check(
                             "Remember last open options panel in this window: ",
