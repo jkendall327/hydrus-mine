@@ -89,7 +89,7 @@ and mouse idle tracking remains Partial because it observes application windows.
 Broader external
 call/editor boundaries also remain Partial. Inspect the current branch with
 `python3 scripts/gui_burndown.py --commit HEAD`; do not substitute its proposed
-total of 298 for the validated 240 ledger. New work and diagnostics continue
+total of 311 for the validated 240 ledger. New work and diagnostics continue
 while hosted validation runs, as authorized by the owner.
 
 The next breadth work, in the owner's existing order:
