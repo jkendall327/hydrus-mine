@@ -11,11 +11,13 @@ fn location(key: &[u8]) -> LocationContext {
     LocationContext::single(ServiceKey::new(key.to_vec()))
 }
 fn defaults(store: &Store, file: &[u8], tags: &[u8]) {
+    let local_location = location(file);
+    let tag_service = ServiceKey::new(tags.to_vec());
     store
-        .write(|ctx| {
+        .write(move |ctx| {
             let mut value: settings::SearchDefaults = settings::get(ctx.conn())?;
-            value.local_location = location(file);
-            value.tag_service = ServiceKey::new(tags.to_vec());
+            value.local_location = local_location;
+            value.tag_service = tag_service;
             settings::set(ctx.conn(), &value)
         })
         .unwrap();
