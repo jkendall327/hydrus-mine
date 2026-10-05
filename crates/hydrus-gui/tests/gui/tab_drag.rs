@@ -421,8 +421,12 @@ fn real_pointer_drag_replays_shift_chase_hover_transfer_disable_and_cancel_with_
             text: slint::platform::Key::Escape.into(),
         });
         assert!(!ui.get_tab_drag_active());
-        shift(&native, false);
+        // Cancelling consumes the grab, not merely the active decoration. A
+        // subsequent real release at the hovered destination must not drop it.
+        pointer(&native, tab_rect(&rects, named(&session, "omega")), 1);
+        assert!(!ui.get_tab_drag_active());
         assert_eq!(bound.pages.borrow().session(), &session);
+        shift(&native, false);
     }
     for step in fixture["drops"].as_array().unwrap() {
         let held = step["shift"].as_bool().unwrap();
