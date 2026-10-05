@@ -621,7 +621,10 @@ impl Editor {
                         .iter()
                         .position(|(service, _)| service == key)
                         .unwrap_or_else(|| {
-                            value.services.push((key.clone(), Default::default()));
+                            value.services.push((
+                                key.clone(),
+                                hydrus_core::import_options::ServiceTagImportOptions::default(),
+                            ));
                             value.services.len() - 1
                         });
                     let service = &mut value.services[index].1;
