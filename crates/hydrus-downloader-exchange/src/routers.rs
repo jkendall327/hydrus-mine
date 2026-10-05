@@ -10,6 +10,78 @@ use hydrus_parse::sidecar::{
 };
 use serde_json::{Value, json};
 
+/// Routers and other recognised object types encountered in an import package.
+/// Strict exchange decoding remains atomic; list controls use this report to
+/// retain the permitted subset as the reference's AddEditDeleteListBox does.
+#[derive(Debug, Default, Clone, PartialEq)]
+pub struct ImportReport {
+    pub routers: Vec<Router>,
+    pub other_types: std::collections::BTreeSet<String>,
+}
+
+/// Inspect reference text without dropping recognised routers alongside other objects.
+pub fn inspect_text(text: &str) -> Result<ImportReport> {
+    if text.len() > MAX_BYTES {
+        return Err(Error::Limit);
+    }
+    let value = serde_json::from_str(text).map_err(|e| Error::Invalid(e.to_string()))?;
+    let mut report = ImportReport::default();
+    let mut count = 0;
+    inspect_value(value, 0, &mut count, &mut report)?;
+    Ok(report)
+}
+
+fn inspect_value(
+    mut value: Value,
+    depth: usize,
+    count: &mut usize,
+    report: &mut ImportReport,
+) -> Result<()> {
+    if depth > 32 || *count >= MAX_OBJECTS {
+        return Err(Error::Limit);
+    }
+    *count += 1;
+    upgrade::object(&mut value, 0)?;
+    let object = SerialisableObject::from_tuple_str(&value.to_string())
+        .map_err(|e| Error::Invalid(e.to_string()))?;
+    object
+        .check_not_future()
+        .map_err(|e| Error::Unsupported(e.to_string()))?;
+    if object.kind.code() == 26 {
+        let object = object
+            .upgraded()
+            .map_err(|e| Error::Invalid(e.to_string()))?;
+        let Body::List(items) = object.body else {
+            return Err(Error::Invalid("Malformed router package.".into()));
+        };
+        for item in items {
+            let Meta::Object(nested) = item else {
+                return Err(Error::Unsupported(
+                    "router package contains a non-object value".into(),
+                ));
+            };
+            let value = serde_json::from_str(&nested.to_tuple().to_python_string())
+                .map_err(|e| Error::Invalid(e.to_string()))?;
+            inspect_value(value, depth + 1, count, report)?;
+        }
+    } else if object.kind.code() == 109 {
+        decode_value(value, depth, &mut report.routers)?;
+    } else {
+        let name = import_type_name(object.kind.code()).ok_or_else(|| {
+            Error::Unsupported(format!("unknown object type {}", object.kind.code()))
+        })?;
+        report.other_types.insert(name.into());
+    }
+    Ok(())
+}
+
+/// Inspect the same bounded compressed PNG format used by strict decoding.
+pub fn inspect_png(bytes: &[u8]) -> Result<ImportReport> {
+    inspect_text(&transport::decode_payload(bytes)?)
+}
+
+include!("router_import_types.rs");
+
 fn timestamp(stub: &TimestampStub) -> Result<Value> {
     let location = match (&stub.kind, &stub.location) {
         (

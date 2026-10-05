@@ -806,15 +806,21 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   use the reusable HTML/JSON editor;
   router testing uses per-source tables instead of a notebook. Router queues
   import/export clipboard text and PNGs through the shared staged review window,
-  rather than Qt's separate chooser dialogs. Unsupported mixed packages are
-  rejected atomically instead of appending the permitted subset and warning.
+  rather than Qt's separate chooser dialogs. Router import now preserves the
+  compatible subset of recognised mixed objects and shows the reference's type
+  and direction warnings; ordered multiple-PNG imports stop at the first failed
+  file and retain earlier successful packages for review. The subset is appended
+  only after accepting that review, so cancelling review discards it; Qt appends
+  each successful package immediately to its still-unsaved queue. Count notices
+  are represented by the staged review rather than separate per-file Qt notices.
   Source/destination editor samples, filename conversions, JSON formula data and
   timestamp stubs round-trip. Non-stub timestamps and unsupported processors are
   rejected before staging rather than silently dropping information.
   Typed router/subsidiary exports now use the reusable title/description/width PNG
   child and retain the reference type/count/size summary in its header. Selected
-  queues export as one bundle; the reference's separate export-each-object-to-PNGs
-  dialog is still absent.
+  queues export as one bundle, as the actual non-named router control does. The
+  separate export-each-object-to-PNGs dialog remains absent for named subsidiary
+  parsers; Qt does not offer it for metadata routers.
   Export-folder search results
   are not yet supplied as media examples (manual exports are).
 - **The string processor editor** receives starting strings from the sidecar

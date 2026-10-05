@@ -19,6 +19,7 @@ export component DownloaderExchangeWindow inherits Window {
     in property <bool> png-enabled;
     in property <bool> png-child;
     in property <bool> json-enabled;
+    in property <bool> router-import;
     in property <string> overwrite-question;
     callback export-png();
     callback action(string);
@@ -51,9 +52,13 @@ export component DownloaderExchangeWindow inherits Window {
             Button { text: "from json files"; enabled: !root.ready; clicked => { root.action("import-jsons"); } }
             Button { text: "from png files"; enabled: !root.ready; clicked => { root.action("import-pngs"); } }
         }
+        if root.router-import: Button {
+            text: "from pngs"; enabled: root.active && !root.ready;
+            clicked => { root.action("import-pngs"); }
+        }
         if !root.png-enabled || root.importing: HorizontalLayout {
             LineEdit { horizontal-stretch: 1; text <=> root.path; placeholder-text: "PNG or text file path"; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; }
-            Button { text: "browse"; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action("browse"); } }
+            if !root.router-import: Button { text: "browse"; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action("browse"); } }
             Button { text: root.importing ? "open file" : "save PNG"; enabled: !root.export-empty && !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action(root.importing ? "open" : "save"); } }
         }
         if root.json-enabled && !root.importing: HorizontalLayout {

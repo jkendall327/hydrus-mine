@@ -62,3 +62,49 @@ fn router_exchange_rejects_incompatible_or_lossy_packages_atomically() {
     assert!(exchange::encode_text(&[]).is_err());
     assert!(exchange::decode_png(b"not a PNG").is_err());
 }
+
+#[test]
+fn inspected_packages_preserve_routers_with_recognised_other_objects() {
+    let reference = hydrus_testkit::fixture_json("router_import.json");
+    for case in reference["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|case| !case["text"].is_null())
+    {
+        let report = exchange::inspect_text(&case["text"].to_string()).unwrap();
+        let added = case["added"].as_array().unwrap();
+        for expected in added {
+            assert!(
+                report
+                    .routers
+                    .iter()
+                    .any(|router| exchange::tuple(router).unwrap() == *expected)
+            );
+        }
+        if case["name"] == "mixed" || case["name"] == "wrong_only" {
+            assert_eq!(
+                report.other_types.into_iter().collect::<Vec<_>>(),
+                ["StringMatch"]
+            );
+            // The strict codec still protects every existing atomic exchange caller.
+            assert!(exchange::decode_text(&case["text"].to_string()).is_err());
+        }
+    }
+    let first =
+        std::fs::read(hydrus_testkit::fixtures_dir().join("router_import_first.png")).unwrap();
+    let report = exchange::inspect_png(&first).unwrap();
+    assert_eq!(report.routers.len(), 1);
+    let broken =
+        std::fs::read(hydrus_testkit::fixtures_dir().join("router_import_broken.png")).unwrap();
+    assert!(exchange::inspect_png(&broken).is_err());
+    let unknown = json!([
+        26,
+        3,
+        [[2, [999, 1, []]], [2, reference["cases"][0]["added"][0]]]
+    ]);
+    assert!(exchange::inspect_text(&unknown.to_string()).is_err());
+    assert!(
+        exchange::inspect_text(&" ".repeat(hydrus_downloader_exchange::MAX_BYTES + 1)).is_err()
+    );
+}

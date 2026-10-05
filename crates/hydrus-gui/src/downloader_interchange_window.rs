@@ -13,6 +13,10 @@ use std::{
     sync::Arc,
 };
 
+#[path = "router_import_window.rs"]
+mod router_import;
+pub use router_import::open as open_router_import;
+
 /// An owned exchange child, cancelled with its parent editor.
 #[derive(Clone, Default)]
 pub struct Slots(
