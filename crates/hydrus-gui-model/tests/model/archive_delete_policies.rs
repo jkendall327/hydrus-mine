@@ -192,7 +192,9 @@ fn actual_qt_domain_alternatives_priorities_delay_and_selected_transaction() {
             })
             .unwrap();
         let keys = match case["page"].as_str().unwrap() {
-            "source" => vec![store.snapshot().services.get(ids[0]).unwrap().key.clone()],
+            "source" | "mixed" | "same_deleted" => {
+                vec![store.snapshot().services.get(ids[0]).unwrap().key.clone()]
+            }
             "both" => ids
                 .iter()
                 .map(|id| store.snapshot().services.get(*id).unwrap().key.clone())
@@ -206,7 +208,16 @@ fn actual_qt_domain_alternatives_priorities_delay_and_selected_transaction() {
         let mut model = ArchiveDeleteFilter::new(
             store.clone(),
             files.clone(),
-            LocationContext::new(keys, vec![]),
+            LocationContext::new(
+                keys,
+                match case["page"].as_str().unwrap() {
+                    "mixed" => vec![store.snapshot().services.get(ids[1]).unwrap().key.clone()],
+                    "same_deleted" => {
+                        vec![store.snapshot().services.get(ids[0]).unwrap().key.clone()]
+                    }
+                    _ => vec![],
+                },
+            ),
         )
         .unwrap();
         model.keep();

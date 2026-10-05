@@ -232,33 +232,44 @@ impl ArchiveDeleteFilter {
             .filter_map(|key| snapshot.services.by_key(key).ok().map(|s| s.id))
             .filter(|id| roles.local.contains(id) || *id == roles.combined_local_media)
             .collect();
+        let page_deleted: Vec<ServiceId> = self
+            .location
+            .deleted()
+            .iter()
+            .filter_map(|key| snapshot.services.by_key(key).ok().map(|s| s.id))
+            .filter(|id| roles.local.contains(id) || *id == roles.combined_local_media)
+            .collect();
         let own: BTreeSet<ServiceId> = memberships.iter().flatten().copied().collect();
         let mut contexts = Vec::new();
         if preferences.all_domains {
-            contexts.push(vec![roles.combined_local_media]);
+            contexts.push((vec![roles.combined_local_media], Vec::new()));
         } else {
             if own.len() > 1 {
-                contexts.push(vec![roles.combined_local_media]);
+                contexts.push((vec![roles.combined_local_media], Vec::new()));
             }
             if !page.is_empty() {
-                contexts.push(page);
+                contexts.push((page, page_deleted));
             }
-            contexts.extend(own.into_iter().map(|domain| vec![domain]));
+            contexts.extend(own.into_iter().map(|domain| (vec![domain], Vec::new())));
         }
         let mut seen = BTreeSet::new();
         contexts
             .into_iter()
-            .filter_map(|mut domains| {
+            .filter_map(|(mut domains, mut deleted_domains)| {
                 domains.sort();
                 domains.dedup();
-                if !seen.insert(domains.clone()) {
+                deleted_domains.sort();
+                deleted_domains.dedup();
+                if !seen.insert((domains.clone(), deleted_domains.clone())) {
                     return None;
                 }
-                let combined = domains == [roles.combined_local_media];
+                let all_local = domains.contains(&roles.combined_local_media);
+                let combined =
+                    domains == [roles.combined_local_media] && deleted_domains.is_empty();
                 let count = memberships
                     .iter()
                     .filter(|current| {
-                        if combined {
+                        if all_local {
                             !current.is_empty()
                         } else {
                             domains.iter().any(|domain| current.contains(domain))
@@ -278,7 +289,9 @@ impl ArchiveDeleteFilter {
                             .map(|service| (*id, service.key.clone()))
                     })
                     .collect();
-                let mut names: Vec<String> = domains
+                let names_domains: BTreeSet<_> =
+                    domains.iter().chain(&deleted_domains).copied().collect();
+                let mut names: Vec<String> = names_domains
                     .iter()
                     .filter_map(|id| {
                         snapshot
@@ -296,6 +309,13 @@ impl ArchiveDeleteFilter {
                     )
                 } else {
                     names.join(", ")
+                };
+                let location = if deleted_domains.is_empty() {
+                    location
+                } else if deleted_domains == domains {
+                    format!("current and deleted files of {location}")
+                } else {
+                    format!("a mix of current and deleted files of {location}")
                 };
                 let number = hydrus_core::numbers::human_int(count as u64);
                 let label = if combined {
