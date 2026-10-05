@@ -2385,8 +2385,10 @@ boundary recording and screenshot inspection ran locally; the authored
 model/native/live-downloader regressions await hosted CI. No local Cargo build,
 Rust test or mutation run was performed for this slice.
 Monotonic persisted queue identities prevent retired workers from adopting a
-successor after SQLite reuses a deleted maximum row; late seed updates also
-qualify the seed by its queue. Pending-pause, deleted-owner replacement and
+successor after SQLite reuses a deleted maximum row. Store opening persists any
+pre-upgrade maximum before a runner can own/delete it; initialized stores retain
+their saved high-water mark without rewriting it on every reopen. Late seed
+updates also qualify the seed by its queue. Pending-pause, deleted-owner replacement and
 retained Options callbacks after reopening are covered by authored regressions.
 FIFO fairness and background repeater scheduling cadence remain outside this
 five-control slice.

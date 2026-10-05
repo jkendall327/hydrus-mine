@@ -476,11 +476,27 @@ pub fn copy_seeds(conn: &Connection, from: i64, to: i64) -> Result<()> {
 
 // Persist a high-water mark so a retired worker's queue identity is never
 // recycled when SQLite removes the highest row. Existing stores bootstrap from
-// their current maximum; allocation happens within the caller's writer transaction.
+// their current maximum before Store::open exposes any worker owners.
+// Allocation happens within the caller's writer transaction.
 #[derive(Debug, Default, Serialize, Deserialize)]
 struct QueueSequence(i64);
 impl crate::settings::Setting for QueueSequence {
     const KEY: &'static str = "import_queue_sequence";
+}
+
+/// Persist pre-existing queue identities before a runner can own them.
+/// Reopening an already-initialized store does not rewrite its settings.
+pub(crate) fn initialize_sequence(conn: &Connection) -> Result<()> {
+    let saved: QueueSequence = crate::settings::get(conn)?;
+    let maximum: i64 = conn.query_row(
+        "SELECT coalesce(max(queue_id), 0) FROM import_queues",
+        [],
+        |row| row.get(0),
+    )?;
+    if maximum > saved.0 {
+        crate::settings::set(conn, &QueueSequence(maximum))?;
+    }
+    Ok(())
 }
 
 /// Make a queue.

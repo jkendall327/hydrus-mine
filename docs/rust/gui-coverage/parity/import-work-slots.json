@@ -27,7 +27,8 @@
         "crates/hydrus-gui-model/src/options.rs::pages",
         "crates/hydrus-download/src/work_slots.rs::Slots",
         "crates/hydrus-download/src/queue.rs::QueueRunner",
-        "crates/hydrus-store/src/queues.rs::create_queue"
+        "crates/hydrus-store/src/queues.rs::create_queue",
+        "crates/hydrus-store/src/store.rs::Store::open"
       ],
       "tests": [
         "crates/hydrus-gui-model/tests/model/import_work_slots.rs",
@@ -37,7 +38,8 @@
         "crates/hydrus-download/tests/url_queue.rs::running_gallery_searches_pick_up_capacity_growth_and_release_on_error",
         "crates/hydrus-download/tests/watchers.rs::watcher_checks_share_their_own_live_capacity_and_owner_close_releases_it",
         "crates/hydrus-store/src/import/decode.rs::importing_work_slots_decode_five_legacy_keys_and_persist_native_limits",
-        "crates/hydrus-store/src/queues.rs::deleted_queue_identity_is_not_recycled_and_late_seed_updates_ignore_successors"
+        "crates/hydrus-store/src/queues.rs::deleted_queue_identity_is_not_recycled_and_late_seed_updates_ignore_successors",
+        "crates/hydrus-store/src/store.rs::pre_existing_queue_without_sequence_keeps_its_retired_identity_after_upgrade"
       ],
       "limits": [
         "Authored Rust/native/downloader tests await hosted CI; no local Cargo builds, Rust tests or mutation runs.",
@@ -57,7 +59,8 @@
         "crates/hydrus-gui-model/src/options.rs::pages",
         "crates/hydrus-download/src/work_slots.rs::Slots",
         "crates/hydrus-download/src/queue.rs::QueueRunner",
-        "crates/hydrus-store/src/queues.rs::create_queue"
+        "crates/hydrus-store/src/queues.rs::create_queue",
+        "crates/hydrus-store/src/store.rs::Store::open"
       ],
       "tests": [
         "crates/hydrus-gui-model/tests/model/import_work_slots.rs",
@@ -67,7 +70,8 @@
         "crates/hydrus-download/tests/url_queue.rs::running_gallery_searches_pick_up_capacity_growth_and_release_on_error",
         "crates/hydrus-download/tests/watchers.rs::watcher_checks_share_their_own_live_capacity_and_owner_close_releases_it",
         "crates/hydrus-store/src/import/decode.rs::importing_work_slots_decode_five_legacy_keys_and_persist_native_limits",
-        "crates/hydrus-store/src/queues.rs::deleted_queue_identity_is_not_recycled_and_late_seed_updates_ignore_successors"
+        "crates/hydrus-store/src/queues.rs::deleted_queue_identity_is_not_recycled_and_late_seed_updates_ignore_successors",
+        "crates/hydrus-store/src/store.rs::pre_existing_queue_without_sequence_keeps_its_retired_identity_after_upgrade"
       ],
       "limits": [
         "Authored Rust/native/downloader tests await hosted CI; no local Cargo builds, Rust tests or mutation runs.",
@@ -87,7 +91,8 @@
         "crates/hydrus-gui-model/src/options.rs::pages",
         "crates/hydrus-download/src/work_slots.rs::Slots",
         "crates/hydrus-download/src/queue.rs::QueueRunner",
-        "crates/hydrus-store/src/queues.rs::create_queue"
+        "crates/hydrus-store/src/queues.rs::create_queue",
+        "crates/hydrus-store/src/store.rs::Store::open"
       ],
       "tests": [
         "crates/hydrus-gui-model/tests/model/import_work_slots.rs",
@@ -97,7 +102,8 @@
         "crates/hydrus-download/tests/url_queue.rs::running_gallery_searches_pick_up_capacity_growth_and_release_on_error",
         "crates/hydrus-download/tests/watchers.rs::watcher_checks_share_their_own_live_capacity_and_owner_close_releases_it",
         "crates/hydrus-store/src/import/decode.rs::importing_work_slots_decode_five_legacy_keys_and_persist_native_limits",
-        "crates/hydrus-store/src/queues.rs::deleted_queue_identity_is_not_recycled_and_late_seed_updates_ignore_successors"
+        "crates/hydrus-store/src/queues.rs::deleted_queue_identity_is_not_recycled_and_late_seed_updates_ignore_successors",
+        "crates/hydrus-store/src/store.rs::pre_existing_queue_without_sequence_keeps_its_retired_identity_after_upgrade"
       ],
       "limits": [
         "Authored Rust/native/downloader tests await hosted CI; no local Cargo builds, Rust tests or mutation runs.",
@@ -117,7 +123,8 @@
         "crates/hydrus-gui-model/src/options.rs::pages",
         "crates/hydrus-download/src/work_slots.rs::Slots",
         "crates/hydrus-download/src/queue.rs::QueueRunner",
-        "crates/hydrus-store/src/queues.rs::create_queue"
+        "crates/hydrus-store/src/queues.rs::create_queue",
+        "crates/hydrus-store/src/store.rs::Store::open"
       ],
       "tests": [
         "crates/hydrus-gui-model/tests/model/import_work_slots.rs",
@@ -127,7 +134,8 @@
         "crates/hydrus-download/tests/url_queue.rs::running_gallery_searches_pick_up_capacity_growth_and_release_on_error",
         "crates/hydrus-download/tests/watchers.rs::watcher_checks_share_their_own_live_capacity_and_owner_close_releases_it",
         "crates/hydrus-store/src/import/decode.rs::importing_work_slots_decode_five_legacy_keys_and_persist_native_limits",
-        "crates/hydrus-store/src/queues.rs::deleted_queue_identity_is_not_recycled_and_late_seed_updates_ignore_successors"
+        "crates/hydrus-store/src/queues.rs::deleted_queue_identity_is_not_recycled_and_late_seed_updates_ignore_successors",
+        "crates/hydrus-store/src/store.rs::pre_existing_queue_without_sequence_keeps_its_retired_identity_after_upgrade"
       ],
       "limits": [
         "Authored Rust/native/downloader tests await hosted CI; no local Cargo builds, Rust tests or mutation runs.",
@@ -147,7 +155,8 @@
         "crates/hydrus-gui-model/src/options.rs::pages",
         "crates/hydrus-download/src/work_slots.rs::Slots",
         "crates/hydrus-download/src/queue.rs::QueueRunner",
-        "crates/hydrus-store/src/queues.rs::create_queue"
+        "crates/hydrus-store/src/queues.rs::create_queue",
+        "crates/hydrus-store/src/store.rs::Store::open"
       ],
       "tests": [
         "crates/hydrus-gui-model/tests/model/import_work_slots.rs",
@@ -157,7 +166,8 @@
         "crates/hydrus-download/tests/url_queue.rs::running_gallery_searches_pick_up_capacity_growth_and_release_on_error",
         "crates/hydrus-download/tests/watchers.rs::watcher_checks_share_their_own_live_capacity_and_owner_close_releases_it",
         "crates/hydrus-store/src/import/decode.rs::importing_work_slots_decode_five_legacy_keys_and_persist_native_limits",
-        "crates/hydrus-store/src/queues.rs::deleted_queue_identity_is_not_recycled_and_late_seed_updates_ignore_successors"
+        "crates/hydrus-store/src/queues.rs::deleted_queue_identity_is_not_recycled_and_late_seed_updates_ignore_successors",
+        "crates/hydrus-store/src/store.rs::pre_existing_queue_without_sequence_keeps_its_retired_identity_after_upgrade"
       ],
       "limits": [
         "Authored Rust/native/downloader tests await hosted CI; no local Cargo builds, Rust tests or mutation runs.",
@@ -183,5 +193,6 @@
     "executedAtUtc": "2026-10-05T04:17:32Z",
     "finishedAtUtc": "2026-10-05T04:17:34Z"
   },
-  "validation": "Actual Qt recorder and PNG inspection, Python syntax/snapshot invariants, direct rustfmt and diff checks; cached warning-aware Slint source compilation passed. Independent source review accepted five-control scope. Rust execution remains pending hosted CI."
+  "validation": "Actual Qt recorder and PNG inspection, Python syntax/snapshot invariants, direct rustfmt and diff checks; cached warning-aware Slint source compilation passed. Independent source review accepted five-control scope. Rust execution remains pending hosted CI.",
+  "upgradeBoundary": "Store::open bootstraps the queue high-water mark through the writer before exposing any runner-owned existing identities. Only a current maximum above the saved mark causes a setting write; initialized reopen preserves higher marks unchanged."
 }
