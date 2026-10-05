@@ -1,0 +1,380 @@
+{
+  "schema_version": 1,
+  "agent": "animation-start",
+  "baseline_git_head": "b010cd5647882b551565735b7359442fc05b42a6",
+  "source_commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a",
+  "implementation_commits": [
+    "1b9be97f3257a18dcbd1f5308b9f571cf0989f07",
+    "b6c0153277598d22d13df28930ac3435a2d7bf7f",
+    "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+  ],
+  "frozen_original_inventory": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "frozen_options_audit": {
+    "path": "docs/rust/gui-coverage/audit/options-patch.json",
+    "baseline_git_head": "5079206dc1d0c2d2614b428632dc9499cb9ad3f8",
+    "sha256": "05fb770dc87d8b03cd0e1a4dbd509de61d48e0dc1c87c7c7032a9aeb4adce20b",
+    "before": {
+      "audit-options-media-playback-video-animations-start-animations-this-in": "missing"
+    }
+  },
+  "eligibility": {
+    "completed_ledger_path": "docs/rust/gui-coverage/overnight/progress.json",
+    "completed_ledger_at_base_sha256": "168d8057e3b023cf822af82b703b4fe018baba266694d06b5c7ae79bf1d20ca6",
+    "listed_ids_already_completed": [],
+    "existing_parity_packets_with_listed_ids": [],
+    "completed_arrays_sizes": [
+      240,
+      51
+    ],
+    "note": "Exact original concrete control independently rechecked against frozen audit, both completed arrays and all prior parity packets. Semantic key/label search found no earlier implemented claim; parent and aliases receive zero credit."
+  },
+  "eligible_concrete_first_pass_count": 0,
+  "parent_promotions": 0,
+  "claims": [
+    {
+      "id": "audit-options-media-playback-video-animations-start-animations-this-in",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Actual0\u2013100 staged spinbox truncates/clamps the retained YAML fraction. Cancel preserves raw input; unchanged Apply normalizes unless a concurrent policy replaced it, and explicit edits merge without overwriting unrelated settings. The actual integer is accepted once; typed29/57/58 retain0.29/0.57/0.58 while reopen truncates28/56/57. Raw0.29 explicitly selecting29 retains0.29 whereas unchanged Apply saves0.28. Native-wins old-YAML upgrade, future import and reopened Options reach shared owned Animation readers in viewer/archive-delete/duplicate filters. Initial seek precedes decoding and uses previous widget metadata count, then installs new count with0/None\u21921. Paused initial publication, held seek generations, impossible-index explicit recovery and blocked-reader release are meaningful authored consumer regressions. Saving affects next media admission without resetting a currently paused frame. Hidden/retired Options and terminal retained viewers cannot save/restart. This is substantive Partial progress with zero completion credit.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/MediaPlaybackPanel.py",
+        "line": 275,
+        "symbol": "rows.append( ( 'Start animations this % in:'",
+        "line_sha256": "44334b1f0d872eb376fb66f6cba59bdecc9ec82f8d40a1cd309a9f39bfd59efa"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/animation_start.rs",
+          "line": 11,
+          "symbol": "pub struct Preferences",
+          "line_sha256": "373d023fffe3d1204eadbb5fe34e74a9fe3d7451eeb8676b7a53ed040046ce76",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/animation_start.rs",
+          "line": 19,
+          "symbol": "pub fn from_legacy(",
+          "line_sha256": "7f646671073e83efaa3ffd59d5e3fd4ba44120aac9ca2c24ea772030a5ecc986",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/animation_start.rs",
+          "line": 39,
+          "symbol": "pub fn percent(",
+          "line_sha256": "12f73c2151c54b8abd11a2dbe3637e6f1af30e26b1c5c5d3e8992e758860e305",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/animation_start.rs",
+          "line": 47,
+          "symbol": "pub fn frame(",
+          "line_sha256": "dbf219d4639e59e0e47bd44d8441ce05de020f8e90b6eb43e531213eaf802d1a",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/animation_start.rs",
+          "line": 51,
+          "symbol": "pub fn save_changed(",
+          "line_sha256": "08ed04e947dd2fe6b4d42591cd0b34a07f84f83a959a9f71f1220881d8cce709",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/animation_start.rs",
+          "line": 65,
+          "symbol": "pub fn load(",
+          "line_sha256": "d4f306aeea39dff3f571f7beaf1ea1ddae58efd8e524f63b9e0b0f63eb189b68",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/animation_start.rs",
+          "line": 90,
+          "symbol": "fn actual_yaml_upgrade_native_override_reopen_and_invalid_values(",
+          "line_sha256": "f23745f846d8e56b4f5ea582b71e24157a766260039086b4ffe8626ffc88e895",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 53,
+          "symbol": "(@save $conn:ident, $after:ident, $before:ident, animation_start)",
+          "line_sha256": "095c9aa0b55381e5bff87c3a4ffced52c90eee7bba449afdc7ed5226537a9eb2",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2961,
+          "symbol": "|s| i64::from(s.animation_start.percent())",
+          "line_sha256": "671de04f36fa9dec0d267d57798c40be45ffde9e5d19706b1463ff93e5443b24",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 4154,
+          "symbol": "| \"Start animations this % in:\"",
+          "line_sha256": "577929288e364b16b5a0ba7de632dd4a1f8ef3c8f2207ba0689fb0265408964e",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/animation_start.rs",
+          "line": 28,
+          "symbol": "fn recorded_raw_constructor_cancel_unchanged_apply_reopen_and_scoped_merge(",
+          "line_sha256": "3c1bc640bcf67c7f354565037689f374b835e2b6c7f7cfe792a9c9b1deb16efe",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/options_window.rs",
+          "line": 1081,
+          "symbol": "let start = matches!",
+          "line_sha256": "3e7426f4921787872bfb4307ecf68a53a53a8e08ccb4d922330d0ccc5f767215",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/animation.rs",
+          "line": 103,
+          "symbol": "pub fn play_with_metadata(",
+          "line_sha256": "7fcbfd463944c9d99e79ece36fd97bf8756d7eda0f3d052f1f47afe5d6c7184d",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/animation.rs",
+          "line": 110,
+          "symbol": "let previous = self.widget_frames.get();",
+          "line_sha256": "d66354e85ef1d7e4f671f612048eef5ac31502ca462cedd32b521216e0501f7f",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/animation.rs",
+          "line": 145,
+          "symbol": "if let Some(index) = initial.filter(",
+          "line_sha256": "7d2a3a032741d52132bf063c77c8af2d3857da3c48c41f1f7aa2331eb88f3ae4",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/animation.rs",
+          "line": 198,
+          "symbol": "show_one: true,",
+          "line_sha256": "4c017ef63ca5aa6e00f9327576844f95117ede8e264e359e32720c2e729cae78",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/animation.rs",
+          "line": 230,
+          "symbol": "Ok(frame) if frame.generation != running.generation",
+          "line_sha256": "09eb057bb5e2b2e003d4ca34cc9ca405e733b75951a80a9798f4fdbfae05e623",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/animation.rs",
+          "line": 411,
+          "symbol": "pub fn stop(",
+          "line_sha256": "53bb1c3018df187118ebc0d2abab8d70fb036251c97ae240de64cda5d78787f4",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/animation.rs",
+          "line": 443,
+          "symbol": "fn saved_initial_seek_uses_previous_metadata_and_rejects_held_pre_seek_pixels(",
+          "line_sha256": "6a6d8d6b9d3991f2e4881b7fc0c66442ee6348f11b252f08478f1cbf4477ae6e",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/animation.rs",
+          "line": 570,
+          "symbol": "fn ugoira_initial_timestamp_and_impossible_reader_request_release_on_stop(",
+          "line_sha256": "bea004c1d5345d888f64ba710862c50e5db6fde08431a7ffbb7c0295cf640ed0",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 5772,
+          "symbol": "animator.play_with_metadata(animation, num_frames, false,",
+          "line_sha256": "dc692b575c4672d5977015c95fdeb96d759bb1b44e72961871f6ade58f20128c",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/archive_delete_window.rs",
+          "line": 151,
+          "symbol": "animator.play_with_metadata(animation, num_frames, false,",
+          "line_sha256": "dc692b575c4672d5977015c95fdeb96d759bb1b44e72961871f6ade58f20128c",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/filter_window.rs",
+          "line": 329,
+          "symbol": ".play_with_metadata(animation, num_frames, false,",
+          "line_sha256": "9f639ad25dc0b24341c617f4c4d3586777a617ed76fd417ed32883d400ee62be",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/animation_start.rs",
+          "line": 53,
+          "symbol": "fn constructor_cancel_hidden_and_retired_controls_then_real_next_media_initial_seek(",
+          "line_sha256": "30276fbcf7ac048a157ec54912a1190ec2cd93f951555553bd208c166b2b2c64",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 132,
+          "symbol": "&crate::animation_start::Preferences::from_legacy(",
+          "line_sha256": "9fab28051c8f1115d592fd7535a61be0605816b983aa357ad23c04bc9b8c8856",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "oracle/record_animation_start.py",
+          "line": 20,
+          "symbol": "def record(session):",
+          "line_sha256": "5d8f3da7e90a56971fc931a2718571d7065d1d7bdacdab73c7cc84b9f660e4bd",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-media/src/animation.rs",
+          "line": 51,
+          "symbol": "pub fn plays(",
+          "line_sha256": "40a17d67a051096b0e0a4756e2a74612f5f3f534e73b197ca831b40c6ebd7291",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-media/src/animation.rs",
+          "line": 177,
+          "symbol": "pub fn seek(",
+          "line_sha256": "0235d229972ee31e0801b9098a2126d71cb1e32eb768a3dc3e81c30bf234d890",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        },
+        {
+          "relativepath": "crates/hydrus-media/src/animation.rs",
+          "line": 139,
+          "symbol": "pub fn with_icc_reader(",
+          "line_sha256": "8f8d489a2af8564757a54a3b3682ab455c326481fcfa9dfd95e42c294b67c1a7",
+          "commit": "97ade473b8c6be023bfdd744afb810dbacb1fb0a"
+        }
+      ],
+      "limits": [
+        "Partial/0: unsigned native frame state cannot represent negative/overflow raw imported indices. Such invalid admission publishes no decoded frame until explicit seek or Options normalization; no exact negative-index/status parity is claimed.",
+        "The existing native Animation readers support WebP and ugoira. Broader native JXL/GIF/APNG/per-filetype backend and preview Animation surfaces remain incomplete; no new decoder or Qt-media-player backend is claimed.",
+        "Qt MPV and Qt-media-player consumers do not read this preference. No invented MPV percentage seek is added. Native per-filetype pause/embed admission remains independently Partial; the reader regression substantiates paused initial publication via the existing animator.",
+        "The reference initial index uses the previous widget metadata count, not the intended fraction of the new media count. Its fresh/cleared zero-frame quirk is deliberately retained.",
+        "Native initial invalid positive indices retain their raw requested index but have existing unsigned/time-zero status constraints; actual Qt impossible-reader requests are inspected in source and recorded as hidden metadata states, not painted.",
+        "Rust/native regressions and render artifacts are authored only; exact hosted CI and rendered acceptance remain pending."
+      ]
+    }
+  ],
+  "consumer_reference_anchors": [
+    {
+      "relativepath": "hydrus/client/ClientDefaults.py",
+      "line": 37,
+      "symbol": "options[ 'animation_start_position' ] = 0.0",
+      "line_sha256": "d965aab28ac1964690b9dd21e525945c458f36314de548e64944b0a51b04c4d1"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/MediaPlaybackPanel.py",
+      "line": 83,
+      "symbol": "self._animation_start_position = ClientGUICommon.BetterSpinBox",
+      "line_sha256": "057ebeed16042c31f725d87dab0fcb2d1b7fe16133f6aebff376e6c2095b230a"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/MediaPlaybackPanel.py",
+      "line": 206,
+      "symbol": "self._animation_start_position.setValue( int( HC.options['animation_start_position'] * 100.0 ) )",
+      "line_sha256": "1d091f010ee8b92f9f3ca06224d3266e7f304e07a32c411fc3a6599e3edb2dfb"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/MediaPlaybackPanel.py",
+      "line": 275,
+      "symbol": "rows.append( ( 'Start animations this % in:'",
+      "line_sha256": "44334b1f0d872eb376fb66f6cba59bdecc9ec82f8d40a1cd309a9f39bfd59efa"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/MediaPlaybackPanel.py",
+      "line": 617,
+      "symbol": "HC.options[ 'animation_start_position' ] = self._animation_start_position.value() / 100.0",
+      "line_sha256": "4e260291f3804552caa5a6f4c15f05d67006346eca960b47d5ae7213d05b3ddf"
+    },
+    {
+      "relativepath": "hydrus/client/gui/canvas/ClientGUICanvasMedia.py",
+      "line": 370,
+      "symbol": "class Animation( CAC.",
+      "line_sha256": "88b8e9ba1be6def84d5837bb75b0f7d82ac695f363d87d8e0a2cf1e720f722f5"
+    },
+    {
+      "relativepath": "hydrus/client/gui/canvas/ClientGUICanvasMedia.py",
+      "line": 793,
+      "symbol": "self._current_frame_index = int( ( self._num_frames - 1 )",
+      "line_sha256": "71e7ed0008f04932a6fa0e71f9f264b59c0d9bc8cc6d3d641aa1d3b02b24ef7f"
+    },
+    {
+      "relativepath": "hydrus/client/gui/canvas/ClientGUICanvasMedia.py",
+      "line": 819,
+      "symbol": "self._num_frames = self._media.GetNumFrames()",
+      "line_sha256": "80323b398d0e76a1185feb288c115b7a1ae3e10f7fe7fab83b482cd5912b264d"
+    },
+    {
+      "relativepath": "hydrus/client/ClientRendering.py",
+      "line": 760,
+      "symbol": "def GetReadyForFrame(",
+      "line_sha256": "6e67367af8cc063aa3ec8cbb05f07692d3ba9fd719719db3f6ffa2645688b12a"
+    },
+    {
+      "relativepath": "hydrus/client/gui/canvas/ClientGUIMPV.py",
+      "line": 1448,
+      "symbol": "def SetMedia( self, media: ClientMediaSingle.MediaSingle | None, start_paused = False )",
+      "line_sha256": "4754177f28c2c20e3177480a1bbc00629c8aeda05e66ddf7dbaa826b00d8ef48"
+    },
+    {
+      "relativepath": "hydrus/client/ClientOptions.py",
+      "line": 97,
+      "symbol": "media_view[ HC.ANIMATION_WEBP ] =",
+      "line_sha256": "50df16da95c56210613372c8b6b9068715126320613ab5acf1da6ae1d02d9252"
+    },
+    {
+      "relativepath": "hydrus/client/ClientOptions.py",
+      "line": 101,
+      "symbol": "media_view[ HC.ANIMATION_UGOIRA ] =",
+      "line_sha256": "2f43449333b41bdca905eba35b226e3daa6e0598a44d97327c9866620607c4e2"
+    },
+    {
+      "relativepath": "hydrus/client/ClientOptions.py",
+      "line": 99,
+      "symbol": "media_view[ HC.ANIMATION_JXL ] =",
+      "line_sha256": "47f52a7fa8181bd9b51aa923880dbe3a4959fa8476c1985ec1c44908f50a33c0"
+    }
+  ],
+  "actual_qt_recording": {
+    "recorder": "oracle/record_animation_start.py",
+    "fixture": "oracle/fixtures/animation_start.json",
+    "fixture_sha256": "47e62c66e68d00449490b33455f2a117c591c4a65e85482e951134754b135f15",
+    "run_utc": "2026-10-05T11:41:51Z",
+    "command": "/workspace/parallel/with-oracle python oracle/record_animation_start.py",
+    "result": "Actual MediaPlaybackPanel constructor/default/min/max/enabled and fourteen raw/staging/Cancel/Apply/reopen cases;42 actual hidden Animation.SetMedia metadata cases, clear-to-fresh behavior and real paused WebP frame1/120ms/green plus ugoira frame2/130ms bitmap publication. Two actual Qt PNGs inspected. Hidden metadata edge widgets intentionally avoid invalid decoder painting.",
+    "environment_notes": "Private copied basic fixture, reference source read-only; actual canvas colour generator and RasterContainerVideo consumers. No listener was requested by driver. Ordinary fixture API socket refusal was logged; no feature exception, normal shutdown and fixture write completed."
+  },
+  "actual_qt_artifacts": [
+    {
+      "path": "oracle/fixtures/animation_start_qt.png",
+      "sha256": "04e8247a336621cf608f6ed080ddb33c3a56116622deb49626c8cbd278121ef6"
+    },
+    {
+      "path": "oracle/fixtures/animation_start_ugoira_qt.png",
+      "sha256": "2094e5bffa295d88a15c5eb4afcc90bd466bed9db5067cc518eef5eed587a38f"
+    }
+  ],
+  "authored_native_artifacts": [
+    "animation_start_options.png",
+    "animation_start_viewer.png"
+  ],
+  "authored_native_artifact_count": 2,
+  "validation": {
+    "source_checks": "Direct rustfmt --check, Python recorder syntax, git diff --check, fixture-shape assertions and cached Slint source compilation passed; no Cargo/local Rust/mutation execution.",
+    "independent_review": "appearance_final_review independently accepted immutable source97ade473b8c6be023bfdd744afb810dbacb1fb0a (three source commits) and final evidence packet. Verified all43 exact source/reference line anchors and source pins, fixture/two actual Qt PNG/frozen-audit/base-ledger hashes, exactly one originalMissing\u2192Partial/countfalse with zero eligible completion/parents/aliases. Actual14 control and42 metadata cases match reference ordering, explicit raw0.29\u219229 versus unchangedApply and single-conversion save; native-wins/scoped concurrency, initial-reader pause/seek generations, blocked-reader disposal and existing owned caller/ICC boundaries accepted for bounded Partial0. No Rust/native execution or native artifact inspection; hosted validation remains pending.",
+    "rust_tests": "Store retained-YAML/native override/reopen/invalid-type, model actual Editor14 recorded cases/concurrent implicit normalization/scoped save, native Options/reader/viewer paused seek/held-generation/invalid-worker-disposal regressions authored only. Hosted CI pending.",
+    "render": "Two actual Qt images inspected; two native Options/viewer artifacts authored, unexecuted and uninspected locally."
+  },
+  "limits": [
+    "Partial/0: unsigned native frame state cannot represent negative/overflow raw imported indices. Such invalid admission publishes no decoded frame until explicit seek or Options normalization; no exact negative-index/status parity is claimed.",
+    "The existing native Animation readers support WebP and ugoira. Broader native JXL/GIF/APNG/per-filetype backend and preview Animation surfaces remain incomplete; no new decoder or Qt-media-player backend is claimed.",
+    "Qt MPV and Qt-media-player consumers do not read this preference. No invented MPV percentage seek is added. Native per-filetype pause/embed admission remains independently Partial; the reader regression substantiates paused initial publication via the existing animator.",
+    "The reference initial index uses the previous widget metadata count, not the intended fraction of the new media count. Its fresh/cleared zero-frame quirk is deliberately retained.",
+    "Native initial invalid positive indices retain their raw requested index but have existing unsigned/time-zero status constraints; actual Qt impossible-reader requests are inspected in source and recorded as hidden metadata states, not painted.",
+    "Rust/native regressions and render artifacts are authored only; exact hosted CI and rendered acceptance remain pending."
+  ],
+  "untouched_scope": "One original Missing-to-Partial proposal, zero FirstPass/completion credit, no parents/aliases. No preview geometry/MPV/fuller backend controls, canonical statuses/ledgers, reference edits or pushes."
+}
