@@ -24,6 +24,7 @@ import { ViewerEyeMenu, ViewerEyeButton } from "viewer_eye_menu.slint";
 // the file's info line. A right-click opens the viewer's menu, whose
 // slideshow submenu may ask for a period to type.
 
+import { ViewerTagsHover } from "viewer_tags_hover.slint";
 import { LineEdit } from "std-widgets.slint";
 import { ListText } from "theme.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
@@ -180,6 +181,12 @@ export component MediaViewerWindow inherits Window {
     in property <string> caption;
     // the file's tags, for the hover frame
     in property <[ListText]> tags;
+    in property <int> tag-wheel-policy: 2;
+    in-out property <length> tag-scroll-offset;
+    out property <length> tag-scroll-maximum: tags-hover.maximum;
+    out property <length> tag-row-height: tags-hover.row-height;
+    callback tag-wheel(float,bool,length,length);
+    callback tag-media-changed();
     // the file's notes, for the right hover frame under the ratings, shown
     // while the pointer is over it
     in property <[NoteRow]> notes;
@@ -218,7 +225,7 @@ export component MediaViewerWindow inherits Window {
     out property <bool> ratings-showing: (root.hover-focus-good || (!root.another-window-active && root.ratings-raised)) && root.hover-ratings-enabled && (root.ratings.length > 0 || root.url-links.length > 0) && (ratings-frame.has-hover
         || (pointer.has-hover && pointer.mouse-x >= root.width - ratings-box.preferred-width - 20px
             && pointer.mouse-y <= ratings-box.preferred-height + 20px));
-    out property <bool> tags-showing: (root.hover-focus-good || (!root.another-window-active && root.tags-raised)) && root.hover-tags-enabled && pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
+    out property <bool> tags-showing: (root.hover-focus-good || (!root.another-window-active && root.tags-raised)) && root.hover-tags-enabled && (tags-hover.has-hover || (pointer.has-hover && pointer.mouse-x < root.width * 0.2)) && root.tags.length > 0;
 
     // a question to answer (a deletion): enter is yes, escape no
     in property <string> question;
@@ -1386,24 +1393,15 @@ export component MediaViewerWindow inherits Window {
                 }
             }
         }
-        // (nothing in it takes the pointer, so the area above keeps it)
-        if root.tags-showing: Rectangle {
+        tags-hover := ViewerTagsHover {
+            visible: root.tags-showing;
             x: 0;
             y: 0;
             width: root.width * 0.2;
             height: root.height;
-            background: #202020e8;
-            clip: true;
-            VerticalLayout {
-                padding: 6px;
-                spacing: 2px;
-                alignment: start;
-                for tag in root.tags: Text {
-                    text: tag.text;
-                    color: tag.colour;
-                    overflow: elide;
-                }
-            }
+            tags: root.tags;
+            offset <=> root.tag-scroll-offset;
+            wheel(delta,control,x,y) => { root.tag-wheel(delta,control,x,y); }
         }
     }
 }

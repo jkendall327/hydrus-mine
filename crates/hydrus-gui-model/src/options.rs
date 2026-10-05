@@ -35,6 +35,7 @@ use hydrus_store::settings::{
     OptionsPreferences, PageSettings, SearchDefaults, TagAutocompleteTabs, ThumbnailLayout,
     ViewerBackgroundSettings, ViewerCanvasSettings, ViewerClosingSettings, ViewerCursorSettings,
     ViewerFocusSettings, ViewerHoverSettings, ViewerPlaybackSettings, ViewerPointerSettings,
+    ViewerTagScrollSettings,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::tag_editing::TagEditingSettings;
@@ -222,6 +223,7 @@ settings! {
     viewer_canvas: ViewerCanvasSettings,
     viewer_background: ViewerBackgroundSettings,
     viewer_hovers: ViewerHoverSettings,
+    viewer_tag_scroll: ViewerTagScrollSettings,
     viewer_eye_menu: hydrus_store::settings::ViewerEyeMenuSettings,
     viewer_pointer: ViewerPointerSettings,
     viewer_focus: ViewerFocusSettings,
@@ -2792,6 +2794,21 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             "Pop-in notes (right) hover window on mouseover:",
                             |settings| settings.viewer_hovers.notes,
                             |settings, value| settings.viewer_hovers.notes = value,
+                        ),
+                        choice(
+                            "Allow a mouse wheel scroll over the taglist to propagate to the main canvas:",
+                            &[
+                                "never propagate",
+                                "only propagate when list has no vertical scrollbar",
+                                "only propagate if vertical scrollbar has not been used recently",
+                                "propagate immediately after vertical scrollbar hits an end (Qt default)",
+                            ],
+                            |settings| settings.viewer_tag_scroll.0.code(),
+                            |settings, value| {
+                                settings.viewer_tag_scroll.0 =
+                                    hydrus_store::settings::TagWheelPropagation::from_code(value)
+                                        .unwrap_or_default();
+                            },
                         ),
                     ],
                 ),

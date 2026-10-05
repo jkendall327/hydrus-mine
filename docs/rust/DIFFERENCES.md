@@ -2243,3 +2243,15 @@ prove that an OS compositor permits the physical warp. Actual Qt was executed
 on 2026-10-05 at 01:54:44–46 UTC with synthetic pointer coordinates and captured
 warp requests; no local Rust build, test or mutation run was performed. Broader
 touch input and the other mouse controls remain independently scoped.
+
+The ordinary browser viewer's hover-tag wheel policy is covered by actual Qt
+`viewer_tag_wheel.json`, recorded on 2026-10-05 at 02:14:41–43 UTC. It includes
+all four persisted choices, child-scroll consumption, short/long-list edges,
+strict delay boundaries, direction changes, media grace and retained/clamped
+positions. The unusual Qt direction-reset threshold of 250 seconds is retained.
+Native list rows use measured native font height; a Winit line tick scrolls three
+rows. Platform wheel-line preferences, Qt's fractional wheel accumulator, full
+tag-list selection/context actions and hover panes absent from preview/filter
+canvases remain outside this control slice. A real native wheel/navigation/zoom
+replay and `viewer-tags-wheel.png` capture are authored for hosted CI; they were
+not executed locally. No new broader hover/list/preview claim is proposed.

@@ -137,3 +137,5 @@ mod external_calls;
 
 mod window_rescue;
 mod viewer_drag;
+
+mod viewer_tag_wheel;

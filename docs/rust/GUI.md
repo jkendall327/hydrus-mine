@@ -3159,3 +3159,13 @@ cursor warp back through that viewer's native window. The optional override
 unanchors after a single movement exceeds 50 pixels of Manhattan distance and
 stays unanchored until the next press. Both preferences survive import and
 reopening. The actual Qt replay is `viewer_anchor_options.json`.
+
+Options > media viewer hovers now stages all four taglist wheel propagation
+policies. The raised tag hover is a clipped, scrollable list with a draggable
+scrollbar. Wheel input first scrolls the list; an edge then either stays in the
+list, propagates only without a scrollbar, waits for a quiet same-direction
+wheel, or immediately reaches the viewer's actual next/previous/zoom action.
+The delayed policy preserves Qt's 0.57-second media grace and direction-change
+gate. Apply refreshes an existing viewer, Cancel preserves its current policy,
+and the imported setting survives reopening. Existing scroll position survives
+a media change when it still fits, and clamps when the new list is shorter.

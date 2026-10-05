@@ -1,0 +1,53 @@
+import { ListText } from "theme.slint";
+// Persistent geometry and hit target, with a clipped, vertically scrollable list.
+export component ViewerTagsHover inherits Rectangle {
+    in property <[ListText]> tags;
+    in-out property <length> offset;
+    out property <length> row-height: probe.preferred-height + 2px;
+    out property <length> maximum: max(0px, self.tags.length * self.row-height + 12px - self.height);
+    out property <bool> has-hover: touch.has-hover || bar-touch.has-hover;
+    callback wheel(float,bool,length,length);
+    changed maximum => { root.offset = clamp(root.offset,0px,self.maximum); }
+    background: #202020e8;
+    clip: true;
+    probe := Text { visible: false; text: "Ag"; font-size: 14px; }
+    for tag[i] in root.tags: Text {
+        x: 6px;
+        y: 6px + i * root.row-height - min(root.offset,root.maximum);
+        width: root.width - 12px - (root.maximum > 0px ? 12px : 0px);
+        height: root.row-height - 2px;
+        text: tag.text;
+        color: tag.colour;
+        font-size: 14px;
+        overflow: elide;
+    }
+    touch := TouchArea {
+        scroll-event(event) => { root.wheel(event.delta-y / 1px,event.modifiers.control,self.mouse-x,self.mouse-y); accept }
+    }
+    // The scrollbar is part of the live hover, so long tag lists remain usable.
+    bar := Rectangle {
+        visible: root.maximum > 0px;
+        x: root.width - 12px;
+        width: 12px;
+        height: root.height;
+        background: #404040;
+        thumb := Rectangle {
+            x: 2px;
+            width: 8px;
+            height: max(20px,bar.height * bar.height / (bar.height + root.maximum));
+            y: min(root.offset,root.maximum) / max(1px,root.maximum) * (bar.height - self.height);
+            background: #909090;
+        }
+        bar-touch := TouchArea {
+            pointer-event(event) => {
+                if event.button == PointerEventButton.left && event.kind == PointerEventKind.down {
+                    root.offset = clamp((self.mouse-y - thumb.height/2) / max(1px,bar.height - thumb.height) * root.maximum,0px,root.maximum);
+                }
+            }
+            moved => {
+                if self.pressed { root.offset = clamp((self.mouse-y - thumb.height/2) / max(1px,bar.height - thumb.height) * root.maximum,0px,root.maximum); }
+            }
+            scroll-event(event) => { root.wheel(event.delta-y / 1px,event.modifiers.control,bar.x+self.mouse-x,self.mouse-y); accept }
+        }
+    }
+}

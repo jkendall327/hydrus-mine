@@ -138,6 +138,7 @@ mod viewer_eye_menu;
 pub mod viewer_focus;
 pub mod viewer_menu;
 mod viewer_presentation;
+mod viewer_tag_wheel;
 mod viewing_tracking;
 mod watcher;
 pub mod windows;
@@ -5010,7 +5011,10 @@ fn open_viewer(
     // what the file shown is, for the slideshow's timing: one the viewer
     // plays (`CurrentlyPresentingMediaWithDuration`), with its duration
     let presenting = Rc::new(std::cell::Cell::new(slideshow::Shown::Still));
+    viewer_tag_wheel::bind(&window, slot);
+    let last_tag_file = Rc::new(std::cell::Cell::new(None));
     let show = {
+        let last_tag_file = last_tag_file.clone();
         let viewing_stats = viewing_stats.clone();
         let model = model.clone();
         let weak = window.as_weak();
@@ -5036,6 +5040,9 @@ fn open_viewer(
                 *file = Some(model.current());
             }
             window.set_caption(model.caption().into());
+            if last_tag_file.replace(Some(model.current())) != Some(model.current()) {
+                window.invoke_tag_media_changed();
+            }
             let tags: Vec<ListText> = model
                 .tag_rows()
                 .iter()

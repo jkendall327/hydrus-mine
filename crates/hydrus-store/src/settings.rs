@@ -1025,6 +1025,40 @@ impl Setting for ViewerHoverSettings {
     const KEY: &'static str = "viewer_hovers";
 }
 
+/// Parent propagation after the tag hover list has consumed a wheel event.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub enum TagWheelPropagation {
+    Never,
+    NoScrollbar,
+    #[default]
+    AfterDelay,
+    Immediately,
+}
+impl TagWheelPropagation {
+    pub fn from_code(code: u16) -> Option<Self> {
+        match code {
+            0 => Some(Self::Never),
+            1 => Some(Self::NoScrollbar),
+            2 => Some(Self::AfterDelay),
+            3 => Some(Self::Immediately),
+            _ => None,
+        }
+    }
+    pub fn code(self) -> u16 {
+        match self {
+            Self::Never => 0,
+            Self::NoScrollbar => 1,
+            Self::AfterDelay => 2,
+            Self::Immediately => 3,
+        }
+    }
+}
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub struct ViewerTagScrollSettings(pub TagWheelPropagation);
+impl Setting for ViewerTagScrollSettings {
+    const KEY: &'static str = "viewer_tag_scroll";
+}
+
 /// Browser viewer eye-menu grouping and initial native window presentation.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

@@ -1263,6 +1263,16 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             viewer_hovers.index_background = *value;
         }
         insert_setting(&mut input, &viewer_hovers)?;
+        let mut scrolling = crate::settings::ViewerTagScrollSettings::default();
+        if let Some(code) = options
+            .integers
+            .get("media_viewer_tags_scrolling_behaviour")
+            .and_then(|&code| u16::try_from(code).ok())
+            .and_then(crate::settings::TagWheelPropagation::from_code)
+        {
+            scrolling.0 = code;
+        }
+        insert_setting(&mut input, &scrolling)?;
         let mut eye = crate::settings::ViewerEyeMenuSettings::default();
         for (key, field) in [
             ("collapse_eye_menu_window", &mut eye.collapse_window),
@@ -4179,6 +4189,32 @@ mod tests {
                 hovers_require_focus: false
             }
         );
+    }
+
+    #[test]
+    fn viewer_tag_wheel_imports_all_four_reference_policy_codes() {
+        use crate::settings::ViewerTagScrollSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerTagScrollSettings>(
+                input.settings["viewer_tag_scroll"].clone(),
+            )
+            .unwrap()
+            .0
+            .code()
+        };
+        assert_eq!(decoded(), 2);
+        for (before, after, code) in [(2, 0, 0), (0, 1, 1), (1, 3, 3), (3, 2, 2)] {
+            edit_client_options(
+                source.path(),
+                &[(
+                    &format!("[[0, \"media_viewer_tags_scrolling_behaviour\"], [0, {before}]]"),
+                    &format!("[[0, \"media_viewer_tags_scrolling_behaviour\"], [0, {after}]]"),
+                )],
+            );
+            assert_eq!(decoded(), code);
+        }
     }
 
     #[test]

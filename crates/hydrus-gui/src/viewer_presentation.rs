@@ -5,7 +5,7 @@ use hydrus_store::{
     media::FileFlags,
     settings::{
         self, ViewerBackgroundSettings, ViewerCanvasSettings, ViewerFocusSettings,
-        ViewerHoverSettings, ViewerPointerSettings,
+        ViewerHoverSettings, ViewerPointerSettings, ViewerTagScrollSettings,
     },
 };
 
@@ -25,6 +25,8 @@ pub(crate) fn refresh(window: &crate::MediaViewerWindow, store: &Store, file: Ha
     window.set_hover_ratings_enabled(hovers.ratings);
     window.set_hover_notes_enabled(hovers.notes);
     window.set_draw_index_background(hovers.index_background);
+    let scrolling: ViewerTagScrollSettings = store.read(settings::get).unwrap_or_default();
+    window.set_tag_wheel_policy(i32::from(scrolling.0.code()));
     let pointer: ViewerPointerSettings = store.read(settings::get).unwrap_or_default();
     window.set_disallow_duration_drag(pointer.disallow_duration_drag);
     window.set_hide_during_drag(pointer.hide_during_drag);

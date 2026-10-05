@@ -158,3 +158,5 @@ mod related_weight_table;
 mod window_rescue;
 mod external_calls;
 mod viewer_drag;
+
+mod viewer_tag_wheel;
