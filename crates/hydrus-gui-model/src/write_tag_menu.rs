@@ -354,7 +354,7 @@ impl WriteAutocomplete {
                 ),
             ],
         ));
-        let favourite_entries = favourite_entries(store, &tag);
+        let favourite_entries = favourite_entries(store, tag);
         entries.push(Entry::Menu("favourites".into(), favourite_entries));
         entries.push(maintenance_entry(vec![tag.clone()]));
         entries
