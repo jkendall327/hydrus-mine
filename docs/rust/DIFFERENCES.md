@@ -2294,8 +2294,10 @@ remains Partial because the reference polls the system-wide cursor and native
 tracking only observes movement in application windows. This does not implement
 high-CPU maintenance scheduling, CPU-busy detection or the broader idle settings.
 Ignored controls reopen with a hidden one-minute value, matching the recorded
-Qt constructor/multiplier behavior. Options saves merge only edited idle fields
-so unrelated live changes survive. Native timing/persistence/Cancel/PNG tests are
+Qt constructor/multiplier behavior. Unchanged Apply normalizes raw imported
+seconds to the displayed floor/bounds (0/59/119 to 60; 60060 to 60000). Cancel
+keeps raw seconds. Explicit edits merge independently; implicit normalization
+does not overwrite a newer value saved while the dialog was open. Native timing/persistence/Cancel/PNG tests are
 authored for hosted CI; only the actual Qt recorder and source checks ran locally.
 
 The external-command argument and template-clipboard controls are replayed against
