@@ -5,6 +5,18 @@ files into canonical paths, changes a checkout, runs Cargo, pushes, or promotes
 all author claims automatically. The root integration owner chooses and reviews
 the exact source checkpoint and publication scope.
 
+Historical author commits named by parity packets may differ from the integrated
+commit identities because integration uses cherry-picks. Immutable annotated
+`gui-evidence/eighth-b010/*` tags preserve the original source objects needed by
+historical hash audits. Fetch these in a fresh clone before inspecting those pins:
+
+```sh
+git fetch origin 'refs/tags/gui-evidence/eighth-b010/*:refs/tags/gui-evidence/eighth-b010/*'
+```
+
+These tags preserve provenance only. They do not attest to runtime validation or
+promote coverage; use the exact integrated source and its hosted CI for that.
+
 Run preparation with the full source SHA and a fresh dedicated output directory:
 
 ```sh
