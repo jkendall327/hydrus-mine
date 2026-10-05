@@ -163,3 +163,5 @@ mod local_transfer;
 mod page_layout;
 
 mod or_connector;
+
+mod image_colour;

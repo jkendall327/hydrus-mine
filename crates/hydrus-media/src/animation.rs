@@ -12,7 +12,7 @@ use crate::error::{MediaError, Result};
 use crate::formats::archive::{self, Zip};
 use crate::formats::{apng, gif, webp};
 use crate::imaging::Raster;
-use crate::tools::{MediaTools, raster_from_bytes};
+use crate::tools::{MediaTools, raster_from_bytes_with_icc};
 
 /// An animation's frames, one at a time, from the first again after the
 /// last, each shown for its duration: a ugoira's as
@@ -23,6 +23,8 @@ pub struct Frames {
     durations: Vec<u32>,
     next: usize,
     times_to_play: u32,
+    icc_reader: std::sync::Arc<dyn Fn() -> bool + Send + Sync>,
+    icc_profile: Option<Vec<u8>>,
 }
 
 enum Source {
@@ -59,6 +61,24 @@ impl Frames {
         notes: &[(String, String)],
         num_frames: Option<u64>,
     ) -> Result<Self> {
+        Self::open_with_icc(path, mime, notes, num_frames, true)
+    }
+
+    /// Open frames with an immutable embedded-profile policy for this player.
+    pub fn open_with_icc(
+        path: &Path,
+        mime: Mime,
+        notes: &[(String, String)],
+        num_frames: Option<u64>,
+        normalise_icc: bool,
+    ) -> Result<Self> {
+        let icc_profile = if mime == Mime::AnimationWebp {
+            crate::imaging::decode::open(&std::fs::read(path)?)
+                .ok()
+                .and_then(|opened| opened.image.icc_profile)
+        } else {
+            None
+        };
         let (source, durations) = match mime {
             Mime::AnimationUgoira => {
                 let damaged = || MediaError::damaged("Could not read the ugoira's frames!");
@@ -109,7 +129,19 @@ impl Frames {
             durations,
             next: 0,
             times_to_play,
+            icc_reader: std::sync::Arc::new(move || normalise_icc),
+            icc_profile,
         })
+    }
+
+    /// Refresh an explicitly owned policy for each future frame conversion,
+    /// without restarting the animation's timing or seek position.
+    pub fn with_icc_reader(
+        mut self,
+        reader: std::sync::Arc<dyn Fn() -> bool + Send + Sync>,
+    ) -> Self {
+        self.icc_reader = reader;
+        self
     }
 
     /// Stored play count: zero means infinite, matching the reference.
@@ -156,6 +188,7 @@ impl Frames {
 
     /// The next frame and how long it shows, in ms.
     pub fn next_frame(&mut self) -> Result<(Raster, u32)> {
+        let normalise_icc = (self.icc_reader)();
         let index = self.next;
         self.next = (index + 1) % self.len().max(1);
         let duration = self.durations.get(index).copied().unwrap_or(83);
@@ -164,7 +197,10 @@ impl Frames {
                 let bytes = zip
                     .read(&names[index])
                     .ok_or_else(|| MediaError::damaged("Could not read a ugoira frame!"))?;
-                Ok((raster_from_bytes(&bytes, false)?, duration))
+                Ok((
+                    raster_from_bytes_with_icc(&bytes, false, normalise_icc)?,
+                    duration,
+                ))
             }
             Source::Webp { decoder, channels } => {
                 if index == 0 {
@@ -178,7 +214,19 @@ impl Frames {
                 decoder
                     .read_frame(&mut buf)
                     .map_err(|e| MediaError::damaged(e.to_string()))?;
-                Ok((Raster::new(width, height, *channels, buf)?, duration))
+                let mode = if *channels == 4 {
+                    crate::imaging::pil::Mode::Rgba
+                } else {
+                    crate::imaging::pil::Mode::Rgb
+                };
+                let mut image = crate::imaging::pil::PilImage::from_u8(mode, width, height, buf)?;
+                image.icc_profile.clone_from(&self.icc_profile);
+                Ok((
+                    image
+                        .normalise_with_icc(normalise_icc)?
+                        .into_raster(false)?,
+                    duration,
+                ))
             }
         }
     }

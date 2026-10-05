@@ -3580,3 +3580,24 @@ renderer disabled, so saving this field preserves existing OR labels, colours
 and copy/export syntax. Namespace formatting and the OR top-row colour remain
 independent live settings. Hidden, cancelled, rebound and closed Options owners
 cannot save a connector draft.
+
+
+Media Playback > system now stages “Apply image ICC Profile colour adjustments”.
+It defaults on, imports the saved ClientOptions value, and persists on Apply;
+Cancel keeps the original value. Turning it off ignores embedded profiles while
+retaining PNG gamma/chromaticity normalization. Existing importers and their
+maintenance tools read the saved policy for future image conversions. Existing
+pixel hashes and stored thumbnails remain unchanged; explicit thumbnail
+regeneration uses the current policy and writes profile-free pixels.
+
+Accepted static preview, browser viewer, archive/delete and duplicate-filter
+images refresh after a saved policy change. Sharp tiles refresh at the existing
+zoom/pan, without changing focus or starting another viewing interval. Preview
+and filter decode requests capture the policy, and old replies cannot populate
+new-policy caches or successor owners. Hidden viewers refresh when shown again;
+retired Options and image owners remain retired. Native ugoira and WebP players
+read the policy for future frame conversions while preserving an already paused
+frame and playback position. Actual Qt checkbox staging, save/reopen, decoded
+pixels, animation frames, cache notifications and profile-free thumbnail encoding
+are recorded in `image_decoder_policies.json` and its reference PNG. Truncated
+image loading has no native control or completion claim.

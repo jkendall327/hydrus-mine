@@ -602,6 +602,13 @@ impl Zoomed {
         (self.overlay)(None);
     }
 
+    /// Replace cached pixels and regenerate current tiles without resetting
+    /// zoom or pan, as an image-cache policy notification does.
+    pub fn refresh_still(&self, still: Option<Arc<hydrus_media::Raster>>) {
+        self.set_still(still);
+        self.draw();
+    }
+
     /// Release still rendering when its owner closes, even if callers retain
     /// the window handle. Dropping the channels lets the worker finish and exit.
     pub fn close(&self) {
