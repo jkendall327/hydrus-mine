@@ -328,6 +328,7 @@ settings! {
     gui_sessions: hydrus_store::settings::GuiSessionSettings,
     gui_idle: hydrus_store::settings::GuiIdleSettings,
     shutdown_work: hydrus_store::settings::ShutdownWork,
+    background_work: hydrus_store::settings::BackgroundWork,
     info_line: InfoLineSettings,
     import_options: hydrus_core::import_options::ImportOptionsManager,
     import_options_ui: hydrus_store::settings::ImportOptionsUiSettings,
@@ -452,6 +453,8 @@ pub enum Value {
     NamespaceColours(crate::namespace_colours::Colours),
     GuiColours([[hydrus_store::services::Rgb; 13]; 2]),
     FrameLocations(std::collections::BTreeMap<String, hydrus_core::windows::FrameLocation>),
+    /// The per-filetype media handling table.
+    MediaViews(std::collections::BTreeMap<u8, hydrus_core::media_viewer::MediaView>),
     /// Registered external program calls, staged in the parent Options draft.
     ExternalCalls(hydrus_core::external_calls::Manager),
     OpenExternally(hydrus_core::open_externally::Routing),
@@ -542,6 +545,7 @@ pub enum Kind {
     NamespaceColours,
     GuiColours,
     FrameLocations,
+    MediaViews,
     /// Importable current file domains, edited in a child selector.
     LocalLocation,
     /// The detached registered external-call table.
@@ -3004,6 +3008,120 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     ],
                 ),
                 boxed(
+                    "repository processing",
+                    vec![
+                        duration(
+                            "\"Very idle\" ideal work packet time: ",
+                            time(&[Unit::Seconds, Unit::Milliseconds], 0.1),
+                            |s| f64::from(s.background_work.repository_very_idle.work_ms) / 1000.0,
+                            |s, v| {
+                                s.background_work.repository_very_idle.work_ms =
+                                    whole(v * 1000.0) as u32;
+                            },
+                        ),
+                        int(
+                            "\"Very idle\" rest time percentage: ",
+                            (0, 100_000),
+                            |s| i64::from(s.background_work.repository_very_idle.rest_percentage),
+                            |s, v| {
+                                s.background_work.repository_very_idle.rest_percentage = v as u32;
+                            },
+                        ),
+                        duration(
+                            "\"Idle\" ideal work packet time: ",
+                            time(&[Unit::Seconds, Unit::Milliseconds], 0.1),
+                            |s| f64::from(s.background_work.repository_idle.work_ms) / 1000.0,
+                            |s, v| {
+                                s.background_work.repository_idle.work_ms =
+                                    whole(v * 1000.0) as u32;
+                            },
+                        ),
+                        int(
+                            "\"Idle\" rest time percentage: ",
+                            (0, 100_000),
+                            |s| i64::from(s.background_work.repository_idle.rest_percentage),
+                            |s, v| s.background_work.repository_idle.rest_percentage = v as u32,
+                        ),
+                        duration(
+                            "\"Normal\" ideal work packet time: ",
+                            time(&[Unit::Seconds, Unit::Milliseconds], 0.1),
+                            |s| f64::from(s.background_work.repository_normal.work_ms) / 1000.0,
+                            |s, v| {
+                                s.background_work.repository_normal.work_ms =
+                                    whole(v * 1000.0) as u32;
+                            },
+                        ),
+                        int(
+                            "\"Normal\" rest time percentage: ",
+                            (0, 100_000),
+                            |s| i64::from(s.background_work.repository_normal.rest_percentage),
+                            |s, v| s.background_work.repository_normal.rest_percentage = v as u32,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "sibling/parent sync processing",
+                    vec![
+                        check(
+                            "Do work in \"idle\" time: ",
+                            |s| s.background_work.tag_display_during_idle,
+                            |s, v| s.background_work.tag_display_during_idle = v,
+                        ),
+                        duration(
+                            "\"Idle\" ideal work packet time: ",
+                            time(&[Unit::Seconds, Unit::Milliseconds], 0.1),
+                            |s| f64::from(s.background_work.tag_display_idle.work_ms) / 1000.0,
+                            |s, v| {
+                                s.background_work.tag_display_idle.work_ms =
+                                    whole(v * 1000.0) as u32;
+                            },
+                        ),
+                        int(
+                            "\"Idle\" rest time percentage: ",
+                            (0, 100_000),
+                            |s| i64::from(s.background_work.tag_display_idle.rest_percentage),
+                            |s, v| s.background_work.tag_display_idle.rest_percentage = v as u32,
+                        ),
+                        check(
+                            "Do work in \"normal\" time: ",
+                            |s| s.background_work.tag_display_during_active,
+                            |s, v| s.background_work.tag_display_during_active = v,
+                        ),
+                        duration(
+                            "\"Normal\" ideal work packet time: ",
+                            time(&[Unit::Seconds, Unit::Milliseconds], 0.1),
+                            |s| f64::from(s.background_work.tag_display_normal.work_ms) / 1000.0,
+                            |s, v| {
+                                s.background_work.tag_display_normal.work_ms =
+                                    whole(v * 1000.0) as u32;
+                            },
+                        ),
+                        int(
+                            "\"Normal\" rest time percentage: ",
+                            (0, 100_000),
+                            |s| i64::from(s.background_work.tag_display_normal.rest_percentage),
+                            |s, v| s.background_work.tag_display_normal.rest_percentage = v as u32,
+                        ),
+                        duration(
+                            "\"Work hard\" ideal work packet time: ",
+                            time(&[Unit::Seconds, Unit::Milliseconds], 0.1),
+                            |s| f64::from(s.background_work.tag_display_work_hard.work_ms) / 1000.0,
+                            |s, v| {
+                                s.background_work.tag_display_work_hard.work_ms =
+                                    whole(v * 1000.0) as u32;
+                            },
+                        ),
+                        int(
+                            "\"Work hard\" rest time percentage: ",
+                            (0, 100_000),
+                            |s| i64::from(s.background_work.tag_display_work_hard.rest_percentage),
+                            |s, v| {
+                                s.background_work.tag_display_work_hard.rest_percentage = v as u32;
+                            },
+                        ),
+                    ],
+                ),
+                boxed(
                     "potential duplicates search",
                     vec![
                         check(
@@ -3082,6 +3200,72 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             (0, 100_000),
                             |s| i64::from(s.auto_resolution.rest_percentage_active),
                             |s, v| s.auto_resolution.rest_percentage_active = v as u32,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "deferred table delete",
+                    vec![
+                        duration(
+                            "\"Idle\" ideal work packet time: ",
+                            time(&[Unit::Seconds, Unit::Milliseconds], 0.1),
+                            |s| f64::from(s.background_work.deferred_delete_idle.work_ms) / 1000.0,
+                            |s, v| {
+                                s.background_work.deferred_delete_idle.work_ms =
+                                    whole(v * 1000.0) as u32;
+                            },
+                        ),
+                        int(
+                            "\"Idle\" rest time percentage: ",
+                            (0, 100_000),
+                            |s| i64::from(s.background_work.deferred_delete_idle.rest_percentage),
+                            |s, v| {
+                                s.background_work.deferred_delete_idle.rest_percentage = v as u32;
+                            },
+                        ),
+                        duration(
+                            "\"Normal\" ideal work packet time: ",
+                            time(&[Unit::Seconds, Unit::Milliseconds], 0.1),
+                            |s| {
+                                f64::from(s.background_work.deferred_delete_normal.work_ms) / 1000.0
+                            },
+                            |s, v| {
+                                s.background_work.deferred_delete_normal.work_ms =
+                                    whole(v * 1000.0) as u32;
+                            },
+                        ),
+                        int(
+                            "\"Normal\" rest time percentage: ",
+                            (0, 100_000),
+                            |s| i64::from(s.background_work.deferred_delete_normal.rest_percentage),
+                            |s, v| {
+                                s.background_work.deferred_delete_normal.rest_percentage = v as u32;
+                            },
+                        ),
+                        duration(
+                            "\"Work hard\" ideal work packet time: ",
+                            time(&[Unit::Seconds, Unit::Milliseconds], 0.1),
+                            |s| {
+                                f64::from(s.background_work.deferred_delete_work_hard.work_ms)
+                                    / 1000.0
+                            },
+                            |s, v| {
+                                s.background_work.deferred_delete_work_hard.work_ms =
+                                    whole(v * 1000.0) as u32;
+                            },
+                        ),
+                        int(
+                            "\"Work hard\" rest time percentage: ",
+                            (0, 100_000),
+                            |s| {
+                                i64::from(
+                                    s.background_work.deferred_delete_work_hard.rest_percentage,
+                                )
+                            },
+                            |s, v| {
+                                s.background_work.deferred_delete_work_hard.rest_percentage =
+                                    v as u32;
+                            },
                         ),
                     ],
                 ),
@@ -3205,6 +3389,21 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |settings, value| settings.image_colour.normalise_icc = value,
                         ),
                     ],
+                ),
+                boxed(
+                    "per-filetype handling",
+                    vec![opt(
+                        "",
+                        Kind::MediaViews,
+                        Rc::new(|s| Value::MediaViews(s.media_viewer.media_view.clone())),
+                        Rc::new(|s, v| match v {
+                            Value::MediaViews(views) => {
+                                s.media_viewer.media_view.clone_from(views);
+                                Ok(())
+                            }
+                            _ => Err(wrong("per-filetype handling")),
+                        }),
+                    )],
                 ),
             ],
         ),
@@ -5196,6 +5395,33 @@ impl Editor {
             .find(|v| matches!(v, Value::Shortcuts(_)))
         {
             *value = Value::Shortcuts(settings);
+        }
+    }
+
+    /// The per-filetype media handling as staged.
+    pub fn edited_media_views(
+        &self,
+    ) -> std::collections::BTreeMap<u8, hydrus_core::media_viewer::MediaView> {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|v| match v {
+                Value::MediaViews(views) => Some(views.clone()),
+                _ => None,
+            })
+            .unwrap_or_else(|| self.before.media_viewer.media_view.clone())
+    }
+    pub fn set_media_views(
+        &mut self,
+        views: std::collections::BTreeMap<u8, hydrus_core::media_viewer::MediaView>,
+    ) {
+        if let Some(value) = self
+            .values
+            .iter_mut()
+            .flatten()
+            .find(|v| matches!(v, Value::MediaViews(_)))
+        {
+            *value = Value::MediaViews(views);
         }
     }
 

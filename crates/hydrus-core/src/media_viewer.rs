@@ -373,10 +373,16 @@ pub fn default_media_view() -> BTreeMap<u8, MediaView> {
     use ShowAction::{Mpv, Native, OpenExternallyButton};
     let image = ZoomRules::all(ScaleAction::ToCanvas, ZOOM_LANCZOS4, ZOOM_AREA);
     let null = ZoomRules::all(ScaleAction::Full, ZOOM_LINEAR, ZOOM_LINEAR);
+    let video = ZoomRules {
+        media_scale_up: ScaleAction::Full,
+        exact_zooms_only: true,
+        ..image
+    };
     [
         (Mime::GeneralImage, MediaView::new(Native, Native, image)),
         (Mime::GeneralAnimation, MediaView::new(Mpv, Mpv, image)),
-        (Mime::GeneralVideo, MediaView::new(Mpv, Mpv, image)),
+        // (with mpv, the reference shows video at 100% with half/double zooms)
+        (Mime::GeneralVideo, MediaView::new(Mpv, Mpv, video)),
         (Mime::GeneralAudio, MediaView::new(Mpv, Mpv, null)),
         (
             Mime::GeneralApplication,

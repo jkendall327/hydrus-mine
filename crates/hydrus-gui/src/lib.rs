@@ -44,6 +44,7 @@ pub mod downloader_display_window;
 pub mod downloader_interchange_window;
 pub mod downloader_update_times;
 mod drops;
+mod duplicates_filtering_sidebar;
 mod duplicates_sidebar;
 mod edit_subscription_window;
 mod embedded_metadata_window;
@@ -103,6 +104,7 @@ pub mod options_deletion;
 mod options_external_calls;
 pub mod options_frames;
 pub mod options_gui_colours;
+pub mod options_media_views;
 pub mod options_namespace_colours;
 pub mod options_open_externally;
 mod options_palette;
@@ -820,6 +822,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         move || current.borrow().clone()
     };
     duplicates_sidebar::bind(window, &duplicates, page.clone());
+    duplicates_filtering_sidebar::bind(window, page.clone(), shown.clone());
     sidebar_context_cog::bind(window, page.clone(), shown.clone());
     // change the pages, then show whichever page is now shown; a change
     // that can't be made says why

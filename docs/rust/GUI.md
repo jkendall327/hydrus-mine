@@ -1476,7 +1476,10 @@ files are eligible for the similar files search and how many it has
 searched at the search distance (named by the distance menu, "exact
 match" to "speculative", or set exactly), names the tab "preparation (60%
 done)" while there is work left, starts and stops working hard, and from
-its cog menu switches the search on in idle and normal time and deletes
+its cog menu switches the search on in idle and normal time, asks the
+reference's questions for "regenerate search tree" and "regenerate search
+numbers", resyncs potential pairs to local file storage (dropping the pairs
+of files no longer stored and saying how many in a popup), and deletes
 every potential pair to search again (asking first). Filtering launches
 the duplicate filter, and its "edit default duplicate metadata merge
 options" menu edits the client's merge options for "this is better",
@@ -2078,6 +2081,11 @@ File-count ties include importer total/completed progress; name ties use file
 count descending and exact lexical names. Equal keys remain stable. Recorded
 against actual reference methods on Qt tabs by `oracle/record_tab_context.py`;
 model replay and session GUI tests cover ordering and reopening.
+
+Tab right-click also has the reference's "pages" submenu: every media page in
+the clicked page of pages (or, for a media page's tab, in its notebook), named
+as the Pages menu names them ("name - N files", elided), each selecting that
+page. It sits after the close entries, before "select".
 
 Pages > sessions > append backup groups rolling snapshots by saved-session name
 and timestamp. Named saves retain ten older snapshots by default (the retention
@@ -4166,6 +4174,13 @@ tables!", "Found 3 bad mappings! ..."). Get tables using definitions copies the
 `oracle/record_database_maintenance.py`; `tests/model/database_maintenance.rs`
 replays its questions, choices and popups on the imported basic client.
 
+The rest of those menus (total pending count, local hashes and local tags
+caches, service info numbers, similar files search tree, repopulate truncated
+mappings tables, resync combined deleted files, clear orphan hashed
+serialisables) now ask their questions too, with "Which service?" over every
+service for service info numbers and over the repositories for the pending
+count, and report as the reference does on a client with nothing to fix.
+
 ## Set a password and how boned am I?
 
 Database > set a password asks the reference's text, then asks again (or, left
@@ -4193,6 +4208,13 @@ work, the "ideal work packet time" and "rest time percentage", and file
 maintenance's idle throttle, all now on the page. The status bar shows "idle"
 and, from the "Consider the system busy if CPU usage is above: N% on M cores"
 check sampled once a minute, "CPU busy".
+
+The same page also has the reference's "repository processing" ("very idle",
+"idle" and "normal" work packet times and rest percentages), "sibling/parent
+sync processing" (whether to work in idle and normal time, and idle, normal
+and work-hard timings) and "deferred table delete" (idle, normal and
+work-hard timings) boxes, with the reference's defaults and ranges, saved
+with Options.
 
 ## Thumbnail manage > maintenance and viewing stats
 
@@ -4222,3 +4244,35 @@ changes: archive/inbox and Manage Tags' applied tag changes, named as the
 reference names them ("undo archive 2 files", "redo my tags->add tags for 3
 files"). Undoing writes the inverse change, redoing the change again; a new
 change forgets what could be redone. `tests/model/content_undo.rs` covers it.
+
+## Namespace colour edit and per-filetype media handling
+
+Options > tag presentation > namespace colours now has "edit": each selected
+entry, defaults included, opens the colour picker in turn; OK recolours it in the
+draft, Cancel keeps its colour.
+
+Options > media playback > per-filetype handling lists each filetype's media and
+preview show actions and zoom info as the reference does, sorted by column.
+"add" offers the searchable filetypes without a row, then edits a copy of the
+class's options; "edit" (or double-click) opens "edit media view options
+information" with the filetype's own show-action choices, start paused/embed
+switches, scaling, half/double zooms and interpolation qualities, enabled as
+`_UpdateControls` enables them; "delete" removes specific filetypes but never the
+classes. Edits stay in the Options draft until Apply. Dumped by
+`oracle/dump_media_view_options.py`; `tests/model/media_view_options.rs`.
+
+## Duplicates page filtering
+
+A duplicates page's filtering tab now edits its potential pair search as the
+reference's panel does: the search kind ("at least one file matches the search",
+"both files match the search", "the two files match different searches", the
+second search shown only for the last), typed tag/system predicates per search,
+"maximum search distance of pair" (disabled when pixel dupes are required) and the
+pixel-dupe preference. A count line ("N pairs searched; M match") recounts off the
+UI thread as the search changes, or on refresh. The duplicate filter box sorts
+pairs by larger/smaller filesize, similarity or random with the matching
+direction words, and picks mixed pairs or group mode; "launch the filter" uses
+all of these. "quick and dirty processing" shows a random potential group in the
+page and sets the shown files as same quality, alternates or false positives
+after the reference's questions, then shows another group.
+`tests/model/duplicates_filtering.rs` covers the model.

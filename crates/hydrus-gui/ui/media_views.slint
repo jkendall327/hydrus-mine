@@ -1,0 +1,111 @@
+// Options > media playback > per-filetype handling (`src/options_media_views.rs`,
+// hydrus-gui-model's media_view_options): the list with add/edit/delete, and
+// the "media view options information" editor.
+
+import { Button, CheckBox, ComboBox } from "std-widgets.slint";
+import { ListTable, TableRow } from "list_table.slint";
+import { Theme } from "theme.slint";
+
+export component MediaViewTable inherits Rectangle {
+    in property <[TableRow]> rows;
+    in property <bool> single;
+    in property <bool> can-add;
+    in property <bool> can-delete;
+    in property <bool> child-open;
+    in property <int> sort-column;
+    in property <bool> ascending;
+    callback clicked(int,bool,bool);
+    callback activated(int);
+    callback sort(int,bool);
+    callback action(string);
+    min-height:300px;
+    min-width:650px;
+    VerticalLayout {
+        spacing:4px;
+        ListTable {
+            rows:root.rows;
+            sort-column:root.sort-column;
+            ascending:root.ascending;
+            columns:[{title:"filetype",width:200px,stretch:true},{title:"media show action",width:200px},{title:"preview show action",width:200px},{title:"zoom info",width:160px}];
+            row-clicked(i,c,s)=>{if !root.child-open{root.clicked(i,c,s);}}
+            row-activated(i)=>{if !root.child-open{root.activated(i);}}
+            sort(i,a)=>{if !root.child-open{root.sort(i,a);}}
+        }
+        HorizontalLayout {
+            spacing:4px;
+            Button{text:"add";enabled:root.can-add && !root.child-open;clicked=>{root.action("add");}}
+            Button{text:"edit";enabled:root.single && !root.child-open;clicked=>{root.action("edit");}}
+            Button{text:"delete";enabled:root.can-delete && !root.child-open;clicked=>{root.action("delete");}}
+        }
+    }
+}
+
+export component MediaViewWindow inherits Window {
+    in property <string> window-title: "edit media view options information";
+    title: root.window-title;
+    preferred-width: 640px;
+    background: Theme.window;
+    in property <string> intro;
+    in property <[string]> media-actions;
+    in property <[string]> preview-actions;
+    in property <[string]> scales;
+    in property <[string]> up-qualities;
+    in property <[string]> down-qualities;
+    in property <bool> zoom-rows;
+    in-out property <int> media-action;
+    in-out property <int> preview-action;
+    in-out property <bool> media-paused;
+    in-out property <bool> media-embed;
+    in-out property <bool> preview-paused;
+    in-out property <bool> preview-embed;
+    in-out property <int> media-up;
+    in-out property <int> media-down;
+    in-out property <int> preview-up;
+    in-out property <int> preview-down;
+    in-out property <bool> exact-zooms;
+    in-out property <int> up-quality;
+    in-out property <int> down-quality;
+    // what `_UpdateControls` enables
+    in property <bool> media-paused-enabled;
+    in property <bool> media-embed-enabled;
+    in property <bool> preview-paused-enabled;
+    in property <bool> preview-embed-enabled;
+    in property <bool> media-scales-enabled;
+    in property <bool> preview-scales-enabled;
+    in property <bool> exact-zooms-enabled;
+    in property <bool> qualities-enabled;
+    callback actions-changed();
+    callback apply();
+    callback cancel();
+    keys := FocusScope {
+        key-pressed(e) => { if e.text == Key.Escape { root.cancel(); return accept; } reject }
+        VerticalLayout {
+            padding: 12px;
+            spacing: 6px;
+            Text { text: root.intro; wrap: word-wrap; color: Theme.text; }
+            HorizontalLayout { Text { text: "media viewer show action: "; color: Theme.text; vertical-alignment: center; } ComboBox { model: root.media-actions; current-index <=> root.media-action; selected => { root.actions-changed(); } } }
+            CheckBox { text: "media starts paused: "; checked <=> root.media-paused; enabled: root.media-paused-enabled; }
+            CheckBox { text: "media starts covered with an embed button: "; checked <=> root.media-embed; enabled: root.media-embed-enabled; }
+            HorizontalLayout { Text { text: "preview viewer show action: "; color: Theme.text; vertical-alignment: center; } ComboBox { model: root.preview-actions; current-index <=> root.preview-action; selected => { root.actions-changed(); } } }
+            CheckBox { text: "preview starts paused: "; checked <=> root.preview-paused; enabled: root.preview-paused-enabled; }
+            CheckBox { text: "preview starts covered with an embed button: "; checked <=> root.preview-embed; enabled: root.preview-embed-enabled; }
+            if root.zoom-rows: VerticalLayout {
+                spacing: 6px;
+                HorizontalLayout { Text { text: "if the media is smaller than the media viewer canvas: "; color: Theme.text; vertical-alignment: center; } ComboBox { model: root.scales; current-index <=> root.media-up; enabled: root.media-scales-enabled; } }
+                HorizontalLayout { Text { text: "if the media is larger than the media viewer canvas: "; color: Theme.text; vertical-alignment: center; } ComboBox { model: root.scales; current-index <=> root.media-down; enabled: root.media-scales-enabled; } }
+                HorizontalLayout { Text { text: "if the media is smaller than the preview canvas: "; color: Theme.text; vertical-alignment: center; } ComboBox { model: root.scales; current-index <=> root.preview-up; enabled: root.preview-scales-enabled; } }
+                HorizontalLayout { Text { text: "if the media is larger than the preview canvas: "; color: Theme.text; vertical-alignment: center; } ComboBox { model: root.scales; current-index <=> root.preview-down; enabled: root.preview-scales-enabled; } }
+                CheckBox { text: "only permit half and double zooms"; checked <=> root.exact-zooms; enabled: root.exact-zooms-enabled; }
+                Text { text: "Nearest neighbour is fast and ugly, 8x8 lanczos and area resampling are slower but beautiful."; wrap: word-wrap; color: Theme.text; }
+                HorizontalLayout { Text { text: ">100% (interpolation) quality: "; color: Theme.text; vertical-alignment: center; } ComboBox { model: root.up-qualities; current-index <=> root.up-quality; enabled: root.qualities-enabled; } }
+                HorizontalLayout { Text { text: "<100% (decimation) quality: "; color: Theme.text; vertical-alignment: center; } ComboBox { model: root.down-qualities; current-index <=> root.down-quality; enabled: root.qualities-enabled; } }
+            }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Button { text: "apply"; clicked => { root.apply(); } }
+                Button { text: "cancel"; clicked => { root.cancel(); } }
+            }
+        }
+    }
+}

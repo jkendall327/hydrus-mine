@@ -618,6 +618,63 @@ impl Setting for ShutdownWork {
     const KEY: &'static str = "shutdown_work";
 }
 
+/// One kind of background work's ideal work packet time (ms) and rest after
+/// it (a percentage of the time worked).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub struct WorkRest {
+    pub work_ms: u32,
+    pub rest_percentage: u32,
+}
+
+const fn work_rest(work_ms: u32, rest_percentage: u32) -> WorkRest {
+    WorkRest {
+        work_ms,
+        rest_percentage,
+    }
+}
+
+/// Options > maintenance and processing's repository processing, sibling/
+/// parent sync and deferred table delete timings (the reference's
+/// `repository_processing_*`, `tag_display_processing_*`,
+/// `tag_display_maintenance_during_*` and `deferred_table_delete_*`).
+/// hydrus-rs keeps and edits them; it syncs and deletes as it writes, and
+/// has no repositories, so none of its work reads them yet.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct BackgroundWork {
+    pub repository_very_idle: WorkRest,
+    pub repository_idle: WorkRest,
+    pub repository_normal: WorkRest,
+    pub tag_display_during_idle: bool,
+    pub tag_display_during_active: bool,
+    pub tag_display_idle: WorkRest,
+    pub tag_display_normal: WorkRest,
+    pub tag_display_work_hard: WorkRest,
+    pub deferred_delete_idle: WorkRest,
+    pub deferred_delete_normal: WorkRest,
+    pub deferred_delete_work_hard: WorkRest,
+}
+impl Default for BackgroundWork {
+    fn default() -> Self {
+        Self {
+            repository_very_idle: work_rest(30_000, 3),
+            repository_idle: work_rest(10_000, 5),
+            repository_normal: work_rest(500, 10),
+            tag_display_during_idle: true,
+            tag_display_during_active: true,
+            tag_display_idle: work_rest(15_000, 3),
+            tag_display_normal: work_rest(100, 9_900),
+            tag_display_work_hard: work_rest(5_000, 5),
+            deferred_delete_idle: work_rest(20_000, 10),
+            deferred_delete_normal: work_rest(250, 1_000),
+            deferred_delete_work_hard: work_rest(5_000, 10),
+        }
+    }
+}
+impl Setting for BackgroundWork {
+    const KEY: &'static str = "background_work";
+}
+
 /// Idle eligibility from the reference's user-action and mouse timers.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

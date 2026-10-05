@@ -189,3 +189,34 @@ fn sorted_add_keeps_qt_positional_range_anchor_then_delete_resets_it() {
         }
     }
 }
+
+#[test]
+fn edit_recolours_each_selected_entry_in_place() {
+    use hydrus_gui_model::namespace_colours::Editor;
+    let mut list = Editor::new(vec![
+        (None, [1, 1, 1]),
+        (Some(String::new()), [2, 2, 2]),
+        (Some("artist".into()), [3, 3, 3]),
+    ]);
+    let artist = list
+        .rows()
+        .iter()
+        .position(|r| r.namespace.as_deref() == Some("artist"))
+        .unwrap();
+    let unnamespaced = list
+        .rows()
+        .iter()
+        .position(|r| r.namespace.as_deref() == Some(""))
+        .unwrap();
+    list.click(artist, false, false);
+    list.click(unnamespaced, true, false);
+    let selected = list.selected();
+    assert_eq!(selected.len(), 2);
+    for (namespace, _) in &selected {
+        list.set_colour(namespace.as_deref(), [9, 8, 7]);
+    }
+    let values = list.values();
+    assert!(values.iter().filter(|(_, rgb)| *rgb == [9, 8, 7]).count() == 2);
+    assert!(values.contains(&(None, [1, 1, 1])));
+    assert_eq!(list.rows().iter().filter(|r| r.selected).count(), 2);
+}

@@ -1,0 +1,368 @@
+{
+  "schema_version": 1,
+  "agent": "background-work-timings",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 20,
+  "claims": [
+    {
+      "id": "audit-options-maintenance-and-processing-deferred-table-delete-idle-ideal-work-packet-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-deferred-table-delete-idle-rest-time-percentage",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-deferred-table-delete-normal-ideal-work-packet-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-deferred-table-delete-normal-rest-time-percentage",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-deferred-table-delete-work-hard-ideal-work-packet-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-deferred-table-delete-work-hard-rest-time-percentage",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-repository-processing-idle-ideal-work-packet-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-repository-processing-idle-rest-time-percentage",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-repository-processing-normal-ideal-work-packet-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-repository-processing-normal-rest-time-percentage",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-repository-processing-very-idle-ideal-work-packet-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-repository-processing-very-idle-rest-time-percentage",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-sibling-parent-sync-processing-idle-ideal-work-packet-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-sibling-parent-sync-processing-idle-rest-time-percentage",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-sibling-parent-sync-processing-normal-ideal-work-packet-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-sibling-parent-sync-processing-normal-rest-time-percentage",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-sibling-parent-sync-processing-work-hard-ideal-work-packet-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-sibling-parent-sync-processing-work-hard-rest-time-percentage",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-sibling-parent-sync-processing-do-work-in-idle-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-sibling-parent-sync-processing-do-work-in-normal-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Options > maintenance and processing has the reference's repository processing, sibling/parent sync processing and deferred table delete boxes: work packet times (seconds/milliseconds, min 0.1 s) and rest percentages (0-100000) with the reference's defaults, and sibling/parent sync's idle/normal switches, saved with Options.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs",
+        "crates/hydrus-gui-model/src/options.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs"
+      ],
+      "limits": [
+        "No hydrus-rs work reads these yet (no repositories; sibling/parent sync and table deletes happen as it writes).",
+        "No legacy import of the values; boxes lack the explanation text and collapsing."
+      ]
+    }
+  ]
+}

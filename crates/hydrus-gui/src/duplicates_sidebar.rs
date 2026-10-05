@@ -21,7 +21,8 @@ use hydrus_store::settings;
 use hydrus_store::similar::{self, SimilarFilesSettings};
 
 use crate::duplicates_page::{
-    RESET_QUESTION, Reset, distance_label, preparation, reset_question, rule_progress, rule_status,
+    REGENERATE_NUMBERS_QUESTION, REGENERATE_TREE_QUESTION, RESET_QUESTION, RESYNC_QUESTION,
+    RESYNC_TITLE, Reset, distance_label, preparation, reset_question, rule_progress, rule_status,
 };
 use crate::list_selection::ListSelection;
 use crate::{DuplicatesData, MainWindow, SearchPage, TableRow};
@@ -29,6 +30,9 @@ use crate::{DuplicatesData, MainWindow, SearchPage, TableRow};
 /// What the sidebar's question panel waits on.
 enum Asking {
     DeletePairs,
+    RegenerateTree,
+    RegenerateNumbers,
+    Resync,
     /// A reset of these rules.
     Reset(Reset, Vec<i64>),
 }
@@ -69,6 +73,7 @@ impl Sidebar {
         if page.duplicates().is_none() {
             return;
         }
+        crate::duplicates_filtering_sidebar::show(window, page);
         let store = page.store().clone();
         let mut state = self.state.borrow_mut();
         if state.store.as_ref().is_none_or(|s| !Arc::ptr_eq(s, &store)) {
@@ -139,6 +144,24 @@ impl Sidebar {
             Some(Asking::DeletePairs) => (
                 "Are you sure?".to_owned(),
                 RESET_QUESTION.to_owned(),
+                vec!["yes".to_owned(), "no".to_owned()],
+            ),
+            Some(Asking::RegenerateTree) => (
+                "Are you sure?".to_owned(),
+                REGENERATE_TREE_QUESTION.0.to_owned(),
+                vec![
+                    REGENERATE_TREE_QUESTION.1.to_owned(),
+                    REGENERATE_TREE_QUESTION.2.to_owned(),
+                ],
+            ),
+            Some(Asking::RegenerateNumbers) => (
+                "Are you sure?".to_owned(),
+                REGENERATE_NUMBERS_QUESTION.to_owned(),
+                vec!["yes".to_owned(), "no".to_owned()],
+            ),
+            Some(Asking::Resync) => (
+                "Are you sure?".to_owned(),
+                RESYNC_QUESTION.to_owned(),
                 vec!["yes".to_owned(), "no".to_owned()],
             ),
             Some(Asking::Reset(which, rules)) => (
@@ -224,6 +247,11 @@ impl Sidebar {
             "rules during idle" => flip_auto(|s| s.during_idle = !s.during_idle),
             "rules during active" => flip_auto(|s| s.during_active = !s.during_active),
             "delete pairs" => self.state.borrow_mut().asking = Some(Asking::DeletePairs),
+            "regenerate tree" => self.state.borrow_mut().asking = Some(Asking::RegenerateTree),
+            "regenerate numbers" => {
+                self.state.borrow_mut().asking = Some(Asking::RegenerateNumbers);
+            }
+            "resync pairs" => self.state.borrow_mut().asking = Some(Asking::Resync),
             "reset search" | "reset test" | "reset denied" => {
                 let which = match what {
                     "reset search" => Reset::Search,
@@ -349,6 +377,22 @@ impl Sidebar {
                 if n == 0 {
                     match asking {
                         Some(Asking::DeletePairs) => write(&store, similar::delete_potential_pairs),
+                        // (hydrus-rs keeps no search tree or count cache: the
+                        // tree is built from the hashes for each search, and
+                        // the counts read from source, so there is nothing to
+                        // regenerate; the numbers are shown again below)
+                        Some(Asking::RegenerateTree | Asking::RegenerateNumbers) => {}
+                        Some(Asking::Resync) => write(&store, |conn| {
+                            let cleared = similar::resync_potentials_to_local_storage(conn)?;
+                            let now = std::time::SystemTime::now()
+                                .duration_since(std::time::UNIX_EPOCH)
+                                .map_or(0.0, |d| d.as_secs_f64());
+                            let mut popup =
+                                hydrus_store::popups::Job::text(similar::resync_text(cleared), now);
+                            popup.status_title = Some(RESYNC_TITLE.to_owned());
+                            #[allow(clippy::cast_possible_truncation)] // (seconds)
+                            hydrus_store::popups::add(conn, &popup, now as i64)
+                        }),
                         Some(Asking::Reset(which, rules)) => write(&store, move |conn| {
                             for &id in &rules {
                                 match which {

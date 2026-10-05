@@ -376,6 +376,47 @@ pub fn delete_potential_pairs(conn: &Connection) -> Result<()> {
     crate::duplicates::cache::changed(conn)
 }
 
+/// Drop the potential pairs of every duplicate group whose best file is no
+/// longer in local file storage, and stop searching that file
+/// (`ResyncPotentialPairsToHydrusLocalFileStorage`); how many files.
+pub fn resync_potentials_to_local_storage(conn: &Connection) -> Result<usize> {
+    let local = crate::services::ServiceRegistry::load(conn)?
+        .builtin(hydrus_core::service::builtin_keys::HYDRUS_LOCAL_FILE_STORAGE)?
+        .id;
+    let orphans: Vec<(i64, HashId)> = conn
+        .prepare(
+            "SELECT DISTINCT g.group_id, g.king_hash_id FROM dup_groups g
+             JOIN potential_pairs p ON g.group_id IN (p.smaller_group_id, p.larger_group_id)
+             WHERE NOT EXISTS (SELECT 1 FROM file_domain_current c
+                               WHERE c.service_id = ?1 AND c.hash_id = g.king_hash_id)",
+        )?
+        .query_map([local], |r| Ok((r.get(0)?, r.get(1)?)))?
+        .collect::<rusqlite::Result<_>>()?;
+    for &(group, king) in &orphans {
+        conn.prepare_cached(
+            "DELETE FROM potential_pairs WHERE smaller_group_id = ?1 OR larger_group_id = ?1",
+        )?
+        .execute([group])?;
+        stop_searching(conn, king)?;
+    }
+    if !orphans.is_empty() {
+        crate::duplicates::cache::changed(conn)?;
+    }
+    Ok(orphans.len())
+}
+
+/// The popup after the resync (`ResyncPotentialPairsToHydrusLocalFileStorage`).
+pub fn resync_text(cleared: usize) -> String {
+    if cleared == 0 {
+        "Done! No orphan pairs found!".into()
+    } else {
+        format!(
+            "Done! Pairs for {} out-of-domain files cleared out.",
+            hydrus_core::numbers::human_int(cleared as u64)
+        )
+    }
+}
+
 impl crate::settings::Setting for SimilarFilesSettings {
     const KEY: &'static str = "similar_files";
 }

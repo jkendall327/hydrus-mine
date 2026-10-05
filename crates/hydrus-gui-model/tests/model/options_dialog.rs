@@ -462,6 +462,7 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
                 | Kind::NamespaceColours
                 | Kind::DeletionReasons
                 | Kind::FrameLocations
+                | Kind::MediaViews
                 | Kind::FavouriteTags
                 | Kind::MostUsedTags
                 | Kind::RelatedWeights

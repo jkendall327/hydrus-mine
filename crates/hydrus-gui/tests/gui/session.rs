@@ -2731,3 +2731,72 @@ fn chooser_new_notebook_name_preference_matches_reference_and_persists() {
         );
     }
 }
+
+#[test]
+fn tab_menu_pages_lists_the_clicked_notebooks_media_pages_as_the_reference_does() {
+    use hydrus_gui::main_menu::{Command, Entry};
+    let (_dirs, store) = store();
+    let search = || PageContent::Search {
+        search: FileSearchContext::default(),
+        synchronised: false,
+        sort: None,
+        lock: None,
+        collect: None,
+    };
+    let saved = Session {
+        name: LAST_SESSION.into(),
+        pages: vec![
+            page("a", search()),
+            page(
+                "nested",
+                PageContent::Pages(vec![page("child 0", search()), page("child 1", search())]),
+            ),
+        ],
+    };
+    store
+        .write(move |ctx| sessions::save(ctx.conn(), &saved, 100))
+        .unwrap();
+    let pages = Pages::open(store.clone()).unwrap();
+    let submenu = |depth, index| {
+        let entries = pages.tab_menu(depth, index);
+        let at = entries
+            .iter()
+            .position(|e| matches!(e, Entry::Menu { label, .. } if label == "pages"))
+            .expect("a pages submenu");
+        // (after the close section, before "select")
+        assert!(matches!(entries[at - 1], Entry::Separator));
+        let Entry::Menu { entries, .. } = &entries[at] else {
+            unreachable!()
+        };
+        entries
+            .iter()
+            .map(|e| match e {
+                Entry::Item {
+                    label,
+                    command: Some(Command::ShowPage(key)),
+                    ..
+                } => (label.split(" - ").next().unwrap().to_owned(), *key),
+                other => panic!("{other:?}"),
+            })
+            .collect::<Vec<_>>()
+    };
+    let session = pages.session();
+    let key = |name: &str| {
+        session
+            .all_pages()
+            .into_iter()
+            .find(|p| p.name == name)
+            .unwrap()
+            .key
+    };
+    // a media page's tab: every media page in its notebook
+    let names = |items: Vec<(String, PageKey)>| {
+        for (name, k) in &items {
+            assert_eq!(*k, key(name));
+        }
+        items.into_iter().map(|(n, _)| n).collect::<Vec<_>>()
+    };
+    assert_eq!(names(submenu(0, 0)), ["a", "child 0", "child 1"]);
+    // a page of pages' tab: the media pages inside it
+    assert_eq!(names(submenu(0, 1)), ["child 0", "child 1"]);
+}

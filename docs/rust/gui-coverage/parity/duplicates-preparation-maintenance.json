@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "agent": "duplicates-preparation-maintenance",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 1,
+  "claims": [
+    {
+      "id": "audit-media-preparation-numbers",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "The duplicates preparation tab's cog menu has regenerate search tree (do it/forget it), regenerate search numbers and resync potential duplicate pairs to storage with the reference's questions; the resync drops pairs of groups whose best file left local storage, stops searching it and reports in a popup.",
+      "source": [
+        "crates/hydrus-store/src/similar.rs",
+        "crates/hydrus-gui-model/src/duplicates_page.rs",
+        "crates/hydrus-gui/src/duplicates_sidebar.rs",
+        "crates/hydrus-gui/ui/duplicates_page.slint"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/duplicates_filtering.rs::resync_drops_pairs_of_files_out_of_local_storage"
+      ],
+      "limits": [
+        "Regenerating the tree and numbers is a refresh: hydrus-rs keeps no tree or count cache.",
+        "The resync popup is not cancellable with progress."
+      ]
+    }
+  ]
+}

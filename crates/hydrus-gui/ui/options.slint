@@ -11,6 +11,7 @@ import { FrameLocationsTable } from "frame_locations.slint";
 
 import { GuiColoursets, GuiColourRow } from "gui_coloursets.slint";
 import { NamespaceColourRow, NamespaceColourList } from "namespace_colours.slint";
+import { MediaViewTable } from "media_views.slint";
 import { Button, CheckBox, ComboBox, LineEdit, ListView, ScrollView, SpinBox, StandardListView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { TableRow } from "list_table.slint";
@@ -160,6 +161,17 @@ export component OptionsWindow inherits Window {
     callback frame-activated(int);
     callback frame-sort(int,bool);
     callback frame-action(string);
+    in property <[TableRow]> media-view-rows;
+    in property <bool> media-view-single;
+    in property <bool> media-view-can-add;
+    in property <bool> media-view-can-delete;
+    in property <bool> media-view-child-open;
+    in property <int> media-view-sort-column;
+    in property <bool> media-view-ascending;
+    callback media-view-clicked(int,bool,bool);
+    callback media-view-activated(int);
+    callback media-view-sort(int,bool);
+    callback media-view-action(string);
     in property <[TableRow]> tag-namespace-rows;
     in property <bool> tag-namespace-selected;
     in property <bool> tag-namespace-child-open;
@@ -649,6 +661,19 @@ export component OptionsWindow inherits Window {
                                 activated(i)=>{root.frame-activated(i);}
                                 sort(i,a)=>{root.frame-sort(i,a);}
                                 action(a)=>{root.frame-action(a);}
+                            }
+                            if row.kind == 38: MediaViewTable {
+                                rows:root.media-view-rows;
+                                single:root.media-view-single;
+                                can-add:root.media-view-can-add;
+                                can-delete:root.media-view-can-delete;
+                                child-open:root.media-view-child-open;
+                                sort-column:root.media-view-sort-column;
+                                ascending:root.media-view-ascending;
+                                clicked(i,c,s)=>{root.media-view-clicked(i,c,s);}
+                                activated(i)=>{root.media-view-activated(i);}
+                                sort(i,a)=>{root.media-view-sort(i,a);}
+                                action(a)=>{root.media-view-action(a);}
                             }
                             if row.kind == 31: NamespaceColourList {
                                 rows:root.namespace-colour-rows;

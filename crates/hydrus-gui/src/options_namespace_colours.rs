@@ -56,6 +56,81 @@ fn warning_notice(child: &Slot, show: &Rc<dyn Fn()>, message: &str) -> Result<()
     Ok(())
 }
 
+thread_local! {
+    // (the namespace colour picker shown, kept until answered)
+    static PICKER: RefCell<Option<crate::GuiColourPickerWindow>> = const { RefCell::new(None) };
+}
+
+/// Recolour the queued entries one after another (`_EditNamespaceColour`);
+/// a cancelled picker keeps an entry's colour.
+fn edit_next(
+    mut queue: Vec<(Option<String>, [u8; 3])>,
+    list: Rc<RefCell<namespace_colours::Editor>>,
+    editor: Rc<RefCell<Editor>>,
+    show: Rc<dyn Fn()>,
+    valid: Rc<dyn Fn() -> bool>,
+) {
+    if queue.is_empty() || !valid() {
+        return;
+    }
+    let (namespace, [red, green, blue]) = queue.remove(0);
+    let Ok(picker) = crate::GuiColourPickerWindow::new() else {
+        return;
+    };
+    picker.set_red(i32::from(red));
+    picker.set_green(i32::from(green));
+    picker.set_blue(i32::from(blue));
+    let answered = Rc::new(Cell::new(false));
+    let queue = Rc::new(RefCell::new(Some(queue)));
+    let finish: Rc<dyn Fn(Option<[u8; 3]>)> = Rc::new({
+        let weak = picker.as_weak();
+        move |rgb: Option<[u8; 3]>| {
+            if answered.replace(true) {
+                return;
+            }
+            if let Some(picker) = weak.upgrade() {
+                let _ = picker.hide();
+            }
+            if let Some(rgb) = rgb
+                && valid()
+            {
+                list.borrow_mut().set_colour(namespace.as_deref(), rgb);
+                editor
+                    .borrow_mut()
+                    .set_namespace_colours(list.borrow().values());
+                show();
+            }
+            if let Some(rest) = queue.borrow_mut().take() {
+                edit_next(
+                    rest,
+                    list.clone(),
+                    editor.clone(),
+                    show.clone(),
+                    valid.clone(),
+                );
+            }
+        }
+    });
+    picker.on_accepted({
+        let finish = finish.clone();
+        move |r, g, b| {
+            let channel = |v: i32| u8::try_from(v.clamp(0, 255)).unwrap_or(0);
+            finish(Some([channel(r), channel(g), channel(b)]));
+        }
+    });
+    picker.on_cancelled({
+        let finish = finish.clone();
+        move || finish(None)
+    });
+    picker.window().on_close_requested(move || {
+        finish(None);
+        slint::CloseRequestResponse::HideWindow
+    });
+    if picker.show().is_ok() {
+        PICKER.with(|p| *p.borrow_mut() = Some(picker));
+    }
+}
+
 pub(crate) fn bind(
     window: &OptionsWindow,
     editor: &Rc<RefCell<Editor>>,
@@ -134,6 +209,17 @@ pub(crate) fn bind(
         let show = show.clone();
         move |action| {
             if !valid() || child.borrow().is_some() {
+                return;
+            }
+            if action == "edit" {
+                let queue = list.borrow().selected();
+                edit_next(
+                    queue,
+                    list.clone(),
+                    editor.clone(),
+                    show.clone(),
+                    valid.clone(),
+                );
                 return;
             }
             let adding = action == "add";

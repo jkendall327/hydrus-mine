@@ -101,6 +101,22 @@ pub fn preparation(
 /// The preparation tab's cog menu's questions.
 pub const RESET_QUESTION: &str = "ADVANCED TOOL: This will delete all the current potential duplicate pairs and queue every eligible file up for another re-search.\n\nThis can be useful if you know you have database damage and need to reset and re-search everything, or if you have accidentally searched too broadly and are now swamped with too many false positives. It is not useful for much else.";
 
+/// "regenerate search tree"'s question, with its yes and no labels.
+pub const REGENERATE_TREE_QUESTION: (&str, &str, &str) = (
+    "This will delete and then recreate the similar files search tree. This is useful if it has orphans or if you suspect it has become unbalanced in a way that maintenance cannot correct.\n\nIf you have a lot of files, it can take a little while, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless.",
+    "do it",
+    "forget it",
+);
+
+/// "regenerate search numbers"'s question.
+pub const REGENERATE_NUMBERS_QUESTION: &str = "The store of how many files have been searched at each distance has cached numbers. If you believe the count is incorrect, hit this and they will be regenerated from source. Correcting a miscount is the only purpose of this task.";
+
+/// "resync potential duplicate pairs to storage"'s question.
+pub const RESYNC_QUESTION: &str = "There was a time that pairs were not delisted when one or both of the pair were deleted. This maintenance task corrects that problem. You should not need to run it again unless you know something is wrong with your numbers (they might just be incorrect, but if you set many trashed/deleted files to be part of potential pairs, this would also do it).";
+
+/// The resync's popup title.
+pub const RESYNC_TITLE: &str = "resyncing potential pairs to hydrus local file storage";
+
 /// The auto-resolution tab's rules list's column titles.
 pub const RULE_COLUMNS: [&str; 3] = ["name", "progress", "status"];
 

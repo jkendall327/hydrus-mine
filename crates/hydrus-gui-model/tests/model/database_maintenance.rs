@@ -87,9 +87,9 @@ fn questions_buttons_and_service_choices_are_the_reference_s() {
             .unwrap()
             .iter()
             .find(|a| a["title"] == WHICH_SERVICE);
-        assert_eq!(chooser.is_some(), job.chooses_tag_service(), "{job:?}");
+        assert_eq!(chooser.is_some(), job.chooses_service(), "{job:?}");
         if let Some(chooser) = chooser {
-            let offered: Vec<(String, String)> = service_choices(&store)
+            let offered: Vec<(String, String)> = service_choices(&store, job)
                 .into_iter()
                 .map(|(name, _, tip)| (name, tip))
                 .collect();
@@ -175,16 +175,5 @@ fn the_menus_enable_the_jobs_hydrus_rs_runs() {
             matches!(entry, Entry::Item { command: Some(Command::DatabaseMaintenance(j)), .. } if *j == job)
         );
     }
-    for label in [
-        "local hashes cache",
-        "local tags cache",
-        "service info numbers",
-        "similar files search tree",
-        "review vacuum data",
-    ] {
-        assert!(
-            !find(&menus, &format!("{label}\u{2026}")).unwrap().usable(),
-            "{label}"
-        );
-    }
+    assert!(!find(&menus, "review vacuum data\u{2026}").unwrap().usable());
 }

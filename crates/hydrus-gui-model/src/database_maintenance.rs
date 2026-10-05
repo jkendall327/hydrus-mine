@@ -5,8 +5,10 @@
 //! Recorded by `oracle/record_database_maintenance.py`.
 //!
 //! The native store has no local hashes, local tags or service info caches,
-//! no separate mappings cache to repopulate from and no hashed serialisables;
-//! those entries stay disabled (DIFFERENCES.md).
+//! no similar files search tree or combined deleted files cache, no separate
+//! mappings cache to repopulate from and no hashed serialisables: those
+//! entries ask the reference's questions, find nothing to do and say so as
+//! the reference does on a client with nothing wrong (DIFFERENCES.md).
 
 use hydrus_core::ServiceKey;
 use hydrus_store::Store;
@@ -34,6 +36,14 @@ pub enum Job {
     OrphanUrlMappings,
     OrphanTables,
     TablesUsingDefinitions,
+    PendingCount,
+    LocalHashes,
+    LocalTags,
+    ServiceInfo,
+    SimilarTree,
+    RepopulateMappings,
+    ResyncDeleted,
+    OrphanSerialisables,
 }
 
 /// How a job's first question is asked.
@@ -76,15 +86,19 @@ pub struct Outcome {
 
 impl Job {
     /// The entries, in their menus' order.
-    pub const ALL: [Job; 18] = [
+    pub const ALL: [Job; 26] = [
         Job::Analyze,
         Job::OrphanFileRecords,
         Job::OrphanUrlMappings,
         Job::OrphanTables,
+        Job::OrphanSerialisables,
         Job::TablesUsingDefinitions,
         Job::FixInvalidTags,
         Job::FixInconsistentMappings,
+        Job::RepopulateMappings,
+        Job::ResyncDeleted,
         Job::ResyncTagCounts,
+        Job::PendingCount,
         Job::TagStorage,
         Job::TagStoragePending,
         Job::TagDisplay,
@@ -95,6 +109,10 @@ impl Job {
         Job::TagText,
         Job::TagTextSubtags,
         Job::TagTextSearchable,
+        Job::LocalHashes,
+        Job::LocalTags,
+        Job::ServiceInfo,
+        Job::SimilarTree,
     ];
 
     /// The job of a Database menu entry's label (without its ellipsis).
@@ -102,11 +120,14 @@ impl Job {
         Self::ALL.into_iter().find(|job| job.label() == label)
     }
 
-    /// Whether, after yes, it asks which tag service.
-    pub const fn chooses_tag_service(self) -> bool {
+    /// Whether, after yes, it asks which service ([`service_choices`]).
+    pub const fn chooses_service(self) -> bool {
         matches!(
             self,
-            Self::TagStorage
+            Self::PendingCount
+                | Self::ServiceInfo
+                | Self::RepopulateMappings
+                | Self::TagStorage
                 | Self::TagStoragePending
                 | Self::TagDisplay
                 | Self::TagDisplayPending
@@ -129,6 +150,10 @@ impl Job {
             Self::TablesUsingDefinitions => Asking::Buttons {
                 title: "Select which content type to fetch for",
                 choices: vec![("hash".into(), "hash".into()), ("tag".into(), "tag".into())],
+            },
+            Self::PendingCount | Self::ServiceInfo => Asking::YesNo {
+                yes: "yes",
+                no: "no",
             },
             _ => Asking::YesNo {
                 yes: self.yes_label(),
@@ -166,6 +191,14 @@ impl Job {
             Self::OrphanUrlMappings => "clear orphan URL mappings",
             Self::OrphanTables => "clear orphan tables",
             Self::TablesUsingDefinitions => "get tables using definitions",
+            Self::PendingCount => "total pending count, in the pending menu",
+            Self::LocalHashes => "local hashes cache",
+            Self::LocalTags => "local tags cache",
+            Self::ServiceInfo => "service info numbers",
+            Self::SimilarTree => "similar files search tree",
+            Self::RepopulateMappings => "repopulate truncated mappings tables",
+            Self::ResyncDeleted => "resync combined deleted files",
+            Self::OrphanSerialisables => "clear orphan hashed serialisables",
         }
     }
 
@@ -226,6 +259,30 @@ impl Job {
             Self::TablesUsingDefinitions => {
                 "SUPER ADVANCED!\n\nThis will gather all the tables and columns that use the particular content type and put them in your clipboard in the format \"(schema_name.)table_name,column_name\". If you want to do mass SELECT or DELETE operations for each of a particular definition, use a multi-editor tool in a powerful text editor to edit all the lines at once (with Ctrl+D, usually).\n\nSome tables are referred to by \"external_x\" schema name, so when you have your commands written out, you will need to either remove the schema names; or use the connect.bat in the db dir, which sets up the correct names for you; or manually initialise your session like so:\n\n.open client.db\nATTACH \"client.caches.db\" as external_caches;\nATTACH \"client.master.db\" as external_master;\nATTACH \"client.mappings.db\" as external_mappings;"
             }
+            Self::PendingCount => {
+                "This will clear and regen the number for the pending menu up top. Due to unusual situations and little counting bugs, these numbers can sometimes become unsynced. It should not take long at all, and will update instantly if changed."
+            }
+            Self::LocalHashes => {
+                "This will check and repair any bad rows in the local hashes cache, which keeps a small record of hashes for files on your hard drive. The cache isn't super important, but it speeds most operations up, and this routine fixes it when broken/desynced.\n\nIf you have a lot of files, it can take a minute, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless."
+            }
+            Self::LocalTags => {
+                "This will delete and then recreate the local tag cache, which keeps a small record of tags for files on your hard drive. It isn't super important, but it speeds most operations up, and this routine fixes it when broken.\n\nIf you have a lot of tags and files, it can take a long time, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless."
+            }
+            Self::ServiceInfo => {
+                "This clears the cached counts for things like the number of files or tags on a service. Due to unusual situations and little counting bugs, these numbers can sometimes become unsynced. Clearing them forces an accurate recount from source.\n\nSome GUI elements (_services->review_, mainly) may be slow the next time they launch. Especially if you clear for all services."
+            }
+            Self::SimilarTree => {
+                "This will delete and then recreate the similar files search tree. This is useful if it has somehow become unbalanced and similar files searches are running slow.\n\nIf you have a lot of files, it can take a little while, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless."
+            }
+            Self::RepopulateMappings => {
+                "WARNING: Do not run this for no reason!\n\nIf you have significant local tags (e.g. 'my tags') storage, recently had a 'malformed' client.mappings.db file, and have since gone through clone/repair and now have a truncated file, this routine will attempt to recover missing tags from the smaller tag cache stored in client.caches.db.\n\nIt can only recover tags for files currently stored by your client. It will take some time, during which the gui may hang. Once it is done, you probably want to regenerate your tag mappings cache, so that you are completely synced again."
+            }
+            Self::ResyncDeleted => {
+                "This will resynchronise the \"deleted from anywhere\" cache to the actual records in the database, ensuring that various tag searches over the deleted files domain give correct counts and file results. It isn't super important, but this routine fixes it if it is desynchronised.\n\nIt should not take all that long, but if you have a lot of deleted files, it can take a little while, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless."
+            }
+            Self::OrphanSerialisables => {
+                "DO NOT RUN THIS UNLESS YOU KNOW YOU NEED TO. MAKE A BACKUP BEFORE YOU RUN IT\n\nThis force-runs a routine that regularly removes some spare data from the database. You most likely do not need to run it."
+            }
         }
     }
 
@@ -242,6 +299,10 @@ impl Job {
             | Self::TagTextSearchable
             | Self::FixInconsistentMappings
             | Self::ResyncTagCounts => "do it--now choose which service",
+            Self::RepopulateMappings => {
+                "I have a reason to run this, let's do it--now choose which service"
+            }
+            Self::PendingCount | Self::ServiceInfo => "yes",
             Self::SiblingsLookup
             | Self::ParentsLookup
             | Self::FixInvalidTags
@@ -249,7 +310,12 @@ impl Job {
             | Self::OrphanFileRecords
             | Self::OrphanUrlMappings
             | Self::OrphanTables
-            | Self::TablesUsingDefinitions => "do it",
+            | Self::TablesUsingDefinitions
+            | Self::LocalHashes
+            | Self::LocalTags
+            | Self::SimilarTree
+            | Self::ResyncDeleted
+            | Self::OrphanSerialisables => "do it",
         }
     }
     /// The popup a job shows while it works, finished "done!" after.
@@ -269,24 +335,47 @@ impl Job {
             Self::Analyze => "database maintenance - analyzing",
             Self::OrphanFileRecords => "clear/fix orphan file records",
             Self::OrphanUrlMappings => "clear orphan url mappings",
+            Self::LocalHashes => "resynchronising local hashes cache",
+            Self::LocalTags => "regenerating local tag cache",
+            Self::SimilarTree => "regenerating similar file search data",
             Self::SiblingsLookup
             | Self::ParentsLookup
             | Self::OrphanTables
-            | Self::TablesUsingDefinitions => return None,
+            | Self::TablesUsingDefinitions
+            | Self::PendingCount
+            | Self::ServiceInfo
+            | Self::RepopulateMappings
+            | Self::ResyncDeleted
+            | Self::OrphanSerialisables => return None,
         })
     }
 }
 
 /// The "Which service?" choices: all services, then each tag service (name,
 /// key, tooltip), as `GetTagServiceKeyForMaintenance` offers them.
-pub fn service_choices(store: &Store) -> Vec<(String, Option<ServiceKey>, String)> {
+pub fn service_choices(store: &Store, job: Job) -> Vec<(String, Option<ServiceKey>, String)> {
+    use hydrus_core::service::ServiceType;
     let snapshot = store.snapshot();
     let mut choices = vec![(
         "all services".to_owned(),
         None,
         "Do it for everything. Can take a long time!".to_owned(),
     )];
-    let mut services: Vec<_> = snapshot.services.tag_services().collect();
+    // (service info: every service; the pending count: the repositories)
+    let mut services: Vec<_> = match job {
+        Job::ServiceInfo => snapshot.services.all().collect(),
+        Job::PendingCount => snapshot
+            .services
+            .all()
+            .filter(|s| {
+                matches!(
+                    s.service_type(),
+                    ServiceType::TagRepository | ServiceType::FileRepository | ServiceType::Ipfs
+                )
+            })
+            .collect(),
+        _ => snapshot.services.tag_services().collect(),
+    };
     // (by name, as the reference's services manager sorts them)
     services.sort_by_key(|s| s.name.to_lowercase());
     for service in services {
@@ -426,6 +515,16 @@ pub fn run(store: &Store, job: Job, answer: &Answer, now: i64) -> hydrus_store::
                     .map(|t| format!("Cleared orphan table \"{t}\"")),
             );
         }
+        // (nothing cached to regenerate or resync; the reference's popups for
+        // a client with nothing wrong)
+        Job::LocalHashes => "Done with no errors found!".clone_into(&mut final_text),
+        Job::LocalTags
+        | Job::SimilarTree
+        | Job::PendingCount
+        | Job::ServiceInfo
+        | Job::ResyncDeleted => {}
+        Job::RepopulateMappings => messages.push("Done! Rows recovered: 0".into()),
+        Job::OrphanSerialisables => messages.push("No orphans found!".into()),
         Job::TablesUsingDefinitions => {
             let definition = if answer.tag_definitions {
                 Definition::Tag

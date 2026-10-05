@@ -865,10 +865,18 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   search's deterministic size ordering rather than the reference's random sample
   when that domain cannot sort at database level. They
   don't pause the folders while open, as the reference does.
-- **The duplicates page's preparation tab** has no "regenerate search
-  tree" or "regenerate search numbers" (hydrus-rs builds its search index
-  afresh, and counts searched files directly) or "resync potential pairs
-  to storage" yet. Working hard tells `hydrus serve` to search whatever
+- **Options > maintenance and processing**'s repository processing,
+  sibling/parent sync and deferred table delete timings are kept and
+  edited, but nothing reads them yet: hydrus-rs has no repository
+  processing, and it syncs siblings/parents and drops tables as it writes
+  rather than in background work. Their boxes lack the reference's one-line
+  explanations, aren't collapsible, and aren't imported from a legacy
+  client's options.
+- **The duplicates page's preparation tab**'s "regenerate search tree"
+  and "regenerate search numbers" ask the reference's questions but then
+  only refresh: hydrus-rs builds its search index afresh and counts
+  searched files directly, so there is no cache to regenerate. The resync
+  reports in one finished popup, not a cancellable progress one. Working hard tells `hydrus serve` to search whatever
   its idle and normal time switches say (it has no idle time of its own).
   The tab's name always hides the percentage once over 99% done (the
   reference's option for it isn't kept). The auto-resolution tab can't
@@ -3383,10 +3391,13 @@ manual save-last-session action and wider debug GUI/style families remain unclai
   service is gone.
 - Local hashes cache, local tags cache, service info numbers, total pending
   count, similar files search tree, repopulate truncated mappings tables,
-  resync combined deleted files and clear orphan hashed serialisables stay
-  disabled: the native store has no such caches or separate tables (pending
-  counts and service numbers are counted live; the similar-files index is
-  built per search).
+  resync combined deleted files and clear orphan hashed serialisables ask
+  the reference's questions (and which service, where it asks) but find
+  nothing to do: the native store has no such caches or separate tables
+  (pending counts and service numbers are counted live; the similar-files
+  index is built per search). They show the popups the reference shows on a
+  client with nothing wrong ("Done with no errors found!", "Done! Rows
+  recovered: 0", "No orphans found!").
 - Get tables using definitions works on the native schema; the reference
   v688's read raises `NotImplementedError` from one of its modules, so it
   shows an error there. Its lines have no schema names (one database file).
@@ -3439,3 +3450,19 @@ manual save-last-session action and wider debug GUI/style families remain unclai
   made elsewhere (write-tag menus, filename tagging, migration) are not yet.
   A content package listing several actions or services names them sorted,
   where the reference's set order varies.
+
+## Per-filetype media handling
+
+- "add" chooses the filetype from a column of buttons rather than the
+  reference's filterable list. The editor offers mpv whatever the client's mpv
+  availability, and shows no mpv/QtMediaPlayer advice beyond the reference's
+  intro text.
+
+## Duplicates page filtering
+
+- The pair searches are typed predicates (as in file history), not read
+  autocompletes, and keep the page's file domain; there is no count pause,
+  estimate or optimisation cog: counts are exact and run once per change.
+- Setting the shown files' relationship applies each pair once with the default
+  merge options; the reference runs its merges twice so content propagates
+  between all files.

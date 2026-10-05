@@ -2121,6 +2121,41 @@ impl Pages {
             self.notebook_at(depth).map_or(0, <[Page]>::len),
             self.path.get(depth).copied().unwrap_or(0),
         );
+        // the media pages in the clicked notebook (or this tab's notebook),
+        // to show one (`selectable_media_pages`)
+        let notebook = match &page.content {
+            PageContent::Pages(_) => Some(page.key),
+            _ => self.notebook_key(depth),
+        };
+        // (a key that isn't a page's gives the top notebook's pages)
+        let leaves = self.pages_under(&notebook.unwrap_or(PageKey([0; 32])));
+        let all = self.session.all_pages();
+        let selectable: Vec<crate::main_menu::Entry> = leaves
+            .iter()
+            .filter_map(|key| all.iter().find(|p| p.key == *key))
+            .map(|p| {
+                let (files, progress) = self.file_summary(p);
+                crate::main_menu::Entry::Item {
+                    label: hydrus_core::pages::name_for_menu(&p.name, files, progress, true),
+                    enabled: true,
+                    command: Some(crate::main_menu::Command::ShowPage(p.key)),
+                }
+            })
+            .collect();
+        if !selectable.is_empty() {
+            let at = entries
+                .iter()
+                .position(|e| *e == crate::main_menu::Entry::Separator)
+                .map_or(entries.len().min(1), |i| i + 1);
+            entries.insert(
+                at,
+                crate::main_menu::Entry::Menu {
+                    label: "pages".into(),
+                    entries: selectable,
+                    enabled: true,
+                },
+            );
+        }
         entries.push(crate::main_menu::Entry::Separator);
         for (label, before) in [("new page", None), ("new page here", Some(page.key))] {
             entries.push(crate::main_menu::Entry::Item {

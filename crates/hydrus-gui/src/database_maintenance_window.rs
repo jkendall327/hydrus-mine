@@ -127,11 +127,11 @@ pub fn open(store: &Arc<Store>, slot: &Slot, job: Job) -> Result<(), String> {
 
 /// After yes: the service chooser where the job asks one, then the job.
 fn after_yes(store: &Arc<Store>, slot: &Slot, job: Job, answer: Answer) {
-    if !job.chooses_tag_service() {
+    if !job.chooses_service() {
         start(store, job, answer);
         return;
     }
-    let choices = model::service_choices(store);
+    let choices = model::service_choices(store, job);
     let names = choices.iter().map(|c| c.0.clone()).collect();
     let keys: Vec<_> = choices.into_iter().map(|c| c.1).collect();
     let store = store.clone();

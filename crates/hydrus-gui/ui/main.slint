@@ -29,8 +29,8 @@ import { NotebookNavigation, NotebookTree, TabRow, PageTreeRow } from "notebook_
 export { TabRow, PageTreeRow, TabNames, TabFit } from "notebook_tabs.slint";
 import { MenuBarRow, MenuLine, MenuPane, MenuPanes, MenuTitle } from "main_menu.slint";
 import { PopupBounds, PopupData, PopupStack } from "popups.slint";
-import { DuplicatesData, DuplicatesSidebar } from "duplicates_page.slint";
-export { DuplicatesData }
+import { DuplicatesData, DuplicatesFiltering, DuplicatesSidebar } from "duplicates_page.slint";
+export { DuplicatesData, DuplicatesFiltering }
 import { RatingShape } from "viewer.slint";
 export { DownloadLine, GalleryData, WatcherData, JobCogMenu }
 export { NetworkErrorWindow } from "importing.slint";
@@ -79,6 +79,7 @@ export { CheckerOptionsWindow, CheckerTexts } from "checker_options.slint";
 export { SessionDialog } from "session_dialog.slint";
 export { ChoiceButtonsWindow } from "choice_buttons.slint";
 export { BonesRow, HowBonedWindow } from "how_boned.slint";
+export { MediaViewWindow } from "media_views.slint";
 export { TableColumn, TableRow }
 export { LocationTick, LocationsWindow } from "domains.slint";
 export { FavouriteEditWindow, FavouriteListRow, FavouritesWindow } from "favourites.slint";
@@ -409,6 +410,10 @@ export component MainWindow inherits Window {
     in property <DuplicatesData> duplicates;
     in property <[TableRow]> duplicates-rules;
     callback duplicates-action(string, int, bool, bool);
+    in property <DuplicatesFiltering> duplicates-filtering;
+    in-out property <string> duplicates-filter-input-1;
+    in-out property <string> duplicates-filter-input-2;
+    callback duplicates-filtering-action(string, int);
     in property <bool> sort-cog-visible;
     in property <ContextCogServices> sort-cog-services;
     in property <ContextCogServices> collect-cog-services;
@@ -1176,6 +1181,10 @@ export component MainWindow inherits Window {
                         data: root.duplicates;
                         rules: root.duplicates-rules;
                         note: root.note;
+                        filtering: root.duplicates-filtering;
+                        filter-input-1 <=> root.duplicates-filter-input-1;
+                        filter-input-2 <=> root.duplicates-filter-input-2;
+                        filtering-action(what, n) => { root.duplicates-filtering-action(what, n); }
                         action(what, n, ctrl, shift) => {
                             if (what == "launch filter") {
                                 root.launch-filter();

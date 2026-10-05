@@ -339,6 +339,11 @@ impl SearchPage {
         self.duplicates.as_ref()
     }
 
+    /// A duplicates page's filtering, to edit.
+    pub fn duplicates_mut(&mut self) -> Option<&mut DuplicatesPage> {
+        self.duplicates.as_mut()
+    }
+
     /// A search page as a session kept it: its search and sort, and the
     /// files it showed (it searches again when its search changes).
     pub fn restored(
