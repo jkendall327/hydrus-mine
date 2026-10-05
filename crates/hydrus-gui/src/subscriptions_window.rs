@@ -24,7 +24,7 @@ use crate::edit_subscription_window::Slots;
 use crate::subscriptions_dedupe::{Answer, Dedupe, Question};
 use crate::subscriptions_dialog::{
     CheckNow, Choice, DELETE_QUESTION, DialogQuery, ImportOptionsPaste, LOWERCASE_QUESTION,
-    MERGE_PRIMARY, MERGE_QUESTION, NOT_MERGEABLE, Picked, RESET_QUESTION, SELECT_MESSAGE,
+    MERGE_PRIMARY, MERGE_QUESTION, Merge, NOT_MERGEABLE, Picked, RESET_QUESTION, SELECT_MESSAGE,
     SEPARATE_CHOICES, SEPARATE_MERGED_CHOICES, SEPARATE_MERGED_NAME, SEPARATE_MERGED_QUESTION,
     SEPARATE_NAME, SEPARATE_PICK, SEPARATE_QUESTION, Separate, Subscriptions, added_message,
     picked,
@@ -55,12 +55,13 @@ enum Asking {
     RetryIgnored,
     Merge,
     /// A merge group's primary; the groups after it.
-    MergePrimary(Vec<u64>, Vec<Vec<u64>>),
+    MergePrimary(Vec<u64>, Vec<Vec<u64>>, Vec<Merge>),
     /// A merged subscription's name; the groups after it.
     MergeName {
         group: Vec<u64>,
         primary: u64,
         rest: Vec<Vec<u64>>,
+        accepted: Vec<Merge>,
     },
     SeparateHow,
     /// "only extract some": the queries ticked.
@@ -384,23 +385,29 @@ fn ask_separate_name(open: &mut Open, how: Separate) {
     open.asking = Some(Asking::SeparateName(how));
 }
 
-/// Merge a group into its primary, named `name` (or its own name), and
-/// ask about the next group, if there is one.
+/// Stage a group's decision; change the list only after every group succeeds.
 fn merge_named(
     open: &mut Open,
     group: &[u64],
     primary: u64,
     mut rest: Vec<Vec<u64>>,
+    mut accepted: Vec<Merge>,
     name: Option<&str>,
 ) {
     let name = name
         .map(str::to_owned)
         .or_else(|| open.dialog.get(primary).map(|s| s.name.clone()))
         .unwrap_or_default();
-    open.dialog.merge(primary, group, &name);
+    accepted.push(Merge {
+        primary,
+        group: group.to_vec(),
+        name,
+    });
     if !rest.is_empty() {
         let next = rest.remove(0);
-        open.asking = Some(Asking::MergePrimary(next, rest));
+        open.asking = Some(Asking::MergePrimary(next, rest, accepted));
+    } else {
+        open.dialog.merge_many(&accepted);
     }
 }
 
@@ -504,7 +511,7 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
             },
             false,
         )),
-        Some(Asking::MergePrimary(group, _)) => Some((
+        Some(Asking::MergePrimary(group, _, _)) => Some((
             Choice {
                 title: MERGE_PRIMARY.into(),
                 message: String::new(),
@@ -1200,11 +1207,11 @@ pub(crate) fn open(
                             open.asking = Some(Asking::Message(NOT_MERGEABLE.into()));
                         } else {
                             let group = groups.remove(0);
-                            open.asking = Some(Asking::MergePrimary(group, groups));
+                            open.asking = Some(Asking::MergePrimary(group, groups, Vec::new()));
                         }
                     }
                 }
-                Some(Asking::MergePrimary(group, rest)) => {
+                Some(Asking::MergePrimary(group, rest, accepted)) => {
                     if let Some(&primary) = group.get(index) {
                         let name = open.dialog.get(primary).map(|s| s.name.clone());
                         *open.text.borrow_mut() = name;
@@ -1212,6 +1219,7 @@ pub(crate) fn open(
                             group,
                             primary,
                             rest,
+                            accepted,
                         });
                     }
                 }
@@ -1219,7 +1227,8 @@ pub(crate) fn open(
                     group,
                     primary,
                     rest,
-                }) => merge_named(open, &group, primary, rest, Some(&text)),
+                    accepted,
+                }) => merge_named(open, &group, primary, rest, accepted, Some(&text)),
                 Some(Asking::SeparateHow) => match index {
                     0 => {
                         open.dialog.separate(now(), &Separate::Half, "");
@@ -1298,8 +1307,9 @@ pub(crate) fn open(
                         group,
                         primary,
                         rest,
+                        accepted,
                     }) => {
-                        merge_named(open, &group, primary, rest, None);
+                        merge_named(open, &group, primary, rest, accepted, None);
                     }
                     Some(Asking::MissingHistory(_, rest)) => {
                         import_next(open, rest);

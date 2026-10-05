@@ -287,6 +287,17 @@ pub struct Subscriptions {
     next_key: u64,
 }
 
+/// One group's accepted primary and name, held until all primary choices succeed.
+#[derive(Debug, Clone)]
+pub struct Merge {
+    /// The surviving subscription's draft key.
+    pub primary: u64,
+    /// All compatible draft keys, including the primary.
+    pub group: Vec<u64>,
+    /// The requested name, before collision handling.
+    pub name: String,
+}
+
 impl Subscriptions {
     /// The dialog on these subscriptions (with their ids), sorted by name.
     pub fn new(
@@ -910,22 +921,59 @@ impl Subscriptions {
     /// join the primary's, which is renamed `name` (made unique if it
     /// changed); the others go.
     pub fn merge(&mut self, primary: u64, group: &[u64], name: &str) {
-        let mut queries = Vec::new();
-        for &key in group.iter().filter(|&&k| k != primary) {
-            if let Some(s) = self.get(key) {
-                queries.extend(s.queries.iter().cloned());
+        self.merge_many(&[Merge {
+            primary,
+            group: group.to_vec(),
+            name: name.to_owned(),
+        }]);
+    }
+
+    /// Commit all accepted groups together. Qt removes every absorbed owner
+    /// before allocating names, reserving surviving original and new names.
+    /// Decisions contain no draft snapshots, so unrelated edits stay intact.
+    pub fn merge_many(&mut self, merges: &[Merge]) {
+        let mut renamed = Vec::new();
+        for merge in merges {
+            let Some(primary) = self.get(merge.primary) else {
+                continue;
+            };
+            let source = primary.settings.gug_name.clone();
+            let others: Vec<_> = merge
+                .group
+                .iter()
+                .copied()
+                .filter(|&key| key != merge.primary)
+                .filter(|&key| self.get(key).is_some_and(|s| s.settings.gug_name == source))
+                .collect();
+            if others.is_empty() {
+                continue;
             }
-            self.forget(key);
+            let mut queries = Vec::new();
+            for key in others {
+                if let Some(s) = self.get(key) {
+                    queries.extend(s.queries.iter().cloned());
+                }
+                self.forget(key);
+            }
+            if let Some(s) = self.get_mut(merge.primary) {
+                s.queries.extend(queries);
+                renamed.push((merge.primary, merge.name.as_str()));
+            }
         }
-        let unchanged = self.get(primary).is_some_and(|s| s.name == name);
-        let name = if unchanged {
-            name.to_owned()
-        } else {
-            self.non_dupe_name(name, Some(primary))
-        };
-        if let Some(s) = self.get_mut(primary) {
-            s.queries.extend(queries);
-            s.name = name;
+        let mut taken: Vec<_> = self
+            .subscriptions
+            .iter()
+            .map(|s| hydrus_core::casefold::casefold(&s.name))
+            .collect();
+        for (key, name) in renamed {
+            if let Some(s) = self.get_mut(key) {
+                if s.name != name {
+                    s.name = crate::favourites::non_dupe_name(name, &|n| {
+                        taken.contains(&hydrus_core::casefold::casefold(n))
+                    });
+                }
+                taken.push(hydrus_core::casefold::casefold(&s.name));
+            }
         }
     }
 }

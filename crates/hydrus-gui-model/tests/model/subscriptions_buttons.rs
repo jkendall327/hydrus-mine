@@ -18,6 +18,108 @@ use hydrus_store::queues::StatusCounts;
 
 use crate::subscriptions_list::{checker, status};
 
+#[test]
+fn batch_merge_reserves_names_after_absorption_and_keeps_successor_edits() {
+    use hydrus_gui_model::subscriptions_dialog::Merge;
+
+    let mut dialog = Subscriptions::new(
+        ["a1", "a2", "b1", "b2", "outside"]
+            .into_iter()
+            .enumerate()
+            .map(|(index, name)| {
+                let mut state = QueryState::new("overlapping text");
+                state.display_name = Some(name.into());
+                state.last_check_time = 123 + index as i64;
+                let mut query = DialogQuery::new(state);
+                query.queue = Some(200 + index as i64);
+                query.files.insert(status(4), index + 1);
+                query.seed_times.push(SeedTime {
+                    created: 50 + index as i64,
+                    source_time: Some(25),
+                });
+                query
+                    .log_changes
+                    .push(hydrus_gui_model::edit_subscription::LogChange::RetryFailed);
+                (
+                    Some(index as i64),
+                    name.into(),
+                    SubscriptionSettings {
+                        gug_name: name.chars().next().unwrap().to_string(),
+                        gug_key: name.into(),
+                        ..Default::default()
+                    },
+                    vec![query],
+                )
+            })
+            .collect(),
+    );
+    let key = |name: &str| {
+        dialog
+            .subscriptions
+            .iter()
+            .find(|s| s.name == name)
+            .unwrap()
+            .key
+    };
+    let (a1, a2, b1, b2, outside) = (key("a1"), key("a2"), key("b1"), key("b2"), key("outside"));
+    let decisions = [
+        Merge {
+            primary: b1,
+            group: vec![b1, b2],
+            name: "a1".into(),
+        },
+        Merge {
+            primary: a2,
+            group: vec![a1, a2],
+            name: "merged".into(),
+        },
+    ];
+    let before = dialog.subscriptions.clone();
+    // A decision list holds no older snapshot that could erase these changes.
+    let changed = dialog
+        .subscriptions
+        .iter_mut()
+        .find(|s| s.key == outside)
+        .unwrap();
+    changed.settings.paused = true;
+    changed
+        .queries
+        .push(DialogQuery::new(QueryState::new("draft addition")));
+    let successor = dialog.push(
+        None,
+        "successor draft".into(),
+        SubscriptionSettings::default(),
+        Vec::new(),
+    );
+    dialog.deleted.push(99);
+    dialog.merge_many(&decisions);
+    assert_eq!(dialog.get(b1).unwrap().name, "a1");
+    assert_eq!(dialog.get(a2).unwrap().name, "merged");
+    for (primary, other) in [(b1, b2), (a2, a1)] {
+        let original = before.iter().find(|s| s.key == primary).unwrap();
+        let absorbed = before.iter().find(|s| s.key == other).unwrap();
+        let actual = dialog.get(primary).unwrap();
+        assert_eq!(actual.id, original.id);
+        assert_eq!(actual.settings, original.settings);
+        let expected: Vec<_> = original
+            .queries
+            .iter()
+            .chain(&absorbed.queries)
+            .cloned()
+            .collect();
+        assert_eq!(actual.queries, expected);
+        assert!(dialog.get(other).is_none());
+    }
+    assert_eq!(dialog.absorbed, [3, 0]);
+    assert_eq!(dialog.deleted, [99]);
+    assert!(dialog.get(outside).unwrap().settings.paused);
+    assert_eq!(
+        dialog.get(outside).unwrap().queries[1].state.query_text,
+        "draft addition"
+    );
+    assert_eq!(dialog.get(successor).unwrap().name, "successor draft");
+}
+
 /// A recorded subscription as the dialog loads it, its queries' states as
 /// the recording started.
 fn subscription(

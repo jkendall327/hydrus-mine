@@ -730,9 +730,16 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   checker options, and deduplicate. Import options can be copied as the
   reference JSON container, pasted and cleared within the dialog's draft.
   Subscription export/import opens a staged modern-container child (remaining
-  exchange modes are noted above). "merge" merges each group
-  as its questions are answered (cancelling a later group's questions
-  leaves the earlier merged, where the reference merges none). It doesn't reckon bandwidth waits (the
+  exchange modes are noted above). Multi-group merge now stages only primary/name
+  decisions until every group is answered, matching the actual Qt cancellation
+  boundary (`oracle/fixtures/subscription_merge.json`). All absorbed owners go
+  before casefolded name allocation; surviving original names remain reserved,
+  including a primary's old spelling on a case-only rename. Like Qt, compatibility
+  uses downloader names even when their stored keys differ, settings come from
+  the primary, and overlapping query texts keep their separate histories. The
+  existing native bulk transaction moves queue identities before deleting
+  absorbed subscriptions; no histories are rebuilt or deduplicated by merge.
+  It doesn't reckon bandwidth waits (the
   error/delay column is empty unless the subscription is delayed). It
   doesn't pause subscriptions while open, as the reference does: "apply"
   writes only what the dialog changed, so a subscription the daemon ran
