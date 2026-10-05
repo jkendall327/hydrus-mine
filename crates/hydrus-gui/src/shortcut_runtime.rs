@@ -171,8 +171,8 @@ pub(crate) fn viewer(
     window: &MediaViewerWindow,
     store: Arc<Store>,
     canvas: crate::viewing_tracking::CanvasTracker,
-    content: Rc<dyn Fn(&hydrus_core::shortcuts::ContentCommand) -> bool>,
-    custom: Rc<RefCell<Vec<String>>>,
+    content: &Rc<dyn Fn(&hydrus_core::shortcuts::ContentCommand) -> bool>,
+    custom: &Rc<RefCell<Vec<String>>>,
 ) -> Route {
     let route = Route::default();
     let execute: Rc<dyn Fn(i32) -> bool> = Rc::new({

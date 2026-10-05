@@ -7681,8 +7681,8 @@ fn open_viewer(
         &window,
         model.borrow().store().clone(),
         viewing_stats.clone(),
-        content,
-        active_custom,
+        &content,
+        &active_custom,
     );
     windows::watch_named_events(
         window.window(),

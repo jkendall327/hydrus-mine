@@ -173,7 +173,7 @@ pub(crate) fn bind(
                 &weak,
                 target,
                 paint.clone(),
-                snapshot.clone(),
+                &snapshot,
             ) {
                 *slots.set.borrow_mut() = Some(window);
                 if let Some(parent) = weak.upgrade() {
@@ -436,8 +436,9 @@ fn open_set(
     parent: &slint::Weak<OptionsWindow>,
     target: Target,
     saved: Rc<dyn Fn()>,
-    snapshot: Arc<Snapshot>,
+    snapshot: &Arc<Snapshot>,
 ) -> Result<Owned<ShortcutSetWindow>, slint::PlatformError> {
+    let snapshot = snapshot.clone();
     let window = ShortcutSetWindow::new()?;
     let live = Rc::new(Cell::new(true));
     let settings = editor.borrow().edited_shortcuts();
@@ -534,7 +535,7 @@ fn open_set(
                 parent_live.clone(),
                 live.clone(),
                 &slots,
-                snapshot.clone(),
+                &snapshot,
                 Rc::new({
                     let snapshot = snapshot.clone();
                     let weak = weak.clone();
@@ -671,7 +672,7 @@ fn open_command(
     parent: Rc<Cell<bool>>,
     set_live: Rc<Cell<bool>>,
     slots: &Rc<Slots>,
-    snapshot: Arc<Snapshot>,
+    snapshot: &Snapshot,
     applied: Rc<dyn Fn(Command)>,
 ) -> Result<Owned<ShortcutCommandWindow>, slint::PlatformError> {
     use hydrus_gui_model::shortcut_content as content;
