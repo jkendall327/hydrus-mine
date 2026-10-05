@@ -148,6 +148,8 @@ fn apply_cancel_reopen_and_four_sides_preserve_real_nested_selection_and_full_na
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let tab_frames = std::rc::Rc::new(std::cell::RefCell::new(std::collections::HashMap::new()));
+    // This is the separate measurement observer. Production drag/pointer hit
+    // tracking remains installed on tab_geometry and receives the same frames.
     ui.on_tab_geometry_measured({
         let tab_frames = tab_frames.clone();
         move |key, _, _, _, x, y, width, height| {

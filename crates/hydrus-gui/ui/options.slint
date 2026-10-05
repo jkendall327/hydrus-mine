@@ -392,7 +392,16 @@ export component OptionsWindow inherits Window {
                                     checked: row.is-none;
                                     toggled => { root.none-toggled(i, self.checked); }
                                     property <{x:length,y:length,w:length,preferred:length}> frame: {x:self.absolute-position.x,y:self.absolute-position.y,w:self.width,preferred:self.preferred-width};
-                                    changed frame => { root.noneable-text-geometry(i,self.frame.x,self.frame.y,self.frame.w,self.frame.preferred); }
+                                    property <bool> measurement-pending: true;
+                                    changed frame => { self.measurement-pending = true; }
+                                }
+                                Timer {
+                                    interval: 1ms;
+                                    running: text-none.measurement-pending;
+                                    triggered => {
+                                        text-none.measurement-pending = false;
+                                        root.noneable-text-geometry(i,text-none.frame.x,text-none.frame.y,text-none.frame.w,text-none.frame.preferred);
+                                    }
                                 }
                             }
                             if row.kind == 16: Button {

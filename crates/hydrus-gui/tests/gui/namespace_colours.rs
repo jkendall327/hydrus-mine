@@ -294,13 +294,25 @@ fn actual_namespace_questions_cancel_retired_owners_reopen_and_live_colours_repl
             frames.borrow_mut().insert(index, (x, y, width, preferred));
         }
     });
-    let pixels = headless::render(&windows.get(1).unwrap(), 950, 1600);
     let connector = options
         .get_rows()
         .iter()
         .position(|row| row.none_phrase == "use ideal tag colour")
         .unwrap();
-    let (x, y, width, preferred) = noneable_frames.borrow()[&i32::try_from(connector).unwrap()];
+    let connector = i32::try_from(connector).unwrap();
+    let started = std::time::Instant::now();
+    let pixels = loop {
+        let pixels = headless::render(&windows.get(1).unwrap(), 950, 1600);
+        if noneable_frames.borrow().contains_key(&connector) {
+            break pixels;
+        }
+        assert!(
+            started.elapsed() < std::time::Duration::from_secs(1),
+            "initial native checkbox measurement must be published"
+        );
+        std::thread::yield_now();
+    };
+    let (x, y, width, preferred) = noneable_frames.borrow()[&connector];
     assert!(y > 0.0 && y < 1600.0, "actual checkbox is in the viewport");
     assert!(
         width + 0.1 >= preferred,
