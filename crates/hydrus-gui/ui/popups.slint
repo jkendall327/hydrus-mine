@@ -42,6 +42,33 @@ export struct PopupData {
     cancellable: bool,
 }
 
+export struct PopupBounds { x: length, y: length, width: length, height: length }
+
+// Observe the actual laid-out button, including its bottom edge. Width alone
+// cannot establish that a wrapped card contains every interactive control.
+component PopupButton inherits Rectangle {
+    in property <string> text;
+    in property <image> icon;
+    callback clicked();
+    callback measured(PopupBounds);
+    min-width: button.min-width;
+    min-height: button.min-height;
+    preferred-width: button.preferred-width;
+    preferred-height: button.preferred-height;
+    horizontal-stretch: 0;
+    vertical-stretch: 0;
+    forward-focus: button;
+    button := Button { width: parent.width; height: parent.height; text: root.text; icon: root.icon; clicked => { root.clicked(); } }
+    property <PopupBounds> frame: {x:button.absolute-position.x,y:button.absolute-position.y,width:button.width,height:button.height};
+    property <bool> measurement-pending: true;
+    changed frame => { self.measurement-pending = true; }
+    Timer {
+        interval: 1ms;
+        running: root.measurement-pending;
+        triggered => { root.measurement-pending = false; root.measured(root.frame); }
+    }
+}
+
 component Gauge inherits ProgressIndicator {
     in property <bool> going;
     indeterminate: self.going;
@@ -62,6 +89,7 @@ export component PopupStack inherits Rectangle {
     callback answer(string,string,string,string,bool);
     callback dismiss-all();
     callback card-measured(int,string,string,length,length);
+    callback control-measured(int,string,string,string,PopupBounds,PopupBounds);
     // Bold title font, as Qt's character-width conversion. Slint exposes text
     // measurement rather than Qt's averageCharWidth; approximate its padded
     // average using the same character sample, with native font metrics.
@@ -85,6 +113,12 @@ export component PopupStack inherits Rectangle {
             spacing: 4px;
             for popup[i] in root.popups: card := Rectangle {
                 clip: true;
+                // An ancestor's preferred-width height query can be wider than
+                // this capped card. Measure the actual body after its width is
+                // resolved, then carry that owned height through the outer stack.
+                property <length> content-height: body.preferred-height;
+                height: self.content-height;
+                property <PopupBounds> bounds: {x:self.absolute-position.x,y:self.absolute-position.y,width:self.width,height:self.height};
                 property <length> cap: round(popup.width-characters * root.character-width / 1px) * 1px;
                 property <{index:int,key:string,owner:string,w:length,cap:length}> frame: {index:i,key:popup.key,owner:popup.gui-owner,w:self.width,cap:self.cap};
                 // Repeated cards may begin with their final layout, without a
@@ -143,26 +177,26 @@ export component PopupStack inherits Rectangle {
                         progress: popup.gauge-2;
                         going: popup.gauge-2-going;
                     }
-                    if popup.has-question: VerticalLayout {
-                        Text {
-                            max-width: card.cap - 4px;
-                            text: popup.question;
-                            wrap: word-wrap;
-                        }
-                        HorizontalLayout {
-                            Button { text: "yes"; clicked => { root.answer(popup.key,popup.action-owner,popup.question-token,popup.gui-owner,true); } }
-                            Button { text: "no"; clicked => { root.answer(popup.key,popup.action-owner,popup.question-token,popup.gui-owner,false); } }
-                        }
+                    // Keep question text in the card's own vertical layout,
+                    // as Qt does, so its intrinsic height uses its rendered width.
+                    if popup.has-question: Text {
+                        max-width: card.cap - 4px;
+                        text: popup.question;
+                        wrap: word-wrap;
+                    }
+                    if popup.has-question: HorizontalLayout {
+                        PopupButton { text: "yes"; measured(b) => { root.control-measured(i,popup.key,popup.gui-owner,"yes",b,card.bounds); } clicked => { root.answer(popup.key,popup.action-owner,popup.question-token,popup.gui-owner,true); } }
+                        PopupButton { text: "no"; measured(b) => { root.control-measured(i,popup.key,popup.gui-owner,"no",b,card.bounds); } clicked => { root.answer(popup.key,popup.action-owner,popup.question-token,popup.gui-owner,false); } }
                     }
                     if popup.has-download: DownloadControl {
                         line: popup.download;
                     }
-                    if popup.has-clipboard: Button { text: popup.clipboard; clicked => { root.copy-payload(popup.key,popup.action-owner,popup.gui-owner); } }
+                    if popup.has-clipboard: PopupButton { measured(b) => { root.control-measured(i,popup.key,popup.gui-owner,"clipboard",b,card.bounds); } text: popup.clipboard; clicked => { root.copy-payload(popup.key,popup.action-owner,popup.gui-owner); } }
                     if popup.files != "": Button {
                         text: popup.files;
                         clicked => { root.show-files(i); }
                     }
-                    if popup.has-callable: Button { text: popup.callable; clicked => { root.call(popup.key,popup.action-owner,popup.gui-owner); } }
+                    if popup.has-callable: PopupButton { measured(b) => { root.control-measured(i,popup.key,popup.gui-owner,"callable",b,card.bounds); } text: popup.callable; clicked => { root.call(popup.key,popup.action-owner,popup.gui-owner); } }
                     if popup.traceback != "": Button {
                         text: card.traceback-shown ? "hide traceback" : "show traceback";
                         clicked => { card.traceback-shown = !card.traceback-shown; }
@@ -183,7 +217,8 @@ export component PopupStack inherits Rectangle {
                             icon: popup.paused ? @image-url("../../../static/play.png") : @image-url("../../../static/pause.png");
                             clicked => { root.pause-play(i); }
                         }
-                        if popup.cancellable: Button {
+                        if popup.cancellable: PopupButton {
+                            measured(b) => { root.control-measured(i,popup.key,popup.gui-owner,"cancel",b,card.bounds); }
                             icon: @image-url("../../../static/stop.png");
                             clicked => { root.cancel(i); }
                         }
