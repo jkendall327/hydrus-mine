@@ -96,6 +96,7 @@ pub(crate) fn open(
     let side_lists = Rc::new(RefCell::new([
         hydrus_gui_model::tag_suggestions::List::default(),
         hydrus_gui_model::tag_suggestions::List::default(),
+        hydrus_gui_model::tag_suggestions::List::default(),
     ]));
     let prefs = model.borrow().suggestion_preferences().clone();
     window.set_suggested_columns(prefs.columns);
@@ -114,11 +115,43 @@ pub(crate) fn open(
         .into_iter()
         .filter_map(|(key, tags)| (!tags.is_empty()).then_some(key))
         .collect();
+    let related_worker = match crate::related_tags_worker::Worker::new(model.borrow().store()) {
+        Ok(worker) => Some(Rc::new(worker)),
+        Err(error) => {
+            window
+                .set_related_status(format!("could not start related-tag search: {error}").into());
+            None
+        }
+    };
+    let related_settings: hydrus_store::related_tags::Settings = model
+        .borrow()
+        .store()
+        .read(hydrus_store::settings::get)
+        .unwrap_or_default();
+    window.set_related_tags_enabled(related_settings.enabled);
+    if prefs.default_page == "related" && related_settings.enabled {
+        window.set_suggested_page(2);
+    }
+    let related_request = Rc::new(RefCell::new(None::<hydrus_store::related_tags::Query>));
+    let related_results = Rc::new(RefCell::new(
+        Vec::<hydrus_store::related_tags::Suggestion>::new(),
+    ));
+    let side_pages = Rc::new(RefCell::new(std::collections::BTreeMap::<
+        hydrus_core::ServiceKey,
+        i32,
+    >::new()));
+    let shown_side_service = Rc::new(RefCell::new(None::<hydrus_core::ServiceKey>));
+    let default_side = window.get_suggested_page();
     let refresh_sides = Rc::new({
         let model = model.clone();
         let weak = window.as_weak();
         let lists = side_lists.clone();
         let active = active.clone();
+        let worker = related_worker.clone();
+        let last = related_request.clone();
+        let results = related_results.clone();
+        let pages = side_pages.clone();
+        let shown = shown_side_service.clone();
         move || {
             if !active.get() {
                 return;
@@ -132,17 +165,78 @@ pub(crate) fn open(
                 .as_ref()
                 .is_some_and(|key| side_services.contains(&key.to_hex()));
             w.set_most_used_enabled(enabled);
-            if !enabled {
-                w.set_suggested_page(1);
-            } else if !w.get_recent_tags_enabled() {
-                // Each Qt service owns its notebook. A shared native notebook
-                // must return to its only available page after service changes.
-                w.set_suggested_page(0);
+            if *shown.borrow() != key {
+                if let Some(previous) = shown.borrow().as_ref() {
+                    pages
+                        .borrow_mut()
+                        .insert(previous.clone(), w.get_suggested_page());
+                }
+                w.set_suggested_page(
+                    key.as_ref()
+                        .and_then(|key| pages.borrow().get(key).copied())
+                        .unwrap_or(default_side),
+                );
+                *shown.borrow_mut() = key.clone();
+            }
+            let valid = match w.get_suggested_page() {
+                0 => enabled,
+                1 => w.get_recent_tags_enabled(),
+                2 => w.get_related_tags_enabled(),
+                _ => false,
+            };
+            if !valid {
+                w.set_suggested_page(if enabled {
+                    0
+                } else if w.get_related_tags_enabled() {
+                    2
+                } else {
+                    1
+                });
+            }
+            if w.get_related_tags_enabled()
+                && let Some(worker) = &worker
+            {
+                match m.related_query(w.get_related_local(), w.get_related_display()) {
+                    Ok(query) => {
+                        if last.borrow().as_ref() != Some(&query) {
+                            worker.request(query.clone());
+                            *last.borrow_mut() = Some(query);
+                            results.borrow_mut().clear();
+                            w.set_related_status("searching…".into());
+                        }
+                        if let Some(result) = worker.poll() {
+                            match result {
+                                Ok(rows) => {
+                                    w.set_related_status(
+                                        if rows.is_empty() {
+                                            "no related tags found!"
+                                        } else {
+                                            "ready"
+                                        }
+                                        .into(),
+                                    );
+                                    *results.borrow_mut() = rows;
+                                }
+                                Err(error) => {
+                                    results.borrow_mut().clear();
+                                    w.set_related_status(error.into());
+                                }
+                            }
+                        }
+                    }
+                    Err(error) => {
+                        w.set_related_status(error.to_string().into());
+                    }
+                }
             }
             let mut lists = lists.borrow_mut();
-            for (i, list) in lists.iter_mut().enumerate() {
+            for (i, list) in lists.iter_mut().enumerate().take(2) {
                 list.update(key.clone(), m.side_suggestions(i == 1));
             }
+            lists[2].update(
+                key.clone(),
+                m.useful_related(results.borrow().iter().map(|row| row.tag.clone()).collect()),
+            );
             let presentation: hydrus_core::tag_presentation::TagPresentation = m
                 .store()
                 .read(hydrus_store::settings::get)
@@ -163,6 +257,39 @@ pub(crate) fn open(
             };
             w.set_most_used_rows(rows(&lists[0]));
             w.set_recent_tag_rows(rows(&lists[1]));
+            w.set_related_tag_rows(ModelRc::new(VecModel::from(
+                lists[2]
+                    .tags
+                    .iter()
+                    .zip(lists[2].mask())
+                    .map(|(tag, selected)| crate::TableRow {
+                        cells: ModelRc::new(VecModel::from(vec![SharedString::from(format!(
+                            "{} ({})",
+                            presentation.render(tag),
+                            hydrus_core::numbers::human_int(
+                                results
+                                    .borrow()
+                                    .iter()
+                                    .find(|r| &r.tag == tag)
+                                    .map_or(0, |r| r.score)
+                            )
+                        ))])),
+                        selected,
+                    })
+                    .collect::<Vec<_>>(),
+            )));
+        }
+    });
+    window.on_related_search({
+        let active = active.clone();
+        let last = related_request.clone();
+        let refresh = refresh_sides.clone();
+        let incremental = incremental_open.clone();
+        move || {
+            if active.get() && !incremental.get() {
+                last.borrow_mut().take();
+                refresh();
+            }
         }
     });
     let base_refresh = refresh.clone();
@@ -329,6 +456,7 @@ pub(crate) fn open(
         let tag_menu = tag_menu.clone();
         let preference_timer = preference_timer.clone();
         let side_timer = side_timer.clone();
+        let related_worker = related_worker.clone();
         move || {
             if !active.replace(false) {
                 return;
@@ -337,6 +465,9 @@ pub(crate) fn open(
             crate::incremental_tagging_window::cancel(&incremental_slot);
             preference_timer.stop();
             side_timer.stop();
+            if let Some(worker) = &related_worker {
+                worker.close();
+            }
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }

@@ -1968,5 +1968,33 @@
         }
       ]
     }
-  ]
+  ],
+  "consumer": {
+    "initial": [
+      "alpha:first",
+      "beta:second",
+      "alpha:third"
+    ],
+    "activations": [
+      {
+        "tags": [
+          "alpha:first"
+        ],
+        "only_add": true
+      }
+    ],
+    "after_activate": [
+      "beta:second",
+      "alpha:third"
+    ],
+    "changed": [
+      "beta:second",
+      "alpha:first",
+      "alpha:third"
+    ],
+    "present_on_all_filtered": [
+      "alpha:first",
+      "alpha:third"
+    ]
+  }
 }

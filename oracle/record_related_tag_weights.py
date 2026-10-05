@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Actual Qt namespace/weight questions and native DB weighted related ranking.
+"""Actual Qt namespace/weight questions and real DB weighted related ranking.
 
-Only modal question answers are scripted. Weight controls, table validation,
+Modal question answers are scripted. Related-panel workers/publishers are
+forwarded synchronously to their real implementations. Weight controls, table validation,
 Options update and the real related-tags DB reader/filter/sort are unchanged.
 Synthetic tags/mappings are written only to the private unpacked basic fixture.
 """
@@ -84,8 +85,37 @@ def record(session):
             ordered = ClientSearchPredicate.SortPredicates(result[3])
             ranking.append(dict(name=name, search_weights=search_weights, result_weights=result_weights, searches=searches,
                                 searched=result[0], total=result[1], skipped=result[2], rows=[dict(tag=p.GetValue(), score=p.GetCount().GetMinCount()) for p in ordered]))
+        # Real RelatedTagsPanel filtering and add-only activation. Forward only
+        # its named query/publisher synchronously, preserving DB and UI handlers.
+        from hydrus.client.gui import ClientGUITagSuggestions as S
+        from hydrus.client.media import ClientMediaSingle
+        medias = [ClientMediaSingle.MediaSingle(m) for m in c.Read('media_results', hashes=hashes)]
+        old_thread, old_after = c.CallToThread, c.CallAfterQtSafe
+        c.CallToThread = lambda f,*a,**kw: f(*a,**kw) if getattr(f,'__name__','')=='do_it' else old_thread(f,*a,**kw)
+        c.CallAfterQtSafe = lambda w,f,*a,**kw: f(*a,**kw) if getattr(f,'__name__','')=='qt_code' else old_after(w,f,*a,**kw)
+        activations=[]
+        consumer=S.RelatedTagsPanel(c.gui,service.GetServiceKey(),lambda tags,**kw:activations.append(dict(tags=sorted(tags),only_add=kw.get('only_add'))))
+        try:
+            consumer._tag_display_type.SetOnOff(False)
+            c.new_options.SetRelatedTagsTagSliceWeights(ranking[0]['search_weights'],ranking[0]['result_weights'])
+            consumer.SetMedia(medias);consumer._FetchRelatedTagsNew(5.0)
+            initial_list=[t.GetTag() for t in consumer._related_tags._ordered_terms]
+            consumer._related_tags.TakeFocusForUser();consumer._related_tags._Activate(False,False)
+            after_activate=[t.GetTag() for t in consumer._related_tags._ordered_terms]
+            c.new_options.SetRelatedTagsTagSliceWeights(ranking[2]['search_weights'],ranking[2]['result_weights'])
+            consumer._FetchRelatedTagsNew(5.0)
+            changed_list=[t.GetTag() for t in consumer._related_tags._ordered_terms]
+            # All captured files already carrying beta removes that result from
+            # the actual panel's filtered list, independently of ranking.
+            c.WriteSynchronous('content_updates', U.ContentUpdatePackage.STATICCreateFromContentUpdates(service.GetServiceKey(), [U.ContentUpdate(HC.CONTENT_TYPE_MAPPINGS,HC.CONTENT_UPDATE_ADD,('beta:second',set(hashes)))]))
+            refreshed=[ClientMediaSingle.MediaSingle(m) for m in c.Read('media_results',hashes=hashes)]
+            consumer.SetMedia(refreshed);consumer._FetchRelatedTagsNew(5.0)
+            filtered_list=[t.GetTag() for t in consumer._related_tags._ordered_terms]
+        finally:
+            consumer.hide();consumer.deleteLater();c.CallToThread,c.CallAfterQtSafe=old_thread,old_after
+        panel_consumer=dict(initial=initial_list,activations=activations,after_activate=after_activate,changed=changed_list,present_on_all_filtered=filtered_list)
         return dict(initial=initial, events=events, protected_deletable=protected, normal_deletable=deletable, before=before, saved=saved, reopened=reopened,
-                    service=service.GetName(), files=[h.hex() for h in hashes], corpus=corpus, ranking=ranking)
+                    service=service.GetName(), files=[h.hex() for h in hashes], corpus=corpus, ranking=ranking, consumer=panel_consumer)
     return c.CallBlockingToQt(c.gui, drive)
 
 def main():

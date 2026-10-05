@@ -248,6 +248,9 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                     out.kind = 17;
                     out.text = "edit favourite tags".into();
                 }
+                (Kind::RelatedWeights, Value::RelatedWeights(_)) => {
+                    out.kind = 29;
+                }
                 (Kind::MostUsedTags, Value::MostUsedTags(_)) => {
                     out.kind = 28;
                 }
@@ -567,6 +570,38 @@ pub(crate) fn open(
             }
         }
     });
+    window.on_related_weights_clicked({
+        let slots = suggested_slot.clone();
+        let editor = editor.clone();
+        let active = active.clone();
+        let show_page = show_page.clone();
+        move || {
+            if !active.get() || slots.editor.borrow().is_some() || slots.weights.borrow().is_some()
+            {
+                return;
+            }
+            let initial = editor.borrow().edited_related_weights();
+            let accepted = Rc::new({
+                let editor = editor.clone();
+                let active = active.clone();
+                let show_page = show_page.clone();
+                move |weights| {
+                    if active.get() {
+                        editor.borrow_mut().set_related_weights(weights);
+                        show_page();
+                    }
+                }
+            });
+            if let Err(error) = crate::related_weights_window::open(
+                &slots.weights,
+                &initial,
+                active.clone(),
+                accepted,
+            ) {
+                eprintln!("could not edit related weights: {error}");
+            }
+        }
+    });
     window.on_most_used_tags_clicked({
         let store = store.clone();
         let suggested_slot = suggested_slot.clone();
@@ -574,7 +609,10 @@ pub(crate) fn open(
         let active = active.clone();
         let show_page = show_page.clone();
         move || {
-            if !active.get() || suggested_slot.editor.borrow().is_some() {
+            if !active.get()
+                || suggested_slot.editor.borrow().is_some()
+                || suggested_slot.weights.borrow().is_some()
+            {
                 return;
             }
             let initial = editor.borrow().edited_most_used_tags();
@@ -1155,6 +1193,7 @@ pub(crate) fn open(
                 || namespace_slot.borrow().is_some()
                 || banner_slot.borrow().is_some()
                 || suggested_slot.editor.borrow().is_some()
+                || suggested_slot.weights.borrow().is_some()
             {
                 return;
             }

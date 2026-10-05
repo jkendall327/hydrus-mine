@@ -95,6 +95,8 @@ mod popup_menu;
 mod popups;
 pub mod predicate_editor_window;
 pub mod regex_favourites_window;
+mod related_tags_worker;
+pub mod related_weights_window;
 pub mod search_log_import_window;
 mod search_log_window;
 pub mod search_or_window;

@@ -19,6 +19,7 @@ fn namespace_questions_and_detached_tables_match_actual_qt() {
     assert_eq!(editor.namespace("creator"), Err(DUPLICATE.into()));
     let slice = editor.namespace("probe").unwrap();
     editor.add(slice, 10_000);
+    assert_eq!(editor.rows()[editor.selection()[0]].0, "probe:");
     assert_eq!(
         serde_json::json!(editor.weights.search),
         f["events"][5]["search"]
@@ -29,6 +30,7 @@ fn namespace_questions_and_detached_tables_match_actual_qt() {
         .position(|(s, _)| s == "probe:")
         .unwrap();
     editor.edit(probe, 0);
+    assert_eq!(editor.rows()[editor.selection()[0]].0, "probe:");
     assert_eq!(
         serde_json::json!(editor.weights.search),
         f["events"][6]["search"]
@@ -174,4 +176,43 @@ fn real_service_mappings_replay_recorded_ranks_and_never_cross_service() {
                 .is_empty()
         );
     }
+}
+
+#[test]
+fn options_acceptance_merges_only_weights_and_preserves_live_unrelated_preferences() {
+    use hydrus_gui_model::options::{Editor as Options, Settings};
+    use hydrus_store::{related_tags::Settings as Related, settings};
+    let (_dirs, store) =
+        super::options_dialog::fixture_store(&hydrus_testkit::fixture_json("options_dialog.json"));
+    let before = store.read(Settings::load).unwrap();
+    let mut options = Options::new(before.clone());
+    let mut weights = options.edited_related_weights();
+    weights.search.push(("parity:".into(), 10_000));
+    options.set_related_weights(weights.clone());
+    assert_eq!(
+        store.read(settings::get::<Related>).unwrap().weights,
+        before.related_tags.weights,
+        "discarded parent draft does not persist"
+    );
+    store
+        .write(|ctx| {
+            let mut current: Related = settings::get(ctx.conn())?;
+            current.enabled = false;
+            current.concurrence_percent = 11;
+            settings::set(ctx.conn(), &current)
+        })
+        .unwrap();
+    let (after, before, problems) = options.applied();
+    assert!(problems.is_empty());
+    let before = before.clone();
+    store
+        .write(move |ctx| after.save(ctx.conn(), &before))
+        .unwrap();
+    let reopened: Related = hydrus_store::Store::open(store.dir())
+        .unwrap()
+        .read(settings::get)
+        .unwrap();
+    assert_eq!(reopened.weights, weights);
+    assert!(!reopened.enabled);
+    assert_eq!(reopened.concurrence_percent, 11);
 }

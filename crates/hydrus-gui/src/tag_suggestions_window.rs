@@ -15,6 +15,7 @@ pub type Tags = BTreeMap<String, Vec<String>>;
 pub struct Slots {
     pub editor: Rc<RefCell<Option<MostUsedTagsWindow>>>,
     pub tags: crate::write_tag_window::Slot,
+    pub weights: crate::related_weights_window::Slot,
 }
 impl std::fmt::Debug for Slots {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -23,6 +24,7 @@ impl std::fmt::Debug for Slots {
 }
 /// Force-cancel descendants before their owner retires.
 pub fn cancel(slots: &Slots) {
+    crate::related_weights_window::cancel(&slots.weights);
     let child = slots
         .editor
         .borrow()
