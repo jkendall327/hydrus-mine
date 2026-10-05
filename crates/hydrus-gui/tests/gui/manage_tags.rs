@@ -88,7 +88,7 @@ fn most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers() {
         .unwrap();
     manage.invoke_service_chosen(i32::try_from(mine).unwrap());
     assert!(manage.get_suggested_columns());
-    assert_eq!(manage.get_suggested_width(), 240.0);
+    assert_eq!(manage.get_suggested_width().to_bits(), 240.0_f32.to_bits());
     assert_eq!(manage.get_suggested_page(), 1);
     let rows = manage.get_most_used_rows();
     assert_eq!(rows.row_count(), 3);
