@@ -620,7 +620,7 @@ export component MainWindow inherits Window {
     callback tab-new-page-requested(string, string);
     callback retire-external-launches();
     callback refresh-application-title();
-    out property <int> tag-search-activation-requests;
+    in-out property <int> tag-search-activation-requests;
     callback close-page();
     callback unclose-page();
     callback archive-delete-filter();

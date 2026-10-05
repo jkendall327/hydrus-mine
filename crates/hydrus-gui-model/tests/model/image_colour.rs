@@ -43,7 +43,7 @@ fn qt_icc_checkbox_cancel_saved_reopen_preserves_concurrent_viewer_rules() {
             .write(|c| {
                 let mut rules: hydrus_core::media_viewer::MediaViewerSettings =
                     settings::get(c.conn())?;
-                rules.rating_icon_size = 29;
+                rules.rating_icon_size = 29.0;
                 settings::set(c.conn(), &rules)
             })
             .unwrap();
