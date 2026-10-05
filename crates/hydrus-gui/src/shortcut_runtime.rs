@@ -144,10 +144,23 @@ pub(crate) fn main(window: &MainWindow, store: Arc<Store>) -> Route {
     });
     route
 }
+/// The sets whose tag and rating shortcuts the viewer runs.
+const CONTENT_SETS: [&str; 2] = ["media", "media_viewer"];
+
+fn content_command(
+    settings: &Settings,
+    gesture: &Gesture,
+) -> Option<hydrus_core::shortcuts::ContentCommand> {
+    CONTENT_SETS
+        .iter()
+        .find_map(|set| settings.content_command(set, gesture).cloned())
+}
+
 pub(crate) fn viewer(
     window: &MediaViewerWindow,
     store: Arc<Store>,
     canvas: crate::viewing_tracking::CanvasTracker,
+    content: Rc<dyn Fn(&hydrus_core::shortcuts::ContentCommand) -> bool>,
 ) -> Route {
     let route = Route::default();
     let execute: Rc<dyn Fn(i32) -> bool> = Rc::new({
@@ -179,6 +192,7 @@ pub(crate) fn viewer(
         let store = store.clone();
         let execute = execute.clone();
         let canvas = canvas.clone();
+        let content = content.clone();
         move |text, bits| {
             if !canvas.active() {
                 return false;
@@ -187,6 +201,9 @@ pub(crate) fn viewer(
             let Some(gesture) = route.keyboard(&text, bits as u8, settings.merge_numpad) else {
                 return false;
             };
+            if let Some(command) = content_command(&settings, &gesture) {
+                return content(&command);
+            }
             settings
                 .command("media_viewer", &gesture)
                 .is_some_and(|action| execute(action))
@@ -198,6 +215,7 @@ pub(crate) fn viewer(
         let execute = execute.clone();
         let weak = window.as_weak();
         let canvas = canvas.clone();
+        let content = content.clone();
         move |key, press, bits| {
             if !canvas.active() {
                 return false;
@@ -206,9 +224,13 @@ pub(crate) fn viewer(
             let Some(gesture) = route.mouse(key as u32, press as u8, bits as u8) else {
                 return false;
             };
-            let done = settings
-                .command("media_viewer", &gesture)
-                .is_some_and(|action| execute(action));
+            let done = if let Some(command) = content_command(&settings, &gesture) {
+                content(&command)
+            } else {
+                settings
+                    .command("media_viewer", &gesture)
+                    .is_some_and(|action| execute(action))
+            };
             if done
                 && gesture.press == 2
                 && let Some(window) = weak.upgrade()

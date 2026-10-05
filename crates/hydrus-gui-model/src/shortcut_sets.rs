@@ -110,6 +110,17 @@ fn simple_names() -> &'static BTreeMap<String, String> {
 
 /// A binding's command as the set editor lists it (`ToString`).
 pub fn command_text(binding: &Binding) -> String {
+    command_text_with(binding, None)
+}
+
+/// [`command_text`], naming a content command's service from `services`.
+pub fn command_text_with(
+    binding: &Binding,
+    services: Option<&hydrus_store::services::ServiceRegistry>,
+) -> String {
+    if let (Some(content), Some(services)) = (&binding.content, services) {
+        return crate::shortcut_content::text(services, content);
+    }
     binding.text.clone().unwrap_or_else(|| {
         simple_names()
             .get(&binding.action.to_string())

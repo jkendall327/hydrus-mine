@@ -3630,6 +3630,17 @@ existing refresh, close-page and new-page callbacks; saved media viewer bindings
 call close, navigation, zoom and fullscreen callbacks. Existing hardcoded
 shortcuts remain fallbacks for unmatched bindings.
 
+A shortcut's command can also be "tag or rating": a local tag service with
+"flip on/off" or "set" and the tag, or a rating service with "flip on/off",
+"set", "increment" or "decrement" and the value ("like", "dislike", a number
+of stars, or blank for not set). The lists word them as the reference does
+("flip on/off tag mappings "blue eyes" for my tags", "set ratings 3/5 for
+stars"). In the media viewer, such shortcuts in the "media" and
+"media_viewer" sets apply to the file shown, as the reference's do: a tag is
+added where the file lacks it, else flipped off; a rating is set, else
+flipped off; increment and decrement move a numerical rating a star (from
+none to its lowest or highest) or an inc/dec count by one.
+
 The page lists the sets as the reference does. "built-in hydrus shortcut sets"
 shows each built-in set the client has, by its pretty name in the reference's
 order, with its number of shortcuts; "edit" (or a double-click) opens that set

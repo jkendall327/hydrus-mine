@@ -530,6 +530,7 @@ pub(crate) fn open(
     let media_views = crate::options_media_views::bind(&window, &editor, &active);
     let shortcuts = crate::shortcut_windows::bind(
         &window,
+        store,
         &editor,
         &active,
         Rc::new({

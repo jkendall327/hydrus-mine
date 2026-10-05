@@ -95,6 +95,7 @@ pub mod session_saving;
 pub mod session_weight;
 pub mod set_password;
 pub mod shortcut_capture;
+pub mod shortcut_content;
 pub mod shortcut_sets;
 pub mod shutdown_work;
 pub mod sidecar_editors;

@@ -7566,10 +7566,34 @@ fn open_viewer(
         }
     });
     windows::place(window.window(), &settings_frame);
+    // tag and rating shortcuts apply to the file shown
+    let content: Rc<dyn Fn(&hydrus_core::shortcuts::ContentCommand) -> bool> = Rc::new({
+        let model = model.clone();
+        let show = show.clone();
+        let last_tag_file = last_tag_file.clone();
+        let files_changed = files_changed.clone();
+        move |command| {
+            let (store, file) = {
+                let model = model.borrow();
+                (model.store().clone(), model.current())
+            };
+            match hydrus_gui_model::shortcut_content::apply(&store, &[file], command) {
+                Ok(true) => {
+                    last_tag_file.set(None);
+                    show();
+                    files_changed();
+                }
+                Ok(false) => {}
+                Err(e) => eprintln!("could not apply the shortcut: {e}"),
+            }
+            true
+        }
+    });
     let shortcuts = shortcut_runtime::viewer(
         &window,
         model.borrow().store().clone(),
         viewing_stats.clone(),
+        content,
     );
     windows::watch_named_events(
         window.window(),

@@ -60,7 +60,7 @@ export component ShortcutSetsPanel inherits VerticalLayout {
     }
 }
 export component ShortcutCommandWindow inherits Window {
-    title:"edit shortcut command";width:700px;height:330px;
+    title:"edit shortcut command";width:700px;height:420px;
     in property <string> keyboard-text;
     in property <string> mouse-text;
     in-out property <int> mode;
@@ -68,6 +68,16 @@ export component ShortcutCommandWindow inherits Window {
     in property <bool> release-enabled;
     in property <[string]> commands;
     in-out property <int> command-index;
+    // 0: a simple command; 1: a tag or rating (content) command
+    in-out property <int> command-type;
+    in property <[string]> content-services;
+    in-out property <int> content-service;
+    in property <[string]> content-actions;
+    in-out property <int> content-action;
+    in-out property <string> content-value;
+    in property <string> content-hint;
+    in property <string> content-error;
+    callback content-service-changed(int);
     out property <bool> keyboard-focused: keyboard.has-focus;
     out property <length> capture-x:mouse.absolute-position.x;
     out property <length> capture-y:mouse.absolute-position.y;
@@ -108,7 +118,15 @@ export component ShortcutCommandWindow inherits Window {
             }
         }
         Text{text:"command";font-weight:700;}
-        ComboBox{model:root.commands;current-index<=>root.command-index;}
+        ComboBox{model:["simple command","tag or rating"];current-index<=>root.command-type;enabled:root.content-services.length > 0;}
+        if root.command-type == 0: ComboBox{model:root.commands;current-index<=>root.command-index;}
+        if root.command-type == 1: VerticalLayout {
+            spacing:6px;
+            ComboBox{model:root.content-services;current-index<=>root.content-service;selected(_)=>{root.content-service-changed(self.current-index);}}
+            ComboBox{model:root.content-actions;current-index<=>root.content-action;}
+            LineEdit{text<=>root.content-value;placeholder-text:root.content-hint;}
+            if root.content-error != "": Text{text:root.content-error;color:#b00020;wrap:word-wrap;}
+        }
         HorizontalLayout {Rectangle{horizontal-stretch:1;}Button{text:"ok";clicked=>{root.apply();}}Button{text:"cancel";clicked=>{root.cancel();}}}
     }
 }

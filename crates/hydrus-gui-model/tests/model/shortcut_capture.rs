@@ -102,11 +102,13 @@ fn saved_keypad_policy_preserves_digits_and_resolves_non_number_alternates() {
                 gesture: pad.clone(),
                 action: 78,
                 text: None,
+                content: None,
             },
             Binding {
                 gesture: number.clone(),
                 action: 7,
                 text: None,
+                content: None,
             },
         ],
     );

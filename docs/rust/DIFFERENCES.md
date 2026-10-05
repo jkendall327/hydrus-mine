@@ -2678,6 +2678,14 @@ packet proposes only the two original Missing Options leaves. Authored Rust and
 native regressions await hosted CI; no local Cargo build, Rust test or mutation
 run was performed for this slice.
 
+Tag and rating shortcuts: only local tag services take tags (no pending or
+petitioning to repositories); the tag is typed rather than chosen with an
+autocomplete, and the rating typed rather than clicked on a rating control.
+They run in the media viewer only (not on thumbnails), from the "media" and
+"media_viewer" sets; custom sets can't be turned on there yet. The
+interactive "popup ... entry dialog" commands and file domain commands
+aren't offered.
+
 Options > shortcuts' set lists: the command editor still offers only the
 commands with a native executor (three for the main window, six for the
 viewers), so editing a default binding for another command replaces it with

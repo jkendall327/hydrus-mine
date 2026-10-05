@@ -7,11 +7,13 @@ use hydrus_gui_model::{
     shortcut_capture::{Capture, Wheel, commands},
     shortcut_sets as sets,
 };
+use hydrus_store::store::Snapshot;
 use slint::winit_030::{
     EventResult, WinitWindowAccessor as _,
     winit::event::{ElementState, MouseButton, MouseScrollDelta, WindowEvent},
 };
 use slint::{ComponentHandle as _, ModelRc, VecModel};
+use std::sync::Arc;
 use std::{
     cell::{Cell, RefCell},
     rc::Rc,
@@ -68,11 +70,13 @@ pub(crate) struct Owner {
 }
 pub(crate) fn bind(
     parent: &OptionsWindow,
+    store: &hydrus_store::Store,
     editor: &Rc<RefCell<Editor>>,
     active: &Rc<Cell<bool>>,
     other_open: Rc<dyn Fn() -> bool>,
 ) -> Owner {
     let slots = Rc::new(Slots::default());
+    let snapshot = store.snapshot();
     let settings = editor.borrow().edited_shortcuts();
     parent.set_shortcuts_merge_numpad(settings.merge_numpad);
     parent.set_shortcuts_primary_labels(settings.primary_labels);
@@ -407,7 +411,7 @@ impl Target {
         }
     }
 }
-fn show_set(window: &ShortcutSetWindow, bindings: &[Command], primary: bool) {
+fn show_set(window: &ShortcutSetWindow, bindings: &[Command], primary: bool, snapshot: &Snapshot) {
     let selected = window.get_selected();
     let rows = bindings
         .iter()
@@ -415,7 +419,7 @@ fn show_set(window: &ShortcutSetWindow, bindings: &[Command], primary: bool) {
         .map(|(i, b)| TableRow {
             cells: ModelRc::new(VecModel::from(vec![
                 b.gesture.text(primary).into(),
-                sets::command_text(b).into(),
+                sets::command_text_with(b, Some(&snapshot.services)).into(),
             ])),
             selected: i32::try_from(i).ok() == Some(selected),
         })
@@ -430,6 +434,7 @@ fn open_set(
     parent: &slint::Weak<OptionsWindow>,
     target: Target,
     saved: Rc<dyn Fn()>,
+    snapshot: Arc<Snapshot>,
 ) -> Result<Owned<ShortcutSetWindow>, slint::PlatformError> {
     let window = ShortcutSetWindow::new()?;
     let live = Rc::new(Cell::new(true));
@@ -442,7 +447,7 @@ fn open_set(
     window.set_set_name(name.as_str().into());
     window.set_name_enabled(matches!(target, Target::Custom(_)));
     window.set_description(sets::description(&name).unwrap_or_default().into());
-    show_set(&window, &draft.borrow(), primary);
+    show_set(&window, &draft.borrow(), primary, &snapshot);
     let close: Rc<dyn Fn()> = Rc::new({
         let slots = Rc::downgrade(slots);
         let live = live.clone();
@@ -465,6 +470,7 @@ fn open_set(
         }
     });
     window.on_selected_row({
+        let snapshot = snapshot.clone();
         let weak = window.as_weak();
         let draft = draft.clone();
         let live = live.clone();
@@ -476,11 +482,12 @@ fn open_set(
             }
             if let Some(window) = weak.upgrade() {
                 window.set_selected(row);
-                show_set(&window, &draft.borrow(), primary);
+                show_set(&window, &draft.borrow(), primary, &snapshot);
             }
         }
     });
     window.on_action({
+        let snapshot = snapshot.clone();
         let weak = window.as_weak();
         let draft = draft.clone();
         let live = live.clone();
@@ -515,6 +522,7 @@ fn open_set(
                     gesture: Gesture::default(),
                     action: commands(&name)[0].0,
                     text: None,
+                    content: None,
                 });
             if let Ok(child) = open_command(
                 value,
@@ -524,7 +532,9 @@ fn open_set(
                 parent_live.clone(),
                 live.clone(),
                 &slots,
+                snapshot.clone(),
                 Rc::new({
+                    let snapshot = snapshot.clone();
                     let weak = weak.clone();
                     let draft = draft.clone();
                     move |value| {
@@ -538,7 +548,7 @@ fn open_set(
                             window.set_selected(
                                 i32::try_from(index.unwrap_or(bindings.len() - 1)).unwrap_or(-1),
                             );
-                            show_set(&window, &bindings, primary);
+                            show_set(&window, &bindings, primary, &snapshot);
                         }
                     }
                 }),
@@ -549,6 +559,7 @@ fn open_set(
         }
     });
     window.on_remove_chosen({
+        let snapshot = snapshot.clone();
         let weak = window.as_weak();
         let draft = draft.clone();
         let live = live.clone();
@@ -570,11 +581,12 @@ fn open_set(
                     bindings.remove(index);
                 }
                 window.set_selected(-1);
-                show_set(&window, &bindings, primary);
+                show_set(&window, &bindings, primary, &snapshot);
             }
         }
     });
     window.on_apply({
+        let snapshot = snapshot.clone();
         let weak = window.as_weak();
         let draft = draft.clone();
         let live = live.clone();
@@ -598,8 +610,8 @@ fn open_set(
                         format!(
                             "The shortcut:\n\n{}\n\nis mapped twice:\n\n{}\n\n{}\n\nThe system only supports one command per shortcut in a set for now, please remove one.",
                             binding.gesture.text(primary),
-                            sets::command_text(binding),
-                            sets::command_text(previous)
+                            sets::command_text_with(binding, Some(&snapshot.services)),
+                            sets::command_text_with(previous, Some(&snapshot.services))
                         )
                         .into(),
                     );
@@ -657,10 +669,71 @@ fn open_command(
     parent: Rc<Cell<bool>>,
     set_live: Rc<Cell<bool>>,
     slots: &Rc<Slots>,
+    snapshot: Arc<Snapshot>,
     applied: Rc<dyn Fn(Command)>,
 ) -> Result<Owned<ShortcutCommandWindow>, slint::PlatformError> {
+    use hydrus_gui_model::shortcut_content as content;
     let window = ShortcutCommandWindow::new()?;
     let live = Rc::new(Cell::new(true));
+    // tag and rating commands, for the services that take them
+    let services = Rc::new(content::services(&snapshot.services));
+    window.set_content_services(ModelRc::new(VecModel::from(
+        services
+            .iter()
+            .map(|s| s.name.as_str().into())
+            .collect::<Vec<slint::SharedString>>(),
+    )));
+    let show_service = {
+        let services = services.clone();
+        let weak = window.as_weak();
+        Rc::new(move |index: usize| {
+            let (Some(window), Some(service)) = (weak.upgrade(), services.get(index)) else {
+                return;
+            };
+            window.set_content_actions(ModelRc::new(VecModel::from(
+                content::actions(&service.value)
+                    .iter()
+                    .map(|a| (*a).into())
+                    .collect::<Vec<slint::SharedString>>(),
+            )));
+            window.set_content_hint(
+                match service.value {
+                    content::ValueKind::Tag => "the tag",
+                    content::ValueKind::Like => "like, dislike, or blank for not set",
+                    content::ValueKind::Stars { .. } => "the stars, or blank for not set",
+                    content::ValueKind::Count => "",
+                }
+                .into(),
+            );
+        })
+    };
+    if let Some(command) = &value.content
+        && let Some((index, action, text)) = content::choices(&services, command)
+    {
+        window.set_command_type(1);
+        window.set_content_service(i32::try_from(index).unwrap_or(0));
+        show_service(index);
+        let position = services
+            .get(index)
+            .and_then(|s| content::actions(&s.value).iter().position(|a| *a == action))
+            .unwrap_or(0);
+        window.set_content_action(i32::try_from(position).unwrap_or(0));
+        window.set_content_value(text.into());
+    } else if !services.is_empty() {
+        show_service(0);
+    }
+    window.on_content_service_changed({
+        let show_service = show_service.clone();
+        let weak = window.as_weak();
+        move |index| {
+            if let Ok(index) = usize::try_from(index) {
+                show_service(index);
+                if let Some(window) = weak.upgrade() {
+                    window.set_content_action(0);
+                }
+            }
+        }
+    });
     let capture = Rc::new(RefCell::new(Capture::new(value.gesture, merge)));
     let actions = commands(scope);
     window.set_commands(ModelRc::new(VecModel::from(
@@ -812,6 +885,7 @@ fn open_command(
     window.on_apply({
         let valid = valid.clone();
         let capture = capture.clone();
+        let services = services.clone();
         let weak = window.as_weak();
         let close = close.clone();
         move || {
@@ -821,6 +895,36 @@ fn open_command(
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            let gesture = if window.get_mode() == 1 {
+                capture.borrow().mouse.clone()
+            } else {
+                capture.borrow().keyboard.clone()
+            };
+            if window.get_command_type() == 1 {
+                let service = usize::try_from(window.get_content_service())
+                    .ok()
+                    .and_then(|i| services.get(i));
+                let Some(service) = service else { return };
+                let action = usize::try_from(window.get_content_action())
+                    .ok()
+                    .and_then(|i| content::actions(&service.value).get(i))
+                    .copied()
+                    .unwrap_or_default();
+                match content::command(service, action, &window.get_content_value()) {
+                    Ok(command) => applied(Command {
+                        gesture,
+                        action: 0,
+                        text: None,
+                        content: Some(command),
+                    }),
+                    Err(e) => {
+                        window.set_content_error(e.into());
+                        return;
+                    }
+                }
+                close();
+                return;
+            }
             let Some((action, _)) = usize::try_from(window.get_command_index())
                 .ok()
                 .and_then(|i| actions.get(i))
@@ -828,13 +932,10 @@ fn open_command(
                 return;
             };
             applied(Command {
-                gesture: if window.get_mode() == 1 {
-                    capture.borrow().mouse.clone()
-                } else {
-                    capture.borrow().keyboard.clone()
-                },
+                gesture,
                 action: *action,
                 text: None,
+                content: None,
             });
             close();
         }

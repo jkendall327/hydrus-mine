@@ -75,6 +75,7 @@ mod session_saving;
 mod session_weight;
 mod set_password;
 mod shortcut_capture;
+mod shortcut_content;
 mod shortcut_sets;
 mod shutdown_work;
 mod sidecar_descriptions;
