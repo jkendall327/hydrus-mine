@@ -53,16 +53,27 @@ fn save(store: &Store, minimized: bool) {
         .unwrap();
 }
 fn open(ui: &MainWindow, bound: &hydrus_gui::Bound) -> (OptionsWindow, i32) {
-    ui.invoke_options_requested();
-    let w = bound.options.borrow().as_ref().unwrap().clone();
-    let p = w
+    ui.invoke_menu_title_pressed(0, 20., 22.);
+    let menu = ui.get_menu_panes().row_data(0).unwrap();
+    let i = menu
+        .lines
+        .iter()
+        .position(|row| row.label == "options…")
+        .unwrap();
+    ui.invoke_menu_line_clicked(0, i32::try_from(i).unwrap(), 0., 0., 0.);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    let page = window
         .get_pages()
         .iter()
-        .position(|p| p == "popup notifications")
+        .position(|p| p.text == "popup notifications")
         .unwrap();
-    w.invoke_page_selected(i32::try_from(p).unwrap());
-    let row = w.get_rows().iter().position(|r| r.label == LABEL).unwrap();
-    (w, i32::try_from(row).unwrap())
+    window.invoke_page_chosen(i32::try_from(page).unwrap());
+    let row = window
+        .get_rows()
+        .iter()
+        .position(|r| r.label == LABEL)
+        .unwrap();
+    (window, i32::try_from(row).unwrap())
 }
 #[test]
 fn queued_jobs_expire_and_change_under_frozen_cards_then_restore_and_live_false_resume() {
