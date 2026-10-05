@@ -469,7 +469,7 @@ fn selected_glyph_measurement_triggers_elision_at_the_actual_near_fit_boundary()
         wide > narrow + 2.0,
         "selected bold glyph advance is included in the actual strip probe: {wide} > {narrow}"
     );
-    let width = ((narrow + wide) / 2.0).floor() as u32;
+    let width = f32::midpoint(narrow, wide).floor() as u32;
     assert!(width as f32 > narrow && (width as f32) < wide);
     let native = windows.get(0).unwrap();
     for _ in 0..20 {
