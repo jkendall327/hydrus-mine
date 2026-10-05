@@ -398,7 +398,8 @@ pub(crate) fn open(
         &active,
         Rc::new({
             let slots = routing_slots.clone();
-            move || slots.has_open()
+            let regex_slot = regex_slot.clone();
+            move || slots.has_open() || crate::regex_favourites_window::has_open(&regex_slot)
         }),
     );
     let routing_table = crate::options_open_externally::bind(
@@ -406,7 +407,11 @@ pub(crate) fn open(
         &editor,
         &active,
         routing_slots,
-        shortcuts.has_open.clone(),
+        Rc::new({
+            let shortcuts_open = shortcuts.has_open.clone();
+            let regex_slot = regex_slot.clone();
+            move || shortcuts_open() || crate::regex_favourites_window::has_open(&regex_slot)
+        }),
     );
     let external_table =
         crate::options_external_calls::bind(store, &window, &editor, &active, external_slots);
@@ -550,8 +555,12 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let routing_open = routing_table.has_open.clone();
         let shortcuts_open = shortcuts.has_open.clone();
+        let regex_slot = regex_slot.clone();
         move |i| {
-            if routing_open() || shortcuts_open() {
+            if routing_open()
+                || shortcuts_open()
+                || crate::regex_favourites_window::has_open(&regex_slot)
+            {
                 return;
             }
             let chosen = usize::try_from(i)
@@ -735,24 +744,65 @@ pub(crate) fn open(
         let editor = editor.clone();
         let regex_slot = regex_slot.clone();
         let show_page = show_page.clone();
+        let active = active.clone();
+        let weak = window.as_weak();
+        let store = store.clone();
+        let routing_open = routing_table.has_open.clone();
+        let shortcuts_open = shortcuts.has_open.clone();
         move || {
-            if crate::regex_favourites_window::has_open(&regex_slot) {
+            if !active.get()
+                || !weak.upgrade().is_some_and(|w| w.window().is_visible())
+                || routing_open()
+                || shortcuts_open()
+                || crate::regex_favourites_window::has_open(&regex_slot)
+            {
                 return;
             }
+            let valid: Rc<dyn Fn() -> bool> = Rc::new({
+                let active = active.clone();
+                let weak = weak.clone();
+                move || active.get() && weak.upgrade().is_some_and(|w| w.window().is_visible())
+            });
             let favourites = editor.borrow().edited_regex_favourites();
             let applied = Rc::new({
                 let editor = editor.clone();
                 let show_page = show_page.clone();
+                let valid = valid.clone();
                 move |favourites| {
+                    if !valid() {
+                        return Err("The options window has closed.".into());
+                    }
                     editor.borrow_mut().set_regex_favourites(favourites);
                     show_page();
                     Ok(())
                 }
             });
-            if let Err(error) =
-                crate::regex_favourites_window::open(&favourites, &regex_slot, applied)
-            {
-                eprintln!("could not open regex favourites: {error}");
+            match crate::regex_favourites_window::open_owned(
+                &favourites,
+                &regex_slot,
+                applied,
+                Rc::new({
+                    let store = store.clone();
+                    move || {
+                        store
+                            .read(hydrus_store::regex_favourites::load)
+                            .map_err(|e| e.to_string())
+                    }
+                }),
+                valid,
+            ) {
+                Ok(child) => {
+                    if let Some(window) = weak.upgrade() {
+                        window.set_regex_child_open(true);
+                    }
+                    let weak = weak.clone();
+                    child.on_closed(move || {
+                        if let Some(window) = weak.upgrade() {
+                            window.set_regex_child_open(false);
+                        }
+                    });
+                }
+                Err(error) => eprintln!("could not open regex favourites: {error}"),
             }
         }
     });
@@ -858,6 +908,7 @@ pub(crate) fn open(
         let active = active.clone();
         let routing_open = routing_table.has_open.clone();
         let shortcuts_open = shortcuts.has_open.clone();
+        let regex_slot = regex_slot.clone();
         move |i| {
             if !active.get()
                 || !weak
@@ -866,7 +917,10 @@ pub(crate) fn open(
             {
                 return;
             }
-            if routing_open() || shortcuts_open() {
+            if routing_open()
+                || shortcuts_open()
+                || crate::regex_favourites_window::has_open(&regex_slot)
+            {
                 // The list's two-way current-item binding can precede this
                 // callback. Retain the editor's page while a child owns input.
                 if let Some(window) = weak.upgrade() {
@@ -1262,6 +1316,7 @@ pub(crate) fn open(
         });
     });
     window.on_apply({
+        let regex_slot = regex_slot.clone();
         let suggested_slot = suggested_slot.clone();
         let colours_open = colour_list.has_open.clone();
         let reasons_open = reason_queue.has_open.clone();
@@ -1289,6 +1344,7 @@ pub(crate) fn open(
                 || external_open()
                 || shortcuts_open()
                 || routing_open()
+                || crate::regex_favourites_window::has_open(&regex_slot)
                 || tag_slot.borrow().is_some()
                 || import_slot.borrow().is_some()
                 || namespace_slot.borrow().is_some()

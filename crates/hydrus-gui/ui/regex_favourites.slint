@@ -1,6 +1,7 @@
 import { Button, LineEdit } from "std-widgets.slint";
 import { ListTable, TableRow } from "list_table.slint";
 import { Theme } from "theme.slint";
+import { MenuPane, MenuPanes } from "main_menu.slint";
 export component RegexFavouritesWindow inherits Window {
     title: "manage regex favourites";
     preferred-width: 780px;
@@ -21,6 +22,12 @@ export component RegexFavouritesWindow inherits Window {
     callback changed();
     callback action(string);
     callback closed();
+    in property <[MenuPane]> favourite-panes;
+    callback favourite-menu(length,length);
+    callback favourite-dismissed();
+    callback favourite-placed(int,length,length,length);
+    callback favourite-line-hovered(int,int,length,length,length);
+    callback favourite-line-clicked(int,int,length,length,length);
     VerticalLayout {
         padding: 12px;
         spacing: 8px;
@@ -43,6 +50,7 @@ export component RegexFavouritesWindow inherits Window {
             HorizontalLayout {
                 Text { text: "regex phrase: "; color: Theme.text; vertical-alignment: center; }
                 LineEdit { horizontal-stretch: 1; text <=> root.phrase; edited => { root.changed(); } }
+                Button { text: "favourites ▾"; clicked => { root.favourite-menu(self.absolute-position.x,self.absolute-position.y+self.height); } }
             }
             HorizontalLayout {
                 Text { text: "description: "; color: Theme.text; vertical-alignment: center; }
@@ -69,5 +77,13 @@ export component RegexFavouritesWindow inherits Window {
             Button { text: "apply"; enabled: !root.editing && !root.deleting; clicked => { root.action("apply"); } }
             Button { text: "cancel"; clicked => { root.action("cancel"); } }
         }
+    }
+    if root.favourite-panes.length > 0: MenuPanes {
+        width: root.width; height: root.height; top: 0px;
+        panes: root.favourite-panes;
+        dismiss => { root.favourite-dismissed(); }
+        placed(p,x,y,w) => { root.favourite-placed(p,x,y,w); }
+        line-hovered(p,l,r,t,left) => { root.favourite-line-hovered(p,l,r,t,left); }
+        line-clicked(p,l,r,t,left) => { root.favourite-line-clicked(p,l,r,t,left); }
     }
 }

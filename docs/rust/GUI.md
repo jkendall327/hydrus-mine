@@ -587,7 +587,12 @@ the next session save uses that limit. The regex favourites page opens its
 regex/description list editor; accepting that child stages the parent draft,
 which Apply saves or Cancel forgets. Gui pages also chooses whether closing
 the current tab focuses its left or right neighbour, and whether sending pages
-to a new notebook prompts to rename it.
+to a new notebook prompts to rename it. The regex child blocks parent Apply and page/search navigation; regex, shortcut
+and routing children reject sibling launches while another is open. Hidden/retired owners cannot open, copy from or accept that child. Row editing
+offers a read-only favourites menu from explicitly owned saved preferences,
+with an enabled instruction and phrase copies that leave the input untouched.
+Unsaved list rows do not become menu choices. Descriptions cannot be empty;
+whitespace and advisory invalid regex fragments remain permitted.
 A "checker options"
 button opens the checker options editor (`hydrus-gui-model/src/checker_options.rs`,
 checked against the reference's `EditCheckerOptions`, recorded by

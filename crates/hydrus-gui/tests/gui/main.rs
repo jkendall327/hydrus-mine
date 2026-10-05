@@ -118,6 +118,7 @@ mod downloader_interchange;
 mod tag_migration;
 
 mod regex_favourites;
+mod regex_options_editor;
 mod tag_filter_favourites;
 
 mod downloader_display;

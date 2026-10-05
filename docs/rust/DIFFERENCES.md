@@ -1770,6 +1770,23 @@ shortcut/menu differences remain outside these ordinary close preferences.
 
 Regex matcher favourites use a dedicated “favourites” popup button, containing the same submenu entries and copy/manage behavior as the reference RegexInput’s combined regex button. Existing regex help/components controls remain separate. The clipboard instruction is enabled but copies nothing, matching the actual Qt action. Favourite validity remains advisory, and the shared manager accepts fragments; its Apply persists global choices independently of accepting the enclosing matcher.
 
+The Options favourites editor already supplied sorted CRUD and typed staging.
+Its row input now also offers the recorded read-only saved-favourites chooser,
+without recursive management or input replacement. All existing native callers
+provide saved preferences and owner validity explicitly; the public three-argument
+open API retains its supplied-value default. Hidden/retired owners reject child
+opening/actions. Regex, shortcut and routing children block each other's launches,
+and an open regex child blocks Options Apply and page/search navigation. Empty descriptions are
+rejected with the recorded EnterText message, while whitespace and invalid regex
+fragments remain permitted. Native row editing combines phrase and description
+in one inline panel instead of Qt's sequential dialogs; Cancel discards both.
+The reference editor has no import action. Existing help/component menus and
+broader regex workflows remain Partial. `regex_options_editor.json` records actual
+RegexPanel staging, nested-input saved choices, both row-input cancellations,
+duplicate warning, Edit and confirmed extended Delete; authored native replay
+reaches the actual saved StringMatchWindow menu and Store reopen. No local Rust
+execution or canonical inventory promotion is part of this slice.
+
 Passive tags, file-information, ratings/locations and notes copies now consume
 all four background preferences independently of popup and focus settings.
 They paint before the media, preserving occlusion and the reference's notes

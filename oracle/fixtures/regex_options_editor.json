@@ -1,0 +1,922 @@
+{
+  "initial": [
+    [
+      "z+",
+      "last"
+    ],
+    [
+      "a+",
+      "letters"
+    ]
+  ],
+  "steps": [
+    {
+      "operation": {
+        "action": "add",
+        "phrase": "\\d+",
+        "description": "numbers",
+        "menu": true
+      },
+      "before": {
+        "draft": [
+          [
+            "a+",
+            "letters"
+          ],
+          [
+            "z+",
+            "last"
+          ]
+        ],
+        "saved": [
+          [
+            "z+",
+            "last"
+          ],
+          [
+            "a+",
+            "letters"
+          ]
+        ]
+      },
+      "after": {
+        "draft": [
+          [
+            "\\d+",
+            "numbers"
+          ],
+          [
+            "a+",
+            "letters"
+          ],
+          [
+            "z+",
+            "last"
+          ]
+        ],
+        "saved": [
+          [
+            "z+",
+            "last"
+          ],
+          [
+            "a+",
+            "letters"
+          ]
+        ]
+      },
+      "said": [
+        {
+          "question": "Enter description.",
+          "default": null
+        }
+      ],
+      "opened": [
+        {
+          "title": "Enter regex",
+          "before": "",
+          "phrase": "\\d+",
+          "unchanged": "\\d+",
+          "valid": true
+        }
+      ],
+      "menus": [
+        {
+          "rows": [
+            {
+              "label": "click below to copy to clipboard",
+              "enabled": true
+            },
+            {
+              "separator": true
+            },
+            {
+              "label": "last",
+              "enabled": true
+            },
+            {
+              "label": "letters",
+              "enabled": true
+            }
+          ],
+          "saved": [
+            [
+              "z+",
+              "last"
+            ],
+            [
+              "a+",
+              "letters"
+            ]
+          ]
+        }
+      ],
+      "copied": [
+        "z+",
+        "a+"
+      ]
+    },
+    {
+      "operation": {
+        "action": "add",
+        "phrase": "\\d+",
+        "description": "numbers"
+      },
+      "before": {
+        "draft": [
+          [
+            "\\d+",
+            "numbers"
+          ],
+          [
+            "a+",
+            "letters"
+          ],
+          [
+            "z+",
+            "last"
+          ]
+        ],
+        "saved": [
+          [
+            "z+",
+            "last"
+          ],
+          [
+            "a+",
+            "letters"
+          ]
+        ]
+      },
+      "after": {
+        "draft": [
+          [
+            "\\d+",
+            "numbers"
+          ],
+          [
+            "a+",
+            "letters"
+          ],
+          [
+            "z+",
+            "last"
+          ]
+        ],
+        "saved": [
+          [
+            "z+",
+            "last"
+          ],
+          [
+            "a+",
+            "letters"
+          ]
+        ]
+      },
+      "said": [
+        {
+          "question": "Enter description.",
+          "default": null
+        },
+        {
+          "warning": "That regex and description are already in the list!"
+        }
+      ],
+      "opened": [
+        {
+          "title": "Enter regex",
+          "before": "",
+          "phrase": "\\d+",
+          "unchanged": "\\d+",
+          "valid": true
+        }
+      ],
+      "menus": [],
+      "copied": []
+    },
+    {
+      "operation": {
+        "action": "add",
+        "phrase": "[",
+        "description": "fragment"
+      },
+      "before": {
+        "draft": [
+          [
+            "\\d+",
+            "numbers"
+          ],
+          [
+            "a+",
+            "letters"
+          ],
+          [
+            "z+",
+            "last"
+          ]
+        ],
+        "saved": [
+          [
+            "z+",
+            "last"
+          ],
+          [
+            "a+",
+            "letters"
+          ]
+        ]
+      },
+      "after": {
+        "draft": [
+          [
+            "[",
+            "fragment"
+          ],
+          [
+            "\\d+",
+            "numbers"
+          ],
+          [
+            "a+",
+            "letters"
+          ],
+          [
+            "z+",
+            "last"
+          ]
+        ],
+        "saved": [
+          [
+            "z+",
+            "last"
+          ],
+          [
+            "a+",
+            "letters"
+          ]
+        ]
+      },
+      "said": [
+        {
+          "question": "Enter description.",
+          "default": null
+        }
+      ],
+      "opened": [
+        {
+          "title": "Enter regex",
+          "before": "",
+          "phrase": "[",
+          "unchanged": "[",
+          "valid": false
+        }
+      ],
+      "menus": [],
+      "copied": []
+    },
+    {
+      "operation": {
+        "action": "add",
+        "phrase": "discard",
+        "description": "unused",
+        "phrase_accept": false
+      },
+      "before": {
+        "draft": [
+          [
+            "[",
+            "fragment"
+          ],
+          [
+            "\\d+",
+            "numbers"
+          ],
+          [
+            "a+",
+            "letters"
+          ],
+          [
+            "z+",
+            "last"
+          ]
+        ],
+        "saved": [
+          [
+            "z+",
+            "last"
+          ],
+          [
+            "a+",
+            "letters"
+          ]
+        ]
+      },
+      "after": {
+        "draft": [
+          [
+            "[",
+            "fragment"
+          ],
+          [
+            "\\d+",
+            "numbers"
+          ],
+          [
+            "a+",
+            "letters"
+          ],
+          [
+            "z+",
+            "last"
+          ]
+        ],
+        "saved": [
+          [
+            "z+",
+            "last"
+          ],
+          [
+            "a+",
+            "letters"
+          ]
+        ]
+      },
+      "said": [],
+      "opened": [
+        {
+          "title": "Enter regex",
+          "before": "",
+          "phrase": "discard",
+          "unchanged": "discard",
+          "valid": true
+        }
+      ],
+      "menus": [],
+      "copied": []
+    },
+    {
+      "operation": {
+        "action": "add",
+        "phrase": "temporary",
+        "description": null,
+        "menu": true
+      },
+      "before": {
+        "draft": [
+          [
+            "[",
+            "fragment"
+          ],
+          [
+            "\\d+",
+            "numbers"
+          ],
+          [
+            "a+",
+            "letters"
+          ],
+          [
+            "z+",
+            "last"
+          ]
+        ],
+        "saved": [
+          [
+            "z+",
+            "last"
+          ],
+          [
+            "a+",
+            "letters"
+          ]
+        ]
+      },
+      "after": {
+        "draft": [
+          [
+            "[",
+            "fragment"
+          ],
+          [
+            "\\d+",
+            "numbers"
+          ],
+          [
+            "a+",
+            "letters"
+          ],
+          [
+            "z+",
+            "last"
+          ]
+        ],
+        "saved": [
+          [
+            "z+",
+            "last"
+          ],
+          [
+            "a+",
+            "letters"
+          ]
+        ]
+      },
+      "said": [
+        {
+          "question": "Enter description.",
+          "default": null
+        }
+      ],
+      "opened": [
+        {
+          "title": "Enter regex",
+          "before": "",
+          "phrase": "temporary",
+          "unchanged": "temporary",
+          "valid": true
+        }
+      ],
+      "menus": [
+        {
+          "rows": [
+            {
+              "label": "click below to copy to clipboard",
+              "enabled": true
+            },
+            {
+              "separator": true
+            },
+            {
+              "label": "last",
+              "enabled": true
+            },
+            {
+              "label": "letters",
+              "enabled": true
+            }
+          ],
+          "saved": [
+            [
+              "z+",
+              "last"
+            ],
+            [
+              "a+",
+              "letters"
+            ]
+          ]
+        }
+      ],
+      "copied": [
+        "z+",
+        "a+"
+      ]
+    },
+    {
+      "operation": {
+        "action": "edit",
+        "selected": [
+          "[",
+          "fragment"
+        ],
+        "phrase": "^a+$",
+        "description": "letters only"
+      },
+      "before": {
+        "draft": [
+          [
+            "[",
+            "fragment"
+          ],
+          [
+            "\\d+",
+            "numbers"
+          ],
+          [
+            "a+",
+            "letters"
+          ],
+          [
+            "z+",
+            "last"
+          ]
+        ],
+        "saved": [
+          [
+            "z+",
+            "last"
+          ],
+          [
+            "a+",
+            "letters"
+          ]
+        ]
+      },
+      "after": {
+        "draft": [
+          [
+            "\\d+",
+            "numbers"
+          ],
+          [
+            "^a+$",
+            "letters only"
+          ],
+          [
+            "a+",
+            "letters"
+          ],
+          [
+            "z+",
+            "last"
+          ]
+        ],
+        "saved": [
+          [
+            "z+",
+            "last"
+          ],
+          [
+            "a+",
+            "letters"
+          ]
+        ]
+      },
+      "said": [
+        {
+          "question": "Edit description.",
+          "default": "fragment"
+        }
+      ],
+      "opened": [
+        {
+          "title": "edit regex",
+          "before": "[",
+          "phrase": "^a+$",
+          "unchanged": "^a+$",
+          "valid": true
+        }
+      ],
+      "menus": [],
+      "copied": []
+    },
+    {
+      "operation": {
+        "action": "edit",
+        "selected": [
+          "^a+$",
+          "letters only"
+        ],
+        "phrase": "discard",
+        "description": null
+      },
+      "before": {
+        "draft": [
+          [
+            "\\d+",
+            "numbers"
+          ],
+          [
+            "^a+$",
+            "letters only"
+          ],
+          [
+            "a+",
+            "letters"
+          ],
+          [
+            "z+",
+            "last"
+          ]
+        ],
+        "saved": [
+          [
+            "z+",
+            "last"
+          ],
+          [
+            "a+",
+            "letters"
+          ]
+        ]
+      },
+      "after": {
+        "draft": [
+          [
+            "\\d+",
+            "numbers"
+          ],
+          [
+            "^a+$",
+            "letters only"
+          ],
+          [
+            "a+",
+            "letters"
+          ],
+          [
+            "z+",
+            "last"
+          ]
+        ],
+        "saved": [
+          [
+            "z+",
+            "last"
+          ],
+          [
+            "a+",
+            "letters"
+          ]
+        ]
+      },
+      "said": [
+        {
+          "question": "Edit description.",
+          "default": "letters only"
+        }
+      ],
+      "opened": [
+        {
+          "title": "edit regex",
+          "before": "^a+$",
+          "phrase": "discard",
+          "unchanged": "discard",
+          "valid": true
+        }
+      ],
+      "menus": [],
+      "copied": []
+    },
+    {
+      "operation": {
+        "action": "delete",
+        "selected": [
+          [
+            "\\d+",
+            "numbers"
+          ],
+          [
+            "z+",
+            "last"
+          ]
+        ],
+        "answer": false
+      },
+      "before": {
+        "draft": [
+          [
+            "\\d+",
+            "numbers"
+          ],
+          [
+            "^a+$",
+            "letters only"
+          ],
+          [
+            "a+",
+            "letters"
+          ],
+          [
+            "z+",
+            "last"
+          ]
+        ],
+        "saved": [
+          [
+            "z+",
+            "last"
+          ],
+          [
+            "a+",
+            "letters"
+          ]
+        ]
+      },
+      "after": {
+        "draft": [
+          [
+            "\\d+",
+            "numbers"
+          ],
+          [
+            "^a+$",
+            "letters only"
+          ],
+          [
+            "a+",
+            "letters"
+          ],
+          [
+            "z+",
+            "last"
+          ]
+        ],
+        "saved": [
+          [
+            "z+",
+            "last"
+          ],
+          [
+            "a+",
+            "letters"
+          ]
+        ]
+      },
+      "said": [],
+      "opened": [],
+      "menus": [],
+      "copied": []
+    },
+    {
+      "operation": {
+        "action": "delete",
+        "selected": [
+          [
+            "\\d+",
+            "numbers"
+          ],
+          [
+            "z+",
+            "last"
+          ]
+        ],
+        "answer": true
+      },
+      "before": {
+        "draft": [
+          [
+            "\\d+",
+            "numbers"
+          ],
+          [
+            "^a+$",
+            "letters only"
+          ],
+          [
+            "a+",
+            "letters"
+          ],
+          [
+            "z+",
+            "last"
+          ]
+        ],
+        "saved": [
+          [
+            "z+",
+            "last"
+          ],
+          [
+            "a+",
+            "letters"
+          ]
+        ]
+      },
+      "after": {
+        "draft": [
+          [
+            "^a+$",
+            "letters only"
+          ],
+          [
+            "a+",
+            "letters"
+          ]
+        ],
+        "saved": [
+          [
+            "z+",
+            "last"
+          ],
+          [
+            "a+",
+            "letters"
+          ]
+        ]
+      },
+      "said": [],
+      "opened": [],
+      "menus": [],
+      "copied": []
+    }
+  ],
+  "cancelled": {
+    "draft": [
+      [
+        "^a+$",
+        "letters only"
+      ],
+      [
+        "a+",
+        "letters"
+      ]
+    ],
+    "saved": [
+      [
+        "z+",
+        "last"
+      ],
+      [
+        "a+",
+        "letters"
+      ]
+    ]
+  },
+  "reopened_cancel": [
+    [
+      "a+",
+      "letters"
+    ],
+    [
+      "z+",
+      "last"
+    ]
+  ],
+  "saved": [
+    [
+      "^a+$",
+      "letters only"
+    ],
+    [
+      "a+",
+      "letters"
+    ]
+  ],
+  "reopened": [
+    [
+      "^a+$",
+      "letters only"
+    ],
+    [
+      "a+",
+      "letters"
+    ]
+  ],
+  "descriptions": [
+    {
+      "input": "",
+      "value": null,
+      "error": "Cannot enter blank text here!"
+    },
+    {
+      "input": " ",
+      "value": " ",
+      "error": null
+    },
+    {
+      "input": "\t",
+      "value": "\t",
+      "error": null
+    },
+    {
+      "input": "name",
+      "value": "name",
+      "error": null
+    }
+  ],
+  "consumer": {
+    "menu": {
+      "rows": [
+        {
+          "label": "manage favourites",
+          "enabled": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "click below to copy to clipboard",
+          "enabled": true
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "letters only",
+          "enabled": true
+        },
+        {
+          "label": "letters",
+          "enabled": true
+        }
+      ],
+      "saved": [
+        [
+          "^a+$",
+          "letters only"
+        ],
+        [
+          "a+",
+          "letters"
+        ]
+      ]
+    },
+    "copied": [
+      "^a+$",
+      "a+"
+    ],
+    "input": "original+"
+  }
+}

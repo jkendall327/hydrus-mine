@@ -11,6 +11,8 @@ use std::{
 pub type Slot = Rc<RefCell<Option<RegexFavouritesWindow>>>;
 /// Accept a complete favourites draft; errors leave it open for correction.
 pub type Applied = Rc<dyn Fn(RegexFavourites) -> Result<(), String>>;
+/// Saved preferences owned by the caller, deliberately separate from the draft.
+pub type SavedFavourites = Rc<dyn Fn() -> Result<RegexFavourites, String>>;
 thread_local! { static LAST: RefCell<Option<slint::Weak<RegexFavouritesWindow>>> = const { RefCell::new(None) }; }
 
 /// Last visible editor, for rendered integration inspection.
@@ -71,6 +73,29 @@ pub fn open(
     slot: &Slot,
     applied: Applied,
 ) -> Result<RegexFavouritesWindow, slint::PlatformError> {
+    let saved = value.clone();
+    open_owned(
+        value,
+        slot,
+        applied,
+        Rc::new(move || Ok(saved.clone())),
+        Rc::new(|| true),
+    )
+}
+
+/// Open with explicit saved-input access and an owner lifetime guard.
+pub fn open_owned(
+    value: &RegexFavourites,
+    slot: &Slot,
+    applied: Applied,
+    saved: SavedFavourites,
+    owner_valid: Rc<dyn Fn() -> bool>,
+) -> Result<RegexFavouritesWindow, slint::PlatformError> {
+    if !owner_valid() {
+        return Err(slint::PlatformError::Other(
+            "The regex input owner is unavailable.".into(),
+        ));
+    }
     if let Some(window) = slot.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
@@ -78,14 +103,75 @@ pub fn open(
     let editor = Rc::new(RefCell::new(Editor::new(value)));
     let editing = Rc::new(Cell::new(None::<usize>));
     let active = Rc::new(Cell::new(true));
+    let popup = crate::popup_menu::Popup::new();
+    window.set_favourite_panes(popup.model());
+    let valid: Rc<dyn Fn() -> bool> = Rc::new({
+        let active = active.clone();
+        let weak = window.as_weak();
+        move || {
+            active.get() && owner_valid() && weak.upgrade().is_some_and(|w| w.window().is_visible())
+        }
+    });
+    window.on_favourite_menu({
+        let valid = valid.clone();
+        let weak = window.as_weak();
+        let popup = popup.clone();
+        move |x, y| {
+            let Some(window) = weak.upgrade() else { return };
+            if !valid() || !window.get_editing() || window.get_deleting() {
+                popup.close();
+                return;
+            }
+            popup.close();
+            match saved() {
+                Ok(value) => {
+                    let (entries, actions) = hydrus_gui_model::regex_favourites::input_menu(&value);
+                    popup.open(entries, actions, x, y);
+                }
+                Err(error) => window.set_error(error.into()),
+            }
+        }
+    });
+    window.on_favourite_line_hovered({
+        let popup = popup.clone();
+        move |p, l, r, t, left| popup.hover(p, l, r, t, left)
+    });
+    window.on_favourite_placed({
+        let popup = popup.clone();
+        move |p, x, y, w| popup.placed(p, x, y, w)
+    });
+    window.on_favourite_dismissed({
+        let popup = popup.clone();
+        move || popup.close()
+    });
+    window.on_favourite_line_clicked({
+        let popup = popup.clone();
+        let valid = valid.clone();
+        let weak = window.as_weak();
+        move |p, l, r, t, left| {
+            let Some(window) = weak.upgrade() else { return };
+            if !valid() || !window.get_editing() || window.get_deleting() {
+                popup.close();
+                return;
+            }
+            if let Some(crate::popup_menu::Chosen::Action(
+                hydrus_gui_model::regex_favourites::MenuAction::Copy(phrase),
+            )) = popup.click(p, l, r, t, left)
+            {
+                crate::copy_to_clipboard(&phrase);
+            }
+        }
+    });
     let close: Rc<dyn Fn()> = Rc::new({
         let slot = Rc::downgrade(slot);
         let weak = window.as_weak();
         let active = active.clone();
+        let popup = popup.clone();
         move || {
             if !active.replace(false) {
                 return;
             }
+            popup.close();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -100,12 +186,12 @@ pub fn open(
     window.on_row_clicked({
         let weak = window.as_weak();
         let editor = editor.clone();
-        let active = active.clone();
+        let valid = valid.clone();
         move |i, ctrl, shift| {
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if !active.get() || window.get_editing() || window.get_deleting() {
+            if !valid() || window.get_editing() || window.get_deleting() {
                 return;
             }
             if let Ok(i) = usize::try_from(i) {
@@ -125,8 +211,11 @@ pub fn open(
     });
     window.on_changed({
         let weak = window.as_weak();
+        let valid = valid.clone();
         move || {
-            if let Some(window) = weak.upgrade() {
+            if valid()
+                && let Some(window) = weak.upgrade()
+            {
                 show_validity(&window);
             }
         }
@@ -136,6 +225,8 @@ pub fn open(
         let editor = editor.clone();
         let active = active.clone();
         let close = close.clone();
+        let valid = valid.clone();
+        let popup = popup.clone();
         move |action| {
             if !active.get() {
                 return;
@@ -143,6 +234,11 @@ pub fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            if action != "cancel" && !valid() {
+                popup.close();
+                return;
+            }
+            popup.close();
             let result = (|| -> Result<(), String> {
                 match action.as_str() {
                     "cancel" => close(),
@@ -154,6 +250,7 @@ pub fn open(
                     "save-row" if window.get_editing() => {
                         let phrase = window.get_phrase().to_string();
                         let description = window.get_description().to_string();
+                        hydrus_gui_model::regex_favourites::description_validity(&description)?;
                         match editing.get() {
                             Some(id) => editor.borrow_mut().replace(id, phrase, description),
                             None => editor.borrow_mut().add(phrase, description)?,

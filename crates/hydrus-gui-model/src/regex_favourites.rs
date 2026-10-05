@@ -91,6 +91,15 @@ pub fn validity(phrase: &str) -> Result<(), String> {
         .map_err(str::to_owned)
 }
 
+/// EnterText disallows only empty descriptions; whitespace is retained.
+pub fn description_validity(description: &str) -> Result<(), String> {
+    if description.is_empty() {
+        Err("Cannot enter blank text here!".into())
+    } else {
+        Ok(())
+    }
+}
+
 /// Reference clipboard snippets. The filename snippet follows
 /// the host path separator, as the reference does.
 pub fn regex_tools(category: usize) -> Vec<(String, String)> {
@@ -169,22 +178,40 @@ pub enum MenuAction {
 
 /// Reference order, including the enabled instruction that never copies.
 pub fn menu(value: &RegexFavourites) -> (Vec<crate::main_menu::Entry>, Vec<MenuAction>) {
+    menu_with_management(value, true)
+}
+
+/// RegexInput inside the list editor reads saved favourites without recursive management.
+pub fn input_menu(value: &RegexFavourites) -> (Vec<crate::main_menu::Entry>, Vec<MenuAction>) {
+    menu_with_management(value, false)
+}
+
+fn menu_with_management(
+    value: &RegexFavourites,
+    manage: bool,
+) -> (Vec<crate::main_menu::Entry>, Vec<MenuAction>) {
     use crate::main_menu::{Command, Entry};
-    let mut actions = vec![MenuAction::Manage, MenuAction::Instruction];
-    let mut entries = vec![
-        Entry::Item {
+    let mut actions = Vec::new();
+    let mut entries = Vec::new();
+    if manage {
+        actions.push(MenuAction::Manage);
+        entries.push(Entry::Item {
             label: "manage favourites".into(),
             command: Some(Command::Popup(0)),
             enabled: true,
-        },
-        Entry::Separator,
+        });
+        entries.push(Entry::Separator);
+    }
+    let instruction = actions.len();
+    actions.push(MenuAction::Instruction);
+    entries.extend([
         Entry::Item {
             label: "click below to copy to clipboard".into(),
-            command: Some(Command::Popup(1)),
+            command: Some(Command::Popup(instruction)),
             enabled: true,
         },
         Entry::Separator,
-    ];
+    ]);
     for (phrase, description) in &value.0 {
         let index = actions.len();
         actions.push(MenuAction::Copy(phrase.clone()));
