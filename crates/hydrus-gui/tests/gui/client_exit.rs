@@ -2,7 +2,6 @@
 use hydrus_gui::{MainWindow, Pages, SearchPage, bind, headless};
 use hydrus_store::settings::{self, GuiSettings};
 use slint::ComponentHandle as _;
-use std::time::Duration;
 
 fn request_close(ui: &MainWindow) {
     ui.window()
@@ -10,7 +9,7 @@ fn request_close(ui: &MainWindow) {
 }
 
 #[test]
-fn retained_exit_timeout_cannot_answer_a_rebound_windows_identical_question() {
+fn cancel_hidden_answer_and_accepted_close_respect_the_live_main_binding() {
     let (_directories, store) = crate::subscriptions::store();
     store
         .write(|ctx| {
@@ -28,13 +27,12 @@ fn retained_exit_timeout_cannot_answer_a_rebound_windows_identical_question() {
     assert!(question.starts_with("Are you sure you want to exit the client?"));
 
     let current = bind(&ui, Pages::single(SearchPage::new(store.clone())));
-    // Hold the event pump until A's actual fifteen-second deadline has passed.
-    // B starts its identical question only afterward, so its own timer is fresh.
-    std::thread::sleep(Duration::from_millis(15_100));
+    // Full rebinding drops the old timer. The private fast held-timer test
+    // separately covers queued replies; this checks actual main-window owners.
     request_close(&ui);
     assert_eq!(ui.get_question(), question);
     slint::platform::update_timers_and_animations();
-    assert!(ui.window().is_visible(), "A's timeout must not close B");
+    assert!(ui.window().is_visible(), "rebinding must leave B live");
     assert_eq!(
         ui.get_question(),
         question,
