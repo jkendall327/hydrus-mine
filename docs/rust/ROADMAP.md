@@ -64,16 +64,20 @@ unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in
 [gui-coverage/README.md](gui-coverage/README.md).
 
-Continuous source work now proposes 53 further original leaf completions over
-that validated 240 checkpoint, consolidated on `codex/parity-more-controls`. It includes tab
+Continuous source work now proposes 58 further original leaf completions over
+that validated 240 checkpoint: 53 on `codex/parity-more-controls`, with five
+more on the dependent `codex/parity-next-details` branch. It includes tab
 appearance/drag, notebook tree, notes, rating sizes, archive repair, duplicate
 colours, tag suggestions/weights, autocomplete panes, sidebar cogs, thumbnail
 navigation, namespace colour actions, external-call list and command controls,
 sibling connector colours, browsing/API idle timeouts, viewer
 drag/hover-wheel preferences, staged subscription merging, registered login
-scripts in mixed downloader packages, and all five importing work-slot limits.
-Historical subscription seed-cache compatibility is a further Partial improvement
-with zero completion credit. These remain proposals while exact hosted CI
+scripts in mixed downloader packages, all five importing work-slot limits,
+local-domain copy/move confirmations, the per-service already-exists tag filter,
+and global viewing-statistics clear/cull actions. Historical subscription
+seed-cache compatibility, direct ordered subscription imports and login editor
+controls are further parent/Partial improvements with zero leaf credit.
+These remain proposals while exact hosted CI
 runs and rendered review are pending. Window rescue and GUI formatting are
 explicitly Partial improvements with zero completion credit. Owned asynchronous
 metadata filesystem jobs also retain their two original Partial assessments,
@@ -81,7 +85,7 @@ and mouse idle tracking remains Partial because it observes application windows.
 Broader external
 call/editor boundaries also remain Partial. Inspect the current branch with
 `python3 scripts/gui_burndown.py --commit HEAD`; do not substitute its proposed
-total of 293 for the validated 240 ledger. New work and diagnostics continue
+total of 298 for the validated 240 ledger. New work and diagnostics continue
 while hosted validation runs, as authorized by the owner.
 
 The next breadth work, in the owner's existing order:

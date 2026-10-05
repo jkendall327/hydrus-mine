@@ -106,9 +106,9 @@ fn cull_reads_current_rules_and_a_preview_validation_failure_preserves_media_row
                 ctx.conn(),
                 &FileViewingStatistics {
                     media_min_ms: Some(2000),
-                    media_max_ms: Some(60000),
-                    preview_min_ms: Some(10001),
-                    preview_max_ms: Some(10000),
+                    media_max_ms: Some(60_000),
+                    preview_min_ms: Some(10_001),
+                    preview_max_ms: Some(10_000),
                     ..Default::default()
                 },
             )

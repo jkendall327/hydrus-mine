@@ -92,9 +92,9 @@ fn real_menu_clear_and_cull_read_live_rules_preserve_declines_and_reopen() {
                 ctx.conn(),
                 &FileViewingStatistics {
                     media_min_ms: Some(2000),
-                    media_max_ms: Some(60000),
+                    media_max_ms: Some(60_000),
                     preview_min_ms: Some(5000),
-                    preview_max_ms: Some(10000),
+                    preview_max_ms: Some(10_000),
                     ..Default::default()
                 },
             )
@@ -181,8 +181,8 @@ fn retired_hidden_and_successor_owners_cannot_clear_or_cull_current_records() {
             settings::set(
                 ctx.conn(),
                 &FileViewingStatistics {
-                    preview_min_ms: Some(10001),
-                    preview_max_ms: Some(10000),
+                    preview_min_ms: Some(10_001),
+                    preview_max_ms: Some(10_000),
                     ..Default::default()
                 },
             )
