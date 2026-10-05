@@ -113,6 +113,8 @@ pub enum Action {
     OpenUrls(Urls),
     CopyUrls(Urls),
     UrlPage(Urls),
+    /// Download some URLs again with metadata fetched even for known files.
+    Refetch(Urls),
     /// Move the selected thumbnails (`SIMPLE_REARRANGE_THUMBNAILS`).
     Rearrange(Rearrange),
     /// One of the media viewer's own entries.
@@ -220,6 +222,8 @@ pub enum Urls {
     Focused,
     Class(u16),
     Selection,
+    /// The focused file's URLs of one of its classes.
+    FocusClass(u16),
 }
 
 /// A kind of hash the share menu copies.
@@ -717,6 +721,10 @@ pub struct UrlFacts {
     pub classes: Vec<String>,
     /// Whether the selection has URLs of no class, or of several classes.
     pub mixed: bool,
+    /// The focused file's URL classes' names, sorted.
+    pub focus_classes: Vec<String>,
+    /// How many files are selected.
+    pub selected: usize,
 }
 
 /// Each of `files`' URLs.
@@ -754,6 +762,9 @@ pub fn url_facts(store: &Store, focused: Option<HashId>, selected: &[HashId]) ->
         }
         matched.sort();
         unmatched.sort();
+        let mut focus_classes: Vec<String> = urls_classes(&matched, &class_of);
+        focus_classes.dedup();
+        facts.focus_classes = focus_classes;
         facts.matched = matched.len();
         facts.focus = matched;
         facts
@@ -773,7 +784,21 @@ pub fn url_facts(store: &Store, focused: Option<HashId>, selected: &[HashId]) ->
     }
     facts.mixed |= seen.len() > 1;
     facts.classes = seen.into_iter().collect();
+    facts.selected = selected.len();
     facts
+}
+
+/// The classes of matched URLs (label, url), sorted.
+fn urls_classes(
+    matched: &[(String, String)],
+    class_of: &dyn Fn(&str) -> Option<String>,
+) -> Vec<String> {
+    let mut classes: Vec<String> = matched
+        .iter()
+        .filter_map(|(_, url)| class_of(url))
+        .collect();
+    classes.sort();
+    classes
 }
 
 /// The most of a list a menu shows (`SpamItems`' `MAX_TO_SHOW`).
@@ -897,8 +922,7 @@ pub fn add_relationships(entries: &mut [Entry], relationships: Entry) {
     }
 }
 
-/// The urls menu (`AddKnownURLsViewCopyMenu`), less forcing a metadata
-/// refetch: manage, then, if there are URLs to offer, the focused file's
+/// The urls menu (`AddKnownURLsViewCopyMenu`): manage, then, if there are URLs to offer, the focused file's
 /// URLs and the selection's, to open in the web browser, open a page of
 /// the files that have them, or copy.
 pub fn urls_menu(facts: &UrlFacts) -> Entry {
@@ -976,11 +1000,40 @@ pub fn urls_menu(facts: &UrlFacts) -> Entry {
             Urls::Selection,
         );
     }
+    // force metadata refetch: the focused file's classes, then (with
+    // several selected) the selection's
+    let index = |i: usize| u16::try_from(i).unwrap_or(u16::MAX);
+    let mut refetch: Vec<Entry> = facts
+        .focus_classes
+        .iter()
+        .enumerate()
+        .map(|(i, class)| {
+            Entry::Item(
+                format!("this file's {class} urls"),
+                Action::Refetch(Urls::FocusClass(index(i))),
+            )
+        })
+        .collect();
+    if facts.selected > 1 {
+        separate(&mut refetch);
+        refetch.extend(facts.classes.iter().enumerate().map(|(i, class)| {
+            Entry::Item(
+                format!("these files' {class} urls"),
+                Action::Refetch(Urls::Class(index(i))),
+            )
+        }));
+    }
+    while refetch.last() == Some(&Entry::Separator) {
+        refetch.pop();
+    }
     let mut inner = vec![manage, Entry::Menu("open in browser".into(), visit)];
     if !facts.focus.is_empty() {
         inner.push(Entry::Menu("open in a new page".into(), pages));
     }
     inner.push(Entry::Menu("copy".into(), copy));
+    if !refetch.is_empty() {
+        inner.push(Entry::Menu("force metadata refetch".into(), refetch));
+    }
     Entry::Menu("urls".into(), inner)
 }
 
@@ -1019,8 +1072,30 @@ pub fn urls_for(store: &Store, facts: &UrlFacts, which: Urls, selected: &[HashId
                 file_urls(store, selected).into_values().flatten().collect();
             urls.into_iter().collect()
         }
+        Urls::FocusClass(i) => {
+            let Some(name) = facts.focus_classes.get(usize::from(i)) else {
+                return Vec::new();
+            };
+            let classes = &store.snapshot().url_classes;
+            let urls: BTreeSet<String> = focus(0..facts.matched)
+                .into_iter()
+                .filter(|url| classes.class_for(url).is_some_and(|c| c.name == *name))
+                .collect();
+            urls.into_iter().collect()
+        }
     }
 }
+
+/// The question before a forced metadata refetch
+/// (`RedownloadURLClassURLsForceRefetch`).
+pub fn refetch_question(count: usize, class: &str) -> String {
+    format!(
+        "Open a new search page and force metadata redownload for {count} \"{class}\" URLs? This is inefficient and should only be done to fill in known gaps in one-time jobs.\n\nDO NOT USE THIS TO RECHECK TEN THOUSAND URLS EVERY MONTH JUST FOR MAYBE A FEW NEW TAGS."
+    )
+}
+
+/// The page a forced refetch's URLs go to (`RedownloadURLsForceFetch`).
+pub const REFETCH_PAGE_NAME: &str = "forced urls downloader";
 
 /// The search for the files that have a urls menu entry's URLs: one, or
 /// any of the focused file's (a page of them is "url search", on all my
@@ -1512,6 +1587,7 @@ pub struct UrlsSlots {
     pub visit: Vec<Vec<SlotItem>>,
     pub pages: Option<Vec<Vec<SlotItem>>>,
     pub copy: Vec<Vec<SlotItem>>,
+    pub refetch: Vec<Vec<SlotItem>>,
 }
 
 impl UrlsSlots {
@@ -1523,6 +1599,7 @@ impl UrlsSlots {
                 match title.as_str() {
                     "open in browser" => urls.visit = groups(sub),
                     "open in a new page" => urls.pages = Some(groups(sub)),
+                    "force metadata refetch" => urls.refetch = groups(sub),
                     _ => urls.copy = groups(sub),
                 }
             }
@@ -1540,6 +1617,9 @@ impl UrlsSlots {
                     .map(|pages| group_menu("open in a new page", pages)),
             );
             inner.push(group_menu("copy", &self.copy));
+            if !self.refetch.is_empty() {
+                inner.push(group_menu("force metadata refetch", &self.refetch));
+            }
         }
         Entry::Menu("urls".into(), inner)
     }
@@ -2097,6 +2177,7 @@ mod tests {
             matched: 2,
             classes: vec!["booru".into(), "gallery".into()],
             mixed: true,
+            ..UrlFacts::default()
         };
         let Entry::Menu(title, mut inner) = urls_menu(&facts) else {
             panic!("a menu");
@@ -2153,6 +2234,7 @@ mod tests {
             matched: 1,
             classes: vec!["booru".into()],
             mixed: false,
+            ..UrlFacts::default()
         };
         let Entry::Menu(_, inner) = urls_menu(&one) else {
             panic!()
@@ -2163,6 +2245,29 @@ mod tests {
         assert_eq!(
             titles(visit),
             ["booru: https://a/1", "---", "these files' booru urls"]
+        );
+        // force metadata refetch: the focused file's classes, then the
+        // selection's when several are selected
+        let refetching = UrlFacts {
+            focus_classes: vec!["booru".into()],
+            selected: 2,
+            ..facts.clone()
+        };
+        let Entry::Menu(_, inner) = urls_menu(&refetching) else {
+            panic!()
+        };
+        let Some(Entry::Menu(title, refetch)) = inner.last() else {
+            panic!()
+        };
+        assert_eq!(title, "force metadata refetch");
+        assert_eq!(
+            titles(refetch),
+            [
+                "this file's booru urls",
+                "---",
+                "these files' booru urls",
+                "these files' gallery urls"
+            ]
         );
         // nothing to offer: manage alone
         assert_eq!(

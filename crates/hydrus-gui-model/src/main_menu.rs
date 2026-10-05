@@ -287,6 +287,11 @@ pub enum Command {
     /// Tags > sync's idle (`true`) or normal time switch.
     TagDisplaySync(bool),
     TagDisplaySyncNow,
+    /// A Database > backup entry.
+    Backup(crate::database_backup::Action),
+    /// Database > db maintenance's deferred delete idle (`true`) or normal
+    /// time switch.
+    DeferredDelete(bool),
     /// Pages > weight > "total session weight"'s information.
     SessionWeightReport,
     /// Freeze the Help menu's default location for a delayed real query page.
@@ -377,6 +382,14 @@ pub struct Facts {
     pub maintenance: FileMaintenanceSettings,
     /// Whether sibling/parent sync works in idle and normal time.
     pub tag_display_sync: (bool, bool),
+    /// Whether deferred table deletes work in idle and normal time.
+    pub deferred_delete: (bool, bool),
+    /// The backup location and last backup, whether the store keeps its
+    /// files in the default place (else no backups), and the time now
+    /// (seconds).
+    pub backup: hydrus_store::backup::BackupSettings,
+    pub locations_default: bool,
+    pub now: i64,
     pub pauses: Pauses,
     pub network_boot_pause: hydrus_store::settings::NetworkBootPause,
     pub clipboard_urls: hydrus_store::settings::ClipboardUrls,
@@ -411,6 +424,7 @@ impl Facts {
             search_domains.push((service.key.clone(), service.name.clone()));
         }
         search_domains.extend(by_name(ServiceType::FileRepository));
+        let locations_default = hydrus_store::backup::locations_are_default(store)?;
         store.read(|conn| {
             let mut import_folders: Vec<String> =
                 hydrus_store::import_folders::import_folders(conn)?
@@ -455,6 +469,16 @@ impl Facts {
                 tag_display_sync: {
                     let work: settings::BackgroundWork = settings::get(conn)?;
                     (work.tag_display_during_idle, work.tag_display_during_active)
+                },
+                backup: settings::get(conn)?,
+                locations_default,
+                now: hydrus_core::TimestampMs::now().millis() / 1000,
+                deferred_delete: {
+                    let work: settings::BackgroundWork = settings::get(conn)?;
+                    (
+                        work.deferred_delete_during_idle,
+                        work.deferred_delete_during_active,
+                    )
                 },
                 pauses: settings::get(conn)?,
                 network_boot_pause: settings::get(conn)?,
@@ -931,8 +955,45 @@ fn pages_menu(facts: &Facts) -> Entry {
 /// (`ClientGUISession.RESERVED_SESSION_NAMES`).
 pub const RESERVED_SESSION_NAMES: [&str; 2] = ["last session", "exit session"];
 
-/// `_InitialiseMenuInfoDatabase`, as its updater fills it for a database
-/// in its default location with no backup location set.
+/// The database menu's backup submenu, as its updater shows it: set up a
+/// location, or update and change it, then restore; or, for a database in
+/// several locations, a note.
+fn backup_entries(facts: &Facts) -> Vec<Entry> {
+    use crate::database_backup::Action;
+    if !facts.locations_default {
+        return vec![item(
+            "database is stored in multiple locations",
+            Command::Backup(Action::Multiple),
+        )];
+    }
+    let mut entries = match &facts.backup.path {
+        None => vec![item(
+            dots("set up a database backup location"),
+            Command::Backup(Action::SetUp),
+        )],
+        Some(_) => vec![
+            item(
+                dots(&crate::database_backup::update_label(
+                    facts.backup.last_backup,
+                    facts.now,
+                )),
+                Command::Backup(Action::Update),
+            ),
+            item(
+                dots("change database backup location"),
+                Command::Backup(Action::SetUp),
+            ),
+        ],
+    };
+    entries.push(SEP);
+    entries.push(item(
+        dots("restore from a database backup"),
+        Command::Backup(Action::Restore),
+    ));
+    entries
+}
+
+/// `_InitialiseMenuInfoDatabase`, as its updater fills it.
 fn database_menu(facts: &Facts) -> Entry {
     // (the maintenance jobs hydrus-rs runs, else greyed out)
     let job = |label: &str| -> Entry {
@@ -950,14 +1011,7 @@ fn database_menu(facts: &Facts) -> Entry {
     menu(
         "&database",
         vec![
-            menu(
-                "backup",
-                vec![
-                    todo(dots("set up a database backup location")),
-                    SEP,
-                    todo(dots("restore from a database backup")),
-                ],
-            ),
+            menu("backup", backup_entries(facts)),
             SEP,
             todo(dots("locations")),
             SEP,
@@ -996,8 +1050,16 @@ fn database_menu(facts: &Facts) -> Entry {
                 vec![
                     todo("review deferred delete table data"),
                     SEP,
-                    check("work deferred delete jobs during idle time", None, true),
-                    check("work deferred delete jobs during normal time", None, true),
+                    check(
+                        "work deferred delete jobs during idle time",
+                        Some(Command::DeferredDelete(true)),
+                        facts.deferred_delete.0,
+                    ),
+                    check(
+                        "work deferred delete jobs during normal time",
+                        Some(Command::DeferredDelete(false)),
+                        facts.deferred_delete.1,
+                    ),
                     SEP,
                     job("analyze"),
                     job("review vacuum data"),

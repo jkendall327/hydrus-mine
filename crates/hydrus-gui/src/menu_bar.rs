@@ -87,6 +87,8 @@ pub(crate) struct Hooks {
     pub clear_thumbnail_cache: Rc<dyn Fn()>,
     /// Run a Help > debug action.
     pub debug: Rc<dyn Fn(hydrus_gui_model::debug_actions::Action)>,
+    /// Run a Database > backup entry.
+    pub backup: Rc<dyn Fn(hydrus_gui_model::database_backup::Action)>,
     pub file_history: Rc<dyn Fn()>,
     pub file_maintenance: Rc<dyn Fn()>,
     /// Toggle watcher or other recognised clipboard URL imports.
@@ -617,29 +619,14 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             }
         }
         Command::CheckImportFolder(name) => {
-            let done = store.write(move |ctx| {
-                let conn = ctx.conn();
-                for folder in hydrus_store::import_folders::import_folders(conn)? {
-                    if name.as_deref().is_none_or(|n| n == folder.name()) {
-                        let mut settings = folder.settings.clone();
-                        settings.check_now = true;
-                        hydrus_store::import_folders::set_settings(conn, folder.id(), &settings)?;
-                    }
-                }
-                Ok(())
-            });
-            if let Err(e) = done {
+            if let Err(e) = hydrus_gui_model::folder_runs::check_import_folders(&store, name) {
                 eprintln!("could not check the import folders: {e}");
             }
         }
         Command::RunExportFolder(name) => {
-            flip::<hydrus_store::settings::ExportFolders>(&store, move |folders| {
-                for folder in &mut folders.0 {
-                    if name.as_deref().is_none_or(|n| n == folder.name) {
-                        folder.run_now = true;
-                    }
-                }
-            });
+            if let Err(e) = hydrus_gui_model::folder_runs::run_export_folders(&store, name) {
+                eprintln!("could not run the export folders: {e}");
+            }
         }
         Command::OpenInstallDirectory => match std::env::current_exe() {
             Ok(exe) => {
@@ -791,6 +778,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::RepairArchiveTimes => (hooks.repair_archive_times)(),
         Command::ClearThumbnailCache => (hooks.clear_thumbnail_cache)(),
         Command::Debug(action) => (hooks.debug)(action),
+        Command::Backup(action) => (hooks.backup)(action),
         Command::DebugFetchUrl => hooks.debug_fetch.open(),
         Command::DebugLongTextPopup => hooks.debug_long_popup.start(),
         Command::DebugForceIdleMode => {
@@ -805,6 +793,16 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::DatabaseMaintenance(job) => (hooks.database_maintenance)(job),
         Command::SetPassword => (hooks.set_password)(),
         Command::HowBoned => (hooks.how_boned)(),
+        Command::DeferredDelete(idle) => {
+            flip::<hydrus_store::settings::BackgroundWork>(&store, move |w| {
+                let field = if idle {
+                    &mut w.deferred_delete_during_idle
+                } else {
+                    &mut w.deferred_delete_during_active
+                };
+                *field = !*field;
+            });
+        }
         Command::TagDisplaySync(idle) => {
             flip::<hydrus_store::settings::BackgroundWork>(&store, move |w| {
                 let field = if idle {

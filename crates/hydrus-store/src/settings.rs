@@ -653,6 +653,10 @@ pub struct BackgroundWork {
     pub deferred_delete_idle: WorkRest,
     pub deferred_delete_normal: WorkRest,
     pub deferred_delete_work_hard: WorkRest,
+    /// Database > db maintenance's "work deferred delete jobs during idle /
+    /// normal time".
+    pub deferred_delete_during_idle: bool,
+    pub deferred_delete_during_active: bool,
 }
 impl Default for BackgroundWork {
     fn default() -> Self {
@@ -668,6 +672,8 @@ impl Default for BackgroundWork {
             deferred_delete_idle: work_rest(20_000, 10),
             deferred_delete_normal: work_rest(250, 1_000),
             deferred_delete_work_hard: work_rest(5_000, 10),
+            deferred_delete_during_idle: true,
+            deferred_delete_during_active: true,
         }
     }
 }

@@ -154,3 +154,11 @@ fn each_rules_tabs_list_its_pairs_as_the_reference() {
         assert_eq!(ours, rows(&case["denied"]), "{name}");
     }
 }
+
+#[test]
+fn approving_and_denying_report_progress_as_the_reference_s() {
+    use hydrus_gui_model::auto_resolution_review::{action_progress, action_title};
+    assert_eq!(action_progress(true, 4, 12), "approving: 4/12");
+    assert_eq!(action_progress(false, 0, 1_500), "denying: 0/1,500");
+    assert_eq!(action_title(true), "approving auto-resolution decisions");
+}

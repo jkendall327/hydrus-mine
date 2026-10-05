@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "agent": "rule-preview-pair-menu",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 1,
+  "claims": [
+    {
+      "id": "audit-media-preview-context",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "The auto-resolution rule editor's preview pass and fail pair lists select rows (click, ctrl, shift) and their right-click menu shows 'show selected row in a new page' / 'show N rows in a new page', opening the selected pairs' files even if deleted (ThumbnailPairList._ShowSelectedPairsInNewPage).",
+      "source": [
+        "crates/hydrus-gui/src/auto_resolution_preview_window.rs",
+        "crates/hydrus-gui/src/auto_resolution_rules_window.rs",
+        "crates/hydrus-gui/ui/auto_resolution_rules.slint",
+        "crates/hydrus-gui/src/duplicates_sidebar.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/auto_resolution_review.rs"
+      ],
+      "limits": [
+        "No new recording; uses the review window's recorded labels and location rule; native GUI test deferred."
+      ]
+    }
+  ]
+}

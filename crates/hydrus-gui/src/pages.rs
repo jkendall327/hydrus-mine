@@ -1479,19 +1479,32 @@ impl Pages {
     /// Integrity maintenance uses a named URL importer without selecting it.
     /// Reuse the current matching page, otherwise the first open matching page.
     pub fn import_maintenance_urls(&mut self, urls: &[String]) -> Result<(), String> {
-        const NAME: &str = hydrus_import::maintenance::REDOWNLOAD_PAGE_NAME;
-        fn matching(pages: &[Page], out: &mut Vec<PageKey>, named: bool) {
+        self.import_urls_to_named_page(urls, hydrus_import::maintenance::REDOWNLOAD_PAGE_NAME, None)
+    }
+
+    /// Pend `urls` on the URL importer named `name` (`GetOrMakeURLImportPage`):
+    /// the current matching page, else the first open one, else a new one
+    /// given that name and, if any, `options` as its own import options.
+    pub fn import_urls_to_named_page(
+        &mut self,
+        urls: &[String],
+        name: &str,
+        options: Option<hydrus_core::import_options::ImportOptionsSlice>,
+    ) -> Result<(), String> {
+        fn matching(pages: &[Page], out: &mut Vec<PageKey>, named: Option<&str>) {
             for page in pages {
                 match &page.content {
                     PageContent::Downloader {
                         kind: DownloaderKind::Urls,
                         ..
-                    } if !named || page.name == NAME => out.push(page.key),
+                    } if named.is_none_or(|name| page.name == name) => out.push(page.key),
                     PageContent::Pages(children) => matching(children, out, named),
                     _ => {}
                 }
             }
         }
+        let name_owned = name.to_owned();
+        let name = name_owned.as_str();
         if urls.is_empty() {
             return Ok(());
         }
@@ -1525,7 +1538,7 @@ impl Pages {
             normalised.push(url);
         }
         let mut candidates = Vec::new();
-        matching(&self.session.pages, &mut candidates, true);
+        matching(&self.session.pages, &mut candidates, Some(name));
         let shown = self.shown().key;
         let (key, created) = if candidates.contains(&shown) {
             (shown, false)
@@ -1533,7 +1546,7 @@ impl Pages {
             (*key, false)
         } else {
             let mut existing = Vec::new();
-            matching(&self.session.pages, &mut existing, false);
+            matching(&self.session.pages, &mut existing, None);
             let target = self.new_page_target.take();
             let depth = self.new_page_depth.take();
             let result = self.new_page_selected(&NewPage::Urls, false);
@@ -1561,7 +1574,7 @@ impl Pages {
             }
             let key = new_url(&self.session.pages, &existing)
                 .ok_or("Could not create the missing files redownloader page.")?;
-            self.rename_key(&key, NAME);
+            self.rename_key(&key, name);
             (key, true)
         };
         let page = self
@@ -1575,7 +1588,10 @@ impl Pages {
         self.store
             .write(move |ctx| {
                 if created {
-                    hydrus_store::queues::rename_queue(ctx.conn(), queue, NAME)?;
+                    hydrus_store::queues::rename_queue(ctx.conn(), queue, &name_owned)?;
+                    if let Some(options) = &options {
+                        hydrus_store::queues::set_queue_options(ctx.conn(), queue, options)?;
+                    }
                 }
                 hydrus_store::queues::request_urls(ctx.conn(), queue, &normalised)
             })

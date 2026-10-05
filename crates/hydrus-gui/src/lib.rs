@@ -34,6 +34,7 @@ pub mod client_exit;
 pub mod clipboard_monitor;
 pub mod command_palette_window;
 pub mod daemon;
+mod database_backup_window;
 mod debug_actions;
 pub mod debug_fetch;
 pub mod debug_long_popup;
@@ -2885,6 +2886,38 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     }
                 })
             },
+            backup: {
+                let context = Rc::new(database_backup_window::Context {
+                    store: pages.borrow().store().clone(),
+                    ask: {
+                        let ask = ask.clone();
+                        Rc::new(move |question, then| ask(Asked::Then(question, then)))
+                    },
+                    save_session: Rc::new({
+                        let pages = pages.clone();
+                        move || {
+                            let at = hydrus_core::TimestampMs::now().millis() / 1000;
+                            if let Err(e) = pages.borrow_mut().save(at) {
+                                eprintln!("could not save the session: {e}");
+                            }
+                        }
+                    }),
+                    restart: Rc::new({
+                        let weak = window.as_weak();
+                        move || {
+                            crate::client_exit::set_mode(
+                                hydrus_gui_model::shutdown_work::ExitMode::Restart,
+                            );
+                            if let Some(window) = weak.upgrade() {
+                                let _ = window.window().dispatch_event_with_result(
+                                    slint::platform::WindowEvent::CloseRequested,
+                                );
+                            }
+                        }
+                    }),
+                });
+                Rc::new(move |action| database_backup_window::run(&context, action))
+            },
             debug: {
                 let context = debug_actions::Context {
                     pages: pages.clone(),
@@ -4928,6 +4961,58 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         page.selected_files(),
                     );
                 }
+                Action::Refetch(which) => {
+                    let (urls, class, store) = {
+                        let page = page.borrow();
+                        let state = menu_state.borrow();
+                        let facts = &state.2;
+                        let urls = thumbnail_menu::urls_for(
+                            page.store(),
+                            facts,
+                            which,
+                            &page.selected_files(),
+                        );
+                        let class = match which {
+                            thumbnail_menu::Urls::FocusClass(i) => {
+                                facts.focus_classes.get(usize::from(i))
+                            }
+                            thumbnail_menu::Urls::Class(i) => facts.classes.get(usize::from(i)),
+                            _ => None,
+                        }
+                        .cloned()
+                        .unwrap_or_default();
+                        (urls, class, page.store().clone())
+                    };
+                    if urls.is_empty() {
+                        return;
+                    }
+                    // the post URL defaults' prefetch, fetching metadata even
+                    // for files known by URL or hash
+                    let manager: hydrus_core::import_options::ImportOptionsManager =
+                        store.read(hydrus_store::settings::get).unwrap_or_default();
+                    let mut prefetch = manager
+                        .full(hydrus_core::import_options::CallerType::PostUrls, None, &[])
+                        .prefetch;
+                    prefetch.fetch_metadata_even_if_url_recognised_and_file_already_in_db = true;
+                    prefetch.fetch_metadata_even_if_hash_recognised_and_file_already_in_db = true;
+                    let options = hydrus_core::import_options::ImportOptionsSlice {
+                        prefetch: Some(prefetch),
+                        ..Default::default()
+                    };
+                    let change_pages = change_pages.clone();
+                    ask(Asked::Then(
+                        thumbnail_menu::refetch_question(urls.len(), &class),
+                        Rc::new(move || {
+                            change_pages(&|pages| {
+                                pages.import_urls_to_named_page(
+                                    &urls,
+                                    thumbnail_menu::REFETCH_PAGE_NAME,
+                                    Some(options.clone()),
+                                )
+                            });
+                        }),
+                    ));
+                }
                 Action::Relationship(act) => {
                     use hydrus_gui_model::file_relationships::{self as relationships, Act};
                     let page_ref = page.borrow();
@@ -5621,6 +5706,7 @@ fn thumbnail_menu_rows(
         has_url_pages: urls.pages.is_some(),
         urls_pages: groups(urls.pages.as_deref().unwrap_or_default()),
         urls_copy: groups(&urls.copy),
+        urls_refetch: groups(&urls.refetch),
         has_open: slots.open.is_some(),
         open_a: rows(&open.a),
         open_similar_title: open_similar_title.into(),

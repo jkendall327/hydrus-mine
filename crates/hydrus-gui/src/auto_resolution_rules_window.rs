@@ -46,6 +46,8 @@ pub struct Slots {
     pub locations: Rc<RefCell<Option<crate::LocationsWindow>>>,
     /// The duplicate filter opened from the preview's lists.
     pub preview_filter: Rc<RefCell<Option<crate::DuplicateFilterWindow>>>,
+    /// Opens a page of files (the preview lists' "show in a new page").
+    pub open_files: Rc<RefCell<Option<crate::auto_resolution_review_window::OpenFiles>>>,
 }
 
 impl std::fmt::Debug for Slots {
@@ -974,6 +976,34 @@ fn open_rule(
             window.on_preview_pass_activated(activated);
         } else {
             window.on_preview_fail_activated(activated);
+        }
+    }
+    // a list's rows clicked, and its "show in a new page"
+    for passing in [true, false] {
+        let clicked = {
+            let preview = preview.clone();
+            let weak = window.as_weak();
+            move |row: i32, control: bool, shift: bool| {
+                if let (Some(window), Ok(row)) = (weak.upgrade(), usize::try_from(row)) {
+                    preview.clicked(&window, passing, row, control, shift);
+                }
+            }
+        };
+        let show = {
+            let preview = preview.clone();
+            let open_files = slots.open_files.clone();
+            move || {
+                if let Some(open_files) = open_files.borrow().as_ref() {
+                    preview.show_selected(passing, open_files);
+                }
+            }
+        };
+        if passing {
+            window.on_preview_pass_clicked(clicked);
+            window.on_preview_pass_show(show);
+        } else {
+            window.on_preview_fail_clicked(clicked);
+            window.on_preview_fail_show(show);
         }
     }
     window.on_preview_fetch_changed({

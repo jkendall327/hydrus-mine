@@ -293,6 +293,13 @@ export component AutoResolutionRuleWindow inherits Window {
     // a pair double-clicked: the duplicate filter on the list from it
     callback preview-pass-activated(int);
     callback preview-fail-activated(int);
+    // (a row clicked: row, control, shift; and "show in a new page")
+    callback preview-pass-clicked(int, bool, bool);
+    callback preview-fail-clicked(int, bool, bool);
+    callback preview-pass-show();
+    callback preview-fail-show();
+    in property <string> preview-pass-menu;
+    in property <string> preview-fail-menu;
     callback apply();
     callback cancel();
     VerticalLayout {
@@ -554,6 +561,9 @@ export component AutoResolutionRuleWindow inherits Window {
                 columns: ["A", "B", "action"];
                 rows: root.preview-pass-rows;
                 row-activated(r) => { root.preview-pass-activated(r); }
+                row-clicked(r, c, sh) => { root.preview-pass-clicked(r, c, sh); }
+                menu-label: root.preview-pass-menu;
+                show-in-page => { root.preview-pass-show(); }
             }
             Text {
                 text: "pairs that will be skipped";
@@ -567,6 +577,9 @@ export component AutoResolutionRuleWindow inherits Window {
                 columns: ["1", "2", ""];
                 rows: root.preview-fail-rows;
                 row-activated(r) => { root.preview-fail-activated(r); }
+                row-clicked(r, c, sh) => { root.preview-fail-clicked(r, c, sh); }
+                menu-label: root.preview-fail-menu;
+                show-in-page => { root.preview-fail-show(); }
             }
         }
         if root.errors != "": Label {

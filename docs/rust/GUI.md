@@ -1135,11 +1135,11 @@ and extra info appear only when present; PNG EXIF includes the reference's
 orientation note. PDFs show Author, Title, Subject and Keywords. Non-local files
 show "This file is not local to this computer!" in human-readable text. Missing
 local files leave basics visible and show a read error.
-Not yet: clearing deletion records, manage's
-duplicates, maintenance and viewing stats,
-locations, urls → force metadata refetch, open's custom
-similarity distance, and
-share's copying of bitmaps.
+Urls → force metadata refetch lists the focused file's URL classes ("this
+file's booru urls") and, with several selected, the selection's; after the
+reference's question it pends those URLs on a "forced urls downloader" page
+whose prefetch fetches metadata even for files known by URL or hash. Not yet:
+open's custom similarity distance and share's copying of bitmaps.
 
 Share → "export files" opens a manual export window for the selected local
 thumbnails or the viewer's file (`ui/export_files.slint`,
@@ -4219,6 +4219,8 @@ with Options.
 Tags > sync's "sync tag display during idle time" and "during normal time"
 switch the same sibling/parent sync settings, and "sync now" says "Seems
 like we are all synced already!", as the reference does with no work left.
+Database > db maintenance's "work deferred delete jobs during idle time" and
+"during normal time" switch the deferred table delete settings likewise.
 
 ## Thumbnail manage > maintenance and viewing stats
 
@@ -4322,4 +4324,21 @@ selected" and "advanced: reset for all selected" do so for the selection.
 The manage menu's maintenance and viewing stats submenus now show in the
 thumbnail menu too (they were dropped by its template before).
 `tests/model/file_relationships.rs` checks the menu and its store actions.
+
+## Database > backup
+
+Database > backup sets up a backup location as the reference does: it
+explains backups, picks a directory, refuses the database's own directory or
+an unchanged one, says what the chosen directory holds ("looks currently
+empty", "a client database already exists", ...), keeps it and offers to back
+up now. "update database backup (last 3 days ago)" asks before updating or
+creating, saves the session, then copies the database with SQLite's online
+backup and mirrors the media directory (copying what differs in size or
+date, deleting what the client no longer has) in a cancellable "backing up
+db" popup ending "backup complete!". "change database backup location"
+picks again. "restore from a database backup" picks a backup, asks, and
+restarts, restoring it before the store opens. A client with media in
+several locations shows "database is stored in multiple locations", whose
+note explains. `tests/model/database_backup.rs` and hydrus-store's
+`backup` tests cover the menu, texts, mirror, backup and restore.
 

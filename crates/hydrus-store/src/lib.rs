@@ -5,6 +5,7 @@
 pub mod animation_start;
 pub mod archive_delete_preferences;
 pub mod autocomplete;
+pub mod backup;
 pub mod bandwidth;
 pub mod command_palette;
 pub mod conn;

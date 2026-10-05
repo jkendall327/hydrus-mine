@@ -50,13 +50,18 @@ fn post(store: &Store, jobs: Vec<Job>) {
 
 /// An information or warning message with an "ok" button.
 pub(crate) fn message(title: &str, text: &str) {
+    message_then(title, text, Box::new(|| {}));
+}
+
+/// A message with an "ok" button; `then` runs once it is dismissed.
+pub(crate) fn message_then(title: &str, text: &str, then: Box<dyn FnOnce()>) {
     let ask = crate::choice_buttons::Ask {
         title,
         message: text,
         choices: Vec::new(),
         no_label: "ok",
     };
-    match crate::choice_buttons::open(&ask, |_| {}) {
+    match crate::choice_buttons::open(&ask, move |_| then()) {
         Ok(window) => MESSAGE.with(|m| *m.borrow_mut() = window),
         Err(e) => eprintln!("could not show the message: {e}"),
     }

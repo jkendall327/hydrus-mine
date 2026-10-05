@@ -221,3 +221,81 @@ pub fn show_location(
 pub fn reselect(earliest: usize, left: usize) -> Option<usize> {
     (left > 0).then(|| earliest.min(left - 1))
 }
+
+/// How long approving or denying works before its popup shows
+/// (`CallLater( 4, ... )`).
+pub const POPUP_AFTER: std::time::Duration = std::time::Duration::from_secs(4);
+
+/// The popup's first text (`approving auto-resolution decisions`).
+pub fn action_title(approve: bool) -> &'static str {
+    if approve {
+        "approving auto-resolution decisions"
+    } else {
+        "denying auto-resolution decisions"
+    }
+}
+
+/// The progress shown on the button and popup before each chunk of four
+/// (`ActionAutoResolutionReviewPairs`): "approving: 4/12".
+pub fn action_progress(approve: bool, done: usize, total: usize) -> String {
+    format!(
+        "{}: {}",
+        if approve { "approving" } else { "denying" },
+        hydrus_core::numbers::value_range(done as u64, total as u64)
+    )
+}
+
+/// Approve or deny `pairs` four at a time, as the reference's worker does:
+/// `status` takes each chunk's progress, and once `POPUP_AFTER` has passed
+/// a popup shows it, finished and dismissed when done.
+pub fn action_pairs(
+    store: &hydrus_store::Store,
+    rule_id: i64,
+    pairs: &[(hydrus_core::HashId, hydrus_core::HashId)],
+    approve: bool,
+    status: &std::sync::Mutex<String>,
+) -> hydrus_store::Result<()> {
+    use hydrus_store::popups;
+    let started = std::time::Instant::now();
+    let now = || hydrus_core::TimestampMs::now().millis() / 1000;
+    let mut popup: Option<[u8; 32]> = None;
+    let mut result = Ok(());
+    for (i, chunk) in pairs.chunks(4).enumerate() {
+        let text = action_progress(approve, i * 4, pairs.len());
+        text.clone_into(
+            &mut status
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner),
+        );
+        if popup.is_none() && started.elapsed() >= POPUP_AFTER {
+            #[allow(clippy::cast_precision_loss)] // (seconds)
+            let job = popups::Job::text(action_title(approve), now() as f64);
+            popup = Some(job.key);
+            let at = now();
+            store.write(move |ctx| popups::add(ctx.conn(), &job, at))?;
+        }
+        if let Some(key) = popup {
+            let at = now();
+            store.write(move |ctx| {
+                popups::update(ctx.conn(), &key, at, |job| job.status_text_1 = Some(text))
+                    .map(|_| ())
+            })?;
+        }
+        let done = if approve {
+            hydrus_duplicates::engine::approve(store, rule_id, chunk)
+        } else {
+            hydrus_duplicates::engine::deny(store, rule_id, chunk)
+        };
+        if let Err(e) = done {
+            result = Err(e);
+            break;
+        }
+    }
+    if let Some(key) = popup {
+        let at = now();
+        store.write(move |ctx| {
+            popups::update(ctx.conn(), &key, at, |job| job.finish_and_dismiss(None, at)).map(|_| ())
+        })?;
+    }
+    result
+}

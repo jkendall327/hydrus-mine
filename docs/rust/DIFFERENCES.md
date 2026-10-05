@@ -520,8 +520,11 @@ in-memory predicate tests their comparators use by
   groups; the reference lists them in its table's order (when they were
   queued), which hydrus-rs doesn't keep. A double-clicked pair with no
   local file says so on the terminal, not in a dialog. The rule preview's
-  lists have no right-click menu. Approving and denying happen at once, without the
-  reference's "approving: 1/4" progress and popup.
+  lists select as the reference's do, and their right-click menu shows the
+  selected rows' files in a new page. Approving and denying work four pairs at a
+  time off the UI thread, showing "approving: 4/12" on the button and, after
+  four seconds, in a popup, as the reference does; the popup's text is
+  checked between chunks rather than live.
 - **Jpeg quality is read from the file's header** (its quantisation tables
   and sampling factors, as Pillow reads them), for "A has clearly better
   jpeg quality" and "is a progressive jpeg".
@@ -877,6 +880,8 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   "sync now" always finds nothing to do, and its idle/normal switches are
   kept without a consumer. "review current sibling/parent sync" isn't
   there yet.
+- **Database > db maintenance**'s deferred delete switches are kept without
+  a consumer: hydrus-rs drops tables as it writes.
 - **The duplicates page's preparation tab**'s "regenerate search tree"
   and "regenerate search numbers" ask the reference's questions but then
   only refresh: hydrus-rs builds its search index afresh and counts
@@ -3494,4 +3499,14 @@ manual save-last-session action and wider debug GUI/style families remain unclai
 - A group's "best quality file" is offered when the group has other files in
   the page's domain; the reference counts its members per domain the same
   way, but hydrus-rs doesn't distinguish a king outside the domain.
+
+## Database > backup
+
+- A backup holds hydrus-rs's one database file and the media directory
+  (`client_files` there), not the reference's four .db files. The backup
+  works with the database live (SQLite's online backup) rather than closing
+  it, and shows its progress in an ordinary popup, not a modal one.
+- "Simple" means the media is in one location, which may be outside the
+  database directory (an imported client's); the reference requires its
+  default `client_files`.
 

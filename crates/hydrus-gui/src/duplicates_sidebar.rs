@@ -308,6 +308,9 @@ impl Sidebar {
             }
             "edit rules" => {
                 crate::auto_resolution_review_window::close_all(&self.reviews);
+                self.rules_editor
+                    .open_files
+                    .replace(self.open_files.borrow().clone());
                 if let Err(e) = crate::auto_resolution_rules_window::open(
                     &store,
                     &self.rules_editor,

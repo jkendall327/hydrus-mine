@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "agent": "folder-run-menu-regressions",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 4,
+  "claims": [
+    {
+      "id": "audit-options-menu-menu-file-check-all",
+      "before": "partial",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "File > import/export folders > check import folder now ({name}/check all) and run export folder now ({name}/run all) flag the named or every folder for the scheduler; the dispatch now lives in hydrus-gui-model's folder_runs and is replayed named-then-all.",
+      "source": [
+        "crates/hydrus-gui-model/src/folder_runs.rs",
+        "crates/hydrus-gui/src/menu_bar.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/folder_runs.rs::named_then_all_folders_are_flagged_to_run"
+      ],
+      "limits": [
+        "The scheduler's pickup of the flags is covered by the folder workers' own tests."
+      ]
+    },
+    {
+      "id": "audit-options-menu-menu-file-check-import-folder-now-folder",
+      "before": "partial",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "File > import/export folders > check import folder now ({name}/check all) and run export folder now ({name}/run all) flag the named or every folder for the scheduler; the dispatch now lives in hydrus-gui-model's folder_runs and is replayed named-then-all.",
+      "source": [
+        "crates/hydrus-gui-model/src/folder_runs.rs",
+        "crates/hydrus-gui/src/menu_bar.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/folder_runs.rs::named_then_all_folders_are_flagged_to_run"
+      ],
+      "limits": [
+        "The scheduler's pickup of the flags is covered by the folder workers' own tests."
+      ]
+    },
+    {
+      "id": "audit-options-menu-menu-file-run-all",
+      "before": "partial",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "File > import/export folders > check import folder now ({name}/check all) and run export folder now ({name}/run all) flag the named or every folder for the scheduler; the dispatch now lives in hydrus-gui-model's folder_runs and is replayed named-then-all.",
+      "source": [
+        "crates/hydrus-gui-model/src/folder_runs.rs",
+        "crates/hydrus-gui/src/menu_bar.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/folder_runs.rs::named_then_all_folders_are_flagged_to_run"
+      ],
+      "limits": [
+        "The scheduler's pickup of the flags is covered by the folder workers' own tests."
+      ]
+    },
+    {
+      "id": "audit-options-menu-menu-file-run-export-folder-now-folder",
+      "before": "partial",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "File > import/export folders > check import folder now ({name}/check all) and run export folder now ({name}/run all) flag the named or every folder for the scheduler; the dispatch now lives in hydrus-gui-model's folder_runs and is replayed named-then-all.",
+      "source": [
+        "crates/hydrus-gui-model/src/folder_runs.rs",
+        "crates/hydrus-gui/src/menu_bar.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/folder_runs.rs::named_then_all_folders_are_flagged_to_run"
+      ],
+      "limits": [
+        "The scheduler's pickup of the flags is covered by the folder workers' own tests."
+      ]
+    }
+  ]
+}

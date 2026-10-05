@@ -45,6 +45,8 @@ struct State {
     search_label: String,
     testing: bool,
     thumbs: HashMap<HashId, slint::Image>,
+    /// Each list's selected rows (passing, failing).
+    selections: [crate::list_selection::ListSelection<usize>; 2],
 }
 
 /// The preview of a rule editor.
@@ -144,6 +146,7 @@ impl Preview {
             state.fetched.clear();
             state.passed.clear();
             state.failed.clear();
+            state.selections = Default::default();
             state.to_test = 0;
             state.testing = true;
             state.search_label = FETCHING.into();
@@ -176,6 +179,7 @@ impl Preview {
             let mut state = self.state.borrow_mut();
             state.passed.clear();
             state.failed.clear();
+            state.selections = Default::default();
             state.to_test = state.fetched.len();
             state.testing = true;
             state.fetched.clone()
@@ -225,6 +229,59 @@ impl Preview {
                 None
             }
             Err(e) => Some(e.to_string()),
+        }
+    }
+
+    /// A list's row clicked (with control or shift), as its table selects.
+    pub(crate) fn clicked(
+        &self,
+        window: &AutoResolutionRuleWindow,
+        passing: bool,
+        row: usize,
+        control: bool,
+        shift: bool,
+    ) {
+        {
+            let mut state = self.state.borrow_mut();
+            let order: Vec<usize> = (0..if passing {
+                state.passed.len()
+            } else {
+                state.failed.len()
+            })
+                .collect();
+            state.selections[usize::from(!passing)].click(&order, row, control, shift);
+        }
+        self.show(window);
+    }
+
+    /// "show selected row(s) in a new page" (`_ShowSelectedPairsInNewPage`):
+    /// the selected pairs' files, even if deleted.
+    pub(crate) fn show_selected(
+        &self,
+        passing: bool,
+        open_files: &crate::auto_resolution_review_window::OpenFiles,
+    ) {
+        let files: Vec<HashId> = {
+            let state = self.state.borrow();
+            let pairs: Vec<(HashId, HashId)> = if passing {
+                state.passed.iter().map(|(pair, _)| *pair).collect()
+            } else {
+                state.failed.clone()
+            };
+            let order: Vec<usize> = (0..pairs.len()).collect();
+            state.selections[usize::from(!passing)]
+                .in_order(&order)
+                .into_iter()
+                .filter_map(|row| pairs.get(row))
+                .flat_map(|(a, b)| [*a, *b])
+                .collect()
+        };
+        if files.is_empty() {
+            return;
+        }
+        match crate::auto_resolution_review::show_location(&self.store, &files) {
+            Ok(location) => open_files(location, files),
+            Err(e) => eprintln!("{e}"),
         }
     }
 
@@ -293,6 +350,7 @@ impl Preview {
     }
 
     fn show(&self, window: &AutoResolutionRuleWindow) {
+        let selections = self.state.borrow().selections.clone();
         let (search_label, to_test, testing, passed, failed, fetched_none) = {
             let state = self.state.borrow();
             (
@@ -326,24 +384,35 @@ impl Preview {
         window.set_preview_fail_label(label(failed.len()).into());
         let pass: Vec<PairRow> = passed
             .iter()
-            .map(|((a, b), text)| PairRow {
+            .enumerate()
+            .map(|(i, ((a, b), text))| PairRow {
                 a: self.thumb(*a),
                 b: self.thumb(*b),
                 text: text.as_str().into(),
-                selected: false,
+                selected: selections[0].is_selected(i),
             })
             .collect();
         window.set_preview_pass_rows(ModelRc::new(VecModel::from(pass)));
         let fail: Vec<PairRow> = failed
             .iter()
-            .map(|(a, b)| PairRow {
+            .enumerate()
+            .map(|(i, (a, b))| PairRow {
                 a: self.thumb(*a),
                 b: self.thumb(*b),
                 text: "".into(),
-                selected: false,
+                selected: selections[1].is_selected(i),
             })
             .collect();
         window.set_preview_fail_rows(ModelRc::new(VecModel::from(fail)));
+        let menu = |n: usize| {
+            if n == 0 {
+                String::new()
+            } else {
+                crate::auto_resolution_review::show_in_page_label(n)
+            }
+        };
+        window.set_preview_pass_menu(menu(selections[0].selected_order().len()).into());
+        window.set_preview_fail_menu(menu(selections[1].selected_order().len()).into());
     }
 }
 

@@ -1865,6 +1865,19 @@ export component MainWindow inherits Window {
                                     activated => { root.menu-chosen(row.id); }
                                 }
                             }
+                            if root.thumbnail-menu.urls-refetch.g1.length + root.thumbnail-menu.urls-refetch.g2.length > 0: MenuSeparator { }
+                            if root.thumbnail-menu.urls-refetch.g1.length + root.thumbnail-menu.urls-refetch.g2.length > 0: Menu {
+                                title: "force metadata refetch";
+                                for row in root.thumbnail-menu.urls-refetch.g1: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                if root.thumbnail-menu.urls-refetch.g2.length > 0: MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-refetch.g2: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                            }
                         }
                         if root.thumbnail-menu.has-open: Menu {
                             title: "open";
