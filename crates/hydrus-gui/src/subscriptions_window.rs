@@ -37,6 +37,11 @@ const MULTIPLE_FAVOURITE_LOAD: &str = "Hey, multiple items in the subscriptions 
 
 /// What a question waits on.
 enum Asking {
+    DirectImportNotice(String, String, crate::subscription_import::Queue),
+    DirectImportMissing(
+        Box<hydrus_downloader_exchange::subscriptions::Subscription>,
+        crate::subscription_import::Queue,
+    ),
     MissingHistory(
         Box<hydrus_downloader_exchange::subscriptions::Subscription>,
         Vec<hydrus_downloader_exchange::subscriptions::Subscription>,
@@ -431,6 +436,35 @@ fn import_next(
     }
 }
 
+fn direct_import_next(open: &mut Open, mut queue: crate::subscription_import::Queue) {
+    use crate::subscription_import::Event;
+    while let Some(event) = queue.next() {
+        match event {
+            Event::Subscription(subscription) => {
+                if subscription.queries.iter().any(|q| q.log.is_none()) {
+                    open.asking = Some(Asking::DirectImportMissing(subscription, queue));
+                    return;
+                }
+                match hydrus_gui_model::subscription_exchange::stage(
+                    &mut open.dialog,
+                    vec![*subscription],
+                ) {
+                    Ok(()) => (),
+                    Err(error) => {
+                        open.asking = Some(Asking::Message(error));
+                        return;
+                    }
+                }
+            }
+            Event::Notice(title, message) => {
+                open.asking = Some(Asking::DirectImportNotice(title, message, queue));
+                return;
+            }
+            Event::File(_, _) => unreachable!("queue loads file events before returning"),
+        }
+    }
+}
+
 /// Show the dialog's list, buttons and question.
 fn show(window: &SubscriptionsWindow, open: &Open) {
     let now = now();
@@ -493,6 +527,18 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
             .collect()
     };
     let question = match &open.asking {
+        Some(Asking::DirectImportMissing(subscription, _)) => Some((
+            hydrus_gui_model::subscription_exchange::missing_history_question(&subscription.name),
+            false,
+        )),
+        Some(Asking::DirectImportNotice(title, message, _)) => Some((
+            Choice {
+                title: title.clone(),
+                message: message.clone(),
+                choices: vec!["ok".into()],
+            },
+            false,
+        )),
         Some(Asking::MissingHistory(subscription, _)) => Some((
             hydrus_gui_model::subscription_exchange::missing_history_question(&subscription.name),
             false,
@@ -1168,6 +1214,19 @@ pub(crate) fn open(
                 .map(|w| w.get_asked_text().to_string())
                 .unwrap_or_default();
             change(&|open| match open.asking.take() {
+                Some(Asking::DirectImportNotice(_, _, queue)) => direct_import_next(open, queue),
+                Some(Asking::DirectImportMissing(subscription, queue)) => {
+                    if index == 0
+                        && let Err(error) = hydrus_gui_model::subscription_exchange::stage(
+                            &mut open.dialog,
+                            vec![*subscription],
+                        )
+                    {
+                        open.asking = Some(Asking::Message(error));
+                        return;
+                    }
+                    direct_import_next(open, queue);
+                }
                 Some(Asking::MissingHistory(subscription, rest)) => {
                     if index == 0
                         && let Err(error) = hydrus_gui_model::subscription_exchange::stage(
@@ -1302,6 +1361,10 @@ pub(crate) fn open(
         move || {
             change(&|open| {
                 match open.asking.take() {
+                    Some(
+                        Asking::DirectImportNotice(_, _, queue)
+                        | Asking::DirectImportMissing(_, queue),
+                    ) => direct_import_next(open, queue),
                     // A cancelled rename keeps the primary's original name.
                     Some(Asking::MergeName {
                         group,
@@ -1595,13 +1658,31 @@ pub(crate) fn open(
         let active = active.clone();
         let weak = window.as_weak();
         let slots = exchange.clone();
+        let change = change.clone();
+        let state = state.clone();
         move |mode| {
-            if !active.get() || slots.has_open() || !(0..=5).contains(&mode) {
+            if !active.get()
+                || slots.has_open()
+                || !(0..=5).contains(&mode)
+                || state.borrow().asking.is_some()
+                || state
+                    .borrow()
+                    .favourites
+                    .as_ref()
+                    .is_some_and(|owner| owner.busy())
+            {
                 return;
             }
             let Some(parent) = weak.upgrade() else {
                 return;
             };
+            if mode >= 3 {
+                let queue = crate::subscription_import::Queue::from_mode(mode);
+                change(&|open| {
+                    direct_import_next(open, queue.clone());
+                });
+                return;
+            }
             parent.invoke_exchange(mode >= 3);
             let child = slots
                 .0

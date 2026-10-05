@@ -1660,9 +1660,9 @@ fn actual_subscription_list_transport_choices_dispatch_frozen_packages_and_guard
     let text = reference["single"].to_string();
     hydrus_gui::set_paster(move || text.clone());
     dialog.invoke_exchange_mode(3);
-    assert!(child(&bound).get_ready());
-    assert!(rows(&dialog).is_empty());
-    child(&bound).invoke_action("accept".into());
+    assert!(!bound.subscription_exchange.has_open());
+    assert_eq!(asked(&dialog).1, "1 objects added!");
+    dialog.invoke_chosen(0);
     assert_eq!(rows(&dialog)[0].0[0], "Artist");
     let copies = Rc::new(RefCell::new(Vec::new()));
     hydrus_gui::set_clipper({
@@ -1699,8 +1699,9 @@ fn actual_subscription_list_transport_choices_dispatch_frozen_packages_and_guard
         vec![picked.clone()]
     });
     dialog.invoke_exchange_mode(4);
-    assert!(child(&bound).get_ready());
-    child(&bound).invoke_action("accept".into());
+    assert!(!bound.subscription_exchange.has_open());
+    assert_eq!(asked(&dialog).1, "1 objects added!");
+    dialog.invoke_chosen(0);
     assert_eq!(rows(&dialog).len(), 2);
     dialog.invoke_exchange_mode(2);
     let png = hydrus_gui::png_export_window::last().unwrap();
@@ -1747,7 +1748,9 @@ fn subscription_reset_and_retries_refresh_persisted_export_caches_and_forget_fil
         let input = case["input"].to_string();
         hydrus_gui::set_paster(move || input.clone());
         dialog.invoke_exchange_mode(3);
-        child(&bound).invoke_action("accept".into());
+        assert!(!bound.subscription_exchange.has_open());
+        assert_eq!(asked(&dialog).1, "1 objects added!");
+        dialog.invoke_chosen(0);
         dialog.invoke_apply();
         let saved = store.read(subscriptions::subscriptions).unwrap();
         let id = saved[0].id;
@@ -1819,4 +1822,304 @@ fn subscription_reset_and_retries_refresh_persisted_export_caches_and_forget_fil
         );
         dialog.invoke_cancel();
     }
+}
+
+#[test]
+fn direct_import_menus_replay_qt_type_warnings_file_prefixes_and_missing_rejection() {
+    use hydrus_downloader_exchange::subscriptions as exchange;
+    let fixture = hydrus_testkit::fixture_json("subscription_import_flow.json");
+    let recorded_now = fixture["now"].as_i64().unwrap();
+    for case in fixture["cases"].as_array().unwrap() {
+        let (_dirs, store) = store();
+        let _windows = headless::init();
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        let dialog = open_dialog(&ui, &bound);
+        let files = tempfile::tempdir().unwrap();
+        let mode = case["mode"].as_str().unwrap();
+        if mode == "clipboard" {
+            let text = case["sources"][case["inputs"][0].as_str().unwrap()]
+                .as_str()
+                .unwrap()
+                .to_owned();
+            hydrus_gui::set_paster(move || text.clone());
+        } else {
+            let mut paths = Vec::new();
+            for (index, key) in case["inputs"].as_array().unwrap().iter().enumerate() {
+                let path = files.path().join(format!("{index}.{mode}"));
+                let Some(source) = case["sources"][key.as_str().unwrap()].as_str() else {
+                    paths.push(path);
+                    continue;
+                };
+                let bytes = if mode == "png" && source != "not json" {
+                    hydrus_downloader_exchange::text_png::encode(source, 512, &vec![255; 512])
+                        .unwrap()
+                } else {
+                    source.as_bytes().to_vec()
+                };
+                std::fs::write(&path, bytes).unwrap();
+                paths.push(path);
+            }
+            let expected_title = if mode == "png" {
+                "select the png or pngs with the encoded data"
+            } else {
+                "select the json or jsons with the serialised data"
+            };
+            hydrus_gui::set_picker(move |_, title| {
+                assert_eq!(title, expected_title);
+                paths.clone()
+            });
+        }
+        dialog.invoke_exchange_mode(match mode {
+            "clipboard" => 3,
+            "json" => 4,
+            "png" => 5,
+            _ => unreachable!(),
+        });
+        assert!(
+            !bound.subscription_exchange.has_open(),
+            "actual menu imports add to the list directly"
+        );
+        for notice in case["messages"].as_array().unwrap() {
+            let (title, text, _) = asked(&dialog);
+            let shown = rows(&dialog);
+            assert_eq!(
+                serde_json::json!(shown.iter().map(|r| &r.0[0]).collect::<Vec<_>>()),
+                notice["during"],
+                "{}",
+                case["case"]
+            );
+            assert_eq!(
+                serde_json::json!(
+                    shown
+                        .iter()
+                        .filter(|r| r.1)
+                        .map(|r| &r.0[0])
+                        .collect::<Vec<_>>()
+                ),
+                notice["selected"]
+            );
+            match notice["kind"].as_str().unwrap() {
+                "warning" => {
+                    assert_eq!(title, "Warning");
+                    let expected = notice["text"].as_str().unwrap();
+                    let mut actual_types = text
+                        .split("\n\n")
+                        .nth(1)
+                        .unwrap()
+                        .lines()
+                        .collect::<Vec<_>>();
+                    let mut expected_types = expected
+                        .split("\n\n")
+                        .nth(1)
+                        .unwrap()
+                        .lines()
+                        .collect::<Vec<_>>();
+                    actual_types.sort_unstable();
+                    expected_types.sort_unstable();
+                    assert_eq!(actual_types, expected_types);
+                    assert_eq!(
+                        text.split("\n\n").skip(2).collect::<Vec<_>>(),
+                        expected.split("\n\n").skip(2).collect::<Vec<_>>()
+                    );
+                }
+                "information" => {
+                    assert_eq!(title, "Information");
+                    assert_eq!(text, notice["text"]);
+                }
+                "question" => {
+                    assert_eq!(title, notice["title"]);
+                    assert_eq!(text, notice["text"]);
+                }
+                "critical" => {
+                    assert_eq!(title, notice["title"]);
+                    assert!(!text.is_empty());
+                }
+                _ => unreachable!(),
+            }
+            dialog.invoke_apply();
+            assert!(
+                store.read(subscriptions::subscriptions).unwrap().is_empty(),
+                "notices and missing-history decisions retain the draft owner"
+            );
+            if notice["kind"] == "question" {
+                dialog.invoke_chosen(1);
+            } else {
+                dialog.invoke_chosen(0);
+            }
+        }
+        assert!(!dialog.get_asking());
+        let shown = rows(&dialog);
+        assert_eq!(
+            serde_json::json!(shown.iter().map(|r| &r.0[0]).collect::<Vec<_>>()),
+            case["names"]
+        );
+        assert_eq!(
+            serde_json::json!(
+                shown
+                    .iter()
+                    .filter(|r| r.1)
+                    .map(|r| &r.0[0])
+                    .collect::<Vec<_>>()
+            ),
+            case["selected"]
+        );
+        dialog.invoke_apply();
+        let saved = store.read(subscriptions::subscriptions).unwrap();
+        assert_eq!(
+            serde_json::json!(saved.iter().map(|s| &s.name).collect::<Vec<_>>()),
+            case["names"]
+        );
+        let mut queue_ids = std::collections::BTreeSet::new();
+        let mut history_names = std::collections::BTreeSet::new();
+        let headers = store
+            .read(hydrus_store::settings::get::<hydrus_gui_model::subscription_exchange::Headers>)
+            .unwrap();
+        for saved in saved {
+            let object = case["exported"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|object| object[2][0][1] == saved.name)
+                .unwrap();
+            let expected = exchange::decode_text_at(&object.to_string(), recorded_now)
+                .unwrap()
+                .remove(0);
+            assert_eq!(saved.settings, expected.settings);
+            let queries = store
+                .read(|conn| subscriptions::queries(conn, saved.id))
+                .unwrap();
+            assert_eq!(queries.len(), expected.queries.len());
+            for (query, expected) in queries.iter().zip(&expected.queries) {
+                assert!(
+                    queue_ids.insert(query.queue_id),
+                    "each import owns a different queue even for identical query text"
+                );
+                let name = headers.0[&query.queue_id][2][0].as_str().unwrap();
+                assert_eq!(name.len(), 64);
+                assert!(history_names.insert(name.to_owned()));
+                assert_ne!(name, expected.log_name);
+                assert_eq!(query.state, expected.state);
+                let mut actual = store
+                    .read(|conn| {
+                        hydrus_gui_model::subscription_exchange::history(
+                            conn,
+                            query.queue_id,
+                            "native history",
+                        )
+                        .map_err(hydrus_store::StoreError::Invalid)
+                    })
+                    .unwrap();
+                let expected = expected.log.as_ref().unwrap();
+                actual.name.clone_from(&expected.name);
+                assert_eq!(
+                    &actual, expected,
+                    "saved ordered file and gallery histories"
+                );
+            }
+        }
+        let reopened = open_dialog(&ui, &bound);
+        assert_eq!(
+            serde_json::json!(rows(&reopened).iter().map(|r| &r.0[0]).collect::<Vec<_>>()),
+            case["names"]
+        );
+        reopened.invoke_cancel();
+        hydrus_gui::set_picker(|_, _| Vec::new());
+    }
+}
+
+#[test]
+fn direct_import_picker_and_pending_notices_are_invalid_after_owner_cancel() {
+    let fixture = hydrus_testkit::fixture_json("subscription_import_flow.json");
+    let text = fixture["cases"][4]["sources"]["a"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let files = tempfile::tempdir().unwrap();
+    let path = files.path().join("subscription.json");
+    std::fs::write(&path, &text).unwrap();
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let dialog = open_dialog(&ui, &bound);
+    hydrus_gui::set_picker({
+        let owner = dialog.as_weak();
+        let path = path.clone();
+        move |_, _| {
+            owner.upgrade().unwrap().invoke_cancel();
+            vec![path.clone()]
+        }
+    });
+    // The modal picker can close its owner before returning. No mutable owner
+    // borrow survives the picker and its returned paths cannot stage anything.
+    dialog.invoke_exchange_mode(4);
+    assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    let successor = open_dialog(&ui, &bound);
+    dialog.invoke_chosen(0);
+    dialog.invoke_apply();
+    dialog.invoke_exchange_mode(3);
+    assert!(rows(&successor).is_empty());
+    hydrus_gui::set_picker(move |_, _| vec![path.clone(), path.clone()]);
+    successor.invoke_exchange_mode(4);
+    assert_eq!(rows(&successor).len(), 1);
+    assert_eq!(asked(&successor).1, "1 objects added!");
+    successor.invoke_cancel();
+    let fresh = open_dialog(&ui, &bound);
+    successor.invoke_chosen(0);
+    successor.invoke_cancelled();
+    successor.invoke_apply();
+    assert!(rows(&fresh).is_empty());
+    assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    fresh.invoke_cancel();
+    hydrus_gui::set_picker(|_, _| Vec::new());
+}
+
+#[test]
+fn direct_missing_history_acceptance_uses_empty_owned_queues_and_dismissal_continues() {
+    let fixture = hydrus_testkit::fixture_json("subscription_import_flow.json");
+    let reference = &fixture["cases"][2];
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let dialog = open_dialog(&ui, &bound);
+    let source = reference["sources"]["missing"].as_str().unwrap().to_owned();
+    hydrus_gui::set_paster(move || source.clone());
+    dialog.invoke_exchange_mode(3);
+    assert_eq!(asked(&dialog).0, reference["messages"][0]["title"]);
+    assert_eq!(rows(&dialog).len(), 1);
+    dialog.invoke_apply();
+    assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    dialog.invoke_chosen(0);
+    assert_eq!(rows(&dialog).len(), 3);
+    assert_eq!(asked(&dialog).1, "3 objects added!");
+    // Closing an informational notice resumes its owned continuation.
+    dialog.invoke_cancelled();
+    assert!(!dialog.get_asking());
+    dialog.invoke_apply();
+    let saved = store.read(subscriptions::subscriptions).unwrap();
+    let incomplete = saved.iter().find(|s| s.name == "Incomplete").unwrap();
+    let queries = store
+        .read(|conn| subscriptions::queries(conn, incomplete.id))
+        .unwrap();
+    assert!(!queries.is_empty());
+    for query in queries {
+        assert!(
+            store
+                .read(|conn| queues::file_seeds(conn, query.queue_id))
+                .unwrap()
+                .is_empty()
+        );
+        assert!(
+            store
+                .read(|conn| queues::gallery_seeds(conn, query.queue_id))
+                .unwrap()
+                .is_empty()
+        );
+    }
+    assert_eq!(saved.len(), 3);
+    let reopened = open_dialog(&ui, &bound);
+    assert_eq!(rows(&reopened).len(), 3);
+    reopened.invoke_cancel();
 }

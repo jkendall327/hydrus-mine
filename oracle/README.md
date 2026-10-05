@@ -263,3 +263,19 @@ image is `import_work_slots.png`; evidence is `import_work_slots.json`.
 Constructor spinner seeds are 5/15/5/15/10, but real ClientOptions defaults loaded
 into them are 15/5/15/5/10. Authored Rust/native/downloader tests remain unrun
 locally and require hosted CI before the five proposed control claims promote.
+
+`record_subscription_import_flow.py` records the actual subscription list's
+permitted-type filtering and ordered clipboard/JSON/PNG import handlers on a
+fresh basic fixture. Eleven cases cover nested valid/wrong-type packages,
+missing-log rejection, warning and information counts, final selection, accepted
+prefixes before invalid/unreadable files, and one future-version warning while
+subsequent files continue. Full exported histories and the registered Python
+class names are retained. The final offscreen run completed 2026-10-05
+04:42:25–04:42:30 UTC under the shared oracle lock with clean shutdown; the
+unrelated sandbox Client API socket bind failed. Synthetic subscriptions use
+only fixture URLs. Business loading/import/export handlers are unmodified;
+clock, fresh-name generation, clipboard text availability and user dialogs are
+held or recorded. Authored codec/native/Store replay and owner cancellation
+regressions await hosted CI. Clipboard bitmap precedence, drops, native error
+bodies and full unrelated-object payload validation remain outside this slice;
+subscriptions-exchange stays Partial with zero completion credit.

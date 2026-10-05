@@ -116,6 +116,7 @@ pub mod simple_formulae_window;
 pub mod slideshow;
 pub mod still;
 pub mod string_processor_window;
+mod subscription_import;
 mod subscription_quality_control;
 mod subscriptions_window;
 mod tab_context_window;

@@ -168,14 +168,26 @@ recordings constrain order, timestamps, statuses, counts and examples. Histories
 with duplicate native identities or complex/float Python note representations
 fail explicitly before staging. `oracle/record_subscription_exchange.py` records the actual Qt list
 clipboard flow and reference PNG. Manage subscriptions now exposes the original clipboard/JSON/PNG transport
-menus, dispatching to an owned import/export child: clipboard/JSON text or JSON/PNG files are reviewed, imported
-subscriptions remain staged; JSON export asks before overwriting an existing file,
-and multiple JSON or PNG files can be imported as one reviewed selection. Apply
+menus. Clipboard text and selected JSON/PNG files add permitted objects directly
+to the staged list, without an intermediate review window. Nested lists preserve
+their object order; known unrelated types produce the original type warning.
+Each file's information/error notice finishes before the next file loads. A later
+unreadable or invalid file leaves earlier accepted objects in the draft and stops
+the selection; future-version failures warn once and continue subsequent files.
+The last accepted subscription remains selected. JSON export asks before
+overwriting an existing file. Apply
 persists both URL histories and retained header examples. Reset/retry updates
 file-count and example caches in both staged exports and saved settings; retries
 forget the old file hashes, preserving gallery examples and velocity. Missing query histories ask the original named confirmation
 before that object enters the draft; rejecting leaves it out and accepting
-initialises empty histories on Apply. Cancel invalidates the child and its callbacks.
+initialises empty histories on Apply. Rejecting or dismissing that question
+continues remaining objects; the information count includes permitted objects
+whose missing-log import was rejected, as in Qt. Cancel invalidates pending
+imports and picker/notice callbacks. `oracle/record_subscription_import_flow.py`
+records these direct menu imports, warnings, accepted prefixes and selection.
+The explicit legacy exchange callback still supports its old review child;
+actual import menus use the direct flow. Clipboard bitmap precedence and list
+drag/drop remain absent (see DIFFERENCES.md).
 
 Network > "subscriptions…" opens the manage subscriptions dialog
 (`src/subscriptions_window.rs`, `hydrus-gui-model/src/subscriptions_dialog.rs`),
