@@ -30,6 +30,7 @@ pub mod maintenance;
 pub mod manage_tags_sort;
 pub mod master;
 pub mod media;
+pub mod menu_choice_wheel;
 pub mod metadata_jobs;
 pub mod network;
 pub mod network_runtime;

@@ -231,6 +231,33 @@ pub fn open(
             }
         }),
     );
+    crate::menu_choice_wheel::bind(
+        window.global::<crate::MenuChoicePolicy<'_>>(),
+        store,
+        Rc::new({
+            let active = active.clone();
+            let weak = window.as_weak();
+            let slot = Rc::downgrade(&slots.window);
+            let sidecars = crate::menu_choice_wheel::occupied(&slots.sidecars.routers);
+            let menu = tag_menu.clone();
+            move || {
+                active.get()
+                    && !sidecars()
+                    && !menu.busy()
+                    && weak.upgrade().is_some_and(|window| {
+                        window.window().is_visible()
+                            && !window.get_working()
+                            && !window.get_asking()
+                            && window.get_tag_menu_question().is_empty()
+                            && slot.upgrade().is_some_and(|slot| {
+                                slot.borrow().as_ref().is_some_and(|current| {
+                                    std::ptr::eq(current.window(), window.window())
+                                })
+                            })
+                    })
+            }
+        }),
+    );
     crate::write_tag_menu::bind!(window, tag_menu);
     window.on_tag_row_clicked({
         let state = state.clone();

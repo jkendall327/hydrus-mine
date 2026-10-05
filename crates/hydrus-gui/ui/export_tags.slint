@@ -1,5 +1,6 @@
 // Read-only ListBoxTagsMedia sidebar within the existing manual-export window.
-import { ComboBox, ScrollView } from "std-widgets.slint";
+import { WheelMenuChoice, MenuChoiceFrame } from "menu_choice_wheel.slint";
+import { ScrollView } from "std-widgets.slint";
 import { ListText, Theme } from "theme.slint";
 export component ExportTags inherits FocusScope {
     in property <[ListText]> rows;
@@ -12,6 +13,7 @@ export component ExportTags inherits FocusScope {
     callback middle-clicked(int,bool,bool);
     callback context-menu(int,length,length);
     callback sort-chosen(int,int);
+    callback sort-geometry(int,MenuChoiceFrame);
     callback copy();
     callback select-all();
     key-pressed(event) => {
@@ -24,10 +26,10 @@ export component ExportTags inherits FocusScope {
         VerticalLayout {
             padding: 5px; spacing: 4px;
             Text { text: "files' tags"; color: Theme.text; font-weight: 700; horizontal-alignment: center; }
-            ComboBox { model: ["sort by tag", "sort by subtag", "sort by count"]; current-index: root.sort-type; selected => {root.sort-chosen(0,self.current-index);} }
+            WheelMenuChoice { enabled:root.enabled;changed frame => {root.sort-geometry(0,self.frame);} model: ["sort by tag", "sort by subtag", "sort by count"]; current-index: root.sort-type; selected(index) => {root.sort-chosen(0,index);} }
             HorizontalLayout {
-                ComboBox { model: root.orders; current-index: root.order; selected => {root.sort-chosen(1,self.current-index);} }
-                if root.sort-type != 1: ComboBox { model: ["no grouping", "namespace (a-z)", "namespace (user)"]; current-index: root.group; selected => {root.sort-chosen(2,self.current-index);} }
+                WheelMenuChoice { enabled:root.enabled;changed frame => {root.sort-geometry(1,self.frame);} model: root.orders; current-index: root.order; selected(index) => {root.sort-chosen(1,index);} }
+                if root.sort-type != 1: WheelMenuChoice { enabled:root.enabled;changed frame => {root.sort-geometry(2,self.frame);} model: ["no grouping", "namespace (a-z)", "namespace (user)"]; current-index: root.group; selected(index) => {root.sort-chosen(2,index);} }
             }
             ScrollView {
                 vertical-stretch: 1;

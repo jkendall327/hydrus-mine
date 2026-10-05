@@ -50,6 +50,7 @@ pub mod main_menu;
 pub mod manage_tags;
 pub mod manage_tags_sort;
 pub mod media_actions;
+pub mod menu_choice_wheel;
 pub mod merge_options_editor;
 pub mod merge_summary;
 pub mod namespace_colours;

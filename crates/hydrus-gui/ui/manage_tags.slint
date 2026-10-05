@@ -1,3 +1,4 @@
+import { WheelMenuChoice, MenuChoiceFrame } from "menu_choice_wheel.slint";
 import { PaintedTagText } from "tag_text.slint";
 // The manage tags window (F3): the files' tags on the tag service chosen,
 // and an input whose tag, entered, is added to them (or, if they all have
@@ -5,7 +6,7 @@ import { PaintedTagText } from "tag_text.slint";
 // through the suggestions. Changes wait: enter with nothing typed (or
 // "apply") applies them, escape (or "cancel") forgets them.
 
-import { Button, ComboBox, ListView } from "std-widgets.slint";
+import { Button, ListView } from "std-widgets.slint";
 import { WriteTagInput, TagMenuOverlay } from "write_autocomplete.slint";
 import { Question } from "favourites.slint";
 import { MenuPane } from "main_menu.slint";
@@ -43,6 +44,9 @@ export component ManageTagsWindow inherits Window {
     in property <int> sort-group;
     in property <int> sort-siblings;
     callback sort-chosen(int,int);
+    out property <MenuChoiceFrame> sort-type-frame: tag-sort-type.frame;
+    out property <MenuChoiceFrame> sort-order-frame: tag-sort-order.frame;
+    callback sort-menu-geometry(int,MenuChoiceFrame);
     out property <bool> sort-enabled: root.question == "" && root.tag-menu-panes.length == 0 && root.tag-menu-question == "";
     in property <string> deleted-count-label;
     in property <bool> deleted-count-visible;
@@ -121,10 +125,10 @@ export component ManageTagsWindow inherits Window {
                 padding: 8px;
                 spacing: 6px;
                 VerticalLayout {
-                    ComboBox { enabled:root.sort-enabled;model:["sort by tag","sort by subtag","sort by count"];current-index:root.sort-type;selected=>{root.sort-chosen(0,self.current-index);} }
-                    ComboBox { enabled:root.sort-enabled;model:root.sort-type == 2 ? ["most first","fewest first"] : ["a-z","z-a"];current-index:root.sort-order;selected=>{root.sort-chosen(1,self.current-index);} }
-                    if root.sort-type != 2: ComboBox { enabled:root.sort-enabled;model:["siblings","tags"];current-index:root.sort-siblings;selected=>{root.sort-chosen(3,self.current-index);} }
-                    if root.sort-type != 1: ComboBox { enabled:root.sort-enabled;model:["no grouping","namespace (a-z)","namespace (user)"];current-index:root.sort-group;selected=>{root.sort-chosen(2,self.current-index);} }
+                    tag-sort-type := WheelMenuChoice { enabled:root.sort-enabled;model:["sort by tag","sort by subtag","sort by count"];current-index:root.sort-type;selected(index)=>{root.sort-chosen(0,index);} }
+                    tag-sort-order := WheelMenuChoice { enabled:root.sort-enabled;model:root.sort-type == 2 ? ["most first","fewest first"] : ["a-z","z-a"];current-index:root.sort-order;selected(index)=>{root.sort-chosen(1,index);} }
+                    if root.sort-type != 2: WheelMenuChoice { changed frame => {root.sort-menu-geometry(3,self.frame);} enabled:root.sort-enabled;model:["siblings","tags"];current-index:root.sort-siblings;selected(index)=>{root.sort-chosen(3,index);} }
+                    if root.sort-type != 1: WheelMenuChoice { changed frame => {root.sort-menu-geometry(2,self.frame);} enabled:root.sort-enabled;model:["no grouping","namespace (a-z)","namespace (user)"];current-index:root.sort-group;selected(index)=>{root.sort-chosen(2,index);} }
                 }
                 Rectangle {
                     border-width: 1px;

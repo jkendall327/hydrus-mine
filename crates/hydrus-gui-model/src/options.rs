@@ -295,6 +295,7 @@ settings! {
     gallery: GalleryDefaults,
     gui: GuiSettings,
     radio_return: hydrus_store::radio_return::RadioReturn => hydrus_store::radio_return::load,
+    menu_choice_wheel: hydrus_store::menu_choice_wheel::MenuChoiceWheel => hydrus_store::menu_choice_wheel::load,
     tag_search_activation: hydrus_store::settings::TagSearchActivation,
     gui_formatting: hydrus_store::settings::GuiFormatting,
     gui_sessions: hydrus_store::settings::GuiSessionSettings,
@@ -2405,6 +2406,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s, value| s.radio_return.force_dialog_ok = value,
                         ),
                         check(
+                            "Mouse wheel can \"scroll\" through menu buttons: ",
+                            |s| s.menu_choice_wheel.enabled,
+                            |s, value| s.menu_choice_wheel.enabled = value,
+                        ),
+                        check(
                             "Remember last open options panel in this window: ",
                             |s| s.options_preferences.remember_panel,
                             |s, v| s.options_preferences.remember_panel = v,
@@ -4386,6 +4392,8 @@ pub struct Editor {
     pages: Vec<Page>,
     before: Settings,
     values: Vec<Vec<Value>>,
+    // Real TagSortControl keeps independent text/count choices until owner close.
+    tag_orders: std::collections::BTreeMap<(usize, usize), crate::manage_tags_sort::Control>,
     /// Each noneable number's number while it is none (as the reference's
     /// spin box keeps it).
     numbers: Vec<Vec<i64>>,
@@ -4430,6 +4438,7 @@ impl Editor {
             pages,
             before: settings,
             values,
+            tag_orders: std::collections::BTreeMap::new(),
             numbers,
             page,
             suggestions,
@@ -4752,7 +4761,18 @@ impl Editor {
     pub fn tag_sort(&mut self, row: usize, part: usize, index: usize) {
         if let Some(i) = self.option_at(row) {
             match &mut self.values[self.page][i] {
-                Value::TagSort(sort) => *sort = tag_sort_chosen(sort, part, index),
+                Value::TagSort(sort) => {
+                    let control = self.tag_orders.entry((self.page, i)).or_insert_with(|| {
+                        crate::manage_tags_sort::Control::new(
+                            hydrus_store::manage_tags_sort::Sort {
+                                order: *sort,
+                                use_siblings: true,
+                            },
+                        )
+                    });
+                    control.choose(part, index);
+                    *sort = control.value.order;
+                }
                 Value::ManageTagsSort(control) => control.choose(part, index),
                 _ => {}
             }
