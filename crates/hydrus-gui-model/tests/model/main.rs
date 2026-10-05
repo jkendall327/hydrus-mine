@@ -166,3 +166,5 @@ mod page_layout;
 mod or_connector;
 
 mod image_colour;
+
+mod duplicates_progress;

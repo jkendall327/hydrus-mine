@@ -192,3 +192,5 @@ mod hidden_page_preview;
 mod or_connector;
 
 mod image_colour;
+
+mod duplicates_progress;

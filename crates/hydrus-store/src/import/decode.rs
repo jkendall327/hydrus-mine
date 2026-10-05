@@ -729,6 +729,10 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         insert_setting(&mut input, &tag_presentation(options))?;
         insert_setting(
             &mut input,
+            &crate::duplicates_progress::Presentation::from_legacy(options),
+        )?;
+        insert_setting(
+            &mut input,
             &crate::image_colour::ImageColour::from_legacy(options),
         )?;
         insert_setting(&mut input, &manage_tags_sort(options))?;
