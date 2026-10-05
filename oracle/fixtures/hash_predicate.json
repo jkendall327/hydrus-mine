@@ -1424,6 +1424,70 @@
       "type": "sha1"
     }
   ],
+  "acceptance": [
+    {
+      "name": "wrong-algorithm",
+      "before": {
+        "text": "9757493665f05cc8562c8ee5163f7970",
+        "type": "sha512",
+        "inclusive": true,
+        "type_checked": [
+          false,
+          false,
+          false,
+          true
+        ],
+        "error": "Hey, I think you have the wrong hash type set. You are set to sha512 but I think you are md5. Try clicking the button to auto-detect."
+      },
+      "after": {
+        "text": "9757493665f05cc8562c8ee5163f7970",
+        "type": "sha512",
+        "inclusive": true,
+        "type_checked": [
+          false,
+          false,
+          false,
+          true
+        ],
+        "error": "Hey, I think you have the wrong hash type set. You are set to sha512 but I think you are md5. Try clicking the button to auto-detect."
+      },
+      "warnings": [
+        "Sorry, predicate was not valid: Hey, I think you have the wrong hash type set. You are set to sha512 but I think you are md5. Try clicking the button to auto-detect."
+      ],
+      "dialog_visible": true
+    },
+    {
+      "name": "invalid-lines",
+      "before": {
+        "text": "not hex",
+        "type": "sha512",
+        "inclusive": true,
+        "type_checked": [
+          false,
+          false,
+          false,
+          true
+        ],
+        "error": "Unfortunately, some hashes did not parse correctly.\n\nIncludes non-hex characters\n\"not hex\""
+      },
+      "after": {
+        "text": "not hex",
+        "type": "sha512",
+        "inclusive": true,
+        "type_checked": [
+          false,
+          false,
+          false,
+          true
+        ],
+        "error": "Unfortunately, some hashes did not parse correctly.\n\nIncludes non-hex characters\n\"not hex\""
+      },
+      "warnings": [
+        "Sorry, predicate was not valid: Unfortunately, some hashes did not parse correctly.\n\nIncludes non-hex characters\n\"not hex\""
+      ],
+      "dialog_visible": true
+    }
+  ],
   "warning_transport": {
     "title": "Warning",
     "message": "Unfortunately, some hashes did not parse correctly.\n\nUnknown hash type (unusual prefix)\n\n1 lines\n\nIncludes non-hex characters\n\n\"not hex\"\n\nHas an odd number of characters\n\n\"a\"\n\nHas a length that does not match to an expected hash\n\n\"abcd\"",

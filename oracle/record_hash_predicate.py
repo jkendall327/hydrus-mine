@@ -94,6 +94,14 @@ def record(session):
                 (editor._format_hashes_button if action == 'normal' else editor._format_hashes_button_forced).click()
                 out['cleanup'].append({'name': name, 'action': action, 'yes': yes, 'before': before,
                                        'after': snapshot(editor), 'warnings': list(warnings), 'questions': list(questions)})
+            out['acceptance'] = []
+            for name, text in [('wrong-algorithm', hashes['md5'][0]), ('invalid-lines', 'not hex')]:
+                editor._hash_type.SetValue('sha512'); editor._hashes.setPlainText(text)
+                warnings.clear()
+                before = snapshot(editor)
+                editor.parentWidget()._ok.click()
+                out['acceptance'].append({'name': name, 'before': before, 'after': snapshot(editor),
+                                          'warnings': list(warnings), 'dialog_visible': dialog.isVisible()})
             for kind in types:
                 initial = P.Predicate(P.PREDICATE_TYPE_SYSTEM_HASH, (tuple(bytes.fromhex(h) for h in sorted(hashes[kind])), kind), inclusive=False)
                 reopened = S.PanelPredicateSystemHash(c.gui, initial)
