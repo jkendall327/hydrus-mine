@@ -45,7 +45,7 @@ fn registered_mixed_login_package_preserves_json_png_rules_and_rejects_partial_d
     malformed[2]
         .as_array_mut()
         .unwrap()
-        .push(json!([2, [999999, 1, []]]));
+        .push(json!([2, [999_999, 1, []]]));
     assert!(decode_text(&malformed.to_string()).is_err());
     let mut unsupported = definitions;
     let Native::Login(script) = &mut unsupported

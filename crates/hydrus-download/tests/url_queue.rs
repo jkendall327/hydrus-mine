@@ -829,7 +829,7 @@ fn file_work_queue(s: &Setup, kind: queues::QueueKind, name: &str) -> i64 {
             )?;
             if kind == queues::QueueKind::Watcher {
                 let mut state = hydrus_core::watchers::WatcherState::new(
-                    "https://watcher.example/thread/1".into(),
+                    "https://watcher.example/thread/1",
                     hydrus_core::subscriptions::CheckerOptions::default(),
                     0,
                 );

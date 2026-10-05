@@ -225,7 +225,7 @@ impl QueueRunner {
                 let runner = Arc::clone(self);
                 let task_handle = Arc::clone(&handle);
                 tokio::spawn(async move {
-                    runner.run(queue, &task_handle).await;
+                    Box::pin(runner.run(queue, &task_handle)).await;
                     *task_handle.running.lock() = false;
                 });
             }

@@ -309,7 +309,7 @@ fn real_page_tabs_apply_caps_keep_zero_count_descendants_and_restore_context() {
 }
 
 fn assert_literal_children_state(ui: &MainWindow, bound: &hydrus_gui::Bound, event: &Value) {
-    use hydrus_core::search::Predicate;
+    use hydrus_core::search::predicate::Predicate;
     let current = bound.current.borrow();
     let page = current.borrow();
     let search = page.favourite_to_save().unwrap().search;
@@ -351,7 +351,7 @@ fn assert_literal_children_state(ui: &MainWindow, bound: &hydrus_gui::Bound, eve
 
 #[test]
 fn literal_parent_activation_children_removal_and_negative_restore_match_qt() {
-    use hydrus_core::search::Predicate;
+    use hydrus_core::search::predicate::Predicate;
     let fixture = hydrus_testkit::fixture_json("read_tag_tabs.json");
     let (_dirs, store, key) = seeded(&fixture);
     let _windows = headless::init();
