@@ -263,3 +263,17 @@ image is `import_work_slots.png`; evidence is `import_work_slots.json`.
 Constructor spinner seeds are 5/15/5/15/10, but real ClientOptions defaults loaded
 into them are 15/5/15/5/10. Authored Rust/native/downloader tests remain unrun
 locally and require hosted CI before the five proposed control claims promote.
+
+`record_shortcut_capture.py` drives the actual EditShortcutAndCommandPanel and
+its keyboard/mouse widgets through Qt events. `shortcut_capture.json` records
+56 steps: both non-number numpad policies, sorted modifiers/effective event
+flags, Unicode casefold, number/Return/Enter/arrow keypad identities, modifier
+keys, Backtab, F24 and ignored null; both mouse label policies, six buttons,
+press/release choice, double-click, strict accumulated small wheel values and
+horizontal rejection. The final offscreen run completed 2026-10-05
+05:18:09–05:18:12 UTC on a fresh basic fixture via `with-oracle`, with clean
+shutdown. The unrelated sandbox Client API socket bind failed. Qt style values
+were 400 ms and five pixels; recording those values does not prove a Winit
+fallback matches native Qt double-click or angleDelta semantics. Mouse remains
+Partial/0. Model/native persistence, Cancel/stale ownership and main/viewer
+consumer assertions are authored for hosted CI, without local Rust execution.

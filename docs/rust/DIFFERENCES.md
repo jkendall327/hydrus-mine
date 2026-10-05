@@ -2392,3 +2392,21 @@ updates also qualify the seed by its queue. Pending-pause, deleted-owner replace
 retained Options callbacks after reopening are covered by authored regressions.
 FIFO fairness and background repeater scheduling cadence remain outside this
 five-control slice.
+
+Shortcut capture now has an owned Options > set > command path and persisted
+keyboard consumers in the main GUI and media viewer. The two capture policies
+migrate from typed legacy booleans. Legacy shortcut sets remain retained as raw
+legacy objects; this slice does not decode those bindings or implement the full
+command catalogue, custom named sets, multi-selection or shortcut exchange.
+Only the original keyboard capture leaf is proposed FirstPass, contingent on
+hosted native/model/Store validation. Parent shortcut workflows remain Partial.
+
+The mouse capture leaf remains Partial/0. The reference uses native Qt double
+click events and vertical angleDelta; Winit supplies ordinary button events and
+line/pixel wheel deltas. Capture uses a 400 ms/five-logical-pixel double-click
+fallback, while the viewer uses five physical pixels. Lines map to 120 angle
+units and pixel Y is borrowed directly. Multi-button masks, platform task-button
+mapping, trackpad angle semantics, global cross-viewer wheel state and native
+platform double-click thresholds are not established by the offscreen Qt
+recording. Authored Rust tests await hosted CI; no local Cargo build, Rust test
+or mutation run was performed.

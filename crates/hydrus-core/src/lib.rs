@@ -25,6 +25,7 @@ pub mod pyjson;
 pub mod search;
 pub mod service;
 pub mod sort;
+pub mod shortcuts;
 pub mod subscriptions;
 pub mod tag;
 pub mod tag_filter;

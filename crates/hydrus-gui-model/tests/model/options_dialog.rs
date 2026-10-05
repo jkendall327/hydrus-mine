@@ -408,9 +408,11 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
         // This reference page embeds the list; native opens the same transaction
         // in a child window, covered by dedicated regex/write-tag/gallery-source/import-options/namespace-queue recordings.
         // The inline namespace RGB list has its own exact namespace_colour_controls replay.
+        // Shortcut capture/policies replay the actual nested command controls separately.
         if matches!(
             option.kind,
             Kind::ExternalCalls
+                | Kind::Shortcuts
                 | Kind::RegexFavourites
                 | Kind::NamespaceColours
                 | Kind::DeletionReasons

@@ -63,6 +63,9 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
             out.label = option.label.into();
             out.depth = int(*depth as i64);
             match (&option.kind, value) {
+                (Kind::Shortcuts, Value::Shortcuts(_)) => {
+                    out.kind = 32;
+                }
                 (Kind::Check, Value::Check(b)) => {
                     out.kind = 1;
                     out.checked = *b;
@@ -385,6 +388,7 @@ pub(crate) fn open(
     let colour_list =
         crate::options_namespace_colours::bind(&window, &editor, &active, colour_slot);
     let frame_table = crate::options_frames::bind(&window, &editor, &active, frame_slot);
+    let shortcuts = crate::shortcut_windows::bind(&window, &editor, &active);
     let external_table =
         crate::options_external_calls::bind(store, &window, &editor, &active, external_slots);
     // (the rows are made anew only as the page changes: an edit leaves its
@@ -449,10 +453,12 @@ pub(crate) fn open(
         let cancel_reasons = reason_queue.cancel.clone();
         let cancel_frames = frame_table.cancel.clone();
         let cancel_external = external_table.cancel.clone();
+        let cancel_shortcuts = shortcuts.cancel.clone();
         move || {
             if !active.replace(false) {
                 return;
             }
+            cancel_shortcuts();
             let child = tag_slot
                 .borrow()
                 .as_ref()
@@ -829,12 +835,14 @@ pub(crate) fn open(
         let reasons_open = reason_queue.has_open.clone();
         let frames_open = frame_table.has_open.clone();
         let external_open = external_table.has_open.clone();
+        let shortcuts_open = shortcuts.has_open.clone();
         move |i, checked| {
             if !active.get()
                 || colours_open()
                 || reasons_open()
                 || frames_open()
                 || external_open()
+                || shortcuts_open()
                 || !matches!(
                     editor.borrow().rows().get(at(i)),
                     Some(Row::Opt { enabled: true, .. })
@@ -1206,6 +1214,7 @@ pub(crate) fn open(
         let reasons_open = reason_queue.has_open.clone();
         let frames_open = frame_table.has_open.clone();
         let external_open = external_table.has_open.clone();
+        let shortcuts_open = shortcuts.has_open.clone();
         let import_slot = import_slot.clone();
         let namespace_slot = namespace_slot.clone();
         let banner_slot = banner_slot.clone();
@@ -1220,6 +1229,7 @@ pub(crate) fn open(
                 || reasons_open()
                 || frames_open()
                 || external_open()
+                || shortcuts_open()
                 || tag_slot.borrow().is_some()
                 || import_slot.borrow().is_some()
                 || namespace_slot.borrow().is_some()

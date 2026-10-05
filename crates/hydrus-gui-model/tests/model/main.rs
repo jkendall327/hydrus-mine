@@ -36,6 +36,7 @@ mod merge_summaries;
 mod namespace_colours;
 mod notes_preferences;
 mod options_dialog;
+mod shortcut_capture;
 mod page_chooser_options;
 mod page_navigation_options;
 mod predicate_history;

@@ -770,6 +770,7 @@ export component MainWindow inherits Window {
     callback flip-global-mute();
     // f5: search the page again; ctrl+page up and down: the page beside
     callback refresh-page();
+    callback shortcut-key(string,int)->bool;
     callback move-pages(int);
     // whether the page searches as its search changes, and ctrl+i (or the
     // button under the search box) switching it
@@ -934,6 +935,7 @@ export component MainWindow inherits Window {
                 }
                 return accept;
             }
+            if root.shortcut-key(event.text,(event.modifiers.control?1:0)+(event.modifiers.alt?2:0)+(event.modifiers.shift?4:0)+(event.modifiers.meta?32:0)) { return accept; }
             if (event.modifiers.control && (event.text == "p" || event.text == "P")) { root.command-palette-requested(); return accept; }
             if (event.text == Key.F9 || (event.modifiers.control && (event.text == "t" || event.text == "T"))) {
                 root.new-page();
@@ -2187,3 +2189,4 @@ export { ViewerEyeMenu } from "viewer_eye_menu.slint";
 export { ArchiveRepairWindow } from "archive_repair.slint";
 
 export { FileHistoryWindow } from "file_history.slint";
+export { ShortcutSetWindow, ShortcutCommandWindow } from "shortcuts.slint";

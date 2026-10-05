@@ -315,6 +315,12 @@ export component MediaViewerWindow inherits Window {
     property <length> drag-y;
 
     callback next();
+    callback shortcut-key(string,int)->bool;
+    callback shortcut-mouse(int,int,int)->bool;
+    callback shortcut-wheel(float,int)->bool;
+    in property <bool> shortcut-native-pointer;
+    in-out property <bool> shortcut-double-consumed;
+    private property <int> shortcut-mouse-bits;
     callback previous();
     callback close-requested();
     callback toggle-pause();
@@ -368,6 +374,7 @@ export component MediaViewerWindow inherits Window {
                 }
                 return accept;
             }
+            if root.shortcut-key(event.text,(event.modifiers.control?1:0)+(event.modifiers.alt?2:0)+(event.modifiers.shift?4:0)+(event.modifiers.meta?32:0)) { return accept; }
             if (event.text == Key.F3) {
                 root.manage-tags();
                 return accept;
@@ -970,6 +977,9 @@ export component MediaViewerWindow inherits Window {
             changed mouse-x => { if (!self.pressed) { root.drag-cursor-hidden = false; } }
             changed mouse-y => { if (!self.pressed) { root.drag-cursor-hidden = false; } }
             pointer-event(event) => {
+                root.shortcut-mouse-bits=(event.modifiers.control?1:0)+(event.modifiers.alt?2:0)+(event.modifiers.shift?4:0)+(event.modifiers.meta?32:0);
+                if event.kind==PointerEventKind.down {root.shortcut-double-consumed=false;}
+                if (event.kind==PointerEventKind.down || event.kind==PointerEventKind.up) && root.shortcut-mouse(event.button==PointerEventButton.left?0:event.button==PointerEventButton.right?1:event.button==PointerEventButton.middle?2:event.button==PointerEventButton.back?7:event.button==PointerEventButton.forward?8:9,event.kind==PointerEventKind.down?0:1,root.shortcut-mouse-bits) {return;}
                 if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
                     root.drag-accepted = !root.disallow-duration-drag || !root.media-has-duration;
                     root.drag-x = self.mouse-x;
@@ -993,7 +1003,11 @@ export component MediaViewerWindow inherits Window {
                 }
             }
             // as is a (left) double-click, as the reference's default
-            double-clicked => { root.close-requested(); }
+            double-clicked => {
+                if !root.shortcut-native-pointer {root.shortcut-double-consumed=root.shortcut-mouse(0,2,root.shortcut-mouse-bits);}
+                if !root.shortcut-double-consumed {root.close-requested();}
+                root.shortcut-double-consumed=false;
+            }
             moved => {
                 if (root.drag-accepted) {
                     if (self.mouse-x != root.drag-x || self.mouse-y != root.drag-y) {
@@ -1007,6 +1021,7 @@ export component MediaViewerWindow inherits Window {
                 }
             }
             scroll-event(event) => {
+                if root.shortcut-wheel(event.delta-y/1px,(event.modifiers.control?1:0)+(event.modifiers.alt?2:0)+(event.modifiers.shift?4:0)+(event.modifiers.meta?32:0)) {return accept;}
                 if (event.modifiers.control) {
                     if (event.delta-y > 0) {
                         root.zoom(1, true, self.mouse-x, self.mouse-y);

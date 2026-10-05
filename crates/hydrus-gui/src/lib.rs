@@ -110,6 +110,9 @@ pub mod services_review_window;
 pub mod session_autosave;
 mod session_dialog;
 pub mod session_startup;
+pub mod shortcut_input;
+mod shortcut_runtime;
+pub mod shortcut_windows;
 mod sidebar_context_cog;
 pub mod sidecars_window;
 pub mod simple_formulae_window;
@@ -809,14 +812,20 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    let shortcuts = shortcut_runtime::main(window, pages.borrow().store().clone());
+    let mut shortcut_events = shortcuts.observer();
+    let mut drop_events = drops::file_handler({
+        let review_files = review_files.clone();
+        move |paths| review_files(paths)
+    });
     windows::watch_named_events(
         window.window(),
         pages.borrow().store(),
         "main_gui",
-        drops::file_handler({
-            let review_files = review_files.clone();
-            move |paths| review_files(paths)
-        }),
+        move |window, event| {
+            let _ = shortcut_events(window, event);
+            drop_events(window, event)
+        },
     );
     // open the page chosen, if one was
     let chosen = {
@@ -5980,7 +5989,16 @@ fn open_viewer(
         }
     });
     windows::place(window.window(), &settings_frame);
+    let shortcuts = shortcut_runtime::viewer(&window, model.borrow().store().clone());
+    windows::watch_named_events(
+        window.window(),
+        model.borrow().store(),
+        "media_viewer",
+        shortcuts.observer(),
+    );
     window.show()?;
+    use slint::winit_030::WinitWindowAccessor as _;
+    window.set_shortcut_native_pointer(window.window().has_winit_window());
     native_focus.watch_native();
     native_cursor.watch_native();
     Ok(window)

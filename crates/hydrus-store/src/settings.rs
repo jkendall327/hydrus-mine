@@ -17,6 +17,10 @@ pub trait Setting: Serialize + DeserializeOwned + Default {
     const KEY: &'static str;
 }
 
+impl Setting for hydrus_core::shortcuts::Settings {
+    const KEY: &'static str = "shortcuts";
+}
+
 /// The duplicate canvas's independent A/B background adjustments and native
 /// transparency policy. Zero is retained from reference defaults until an
 /// Options Apply normalizes its displayed spin box to one.

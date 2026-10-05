@@ -205,6 +205,11 @@ export component OptionsWindow inherits Window {
     callback sort-cog-choice(int, int);
     callback sort-cog-cancel();
     callback apply();
+    callback shortcuts-clicked();
+    in property <bool> shortcuts-child-open;
+    in-out property <bool> shortcuts-merge-numpad;
+    in-out property <bool> shortcuts-primary-labels;
+    callback shortcuts-policy(bool,bool);
     callback cancel();
 
     forward-focus: search;
@@ -375,6 +380,11 @@ export component OptionsWindow inherits Window {
                             if row.kind == 17: Button {
                                 text: row.text;
                                 clicked => { root.favourite-tags-clicked(); }
+                            }
+                            if row.kind == 32: VerticalLayout {
+                                CheckBox{text:"Treat all non-number numpad inputs as \"normal\": ";checked<=>root.shortcuts-merge-numpad;enabled:!root.shortcuts-child-open;toggled=>{root.shortcuts-policy(self.checked,root.shortcuts-primary-labels);}}
+                                CheckBox{text:"Replace \"left/right\"-click labels with \"primary/secondary\": ";checked<=>root.shortcuts-primary-labels;enabled:!root.shortcuts-child-open;toggled=>{root.shortcuts-policy(root.shortcuts-merge-numpad,self.checked);}}
+                                Button { text:"edit shortcuts";enabled:!root.shortcuts-child-open;clicked=>{root.shortcuts-clicked();} }
                             }
                             if row.kind == 27: Button {
                                 text: row.text;
