@@ -263,3 +263,15 @@ image is `import_work_slots.png`; evidence is `import_work_slots.json`.
 Constructor spinner seeds are 5/15/5/15/10, but real ClientOptions defaults loaded
 into them are 15/5/15/5/10. Authored Rust/native/downloader tests remain unrun
 locally and require hosted CI before the five proposed control claims promote.
+
+`record_existing_tags_filter.py` drives the real per-service
+`_EditOnlyAddExistingTagsFilter` action. Qt timers answer actual modal dialogs;
+editor, business handlers, serialization and database reads are unchanged.
+Synthetic current tags on fixture files distinguish selected-service counts
+from another service, and parsed from additional candidates. It records child
+Cancel/accept, automatic enablement, saving/reopening the typed service options,
+and `GetTags` consumers with enabled/disabled gates. The final offscreen run
+completed 2026-10-05 04:35:36–38 UTC with clean shutdown; its unrelated sandbox
+Client API bind failed. Evidence is `existing_tags_filter.json` and the inspected
+actual Qt `existing_tags_filter.png`. Rust/native/importer replay assertions are
+authored for hosted CI and were not run locally.

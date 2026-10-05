@@ -2392,3 +2392,15 @@ updates also qualify the seed by its queue. Pending-pause, deleted-owner replace
 retained Options callbacks after reopening are covered by authored regressions.
 FIFO fairness and background repeater scheduling cadence remain outside this
 five-control slice.
+
+The per-service already-exists filter action uses an owned detached shared tag
+filter editor, while Qt opens its modal editor from the cog menu. Accepting
+enables the test and stages the captured service's filter; Cancel and owner
+retirement do not save it. The importer already stored and consumed this filter,
+and now has a native editing route. Actual Qt recording covers real modal
+Cancel/accept, saved typed-object reopening, and real per-service mapping reads
+for parsed/additional tags, including disabled-test bypass. Authored model,
+native and real local-file-importer regressions await hosted CI; no local Cargo
+build, Rust test or mutation run was performed. This closes only the original
+`import-existing-tags-filter` action; broader service/import-option parents
+remain Partial, including other unimplemented controls.

@@ -19,6 +19,7 @@ mod duplicate_filter;
 mod duplicates_page;
 mod edit_subscription;
 mod embedded_metadata;
+mod existing_tags_filter;
 mod favourites;
 mod file_log;
 mod filename_rules;

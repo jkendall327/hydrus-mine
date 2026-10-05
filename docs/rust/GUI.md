@@ -3291,3 +3291,14 @@ consume a work slot. Watcher checks and files now run independently, so a
 checker waiting for its own slot does not prevent that watcher's file imports.
 URL and simple-downloader file/page work and local-import files share the other
 paged-job pool. These limits are separate from network connection semaphores.
+
+An importer's per-service tags page now offers “set a filter for already-exist
+test”. It opens the shared whitelist/blacklist/advanced tag-filter editor with
+the reference explanation and parser namespaces. Accepting the filter enables
+“only add tags that already exist” for that captured service and changes only
+the importer draft. Cancelling the child preserves its filter and toggle;
+cancelling or closing the importer closes the child and invalidates retained
+callbacks. Parent Apply waits for the child. Saved importer options retain the
+filter after reopening and feed the file importer's existing-tag consumer for
+both parsed and additional tags. Only tags admitted by this filter are tested
+against current mappings on the chosen service; excluded tags bypass the test.
