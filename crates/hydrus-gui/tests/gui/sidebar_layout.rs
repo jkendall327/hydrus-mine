@@ -41,6 +41,9 @@ fn sidebar(ui: &MainWindow, label: &str) -> bool {
     ui.invoke_menu_line_clicked(pane as i32, index as i32, 0.0, 0.0, 0.0);
     row.checked
 }
+pub(super) fn restore(ui: &MainWindow) {
+    sidebar(ui, RESTORE);
+}
 fn options(ui: &MainWindow, bound: &hydrus_gui::Bound) -> OptionsWindow {
     ui.invoke_menu_title_pressed(0, 20.0, 22.0);
     let lines = ui.get_menu_panes().row_data(0).unwrap().lines;
@@ -408,8 +411,8 @@ fn live_hide_setting_keeps_accepted_preview_refuses_replacements_and_collapse_re
     ui.invoke_tab_chosen(0, 0);
     bound.preview.refresh();
     assert!(
-        !ui.get_preview_has_media(),
-        "shared native canvas has no per-page cached raster"
+        ui.get_preview_has_media(),
+        "the returned live page retains its own accepted raster under global hide"
     );
     let totals = || {
         let rows = store
@@ -422,11 +425,6 @@ fn live_hide_setting_keeps_accepted_preview_refuses_replacements_and_collapse_re
         (row.views, row.viewtime_ms)
     };
     assert_eq!(
-        totals(),
-        (1, 1000),
-        "prior page interval ends exactly once at owner transition"
-    );
-    assert_eq!(
         store
             .read(|c| Ok(c.query_row(
                 "SELECT count(*) FROM file_viewing_stats WHERE canvas_type=1",
@@ -434,8 +432,8 @@ fn live_hide_setting_keeps_accepted_preview_refuses_replacements_and_collapse_re
                 |r| r.get::<_, i64>(0)
             )?))
             .unwrap(),
-        1,
-        "rejected replacements create no durable preview views"
+        0,
+        "global hide rejects PageHidden clear, so the first owned interval continues"
     );
 
     let w = options(&ui, &bound);
@@ -459,11 +457,11 @@ fn live_hide_setting_keeps_accepted_preview_refuses_replacements_and_collapse_re
     assert!(bound.current.borrow().borrow().focused().is_none());
     assert_eq!(
         totals(),
-        (2, 2000),
-        "collapse ends only the accepted successor interval"
+        (1, 2000),
+        "collapse ends the original interval once after its hidden page roundtrip"
     );
     bound.preview.close();
-    assert_eq!(totals(), (2, 2000));
+    assert_eq!(totals(), (1, 2000));
     let reopened = hydrus_store::Store::open(store.dir()).unwrap();
     let row = reopened
         .read(|c| hydrus_store::media::viewing_stats(c, &[first]))
@@ -471,7 +469,7 @@ fn live_hide_setting_keeps_accepted_preview_refuses_replacements_and_collapse_re
         .into_iter()
         .find(|r| r.canvas == hydrus_core::CanvasType::Preview)
         .unwrap();
-    assert_eq!((row.views, row.viewtime_ms), (2, 2000));
+    assert_eq!((row.views, row.viewtime_ms), (1, 2000));
 
     sidebar(&ui, RESTORE);
     bound.preview.refresh();

@@ -1,0 +1,598 @@
+{
+  "admission_before_event_settle": {
+    "current": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "hidden": null,
+    "start": 1000,
+    "visible": true,
+    "splitter_hidden": false,
+    "raster_rendered": false,
+    "raster_ready": false
+  },
+  "hashes": [
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+  ],
+  "steps": [
+    {
+      "action": "A accepts first",
+      "now": 1000,
+      "hide": false,
+      "shown": "A",
+      "A": {
+        "current": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden": null,
+        "start": 1000,
+        "visible": true,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "B": {
+        "current": null,
+        "hidden": null,
+        "start": 1791187578107,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": null,
+        "raster_ready": null
+      },
+      "intervals": []
+    },
+    {
+      "action": "enable hide keeps accepted A",
+      "now": 1500,
+      "hide": true,
+      "shown": "A",
+      "A": {
+        "current": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden": null,
+        "start": 1000,
+        "visible": true,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "B": {
+        "current": null,
+        "hidden": null,
+        "start": 1791187578107,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": null,
+        "raster_ready": null
+      },
+      "intervals": []
+    },
+    {
+      "action": "A to empty B while hide",
+      "now": 2000,
+      "hide": true,
+      "shown": "B",
+      "A": {
+        "current": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "start": 1000,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "B": {
+        "current": null,
+        "hidden": null,
+        "start": 1791187578107,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": null,
+        "raster_ready": null
+      },
+      "intervals": []
+    },
+    {
+      "action": "empty B rejects new media",
+      "now": 2000,
+      "hide": true,
+      "shown": "B",
+      "A": {
+        "current": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "start": 1000,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "B": {
+        "current": null,
+        "hidden": null,
+        "start": 1791187578107,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": null,
+        "raster_ready": null
+      },
+      "intervals": []
+    },
+    {
+      "action": "return A while hide retains accepted A",
+      "now": 3000,
+      "hide": true,
+      "shown": "A",
+      "A": {
+        "current": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden": null,
+        "start": 1000,
+        "visible": true,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "B": {
+        "current": null,
+        "hidden": null,
+        "start": 1791187578107,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": null,
+        "raster_ready": null
+      },
+      "intervals": []
+    },
+    {
+      "action": "clear rejected on returned A",
+      "now": 3000,
+      "hide": true,
+      "shown": "A",
+      "A": {
+        "current": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden": null,
+        "start": 1000,
+        "visible": true,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "B": {
+        "current": null,
+        "hidden": null,
+        "start": 1791187578107,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": null,
+        "raster_ready": null
+      },
+      "intervals": []
+    },
+    {
+      "action": "B accepts second after disable",
+      "now": 4000,
+      "hide": false,
+      "shown": "B",
+      "A": {
+        "current": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "start": 1000,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "B": {
+        "current": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "hidden": null,
+        "start": 4000,
+        "visible": true,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "intervals": []
+    },
+    {
+      "action": "A and B both retain owned accepted media",
+      "now": 5000,
+      "hide": true,
+      "shown": "A",
+      "A": {
+        "current": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden": null,
+        "start": 1000,
+        "visible": true,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "B": {
+        "current": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "hidden": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "start": 4000,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "intervals": []
+    },
+    {
+      "action": "whole window hidden while globally hidden",
+      "now": 5500,
+      "hide": true,
+      "shown": "A",
+      "A": {
+        "current": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden": null,
+        "start": 1000,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "B": {
+        "current": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "hidden": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "start": 4000,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "intervals": []
+    },
+    {
+      "action": "whole window shown retains accepted canvases",
+      "now": 5600,
+      "hide": true,
+      "shown": "A",
+      "A": {
+        "current": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden": null,
+        "start": 1000,
+        "visible": true,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "B": {
+        "current": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "hidden": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "start": 4000,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "intervals": []
+    },
+    {
+      "action": "closed live B retains accepted canvas",
+      "now": 5700,
+      "hide": true,
+      "shown": "A",
+      "A": {
+        "current": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden": null,
+        "start": 1000,
+        "visible": true,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "B": {
+        "current": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "hidden": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "start": 4000,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "intervals": []
+    },
+    {
+      "action": "reopened live B retains accepted canvas",
+      "now": 5800,
+      "hide": true,
+      "shown": "A",
+      "A": {
+        "current": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden": null,
+        "start": 1000,
+        "visible": true,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "B": {
+        "current": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "hidden": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "start": 4000,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "intervals": []
+    },
+    {
+      "action": "splitter clear rejected while hide",
+      "now": 6000,
+      "hide": true,
+      "shown": "A",
+      "A": {
+        "current": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden": null,
+        "start": 1000,
+        "visible": false,
+        "splitter_hidden": true,
+        "raster_rendered": false,
+        "raster_ready": true
+      },
+      "B": {
+        "current": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "hidden": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "start": 4000,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "intervals": []
+    },
+    {
+      "action": "disable global hide while still collapsed retains accepted A",
+      "now": 7000,
+      "hide": false,
+      "shown": "A",
+      "A": {
+        "current": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden": null,
+        "start": 1000,
+        "visible": false,
+        "splitter_hidden": true,
+        "raster_rendered": false,
+        "raster_ready": true
+      },
+      "B": {
+        "current": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "hidden": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "start": 4000,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "intervals": []
+    },
+    {
+      "action": "switch away and return while collapsed preserves A",
+      "now": 7000,
+      "hide": false,
+      "shown": "A",
+      "A": {
+        "current": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden": null,
+        "start": 1000,
+        "visible": false,
+        "splitter_hidden": true,
+        "raster_rendered": false,
+        "raster_ready": true
+      },
+      "B": {
+        "current": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "hidden": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "start": 4000,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "intervals": []
+    },
+    {
+      "action": "reveal after disable",
+      "now": 7000,
+      "hide": false,
+      "shown": "A",
+      "A": {
+        "current": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hidden": null,
+        "start": 1000,
+        "visible": true,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "B": {
+        "current": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "hidden": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "start": 4000,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "intervals": []
+    },
+    {
+      "action": "accepted clear ends A interval",
+      "now": 7000,
+      "hide": false,
+      "shown": "A",
+      "A": {
+        "current": null,
+        "hidden": null,
+        "start": 7000,
+        "visible": true,
+        "splitter_hidden": false,
+        "raster_rendered": null,
+        "raster_ready": null
+      },
+      "B": {
+        "current": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "hidden": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "start": 4000,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "intervals": [
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1000,
+          "elapsed": 6000
+        }
+      ]
+    },
+    {
+      "action": "normal show restores B",
+      "now": 8000,
+      "hide": false,
+      "shown": "B",
+      "A": {
+        "current": null,
+        "hidden": null,
+        "start": 7000,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": null,
+        "raster_ready": null
+      },
+      "B": {
+        "current": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "hidden": null,
+        "start": 4000,
+        "visible": true,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "intervals": [
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1000,
+          "elapsed": 6000
+        }
+      ]
+    },
+    {
+      "action": "normal hide finishes B and retains restoration identity",
+      "now": 9000,
+      "hide": false,
+      "shown": "A",
+      "A": {
+        "current": null,
+        "hidden": null,
+        "start": 7000,
+        "visible": true,
+        "splitter_hidden": false,
+        "raster_rendered": null,
+        "raster_ready": null
+      },
+      "B": {
+        "current": null,
+        "hidden": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "start": 9000,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": null,
+        "raster_ready": null
+      },
+      "intervals": [
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1000,
+          "elapsed": 6000
+        },
+        {
+          "hash": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+          "canvas": 1,
+          "start": 4000,
+          "elapsed": 5000
+        }
+      ]
+    },
+    {
+      "action": "normal show starts B successor interval",
+      "now": 10000,
+      "hide": false,
+      "shown": "B",
+      "A": {
+        "current": null,
+        "hidden": null,
+        "start": 7000,
+        "visible": false,
+        "splitter_hidden": false,
+        "raster_rendered": null,
+        "raster_ready": null
+      },
+      "B": {
+        "current": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "hidden": null,
+        "start": 10000,
+        "visible": true,
+        "splitter_hidden": false,
+        "raster_rendered": true,
+        "raster_ready": true
+      },
+      "intervals": [
+        {
+          "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "canvas": 1,
+          "start": 1000,
+          "elapsed": 6000
+        },
+        {
+          "hash": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+          "canvas": 1,
+          "start": 4000,
+          "elapsed": 5000
+        }
+      ]
+    }
+  ],
+  "fresh_page": {
+    "current": null,
+    "hidden": null,
+    "start": 10000,
+    "visible": true,
+    "splitter_hidden": false,
+    "raster_rendered": null,
+    "raster_ready": null
+  },
+  "fresh_hidden": {
+    "current": null,
+    "hidden": null,
+    "start": 10000,
+    "visible": true,
+    "splitter_hidden": false,
+    "raster_rendered": null,
+    "raster_ready": null
+  },
+  "forgotten_before": {
+    "current": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "hidden": null,
+    "start": 11000,
+    "visible": true,
+    "splitter_hidden": false,
+    "raster_rendered": true,
+    "raster_ready": true
+  },
+  "forgotten_after": {
+    "current": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "hidden": null,
+    "start": 11000,
+    "visible": true,
+    "splitter_hidden": false,
+    "raster_rendered": true,
+    "raster_ready": true
+  },
+  "limits": [
+    "FinishViewing is captured at the real canvas boundary; manager/database cap and minimum rules are covered by preview_viewing fixtures.",
+    "Fresh reference pages receive a fresh PageKey; native session reuse of the same key is separately guarded by SearchPage identity.",
+    "Reference image decode is asynchronous; current accepted identity is sampled independently of raster readiness."
+  ]
+}

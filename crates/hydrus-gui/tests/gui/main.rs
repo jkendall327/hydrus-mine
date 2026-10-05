@@ -185,3 +185,5 @@ mod viewing_maintenance;
 mod local_transfer;
 
 mod sidebar_layout;
+
+mod hidden_page_preview;

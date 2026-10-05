@@ -8,7 +8,8 @@ use hydrus_store::Store;
 use slint::{ComponentHandle as _, Timer, TimerMode};
 use std::{
     cell::{Cell, RefCell},
-    rc::Rc,
+    collections::HashMap,
+    rc::{Rc, Weak},
     sync::{
         Arc,
         atomic::{AtomicBool, Ordering},
@@ -17,7 +18,20 @@ use std::{
 };
 
 type Target = (PageKey, HashId);
-type Source = Rc<dyn Fn() -> (PageKey, Option<HashId>)>;
+/// A live page incarnation and its requested focus. Weak ownership prevents
+/// preview snapshots from keeping closed/forgotten pages alive.
+#[derive(Debug)]
+pub(crate) struct SourcePage {
+    pub key: PageKey,
+    pub owner: Weak<RefCell<crate::SearchPage>>,
+    pub file: Option<HashId>,
+}
+type Source = Rc<dyn Fn() -> SourcePage>;
+type OwnerValid = Rc<dyn Fn(PageKey, &Weak<RefCell<crate::SearchPage>>) -> bool>;
+// Preview snapshots are a rendering cache, not page/session data. Retain at
+// most 64MiB across hidden pages; the currently shown frame may exceed this
+// soft bound. Eviction keeps accepted identity and interval ownership intact.
+const SNAPSHOT_BYTES: u64 = 64 * 1024 * 1024;
 /// The preview clock, retained by its canvas owner rather than a global clock.
 pub type Clock = Rc<dyn Fn() -> i64>;
 /// Decode backend; the owner can supply a bounded media worker for deterministic replay.
@@ -26,6 +40,7 @@ struct Pending {
     file: HashId,
     started_ms: i64,
     generation: u128,
+    restore: bool,
 }
 struct Request {
     file: HashId,
@@ -104,18 +119,61 @@ impl Drop for Workers {
         // An in-progress synchronous decode exits without publishing afterward.
     }
 }
+struct Frame {
+    image: slint::Image,
+    bytes: u64,
+    touched: u64,
+}
+struct Canvas {
+    owner: Weak<RefCell<crate::SearchPage>>,
+    tracker: RefCell<Tracker>,
+    requested: Cell<Option<Target>>,
+    accepted: Cell<Option<HashId>>,
+    observed: Cell<Option<HashId>>,
+    suspended: Cell<bool>,
+    retry: Cell<bool>,
+    failed: Cell<bool>,
+    requested_started_ms: Cell<Option<i64>>,
+    frame: RefCell<Option<Frame>>,
+    blocked: Cell<Option<Target>>,
+    splitter_hidden: Cell<bool>,
+    pending: RefCell<Option<Pending>>,
+}
+impl Canvas {
+    fn track(&self, file: Option<HashId>, now_ms: i64) {
+        if let Err(error) = self.tracker.borrow_mut().show(file, now_ms) {
+            eprintln!("could not save preview viewing statistics: {error}");
+        }
+    }
+    fn clear(&self, now_ms: i64) {
+        self.pending.borrow_mut().take();
+        self.requested.set(None);
+        self.accepted.set(None);
+        self.suspended.set(false);
+        self.retry.set(false);
+        self.failed.set(false);
+        self.requested_started_ms.set(None);
+        self.frame.borrow_mut().take();
+        self.track(None, now_ms);
+    }
+    fn close(&self, now_ms: i64) {
+        self.pending.borrow_mut().take();
+        self.frame.borrow_mut().take();
+        if let Err(error) = self.tracker.borrow_mut().close(now_ms) {
+            eprintln!("could not save preview viewing statistics: {error}");
+        }
+    }
+}
 struct State {
     window: slint::Weak<MainWindow>,
     store: Arc<Store>,
     source: Source,
+    owner_valid: OwnerValid,
     clock: RefCell<Clock>,
     decoder: RefCell<Decoder>,
-    tracker: RefCell<Tracker>,
-    requested: Cell<Option<Target>>,
-    page: Cell<Option<PageKey>>,
-    blocked: Cell<Option<Target>>,
-    splitter_hidden: Cell<bool>,
-    pending: RefCell<Option<Pending>>,
+    canvases: RefCell<HashMap<PageKey, Rc<Canvas>>>,
+    current: RefCell<Option<Rc<Canvas>>>,
+    touch: Cell<u64>,
     workers: RefCell<Option<Workers>>,
     alive: Cell<bool>,
     timer: Timer,
@@ -124,24 +182,172 @@ impl State {
     fn time(&self) -> i64 {
         (self.clock.borrow())()
     }
-    fn track(&self, file: Option<HashId>) {
-        self.track_at(file, self.time());
-    }
-    fn track_at(&self, file: Option<HashId>, now_ms: i64) {
-        if let Err(error) = self.tracker.borrow_mut().show(file, now_ms) {
-            eprintln!("could not save preview viewing statistics: {error}");
-        }
-    }
-    fn clear(&self, window: &MainWindow) {
-        self.pending.borrow_mut().take();
-        if let Some(workers) = self.workers.borrow().as_ref() {
-            workers.clear_queued();
-        }
-        self.requested.set(None);
-        self.track(None);
+    fn blank(window: &MainWindow) {
         window.set_preview_media(slint::Image::default());
         window.set_preview_has_media(false);
         window.set_preview_loading(false);
+    }
+    fn trim_frames(&self) {
+        let current = self.current.borrow().clone();
+        loop {
+            let canvases = self.canvases.borrow();
+            let bytes: u64 = canvases
+                .values()
+                .filter_map(|canvas| canvas.frame.borrow().as_ref().map(|frame| frame.bytes))
+                .sum();
+            if bytes <= SNAPSHOT_BYTES {
+                break;
+            }
+            let oldest = canvases
+                .values()
+                .filter(|canvas| {
+                    !current
+                        .as_ref()
+                        .is_some_and(|shown| Rc::ptr_eq(shown, canvas))
+                })
+                .filter_map(|canvas| {
+                    canvas
+                        .frame
+                        .borrow()
+                        .as_ref()
+                        .map(|frame| (frame.touched, canvas.clone()))
+                })
+                .min_by_key(|(touched, _)| *touched)
+                .map(|(_, canvas)| canvas);
+            drop(canvases);
+            let Some(oldest) = oldest else { break };
+            oldest.frame.borrow_mut().take();
+        }
+    }
+    fn present(&self, canvas: &Canvas, window: &MainWindow) {
+        if let Some(frame) = canvas.frame.borrow_mut().as_mut() {
+            let touched = self.touch.get().wrapping_add(1);
+            self.touch.set(touched);
+            frame.touched = touched;
+            window.set_preview_media(frame.image.clone());
+            window.set_preview_has_media(true);
+        } else {
+            window.set_preview_media(slint::Image::default());
+            window.set_preview_has_media(false);
+        }
+        window.set_preview_loading(canvas.pending.borrow().is_some());
+        self.trim_frames();
+    }
+    fn submit(&self, canvas: &Canvas, file: HashId, restore: bool) {
+        let generation = rand::random();
+        canvas.retry.set(false);
+        canvas.failed.set(false);
+        *canvas.pending.borrow_mut() = Some(Pending {
+            file,
+            started_ms: if restore {
+                self.time()
+            } else {
+                canvas
+                    .requested_started_ms
+                    .get()
+                    .unwrap_or_else(|| self.time())
+            },
+            generation,
+            restore,
+        });
+        let decoder = self.decoder.borrow().clone();
+        let mut workers = self.workers.borrow_mut();
+        if workers.is_none() {
+            match Workers::new(&self.store) {
+                Ok(created) => *workers = Some(created),
+                Err(error) => {
+                    canvas.pending.borrow_mut().take();
+                    canvas.failed.set(true);
+                    eprintln!("could not load preview: {error}");
+                    return;
+                }
+            }
+        }
+        if let Some(workers) = workers.as_ref() {
+            // Retire a superseded queued request's logical loading state too.
+            // The two running decodes keep their request generations.
+            while let Ok(request) = workers.queued.try_recv() {
+                for previous in self.canvases.borrow().values() {
+                    if previous
+                        .pending
+                        .borrow()
+                        .as_ref()
+                        .is_some_and(|pending| pending.generation == request.generation)
+                    {
+                        previous.pending.borrow_mut().take();
+                        previous.retry.set(true);
+                    }
+                }
+            }
+            if !workers.submit(Request {
+                file,
+                generation,
+                decoder,
+            }) {
+                canvas.pending.borrow_mut().take();
+                canvas.failed.set(true);
+            }
+        }
+    }
+    fn collect(&self) {
+        let mut replies = Vec::new();
+        let mut disconnected = false;
+        if let Some(workers) = self.workers.borrow().as_ref() {
+            loop {
+                match workers.pixels.try_recv() {
+                    Ok(reply) => replies.push(reply),
+                    Err(crossbeam_channel::TryRecvError::Disconnected) => {
+                        disconnected = true;
+                        break;
+                    }
+                    Err(crossbeam_channel::TryRecvError::Empty) => break,
+                }
+            }
+        }
+        for (generation, pixels) in replies {
+            let canvas = self
+                .canvases
+                .borrow()
+                .values()
+                .find(|canvas| {
+                    canvas
+                        .pending
+                        .borrow()
+                        .as_ref()
+                        .is_some_and(|pending| pending.generation == generation)
+                })
+                .cloned();
+            let Some(canvas) = canvas else { continue };
+            let Some(pending) = canvas.pending.borrow_mut().take() else {
+                continue;
+            };
+            if canvas.owner.upgrade().is_none() {
+                continue;
+            }
+            if let Some(pixels) = pixels {
+                let bytes = pixels.byte_len();
+                let image = pixels.image();
+                *canvas.frame.borrow_mut() = Some(Frame {
+                    image,
+                    bytes,
+                    touched: self.touch.get(),
+                });
+                if !pending.restore {
+                    canvas.accepted.set(Some(pending.file));
+                    canvas.track(Some(pending.file), pending.started_ms);
+                }
+            } else {
+                canvas.failed.set(true);
+            }
+        }
+        if disconnected {
+            for canvas in self.canvases.borrow().values() {
+                if canvas.pending.borrow_mut().take().is_some() {
+                    canvas.failed.set(true);
+                }
+            }
+        }
+        self.trim_frames();
     }
     fn eligible(&self, file: HashId) -> bool {
         use hydrus_core::media_viewer::{MediaViewerSettings, ShowAction};
@@ -175,128 +381,162 @@ impl State {
             self.close();
             return;
         };
-        let (page, file) = (self.source)();
-        if self.page.replace(Some(page)) != Some(page) {
-            // A shared native raster must never cross a page owner, even when
-            // global hide refuses the next page's SetMedia request.
-            self.clear(&window);
-            self.blocked.set(None);
-        }
-        let hide_preference = self
+        let source = (self.source)();
+        let hide = self
             .store
             .read(hydrus_store::page_layout::load)
             .unwrap_or_default()
             .hide_preview;
-        // Qt refuses all SetMedia (including clear) while globally hidden.
-        let target = if hide_preference {
-            self.requested.get()
-        } else {
-            file.map(|file| (page, file))
+        let now = self.time();
+        self.canvases.borrow_mut().retain(|key, canvas| {
+            if canvas.owner.upgrade().is_none() || !(self.owner_valid)(*key, &canvas.owner) {
+                canvas.close(now);
+                false
+            } else {
+                true
+            }
+        });
+        let canvas = {
+            let mut canvases = self.canvases.borrow_mut();
+            if canvases
+                .get(&source.key)
+                .is_some_and(|canvas| !Weak::ptr_eq(&canvas.owner, &source.owner))
+                && let Some(retired) = canvases.remove(&source.key)
+            {
+                retired.close(now);
+            }
+            canvases
+                .entry(source.key)
+                .or_insert_with(|| {
+                    Rc::new(Canvas {
+                        owner: source.owner,
+                        tracker: RefCell::new(Tracker::new(
+                            self.store.clone(),
+                            CanvasType::Preview,
+                        )),
+                        requested: Cell::new(None),
+                        accepted: Cell::new(None),
+                        observed: Cell::new(None),
+                        suspended: Cell::new(false),
+                        retry: Cell::new(false),
+                        failed: Cell::new(false),
+                        requested_started_ms: Cell::new(None),
+                        frame: RefCell::new(None),
+                        blocked: Cell::new(None),
+                        splitter_hidden: Cell::new(window.get_preview_splitter_hidden()),
+                        pending: RefCell::new(None),
+                    })
+                })
+                .clone()
         };
+        let changed = !self
+            .current
+            .borrow()
+            .as_ref()
+            .is_some_and(|shown| Rc::ptr_eq(shown, &canvas));
+        if changed {
+            if let Some(previous) = self.current.borrow_mut().replace(canvas.clone())
+                && !hide
+                && !previous.splitter_hidden.get()
+            {
+                if previous.pending.borrow_mut().take().is_some() {
+                    previous.retry.set(true);
+                }
+                previous.track(None, now);
+                previous.suspended.set(true);
+                // Keep accepted identity/frame as PageHidden's restoration snapshot.
+            }
+            Self::blank(&window);
+            if canvas.suspended.replace(false) {
+                if hide || window.get_preview_splitter_hidden() {
+                    // PageShown consumes the hidden restoration identity even
+                    // when SetMedia rejects it; an empty current canvas stays empty.
+                    canvas.clear(now);
+                } else {
+                    canvas.requested_started_ms.set(Some(now));
+                    canvas.failed.set(false);
+                    if let Some(file) = canvas.accepted.get() {
+                        canvas.track(Some(file), now);
+                    }
+                }
+            }
+        }
+        if !window.window().is_visible() && hide {
+            // The global flag rejects clears even while the whole window is
+            // hidden. Keep each accepted canvas/interval owned until close.
+            self.collect();
+            self.present(&canvas, &window);
+            return;
+        }
         if !window.window().is_visible() {
-            self.clear(&window);
+            // Window suspension ends current presentation; accepted close below
+            // terminates every per-page tracker, including globally hidden pages.
+            canvas.clear(now);
+            canvas.observed.set(None);
+            Self::blank(&window);
             return;
         }
         let hidden = window.get_preview_splitter_hidden();
-        if hidden != self.splitter_hidden.replace(hidden) && !hide_preference {
-            self.clear(&window);
-            // A splitter reveal does not restore its old file in Qt. The next
-            // selection change supplies a fresh SetMedia; page show does restore.
-            self.blocked.set(target);
+        let focus_changed = canvas.observed.replace(source.file) != source.file;
+        // Changing the preference alone does not resend an already rejected
+        // SetMedia. The real focus source must change (or PageShown restore).
+        let target = if hide || hidden || !focus_changed {
+            canvas.requested.get()
+        } else {
+            source.file.map(|file| (source.key, file))
+        };
+        if hidden != canvas.splitter_hidden.replace(hidden) && !hide && hidden {
+            canvas.clear(now);
+            canvas.blocked.set(target);
         }
-        if hidden && !hide_preference {
-            self.clear(&window);
-            self.blocked.set(target);
+        if hidden && !hide {
+            // An already collapsed splitter rejects SetMedia(None) too. Turning
+            // global hide off cannot replay the earlier refused clear.
+            self.collect();
+            self.present(&canvas, &window);
             return;
         }
-        if target != self.blocked.get() {
-            self.blocked.set(None);
+        if target != canvas.blocked.get() {
+            canvas.blocked.set(None);
         }
-        let target = target.filter(|target| Some(*target) != self.blocked.get());
-        if target != self.requested.get() {
-            self.clear(&window);
-            self.requested.set(target);
+        let target = target.filter(|target| Some(*target) != canvas.blocked.get());
+        if target != canvas.requested.get() {
+            canvas.clear(now);
+            canvas.requested.set(target);
+            canvas.requested_started_ms.set(Some(now));
             if let Some((_, file)) = target.filter(|(_, file)| self.eligible(*file)) {
-                window.set_preview_loading(true);
-                let generation = rand::random();
-                *self.pending.borrow_mut() = Some(Pending {
-                    file,
-                    started_ms: self.time(),
-                    generation,
-                });
-                let decoder = self.decoder.borrow().clone();
-                let mut workers = self.workers.borrow_mut();
-                if workers.is_none() {
-                    match Workers::new(&self.store) {
-                        Ok(created) => *workers = Some(created),
-                        Err(error) => {
-                            self.pending.borrow_mut().take();
-                            window.set_preview_loading(false);
-                            eprintln!("could not load preview: {error}");
-                        }
-                    }
-                }
-                if let Some(workers) = workers.as_ref()
-                    && !workers.submit(Request {
-                        file,
-                        generation,
-                        decoder,
-                    })
-                {
-                    self.pending.borrow_mut().take();
-                    window.set_preview_loading(false);
-                }
+                self.submit(&canvas, file, false);
+            }
+        } else if canvas.retry.get() && canvas.pending.borrow().is_none() {
+            if let Some((_, file)) = canvas.requested.get() {
+                self.submit(&canvas, file, false);
+            }
+        } else if canvas.accepted.get().is_some()
+            && !canvas.failed.get()
+            && canvas.frame.borrow().is_none()
+            && canvas.pending.borrow().is_none()
+        {
+            // An evicted rendering snapshot is restored from its accepted file;
+            // this is not a new SetMedia acceptance or viewing interval.
+            if let Some(file) = canvas.accepted.get() {
+                self.submit(&canvas, file, true);
             }
         }
-        let mut ready = None;
-        if let Some(workers) = self.workers.borrow().as_ref() {
-            loop {
-                match workers.pixels.try_recv() {
-                    Ok((generation, pixels)) => {
-                        if let Some(pending) = self.pending.borrow().as_ref()
-                            && generation == pending.generation
-                        {
-                            ready = Some((pending.file, pending.started_ms, pixels));
-                        }
-                    }
-                    Err(crossbeam_channel::TryRecvError::Disconnected) => {
-                        if ready.is_none()
-                            && let Some(pending) = self.pending.borrow().as_ref()
-                        {
-                            ready = Some((pending.file, pending.started_ms, None));
-                        }
-                        break;
-                    }
-                    Err(crossbeam_channel::TryRecvError::Empty) => break,
-                }
-            }
-        }
-        if let Some((file, started_ms, pixels)) = ready {
-            self.pending.borrow_mut().take();
-            window.set_preview_loading(false);
-            if let Some(pixels) = pixels {
-                window.set_preview_media(pixels.image());
-                window.set_preview_has_media(true);
-                // Successful presentation accepts the requested interval's
-                // original SetMedia timestamp, as Qt does before decoding.
-                self.track_at(Some(file), started_ms);
-            }
-        }
+        self.collect();
+        self.present(&canvas, &window);
     }
     fn close(&self) {
         if !self.alive.replace(false) {
             return;
         }
         self.timer.stop();
-        self.pending.borrow_mut().take();
         self.workers.borrow_mut().take();
-        if let Err(error) = self.tracker.borrow_mut().close(self.time()) {
-            eprintln!("could not save preview viewing statistics: {error}");
+        for canvas in self.canvases.borrow_mut().drain().map(|(_, canvas)| canvas) {
+            canvas.close(self.time());
         }
+        self.current.borrow_mut().take();
         if let Some(window) = self.window.upgrade() {
-            window.set_preview_media(slint::Image::default());
-            window.set_preview_has_media(false);
-            window.set_preview_loading(false);
+            Self::blank(&window);
         }
     }
 }
@@ -313,27 +553,30 @@ impl std::fmt::Debug for Monitor {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("PreviewMonitor")
             .field("active", &self.0.alive.get())
-            .field("requested", &self.0.requested.get())
+            .field("pages", &self.0.canvases.borrow().len())
             .finish_non_exhaustive()
     }
 }
 impl Monitor {
-    pub(crate) fn bind(window: &MainWindow, store: Arc<Store>, source: Source) -> Self {
+    pub(crate) fn bind(
+        window: &MainWindow,
+        store: Arc<Store>,
+        source: Source,
+        owner_valid: OwnerValid,
+    ) -> Self {
         // The window owns this retirement callback. Rebinding retires its prior
         // preview before any successor callback/pixels can be published.
         window.invoke_preview_retired();
         let state = Rc::new(State {
             window: window.as_weak(),
-            tracker: RefCell::new(Tracker::new(store.clone(), CanvasType::Preview)),
             store,
             source,
+            owner_valid,
             clock: RefCell::new(Rc::new(|| TimestampMs::now().0)),
             decoder: RefCell::new(Arc::new(crate::viewer::still)),
-            requested: Cell::new(None),
-            page: Cell::new(None),
-            blocked: Cell::new(None),
-            splitter_hidden: Cell::new(false),
-            pending: RefCell::new(None),
+            canvases: RefCell::new(HashMap::new()),
+            current: RefCell::new(None),
+            touch: Cell::new(0),
             workers: RefCell::new(None),
             alive: Cell::new(true),
             timer: Timer::default(),
@@ -369,6 +612,25 @@ impl Monitor {
     /// Refresh this visible canvas after a real page/selection/presentation change.
     pub fn refresh(&self) {
         self.0.refresh();
+    }
+    /// Accepted media belongs to the shown live page, independently of focus.
+    pub fn displayed_file(&self) -> Option<HashId> {
+        self.0.current.borrow().as_ref().and_then(|canvas| {
+            if canvas.suspended.get() {
+                None
+            } else {
+                canvas.accepted.get()
+            }
+        })
+    }
+    /// Bytes retained by this owner's bounded preview rendering snapshots.
+    pub fn resident_snapshot_bytes(&self) -> u64 {
+        self.0
+            .canvases
+            .borrow()
+            .values()
+            .filter_map(|canvas| canvas.frame.borrow().as_ref().map(|frame| frame.bytes))
+            .sum()
     }
     /// Supply the owned display clock before showing media (also used for replay).
     pub fn set_clock(&self, clock: Clock) {

@@ -3531,8 +3531,18 @@ last inner preview height; a separately collapsed preview keeps the saved height
 Options > gui pages > preview window stages the global hide preference. Apply
 preserves concurrent size saves and the exit switch; Cancel discards the draft.
 New pages and restore/reveal consume the saved hide flag. Existing accepted preview
-media survives refused SetMedia/clear calls on that same page while globally hidden;
-page-owner transitions still retire the shared native raster (see DIFFERENCES.md).
+media survives refused SetMedia/clear calls while globally hidden. Each live page
+retains its own accepted file and interval across page switches, whole-window hide
+and live close/reopen; returning to that page restores its image without counting a
+second view. Forgetting the page, loading fresh page owners or accepted client close
+retires its state, including late decoder replies. Preview rendering snapshots use a
+64MiB soft LRU budget with the shown frame allowed above the limit; an evicted frame
+re-decodes its accepted file without starting another interval. The existing two
+workers and one latest queued request are shared across all pages. Normal page hide
+with a visible splitter ends its interval, and normal show starts its restored
+successor interval. An already collapsed splitter also refuses clear/update;
+disabling the global flag alone does not replay an earlier refused clear. Pending
+and failed-raster acceptance still differs from Qt (see DIFFERENCES.md).
 
 Tag Sort now includes independent opening defaults for search-page and media-viewer
 Manage Tags dialogs. Both stage tag/subtag/count, text or count order, siblings/tags,

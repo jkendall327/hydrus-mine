@@ -309,6 +309,24 @@ impl Pages {
         &self.store
     }
 
+    /// A preview belongs to an open or restorable closed live page, even if
+    /// another callback retains a SearchPage after the page is forgotten.
+    pub(crate) fn owns_preview(
+        &self,
+        key: PageKey,
+        owner: &std::rc::Weak<RefCell<SearchPage>>,
+    ) -> bool {
+        let matches =
+            |opened: &Rc<RefCell<SearchPage>>| std::rc::Weak::ptr_eq(&Rc::downgrade(opened), owner);
+        self.open.get(&key).is_some_and(matches)
+            || self.closed.iter().any(|closed| {
+                closed
+                    .open
+                    .iter()
+                    .any(|(closed_key, opened)| *closed_key == key && matches(opened))
+            })
+    }
+
     /// One page, already open.
     pub fn single(mut page: SearchPage) -> Self {
         let tree = new_search_page(page.store());

@@ -2647,16 +2647,37 @@ an unsaved resize, and saves hidden sidebar width zero. These boundaries reach t
 native menu and accepted-exit consumer. Root integration must retain the newer
 accepted-close incarnation guards and weak AfterChange callback ownership.
 
-The newly editable hide-preview setting remains a scoped Partial action. Native
-staging, persistence, new/reset layouts and same-page refused SetMedia/clear calls
-are implemented, including retaining an accepted image while globally hidden.
-Qt owns a canvas per live page and retains that page's accepted image while the
-global flag refuses replacement. Native owns one shared raster: switching pages
-ends the old owned interval and clears its pixels, so returning under hide=true
-has no cached prior image to restore. This prevents pixels/statistics crossing page
-owners, but does not complete that original hide control. Broader sidebar/search,
-preview playback, hover/rating and structural Options parents remain Partial.
-No canonical inventory status or overnight completed ledger is edited here.
+The editable hide-preview setting remains a scoped Partial action. Typed staging,
+persistence and new/reset layouts are implemented, and successfully rendered
+previews now retain independent accepted file identity, interval and bounded frame
+snapshots per live PageKey/SearchPage incarnation. Actual Qt A→B→A, whole-window
+hide/show and live close/unclose keep each accepted canvas and interval while the
+global flag rejects SetMedia/clear. Native follows those successful-render boundaries;
+normal hide with a visible splitter finishes and normal show restores a successor
+interval. A previously collapsed splitter independently rejects clear/update,
+including a page switch after the global flag is disabled. Its one shared
+worker pool remains two workers plus one queued request, with logical retry for a
+displaced or normally suspended unaccepted request. Normal return resets its pending
+start; displacement under global hide retains the original request time. Rendering
+snapshots have a 64MiB soft LRU bound plus the currently shown oversized frame;
+evicted snapshots re-decode their accepted identity without counting another view.
+A failed restoration remains blank until another page-show/request, rather than
+repeating decode every refresh. Broader image-cache controls are still Partial.
+
+The remaining hide-control boundary is explicit in `hidden_page_preview.json`:
+actual Qt accepts current file/start before its first raster is ready. Native keeps
+the previously reviewed successful-raster gate, so a cancelled or failed first decode
+has no accepted file/view, and normal hide before that decode finishes has no view to
+save. Cache eviction may also require a loading/blank reconstruction frame instead
+of Qt's resident per-page renderer. Existing failed/cancelled decode regressions stay
+intact. Native membership/accepted-close retirement finishes successful trackers once,
+even if a callback retains a stale SearchPage Rc; actual Qt CleanBeforeDestroy while
+globally hidden can refuse its clear, as the recorded accepted cleanup probe shows.
+Whole-window suspension without the global hide flag retains the native's existing
+finish/clear policy. These renderer/lifetime differences prevent full completion
+credit for the original hide control. Broader sidebar/search, preview playback,
+hover/rating and structural Options parents remain Partial. No canonical inventory
+status or overnight completed ledger is edited here.
 
 
 The four thumbnail modifier-preview preferences now have typed legacy import,

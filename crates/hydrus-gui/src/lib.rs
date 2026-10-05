@@ -509,8 +509,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     .focused()
                     .and_then(|i| page.results().get(i))
                     .and_then(|item| page.files_of(*item).first().copied());
-                (key, file)
+                preview_window::SourcePage {
+                    key,
+                    owner: Rc::downgrade(&current),
+                    file,
+                }
             }
+        }),
+        Rc::new({
+            let pages = pages.clone();
+            move |key, owner| pages.borrow().owns_preview(key, owner)
         }),
     );
     let local_transfer: local_transfer_window::Slot = Rc::default();
