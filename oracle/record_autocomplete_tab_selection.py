@@ -7,8 +7,9 @@ normal predicate batches and Shift OR drafts. Real read-list QAction dispatch
 records favourite add/removal questions, No/Yes, refresh, tab retention, and a
 new dropdown opened after editing. Write lists broadcast selected favourites
 and children to their real external entry callback. Literal wildcard/system-looking
-tags remain typed tags, and deselected Enter/Shift+Enter leave queries/OR drafts
-unchanged. Only asynchronous scheduling
+tags remain typed tags. Typing switches to results while the static favourite
+pane retains selection; returning and deselecting before Enter/Shift+Enter
+leaves queries/OR drafts unchanged. Only asynchronous scheduling
 is made synchronous; queries, list handlers and broadcast consumers are real.
 No remote data or file deletion is involved.
 """
@@ -111,6 +112,10 @@ def record(session):
                 def shape(predicates):
                     return sorted([dict(kind='tag' if p.GetType()==P.PREDICATE_TYPE_TAG else 'or',value=p.GetValue() if p.GetType()==P.PREDICATE_TYPE_TAG else sorted(child.GetValue() for child in p.GetValue())) for p in predicates],key=lambda p:str(p['value']))
                 step=dict(shift=shift,tags=sorted(literal_tags),active=shape(predicates),draft=[] if draft is None else shape(draft.GetValue()))
+                literal._text_ctrl.setText('empty batch retained input')
+                results_tab=literal._dropdown_notebook.currentIndex()
+                literal._dropdown_notebook.setCurrentWidget(literal._favourites_list)
+                step['input_transition']=dict(results_tab=results_tab,favourites_tab=literal._dropdown_notebook.currentIndex(),text=literal._text_ctrl.text(),selected=[t.GetPredicate().GetValue() for t in literal._favourites_list._ordered_terms if t in literal._favourites_list._selected_terms])
                 literal._favourites_list._DeselectAll()
                 step['empty_attempts']=[]
                 for empty_shift in [False,True]:
@@ -122,13 +127,26 @@ def record(session):
                 step['committed']=shape(literal.GetFileSearchContext().GetPredicates())
                 step['query_count']=len(c.Read('file_query_ids',literal.GetFileSearchContext()))
                 literals.append(step);literal.deleteLater()
+            # Typing activates results without filtering or deselecting the static
+            # favourite pane; returning to it retains even literal-looking tags.
+            typed=A.AutoCompleteDropdownTagsRead(c.gui,b'parity typed favourite selection',context,synchronised=False)
+            typed.RefreshFavouriteTags();typed._dropdown_notebook.setCurrentWidget(typed._favourites_list)
+            typed._favourites_list._SelectAll()
+            typed_states=[]
+            def typed_snap(action):
+                typed_states.append(dict(action=action,tab=typed._dropdown_notebook.currentIndex(),text=typed._text_ctrl.text(),rows=[t.GetPredicate().GetValue() for t in typed._favourites_list._ordered_terms],selected=[t.GetPredicate().GetValue() for t in typed._favourites_list._ordered_terms if t in typed._favourites_list._selected_terms],all_are_tag_predicates=all(t.GetPredicate().GetType()==P.PREDICATE_TYPE_TAG for t in typed._favourites_list._ordered_terms)))
+            typed_snap('selected_favourites')
+            typed._text_ctrl.setText('caller draft');typed_snap('typed_results')
+            typed._dropdown_notebook.setCurrentWidget(typed._favourites_list);typed_snap('return_favourites')
+            typed._favourites_list._DeselectAll();typed_snap('deselect_favourites')
+            typed.deleteLater()
         finally:
             ClientGUICore.core().PopupMenu=old_popup;ClientGUIDialogsQuick.GetYesNo=old_yes;ClientGUIAsync.AsyncQtJob.start=old_start
             ac.deleteLater()
-        return events,literals
-    try:events,literals=qt(replay)
+        return events,literals,typed_states
+    try:events,literals,typed_states=qt(replay)
     finally:c.CallToThread=old_thread
-    return dict(corpus=[dict(tag=t,hashes=[h.hex() for h in hs]) for t,hs in corpus],parents=parents,siblings=siblings,events=events,literal_cases=literals)
+    return dict(corpus=[dict(tag=t,hashes=[h.hex() for h in hs]) for t,hs in corpus],parents=parents,siblings=siblings,events=events,literal_cases=literals,typed_favourites=typed_states)
 def child(out):
     import hydrus_driver,record_api
     result=hydrus_driver.run_client(record_api.unpack_fixture('basic'),record)

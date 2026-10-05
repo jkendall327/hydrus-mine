@@ -628,6 +628,16 @@
         }
       ],
       "draft": [],
+      "input_transition": {
+        "results_tab": 0,
+        "favourites_tab": 1,
+        "text": "empty batch retained input",
+        "selected": [
+          "parity:*",
+          "parity:star*",
+          "system:inbox"
+        ]
+      },
       "empty_attempts": [
         {
           "shift": false,
@@ -706,6 +716,16 @@
           "value": "system:inbox"
         }
       ],
+      "input_transition": {
+        "results_tab": 0,
+        "favourites_tab": 1,
+        "text": "empty batch retained input",
+        "selected": [
+          "parity:*",
+          "parity:star*",
+          "system:inbox"
+        ]
+      },
       "empty_attempts": [
         {
           "shift": false,
@@ -757,6 +777,68 @@
         }
       ],
       "query_count": 1
+    }
+  ],
+  "typed_favourites": [
+    {
+      "action": "selected_favourites",
+      "tab": 1,
+      "text": "",
+      "rows": [
+        "parity:*",
+        "parity:star*",
+        "system:inbox"
+      ],
+      "selected": [
+        "parity:*",
+        "parity:star*",
+        "system:inbox"
+      ],
+      "all_are_tag_predicates": true
+    },
+    {
+      "action": "typed_results",
+      "tab": 0,
+      "text": "caller draft",
+      "rows": [
+        "parity:*",
+        "parity:star*",
+        "system:inbox"
+      ],
+      "selected": [
+        "parity:*",
+        "parity:star*",
+        "system:inbox"
+      ],
+      "all_are_tag_predicates": true
+    },
+    {
+      "action": "return_favourites",
+      "tab": 1,
+      "text": "caller draft",
+      "rows": [
+        "parity:*",
+        "parity:star*",
+        "system:inbox"
+      ],
+      "selected": [
+        "parity:*",
+        "parity:star*",
+        "system:inbox"
+      ],
+      "all_are_tag_predicates": true
+    },
+    {
+      "action": "deselect_favourites",
+      "tab": 1,
+      "text": "caller draft",
+      "rows": [
+        "parity:*",
+        "parity:star*",
+        "system:inbox"
+      ],
+      "selected": [],
+      "all_are_tag_predicates": true
     }
   ]
 }

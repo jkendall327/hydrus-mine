@@ -172,9 +172,50 @@ fn literal_favourite_rows_remain_selected_as_tags_until_explicitly_deselected() 
         .map(|row| row.predicate.clone())
         .collect();
     assert_eq!(json!(selected), fixture["literal_cases"][0]["tags"]);
+    let typed = &fixture["typed_favourites"];
+    assert_eq!(json!(input.tab().index()), typed[0]["tab"]);
+    assert_eq!(json!(selected), typed[0]["selected"]);
     input.set_text("caller draft");
+    // The actual textChanged handler switches to results; it does not filter
+    // or deselect the separate static favourite pane.
+    assert_eq!(input.tab(), Tab::Tags);
+    assert_eq!(json!(input.tab().index()), typed[1]["tab"]);
+    assert_eq!(input.text(), typed[1]["text"].as_str().unwrap());
+    input.set_tab(Tab::Favourites);
+    assert_eq!(json!(input.tab().index()), typed[2]["tab"]);
     assert_eq!(input.selected_suggestions().len(), 3);
+    assert_eq!(
+        json!(
+            input
+                .selected_suggestions()
+                .iter()
+                .map(|row| row.predicate.clone())
+                .collect::<Vec<_>>()
+        ),
+        typed[2]["selected"]
+    );
+    assert_eq!(
+        json!(
+            input
+                .suggestions()
+                .iter()
+                .map(|row| row.predicate.clone())
+                .collect::<Vec<_>>()
+        ),
+        typed[2]["rows"]
+    );
+    assert!(typed[2]["all_are_tag_predicates"].as_bool().unwrap());
     assert!(input.deselect());
     assert!(input.selected_suggestions().is_empty());
+    assert_eq!(
+        json!(
+            input
+                .selected_suggestions()
+                .iter()
+                .map(|row| row.predicate.clone())
+                .collect::<Vec<_>>()
+        ),
+        typed[3]["selected"]
+    );
     assert_eq!(input.text(), "caller draft");
 }
