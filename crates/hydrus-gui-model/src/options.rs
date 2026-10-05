@@ -50,6 +50,9 @@ fn normalise_idle_timeout(seconds: Option<u64>) -> Option<u64> {
 }
 
 macro_rules! settings {
+    (@save $conn:ident, $after:ident, $before:ident, animation_start) => {
+        $after.animation_start.save_changed($conn, &$before.animation_start)?;
+    };
     (@save $conn:ident, $after:ident, $before:ident, gui) => {
         if $after.gui != $before.gui {
             let mut latest: GuiSettings = hydrus_store::settings::get($conn)?;
@@ -327,6 +330,7 @@ settings! {
     thumbnail_navigation: hydrus_store::settings::ThumbnailNavigation,
     thumbnail_preview_selection: hydrus_store::thumbnail_preview_selection::Preferences,
     thumbnail_appearance: hydrus_store::thumbnail_appearance::Preferences => hydrus_store::thumbnail_appearance::load,
+    animation_start: hydrus_store::animation_start::Preferences => hydrus_store::animation_start::load,
     downloader_update_times: hydrus_store::downloader_update_times::Preferences,
     thumbnail_ratings: ThumbnailRatingSettings,
     rating_context_sizes: hydrus_store::settings::RatingContextSizes,
@@ -2950,11 +2954,19 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 ),
                 boxed(
                     "video/animations",
-                    vec![check(
-                        "Always Loop Animations:",
-                        |s| s.viewer_playback.always_loop,
-                        |s, value| s.viewer_playback.always_loop = value,
-                    )],
+                    vec![
+                        int(
+                            "Start animations this % in:",
+                            (0, 100),
+                            |s| i64::from(s.animation_start.percent()),
+                            |s, value| s.animation_start.set_percent(value),
+                        ),
+                        check(
+                            "Always Loop Animations:",
+                            |s| s.viewer_playback.always_loop,
+                            |s, value| s.viewer_playback.always_loop = value,
+                        ),
+                    ],
                 ),
             ],
         ),

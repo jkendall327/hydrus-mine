@@ -2,6 +2,7 @@
 //!
 //! See `docs/rust/STORE.md` for the schema design and consistency rules.
 
+pub mod animation_start;
 pub mod autocomplete;
 pub mod bandwidth;
 pub mod command_palette;

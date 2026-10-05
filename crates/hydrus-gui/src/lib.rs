@@ -5745,6 +5745,7 @@ fn open_viewer(
             // (for a file that plays, its thumbnail until the first frame)
             let (shape, media) = (model.shape(), model.media().map(Arc::new));
             let (playable, animation) = (model.playable(), model.animation());
+            let (duration_ms, num_frames) = viewer::timing(model.store(), model.current());
             window.set_media(media.as_deref().map(image).unwrap_or_default());
             let still = playable.is_none() && animation.is_none();
             zoomed.set_still(viewer::still_of(media, shape, still));
@@ -5768,12 +5769,11 @@ fn open_viewer(
             );
             let own = animation.as_ref().map(|f| (f.len(), f.total_ms()));
             let frame = weak.clone();
-            animator.play(animation, move |image| {
+            animator.play_with_metadata(animation, num_frames, false, move |image| {
                 if let Some(window) = frame.upgrade() {
                     window.set_media(image);
                 }
             });
-            let (duration_ms, num_frames) = viewer::timing(model.store(), model.current());
             presenting.set(
                 if (playable.is_some() && mpv::available()) || own.is_some() {
                     #[allow(clippy::cast_precision_loss)] // (milliseconds)

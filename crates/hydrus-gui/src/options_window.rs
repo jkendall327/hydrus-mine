@@ -1076,7 +1076,10 @@ pub(crate) fn open(
         let editor = editor.clone();
         let weak = window.as_weak();
         let store = store.clone();
+        let active = active.clone();
         move |i, n| {
+            let start = matches!(editor.borrow().rows().get(at(i)), Some(Row::Opt { option, .. }) if option.label == "Start animations this % in:");
+            if start && (!active.get() || !weak.upgrade().is_some_and(|window| window.window().is_visible())) { return; }
             editor.borrow_mut().number(at(i), i64::from(n));
             refresh_byte_row(&weak, &editor, &store, i);
         }

@@ -7,6 +7,7 @@ mod headless_lifetime;
 
 mod about;
 mod animation;
+mod animation_start;
 mod archive_delete;
 mod auto_resolution_preview;
 mod auto_resolution_review;

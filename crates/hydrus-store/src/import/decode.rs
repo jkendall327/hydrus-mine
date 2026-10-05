@@ -127,6 +127,10 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     }
     let options = db.client_options()?;
     let legacy_options = db.legacy_options()?;
+    insert_setting(
+        &mut input,
+        &crate::animation_start::Preferences::from_legacy(&legacy_options)?,
+    )?;
 
     let mut gallery = hydrus_core::subscriptions::GalleryDefaults::default();
     if let Some(value) = legacy_options.get("gallery_file_limit") {
