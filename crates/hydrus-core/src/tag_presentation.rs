@@ -387,6 +387,34 @@ pub struct TagText {
     pub fade: bool,
 }
 impl SiblingConnectorColours {
+    /// A collapsed-parent suffix also has its own namespace when no sibling is shown.
+    pub fn parent_runs(
+        &self,
+        (raw, prefix): (&str, String),
+        suffix: String,
+        colours: &NamespaceColours,
+        can_fade: bool,
+    ) -> Vec<TagText> {
+        if suffix.is_empty() {
+            return Vec::new();
+        }
+        let raw_colour = colours.tag(raw);
+        let parent_colour = colours.colour(Some(""));
+        vec![
+            TagText {
+                text: prefix,
+                colour: raw_colour,
+                previous_colour: raw_colour,
+                fade: false,
+            },
+            TagText {
+                text: suffix,
+                colour: parent_colour,
+                previous_colour: raw_colour,
+                fade: self.fade && can_fade && raw_colour != parent_colour,
+            },
+        ]
+    }
     pub fn runs(
         &self,
         (raw, prefix): (&str, String),

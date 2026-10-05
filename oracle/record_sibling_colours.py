@@ -90,11 +90,39 @@ def record(session):
             QW.QApplication.processEvents();assert write.grab().save('/tmp/sibling-colours-qt-selected.png')
             write._DeselectAll()
         return dict(fade=fade,namespace=namespace,namespace_enabled=enabled,reopened_text=reopened_text,storage=rows(box,'storage'),write=rows(write,'write'))
-    try:cases=[qt(lambda fade=fade,namespace=namespace:snapshot(fade,namespace)) for fade,namespace in [(True,'system'),(False,None),(False,'system'),(False,'character'),(False,'missing namespace'),(False,''),(False,' character '),(True,None)]]
+    try:
+        cases=[qt(lambda fade=fade,namespace=namespace:snapshot(fade,namespace)) for fade,namespace in [(True,'system'),(False,None),(False,'system'),(False,'character'),(False,'missing namespace'),(False,''),(False,' character '),(True,None)]]
+        parent_pair=('character:parity ideal','parity unnamespaced parent')
+        update=U.ContentUpdate(HC.CONTENT_TYPE_TAG_PARENTS,HC.CONTENT_UPDATE_ADD,parent_pair)
+        c.WriteSynchronous('content_updates',U.ContentUpdatePackage.STATICCreateFromContentUpdates(local,[update]))
+        for _ in range(12):
+            if not c.WriteSynchronous('sync_tag_display_maintenance',local,0.5):break
+        captured.clear()
+        c.CallAfterQtSafe=lambda target,func,*args,**kw:func(*args,**kw) if target==ac and func in (prefetch,results) else old_after(target,func,*args,**kw)
+        try:A.WriteFetch(ac,ClientThreading.JobStatus(),prefetch,results,parsed,context,SA.PredicateResultsCacheInit())
+        finally:c.CallAfterQtSafe=old_after
+        def collapsed():
+            write.SetPredicates([]);write.SetPredicates(captured['matches'])
+            write.SetParentDecoratorsAllowed(True);write.SetExtraParentRowsAllowed(False)
+            case=snapshot(True,None)
+            index=next(i for i,t in enumerate(write._ordered_terms) if t.GetPredicate().GetValue()=='creator:parity alias')
+            write._Hit(False,False,index)
+            paints=[]
+            for width in [700,1000]:
+                write.resize(width,200);QW.QApplication.processEvents()
+                image=write.widget().grab().toImage()
+                assert image.save('/tmp/sibling-colours-qt-collapsed-'+str(width)+'.png')
+                y=write._GetPositionalIndexFromLogicalIndex(index)*write.fontMetrics().height()+1
+                gradient=[x for x in range(image.width()) if image.pixelColor(x,y).red()==0 and 0<image.pixelColor(x,y).blue()<250 and image.pixelColor(x,y).green()<170]
+                samples=[list(image.pixelColor(x,y).getRgb()[:3]) for x in range(image.width()-100,image.width()-20)]
+                paints.append(dict(width=image.width(),row_y=y,gradient_extent=[min(gradient),max(gradient)],trailing_colour=samples[0],trailing_is_solid=all(colour==samples[0] for colour in samples)))
+            case.update(parents=[list(parent_pair)],selected_paints=paints)
+            return case
+        collapsed_case=qt(collapsed)
     finally:
         c.CallToThread=old_thread;c.CallAfterQtSafe=old_after
         qt(lambda:(panel.deleteLater(),ac.deleteLater()))
-    return {'options':controls,'files':[h.hex() for h in hashes],'corpus':[{'tag':tag,'hashes':[h.hex() for h in files]} for tag,files in corpus],'siblings':[['creator:parity alias','character:parity ideal']],'parents':[],'file_context':[k.hex() for k in context.GetLocationContext().current_service_keys],'tag_service':local.hex(),'query':'creator:parity alias','cases':cases}
+    return {'options':controls,'files':[h.hex() for h in hashes],'corpus':[{'tag':tag,'hashes':[h.hex() for h in files]} for tag,files in corpus],'siblings':[['creator:parity alias','character:parity ideal']],'parents':[],'file_context':[k.hex() for k in context.GetLocationContext().current_service_keys],'tag_service':local.hex(),'query':'creator:parity alias','cases':cases,'collapsed_case':collapsed_case}
 def child(out):
     import hydrus_driver,record_api
     result=hydrus_driver.run_client(record_api.unpack_fixture('basic'),record)

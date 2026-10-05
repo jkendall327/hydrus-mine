@@ -186,3 +186,62 @@ fn qt_sibling_colours_stage_cancel_apply_reopen_and_all_live_model_runs() {
         );
     }
 }
+
+#[test]
+fn qt_collapsed_parent_suffix_keeps_its_own_fade_and_ideal_trailing_colour() {
+    let recorded = hydrus_testkit::fixture_json("sibling_colours.json");
+    let case = &recorded["collapsed_case"];
+    let mut input_fixture = recorded.clone();
+    input_fixture["parents"] = case["parents"].clone();
+    let (_directory, store, _files) = fixture::seed(&input_fixture);
+    store
+        .write(|ctx| {
+            let mut preferences: hydrus_store::tag_editing::TagEditingSettings =
+                settings::get(ctx.conn())?;
+            preferences.autocomplete_show_parents = true;
+            preferences.autocomplete_expand_parents = false;
+            preferences.autocomplete_show_siblings = true;
+            settings::set(ctx.conn(), &preferences)?;
+            settings::set(
+                ctx.conn(),
+                &SiblingConnectorColours {
+                    fade: true,
+                    namespace: None,
+                },
+            )
+        })
+        .unwrap();
+    let key = ServiceKey::from_hex(recorded["tag_service"].as_str().unwrap()).unwrap();
+    let location = LocationContext::single(
+        ServiceKey::from_hex(recorded["file_context"][0].as_str().unwrap()).unwrap(),
+    );
+    let mut input = WriteAutocomplete::new(store.clone(), key.clone(), location.clone());
+    input.choose_domain(Choice::Tags(key));
+    input.choose_domain(Choice::Location(location));
+    input.set_text(recorded["query"].as_str().unwrap());
+    let colours: NamespaceColours = store.read(settings::get).unwrap();
+    for expected in case["write"].as_array().unwrap() {
+        let row = input
+            .rows()
+            .iter()
+            .find(|row| row.tag == expected["tag"])
+            .unwrap();
+        compare(
+            &row.label,
+            &row.parts,
+            &row.colour_tag,
+            &colours,
+            expected,
+            true,
+        );
+        assert!(row.parts.last().unwrap().fade);
+    }
+    let paints = case["selected_paints"].as_array().unwrap();
+    assert_eq!(paints[0]["gradient_extent"], paints[1]["gradient_extent"]);
+    assert_eq!(paints[0]["trailing_colour"], json!([0, 170, 0]));
+    assert!(
+        paints
+            .iter()
+            .all(|paint| paint["trailing_is_solid"] == true)
+    );
+}

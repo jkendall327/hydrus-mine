@@ -906,5 +906,163 @@
         }
       ]
     }
-  ]
+  ],
+  "collapsed_case": {
+    "fade": true,
+    "namespace": null,
+    "namespace_enabled": false,
+    "reopened_text": "system",
+    "storage": [
+      {
+        "tag": "creator:parity alias",
+        "rows": [
+          [
+            [
+              "creator:parity alias (1)",
+              [
+                170,
+                0,
+                0
+              ]
+            ],
+            [
+              " → ",
+              [
+                0,
+                170,
+                0
+              ]
+            ],
+            [
+              "character:parity ideal",
+              [
+                0,
+                170,
+                0
+              ]
+            ]
+          ]
+        ],
+        "can_fade": false
+      },
+      {
+        "tag": "character:parity ideal",
+        "rows": [
+          [
+            [
+              "character:parity ideal (2)",
+              [
+                0,
+                170,
+                0
+              ]
+            ]
+          ]
+        ],
+        "can_fade": false
+      }
+    ],
+    "write": [
+      {
+        "tag": "character:parity ideal",
+        "rows": [
+          [
+            [
+              "character:parity ideal (1)",
+              [
+                0,
+                170,
+                0
+              ]
+            ],
+            [
+              " (1 parents)",
+              [
+                0,
+                111,
+                250
+              ]
+            ]
+          ]
+        ],
+        "can_fade": true
+      },
+      {
+        "tag": "creator:parity alias",
+        "rows": [
+          [
+            [
+              "creator:parity alias (1)",
+              [
+                170,
+                0,
+                0
+              ]
+            ],
+            [
+              " → ",
+              [
+                0,
+                170,
+                0
+              ]
+            ],
+            [
+              "character:parity ideal",
+              [
+                0,
+                170,
+                0
+              ]
+            ],
+            [
+              " (1 parents)",
+              [
+                0,
+                111,
+                250
+              ]
+            ]
+          ]
+        ],
+        "can_fade": true
+      }
+    ],
+    "parents": [
+      [
+        "character:parity ideal",
+        "parity unnamespaced parent"
+      ]
+    ],
+    "selected_paints": [
+      {
+        "width": 698,
+        "row_y": 15,
+        "gradient_extent": [
+          260,
+          320
+        ],
+        "trailing_colour": [
+          0,
+          170,
+          0
+        ],
+        "trailing_is_solid": true
+      },
+      {
+        "width": 998,
+        "row_y": 15,
+        "gradient_extent": [
+          260,
+          320
+        ],
+        "trailing_colour": [
+          0,
+          170,
+          0
+        ],
+        "trailing_is_solid": true
+      }
+    ]
+  }
 }
