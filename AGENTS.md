@@ -79,9 +79,11 @@ box. Each one is a commit that passes CI on its own.
    terms; `docs/rust/DIFFERENCES.md` says what is missing or different
    from the reference, and why. Update both in the same commit as the
    code.
-8. **Use cheap validation.** Formatting, strict Clippy/type checks, simple builds
-   and targeted fast tests are appropriate. Automatic CI has one Linux lint/model
-   lane; `scripts/check.sh`, full workspace/native suites, platform runs and audits
+8. **Use cheap validation.** Formatting, strict backend/model Clippy/type checks,
+   simple builds and targeted fast tests are appropriate. Automatic CI has one
+   Linux lint/model lane excluding `hydrus-gui`: its generated metadata exceeded
+   the cheap budget (over 12 minutes and about 9 GiB in one compiler process).
+   Native GUI Clippy/type checking, `scripts/check.sh`, full workspace/native suites, platform runs and audits
    are deferred until the owner requests the final validation pass. Preserve
    authored regressions for that pass. Keep implemented and fully validated item
    counts separate. CI denies warnings, including clippy's pedantic set.

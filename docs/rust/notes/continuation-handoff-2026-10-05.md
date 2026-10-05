@@ -107,7 +107,12 @@ These repairs have no independent feature credit.
 ## Environment and validation
 
 Automatic `.github/workflows/rust.yml` now has one cached Linux `quick-check`:
-formatting, strict workspace/all-target Clippy and fast core/model tests.
+formatting, strict workspace/all-target Clippy excluding `hydrus-gui`, and fast
+core/model tests. Generated native GUI metadata checking was stopped after over
+12 minutes at about9GiB in one compiler process; it exceeded the cheap budget.
+Known GUI API compile blockers discovered by the initial probe were repaired,
+but no completed native GUI Clippy/type-check result is claimed. That target
+remains in the manual full lane for the final validation pass.
 Expensive jobs remain available only via manual dispatch with
 `full_validation=true`. Cached Slint source compilation can be run with
 `/workspace/parallel/parity-slint-syntax.sh ABS_WORKTREE`; it is not a runtime test.
@@ -121,7 +126,7 @@ returned an unavailable-tool error; ordinary GitHub PR links are usable.
 
 Completed source-only worktrees were removed after clean-state and independently
 fetched remote-tag checks; all branches/tags remain. Wrapup uses local strict
-Clippy/type checks and fast core/model tests against the shared cached target,
+backend/model Clippy/type checks and fast core/model tests against the shared cached target,
 with isolated workspace compiler wrappers and the current `HYDRUS_FIXTURE_DIR`.
 Full native GUI compilation and suites remain deferred. Disk was about6GiB free
 at wrapup; check `df -h /workspace` before creating targets/worktrees.
