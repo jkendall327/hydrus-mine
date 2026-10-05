@@ -245,6 +245,11 @@ search.
   retain the existing native predicate's class-name identity. Date and fractional
   viewtime precision retain the limits above.
 
+- **Still resampling under thread exhaustion** leaves the original image
+  visible with Slint's nearest-pixel scaling when the OS cannot start its
+  worker. It does not block the UI or poll for an unavailable result; a changed
+  file, zoom or clipping plan can retry. Normal resampling remains unchanged.
+
 - **Thumbnails on a scaled screen are resampled to its pixels** (area
   when shrinking, Lanczos when growing, as the reference resizes
   thumbnails), where the reference has Qt scale them as it draws. Slint's

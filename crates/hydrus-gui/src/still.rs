@@ -124,7 +124,7 @@ impl std::fmt::Debug for Renderer {
 }
 
 impl Renderer {
-    pub fn new() -> Self {
+    pub fn new() -> std::io::Result<Self> {
         let (jobs, queued) = crossbeam_channel::unbounded::<Job>();
         let (finished, done) = crossbeam_channel::unbounded();
         std::thread::Builder::new()
@@ -140,9 +140,8 @@ impl Renderer {
                         break;
                     }
                 }
-            })
-            .expect("starting the stills thread");
-        Self { jobs, done }
+            })?;
+        Ok(Self { jobs, done })
     }
 
     pub fn request(&self, id: u64, source: Arc<Raster>, plan: Plan) {
