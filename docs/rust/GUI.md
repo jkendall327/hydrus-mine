@@ -3291,3 +3291,13 @@ consume a work slot. Watcher checks and files now run independently, so a
 checker waiting for its own slot does not prevent that watcher's file imports.
 URL and simple-downloader file/page work and local-import files share the other
 paged-job pool. These limits are separate from network connection semaphores.
+
+Database > clear now opens the original clear-all and cull-viewing-statistics
+questions with “do it”/“forget it” choices and the original completion notices.
+Clear removes every canvas's view counts, durations and last-viewed records.
+Cull reads the current saved media and preview rules when accepted, validates
+both before writing, reduces excessive counts before limiting total durations,
+and preserves other canvases and timestamps. Preview minimum/maximum rules are
+editable and migrate from the reference; older native settings use the reference
+5-second/60-second defaults. Decline, closing the owning window and callbacks
+from retired questions preserve the records and any successor question.

@@ -194,6 +194,8 @@ pub struct FileViewingStatistics {
     pub duplicates: bool,
     pub media_min_ms: Option<u64>,
     pub media_max_ms: Option<u64>,
+    pub preview_min_ms: Option<u64>,
+    pub preview_max_ms: Option<u64>,
     pub menu_display: ViewingStatsMenuDisplay,
     pub interesting_canvases: Vec<CanvasType>,
 }
@@ -207,6 +209,8 @@ impl Default for FileViewingStatistics {
             duplicates: false,
             media_min_ms: Some(2000),
             media_max_ms: Some(600_000),
+            preview_min_ms: Some(5_000),
+            preview_max_ms: Some(60_000),
             menu_display: ViewingStatsMenuDisplay::Combined,
             interesting_canvases: vec![CanvasType::MediaViewer, CanvasType::ClientApi],
         }
