@@ -237,7 +237,7 @@ fn package_reviews_real_png_cancel_and_invalid_input_before_atomic_apply() {
 }
 #[test]
 fn parser_list_import_and_export_buttons_stage_until_owner_apply() {
-    headless::init();
+    let _headless_windows = headless::init();
     let (_dir, store) = setup();
     let slots = hydrus_gui::parser_editors_window::Slots::default();
     let list = hydrus_gui::parser_editors_window::open(&store, &slots, false).unwrap();
@@ -273,7 +273,7 @@ fn parser_list_import_and_export_buttons_stage_until_owner_apply() {
 }
 #[test]
 fn class_list_buttons_preserve_export_format_and_owner_cancel() {
-    headless::init();
+    let _headless_windows = headless::init();
     let (_dir, store) = setup();
     let slots = hydrus_gui::downloader_definitions_window::Slots::default();
     let list = hydrus_gui::downloader_definitions_window::open(&store, &slots, true).unwrap();
@@ -318,7 +318,7 @@ fn class_list_buttons_preserve_export_format_and_owner_cancel() {
 }
 #[test]
 fn formula_buttons_keep_imported_auxiliary_through_child_apply() {
-    headless::init();
+    let _headless_windows = headless::init();
     let (_dir, store) = setup();
     let slots = hydrus_gui::formula_window::Slots::default();
     let applied = Rc::new(RefCell::new(None));
@@ -351,7 +351,7 @@ fn formula_buttons_keep_imported_auxiliary_through_child_apply() {
 
 #[test]
 fn export_text_is_selectable_read_only_and_png_accepts_a_bare_relative_path() {
-    headless::init();
+    let _headless_windows = headless::init();
     let slots = windows::Slots::default();
     let definitions = exchange::decode_text(&one_page()).unwrap();
     let w = windows::open(
@@ -396,7 +396,7 @@ fn export_text_is_selectable_read_only_and_png_accepts_a_bare_relative_path() {
 }
 #[test]
 fn closing_a_sibling_definition_list_keeps_the_owning_import_open() {
-    headless::init();
+    let _headless_windows = headless::init();
     let (_dir, store) = setup();
     let slots = hydrus_gui::downloader_definitions_window::Slots::default();
     let classes = hydrus_gui::downloader_definitions_window::open(&store, &slots, true).unwrap();
@@ -430,7 +430,7 @@ fn closing_a_sibling_definition_list_keeps_the_owning_import_open() {
 
 #[test]
 fn dropping_the_final_exchange_owner_hides_and_invalidates_a_retained_window_handle() {
-    headless::init();
+    let _headless_windows = headless::init();
     let slots = windows::Slots::default();
     let other_owner = slots.clone();
     let weak_slot = Rc::downgrade(&slots.0);

@@ -23,9 +23,9 @@ async fn real_cookie_header_requests_replay_qt_jobs_noops_errors_and_backend_val
             basic: if allowed {
                 [Permission::ManageHeaders].into()
             } else {
-                Default::default()
+                std::collections::BTreeSet::default()
             },
-            search_filter: Default::default(),
+            search_filter: hydrus_core::tag_filter::TagFilter::default(),
         };
         store
             .write(move |ctx| auth::save_key(ctx.conn(), &permissions))
