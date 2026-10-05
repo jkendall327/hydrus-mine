@@ -547,6 +547,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let binding_active = Rc::new(Cell::new(true));
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
     let manage_tags: Rc<RefCell<Option<ManageTagsWindow>>> = Rc::default();
+    let predicate_editor: Rc<RefCell<Option<PredicateEditorWindow>>> = Rc::default();
 
     let pages = Rc::new(RefCell::new(pages));
     let session_autosave = session_autosave::bind(window, &pages);
@@ -599,6 +600,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     window.on_retire_external_launches({
         let options = options.clone();
         let manage_tags = manage_tags.clone();
+        let predicate_editor = predicate_editor.clone();
         let rows = rows.clone();
         let retire_colours = gui_colour_actions.retire_callback();
         let launcher = external_launches.clone();
@@ -613,6 +615,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 window.set_thumbnail_background(slint::Image::default());
             }
             let child = options
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            if let Some(child) = child {
+                child.invoke_cancel();
+            }
+            let child = predicate_editor
                 .borrow()
                 .as_ref()
                 .map(slint::ComponentHandle::clone_strong);
@@ -1023,7 +1032,6 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // the favourites the star button's menu was made from, to load from
     let menu_favourites: Rc<RefCell<Vec<hydrus_core::pages::FavouriteSearch>>> = Rc::default();
     // a system predicate's editor, from the search box
-    let predicate_editor: Rc<RefCell<Option<PredicateEditorWindow>>> = Rc::default();
     let search_or = search_or_window::Slot::default();
     let review_files: Rc<dyn Fn(Vec<String>)> = Rc::new({
         let slot = review_imports.clone();
@@ -1271,7 +1279,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let shown = shown.clone();
         let current_page = page.clone();
         let main = window.as_weak();
+        let active = binding_active.clone();
         move |page: Rc<RefCell<SearchPage>>| {
+            if !active.get()
+                || main
+                    .upgrade()
+                    .is_none_or(|main| !main.window().is_visible())
+            {
+                return;
+            }
             let Some((blank, shift)) = page.borrow_mut().take_system_editor_wanted() else {
                 return;
             };
@@ -1297,12 +1313,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let original = Rc::downgrade(&page);
                 let current_page = current_page.clone();
                 let main = main.clone();
+                let active = active.clone();
                 move || {
-                    original.upgrade().is_some_and(|original| {
-                        Rc::ptr_eq(&original, &current_page()) && original.borrow().lock().is_none()
-                    }) && main
-                        .upgrade()
-                        .is_some_and(|window| window.window().is_visible())
+                    active.get()
+                        && original.upgrade().is_some_and(|original| {
+                            Rc::ptr_eq(&original, &current_page())
+                                && original.borrow().lock().is_none()
+                        })
+                        && main
+                            .upgrade()
+                            .is_some_and(|window| window.window().is_visible())
                 }
             });
             let chosen: Rc<dyn Fn(Vec<hydrus_search::Predicate>)> = Rc::new({
@@ -2907,6 +2927,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let retire_popups = popup_timer.retire_callback();
             let options = options.clone();
             let manage_tags = manage_tags.clone();
+            let predicate_editor = predicate_editor.clone();
             let rows = rows.clone();
             let sidebar_layout = sidebar_layout.clone();
             let binding_active = binding_active.clone();
@@ -2923,6 +2944,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     child.invoke_cancel();
                 }
                 let child = manage_tags
+                    .borrow()
+                    .as_ref()
+                    .map(slint::ComponentHandle::clone_strong);
+                if let Some(child) = child {
+                    child.invoke_cancel();
+                }
+                let child = predicate_editor
                     .borrow()
                     .as_ref()
                     .map(slint::ComponentHandle::clone_strong);

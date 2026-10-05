@@ -2999,6 +2999,18 @@ actual Qt cases in the main read input and basic OR child, including accepted
 system recents surviving outer Cancel. Both callers use the original activation intent. Authored model replay and
 the native 18-case consumer replay await hosted CI; no native render is claimed.
 
+The file-size editor displays `<`, `≈`, `=`, `≠` and `>` as five radio choices,
+with bounded arrow navigation, Space and default Enter acceptance. Its amount
+stays within 0–1,048,576; selecting B/KB/MB/GB/TB changes the binary multiplier
+without converting the amount. Typed values and saved custom defaults retain
+the selected unit, including zero KB and unnormalised 1,024 B. Cancel leaves the
+search unchanged. Hidden owners refuse edits/acceptance; rebinding the main
+window or accepting client exit cancels its owned predicate child. A declined
+exit leaves it live. `filesize_predicate.json` records actual Qt controls,
+30 database-query outcomes, numeric bounds, explicit-value reopening, keys and
+Cancel. Authored model/native replays and the native screenshot await hosted
+execution; the actual Qt screenshot has been inspected.
+
 Manage Tags now reads deleted mappings separately for each selected local tag
 service. The count measures tag–file mappings, hides at zero, and follows staged
 deletions and re-additions. Show/hide is an immediately saved global preference

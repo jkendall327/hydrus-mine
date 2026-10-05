@@ -7,12 +7,13 @@
 
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox, TextEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
+import { FilesizeComparison } from "filesize_comparison.slint";
 
 import { EditorTreeRow, FiletypeTree } from "filetype_tree.slint";
 
 // One of a panel's fields: `kind` 0 a label, 1 a choice, 2 tick boxes, 3 a
 // number, 4 a line of text, 5 several lines, 6 the filetype tree, 7 a
-// button; on the panel's first line (0) or its second (1).
+// button, 8 filesize comparison radios; on the panel's first line (0) or its second (1).
 export struct EditorField {
     kind: int,
     text: string,
@@ -43,6 +44,7 @@ component FieldView {
     in property <EditorField> field;
     in property <bool> here;
     in property <bool> blocked: false;
+    in property <bool> comparison-focus;
     callback chose(int);
     callback ticked(int, bool);
     callback number-edited(int);
@@ -76,6 +78,15 @@ component FieldView {
             current-index: root.field.chosen;
             enabled: root.field.enabled && !root.blocked;
             selected => { root.chose(self.current-index); }
+        }
+        if root.field.kind == 8: FilesizeComparison {
+            horizontal-stretch: 0;
+            options: root.field.options;
+            chosen: root.field.chosen;
+            enabled: root.field.enabled && !root.blocked;
+            focus-request: root.comparison-focus;
+            chose(option) => { root.chose(option); }
+            accepted => { root.accepted(); }
         }
         if root.field.kind == 2: VerticalLayout {
             for option[o] in root.field.options: CheckBox {
@@ -183,6 +194,7 @@ export component PredicateEditorWindow inherits Window {
     in property <[EditorPanel]> panels;
     in property <string> error;
     in property <string> question;
+    in property <bool> comparison-focus;
     callback answer(bool);
     // the shown page's recent predicates, each a button adding it with
     // one beside it forgetting it
@@ -318,6 +330,7 @@ export component PredicateEditorWindow inherits Window {
                                 }
                                 for field[f] in panel.fields: FieldView {
                                     field: field;
+                                    comparison-focus: root.comparison-focus;
                                     blocked: root.question != "";
                                     here: field.shown && field.line == 0;
                                     chose(option) => { root.chose(p, f, option); }
@@ -342,6 +355,7 @@ export component PredicateEditorWindow inherits Window {
                             if panel.two-lines: HorizontalLayout {
                                 for field[f] in panel.fields: FieldView {
                                     field: field;
+                                    comparison-focus: root.comparison-focus;
                                     blocked: root.question != "";
                                     here: field.shown && field.line == 1;
                                     chose(option) => { root.chose(p, f, option); }

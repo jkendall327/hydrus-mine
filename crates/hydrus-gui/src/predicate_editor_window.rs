@@ -15,7 +15,7 @@ use hydrus_store::Store;
 
 pub use crate::predicate_editors::button_label;
 use crate::predicate_editors::{
-    Context, Editor, Field, Panel, Pressed,
+    Blank, Context, Editor, Field, Kind, Panel, Pressed,
     defaults::{CustomDefaults, CustomDefaultsExt},
 };
 use crate::{EditorField, EditorPanel, EditorTreeRow, PredicateEditorWindow};
@@ -43,7 +43,11 @@ fn field_row(panel: &Panel, i: usize) -> EditorField {
             row.text = text.as_str().into();
         }
         Field::Choice { options, chosen } => {
-            row.kind = 1;
+            row.kind = if panel.kind == Kind::Size && i == 1 {
+                8
+            } else {
+                1
+            };
             row.options = strings(options);
             row.chosen = i32::try_from(*chosen).unwrap_or(0);
             // (room for the longest option, and the arrow)
@@ -150,10 +154,12 @@ impl State {
             // The active input already shows what was typed. A button also
             // synchronizes cached text before freezing or cleaning that draft.
             let redrawn = matches!(panel.fields[i], Field::Ticks { .. } | Field::Tree { .. });
+            let size_control = panel.kind == Kind::Size && matches!(i, 1..=3);
             let changed = (redrawn && Some(i) == set)
                 || old.as_ref().is_none_or(|old| {
                     old.shown != row.shown
                         || old.enabled != row.enabled
+                        || (size_control && (old.chosen != row.chosen || old.value != row.value))
                         || (set.is_none() && old.text != row.text)
                 });
             if changed {
@@ -230,6 +236,7 @@ pub(crate) fn open(
     };
     window.set_pages(ModelRc::new(VecModel::from(names)));
     window.set_two_columns(editor.blank == crate::predicate_editors::Blank::FileProperties);
+    let filesize = editor.blank == Blank::Filesize;
     let state = Rc::new(RefCell::new(State {
         editor,
         context,
@@ -652,6 +659,7 @@ pub(crate) fn open(
         slint::CloseRequestResponse::HideWindow
     });
     window.show().map_err(|e| e.to_string())?;
+    window.set_comparison_focus(filesize);
     *slot.borrow_mut() = Some(window);
     Ok(())
 }

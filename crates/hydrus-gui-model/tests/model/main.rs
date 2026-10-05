@@ -22,6 +22,7 @@ mod file_view_removal;
 mod filename_rules;
 mod filename_simple;
 mod filename_tagging;
+mod filesize_predicate;
 mod filetype_tree;
 mod folders;
 mod force_filetype;
