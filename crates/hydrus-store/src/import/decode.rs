@@ -4027,7 +4027,7 @@ mod tests {
                     r#"[[0, "file_viewing_statistics_media_min_time_ms"], [0, null]]"#,
                 ),
                 (
-                    r#"[[0, "file_viewing_statistics_media_max_time_ms"], [0, 600_000]]"#,
+                    r#"[[0, "file_viewing_statistics_media_max_time_ms"], [0, 600000]]"#,
                     r#"[[0, "file_viewing_statistics_media_max_time_ms"], [0, 1234]]"#,
                 ),
                 (
