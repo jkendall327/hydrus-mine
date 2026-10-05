@@ -38,15 +38,17 @@
         "Conditional proposal awaits hosted Rust/native validation. No local Cargo/Rust builds/tests/mutation runs.",
         "Native phrase/description editing remains one inline panel instead of sequential Qt dialogs; Cancel discards the row draft. Duplicate and blank-description errors use inline native error text.",
         "The reference editor has no import action; this slice does not invent one. Existing broader regex help, components and regex-input parent workflows remain Partial.",
-        "One original concrete editor leaf only; current canonical inventory already marks earlier scoped CRUD first_pass. This packet describes new production gaps repaired, with no canonical status edits or credit for duplicate aliases/parents."
-      ]
+        "This original editor ID is already included in the validated completion ledger. New production gaps are repaired, with zero additional original completion credit and no canonical status edits or duplicate parent/alias credit."
+      ],
+      "countAsCompletedLeaf": false,
+      "change_kind": "implementation_refinement"
     }
   ],
   "parentsRemainPartial": [
     "options-regex-favourites"
   ],
   "canonical_files_changed": false,
-  "claimsPromotion": "One unclaimed original frozen Missing editor leaf, conditional on finite source and hosted validation; no parent/alias claim or evidence-only promotion.",
+  "claimsPromotion": "Zero additional original completion credit: this editor ID is already included in overnight/progress.json completed_feature_ids from overnight/string-dates.json. This adds real saved-input chooser, description validation and owner/child guard behavior within its existing first-pass scope.",
   "referenceRecording": {
     "recorder": "oracle/record_regex_options_editor.py",
     "fixture": "oracle/fixtures/regex_options_editor.json",
@@ -56,5 +58,8 @@
     "finishedAtUtc": "2026-10-05T06:28:27Z",
     "reference": "Actual RegexPanel/EditRegexFavourites Add/Edit/extended Delete and RegexInput saved-favourites menu, real EditTextPanel empty/whitespace description validation, outer draft cancel/reopen/UpdateOptions and actual accepted RegexInput copy consumer. Modal answers substituted; no network authored. Client API listen attempt was refused by sandbox, independently of these successful Qt handlers."
   },
-  "validation": "Actual Qt recording and PNG inspection, Python syntax/JSON invariants, direct rustfmt/diff, warning-aware cached Slint source compilation passed. Rust/native execution remains pending hosted CI. Independent source review accepted the finite editor slice and reciprocal child/hidden-opening repairs; no source blocker remains."
+  "validation": "Actual Qt recording and PNG inspection, Python syntax/JSON invariants, direct rustfmt/diff, warning-aware cached Slint source compilation passed. Rust/native execution remains pending hosted CI. Independent source review accepted the finite editor slice and reciprocal child/hidden-opening repairs; no source blocker remains.",
+  "currentAlreadyValidatedOriginalLeaf": true,
+  "validatedPriorManifest": "docs/rust/gui-coverage/overnight/string-dates.json",
+  "additionalOriginalLeafCompletions": 0
 }
