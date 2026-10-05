@@ -836,6 +836,7 @@ pub fn open(
         let state = state.clone();
         let refresh = refresh.clone();
         let blocked = blocked.clone();
+        let close = close.clone();
         move |i| {
             if blocked() {
                 return;
