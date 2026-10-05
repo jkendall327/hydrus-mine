@@ -14,6 +14,7 @@ pub struct Row {
 }
 
 /// A detached namespace list draft; mutations never write settings themselves.
+#[derive(Debug)]
 pub struct Editor {
     colours: Colours,
     selection: Selection,
@@ -64,7 +65,7 @@ impl Editor {
     }
     /// Add after the exact namespace normalization/warnings. RGB comes from the owner.
     pub fn add(&mut self, raw: &str, rgb: [u8; 3]) -> Result<(), &'static str> {
-        let mut namespace = raw
+        let namespace = raw
             .to_lowercase()
             .trim_matches(|c: char| c.is_whitespace() || matches!(c, '\u{1c}'..='\u{1f}'))
             .to_owned();
@@ -73,7 +74,7 @@ impl Editor {
                 "Sorry, that namespace means unnamespaced/default namespaced, which are already listed.",
             );
         }
-        namespace = namespace.trim_end_matches(':').to_owned();
+        let mut namespace = namespace.trim_end_matches(':').to_owned();
         if namespace != "system" {
             namespace = hydrus_core::tag::strip_tag_text_of_gumpf(&namespace);
         }
