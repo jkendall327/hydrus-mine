@@ -218,3 +218,25 @@ fn captured_menu_and_populated_child_cannot_edit_hidden_replaced_rebound_or_drop
     assert_eq!(current.borrow().predicates(), dropped_before);
     child.invoke_cancel();
 }
+
+#[test]
+fn dropping_the_last_owner_releases_a_populated_editor_without_cancel() {
+    let (_dir, store) = setup();
+    let _windows = headless::init();
+    let (ui, bound) = main(&store);
+    add(&ui, "system:filesize < 7KB");
+    let child = editor(&ui, &bound);
+    let weak_child = child.as_weak();
+    ui.hide().unwrap();
+    drop(ui);
+    drop(bound);
+    assert!(
+        weak_child.upgrade().is_some(),
+        "retained child is still live"
+    );
+    drop(child);
+    assert!(
+        weak_child.upgrade().is_none(),
+        "the close callback must not retain its owning slot"
+    );
+}
