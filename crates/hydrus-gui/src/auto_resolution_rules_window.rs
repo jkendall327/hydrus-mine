@@ -1424,7 +1424,7 @@ fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, m
     let add = |rules: Vec<Rule>, say: bool| {
         let n = rules.len();
         let mut state = state.borrow_mut();
-        state.list.selection = Default::default();
+        state.list.selection = hydrus_gui_model::list_selection::ListSelection::default();
         for rule in rules {
             state.list.add(RuleEdit { id: None, rule });
         }
