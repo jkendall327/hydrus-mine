@@ -1707,6 +1707,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let ask = ask.clone();
             move |question, then| ask(Asked::Then(question, then))
         }),
+        Rc::new({
+            let shortcuts = shortcuts.clone();
+            move || shortcuts.retire()
+        }),
     );
     // (the status bar counts the selection's inbox)
     let archive_or_inbox = |archive: bool| {
@@ -5989,7 +5993,11 @@ fn open_viewer(
         }
     });
     windows::place(window.window(), &settings_frame);
-    let shortcuts = shortcut_runtime::viewer(&window, model.borrow().store().clone());
+    let shortcuts = shortcut_runtime::viewer(
+        &window,
+        model.borrow().store().clone(),
+        viewing_stats.clone(),
+    );
     windows::watch_named_events(
         window.window(),
         model.borrow().store(),

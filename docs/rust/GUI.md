@@ -3311,3 +3311,9 @@ and Manhattan distance of five logical pixels in capture (five physical pixels
 in the viewer). Winit wheel lines map to 120 units and pixel deltas use their Y
 value. These fallbacks do not establish Qt platform double-click/angle-delta
 parity; the original mouse leaf remains Partial with zero completion credit.
+
+Saved shortcut dispatch retains the owning window’s lifetime. Accepted client
+exit retires the main route after confirmation; cancelling exit keeps it live.
+A closed viewer’s canvas retires keyboard, mouse and partial wheel dispatch,
+even if a retained handle is shown again. Fresh bindings and other live viewers
+keep their own routes.
