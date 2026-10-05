@@ -200,6 +200,32 @@ fn hidden_cancelled_rebound_and_accepted_closed_main_cannot_accept_a_retained_si
     window.invoke_cancel();
     window.invoke_ok(0);
     assert!(bound.current.borrow().borrow().predicates().is_empty());
+    ui.invoke_search_edited("".into());
+    let index = ui
+        .get_suggestions()
+        .iter()
+        .position(|s| s.text == "system:filesize")
+        .unwrap();
+    ui.hide().unwrap();
+    ui.invoke_suggestion_chosen(i32::try_from(index).unwrap());
+    assert!(bound.predicate_editor.borrow().is_none());
+    ui.show().unwrap();
+    ui.invoke_search_edited("".into());
+    let everything = ui
+        .get_suggestions()
+        .iter()
+        .position(|s| s.text.starts_with("system:everything"))
+        .unwrap();
+    ui.invoke_suggestion_chosen(i32::try_from(everything).unwrap());
+    assert!(
+        bound.predicate_editor.borrow().is_none(),
+        "a refused hidden activation must not reopen on a later concrete selection"
+    );
+    assert_eq!(
+        bound.current.borrow().borrow().predicates(),
+        ["system:everything"]
+    );
+    ui.invoke_remove_predicate(0);
     let retired = open(&ui, &bound);
     let successor = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     assert!(!retired.window().is_visible());
@@ -221,6 +247,9 @@ fn hidden_cancelled_rebound_and_accepted_closed_main_cannot_accept_a_retained_si
     assert!(successor.current.borrow().borrow().predicates().is_empty());
     ui.invoke_answer(false);
     assert!(child.window().is_visible());
+    child.invoke_number_edited(0, 2, 201);
+    assert_eq!(fields(&child).row_data(2).unwrap().value, 201);
+    child.invoke_number_edited(0, 2, 200);
     ui.window().dispatch_event(WindowEvent::CloseRequested);
     ui.invoke_answer(true);
     assert!(!child.window().is_visible());

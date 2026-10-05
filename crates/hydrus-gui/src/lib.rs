@@ -1281,6 +1281,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let main = window.as_weak();
         let active = binding_active.clone();
         move |page: Rc<RefCell<SearchPage>>| {
+            // A refused activation is consumed, not queued behind an owner question/hide.
+            let Some((blank, shift)) = page.borrow_mut().take_system_editor_wanted() else {
+                return;
+            };
             if !active.get()
                 || main.upgrade().is_none_or(|main| {
                     !main.window().is_visible() || !main.get_question().is_empty()
@@ -1288,9 +1292,6 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             {
                 return;
             }
-            let Some((blank, shift)) = page.borrow_mut().take_system_editor_wanted() else {
-                return;
-            };
             let store = page.borrow().store().clone();
             let snapshot = store.snapshot();
             let url_classes = snapshot
