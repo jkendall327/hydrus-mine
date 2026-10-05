@@ -754,6 +754,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::RepairArchiveTimes => (hooks.repair_archive_times)(),
         Command::ClearThumbnailCache => (hooks.clear_thumbnail_cache)(),
         Command::DebugLongTextPopup => hooks.debug_long_popup.start(),
+        Command::DebugDelayedTextPopup => hooks.debug_long_popup.start_delayed_popup(),
         Command::ClearViewingStatistics => (hooks.viewing_maintenance)(false),
         Command::CullViewingStatistics => (hooks.viewing_maintenance)(true),
         Command::FileMaintenance(idle) => {

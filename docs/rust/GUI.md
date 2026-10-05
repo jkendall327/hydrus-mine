@@ -3883,3 +3883,5 @@ Current passes finish their admitted work using their captured policy. Broader
 maintenance scheduling and idle/system-busy behavior remain Partial. Actual Qt
 controls and entry/shutdown paths are recorded; model, Store, daemon and native
 regressions are authored and await hosted execution.
+
+Help → Debug → GUI actions now offers “make a popup in five seconds”. Each activation queues the exact reference message without publishing early; overlapping activations keep separate deadlines and independent dismissible jobs. Existing delayed work progresses while Main is hidden, while new hidden-window launches are refused. The existing debug producer owns the timer and permanently cancels pending work on accepted exit, rebind and owner destruction; Exit Cancel preserves it. Authored native deadline/Store/toaster/ownership regressions await hosted CI.
