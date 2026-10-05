@@ -39,6 +39,13 @@ fn qt_namespace_add_normalization_protected_mixed_delete_and_options_cancel_reop
                 assert_eq!(json!(warnings), event["warnings"]);
             }
         } else {
+            if event["clear_selection"] == true {
+                for (index, row) in list.rows().iter().enumerate() {
+                    if row.selected {
+                        list.click(index, true, false);
+                    }
+                }
+            }
             for namespace in event["selected"].as_array().unwrap() {
                 let index = list
                     .rows()
@@ -50,13 +57,14 @@ fn qt_namespace_add_normalization_protected_mixed_delete_and_options_cancel_reop
                 }
             }
             assert_eq!(
-                json!([list.removal_question().unwrap()]),
+                json!(list.removal_question().into_iter().collect::<Vec<_>>()),
                 event["questions"]
             );
             if event["yes"] == true {
                 list.remove_selected();
             }
         }
+        assert_eq!(event["delete_enabled"], true);
         assert_eq!(rows(&list), event["rows"]);
         assert_eq!(store.read(Settings::load).unwrap(), before);
     }
@@ -127,4 +135,57 @@ fn qt_namespace_add_normalization_protected_mixed_delete_and_options_cancel_reop
         rows(&namespace_colours::Editor::new(saved.colours)),
         fixture["reopened_rows"]
     );
+}
+
+#[test]
+fn sorted_add_keeps_qt_positional_range_anchor_then_delete_resets_it() {
+    let fixture = hydrus_testkit::fixture_json("namespace_colour_controls.json");
+    for case in fixture["selection_cases"].as_array().unwrap() {
+        let events = case["events"].as_array().unwrap();
+        let colours = events[0]["rows"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|row| {
+                (
+                    serde_json::from_value(row["namespace"].clone()).unwrap(),
+                    serde_json::from_value(row["rgb"].clone()).unwrap(),
+                )
+            })
+            .collect();
+        let mut list = namespace_colours::Editor::new(colours);
+        for event in events {
+            match event["action"].as_str().unwrap() {
+                "initial" => {}
+                "hit" => {
+                    let index = list
+                        .rows()
+                        .iter()
+                        .position(|row| json!(row.namespace) == event["namespace"])
+                        .unwrap();
+                    list.click(
+                        index,
+                        event["ctrl"].as_bool().unwrap(),
+                        event["shift"].as_bool().unwrap(),
+                    );
+                }
+                "add" => {
+                    list.add(event["input"].as_str().unwrap(), [12, 34, 56])
+                        .unwrap();
+                }
+                "delete" => {
+                    list.remove_selected();
+                }
+                other => panic!("unrecorded selection action {other}"),
+            }
+            assert_eq!(rows(&list), event["rows"]);
+            let selected: Vec<_> = list
+                .rows()
+                .into_iter()
+                .filter(|row| row.selected)
+                .map(|row| row.namespace)
+                .collect();
+            assert_eq!(json!(selected), event["selected"], "{event}");
+        }
+    }
 }

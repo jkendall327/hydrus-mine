@@ -135,7 +135,6 @@ export component OptionsWindow inherits Window {
     in-out property <int> match-highlighted: -1;
     in property <[NamespaceColourRow]> namespace-colour-rows;
     in property <bool> namespace-colour-child-open;
-    in property <bool> namespace-colour-can-delete;
     callback namespace-colour-clicked(int,bool,bool);
     callback namespace-colour-action(string);
     callback search-edited(string);
@@ -517,7 +516,6 @@ export component OptionsWindow inherits Window {
                                 rows:root.namespace-colour-rows;
                                 enabled:row.enabled;
                                 child-open:root.namespace-colour-child-open;
-                                can-delete:root.namespace-colour-can-delete;
                                 clicked(index,ctrl,shift)=>{root.namespace-colour-clicked(index,ctrl,shift);}
                                 action(action)=>{root.namespace-colour-action(action);}
                             }

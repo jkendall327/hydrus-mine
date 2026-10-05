@@ -2195,3 +2195,5 @@ coloured child rows. Qt's "OR connecting string (on one line)" currently has no
 active renderer consumer; this slice does not change that inactive preference.
 Authored native replays and namespace-colours-draft.png await hosted CI; no local
 Cargo builds, tests or mutation runs were performed.
+
+The namespace colour controls now replay Add sorting during active Shift and Ctrl+Shift ranges, along with enabled, no-op Delete clicks for protected and empty selections. These finite controls do not complete the broader namespace colour editor, colour picker, inherited menus, or keyboard navigation.

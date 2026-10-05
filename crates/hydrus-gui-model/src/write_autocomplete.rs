@@ -108,6 +108,14 @@ impl Selection {
             self.click(first, false, false);
         }
     }
+    /// Sorting keeps numeric range bookkeeping and remaps only selected terms.
+    pub(crate) fn remap_selected(&mut self, remap: impl Fn(usize) -> Option<usize>) {
+        self.selected = self
+            .selected
+            .iter()
+            .filter_map(|&index| remap(index))
+            .collect();
+    }
     pub(crate) fn click(&mut self, hit: usize, ctrl: bool, shift: bool) {
         if !shift {
             self.anchor = Some(hit);
