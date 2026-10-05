@@ -102,11 +102,11 @@ conformance runner, which skips exactly the recorded fields listed in
   record leaves the cache reporting the combined-local-media deletion and
   "deleted from anywhere" membership that the database no longer has. We
   have no such cache and report what the reference reports after a restart.
-- **The trash is emptied whether or not you are busy.** Hydrus skips its
-  hourly trash maintenance while you are using the client, unless
-  "maintain the trash in normal time" is on (it is by default). `hydrus
-  serve` has no user to be busy, so it always runs it, with your maximum
-  trash age and size; the switch isn't carried over.
+- **Automatic maintenance has an explicit activity source.** GUI trash and
+  deferred-delete passes sample the owned live idle monitor; the daemon has
+  no GUI activity and is classified as normal time. Both consumers honor the
+  saved normal-time flags (default on). Broader system-busy and scheduling
+  parity remains separate from these finite gates.
 
 ## Duplicates (`hydrus-store::duplicates`)
 
@@ -3006,8 +3006,8 @@ entry without undoing earlier committed clears. Actual Qt ordinary-delete
 refusal is recorded and has no wait/queue clear. Corrupt native metadata raises
 an error; reference-specific boot-long disabling and diagnostic text remain
 separate broader maintenance behavior. Existing native 1024-pair/ten-minute
-passes and absence of reference idle/normal scheduling/location-extension repair
-remain unchanged. No credit is proposed for those worker/maintenance parents.
+passes and broader scheduling/location-extension repair remain separate;
+the finite normal-time admission controls below now reach these workers. No credit is proposed for those worker/maintenance parents.
 This finite delay-control proposal requires exact hosted Rust/native validation
 and inspection of its authored Options artifact; local Cargo/Rust execution was
 not performed. All physical mutation evidence uses disposable authored/copied
@@ -3053,3 +3053,28 @@ PNGs; authored Rust/native assertions and PNG captures
 await hosted execution and exact-source rendered review.
 
 The popup question label continues to wrap in the native client. Actual Qt `PopupMessage._text_yes_no` remains a single-line label at the same narrow/fixed width settings; the new `popup_question_layout.json`/PNG records that distinction and verifies every Qt action control fits within its card. The native layout repair preserves its existing wrapping while preventing the lower stop button from crossing the clipped card boundary. No Options or popup family completion status changes.
+
+The two Files and Trash normal-time controls now reach actual automatic trash
+and deferred physical-delete passes. Defaults and retained ClientOptions imports
+are true, native preferences win, and Options saves only changed fields. A GUI
+owner samples its existing live activity/API idle monitor immediately before each
+pass; a daemon without GUI activity is normal time. Idle bypasses either unchecked
+normal-time flag, as Qt does. An admitted pass is not cancelled by a later flag
+edit. Explicit CLI purge remains an explicit command rather than an automatic pass.
+
+GUI maintenance runs off the UI thread, with at most one worker of each kind.
+Rebind, accepted exit and last-owner drop cancel the old workers, wake physical
+waits and reject late reports; a declined exit leaves them live. Trash checks
+shutdown before each eight-file group, while physical deletion retains its per-pair
+writer admission, current-storage/import/shared-media checks, durable queue clear
+and outside-writer captured delay. A current filesystem call or admitted group
+may finish. Errors stop a pass and are retained as owned diagnostics.
+
+This is bounded gate parity, not the broader maintenance scheduler: existing
+256-file trash writes and 1024-pair/ten-minute physical passes, queue wakeups,
+reference inter-group trash pacing, CPU/system-busy/global mouse activity, boot
+error disabling and location-extension repair remain Partial. Actual Qt entry,
+mid-pass settings and shutdown paths were recorded with an owned synthetic queue
+transport; physical native tests use disposable copied media. Authored Rust/native
+regressions and one Options artifact await hosted execution and render inspection.
+No local Cargo/Rust validation was run; no parent completion is proposed.

@@ -82,6 +82,7 @@ pub mod login_step_window;
 pub mod login_test_window;
 pub mod login_workflows_window;
 mod main_identity;
+pub mod maintenance_runtime;
 mod manage_notes_window;
 mod manage_ratings_window;
 pub(crate) mod manage_tags_window;
@@ -425,6 +426,8 @@ pub struct Bound {
     pub clipboard_monitor: clipboard_monitor::Monitor,
     /// Historical autosaves, with real input activity and a bounded timer.
     pub session_autosave: session_autosave::Monitor,
+    /// Automatic maintenance uses this binding's fresh live idle admissions.
+    pub maintenance: maintenance_runtime::Control,
     _header_approval: network_header_approval::Monitor,
 }
 
@@ -557,6 +560,12 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
 
     let pages = Rc::new(RefCell::new(pages));
     let session_autosave = session_autosave::bind(window, &pages);
+    let maintenance = maintenance_runtime::Control::bind(
+        window,
+        pages.borrow().store(),
+        &session_autosave,
+        &binding_active,
+    );
     let first = pages.borrow_mut().current();
     let debug_long_popup = debug_long_popup::Control::new(
         window,
@@ -609,6 +618,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         binding_active.clone(),
     );
     window.on_retire_external_launches({
+        let maintenance = maintenance.clone();
         let debug_long_popup = debug_long_popup.clone();
         let options = options.clone();
         let manage_tags = manage_tags.clone();
@@ -620,6 +630,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let weak = window.as_weak();
         move || {
             binding_active.set(false);
+            maintenance.retire();
             debug_long_popup.retire();
             retire_colours();
             launcher.cancel();
@@ -2976,10 +2987,12 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let sidebar_layout = sidebar_layout.clone();
             let binding_active = binding_active.clone();
             let weak = window.as_weak();
+            let maintenance = maintenance.clone();
             let debug_long_popup = debug_long_popup.clone();
             move || {
                 sidebar_layout.accepted_exit();
                 binding_active.set(false);
+                maintenance.retire();
                 debug_long_popup.retire();
                 retire_colours();
                 rows.retire();
@@ -4630,6 +4643,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         _gui_colour_actions: gui_colour_actions,
         preview,
         session_autosave,
+        maintenance,
         pages,
         current,
         rows,

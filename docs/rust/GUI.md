@@ -3866,3 +3866,20 @@ finite scope, including real Enter Text blank/whitespace Apply and Cancel
 handlers with their “apply”/“cancel” buttons. Hosted Rust execution and native PNG review remain pending.
 
 Popup cards now measure their body at the resolved card width before the outer stack allocates their height. The narrow long-question regression checks all five actual action-button bounds, the rendered lower stop border and a pointer delivered near that lower edge; the fixed-width and width-cap checks remain. This is a layout repair with no new coverage claim. Native execution is pending hosted CI.
+
+Options > files and trash now stages “Allow trash maintenance during normal time”
+and “Allow deferred file deletes during normal time”, both checked by default.
+Apply saves each changed flag without replacing its concurrently changed peer;
+Cancel, hidden callbacks and retired owners cannot save. Saved legacy flags survive
+upgrading an already imported store.
+
+The flags control real automatic maintenance: busy GUI passes require the relevant
+flag, while the current owned idle decision allows either job. The daemon honors
+them as normal-time jobs; explicit purge remains available independently. Trash
+cleanup and physical deletion run on bounded background workers, allowing Options
+and other Store writes during a physical wait. Accepted exit and rebind retire
+the old jobs and retain the next queued pair; Cancel keeps the current job live.
+Current passes finish their admitted work using their captured policy. Broader
+maintenance scheduling and idle/system-busy behavior remain Partial. Actual Qt
+controls and entry/shutdown paths are recorded; model, Store, daemon and native
+regressions are authored and await hosted execution.

@@ -27,6 +27,7 @@ pub mod live;
 pub mod login_runtime;
 pub mod logins;
 pub mod maintenance;
+pub mod maintenance_gates;
 pub mod manage_tags_sort;
 pub mod master;
 pub mod media;
