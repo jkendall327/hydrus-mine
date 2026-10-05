@@ -5,13 +5,14 @@
 use crate::{Store, file_maintenance, popups};
 use hydrus_core::{HashId, Mime, Sha256};
 use std::{
+    cell::Cell,
     fs, io,
     path::{Path, PathBuf},
     sync::{
         Arc,
         atomic::{AtomicBool, Ordering},
     },
-    time::{Duration, SystemTime, UNIX_EPOCH},
+    time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 
 /// One file's identity and MIME values captured when its editor was accepted.
@@ -57,16 +58,34 @@ pub trait Effects {
     fn before_step(&self, _index: usize, _key: &[u8; 32]) {}
     /// Observe publication of the real persisted job.
     fn published(&self, _job: &popups::Job) {}
+    /// Yield after completed force blocks, as the reference BigJobPauser does.
+    fn block_complete(&self) {}
 }
 
 /// Normal local filesystem effects and the current wall clock.
-pub struct Local;
+pub struct Local {
+    next_pause: Cell<Instant>,
+}
+impl Default for Local {
+    fn default() -> Self {
+        Self {
+            next_pause: Cell::new(Instant::now() + Duration::from_secs(10)),
+        }
+    }
+}
 impl Effects for Local {
     fn now(&self) -> i64 {
         hydrus_core::TimestampMs::now().millis() / 1000
     }
     fn rename(&self, from: &Path, to: &Path) -> io::Result<()> {
         fs::rename(from, to)
+    }
+    fn block_complete(&self) {
+        if Instant::now() > self.next_pause.get() {
+            std::thread::sleep(Duration::from_millis(100));
+            self.next_pause
+                .set(Instant::now() + Duration::from_secs(10));
+        }
     }
 }
 
@@ -338,6 +357,7 @@ pub fn run(
                             })
                             .map_err(|e| e.to_string())?;
                     }
+                    effects.block_complete();
                 }
             }
         }
