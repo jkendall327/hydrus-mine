@@ -1,0 +1,431 @@
+{
+  "schema_version": 1,
+  "agent": "physical-delete-delay",
+  "baseline_git_head": "a6b6cf82d1d02576f6f644762852e25c1a5abde3",
+  "source_commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0",
+  "implementation_commits": [
+    "2b49fb61edfee6ea5e0629b70ef749339f8f076d",
+    "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+  ],
+  "frozen_original_inventory": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "frozen_options_audit": {
+    "path": "docs/rust/gui-coverage/audit/options-patch.json",
+    "baseline_git_head": "5079206dc1d0c2d2614b428632dc9499cb9ad3f8",
+    "sha256": "05fb770dc87d8b03cd0e1a4dbd509de61d48e0dc1c87c7c7032a9aeb4adce20b",
+    "before": {
+      "audit-options-files-and-trash-when-maintenance-physically-deletes-files-wait-this-long-between-each-delete": "missing"
+    }
+  },
+  "eligibility": {
+    "completed_ledger_path": "docs/rust/gui-coverage/overnight/progress.json",
+    "completed_ledger_at_base_sha256": "168d8057e3b023cf822af82b703b4fe018baba266694d06b5c7ae79bf1d20ca6",
+    "listed_ids_already_completed": [],
+    "existing_parity_packets_with_listed_ids": [],
+    "completed_arrays_sizes": [
+      240,
+      51
+    ],
+    "note": "Exact original concrete Missing control checked against frozen audit, both completed arrays and all prior packets; semantic key/label search found no duplicate claim. No parent/alias credit."
+  },
+  "eligible_concrete_first_pass_count": 1,
+  "parent_promotions": 0,
+  "claims": [
+    {
+      "id": "audit-options-files-and-trash-when-maintenance-physically-deletes-files-wait-this-long-between-each-delete",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Actual Qt seconds/milliseconds fields default to 600 ms, clamp minimum 20 ms, and have 59/999 field maxima. Cancel retains raw imported milliseconds; unchanged Apply accepts displayed fields once without overwriting a concurrent policy, and explicit edits preserve their actual float-sum conversion (1 s 29 ms saves 1029 ms and reopens at 1 s 28 ms). Native-wins retained ClientOptions load, future import, field-scoped save and hidden/retired controls reach the real maintenance consumer. Each pass snapshots its saved delay; each admitted file/thumbnail pair commits its durable queue clear then waits outside the writer, including the final pair and a missing original. Successors recheck current queue/membership/shared-media/import claims. Restored local media only clears an inconsistent queue and does not perform or wait for a physical pair; actual reference re-add clears those queues before the loop. Owned worker shutdown wakes bounded waits, retires further admissions and joins on normal shutdown. Failed pairs remain queued and receive no successful-pair wait; earlier pairs stay committed. Conditional finite-control FirstPass requires hosted validation; broader maintenance parents remain Partial.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/FilesAndTrashPanel.py",
+        "line": 161,
+        "symbol": "rows.append( ( 'When maintenance physically deletes files, wait this long between each delete:",
+        "line_sha256": "68fb82bd21b61700f72ad60929aa4a2149a9021c8448c483fa2696d3db2e51ac"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/physical_delete.rs",
+          "line": 15,
+          "symbol": "pub struct Preferences",
+          "line_sha256": "373d023fffe3d1204eadbb5fe34e74a9fe3d7451eeb8676b7a53ed040046ce76",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/physical_delete.rs",
+          "line": 29,
+          "symbol": "pub fn from_legacy(",
+          "line_sha256": "45934f85d2ad25c5548d1765fc3941e10df4f692bfe052dd0d38c1c5b5fcd18b",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/physical_delete.rs",
+          "line": 39,
+          "symbol": "pub fn displayed_seconds(",
+          "line_sha256": "239f084304165bb50b4b9e2b632ad24e8efd52466426397ac1b7fd48b8442027",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/physical_delete.rs",
+          "line": 45,
+          "symbol": "pub fn set_seconds(",
+          "line_sha256": "7cfb7ff02c4cb6faa705bf6bc5c057e88c7a50906e07708fd45b68262e17c5db",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/physical_delete.rs",
+          "line": 49,
+          "symbol": "pub fn save_changed(",
+          "line_sha256": "08ed04e947dd2fe6b4d42591cd0b34a07f84f83a959a9f71f1220881d8cce709",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/physical_delete.rs",
+          "line": 60,
+          "symbol": "pub fn load(",
+          "line_sha256": "d4f306aeea39dff3f571f7beaf1ea1ddae58efd8e524f63b9e0b0f63eb189b68",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/physical_delete.rs",
+          "line": 84,
+          "symbol": "fn recorded_retained_options_native_override_constructor_and_reopen(",
+          "line_sha256": "3a895d1a983f30290b07f145b36b0487fc385770e2140dd23eed2613c54eef94",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 132,
+          "symbol": "&crate::physical_delete::Preferences::from_legacy(",
+          "line_sha256": "197d227a309b2ccebd68b0ed90e25dc9ed3956c243f4a12e416f853131053b1a",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 53,
+          "symbol": "(@save $conn:ident, $after:ident, $before:ident, physical_delete)",
+          "line_sha256": "9754cff07c45a9c79a8fcab21d9f065b6bdee03b1133755be4a510647caa4a5e",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2232,
+          "symbol": "|s| s.physical_delete.displayed_seconds()",
+          "line_sha256": "4ef12a177341a542a945f18e16e45b00de0640a2946be5488a8379cd56368571",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 4191,
+          "symbol": "| \"When maintenance physically deletes files, wait this long between each delete: \"",
+          "line_sha256": "e316cdcf07e607462ad240204d0f7884756a520889ddedecb7b1129d6577860a",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/physical_delete_delay.rs",
+          "line": 26,
+          "symbol": "fn real_constructor_cancel_acceptance_reopen_fields_and_concurrent_policy_replacement(",
+          "line_sha256": "bf2ddfc09a044f9031de2047977c109399f69c85fedfff135c8d17aeee62b47b",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/options_window.rs",
+          "line": 1157,
+          "symbol": "let deletion = matches!",
+          "line_sha256": "e9d19ba24df5e97790af7bf58c3795a3f6df44754e3371d930318f4b48291129",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/physical_delete_delay.rs",
+          "line": 42,
+          "symbol": "fn actual_fields_cancel_raw_apply_reopen_hidden_retired_and_rebind_ownership(",
+          "line_sha256": "88bf5034459d05567b8526c04f148921e632a1ec932029330d1f29507ec3ed5b",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/maintenance.rs",
+          "line": 27,
+          "symbol": "pub struct PurgeControl(",
+          "line_sha256": "d805a78c833df93b8baff05839dc273a338393de94a9a958f3cacc9833069f3b",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/maintenance.rs",
+          "line": 35,
+          "symbol": "pub fn cancel(",
+          "line_sha256": "4c46de63c76aca15d0c3b89851b67e3b0b4f3686f085b10a3942b23f78bf4c41",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/maintenance.rs",
+          "line": 53,
+          "symbol": "pub fn wait(",
+          "line_sha256": "936e706d8a80076aad2eeb16335a3a70b6200fae57360d9b76923c1e8d2c0007",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/maintenance.rs",
+          "line": 83,
+          "symbol": "pub fn purge_deleted_media_with_control(",
+          "line_sha256": "58547543aa6b5e44d50f157ede1522741f2363ad154766c290242bef36594e63",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/maintenance.rs",
+          "line": 107,
+          "symbol": "let period = store.read(crate::physical_delete::load)?.wait_ms;",
+          "line_sha256": "3f83071f9b943e3b6e81c61c005a9c3e46d1c1205e1c6e0184b55320404d0d4a",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/maintenance.rs",
+          "line": 160,
+          "symbol": "let Some(_claim) = claims.try_claim(hash)",
+          "line_sha256": "863e3a2302750324c6ed772d612e241ecfa95a682ac8ed20f01216aebcad6ab7",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/maintenance.rs",
+          "line": 180,
+          "symbol": "conn.execute(\"DELETE FROM deferred_physical_deletes WHERE hash_id=?\", [id])?;",
+          "line_sha256": "c03af8255f41979a624fd5d18494ee64505d6ffa9618d3265e8042481d57e2eb",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/maintenance.rs",
+          "line": 189,
+          "symbol": "if step.kept == 0 && !wait(period)",
+          "line_sha256": "5fd5a57af2fd2cbe67b2c38ee5a556d8bf0e2a636b0c9758bc2868a76396ad5e",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/maintenance.rs",
+          "line": 277,
+          "symbol": "fn retained_local_queue_cleanup_does_not_wait_or_remove_physical_paths(",
+          "line_sha256": "4c72ec957cad52a37e7cd7c7f2ed8edc5765bf6dda1c6823566280fd357f9ca5",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/maintenance.rs",
+          "line": 322,
+          "symbol": "fn captured_wait_follows_committed_pairs_including_last_and_allows_live_readd(",
+          "line_sha256": "818761b07bae0ae0fccff66ced59759db246690a1415831e3594a23a6c40af75",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/maintenance.rs",
+          "line": 394,
+          "symbol": "fn pair_failure_keeps_its_queue_and_previous_pair_commit_and_does_not_wait(",
+          "line_sha256": "484ac88e2cafbfc8b5a0111ef7264ae4e8ca8140b96611be1bb75b26f8ca2746",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/maintenance.rs",
+          "line": 435,
+          "symbol": "fn missing_file_still_waits_after_its_thumbnail_and_queue_commit(",
+          "line_sha256": "ac4e2fdc6283b5fa978782e38d11e121791d2f91df201f59b5edabeac5441548",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/maintenance.rs",
+          "line": 462,
+          "symbol": "fn cancelled_owned_wait_releases_writer_and_never_admits_a_successor_pair(",
+          "line_sha256": "053380a43e907a00d678a5d0b7ac16f90e171e0256625a45402f6fea2d7e443a",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-cli/src/physical_deletes.rs",
+          "line": 7,
+          "symbol": "pub(crate) struct Worker",
+          "line_sha256": "1d501b6d9985ac212675a165acf2f5e59245e9c39d208e08c94b9d75f29c0063",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-cli/src/physical_deletes.rs",
+          "line": 13,
+          "symbol": "pub fn start(",
+          "line_sha256": "46eb45eaf3728c54f65b5161a30b6b3895cf389e3421772e1ae88ed1fcc24694",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-cli/src/physical_deletes.rs",
+          "line": 56,
+          "symbol": "pub async fn shutdown(",
+          "line_sha256": "988aef14c36eef9ce443226b7cf777048a27ae5d9fd32382849bd61d74316c88",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-cli/src/physical_deletes.rs",
+          "line": 69,
+          "symbol": "impl Drop for Worker",
+          "line_sha256": "c7c20597ee894a7cdc1ed46a70735ae5cc0c7077c709b5b246a62f347cfe4a3e",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-cli/src/physical_deletes.rs",
+          "line": 79,
+          "symbol": "async fn dropping_owner_wakes_idle_task_and_releases_store_without_restart(",
+          "line_sha256": "10d31daac43e03ffd7fae3742a77d101a1aa02a5aeaddb8225949596457b4021",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-cli/src/main.rs",
+          "line": 518,
+          "symbol": "let physical_deletes = physical_deletes::Worker::start(",
+          "line_sha256": "a9dea13fc4c3f1719eb6e9817e5e766db8ab008580af672c9d3821da65133c12",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-cli/src/main.rs",
+          "line": 953,
+          "symbol": "stopping_physical_deletes.cancel();",
+          "line_sha256": "338deffb5ed4b9f5c0b4c706c8c8a270a5cbce009578547ab9d040483c899365",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "crates/hydrus-cli/src/main.rs",
+          "line": 963,
+          "symbol": "physical_deletes.shutdown().await;",
+          "line_sha256": "454a4b2cc8dda564cc2925c8b6807905d25be4315b2e85befe0593b9016a2eaf",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        },
+        {
+          "relativepath": "oracle/record_physical_delete_delay.py",
+          "line": 17,
+          "symbol": "def record(session):",
+          "line_sha256": "5d8f3da7e90a56971fc931a2718571d7065d1d7bdacdab73c7cc84b9f660e4bd",
+          "commit": "b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0"
+        }
+      ],
+      "limits": [
+        "The finite preference reaches real physical deletion and owned waits. Broader reference idle/normal scheduling, location-extension repair, boot-long disabling on missing metadata and exact diagnostic presentation remain outside this control; no maintenance parent credit.",
+        "Native daemon retains its existing 1024-pair/ten-minute pass cadence. CLI purge uses the same captured delay. Current synchronous filesystem IO cannot be interrupted; cancellation wakes waits and prevents subsequent pair admissions.",
+        "The reference permits independent file/thumbnail hash pairs; native durable queues identify media by one hash. Existing re-add/current-membership/shared-media/import-claim protections are preserved; no complete deferred-delete backend parity is claimed.",
+        "Hosted exact-source Rust/Clippy/native execution and inspection of the authored Options PNG remain pending. Physical mutation regressions are authored against disposable copied fixtures, not executed locally."
+      ]
+    }
+  ],
+  "consumer_reference_anchors": [
+    {
+      "relativepath": "hydrus/client/db/ClientDBFilesStorage.py",
+      "line": 366,
+      "symbol": "self.ClearDeferredPhysicalDeleteIds( file_hash_id = hash_id, thumbnail_hash_id = hash_id )",
+      "line_sha256": "67cbf66dd9f19639d93cdf96c5a8470c4ff50fd24905e6d09f0c97352aa8e83e"
+    },
+    {
+      "relativepath": "hydrus/client/ClientOptions.py",
+      "line": 570,
+      "symbol": "'ms_to_wait_between_physical_file_deletes' : 600",
+      "line_sha256": "b9b7b3c106465dda5a1d573841c23618070224e325efb4f50af60146d61624ee"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/FilesAndTrashPanel.py",
+      "line": 30,
+      "symbol": "self._ms_to_wait_between_physical_file_deletes = ClientGUITime.TimeDeltaWidget",
+      "line_sha256": "67ad539a202c0a9ba648836825b05460dd671997652500cd344d2f21bae0c958"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/FilesAndTrashPanel.py",
+      "line": 104,
+      "symbol": "self._ms_to_wait_between_physical_file_deletes.SetValue(",
+      "line_sha256": "9df2c50f119aed5d53d7ea6340bb8fd27981947461eda1c7589ad1126628f19e"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/FilesAndTrashPanel.py",
+      "line": 161,
+      "symbol": "rows.append( ( 'When maintenance physically deletes files, wait this long between each delete:",
+      "line_sha256": "68fb82bd21b61700f72ad60929aa4a2149a9021c8448c483fa2696d3db2e51ac"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/FilesAndTrashPanel.py",
+      "line": 289,
+      "symbol": "self._new_options.SetInteger( 'ms_to_wait_between_physical_file_deletes'",
+      "line_sha256": "86337f9e8ed1de6dc764bd3f04126e1f26485d7351f4ae2463b8df5b2e9a9c13"
+    },
+    {
+      "relativepath": "hydrus/client/gui/metadata/ClientGUITime.py",
+      "line": 1418,
+      "symbol": "if value is not None and value < self._min:",
+      "line_sha256": "cf3beaee42395b90e58c5870d755f10ec8e7aae4444c032886969c6f90d1d1a0"
+    },
+    {
+      "relativepath": "hydrus/client/gui/metadata/ClientGUITime.py",
+      "line": 1468,
+      "symbol": "value += self._seconds.value()",
+      "line_sha256": "6be93224bc1bbd9c65d6b086ca10b4169a3fddece5d15376dd7744697e95eb9b"
+    },
+    {
+      "relativepath": "hydrus/client/gui/metadata/ClientGUITime.py",
+      "line": 1473,
+      "symbol": "value += HydrusTime.SecondiseMSFloat( self._milliseconds.value() )",
+      "line_sha256": "5c07168f700937d71db2ec44c9f159bde620fa2185d8da9b06a45c1af45d3495"
+    },
+    {
+      "relativepath": "hydrus/client/files/ClientFilesManager.py",
+      "line": 1222,
+      "symbol": "def DoDeferredPhysicalDeletes(",
+      "line_sha256": "a90ead762321f9b65e9f43753611a90d9927b73f741412d868bd0079353d1036"
+    },
+    {
+      "relativepath": "hydrus/client/files/ClientFilesManager.py",
+      "line": 1234,
+      "symbol": "wait_period = HydrusTime.SecondiseMSFloat( self._controller.new_options.GetInteger( 'ms_to_wait_between_physical_file_deletes'",
+      "line_sha256": "1a8d9bae8a00393e437a2c0deb36180c6547d30e70dad2cb5b2416dc74c95ec8"
+    },
+    {
+      "relativepath": "hydrus/client/files/ClientFilesManager.py",
+      "line": 1300,
+      "symbol": "self._controller.WriteSynchronous( 'clear_deferred_physical_delete'",
+      "line_sha256": "be7636e7794f5696e6c4d2043b0cee82ca48fed916b89b9113dccbea330e1bf1"
+    },
+    {
+      "relativepath": "hydrus/client/files/ClientFilesManager.py",
+      "line": 1308,
+      "symbol": "self._physical_file_delete_wait.wait( wait_period )",
+      "line_sha256": "c8892f0cc73f1780f6b276a5403aaf4a22c6fcd69d6ea559edbc158a958316a5"
+    },
+    {
+      "relativepath": "hydrus/client/files/ClientFilesManager.py",
+      "line": 1310,
+      "symbol": "self._physical_file_delete_wait.clear()",
+      "line_sha256": "81e1193896878f7cc905651b4f595bb8c64adbfd7da4a9ef102623fcd73945c2"
+    },
+    {
+      "relativepath": "hydrus/client/files/ClientFilesManager.py",
+      "line": 1654,
+      "symbol": "self._physical_file_delete_wait.set()",
+      "line_sha256": "6ef910cd25dd3db071d951edde3b351e8788170703b70cfbfa9c18e48029fc7b"
+    }
+  ],
+  "actual_qt_recording": {
+    "recorder": "oracle/record_physical_delete_delay.py",
+    "fixture": "oracle/fixtures/physical_delete_delay.json",
+    "fixture_sha256": "88cbe6346928e2fefb13f6f459979b704b49a7669530e8f1035c690521115354",
+    "run_utc": "2026-10-05T11:59:41Z",
+    "command": "/workspace/parallel/with-oracle python oracle/record_physical_delete_delay.py",
+    "result": "Sixteen actual FilesAndTrashPanel constructor/staged/FocusOut-minimum/Cancel/Apply/reopen cases, saved ClientOptions tuple, five actual ClientFilesManager deferred-delete loop passes (pairs, changed policy, missing original, shutdown, physical-delete failure), and real shutdown Event wake. One actual Qt Options PNG inspected.",
+    "environment_notes": "Private copied basic client fixture and disposable authored physical paths. Actual loop/ClientPaths deletion unchanged; owned controller queue/publication/wait boundaries instrumented. Reference source read-only. Ordinary fixture API socket refusal logged; feature recording and normal shutdown completed."
+  },
+  "actual_qt_artifacts": [
+    {
+      "path": "oracle/fixtures/physical_delete_delay_qt.png",
+      "sha256": "99b34e64acbea3a9adcb4a8bad7e0396c056c5929798cc206df51710d1ff9d1b"
+    }
+  ],
+  "authored_native_artifacts": [
+    "physical_delete_delay_options.png"
+  ],
+  "authored_native_artifact_count": 1,
+  "validation": {
+    "source_checks": "Direct rustfmt --check, git diff --check, Python recorder compilation, fixture arithmetic/order assertions and cached Slint compilation passed; no Cargo/local Rust/mutation execution.",
+    "independent_review": "appearance_final_review independently accepted immutable source 2b49fb61edfee6ea5e0629b70ef749339f8f076d plus correction b6f483f3d0e4bcf7a616e70b2dec25d3ca9551a0 and final repinned packet. Independently replayed all sixteen Qt constructor/acceptance/reopen cases and inspected the actual Qt PNG; five actual loop passes confirm captured policy/final pair/missing original/failure/shutdown. Per-pair writer/claim/shared/current membership admission, durable clears before outside-writer waits, permanent cancellation and owned CLI drop/join accepted. Restored-current stale queue clears without a physical attempt or wait; regression preserves physical paths and proves no wait. Verified all 52 exact source/reference fingerprints, source/implementation chain, audit/base ledger/fixture/Qt PNG hashes, wait vectors, both 240+51 completed arrays/no prior packet target and exactly one conditional original Missing-to-FirstPass with zero parents/aliases. Hosted Rust/native execution and native render review remain pending.",
+    "rust_tests": "Store retained-options/native override/reopen/corrupt type; model real Editor sixteen recorded cases plus concurrent merge; native Options staging/retirement/rebind; real copied-media per-pair commits/re-add/retained-local-no-wait/failure/missing/last wait/cancel and writer availability; daemon drop/store release authored only, hosted execution pending.",
+    "render": "One actual Qt image inspected. One native Options artifact authored; hosted execution and native render inspection pending."
+  },
+  "limits": [
+    "The finite preference reaches real physical deletion and owned waits. Broader reference idle/normal scheduling, location-extension repair, boot-long disabling on missing metadata and exact diagnostic presentation remain outside this control; no maintenance parent credit.",
+    "Native daemon retains its existing 1024-pair/ten-minute pass cadence. CLI purge uses the same captured delay. Current synchronous filesystem IO cannot be interrupted; cancellation wakes waits and prevents subsequent pair admissions.",
+    "The reference permits independent file/thumbnail hash pairs; native durable queues identify media by one hash. Existing re-add/current-membership/shared-media/import-claim protections are preserved; no complete deferred-delete backend parity is claimed.",
+    "Hosted exact-source Rust/Clippy/native execution and inspection of the authored Options PNG remain pending. Physical mutation regressions are authored against disposable copied fixtures, not executed locally."
+  ],
+  "untouched_scope": "One conditional original Missing FirstPass proposal; zero parents/aliases. No canonical status/ledger, reference source edits or pushes. Broader worker gating/location repair and diagnostic backend remain Partial."
+}
