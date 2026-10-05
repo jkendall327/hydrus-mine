@@ -258,6 +258,7 @@ fn the_options_window_applies_its_changes() {
             "media playback",
             "media viewer",
             "media viewer hovers",
+            "notes",
             "ratings",
             "regex favourites",
             "system",
@@ -265,6 +266,7 @@ fn the_options_window_applies_its_changes() {
             "tag editing",
             "tag presentation",
             "tag sort",
+            "tag suggestions",
             "thumbnails",
             "advanced"
         ]
