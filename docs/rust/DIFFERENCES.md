@@ -2587,3 +2587,11 @@ through the client’s accepted-exit hook. Exit confirmation, Cancel and its
 auto-yes path remain owned by client_exit. Native regressions cover retained
 close/show, independent successor dispatch and untouched F7/default command
 Apply, with hosted execution pending. This adds no original leaf proposal.
+
+Exit confirmation now checks the main binding's permanent activity and visibility
+before asking, timing out or running its retained close continuation. Cancel
+preserves the owner; accepted close remains terminal after re-show. Normal rebind
+already drops its prior exit timer references; the added guard also protects a
+retained timer or close continuation. Native regressions cover a retained timer,
+full main-window rebind, hidden acceptance and accepted close/re-show. Hosted
+execution remains pending; this adds no original leaf proposal.
