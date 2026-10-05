@@ -193,4 +193,5 @@ mod or_connector;
 
 mod image_colour;
 
+mod duplicates_progress;
 mod quick_export_directory;

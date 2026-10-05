@@ -86,10 +86,11 @@ impl Sidebar {
                 similar::search_status_counts(conn)?,
                 settings::get::<SimilarFilesSettings>(conn)?,
                 settings::get::<AutoResolutionSettings>(conn)?,
+                hydrus_store::duplicates_progress::load(conn)?,
                 rules,
             ))
         });
-        let (searched, similar_settings, auto_settings, mut rules) = match read {
+        let (searched, similar_settings, auto_settings, progress, mut rules) = match read {
             Ok(read) => read,
             Err(e) => {
                 eprintln!("could not read the duplicates page's numbers: {e}");
@@ -111,7 +112,11 @@ impl Sidebar {
         }
         // (the reference hides the "needs work" percentage when nearly
         // caught up, by default)
-        let prep = preparation(&searched, similar_settings.search_distance, true);
+        let prep = preparation(
+            &searched,
+            similar_settings.search_distance,
+            progress.hide_caught_up,
+        );
         let able = auto_settings.during_active || auto_settings.during_idle;
         let rows: Vec<TableRow> = state
             .rules

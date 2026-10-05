@@ -1475,6 +1475,18 @@ asking first. What the tabs say is as
 `oracle/record_duplicates_preparation.py` and
 `oracle/record_auto_resolution_rows.py` recorded the reference's.
 
+Options > duplicates > duplicates filter page includes the reference's
+"Hide the \"x% done\" notification on preparation tab when >99% searched"
+checkbox, enabled by default. Apply updates the current preparation label;
+future pages and reopened stores use the saved value. Exactly 99% still shows
+the percentage, while 99.95% shows "99.9% done" when suppression is disabled.
+The switch changes the label alone, preserving counts, the gauge and search
+availability. Drafts stay local to Options, and Cancel, hidden or retired
+callbacks cannot save them. Imported and retained legacy ClientOptions use
+the same Boolean. `oracle/record_duplicates_progress_option.py` records the
+actual control's save/Cancel/reopen and both policies at thirteen preparation
+boundaries; authored store/model/native regressions await hosted execution.
+
 "edit rules" opens the reference's "edit rules" dialog
 (`src/auto_resolution_rules_window.rs`,
 `hydrus-gui-model/src/auto_resolution_rules.rs`): the rules with their

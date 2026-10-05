@@ -314,7 +314,7 @@ search.
   number of subscriptions syncing at once and the failed-imports limit; on
   the maintenance page, idle time and shutdown, repository, sibling,
   deferred delete and idle work settings; on the duplicates page, the
-  preparation tab's notification and the filter's colours; on the file
+  filter's colours; on the file
   viewing statistics page, the filters' own switches and the menus'
   stats; most of the gui page; on the importing page, dropped URLs and
   the work slots; and on the media playback page, the preview's zoom,

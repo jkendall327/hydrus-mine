@@ -311,6 +311,7 @@ settings! {
     manage_tags_sort: hydrus_store::manage_tags_sort::Settings,
     or_connector: hydrus_store::or_connector::Connector => hydrus_store::or_connector::load,
     image_colour: hydrus_store::image_colour::ImageColour => hydrus_store::image_colour::load,
+    duplicates_progress: hydrus_store::duplicates_progress::Presentation => hydrus_store::duplicates_progress::load,
     namespace_colours: hydrus_core::tag_presentation::NamespaceColours,
     sibling_connector_colours: hydrus_core::tag_presentation::SiblingConnectorColours,
     tag_summaries: hydrus_core::tag_summary::TagSummaries,
@@ -1719,6 +1720,14 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         "Set to \"combined local file domains\" when hitting \"Open files in a new duplicates filter page\":",
                         |s| s.page_settings.duplicate_filter_uses_all_my_files,
                         |s, v| s.page_settings.duplicate_filter_uses_all_my_files = v,
+                    )],
+                ),
+                boxed(
+                    "duplicates filter page",
+                    vec![check(
+                        "Hide the \"x% done\" notification on preparation tab when >99% searched:",
+                        |s| s.duplicates_progress.hide_caught_up,
+                        |s, value| s.duplicates_progress.hide_caught_up = value,
                     )],
                 ),
                 boxed(
