@@ -206,6 +206,7 @@ settings! {
     slideshow: SlideshowSettings,
     sorts: SortSettings,
     tag_presentation: TagPresentation,
+    namespace_colours: hydrus_core::tag_presentation::NamespaceColours,
     tag_summaries: hydrus_core::tag_summary::TagSummaries,
     thumbnails: ThumbnailSettings,
     thumbnail_layout: ThumbnailLayout,
@@ -271,6 +272,7 @@ pub enum Value {
     RegexFavourites(RegexFavourites),
     /// Ordered advanced file-deletion reason suggestions.
     DeletionReasons(Vec<String>),
+    NamespaceColours(crate::namespace_colours::Colours),
     FrameLocations(std::collections::BTreeMap<String, hydrus_core::windows::FrameLocation>),
     /// Shared favourite tags, staged until the parent options dialog applies.
     FavouriteTags(FavouriteTags),
@@ -349,6 +351,7 @@ pub enum Kind {
     RegexFavourites,
     /// Inline ordered advanced file-deletion reason queue.
     DeletionReasons,
+    NamespaceColours,
     FrameLocations,
     /// Importable current file domains, edited in a child selector.
     LocalLocation,
@@ -3147,6 +3150,14 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                 Ok(())
                             },
                         ),
+                        text(
+                            "Namespace for the OR top row: ",
+                            |s| s.namespace_colours.or_connector.clone().unwrap_or_default(),
+                            |s, text| {
+                                s.namespace_colours.or_connector = Some(text.to_owned());
+                                Ok(())
+                            },
+                        ),
                         check(
                             "EXPERIMENTAL: Replace all underscores with spaces: ",
                             |s| s.tag_presentation.replace_underscores,
@@ -3158,6 +3169,23 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s, v| s.tag_presentation.replace_emojis = v,
                         ),
                     ],
+                ),
+                boxed(
+                    "namespace colours",
+                    vec![opt(
+                        "",
+                        Kind::NamespaceColours,
+                        Rc::new(|settings| {
+                            Value::NamespaceColours(settings.namespace_colours.colours.clone())
+                        }),
+                        Rc::new(|settings, value| match value {
+                            Value::NamespaceColours(colours) => {
+                                settings.namespace_colours.colours.clone_from(colours);
+                                Ok(())
+                            }
+                            _ => Err(wrong("namespace colours")),
+                        }),
+                    )],
                 ),
                 boxed(
                     "default taglist display type (advanced)",
@@ -4207,6 +4235,30 @@ impl Editor {
         for value in self.values.iter_mut().flatten() {
             if matches!(value, Value::FavouriteTags(_)) {
                 *value = Value::FavouriteTags(FavouriteTags(tags));
+                return;
+            }
+        }
+    }
+
+    /// Current namespace RGB list staged independently of the OR namespace field.
+    pub fn edited_namespace_colours(&self) -> crate::namespace_colours::Colours {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| {
+                if let Value::NamespaceColours(colours) = value {
+                    Some(colours.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| self.before.namespace_colours.colours.clone())
+    }
+    /// Accept an owned namespace operation into the Options draft only.
+    pub fn set_namespace_colours(&mut self, colours: crate::namespace_colours::Colours) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::NamespaceColours(_)) {
+                *value = Value::NamespaceColours(colours);
                 return;
             }
         }

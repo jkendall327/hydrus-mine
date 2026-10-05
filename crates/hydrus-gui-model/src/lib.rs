@@ -47,6 +47,7 @@ pub mod manage_tags;
 pub mod media_actions;
 pub mod merge_options_editor;
 pub mod merge_summary;
+pub mod namespace_colours;
 pub mod notes_editor;
 pub mod options;
 pub mod page_chooser;

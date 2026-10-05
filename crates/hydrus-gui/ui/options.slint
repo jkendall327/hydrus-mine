@@ -6,6 +6,7 @@ import { FrameLocationsTable } from "frame_locations.slint";
 // the page's titled boxes. Changes wait for "apply"; "cancel" (or escape)
 // forgets them.
 
+import { NamespaceColourRow, NamespaceColourList } from "namespace_colours.slint";
 import { Button, CheckBox, ComboBox, LineEdit, ListView, ScrollView, SpinBox, StandardListView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { TableRow } from "list_table.slint";
@@ -132,6 +133,11 @@ export component OptionsWindow inherits Window {
     in-out property <string> search-text;
     in property <[string]> matches;
     in-out property <int> match-highlighted: -1;
+    in property <[NamespaceColourRow]> namespace-colour-rows;
+    in property <bool> namespace-colour-child-open;
+    in property <bool> namespace-colour-can-delete;
+    callback namespace-colour-clicked(int,bool,bool);
+    callback namespace-colour-action(string);
     callback search-edited(string);
     callback search-chosen(int);
     callback move-match(int);
@@ -506,6 +512,14 @@ export component OptionsWindow inherits Window {
                                 activated(i)=>{root.frame-activated(i);}
                                 sort(i,a)=>{root.frame-sort(i,a);}
                                 action(a)=>{root.frame-action(a);}
+                            }
+                            if row.kind == 31: NamespaceColourList {
+                                rows:root.namespace-colour-rows;
+                                enabled:row.enabled;
+                                child-open:root.namespace-colour-child-open;
+                                can-delete:root.namespace-colour-can-delete;
+                                clicked(index,ctrl,shift)=>{root.namespace-colour-clicked(index,ctrl,shift);}
+                                action(action)=>{root.namespace-colour-action(action);}
                             }
                             if row.kind == 25: DeletionReasonQueue {
                                 rows:root.reason-rows;

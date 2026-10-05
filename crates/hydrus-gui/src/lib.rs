@@ -84,6 +84,7 @@ pub mod mpv;
 pub mod network_header_approval;
 pub mod options_deletion;
 pub mod options_frames;
+pub mod options_namespace_colours;
 mod options_palette;
 mod options_window;
 mod page;
@@ -270,6 +271,8 @@ pub struct Bound {
     pub options: Rc<RefCell<Option<OptionsWindow>>>,
     /// Options-owned custom reason Enter Text/question child.
     pub options_reason_child: options_deletion::Slot,
+    /// Options-owned namespace Add/Delete question.
+    pub options_colour_child: options_namespace_colours::Slot,
     /// Options-owned detached frame geometry editor.
     pub options_frame_child: options_frames::Slot,
     /// The Options-owned detached banner editor, while one is open.
@@ -1806,6 +1809,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // the menu bar, its titles shown again as what they say changes
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
     let options_reason_child: options_deletion::Slot = Rc::default();
+    let options_colour_child: options_namespace_colours::Slot = Rc::default();
     let options_frame_child: options_frames::Slot = Rc::default();
     let options_banner_child: tag_banner_window::Slot = Rc::default();
     let options_suggested_tags_slot = tag_suggestions_window::Slots::default();
@@ -1979,6 +1983,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let pages = pages.clone();
                 let slot = options.clone();
                 let reason_slot = options_reason_child.clone();
+                let colour_slot = options_colour_child.clone();
                 let frame_slot = options_frame_child.clone();
                 let banner_slot = options_banner_child.clone();
                 let suggested_slot = options_suggested_tags_slot.clone();
@@ -2024,6 +2029,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         &slot,
                         &checker_slot,
                         &reason_slot,
+                        &colour_slot,
                         &frame_slot,
                         &banner_slot,
                         &suggested_slot,
@@ -3905,6 +3911,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         manage_urls,
         options,
         options_reason_child,
+        options_colour_child,
         options_frame_child,
         options_banner_child,
         options_suggested_tags_slot,
