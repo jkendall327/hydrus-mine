@@ -336,10 +336,7 @@ fn saved_preview_options_reach_open_display_duration_cap_cancel_and_confirmed_cl
     clock.set(310_000);
     ui.invoke_select_none();
     bound.preview.refresh();
-    assert_eq!(
-        read(video).viewtime_ms,
-        (duration * 5).max(1000).min(100_000)
-    );
+    assert_eq!(read(video).viewtime_ms, (duration * 5).clamp(1000, 100_000));
     clock.set(320_000);
     select(&ui, &bound, first);
     store

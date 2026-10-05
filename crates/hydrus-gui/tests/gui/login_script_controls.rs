@@ -321,7 +321,8 @@ fn actual_login_cog_targets_isolated_http_request_and_drops_stale_command() {
     let server = std::thread::spawn(move || {
         let (mut stream, _) = listener.accept().unwrap();
         let mut request = [0; 4096];
-        stream.read(&mut request).unwrap();
+        let read = stream.read(&mut request).unwrap();
+        assert!(read > 0, "the restarted login request reaches its server");
         released
             .recv_timeout(std::time::Duration::from_secs(10))
             .unwrap();
