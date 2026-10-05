@@ -2,11 +2,7 @@
 use crate::{
     ExternalRoutingChoiceWindow, OpenFileCallsWindow, OptionsWindow, SessionDialog, TableRow,
 };
-use hydrus_core::{
-    Mime,
-    external_calls::{Manager, Pipeline},
-    open_externally::{CallRef, Routing},
-};
+use hydrus_core::{Mime, external_calls::Pipeline};
 use hydrus_gui_model::{
     open_externally::{self as model, Queue},
     options::{Editor, Kind, Row},

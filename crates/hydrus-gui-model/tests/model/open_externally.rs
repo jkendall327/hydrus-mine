@@ -1,7 +1,7 @@
 //! Actual Qt queue snapshots, stable-key washing and default dispatch boundaries.
 use hydrus_core::{
     Mime,
-    external_calls::{ActualCall, Callable, Manager, Pipeline},
+    external_calls::{ActualCall, Callable, Manager, Pipeline, Process},
     open_externally::{CallRef, Routing},
 };
 use hydrus_gui_model::open_externally::{self as model, Queue};
@@ -21,19 +21,47 @@ fn manager(fixture: &Value) -> Manager {
                 } else {
                     Pipeline::Url
                 };
-                call.call = if call.pipeline == Pipeline::File {
-                    ActualCall::DefaultFile
-                } else {
-                    ActualCall::DefaultUrl
+                // The real recorder creates four synthetic process calls and
+                // only keys 05/06 as OS defaults. Pipeline alone does not imply OS.
+                call.call = match call.key[0] {
+                    5 => ActualCall::DefaultUrl,
+                    6 => ActualCall::DefaultFile,
+                    _ => ActualCall::Process(Process {
+                        executable: "synthetic-program".into(),
+                        arguments: vec![
+                            if call.pipeline == Pipeline::File {
+                                "%path%"
+                            } else {
+                                "%url%"
+                            }
+                            .into(),
+                        ],
+                        ..Process::default()
+                    }),
                 };
                 call
             })
             .collect(),
     }
 }
-fn refs(queue: &Queue) -> Value {
-    json!(queue.values().iter().map(|value|json!({"key":value.key.iter().map(|byte|format!("{byte:02x}")).collect::<String>(),"name":value.name})).collect::<Vec<_>>())
+fn hex_key(key: &[u8; 32]) -> String {
+    use std::fmt::Write as _;
+    let mut text = String::with_capacity(64);
+    for byte in key {
+        write!(text, "{byte:02x}").expect("writing to a String cannot fail");
+    }
+    text
 }
+fn refs(queue: &Queue) -> Value {
+    json!(
+        queue
+            .values()
+            .iter()
+            .map(|value| json!({"key":hex_key(&value.key),"name":value.name}))
+            .collect::<Vec<_>>()
+    )
+}
+
 #[test]
 fn actual_qt_registered_choices_queue_order_and_protected_mime_rows() {
     let fixture = hydrus_testkit::fixture_json("open_externally.json");

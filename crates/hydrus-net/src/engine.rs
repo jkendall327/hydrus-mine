@@ -2465,7 +2465,7 @@ mod reload_tests {
             .unwrap_err();
         let job = Job::new();
         job.state.lock().bytes_read = 1536;
-        job.state.lock().bytes_total = Some(243200);
+        job.state.lock().bytes_total = Some(243_200);
         engine.jobs.lock().insert(1, ((*job).clone(), Vec::new()));
         let waiting = engine.wait_for_gallery_token("format.example", kind, &job);
         tokio::pin!(waiting);

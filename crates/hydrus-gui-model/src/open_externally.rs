@@ -246,7 +246,12 @@ fn resolve(
     })
 }
 fn hex_key(key: &[u8; 32]) -> String {
-    key.iter().map(|byte| format!("{byte:02x}")).collect()
+    use std::fmt::Write as _;
+    let mut text = String::with_capacity(64);
+    for byte in key {
+        write!(text, "{byte:02x}").expect("writing to a String cannot fail");
+    }
+    text
 }
 pub fn url(manager: &Manager, routing: &Routing, url: &str) -> Result<Launch, String> {
     resolve(

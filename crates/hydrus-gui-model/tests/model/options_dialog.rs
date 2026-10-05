@@ -409,9 +409,12 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
         // in a child window, covered by dedicated regex/write-tag/gallery-source/import-options/namespace-queue recordings.
         // The inline namespace RGB list has its own exact namespace_colour_controls replay.
         // Shortcut capture/policies replay the actual nested command controls separately.
+        // Open-externally queues/MIME rows/washing replay actual Qt lists separately;
+        // this generic recorder captures scalar controls rather than these inline lists.
         if matches!(
             option.kind,
             Kind::ExternalCalls
+                | Kind::OpenExternally
                 | Kind::Shortcuts
                 | Kind::RegexFavourites
                 | Kind::NamespaceColours
@@ -544,6 +547,39 @@ fn the_options_search_offers_what_the_references_does() {
         .filter(|text| !theirs.contains(text))
         .collect();
     assert!(missing.is_empty(), "not the reference's: {missing:?}");
+    for (label, expected_page, routing) in [
+        ("URL calls (open externally)", "open externally", true),
+        (
+            "single file calls (open externally)",
+            "open externally",
+            true,
+        ),
+        (
+            "built-in hydrus shortcut sets (shortcuts)",
+            "shortcuts",
+            false,
+        ),
+        ("custom user sets (shortcuts)", "shortcuts", false),
+    ] {
+        assert!(
+            theirs.contains(&label),
+            "alias must be actual recorded Qt text"
+        );
+        let suggestion = ours.iter().find(|value| value.text == label).unwrap();
+        let actual_pages = pages(&settings);
+        let page = &actual_pages[suggestion.page];
+        assert_eq!(page.name, expected_page);
+        let mut rows = Vec::new();
+        our_rows(&page.items, &[], &mut rows);
+        let Item::Opt(option) = rows[suggestion.row].1 else {
+            panic!("search must target the real compound control")
+        };
+        assert!(if routing {
+            matches!(option.kind, Kind::OpenExternally)
+        } else {
+            matches!(option.kind, Kind::Shortcuts)
+        });
+    }
     assert!(ours.len() > 100, "{} suggestions", ours.len());
 }
 

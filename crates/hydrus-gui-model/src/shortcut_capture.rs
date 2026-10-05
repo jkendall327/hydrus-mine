@@ -16,12 +16,10 @@ impl Wheel {
             delta = self.remainder;
             self.remainder = 0;
         }
-        if delta > 0 {
-            Some(3)
-        } else if delta < 0 {
-            Some(4)
-        } else {
-            None
+        match delta.cmp(&0) {
+            std::cmp::Ordering::Greater => Some(3),
+            std::cmp::Ordering::Less => Some(4),
+            std::cmp::Ordering::Equal => None,
         }
     }
 }

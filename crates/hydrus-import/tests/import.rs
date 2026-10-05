@@ -69,7 +69,7 @@ fn saved_precision_reaches_actual_import_rejection_without_importing_or_changing
     let path = media_dir().join("png_rgba.png");
     let info = MediaTools::new().inspect(&path).unwrap();
     let rules = FileImportOptions {
-        min_size: Some(243200),
+        min_size: Some(243_200),
         ..Default::default()
     };
     for event in fixture["events"].as_array().unwrap() {
@@ -85,7 +85,7 @@ fn saved_precision_reaches_actual_import_rejection_without_importing_or_changing
         let result = w.importer.import_path(&path, &rules).unwrap();
         assert_eq!(result.status, ImportStatus::Vetoed);
         assert_eq!(result.note, expected);
-        assert_eq!(rules.min_size, Some(243200));
+        assert_eq!(rules.min_size, Some(243_200));
         assert!(
             w.store
                 .read(|conn| hydrus_store::master::hash_id(conn, &result.hash.unwrap()))
