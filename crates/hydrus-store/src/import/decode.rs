@@ -541,6 +541,12 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .copied()
             .flatten()
             .and_then(|seconds| u64::try_from(seconds).ok());
+        if let Some(&percent) = options.integers.get("system_busy_cpu_percent") {
+            idle.busy_cpu_percent = u32::try_from(percent).unwrap_or(50);
+        }
+        if let Some(&count) = options.noneable_integers.get("system_busy_cpu_count") {
+            idle.busy_cpu_count = count.and_then(|n| u32::try_from(n).ok());
+        }
     }
     insert_setting(&mut input, &idle)?;
     let mut backups = crate::session_backups::SessionBackupSettings::default();
@@ -1606,6 +1612,28 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .get("maintain_similar_files_duplicate_pairs_during_idle")
         {
             similar.during_idle = b;
+        }
+        for (key, field) in [
+            (
+                "potential_duplicates_search_work_time_ms_active",
+                &mut similar.work_time_ms_active,
+            ),
+            (
+                "potential_duplicates_search_work_time_ms_idle",
+                &mut similar.work_time_ms_idle,
+            ),
+            (
+                "potential_duplicates_search_rest_percentage_active",
+                &mut similar.rest_percentage_active,
+            ),
+            (
+                "potential_duplicates_search_rest_percentage_idle",
+                &mut similar.rest_percentage_idle,
+            ),
+        ] {
+            if let Some(&n) = options.integers.get(key) {
+                *field = u32::try_from(n).unwrap_or(0);
+            }
         }
         insert_setting(&mut input, &similar)?;
         let mut auto = crate::duplicates::auto::AutoResolutionSettings::default();

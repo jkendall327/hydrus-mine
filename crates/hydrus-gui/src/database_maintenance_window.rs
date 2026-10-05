@@ -14,6 +14,7 @@ use crate::{ChoiceButtonsWindow, SessionDialog};
 
 /// The open question or chooser, so one job is asked at a time.
 #[derive(Default, Clone)]
+#[allow(missing_debug_implementations)]
 pub struct Slot {
     question: Rc<RefCell<Option<SessionDialog>>>,
     chooser: Rc<RefCell<Option<ChoiceButtonsWindow>>>,

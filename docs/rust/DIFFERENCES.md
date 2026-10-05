@@ -3396,3 +3396,29 @@ manual save-last-session action and wider debug GUI/style families remain unclai
   file/tag-service cache. Fixed invalid tags aren't written to a log.
 - The jobs show their result popups but no step-by-step progress text, and
   can't be cancelled once started.
+
+## How boned am I?
+
+- The search panel is a domain list and a typed tag/system predicate box (as in
+  file history), not the reference's full read autocomplete with its results
+  list; "all files ever imported or deleted" isn't offered as a domain.
+- The files table is laid out as text columns rather than Qt's grid.
+
+## Idle-time maintenance
+
+- The GUI publishes its idle state to a marker file the daemon reads; without
+  a GUI (or once it stops publishing for 15 seconds) the daemon works in normal
+  time. Idle time doesn't wait for the reference's two-minute boot delay beyond
+  what the GUI's own idle check already applies.
+- CPU use is read from Linux's `/proc/stat`; elsewhere "CPU busy" is never
+  shown. As in the reference v688, CPU busyness only reaches the status bar.
+- Similar-files search packets search 16 files at a time until the packet time
+  passes, so a packet can run over by one batch.
+- The status bar has no "hydrus busy" or database activity fields yet.
+
+## Thumbnail manage > maintenance
+
+- "Do it now" queues the job for the selected files and runs that job type's
+  due work at once, so other files already queued for the same job type may run
+  with them. There is no popup of its progress, and the focused file isn't
+  cleared from the preview first.

@@ -7,7 +7,11 @@ use slint::{ComponentHandle, ModelRc, SharedString, VecModel};
 
 use crate::ChoiceButtonsWindow;
 
+/// The answer callback, taken once.
+type Answer = Box<dyn FnOnce(Option<usize>)>;
+
 /// What the chooser asks.
+#[derive(Debug)]
 pub struct Ask<'a> {
     pub title: &'a str,
     pub message: &'a str,
@@ -20,7 +24,7 @@ pub struct Ask<'a> {
 /// With one choice and no "no" button it answers at once, as
 /// `allow_insta_one_item_select` does.
 pub fn open(
-    ask: &Ask,
+    ask: &Ask<'_>,
     answer: impl FnOnce(Option<usize>) + 'static,
 ) -> Result<Option<ChoiceButtonsWindow>, String> {
     if ask.choices.len() == 1 && ask.no_label.is_empty() {
@@ -37,8 +41,7 @@ pub fn open(
             .map(SharedString::from)
             .collect::<Vec<_>>(),
     )));
-    let answer: Rc<RefCell<Option<Box<dyn FnOnce(Option<usize>)>>>> =
-        Rc::new(RefCell::new(Some(Box::new(answer))));
+    let answer: Rc<RefCell<Option<Answer>>> = Rc::new(RefCell::new(Some(Box::new(answer))));
     let finish = Rc::new({
         let weak = window.as_weak();
         move |choice: Option<usize>| {

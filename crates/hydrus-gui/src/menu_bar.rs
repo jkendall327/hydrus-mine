@@ -82,6 +82,8 @@ pub(crate) struct Hooks {
     pub viewing_maintenance: Rc<dyn Fn(bool)>,
     /// Ask about, then run, a Database menu maintenance job.
     pub database_maintenance: Rc<dyn Fn(hydrus_gui_model::database_maintenance::Job)>,
+    pub set_password: Rc<dyn Fn()>,
+    pub how_boned: Rc<dyn Fn()>,
     pub clear_thumbnail_cache: Rc<dyn Fn()>,
     pub file_history: Rc<dyn Fn()>,
     pub file_maintenance: Rc<dyn Fn()>,
@@ -774,11 +776,13 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         }
         Command::DebugDelayedTextPopup => hooks.debug_long_popup.start_delayed_popup(),
         Command::DebugDelayedNewPage(location) => {
-            hooks.debug_long_popup.start_delayed_page(location)
+            hooks.debug_long_popup.start_delayed_page(location);
         }
         Command::ClearViewingStatistics => (hooks.viewing_maintenance)(false),
         Command::CullViewingStatistics => (hooks.viewing_maintenance)(true),
         Command::DatabaseMaintenance(job) => (hooks.database_maintenance)(job),
+        Command::SetPassword => (hooks.set_password)(),
+        Command::HowBoned => (hooks.how_boned)(),
         Command::FileMaintenance(idle) => {
             flip::<hydrus_store::file_maintenance::FileMaintenanceSettings>(&store, move |m| {
                 let field = if idle {

@@ -168,6 +168,9 @@ pub fn thumbnail_recovery(
 }
 pub mod choice_buttons;
 pub mod database_maintenance_window;
+pub mod how_boned_window;
+pub mod set_password_window;
+pub mod thumbnail_maintenance_window;
 pub mod thumbnail_menu;
 mod thumbnail_navigation;
 pub mod thumbnail_paint;
@@ -2435,7 +2438,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     )
     .map_err(|error| eprintln!("Could not initialise file maintenance: {error}"))
     .ok();
-    *file_maintenance_binding.borrow_mut() = file_maintenance.clone();
+    file_maintenance_binding
+        .borrow_mut()
+        .clone_from(&file_maintenance);
 
     let network_data = network_data_window::Slots::default();
     let checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>> = Rc::default();
@@ -2888,6 +2893,24 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     }
                 }
             }),
+            how_boned: {
+                let pages = pages.clone();
+                let slot = how_boned_window::Slot::default();
+                Rc::new(move || {
+                    if let Err(error) = how_boned_window::open(pages.borrow().store(), &slot) {
+                        eprintln!("could not open how boned am I?: {error}");
+                    }
+                })
+            },
+            set_password: {
+                let pages = pages.clone();
+                let slot = set_password_window::Slot::default();
+                Rc::new(move || {
+                    if let Err(error) = set_password_window::open(pages.borrow().store(), &slot) {
+                        eprintln!("could not open set a password: {error}");
+                    }
+                })
+            },
             database_maintenance: {
                 let pages = pages.clone();
                 let slot = database_maintenance_window::Slot::default();
@@ -4835,6 +4858,22 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     if !files.is_empty() {
                         open_force_filetype(page.store().clone(), files, files_changed.clone());
                     }
+                }
+                Action::Regenerate(job) => {
+                    let page = page.borrow();
+                    thumbnail_maintenance_window::regenerate(
+                        page.store(),
+                        page.selected_files(),
+                        job,
+                        files_changed.clone(),
+                    );
+                }
+                Action::ClearViewingStats => {
+                    let page = page.borrow();
+                    thumbnail_maintenance_window::clear_viewing_stats(
+                        page.store(),
+                        page.selected_files(),
+                    );
                 }
                 _ => {
                     let page = page.borrow();
@@ -6961,6 +7000,7 @@ fn open_viewer(
                 .borrow()
                 .2
                 .unwrap_or_else(|| model.borrow().current());
+            #[allow(clippy::match_same_arms)] // (separate actions that happen to do nothing here)
             match action {
                 Action::Viewer(ViewerAction::ZoomIn) => zoomed.zoom(1, None),
                 Action::Viewer(ViewerAction::ZoomOut) => zoomed.zoom(-1, None),

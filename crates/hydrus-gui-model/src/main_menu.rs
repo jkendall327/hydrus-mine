@@ -258,6 +258,10 @@ pub enum Command {
     /// Scan and optionally fill missing global archive times.
     RepairArchiveTimes,
     ClearViewingStatistics,
+    /// Review the files' statistics ("how boned am I?").
+    HowBoned,
+    /// Set, change or clear the lock password.
+    SetPassword,
     /// Ask, then run, a Database menu maintenance job.
     DatabaseMaintenance(crate::database_maintenance::Job),
     /// Clear only this GUI incarnation's thumbnail cache and redraw its current grid.
@@ -923,7 +927,7 @@ fn database_menu(facts: &Facts) -> Entry {
             SEP,
             todo(dots("locations")),
             SEP,
-            todo("how boned am I?"),
+            item("how boned am I?", Command::HowBoned),
             item("view file history", Command::FileHistory),
             SEP,
             menu(
@@ -1020,7 +1024,7 @@ fn database_menu(facts: &Facts) -> Entry {
                 ],
             ),
             SEP,
-            todo(dots("set a password")),
+            item(dots("set a password"), Command::SetPassword),
         ],
     )
 }

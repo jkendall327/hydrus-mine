@@ -21,6 +21,7 @@ pub mod file_maintenance;
 pub mod folder_activity;
 pub mod gallery;
 pub mod gui_colours;
+pub mod idle_state;
 pub mod import;
 pub mod import_folders;
 pub mod legacy;

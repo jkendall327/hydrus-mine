@@ -47,6 +47,12 @@ struct Inner {
     control: PurgeControl,
     statistics: RefCell<Statistics>,
     timer: slint::Timer,
+    /// The idle state last published for the daemon, and when.
+    published: Cell<Option<(bool, i64)>>,
+    /// The CPU-busy check, sampled once a minute, and its answer.
+    cpu: RefCell<hydrus_store::idle_state::CpuBusy>,
+    cpu_at: Cell<i64>,
+    busy: Cell<bool>,
 }
 impl Drop for Inner {
     fn drop(&mut self) {
@@ -106,6 +112,10 @@ impl Control {
             control: PurgeControl::default(),
             statistics: RefCell::new(Statistics::default()),
             timer: slint::Timer::default(),
+            published: Cell::new(None),
+            cpu: RefCell::default(),
+            cpu_at: Cell::new(i64::MIN),
+            busy: Cell::new(false),
         }));
         control
             .0
@@ -151,6 +161,40 @@ impl Control {
             pending.borrow_mut().take();
         }
     }
+    /// Publish the idle state for the daemon (on change, else every five
+    /// seconds) and show it, with the CPU-busy check, in the status bar.
+    fn publish_idle(&self, window: &MainWindow, store: &Store, now_ms: i64) {
+        let idle = self.0.monitor.idle_at(now_ms);
+        let due = self
+            .0
+            .published
+            .get()
+            .is_none_or(|(was, at)| was != idle || now_ms - at >= 5_000);
+        if due {
+            if let Err(error) = hydrus_store::idle_state::publish(store.dir(), idle, now_ms) {
+                eprintln!("could not publish the idle state: {error}");
+            }
+            self.0.published.set(Some((idle, now_ms)));
+        }
+        if now_ms.saturating_sub(self.0.cpu_at.get()) >= 60_000 {
+            self.0.cpu_at.set(now_ms);
+            let config: hydrus_store::settings::GuiIdleSettings =
+                store.read(hydrus_store::settings::get).unwrap_or_default();
+            let busy = match config.busy_cpu_count {
+                None => false,
+                Some(count) => self
+                    .0
+                    .cpu
+                    .borrow_mut()
+                    .sample(config.busy_cpu_percent, count)
+                    .unwrap_or(self.0.busy.get()),
+            };
+            self.0.busy.set(busy);
+        }
+        let (idle_text, busy_text) = hydrus_gui_model::status::activity(idle, self.0.busy.get());
+        window.set_status_idle(idle_text.into());
+        window.set_status_busy(busy_text.into());
+    }
     /// Sample current saved settings and live idle state immediately before each
     /// admission. Already admitted passes retain their policy until completion.
     /// Only completed threads are joined here; filesystem work/waits stay off UI.
@@ -173,6 +217,7 @@ impl Control {
             self.retire();
             return Ok(());
         };
+        self.publish_idle(&window, &store, now_ms);
         for worker in [Worker::Trash, Worker::Deferred] {
             let slot = &self.0.pending[index(worker)];
             if slot

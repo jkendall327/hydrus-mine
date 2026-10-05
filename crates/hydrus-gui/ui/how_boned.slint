@@ -1,0 +1,112 @@
+// Database > how boned am I? (`src/how_boned_window.rs`, hydrus-gui-model's
+// how_boned): a search on the left, Mr. Bones (or his words) and the files,
+// views and duplicates tabs on the right.
+
+import { Button, ComboBox, LineEdit, ScrollView, TabWidget } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+export struct BonesRow { cells: [string] }
+
+export component HowBonedWindow inherits Window {
+    title: "review your fate";
+    preferred-width: 900px;
+    preferred-height: 560px;
+    background: Theme.window;
+    in property <[string]> domains;
+    in-out property <int> domain-index;
+    in-out property <string> input;
+    in property <[string]> predicates;
+    in property <string> loading-text;
+    in property <bool> loading;
+    in property <string> bones-text;
+    in property <[BonesRow]> files;
+    in property <string> no-files;
+    in property <string> earliest;
+    in property <[string]> views;
+    in property <string> duplicates-note;
+    in property <[string]> duplicates;
+    callback domain-chosen(int);
+    callback enter();
+    callback remove(int);
+    callback refresh();
+    callback cancel-search();
+
+    HorizontalLayout {
+        padding: 10px;
+        spacing: 10px;
+        VerticalLayout {
+            width: 250px;
+            spacing: 6px;
+            ComboBox { model: root.domains; current-index <=> root.domain-index; selected => { root.domain-chosen(self.current-index); } }
+            ScrollView {
+                vertical-stretch: 1;
+                VerticalLayout {
+                    for text[i] in root.predicates: HorizontalLayout {
+                        Text { text: text; color: Theme.text; wrap: word-wrap; horizontal-stretch: 1; }
+                        Button { text: "×"; clicked => { root.remove(i); } }
+                    }
+                }
+            }
+            LineEdit { placeholder-text: "tag or system predicate"; text <=> root.input; accepted => { root.enter(); } }
+            HorizontalLayout {
+                spacing: 4px;
+                Text { text: root.loading-text; color: Theme.text; horizontal-stretch: 1; horizontal-alignment: right; vertical-alignment: center; }
+                Button { text: "stop"; enabled: root.loading; clicked => { root.cancel-search(); } }
+                Button { text: "refresh"; enabled: !root.loading; clicked => { root.refresh(); } }
+            }
+        }
+        VerticalLayout {
+            spacing: 6px;
+            if root.bones-text == "": Image {
+                source: @image-url("../../../static/boned.jpg");
+                image-fit: contain;
+                height: 200px;
+            }
+            if root.bones-text != "": Text {
+                text: root.bones-text;
+                wrap: word-wrap;
+                horizontal-alignment: center;
+                color: Theme.text;
+            }
+            TabWidget {
+                vertical-stretch: 1;
+                Tab {
+                    title: "files";
+                    VerticalLayout {
+                        padding: 6px;
+                        alignment: start;
+                        if root.no-files != "": Text { text: root.no-files; color: Theme.text; horizontal-alignment: center; }
+                        for row in root.files: HorizontalLayout {
+                            spacing: 8px;
+                            for cell[c] in row.cells: Text {
+                                text: cell;
+                                color: Theme.text;
+                                horizontal-stretch: c == 0 ? 1 : 0;
+                                min-width: c == 0 ? 0px : 70px;
+                                horizontal-alignment: c == 0 ? left : right;
+                            }
+                        }
+                        if root.earliest != "": Text { text: root.earliest; color: Theme.text; horizontal-alignment: center; }
+                    }
+                }
+                Tab {
+                    title: "views";
+                    VerticalLayout {
+                        padding: 6px;
+                        alignment: start;
+                        for line in root.views: Text { text: line; color: Theme.text; horizontal-alignment: center; }
+                    }
+                }
+                Tab {
+                    title: "duplicates";
+                    VerticalLayout {
+                        padding: 6px;
+                        alignment: start;
+                        Text { text: root.duplicates-note; color: Theme.text; wrap: word-wrap; horizontal-alignment: center; }
+                        for line in root.duplicates: Text { text: line; color: Theme.text; horizontal-alignment: center; }
+                    }
+                }
+            }
+        }
+    }
+}

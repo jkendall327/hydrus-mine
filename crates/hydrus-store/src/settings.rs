@@ -600,6 +600,10 @@ pub struct GuiIdleSettings {
     pub user_seconds: Option<u64>,
     pub mouse_seconds: Option<u64>,
     pub api_seconds: Option<u64>,
+    /// The CPU-busy check: busy when this many cores (none: ignore CPU use)
+    /// ran above this percentage.
+    pub busy_cpu_percent: u32,
+    pub busy_cpu_count: Option<u32>,
 }
 impl Default for GuiIdleSettings {
     fn default() -> Self {
@@ -608,6 +612,8 @@ impl Default for GuiIdleSettings {
             user_seconds: Some(1800),
             mouse_seconds: Some(600),
             api_seconds: None,
+            busy_cpu_percent: 50,
+            busy_cpu_count: Some(1),
         }
     }
 }

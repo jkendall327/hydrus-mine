@@ -78,6 +78,7 @@ export { CommandPaletteWindow, PaletteRow } from "command_palette.slint";
 export { CheckerOptionsWindow, CheckerTexts } from "checker_options.slint";
 export { SessionDialog } from "session_dialog.slint";
 export { ChoiceButtonsWindow } from "choice_buttons.slint";
+export { BonesRow, HowBonedWindow } from "how_boned.slint";
 export { TableColumn, TableRow }
 export { LocationTick, LocationsWindow } from "domains.slint";
 export { FavouriteEditWindow, FavouriteListRow, FavouritesWindow } from "favourites.slint";
@@ -472,6 +473,9 @@ export component MainWindow inherits Window {
     in property <color> banner-bottom-text;
     in property <string> status;
     in property <string> status-network;
+    // the idle and CPU-busy fields ("idle", "CPU busy", or empty)
+    in property <string> status-idle;
+    in property <string> status-busy;
     in property <string> error;
     // a downloader page's importer (the reference's "url downloader" box):
     // its file log's status and progress, whether it is paused, and its
@@ -1969,6 +1973,14 @@ export component MainWindow inherits Window {
                         vertical-alignment: center;
                         horizontal-stretch: 1;
                         overflow: elide;
+                    }
+                    if root.status-idle != "": Text {
+                        text: root.status-idle;
+                        vertical-alignment: center;
+                    }
+                    if root.status-busy != "": Text {
+                        text: root.status-busy;
+                        vertical-alignment: center;
                     }
                     Text {
                         text: root.status-network;

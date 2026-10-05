@@ -1,0 +1,162 @@
+{
+  "now": 1780000000,
+  "utc_offset_seconds": 0,
+  "default": {
+    "files": [
+      [
+        "",
+        "Files",
+        "%",
+        "Size",
+        "%",
+        "Average"
+      ],
+      [
+        "Total Ever Imported:",
+        "36",
+        "",
+        "362 KB",
+        "",
+        "10.1 KB"
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "Current:",
+        "31",
+        "86.11%",
+        "324 KB",
+        "89.44%",
+        "10.5 KB"
+      ],
+      [
+        "Deleted:",
+        "5",
+        "13.89%",
+        "38.2 KB",
+        "10.56%",
+        "7.65 KB"
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "Inbox:",
+        "15",
+        "48.39%",
+        "169 KB",
+        "52.16%",
+        "11.3 KB"
+      ],
+      [
+        "Archive:",
+        "16",
+        "51.61%",
+        "155 KB",
+        "47.84%",
+        "9.69 KB"
+      ]
+    ],
+    "earliest": "Earliest file import: 2026-09-29 18:38:54 (in 4 months 2 days)",
+    "views": [
+      "Total media views: 21, totalling 52.5 seconds",
+      "Total preview views: 6, totalling 3 seconds"
+    ],
+    "duplicates": [
+      "Total files in duplicate groups: 2",
+      "Total files in alternate groups: 2 (1 groups)"
+    ],
+    "bones_text": "I hope you enjoy my software. You might like to think about workflows to import your backlog and new files. :^)",
+    "loading": ""
+  },
+  "my_files": {
+    "files": [
+      [
+        "",
+        "Files",
+        "%",
+        "Size",
+        "%",
+        "Average"
+      ],
+      [
+        "Total Ever Imported:",
+        "36",
+        "",
+        "362 KB",
+        "",
+        "10.1 KB"
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "Current:",
+        "30",
+        "83.33%",
+        "324 KB",
+        "89.41%",
+        "10.8 KB"
+      ],
+      [
+        "Deleted:",
+        "6",
+        "16.67%",
+        "38.4 KB",
+        "10.59%",
+        "6.39 KB"
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "Inbox:",
+        "14",
+        "46.67%",
+        "169 KB",
+        "52.14%",
+        "12.1 KB"
+      ],
+      [
+        "Archive:",
+        "16",
+        "53.33%",
+        "155 KB",
+        "47.86%",
+        "9.69 KB"
+      ]
+    ],
+    "earliest": "Earliest file import: 2026-09-29 18:38:54 (in 4 months 2 days)",
+    "views": [
+      "Total media views: 21, totalling 52.5 seconds",
+      "Total preview views: 6, totalling 3 seconds"
+    ],
+    "duplicates": [
+      "Total files in duplicate groups: 2",
+      "Total files in alternate groups: 2 (1 groups)"
+    ],
+    "bones_text": null,
+    "loading": ""
+  }
+}

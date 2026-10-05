@@ -2833,6 +2833,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     vec![boxed(
                         "idle",
                         vec![
+                            check(
+                                "Run maintenance jobs when the client is idle and the system is not otherwise busy: ",
+                                |s| s.gui_idle.enabled,
+                                |s, v| s.gui_idle.enabled = v,
+                            ),
                             enabled(
                                 noneable(
                                     "Permit idle mode if no general browsing activity has occurred in the past: ",
@@ -2884,12 +2889,50 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                 ),
                                 |settings| settings.gui_idle.enabled,
                             ),
+                            enabled(
+                                int(
+                                    "Consider the system busy if CPU usage is above: ",
+                                    (5, 99),
+                                    |s| i64::from(s.gui_idle.busy_cpu_percent),
+                                    |s, v| s.gui_idle.busy_cpu_percent = v as u32,
+                                ),
+                                |s| s.gui_idle.enabled && s.gui_idle.busy_cpu_count.is_some(),
+                            ),
+                            enabled(
+                                noneable(
+                                    "% on ",
+                                    none("ignore cpu usage", 1, (1, 64), Some("cores")),
+                                    |s| s.gui_idle.busy_cpu_count.map(i64::from),
+                                    |s, v| s.gui_idle.busy_cpu_count = v.map(|n| n as u32),
+                                ),
+                                |settings| settings.gui_idle.enabled,
+                            ),
                         ],
                     )],
                 ),
                 boxed(
                     "file maintenance",
                     vec![
+                        check(
+                            "Run file maintenance during idle time: ",
+                            |s| s.file_maintenance.during_idle,
+                            |s, v| s.file_maintenance.during_idle = v,
+                        ),
+                        velocity(
+                            "Idle throttle: ",
+                            ((1, 1000), "heavy work units every"),
+                            time(&[Unit::Minutes, Unit::Seconds], 1.0),
+                            |s| {
+                                (
+                                    s.file_maintenance.idle_files as i64,
+                                    s.file_maintenance.idle_seconds as f64,
+                                )
+                            },
+                            |s, n, seconds| {
+                                s.file_maintenance.idle_files = n as u64;
+                                s.file_maintenance.idle_seconds = whole(seconds);
+                            },
+                        ),
                         check(
                             "Run file maintenance during normal time: ",
                             |s| s.file_maintenance.during_active,
@@ -2920,16 +2963,59 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s| s.similar_files.during_idle,
                             |s, v| s.similar_files.during_idle = v,
                         ),
+                        duration(
+                            "\"Idle\" ideal work packet time: ",
+                            time(&[Unit::Seconds, Unit::Milliseconds], 0.02),
+                            |s| f64::from(s.similar_files.work_time_ms_idle) / 1000.0,
+                            |s, v| s.similar_files.work_time_ms_idle = whole(v * 1000.0) as u32,
+                        ),
+                        int(
+                            "\"Idle\" rest time percentage: ",
+                            (0, 100_000),
+                            |s| i64::from(s.similar_files.rest_percentage_idle),
+                            |s, v| s.similar_files.rest_percentage_idle = v as u32,
+                        ),
                         check(
                             "Search for potential duplicates in \"normal\" time: ",
                             |s| s.similar_files.during_active,
                             |s, v| s.similar_files.during_active = v,
+                        ),
+                        duration(
+                            "\"Normal\" ideal work packet time: ",
+                            time(&[Unit::Seconds, Unit::Milliseconds], 0.02),
+                            |s| f64::from(s.similar_files.work_time_ms_active) / 1000.0,
+                            |s, v| s.similar_files.work_time_ms_active = whole(v * 1000.0) as u32,
+                        ),
+                        int(
+                            "\"Normal\" rest time percentage: ",
+                            (0, 100_000),
+                            |s| i64::from(s.similar_files.rest_percentage_active),
+                            |s, v| s.similar_files.rest_percentage_active = v as u32,
                         ),
                     ],
                 ),
                 boxed(
                     "duplicates auto-resolution",
                     vec![
+                        check(
+                            "Work duplicates auto-resolution in \"idle\" time: ",
+                            |s| s.auto_resolution.during_idle,
+                            |s, v| s.auto_resolution.during_idle = v,
+                        ),
+                        duration(
+                            "\"Idle\" ideal work packet time: ",
+                            time(&[Unit::Seconds, Unit::Milliseconds], 0.1),
+                            |s| f64::from(s.auto_resolution.work_time_ms_idle) / 1000.0,
+                            |s, v| {
+                                s.auto_resolution.work_time_ms_idle = whole(v * 1000.0) as u32;
+                            },
+                        ),
+                        int(
+                            "\"Idle\" rest time percentage: ",
+                            (0, 100_000),
+                            |s| i64::from(s.auto_resolution.rest_percentage_idle),
+                            |s, v| s.auto_resolution.rest_percentage_idle = v as u32,
+                        ),
                         check(
                             "Work duplicates auto-resolution in \"normal\" time: ",
                             |s| s.auto_resolution.during_active,

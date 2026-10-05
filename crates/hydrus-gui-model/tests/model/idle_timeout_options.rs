@@ -160,6 +160,7 @@ fn edited_idle_thresholds_merge_without_overwriting_live_unrelated_preferences()
                     user_seconds: Some(1800),
                     mouse_seconds: Some(3000),
                     api_seconds: Some(900),
+                    ..GuiIdleSettings::default()
                 },
             )
         })
@@ -173,7 +174,8 @@ fn edited_idle_thresholds_merge_without_overwriting_live_unrelated_preferences()
             enabled: false,
             user_seconds: Some(60),
             mouse_seconds: Some(3000),
-            api_seconds: Some(900)
+            api_seconds: Some(900),
+            ..GuiIdleSettings::default()
         }
     );
 }
@@ -187,6 +189,7 @@ fn saved_timeout_choices_replay_strict_qt_boot_activity_and_ignore_gates() {
             user_seconds: values[0].as_u64(),
             mouse_seconds: values[1].as_u64(),
             api_seconds: values[2].as_u64(),
+            ..GuiIdleSettings::default()
         };
         let mut idle = Idle::new(0);
         let times = &step["times"];
@@ -285,6 +288,7 @@ fn implicit_idle_normalisation_preserves_newer_fields_and_explicit_edits_still_a
                         user_seconds: Some(119),
                         mouse_seconds: Some(0),
                         api_seconds: Some(60060),
+                        ..GuiIdleSettings::default()
                     },
                 )
             })
@@ -305,6 +309,7 @@ fn implicit_idle_normalisation_preserves_newer_fields_and_explicit_edits_still_a
                         user_seconds: Some(300),
                         mouse_seconds: Some(0),
                         api_seconds: Some(777),
+                        ..GuiIdleSettings::default()
                     },
                 )
             })
@@ -319,6 +324,7 @@ fn implicit_idle_normalisation_preserves_newer_fields_and_explicit_edits_still_a
                 user_seconds: Some(if explicit { 120 } else { 300 }),
                 mouse_seconds: Some(60),
                 api_seconds: Some(777),
+                ..GuiIdleSettings::default()
             }
         );
     }

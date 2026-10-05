@@ -283,6 +283,14 @@ impl SessionBytes {
     }
 }
 
+/// The status bar's idle and CPU-busy fields (`_RefreshStatusBar`).
+pub fn activity(idle: bool, cpu_busy: bool) -> (&'static str, &'static str) {
+    (
+        if idle { "idle" } else { "" },
+        if cpu_busy { "CPU busy" } else { "" },
+    )
+}
+
 #[cfg(test)]
 mod bandwidth_tests {
     use hydrus_store::live::DaemonLive;

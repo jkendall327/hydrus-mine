@@ -340,6 +340,12 @@ pub struct SimilarFilesSettings {
     pub during_active: bool,
     pub during_idle: bool,
     pub work_hard: bool,
+    /// How long one burst of search may take, and the rest after it as a
+    /// percentage of the time it took, in normal and idle time.
+    pub work_time_ms_active: u32,
+    pub work_time_ms_idle: u32,
+    pub rest_percentage_active: u32,
+    pub rest_percentage_idle: u32,
 }
 
 impl Default for SimilarFilesSettings {
@@ -349,6 +355,10 @@ impl Default for SimilarFilesSettings {
             during_active: true,
             during_idle: true,
             work_hard: false,
+            work_time_ms_active: 100,
+            work_time_ms_idle: 5000,
+            rest_percentage_active: 1900,
+            rest_percentage_idle: 50,
         }
     }
 }

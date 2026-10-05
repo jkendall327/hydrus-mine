@@ -4165,3 +4165,41 @@ tables!", "Found 3 bad mappings! ..."). Get tables using definitions copies the
 `table,column` lines to the clipboard. The recording is
 `oracle/record_database_maintenance.py`; `tests/model/database_maintenance.rs`
 replays its questions, choices and popups on the imported basic client.
+
+## Set a password and how boned am I?
+
+Database > set a password asks the reference's text, then asks again (or, left
+blank, "Clear any existing password?"), warns "Those passwords did not match!"
+on a mismatch, and saves the lock the startup unlock window checks. Recorded by
+`oracle/record_set_password.py`; `tests/model/set_password.rs` replays its
+scripted answers.
+
+Database > how boned am I? opens "review your fate": a file domain and typed
+predicates on the left, and on the right Mr. Bones (or his special message) over
+the files, views and duplicates tabs, worded as the reference's. A single plain
+local domain also counts its deleted files. Searches load off the UI thread; a
+newer search or stop drops an older result. Recorded by
+`oracle/record_how_boned.py`; `tests/model/how_boned.rs` checks every text on the
+imported basic client.
+
+## Idle-time maintenance
+
+The client now tells `hydrus serve` whether it is idle (Options > maintenance
+and processing > idle: the user, mouse and Client API timers, behind "Run
+maintenance jobs when the client is idle and the system is not otherwise
+busy"). The daemon's potential duplicates search, duplicates auto-resolution
+and file maintenance then work with their idle or normal settings: whether to
+work, the "ideal work packet time" and "rest time percentage", and file
+maintenance's idle throttle, all now on the page. The status bar shows "idle"
+and, from the "Consider the system busy if CPU usage is above: N% on M cores"
+check sampled once a minute, "CPU busy".
+
+## Thumbnail manage > maintenance and viewing stats
+
+The thumbnail menu's manage submenu now ends with "maintenance", every file
+maintenance job in the reference's order, and "viewing stats > clear". A job
+asks the reference's question (with "do it now", "do it later" or "forget it"
+over 50 files) and runs on the selected files off the UI thread, or schedules
+them in the file maintenance queue. Clearing asks, then deletes only the selected
+files' viewing records. The labels and descriptions are dumped by
+`oracle/dump_regen_jobs.py` and checked in `tests/model/thumbnail_maintenance.rs`.

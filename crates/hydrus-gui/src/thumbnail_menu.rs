@@ -74,6 +74,10 @@ pub enum Action {
     ManageTimes,
     /// Force the selected files' filetype (the file shown's).
     ForceFiletype,
+    /// Run or schedule a file maintenance job on the selected files.
+    Regenerate(hydrus_store::file_maintenance::JobType),
+    /// Clear the selected files' viewing records.
+    ClearViewingStats,
     /// The focused file's embedded metadata window.
     EmbeddedMetadata,
     /// The selected files' URLs (the focused file's, in the viewer).
@@ -798,6 +802,25 @@ pub fn manage_menu(services: &ServiceRegistry, notes: usize) -> Vec<Entry> {
     entries
 }
 
+/// The thumbnail menu's manage > maintenance (each file maintenance job)
+/// and viewing stats (clear) submenus.
+pub fn maintenance_entries() -> Vec<Entry> {
+    use hydrus_gui_model::thumbnail_maintenance::HUMAN_ORDER;
+    vec![
+        Entry::Menu(
+            "maintenance".into(),
+            HUMAN_ORDER
+                .iter()
+                .map(|&job| Entry::Item(job.description().into(), Action::Regenerate(job)))
+                .collect(),
+        ),
+        Entry::Menu(
+            "viewing stats".into(),
+            vec![Entry::Item("clear".into(), Action::ClearViewingStats)],
+        ),
+    ]
+}
+
 /// The urls menu (`AddKnownURLsViewCopyMenu`), less forcing a metadata
 /// refetch: manage, then, if there are URLs to offer, the focused file's
 /// URLs and the selection's, to open in the web browser, open a page of
@@ -1173,10 +1196,11 @@ pub fn menu(
     }
     separate(&mut entries);
     if num_selected > 0 {
-        entries.push(Entry::Menu(
-            "manage".into(),
-            manage_menu(services, notes.unwrap_or(0)),
-        ));
+        entries.push(Entry::Menu("manage".into(), {
+            let mut manage = manage_menu(services, notes.unwrap_or(0));
+            manage.extend(maintenance_entries());
+            manage
+        }));
         if let Some(locations) = local_transfer_menu(services, &roles, &chosen) {
             entries.push(locations);
         }
