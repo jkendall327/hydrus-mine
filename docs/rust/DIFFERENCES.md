@@ -2989,3 +2989,28 @@ existing native font-derived popup width policy; Qt pixel geometry is recorded
 without claiming identical font metrics. Other debug actions and broader popup
 freeze/monitor/API families remain Partial. No MIME-mode reassessment or parent
 completion is claimed. Native regressions are authored; hosted execution is pending.
+
+Physical deletion now consumes the saved files-and-trash per-pair delay rather
+than deleting an entire native batch without waits. The real Qt control uses
+seconds 0–59 and milliseconds 0–999, minimum 20 ms, default 600 ms; raw imported values
+are retained until Apply. Constructor truncation and exactly one acceptance
+conversion match 16 actual staged/Cancel/Apply/reopen cases, including 1029 ms
+displaying 1 s 28 ms and explicitly entering 1 s 29 ms saving 1029 ms. The native-wins
+retained ClientOptions upgrade avoids silently replacing older saved waits.
+
+Both explicit CLI purge and the daemon's physical worker commit a pair then wait
+outside the writer, including after the final pair or a missing physical file.
+The pass captures its preference once. Real re-add/import claims and shared-media
+guards are rechecked for every admitted pair. Shutdown retires the owned worker,
+wakes bounded wait slices and prevents later admissions; a current filesystem
+call cannot be interrupted. Errors abort the pass and retain its failed queue
+entry without undoing earlier committed clears. Actual Qt ordinary-delete
+refusal is recorded and has no wait/queue clear. Corrupt native metadata raises
+an error; reference-specific boot-long disabling and diagnostic text remain
+separate broader maintenance behavior. Existing native 1024-pair/ten-minute
+passes and absence of reference idle/normal scheduling/location-extension repair
+remain unchanged. No credit is proposed for those worker/maintenance parents.
+This finite delay-control proposal requires exact hosted Rust/native validation
+and inspection of its authored Options artifact; local Cargo/Rust execution was
+not performed. All physical mutation evidence uses disposable authored/copied
+fixtures, with reference source read-only.

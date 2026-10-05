@@ -47,6 +47,7 @@ mod notes_preferences;
 mod options_dialog;
 mod page_chooser_options;
 mod page_navigation_options;
+mod physical_delete_delay;
 mod predicate_history;
 mod rating_sizes;
 mod ratings_editor;

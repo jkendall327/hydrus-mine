@@ -50,6 +50,9 @@ fn normalise_idle_timeout(seconds: Option<u64>) -> Option<u64> {
 }
 
 macro_rules! settings {
+    (@save $conn:ident, $after:ident, $before:ident, physical_delete) => {
+        $after.physical_delete.save_changed($conn, &$before.physical_delete)?;
+    };
     (@save $conn:ident, $after:ident, $before:ident, animation_start) => {
         $after.animation_start.save_changed($conn, &$before.animation_start)?;
     };
@@ -336,6 +339,7 @@ settings! {
     thumbnail_preview_selection: hydrus_store::thumbnail_preview_selection::Preferences,
     thumbnail_appearance: hydrus_store::thumbnail_appearance::Preferences => hydrus_store::thumbnail_appearance::load,
     animation_start: hydrus_store::animation_start::Preferences => hydrus_store::animation_start::load,
+    physical_delete: hydrus_store::physical_delete::Preferences => hydrus_store::physical_delete::load,
     downloader_update_times: hydrus_store::downloader_update_times::Preferences,
     thumbnail_ratings: ThumbnailRatingSettings,
     rating_context_sizes: hydrus_store::settings::RatingContextSizes,
@@ -2221,6 +2225,12 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     "When physically deleting files or folders, send them to the OS's recycle bin: ",
                     |s| s.folders.delete_to_recycle_bin,
                     |s, v| s.folders.delete_to_recycle_bin = v,
+                ),
+                duration(
+                    "When maintenance physically deletes files, wait this long between each delete: ",
+                    time(&[Unit::Seconds, Unit::Milliseconds], 0.02),
+                    |s| s.physical_delete.displayed_seconds(),
+                    |s, value| s.physical_delete.set_seconds(value),
                 ),
                 check(
                     "When finishing archive/delete filtering, always delete from all possible domains: ",
@@ -4178,6 +4188,7 @@ pub fn applied(
                     | "EXPERIMENTAL: Minimum watcher importer update time:"
                     | "Application display name: "
                     | "Start animations this % in:"
+                    | "When maintenance physically deletes files, wait this long between each delete: "
             );
             if ((option.get)(settings) != *value || accept_displayed)
                 && let Err(why) = (option.set)(&mut out, value)

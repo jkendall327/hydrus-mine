@@ -68,6 +68,7 @@ mod options_window;
 mod page_chooser_options;
 mod page_navigation_options;
 mod page_scroll;
+mod physical_delete_delay;
 mod popup_job_actions;
 mod popup_width;
 mod popups;

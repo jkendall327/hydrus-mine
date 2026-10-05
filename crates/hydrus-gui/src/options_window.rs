@@ -1151,7 +1151,13 @@ pub(crate) fn open(
     });
     window.on_field_edited({
         let editor = editor.clone();
-        move |i, field, n| editor.borrow_mut().field(at(i), at(field), i64::from(n))
+        let active = active.clone();
+        let weak = window.as_weak();
+        move |i, field, n| {
+            let deletion = matches!(editor.borrow().rows().get(at(i)), Some(Row::Opt {option,..}) if option.label == "When maintenance physically deletes files, wait this long between each delete: ");
+            if deletion && (!active.get() || !weak.upgrade().is_some_and(|w| w.window().is_visible())) {return;}
+            editor.borrow_mut().field(at(i), at(field), i64::from(n));
+        }
     });
     // checker options' button: their editor (with advanced mode's tiny
     // least times if the options have it on, as the reference's reads
