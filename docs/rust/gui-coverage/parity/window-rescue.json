@@ -4,7 +4,9 @@
   "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
   "source_base": "fb45468c2a9a1dcb2542f35dd399a923347160b5",
   "implementation_commits": [
-    "9f7b4fd45de92a88f4c27b50d7639a7cb84a6799"
+    "9f7b4fd45de92a88f4c27b50d7639a7cb84a6799",
+    "67e2e02693a2965329d20ac7a1ea8245b5bff956",
+    "cd0379bec3114721699ac4958f136ed772bd06ca"
   ],
   "completed_original_leaves_proposed": 0,
   "claims": [
@@ -52,6 +54,12 @@
           "line": 129,
           "symbol": "fn native_screens",
           "commit": "9f7b4fd45de92a88f4c27b50d7639a7cb84a6799"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/windows.rs",
+          "line": 62,
+          "symbol": "pub(crate) fn watch_named_events",
+          "commit": "cd0379bec3114721699ac4958f136ed772bd06ca"
         }
       ],
       "test_anchors": [
@@ -72,6 +80,12 @@
           "line": 54,
           "symbol": "fn staged_options",
           "commit": "9f7b4fd45de92a88f4c27b50d7639a7cb84a6799"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/windows.rs",
+          "line": 263,
+          "symbol": "fn opening_observer_and_batched_files_share_the_same_owned_filter",
+          "commit": "cd0379bec3114721699ac4958f136ed772bd06ca"
         }
       ],
       "limitations": [
@@ -136,6 +150,12 @@
           "line": 129,
           "symbol": "fn native_screens",
           "commit": "9f7b4fd45de92a88f4c27b50d7639a7cb84a6799"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/windows.rs",
+          "line": 62,
+          "symbol": "pub(crate) fn watch_named_events",
+          "commit": "cd0379bec3114721699ac4958f136ed772bd06ca"
         }
       ],
       "test_anchors": [
@@ -156,6 +176,12 @@
           "line": 54,
           "symbol": "fn staged_options",
           "commit": "9f7b4fd45de92a88f4c27b50d7639a7cb84a6799"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/windows.rs",
+          "line": 263,
+          "symbol": "fn opening_observer_and_batched_files_share_the_same_owned_filter",
+          "commit": "cd0379bec3114721699ac4958f136ed772bd06ca"
         }
       ],
       "limitations": [
@@ -220,6 +246,12 @@
           "line": 129,
           "symbol": "fn native_screens",
           "commit": "9f7b4fd45de92a88f4c27b50d7639a7cb84a6799"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/windows.rs",
+          "line": 62,
+          "symbol": "pub(crate) fn watch_named_events",
+          "commit": "cd0379bec3114721699ac4958f136ed772bd06ca"
         }
       ],
       "test_anchors": [
@@ -240,6 +272,12 @@
           "line": 54,
           "symbol": "fn staged_options",
           "commit": "9f7b4fd45de92a88f4c27b50d7639a7cb84a6799"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/windows.rs",
+          "line": 263,
+          "symbol": "fn opening_observer_and_batched_files_share_the_same_owned_filter",
+          "commit": "cd0379bec3114721699ac4958f136ed772bd06ca"
         }
       ],
       "limitations": [
@@ -341,5 +379,6 @@
         }
       ]
     }
-  ]
+  ],
+  "review_repairs": "Main rescue and batched file drops share one window-owned Winit filter; neither registration replaces the other. The real hook reads native inner_size before Slint updates its cached event size and defers zero-size observations. Headless regression checks the exact rescue decision, not unsupported OS positioning. All three proposals remain Partial and the eligible completion count stays zero."
 }

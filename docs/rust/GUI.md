@@ -3122,6 +3122,11 @@ real offscreen display decisions and the unmodified Qt rescue handler over an
 explicit two-display topology. Native geometry and Options screenshot regressions
 are authored for hosted CI; native OS monitor behavior has not been executed here.
 
+The main opening observer composes with batched file drops in one window-owned
+Winit filter. It reads the native client size before Slint updates its cached
+event geometry, defers zero-sized openings, and retains the one-shot decision.
+The headless regression verifies the exact rescue result and drop forwarding;
+its adapter cannot verify OS window positioning.
 
 Options > external programs now has a staged registered-call table with name,
 job and command columns. Add/Edit own a detached callable editor and command
