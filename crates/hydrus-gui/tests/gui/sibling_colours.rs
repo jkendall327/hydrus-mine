@@ -435,10 +435,22 @@ fn options_cancel_retired_apply_reopen_and_all_segmented_native_consumers() {
         let pixels = headless::render(&native, width, 650);
         let y = child.get_results_y().floor() as usize + 2 + alias * 22 + 2;
         let row = &pixels[y * width as usize * 4..(y + 1) * width as usize * 4];
+        // The selected row has a 4px palette-coloured strip outside each
+        // PaintedTagText edge. That blue is not a sibling gradient. Sample
+        // the actual text consumer: 2px row padding plus its 4px inset.
+        let left = child.get_results_x() + 6.0;
+        let right = child.get_results_x() + child.get_results_width() - 6.0;
         let gradient: Vec<_> = row
             .chunks_exact(4)
             .enumerate()
-            .filter(|(_, pixel)| pixel[0] == 0 && pixel[2] > 0 && pixel[2] < 250 && pixel[1] < 170)
+            .filter(|(x, pixel)| {
+                (*x as f32) >= left
+                    && (*x as f32) < right
+                    && pixel[0] == 0
+                    && pixel[2] > 0
+                    && pixel[2] < 250
+                    && pixel[1] < 170
+            })
             .map(|(x, _)| x)
             .collect();
         assert!(
