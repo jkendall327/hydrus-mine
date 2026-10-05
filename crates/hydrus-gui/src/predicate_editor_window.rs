@@ -45,6 +45,8 @@ fn field_row(panel: &Panel, i: usize) -> EditorField {
         Field::Choice { options, chosen } => {
             row.kind = if panel.kind == Kind::Size && i == 1 {
                 8
+            } else if panel.kind == Kind::Hash {
+                9
             } else {
                 1
             };
@@ -142,6 +144,7 @@ impl State {
                 EditorPanel {
                     fields: ModelRc::from(rows.clone()),
                     two_lines: !panel.second_line.is_empty(),
+                    hash_layout: panel.kind == Kind::Hash,
                 },
             );
             self.fields[p] = rows;
@@ -155,11 +158,15 @@ impl State {
             // synchronizes cached text before freezing or cleaning that draft.
             let redrawn = matches!(panel.fields[i], Field::Ticks { .. } | Field::Tree { .. });
             let size_control = panel.kind == Kind::Size && matches!(i, 1..=3);
+            let hash_control = panel.kind == Kind::Hash;
             let changed = (redrawn && Some(i) == set)
                 || old.as_ref().is_none_or(|old| {
                     old.shown != row.shown
                         || old.enabled != row.enabled
-                        || (size_control && (old.chosen != row.chosen || old.value != row.value))
+                        || ((size_control || hash_control)
+                            && (old.chosen != row.chosen
+                                || old.value != row.value
+                                || old.text != row.text))
                         || (set.is_none() && old.text != row.text)
                 });
             if changed {
@@ -224,6 +231,10 @@ pub(crate) fn open(
         let owner = owner.clone();
         move || !closed.get() && owner.as_ref().is_none_or(|owner| owner())
     });
+    let notices = Rc::new(crate::predicate_notice::Notices::new(
+        &window,
+        valid.clone(),
+    ));
     window.set_note(editor.note.clone().unwrap_or_default().into());
     let names: Vec<SharedString> = if editor.pages.len() > 1 {
         editor
@@ -237,6 +248,7 @@ pub(crate) fn open(
     window.set_pages(ModelRc::new(VecModel::from(names)));
     window.set_two_columns(editor.blank == crate::predicate_editors::Blank::FileProperties);
     let filesize = editor.blank == Blank::Filesize;
+    let hash = editor.blank == Blank::Hash;
     let state = Rc::new(RefCell::new(State {
         editor,
         context,
@@ -258,7 +270,7 @@ pub(crate) fn open(
                 return;
             }
             let Some(window) = weak.upgrade() else { return };
-            if !window.get_question().is_empty() {
+            if !window.get_question().is_empty() || window.get_notice_open() {
                 return;
             }
             let mut state = state.borrow_mut();
@@ -281,6 +293,7 @@ pub(crate) fn open(
                     .map(|(f, panel)| EditorPanel {
                         fields: ModelRc::from(f.clone()),
                         two_lines: !panel.second_line.is_empty(),
+                        hash_layout: panel.kind == Kind::Hash,
                     })
                     .collect::<Vec<_>>(),
             ));
@@ -296,13 +309,19 @@ pub(crate) fn open(
             window.set_page(i32::try_from(page).unwrap_or(0));
             window.set_buttons(ModelRc::new(VecModel::from(labels)));
             window.set_panels(ModelRc::from(panels));
+            if let Some(panel) = state.panels().iter().find(|panel| panel.kind == Kind::Hash)
+                && let Field::Lines { text, .. } = &panel.fields[2]
+            {
+                window.set_hash_text(text.as_str().into());
+            }
             window.set_error(SharedString::new());
         }
     };
     show_page(0);
     let close = {
         let weak = window.as_weak();
-        let slot = slot.clone();
+        let slot = Rc::downgrade(slot);
+        let notices = notices.clone();
         let closed = closed.clone();
         move || {
             if closed.replace(true) {
@@ -312,7 +331,16 @@ pub(crate) fn open(
             if let Some(window) = &window {
                 let _ = window.hide();
             }
-            slot.borrow_mut().take();
+            if let (Some(slot), Some(window)) = (slot.upgrade(), window.as_ref()) {
+                let owns = slot
+                    .borrow()
+                    .as_ref()
+                    .is_some_and(|current| std::ptr::eq(current.window(), window.window()));
+                if owns {
+                    slot.borrow_mut().take();
+                }
+            }
+            notices.cancel();
             if let Some(window) = window {
                 window.invoke_closed();
             }
@@ -330,7 +358,8 @@ pub(crate) fn open(
                 return;
             }
             if weak.upgrade().is_none_or(|window| {
-                !window.window().is_visible() || !window.get_question().is_empty()
+                !window.window().is_visible()
+                    || (!window.get_question().is_empty() || window.get_notice_open())
             }) {
                 return;
             }
@@ -375,7 +404,8 @@ pub(crate) fn open(
                 return;
             }
             if weak.upgrade().is_none_or(|window| {
-                !window.window().is_visible() || !window.get_question().is_empty()
+                !window.window().is_visible()
+                    || (!window.get_question().is_empty() || window.get_notice_open())
             }) {
                 return;
             }
@@ -414,6 +444,7 @@ pub(crate) fn open(
     // a field set (or, with none, a button pressed): change the panel, and
     // show what that changes; what a button says to the user
     let edit = {
+        let notices = notices.clone();
         let valid = valid.clone();
         let state = state.clone();
         let weak = window.as_weak();
@@ -422,7 +453,8 @@ pub(crate) fn open(
                 return;
             }
             if weak.upgrade().is_none_or(|window| {
-                !window.window().is_visible() || !window.get_question().is_empty()
+                !window.window().is_visible()
+                    || (!window.get_question().is_empty() || window.get_notice_open())
             }) {
                 return;
             }
@@ -433,10 +465,26 @@ pub(crate) fn open(
                 return;
             };
             let before = panel.fields.clone();
+            let hash = panel.kind == Kind::Hash;
             let said = change(panel);
+            let hash_text = hash.then(|| match &panel.fields[2] {
+                Field::Lines { text, .. } => text.clone(),
+                _ => String::new(),
+            });
             state.refresh(p, set.map(index), &before);
+            drop(state);
             if let Some(window) = weak.upgrade() {
-                window.set_error(said.unwrap_or_default().into());
+                if let Some(text) = hash_text {
+                    window.set_hash_text(text.into());
+                }
+                match said {
+                    Some(said) if hash => {
+                        if let Err(error) = notices.show(&said) {
+                            window.set_error(format!("{said}\n{error}").into());
+                        }
+                    }
+                    said => window.set_error(said.unwrap_or_default().into()),
+                }
             }
         }
     };
@@ -554,7 +602,9 @@ pub(crate) fn open(
                 return;
             }
             let Some(window) = weak.upgrade() else { return };
-            if !window.window().is_visible() || !window.get_question().is_empty() {
+            if !window.window().is_visible()
+                || (!window.get_question().is_empty() || window.get_notice_open())
+            {
                 return;
             }
             let state = state.borrow();
@@ -585,7 +635,9 @@ pub(crate) fn open(
                 return;
             }
             let Some(window) = weak.upgrade() else { return };
-            if !window.window().is_visible() || !window.get_question().is_empty() {
+            if !window.window().is_visible()
+                || (!window.get_question().is_empty() || window.get_notice_open())
+            {
                 return;
             }
             let state = state.borrow();
@@ -620,6 +672,7 @@ pub(crate) fn open(
         }
     });
     window.on_ok({
+        let notices = notices.clone();
         let valid = valid.clone();
         let weak = window.as_weak();
         let state = state.clone();
@@ -629,22 +682,29 @@ pub(crate) fn open(
                 return;
             }
             if weak.upgrade().is_none_or(|window| {
-                !window.window().is_visible() || !window.get_question().is_empty()
+                !window.window().is_visible()
+                    || (!window.get_question().is_empty() || window.get_notice_open())
             }) {
                 return;
             }
-            let made = {
+            let (hash, made) = {
                 let state = state.borrow();
                 let Some(panel) = state.panels().get(index(p)) else {
                     return;
                 };
-                panel.predicates(&state.context)
+                (panel.kind == Kind::Hash, panel.predicates(&state.context))
             };
             match made {
                 Ok(predicates) => finish(predicates),
                 Err(why) => {
                     if let Some(window) = weak.upgrade() {
-                        window.set_error(why.into());
+                        if hash {
+                            if let Err(error) = notices.show(&why) {
+                                window.set_error(format!("{why}\n{error}").into());
+                            }
+                        } else {
+                            window.set_error(why.into());
+                        }
                     }
                 }
             }
@@ -660,6 +720,7 @@ pub(crate) fn open(
     });
     window.show().map_err(|e| e.to_string())?;
     window.set_comparison_focus(filesize);
+    window.set_hash_focus(hash);
     *slot.borrow_mut() = Some(window);
     Ok(())
 }

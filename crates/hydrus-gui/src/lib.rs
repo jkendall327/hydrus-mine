@@ -109,6 +109,7 @@ mod popup_job_actions;
 mod popup_menu;
 mod popups;
 pub mod predicate_editor_window;
+mod predicate_notice;
 pub mod preview_window;
 pub mod regex_favourites_window;
 mod related_tags_worker;

@@ -7,13 +7,14 @@
 
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox, TextEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
+import { HashChoices } from "hash_choices.slint";
 import { FilesizeComparison } from "filesize_comparison.slint";
 
 import { EditorTreeRow, FiletypeTree } from "filetype_tree.slint";
 
 // One of a panel's fields: `kind` 0 a label, 1 a choice, 2 tick boxes, 3 a
 // number, 4 a line of text, 5 several lines, 6 the filetype tree, 7 a
-// button, 8 filesize comparison radios; on the panel's first line (0) or its second (1).
+// button, 8 filesize comparison radios, 9 hash radios; on the panel's first line (0) or its second (1).
 export struct EditorField {
     kind: int,
     text: string,
@@ -37,6 +38,7 @@ export struct EditorField {
 export struct EditorPanel {
     fields: [EditorField],
     two-lines: bool,
+    hash-layout: bool,
 }
 
 // A field, if it is shown on this line (else nothing, taking no room).
@@ -195,6 +197,11 @@ export component PredicateEditorWindow inherits Window {
     in property <string> error;
     in property <string> question;
     in property <bool> comparison-focus;
+    in property <bool> hash-focus;
+    in property <bool> notice-open;
+    in property <string> notice-message;
+    // The live TextEdit draft, two-way linked so cleanup also replaces real typing.
+    in-out property <string> hash-text;
     callback answer(bool);
     // the shown page's recent predicates, each a button adding it with
     // one beside it forgetting it
@@ -211,6 +218,8 @@ export component PredicateEditorWindow inherits Window {
     callback number-edited(int, int, int);
     // (panel, field, text)
     callback text-edited(int, int, string);
+    // Measured native input bounds, also used by pointer replays.
+    callback hash-field-placed(int, float, float, float, float);
     // (panel, field)
     callback pressed(int, int);
     // (panel, field, group, filetype or -1, ticked)
@@ -228,6 +237,7 @@ export component PredicateEditorWindow inherits Window {
     forward-focus: keys;
     keys := FocusScope {
         key-pressed(event) => {
+            if root.notice-open { return accept; }
             if (event.text == Key.Escape) {
                 if (root.question != "") {
                     root.answer(false);
@@ -251,7 +261,7 @@ export component PredicateEditorWindow inherits Window {
                 alignment: start;
                 for name[i] in root.pages: Button {
                     text: name;
-                                    enabled: root.question == "";
+                                    enabled: (root.question == "" && !root.notice-open);
                     checkable: true;
                     checked: i == root.page;
                     clicked => { root.page-chosen(i); }
@@ -278,12 +288,12 @@ export component PredicateEditorWindow inherits Window {
                                 Button {
                                     horizontal-stretch: 1;
                                     text: label;
-                                    enabled: root.question == "";
+                                    enabled: (root.question == "" && !root.notice-open);
                                     clicked => { root.recent-clicked(i); }
                                 }
                                 Button {
                                     text: "forget";
-                                    enabled: root.question == "";
+                                    enabled: (root.question == "" && !root.notice-open);
                                     clicked => { root.recent-forgotten(i); }
                                 }
                             }
@@ -293,7 +303,7 @@ export component PredicateEditorWindow inherits Window {
                         spacing: 2px;
                         for label[i] in root.buttons: Button {
                             text: label;
-                                    enabled: root.question == "";
+                                    enabled: (root.question == "" && !root.notice-open);
                             clicked => { root.button-clicked(i); }
                         }
                     }
@@ -304,13 +314,13 @@ export component PredicateEditorWindow inherits Window {
                             Button {
                                 horizontal-stretch: 1;
                                 text: root.buttons[row * 2];
-                                    enabled: root.question == "";
+                                    enabled: (root.question == "" && !root.notice-open);
                                 clicked => { root.button-clicked(row * 2); }
                             }
                             if row * 2 + 1 < root.buttons.length: Button {
                                 horizontal-stretch: 1;
                                 text: root.buttons[row * 2 + 1];
-                                    enabled: root.question == "";
+                                    enabled: (root.question == "" && !root.notice-open);
                                 clicked => { root.button-clicked(row * 2 + 1); }
                             }
                         }
@@ -321,17 +331,68 @@ export component PredicateEditorWindow inherits Window {
                         VerticalLayout {
                             padding: 4px;
                             spacing: 4px;
-                            HorizontalLayout {
+                            if panel.hash-layout: HorizontalLayout {
+                                spacing: 6px;
                                 DefaultsButton {
                                     actions: root.defaults-actions;
-                                    enabled: root.question == "";
+                                    enabled: root.question == "" && !root.notice-open;
+                                    opening => { root.defaults-menu(p); }
+                                    selected(action) => { root.defaults-action(p, action); }
+                                }
+                                Text { text: panel.fields[0].text; vertical-alignment: center; color: Theme.text; }
+                                VerticalLayout {
+                                    alignment: center;
+                                    HashChoices {
+                                        options: panel.fields[1].options;
+                                        chosen: panel.fields[1].chosen;
+                                        enabled: root.question == "" && !root.notice-open;
+                                        focus-request: root.hash-focus;
+                                        chose(option) => { root.chose(p, 1, option); }
+                                        accepted => { root.ok(p); }
+                                    }
+                                }
+                                VerticalLayout {
+                                    horizontal-stretch: 1; spacing: 4px;
+                                    TextEdit {
+                                        property <{x:length,y:length,w:length,h:length}> frame: {x:self.absolute-position.x,y:self.absolute-position.y,w:self.width,h:self.height};
+                                        changed frame => { root.hash-field-placed(2,self.frame.x/1px,self.frame.y/1px,self.frame.w/1px,self.frame.h/1px); }
+                                        min-width: 420px; min-height: 220px;
+                                        text <=> root.hash-text;
+                                        placeholder-text: panel.fields[2].placeholder;
+                                        enabled: root.question == "" && !root.notice-open;
+                                        edited(text) => { root.text-edited(p, 2, text); }
+                                    }
+                                    Button { text: panel.fields[3].text; enabled: root.question == "" && !root.notice-open; clicked => { root.pressed(p, 3); } }
+                                    Button { text: panel.fields[4].text; enabled: root.question == "" && !root.notice-open; clicked => { root.pressed(p, 4); } }
+                                }
+                                VerticalLayout {
+                                    alignment: center;
+                                    HashChoices {
+                                        property <{x:length,y:length,w:length,h:length}> frame: {x:self.absolute-position.x,y:self.absolute-position.y,w:self.width,h:self.height};
+                                        changed frame => { root.hash-field-placed(5,self.frame.x/1px,self.frame.y/1px,self.frame.w/1px,self.frame.h/1px); }
+                                        options: panel.fields[5].options;
+                                        chosen: panel.fields[5].chosen;
+                                        enabled: root.question == "" && !root.notice-open;
+                                        chose(option) => { root.chose(p, 5, option); }
+                                        accepted => { root.ok(p); }
+                                    }
+                                }
+                                VerticalLayout {
+                                    alignment: center;
+                                    Button { text: "ok"; enabled: root.question == "" && !root.notice-open; clicked => { root.ok(p); } }
+                                }
+                            }
+                            if !panel.hash-layout: HorizontalLayout {
+                                DefaultsButton {
+                                    actions: root.defaults-actions;
+                                    enabled: (root.question == "" && !root.notice-open);
                                     opening => { root.defaults-menu(p); }
                                     selected(action) => { root.defaults-action(p, action); }
                                 }
                                 for field[f] in panel.fields: FieldView {
                                     field: field;
                                     comparison-focus: root.comparison-focus;
-                                    blocked: root.question != "";
+                                    blocked: root.question != "" || root.notice-open;
                                     here: field.shown && field.line == 0;
                                     chose(option) => { root.chose(p, f, option); }
                                     ticked(option, on) => { root.ticked(p, f, option, on); }
@@ -347,16 +408,16 @@ export component PredicateEditorWindow inherits Window {
                                     alignment: center;
                                     Button {
                                         text: "ok";
-                                    enabled: root.question == "";
+                                    enabled: (root.question == "" && !root.notice-open);
                                         clicked => { root.ok(p); }
                                     }
                                 }
                             }
-                            if panel.two-lines: HorizontalLayout {
+                            if panel.two-lines && !panel.hash-layout: HorizontalLayout {
                                 for field[f] in panel.fields: FieldView {
                                     field: field;
                                     comparison-focus: root.comparison-focus;
-                                    blocked: root.question != "";
+                                    blocked: root.question != "" || root.notice-open;
                                     here: field.shown && field.line == 1;
                                     chose(option) => { root.chose(p, f, option); }
                                     ticked(option, on) => { root.ticked(p, f, option, on); }
@@ -372,7 +433,7 @@ export component PredicateEditorWindow inherits Window {
                                     alignment: center;
                                     Button {
                                         text: "ok";
-                                    enabled: root.question == "";
+                                    enabled: (root.question == "" && !root.notice-open);
                                         clicked => { root.ok(p); }
                                     }
                                 }
