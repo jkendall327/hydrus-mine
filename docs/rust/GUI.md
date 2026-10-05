@@ -3107,3 +3107,15 @@ namespaces receive random RGB colours. Owned Enter Text and confirmation childre
 block parent Apply, and Cancel discards the whole Options draft. Accepted colours
 persist across reopening and reach existing media tag and OR predicate rows.
 The OR-row namespace text preserves named, missing and empty namespace choices.
+Options > GUI > frame locations also stages the disable-rescue checkbox,
+rescued-position safety padding and its 0–100 pixel amount. Legacy preferences
+import and reopen with their recorded values. Remembered positions for the main
+window and existing named dialog owners now reach an owner-local opening check
+when their Winit window becomes available. It preserves a top left within the
+configured leniency, otherwise tries the three remaining window corners in the
+reference order and falls back to the primary display. The disable checkbox
+preserves the requested position. Hidden owners defer the one-time check.
+`window_rescue.json` records actual Qt Options staging/bounds/serialization/Cancel,
+real offscreen display decisions and the unmodified Qt rescue handler over an
+explicit two-display topology. Native geometry and Options screenshot regressions
+are authored for hosted CI; native OS monitor behavior has not been executed here.

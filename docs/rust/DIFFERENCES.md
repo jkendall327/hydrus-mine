@@ -1932,10 +1932,9 @@ sequence as an unchanged draft.
 
 Frame locations: the complete imported table and geometry editor persist all
 fields, but placement consumers currently use remembered size/position and
-maximised/fullscreen for the main window, media viewer and Options window. Other
-named dialog owners have not yet been wired to their frame keys. Default gravity,
-parent/cursor positioning, screen fitting and offscreen-rescue preferences still
-lack native consumers; their parent/table/editor coverage remains Partial.
+maximised/fullscreen for the main window, media viewer and Options window. Existing named dialog owners also use their wired frame keys. Default gravity,
+parent/cursor positioning and screen fitting remain incomplete; the broader
+frame/table/editor coverage remains Partial.
 The real Options lifecycle does not retain incidental resize/move geometry on
 Cancel/X or unchanged Apply: the accepted-dialog geometry save occurs before
 the GUI page commits its captured frame table. Native retains the same final
@@ -2195,3 +2194,16 @@ coloured child rows. Qt's "OR connecting string (on one line)" currently has no
 active renderer consumer; this slice does not change that inactive preference.
 Authored native replays and namespace-colours-draft.png await hosted CI; no local
 Cargo builds, tests or mutation runs were performed.
+Ordinary remembered-window offscreen rescue now consumes the three GUI preferences
+at the main and existing named-dialog placement boundary. Native monitor bounds
+come from the opening Winit window; the check has owner-local state and preserves
+hidden/retired-window boundaries. Winit has no portable available-work-area origin,
+so the final fallback uses primary monitor geometry rather than Qt's taskbar/dock
+work-area origin. Mixed-DPI global coordinate conventions and compositor-enforced
+positions can also differ. Default parent/mouse positions, unkeyed windows, the
+self-sizing media-viewer exception and dynamic Qt rescue after later screen/layout
+changes remain unported. These limits keep the rescue controls Partial proposals;
+exposing them does not complete the broader GUI/frame family. Deterministic
+multi-monitor reference cases supply only QApplication screen geometry; the actual
+GetSafePosition decision handler is unchanged. Native OS movement and authored
+Rust regressions remain pending hosted validation.

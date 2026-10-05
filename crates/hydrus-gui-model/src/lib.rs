@@ -137,3 +137,5 @@ pub mod archive_repair;
 pub mod file_history;
 
 pub mod file_history_worker;
+
+pub mod window_rescue;

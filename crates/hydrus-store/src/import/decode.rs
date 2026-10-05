@@ -530,6 +530,22 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         gui.confirm_exit = value;
     }
     insert_setting(&mut input, &gui)?;
+    let mut rescue = crate::settings::WindowRescueSettings::default();
+    if let Some(options) = &options {
+        if let Some(&value) = options.booleans.get("disable_get_safe_position_test") {
+            rescue.disabled = value;
+        }
+        if let Some(&value) = options
+            .booleans
+            .get("fuzzy_relocate_on_get_safe_position_test")
+        {
+            rescue.add_padding = value;
+        }
+        if let Some(&value) = options.integers.get("forgive_frame_gubbins_fuzzy_padding") {
+            rescue.padding = u8::try_from(value.clamp(0, 100)).unwrap_or_default();
+        }
+    }
+    insert_setting(&mut input, &rescue)?;
     let mut preferences = crate::settings::OptionsPreferences::default();
     if let Some(options) = &options {
         if let Some(&value) = options.booleans.get("remember_options_window_panel") {
