@@ -2905,3 +2905,5 @@ exit Cancel/accept/re-show/fresh-binding coverage is authored; hosted execution
 remains pending. This correction adds no completion credit or renderer fidelity.
 
 The combined colour/thumbnail integration copies all eight saved local/remote and selected/unselected fill/border roles into each owned paint snapshot. Current physical storage membership selects the palette, including collection membership. A colour change clears both old and current copied cells before repaint; the viewport background keeps its saved grid colour behind the clipped image. This integration remains source-only until exact hosted native execution and PNG inspection.
+
+The popup question label continues to wrap in the native client. Actual Qt `PopupMessage._text_yes_no` remains a single-line label at the same narrow/fixed width settings; the new `popup_question_layout.json`/PNG records that distinction and verifies every Qt action control fits within its card. The native layout repair preserves its existing wrapping while preventing the lower stop button from crossing the clipped card boundary. No Options or popup family completion status changes.
