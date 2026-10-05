@@ -183,7 +183,8 @@ fn options_cancel_retired_apply_reopen_and_all_segmented_native_consumers() {
                 &pixels,
                 760,
                 650,
-            );
+            )
+            .expect("save the sibling colour evidence");
             let alias = child
                 .get_suggestions()
                 .iter()
@@ -218,7 +219,8 @@ fn options_cancel_retired_apply_reopen_and_all_segmented_native_consumers() {
                 &pixels,
                 760,
                 650,
-            );
+            )
+            .expect("save the sibling colour evidence");
         }
         child.invoke_cancel();
         child.invoke_chosen(0);
@@ -427,7 +429,8 @@ fn options_cancel_retired_apply_reopen_and_all_segmented_native_consumers() {
             &pixels,
             width,
             650,
-        );
+        )
+        .expect("save the sibling colour evidence");
     }
     assert_eq!(
         extents[0], extents[1],

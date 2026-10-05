@@ -304,7 +304,7 @@ impl Draft {
                 return Err(StoreError::Invalid("Downloader definitions changed in another editor. Reopen the import before applying.".into()));
             }
             if draft.login_scripts != draft.original_login_scripts {
-                logins.scripts = draft.login_scripts.clone();
+                logins.scripts.clone_from(&draft.login_scripts);
                 logins.scripts.sort_by_key(|script| script.credentials.len());
                 for script in &logins.scripts {
                     for example in &script.examples {
