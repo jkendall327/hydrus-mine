@@ -204,10 +204,9 @@ impl State {
                             let state = Rc::downgrade(self);
                             move || state.upgrade().is_some_and(|state| state.valid())
                         }),
-                    ) {
-                        if let Some(window) = self.window.upgrade() {
-                            window.set_error(error.into());
-                        }
+                    ) && let Some(window) = self.window.upgrade()
+                    {
+                        window.set_error(error.into());
                     }
                     self.children();
                 }
