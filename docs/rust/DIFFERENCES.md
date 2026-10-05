@@ -2845,7 +2845,8 @@ or new preference is introduced. Configured missing paths are opened without a
 validation dialog or creation. On non-Windows platforms, reference legacy
 backslash recovery only applies when the original spelling does not exist.
 The fallback is created only for an unset preference. Home lookup is owner-local:
-POSIX HOME/account fallback and Windows USERPROFILE/HOMEDRIVE+HOMEPATH follow
+POSIX HOME (including an explicit empty value)/account fallback and Windows
+USERPROFILE/HOMEDRIVE+HOMEPATH follow
 Python expanduser rules without changing process environment. The POSIX resolver
 uses the standard-library home API with a local deprecation allowance; its
 Windows ambiguity does not apply to that cfg-limited branch. An unavailable home

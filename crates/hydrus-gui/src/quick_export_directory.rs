@@ -43,13 +43,17 @@ impl State {
     }
 }
 // Python expanduser uses HOME, then the POSIX account database. This stable
-// std API implements that account fallback; its deprecation concerns Windows,
+// std API supplies the account fallback only after checking HOME ourselves,
+// because it ignores an explicitly empty HOME. Its deprecation concerns Windows,
 // where we instead use Python's USERPROFILE/HOMEDRIVE+HOMEPATH rules below.
 #[allow(deprecated)]
 fn default_home() -> Option<PathBuf> {
     #[cfg(unix)]
     {
-        std::env::home_dir()
+        home_or_account(
+            std::env::var_os("HOME").map(PathBuf::from),
+            std::env::home_dir,
+        )
     }
     #[cfg(windows)]
     {
@@ -67,6 +71,14 @@ fn default_home() -> Option<PathBuf> {
     {
         std::env::var_os("HOME").map(PathBuf::from)
     }
+}
+// Pure owner-local resolution: an explicit empty path is a value, not absence.
+#[cfg(any(unix, test))]
+fn home_or_account(
+    home: Option<PathBuf>,
+    account: impl FnOnce() -> Option<PathBuf>,
+) -> Option<PathBuf> {
+    home.or_else(account)
 }
 /// An action owned by one main-window binding, including its home resolver.
 #[derive(Clone)]
@@ -151,5 +163,34 @@ impl Control {
         if self.0.available() {
             crate::launch(&directory);
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn explicit_empty_home_wins_and_account_lookup_only_runs_for_absent_home() {
+        let calls = Cell::new(0);
+        let account = || {
+            calls.set(calls.get() + 1);
+            Some(PathBuf::from("synthetic account home"))
+        };
+        assert_eq!(
+            home_or_account(Some(PathBuf::new()), account),
+            Some(PathBuf::new())
+        );
+        assert_eq!(calls.get(), 0, "empty HOME must not consult the account");
+        assert_eq!(
+            home_or_account(Some(PathBuf::from("synthetic explicit home")), account),
+            Some(PathBuf::from("synthetic explicit home"))
+        );
+        assert_eq!(calls.get(), 0);
+        assert_eq!(
+            home_or_account(None, account),
+            Some(PathBuf::from("synthetic account home"))
+        );
+        assert_eq!(calls.get(), 1);
+        assert_eq!(home_or_account(None, || None), None);
     }
 }
