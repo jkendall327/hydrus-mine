@@ -237,7 +237,7 @@ impl Handle {
                 data.cache
                     .remove_if(id, |current| Arc::ptr_eq(current, &loading));
             }
-            completion.0.take();
+            drop(completion.0.take());
             loading.finish(raster.clone());
             raster
         } else {
