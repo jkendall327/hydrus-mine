@@ -1,6 +1,6 @@
 //! Real Options staging and segmented colours in all existing sibling-display consumers.
 use super::tag_dialog_preferences::fixture;
-use hydrus_core::{ServiceKey, tag_presentation::SiblingConnectorColours};
+use hydrus_core::{ServiceKey, Tag, tag_presentation::SiblingConnectorColours};
 use hydrus_gui::{
     ListText, MainWindow, OptionsWindow, Pages, SearchPage, WriteTagsWindow, bind, headless,
 };
@@ -334,6 +334,106 @@ fn options_cancel_retired_apply_reopen_and_all_segmented_native_consumers() {
     assert_eq!(child.get_selected().iter().collect::<Vec<_>>(), selected);
     child.invoke_cancel();
     manage.invoke_cancel();
+    // A selected fading final parent suffix stays fixed as the viewport widens.
+    let collapsed = &recorded["collapsed_case"];
+    let service = store.snapshot().services.by_key(&key).unwrap().id;
+    hydrus_store::content::tag_relations::apply(
+        &store,
+        hydrus_store::display::RelationKind::Parents,
+        collapsed["parents"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(
+                |pair| hydrus_store::content::tag_relations::RelationUpdate {
+                    service,
+                    left: Tag::new(pair[0].as_str().unwrap()).unwrap(),
+                    right: Tag::new(pair[1].as_str().unwrap()).unwrap(),
+                    action: hydrus_store::content::tag_relations::RelationAction::Add,
+                },
+            )
+            .collect(),
+    )
+    .unwrap();
+    store
+        .write(|ctx| {
+            let mut preferences: hydrus_store::tag_editing::TagEditingSettings =
+                settings::get(ctx.conn())?;
+            preferences.autocomplete_show_parents = true;
+            preferences.autocomplete_expand_parents = false;
+            preferences.autocomplete_show_siblings = true;
+            settings::set(ctx.conn(), &preferences)?;
+            settings::set(
+                ctx.conn(),
+                &SiblingConnectorColours {
+                    fade: true,
+                    namespace: None,
+                },
+            )
+        })
+        .unwrap();
+    let slot = hydrus_gui::write_tag_window::Slot::default();
+    let native_index = windows.count();
+    let child = hydrus_gui::write_tag_window::open(
+        &store,
+        key.clone(),
+        &[],
+        "collapsed parent colours",
+        &slot,
+        Rc::new(|_| {}),
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    source(&child, true, &tag_label);
+    source(&child, false, &file_label);
+    child.invoke_edited(recorded["query"].as_str().unwrap().into());
+    child.invoke_fetch();
+    compare(&child.get_suggestions(), &collapsed["write"], true);
+    let alias = child
+        .get_suggestions()
+        .iter()
+        .position(|row| row.text.starts_with("creator:parity alias"))
+        .unwrap();
+    child.invoke_selection_clicked(i32::try_from(alias).unwrap(), false, false);
+    let native = windows.get(native_index).unwrap();
+    let mut extents = Vec::new();
+    let expected_trailing: [u8; 3] =
+        serde_json::from_value(collapsed["selected_paints"][0]["trailing_colour"].clone()).unwrap();
+    for width in [760_u32, 1100] {
+        let pixels = headless::render(&native, width, 650);
+        let y = child.get_results_y().floor() as usize + 2 + alias * 22 + 2;
+        let row = &pixels[y * width as usize * 4..(y + 1) * width as usize * 4];
+        let gradient: Vec<_> = row
+            .chunks_exact(4)
+            .enumerate()
+            .filter(|(_, pixel)| pixel[0] == 0 && pixel[2] > 0 && pixel[2] < 250 && pixel[1] < 170)
+            .map(|(x, _)| x)
+            .collect();
+        assert!(
+            !gradient.is_empty(),
+            "collapsed parent suffix paints its own green-to-blue fade"
+        );
+        extents.push((*gradient.first().unwrap(), *gradient.last().unwrap()));
+        for x in width as usize - 100..width as usize - 30 {
+            assert_eq!(
+                &row[x * 4..x * 4 + 3],
+                expected_trailing.as_slice(),
+                "Qt keeps the preceding ideal solid beyond the fading suffix"
+            );
+        }
+        headless::save_png(
+            &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                .join(format!("sibling-colours-collapsed-{width}.png")),
+            &pixels,
+            width,
+            650,
+        );
+    }
+    assert_eq!(
+        extents[0], extents[1],
+        "a wider viewport cannot stretch the final text/background fade"
+    );
+    child.invoke_cancel();
     assert_eq!(
         hydrus_store::Store::open(store.dir())
             .unwrap()

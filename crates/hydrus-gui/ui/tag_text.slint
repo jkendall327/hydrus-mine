@@ -11,11 +11,20 @@ export component PaintedTagText inherits Rectangle {
     }
     if root.item.parts.length > 0: HorizontalLayout {
         spacing:0px;alignment:start;
-        for part[index] in root.item.parts: Rectangle {
+        for part in root.item.parts: Rectangle {
             min-width:label.preferred-width + 2px;
             preferred-width:label.preferred-width + 2px;
-            horizontal-stretch:index == root.item.parts.length - 1 ? 1 : 0;
-            background:root.selected ? (part.fade ? @linear-gradient(90deg,part.previous-colour,part.colour) : part.colour) : transparent;
+            horizontal-stretch:0;
+            // Qt paints each solid run through the remaining row, then overlays
+            // fading runs only within their fixed text/background block.
+            Rectangle {
+                width:max(0px,root.width - parent.x);height:parent.height;
+                background:root.selected && !part.fade ? part.colour : transparent;
+            }
+            Rectangle {
+                width:label.preferred-width + 2px;height:parent.height;
+                background:root.selected && part.fade ? @linear-gradient(90deg,part.previous-colour,part.colour) : transparent;
+            }
             label := Text {
                 text:part.text;
                 width:self.preferred-width;

@@ -436,7 +436,7 @@ impl ManageTags {
                     hydrus_core::numbers::human_int(parents.len() as u64)
                 ));
             }
-            let parts = shown_ideal.as_ref().map_or_else(Vec::new, |ideal| {
+            let parts = if let Some(ideal) = shown_ideal.as_ref() {
                 let suffix = label
                     .strip_prefix(&format!(
                         "{prefix}{}{ideal}",
@@ -452,7 +452,10 @@ impl ManageTags {
                     &colours,
                     false,
                 )
-            });
+            } else {
+                let suffix = label.strip_prefix(&prefix).unwrap_or_default().to_owned();
+                style.parent_runs((&tag, prefix), suffix, &colours, false)
+            };
             out.push(TagRow {
                 tag: tag.clone(),
                 colour_tag: tag.clone(),

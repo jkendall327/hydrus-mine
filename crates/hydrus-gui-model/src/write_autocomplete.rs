@@ -705,7 +705,7 @@ impl WriteAutocomplete {
             {
                 label.push_str(&format!(" ({} parents)", parents.len()));
             }
-            let parts = shown_ideal.as_ref().map_or_else(Vec::new, |ideal| {
+            let parts = if let Some(ideal) = shown_ideal.as_ref() {
                 let ideal_text = presentation.render(ideal);
                 let suffix = label
                     .strip_prefix(&format!(
@@ -722,7 +722,10 @@ impl WriteAutocomplete {
                     &colours,
                     true,
                 )
-            });
+            } else {
+                let suffix = label.strip_prefix(&prefix).unwrap_or_default().to_owned();
+                style.parent_runs((&m.tag, prefix), suffix, &colours, true)
+            };
             rows.push(Suggestion {
                 tag: m.tag.clone(),
                 colour_tag: m.tag.clone(),
