@@ -4108,7 +4108,8 @@ review. Rows show real job types, due counts and future counts; type identities
 survive refresh and sorting. Clear asks “Clear all the selected scheduled work?”
 and cancels both due and future jobs of the captured types. Selected/all work
 runs the existing physical maintenance runners off the UI, with a real
-cancellable file-maintenance toaster, committed progress and five-second finish.
+cancellable file-maintenance toaster, pre-work job gauge, committed results and
+five-second finish.
 A crash-safe file lease excludes the daemon's simultaneous physical pass.
 Integrity redownload results reach a named URL-import page without selecting it;
 matching named pages are reused and URL requests feed the existing importer.
@@ -4119,6 +4120,11 @@ The actual Qt recording is file_maintenance_current.json; native/model/Store
 regressions and file-maintenance-current.png are authored and hosted execution
 and final rendered review remain pending. New scheduling/search and the parent
 maintenance family remain incomplete.
-This current-work leaf remains Partial with zero completion credit because Clear
-waits behind an accepted forced pass and progress follows committed file work,
-rather than the reference's batch interleaving and pre-work gauge.
+Accepted Clear/Refresh commands are serviced between fetched batches while the
+same actor retains its physical lease; Clear never races that actor's in-flight
+file results. Ordinary daemon passes defer on lease contention, and forced waits
+remain cancellable. Each redownload URL is dispatched independently, so one
+invalid URL reports its error without suppressing other useful URLs.
+This current-work leaf remains Partial with zero completion credit: counts refresh
+only between native batches, independent-process Clear waits for its physical
+pass, and the waiting-for-lease popup is published before admission.

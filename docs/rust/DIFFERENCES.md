@@ -3334,14 +3334,21 @@ cause. No local Rust execution, mutation run or completion credit is claimed.
 The scheduled file-maintenance review implements its current-work tab using the
 existing 27 native runners. New-work search, quick selection and scheduling are
 still missing. The native review uses an inline owned yes/no confirmation; Qt
-uses its modal question dialog. Progress is published after each file commits,
-where Qt increments its gauge just before that file's work. Native GUI commands
-currently serialize Clear behind an accepted forced pass; Qt can clear between
-_RunJob batches. The native physical lease is shared across GUI and daemon and
-is released on process exit; no UI disk work or joins are introduced. Broader
-backend notification/error presentation and scheduler policy are not claimed.
-This finite source is not a runtime attestation: native execution, exact PNG
-inspection remain pending. Exactly one original Missing leaf is recorded as
-Partial with zero completion credit; no parent, scheduling or search claim is
-made. Batch URL validation currently rejects the batch on an invalid URL,
-where Qt calls ImportURL separately for each reported URL.
+uses its modal question dialog. Gauges advance immediately before each physical
+job, while committed file results drive thumbnail facts and redownload delivery.
+Same-owner Clear/Refresh commands are drained between fetched batches before new
+work is read, matching the reference's batch lock boundary; the exclusive native
+physical lease stays held so this metadata-only Clear does not race file work.
+Ordinary daemon/CLI passes defer immediately on contention rather than waiting
+uncancellably. GUI force waits remain cancellable. No UI disk work or joins are
+introduced, and each redownload URL is attempted independently with its own error.
+
+This exact original Missing leaf remains Partial with zero completion credit:
+reference count Refresh can publish while a physical batch is still running,
+but the native actor services it at the next batch boundary. An independent
+process's physical pass still delays native Clear until its pass lease is free;
+Qt's manager releases its local lock between batches. Native publishes the
+cancellable waiting job before physical admission; Qt first publishes after
+admitting its batch. Broader backend notification/error presentation and
+scheduler policy remain unclaimed. Rust/native execution and exact authored PNG
+inspection are pending; no canonical ledger, parent or scheduling/search claim.
