@@ -3171,22 +3171,27 @@ gate. Apply refreshes an existing viewer, Cancel preserves its current policy,
 and the imported setting survives reopening. Existing scroll position survives
 a media change when it still fits, and clamps when the new list is shorter.
 
-Options > GUI > misc now stages the ISO-time checkbox and the bytes precision
-spinbox (1–6), imports their exact legacy keys, and preserves Apply/Cancel and
-reopening. File/gallery log rows, page and bandwidth status, and file-info
-hover/status/menu text consume owned formatting settings; timestamps use the
-system timezone and byte rounding preserves the reference half-even behavior.
-`gui_format.json` records eight actual Qt control states, boundary inputs,
-serialization/reopening and formatter/log outputs. Native replay tests include
-retained Cancel owners, real log rows, page totals, selected-file size text and
-an Options PNG capture; their execution awaits hosted CI.
+Options > GUI > misc stages the ISO-time checkbox and bytes precision spinbox
+(1–6), imports their exact legacy keys, and preserves Apply/Cancel and reopening.
+Owned formatting reaches existing log, page/status, file-info, service/import,
+network review/rule/job/graph, import-options, parser-preview and PNG labels;
+live download and popup progress preserve gauges and cancellation ownership.
+ISO also reaches About, cookies, subscriptions, downloader timestamps and
+viewing-statistics menus. Python applies the current local offset to every date;
+the native formatter does the same, with recorded opposite-season timezone and
+POSIX year-one cases. Manage Times and duplicate-review relative suffixes stay
+relative because the reference explicitly forces that behavior.
 
-Both formatting controls remain Partial proposals. Network review/job/rule/graph
-bytes, local-import and service list sizes, import/parser/PNG helper labels, and
-about/auto-resolution/subscription/network-session/times-editor relative-time
-labels still use the fixed default formatters. The inspected radio Return flag
-is unclaimed because the reference dialog behaved identically in both states
-on the recorded platform. Broader GUI/misc/menu coverage stays Partial.
+`gui_format.json` records eight actual Qt staged/saved/reopened control states,
+byte/time/log outputs, import summaries, raw parsing previews, expiry and
+relative-time variants. Five owned status inputs per setting pass through the
+actual Qt network-job control; no request is sent. Native consumer replays and
+an Options PNG capture are authored for hosted CI, with no local Rust builds.
+Both original controls remain Partial and add zero completed leaves: backend
+network wait and import/network error messages still format with defaults, and
+whole-application cached-label broadcast refresh timing is not claimed. The
+radio Return flag is unclaimed because the reference dialog behaved identically
+in both states on the recorded platform. Broader GUI/misc/menu stays Partial.
 Tag Presentation offers the sibling connector colour controls. Fading disables the optional namespace choice and uses the ideal tag’s colour; turning fading off allows a named, missing, empty, or ideal-tag namespace choice. Apply saves the staged preferences and Cancel discards them. Manage Tags paints raw/count, connector and ideal-tag runs separately with solid colours; shared write-autocomplete rows can fade between namespace colours, including selected backgrounds. Detached tag editors and both relationship inputs share those runs, and open, visible editors refresh after another owner changes the preferences without replacing the input or selected tags.
 
 Selected sibling rows paint solid namespace runs through the remaining row, then overlay each fading run only within its fixed text block. A collapsed-parent suffix can fade to the unnamespaced colour while the preceding ideal tag’s solid colour remains beyond the suffix, including when the viewport widens.

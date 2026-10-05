@@ -2254,14 +2254,17 @@ canvases remain outside this control slice. A real native wheel/navigation/zoom
 replay and `viewer-tags-wheel.png` capture are authored for hosted CI; they were
 not executed locally. No new broader hover/list/preview claim is proposed.
 
-GUI formatting settings are owned values rather than the reference mutable
-formatter globals. ISO time and byte precision reach existing log, page/status
-and file-info consumers after Apply, with Cancel and reopening preserved.
-Other native size/time display helpers listed in the GUI formatting packet
-still use default formatting, so the two global controls remain Partial and
-add zero completed original leaves. The Qt fixture was recorded in UTC; native
-production ISO formatting follows the system timezone. Integer-locale, radio
-Return force and menu-button wheel preferences are outside this slice.
+GUI formatting settings are owned values rather than mutable formatter globals.
+ISO and byte precision reach the existing GUI display consumers documented in
+`gui-format.json`, with staged Apply/Cancel and reopening preserved. ISO uses
+Python's current local offset rather than historical target-date DST; separate
+UTC/New York/Berlin recordings cover the distinction and POSIX year-one output.
+Time-picker and duplicate-review relative suffixes intentionally retain the
+reference force-no-ISO behavior. Existing refresh paths update cached labels;
+immediate whole-application broadcast timing is not claimed. Backend-generated
+network wait and import/network error strings still use default formatting, so
+both original global preferences remain Partial and add zero completed leaves.
+Integer-locale, radio Return force and menu-button wheel are outside this slice.
 
 Drag and hover-wheel input now use each viewer's own active/closed lifetime,
 rather than the main window's latest-viewer slot. Several visible viewers keep
