@@ -823,6 +823,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             let report = hooks.pages.borrow().weight_report();
             crate::debug_actions::message("Information", &report);
         }
+        Command::ReviewVacuum => crate::vacuum_review_window::open(&store),
         Command::TagSyncReview => crate::tag_sync_review_window::open(&store),
         Command::TagDisplaySyncNow => {
             let now = hydrus_core::time::TimestampMs::now().millis() / 1000;

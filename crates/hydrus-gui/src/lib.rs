@@ -165,6 +165,7 @@ pub mod tag_suggestions_window;
 mod tag_sync_review_window;
 mod tag_text;
 pub mod thumbnail_background;
+mod vacuum_review_window;
 
 /// Missing-thumbnail recovery, independent of stored image colour policy.
 pub fn thumbnail_recovery(

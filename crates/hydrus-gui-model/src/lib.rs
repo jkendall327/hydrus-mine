@@ -94,6 +94,7 @@ pub mod session_saving;
 pub mod session_weight;
 pub mod set_password;
 pub mod shortcut_capture;
+pub mod shortcut_sets;
 pub mod shutdown_work;
 pub mod sidecar_editors;
 pub mod sidecars;
@@ -119,6 +120,7 @@ pub mod thumbnail_preview_selection;
 pub mod thumbnail_ratings;
 pub mod times_editor;
 pub mod urls_editor;
+pub mod vacuum_review;
 pub mod viewer_prefetch;
 
 pub mod tag_relationships;

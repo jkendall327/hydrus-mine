@@ -3,7 +3,6 @@
 //! deleting, then the scan and clear on a worker with a cancellable
 //! "clearing orphans" popup.
 use std::cell::RefCell;
-use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 

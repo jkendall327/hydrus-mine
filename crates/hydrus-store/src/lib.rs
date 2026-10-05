@@ -80,6 +80,7 @@ pub mod transfer;
 pub mod trash;
 pub mod undo;
 pub mod urls;
+pub mod vacuum;
 pub mod viewing_maintenance;
 pub mod watchers;
 

@@ -2678,6 +2678,15 @@ packet proposes only the two original Missing Options leaves. Authored Rust and
 native regressions await hosted CI; no local Cargo build, Rust test or mutation
 run was performed for this slice.
 
+Options > shortcuts' set lists: the command editor still offers only the
+commands with a native executor (three for the main window, six for the
+viewers), so editing a default binding for another command replaces it with
+one of those, and only those run. Default bindings with data are shown, not
+run. Custom sets are kept and edited but nothing turns them on in the media
+viewer yet. A custom set can't take a built-in set's name (the reference only
+keeps custom names apart from each other). "restore defaults" chooses from
+buttons rather than a list, and the help shows in a message window.
+
 Shortcut capture now has an owned Options > set > command path and persisted
 keyboard consumers in the main GUI and media viewer. The two capture policies
 migrate from typed legacy booleans. Legacy shortcut sets remain retained as raw
@@ -3438,6 +3447,14 @@ manual save-last-session action and wider debug GUI/style families remain unclai
 - hydrus-rs applies siblings and parents as it writes, so there is never
   work to show: every service reads as synced and "work hard now!" never
   appears. Repository "waiting on" lines can't arise without repositories.
+
+## Review vacuum data
+
+- hydrus-rs has one database file (listed as "main"), not the reference's
+  four. It vacuums in place with SQLite's `VACUUM` while every store
+  connection is paused, rather than vacuuming into a copy and swapping it
+  in with the connections closed; the effect on the file is the same.
+- The window opens directly, without the "loading database data" popup.
 
 ## Idle-time maintenance
 

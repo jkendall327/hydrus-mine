@@ -1,0 +1,1100 @@
+{
+ "archive_delete_filter": [
+  {
+   "action": 2,
+   "gesture": {
+    "key": 0,
+    "kind": 1,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 2,
+   "gesture": {
+    "key": 0,
+    "kind": 1,
+    "modifiers": [],
+    "press": 2
+   }
+  },
+  {
+   "action": 1,
+   "gesture": {
+    "key": 1,
+    "kind": 1,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 0,
+   "gesture": {
+    "key": 2,
+    "kind": 1,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 2,
+   "gesture": {
+    "key": 23,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 1,
+   "gesture": {
+    "key": 8,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 0,
+   "gesture": {
+    "key": 1,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 3,
+   "gesture": {
+    "key": 9,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 6,
+   "gesture": {
+    "key": 28,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  }
+ ],
+ "duplicate_filter": [
+  {
+   "action": 23,
+   "gesture": {
+    "key": 0,
+    "kind": 1,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 23,
+   "gesture": {
+    "key": 0,
+    "kind": 1,
+    "modifiers": [],
+    "press": 2
+   }
+  },
+  {
+   "action": 17,
+   "gesture": {
+    "key": 1,
+    "kind": 1,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 18,
+   "gesture": {
+    "key": 2,
+    "kind": 1,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 22,
+   "gesture": {
+    "key": 9,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  }
+ ],
+ "global": [
+  {
+   "action": 42,
+   "gesture": {
+    "key": 103,
+    "kind": 0,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   }
+  }
+ ],
+ "main_gui": [
+  {
+   "action": 78,
+   "gesture": {
+    "key": 21,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 56,
+   "gesture": {
+    "key": 25,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 83,
+   "gesture": {
+    "key": 109,
+    "kind": 0,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 89,
+   "gesture": {
+    "key": 114,
+    "kind": 0,
+    "modifiers": [
+     0,
+     2
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 84,
+   "gesture": {
+    "key": 115,
+    "kind": 0,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 56,
+   "gesture": {
+    "key": 116,
+    "kind": 0,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 94,
+   "gesture": {
+    "key": 117,
+    "kind": 0,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 7,
+   "gesture": {
+    "key": 119,
+    "kind": 0,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 77,
+   "gesture": {
+    "key": 121,
+    "kind": 0,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 96,
+   "gesture": {
+    "key": 122,
+    "kind": 0,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 137,
+   "gesture": {
+    "key": 112,
+    "kind": 0,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 183,
+   "gesture": {
+    "key": 111,
+    "kind": 0,
+    "modifiers": [
+     0,
+     2
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 121,
+   "gesture": {
+    "key": 15,
+    "kind": 2,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 122,
+   "gesture": {
+    "key": 16,
+    "kind": 2,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   }
+  }
+ ],
+ "media": [
+  {
+   "action": 16,
+   "gesture": {
+    "key": 8,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 95,
+   "gesture": {
+    "key": 8,
+    "kind": 2,
+    "modifiers": [
+     2
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 49,
+   "gesture": {
+    "key": 20,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 50,
+   "gesture": {
+    "key": 19,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 4,
+   "gesture": {
+    "key": 23,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 45,
+   "gesture": {
+    "key": 23,
+    "kind": 2,
+    "modifiers": [
+     2
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 61,
+   "gesture": {
+    "key": 101,
+    "kind": 0,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 81,
+   "gesture": {
+    "key": 114,
+    "kind": 0,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 10,
+   "gesture": {
+    "key": 99,
+    "kind": 0,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   },
+   "text": "copy file (selected files)"
+  }
+ ],
+ "media_viewer": [
+  {
+   "action": 75,
+   "gesture": {
+    "key": 0,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 134,
+   "gesture": {
+    "key": 11,
+    "kind": 2,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   },
+   "text": "seek media (back 2.5 seconds)"
+  },
+  {
+   "action": 134,
+   "gesture": {
+    "key": 12,
+    "kind": 2,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   },
+   "text": "seek media (forwards 5 seconds)"
+  },
+  {
+   "action": 53,
+   "gesture": {
+    "key": 98,
+    "kind": 0,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 52,
+   "gesture": {
+    "key": 110,
+    "kind": 0,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 92,
+   "gesture": {
+    "key": 102,
+    "kind": 0,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 91,
+   "gesture": {
+    "key": 122,
+    "kind": 0,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 101,
+   "gesture": {
+    "key": 43,
+    "kind": 0,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 102,
+   "gesture": {
+    "key": 45,
+    "kind": 0,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 101,
+   "gesture": {
+    "key": 3,
+    "kind": 1,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 102,
+   "gesture": {
+    "key": 4,
+    "kind": 1,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 72,
+   "gesture": {
+    "key": 9,
+    "kind": 2,
+    "modifiers": [
+     2
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 65,
+   "gesture": {
+    "key": 10,
+    "kind": 2,
+    "modifiers": [
+     2
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 67,
+   "gesture": {
+    "key": 11,
+    "kind": 2,
+    "modifiers": [
+     2
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 69,
+   "gesture": {
+    "key": 12,
+    "kind": 2,
+    "modifiers": [
+     2
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 6,
+   "gesture": {
+    "key": 4,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 6,
+   "gesture": {
+    "key": 3,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 6,
+   "gesture": {
+    "key": 6,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  }
+ ],
+ "media_viewer_browser": [
+  {
+   "action": 100,
+   "gesture": {
+    "key": 9,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 100,
+   "gesture": {
+    "key": 11,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 100,
+   "gesture": {
+    "key": 15,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 90,
+   "gesture": {
+    "key": 1,
+    "kind": 1,
+    "modifiers": [],
+    "press": 1
+   }
+  },
+  {
+   "action": 100,
+   "gesture": {
+    "key": 3,
+    "kind": 1,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 99,
+   "gesture": {
+    "key": 10,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 99,
+   "gesture": {
+    "key": 12,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 99,
+   "gesture": {
+    "key": 16,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 99,
+   "gesture": {
+    "key": 4,
+    "kind": 1,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 97,
+   "gesture": {
+    "key": 13,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 98,
+   "gesture": {
+    "key": 14,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 6,
+   "gesture": {
+    "key": 0,
+    "kind": 1,
+    "modifiers": [],
+    "press": 2
+   }
+  },
+  {
+   "action": 6,
+   "gesture": {
+    "key": 2,
+    "kind": 1,
+    "modifiers": [],
+    "press": 0
+   }
+  }
+ ],
+ "media_viewer_media_window": [
+  {
+   "action": 75,
+   "gesture": {
+    "key": 0,
+    "kind": 1,
+    "modifiers": [],
+    "press": 0
+   }
+  }
+ ],
+ "preview_media_window": [
+  {
+   "action": 75,
+   "gesture": {
+    "key": 0,
+    "kind": 1,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 46,
+   "gesture": {
+    "key": 0,
+    "kind": 1,
+    "modifiers": [],
+    "press": 2
+   }
+  },
+  {
+   "action": 46,
+   "gesture": {
+    "key": 2,
+    "kind": 1,
+    "modifiers": [],
+    "press": 0
+   }
+  }
+ ],
+ "tags_autocomplete": [
+  {
+   "action": 126,
+   "gesture": {
+    "key": 0,
+    "kind": 2,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   }
+  },
+  {
+   "action": 127,
+   "gesture": {
+    "key": 7,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 128,
+   "gesture": {
+    "key": 11,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 129,
+   "gesture": {
+    "key": 12,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 130,
+   "gesture": {
+    "key": 9,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 131,
+   "gesture": {
+    "key": 10,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 132,
+   "gesture": {
+    "key": 15,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 133,
+   "gesture": {
+    "key": 16,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 93,
+   "gesture": {
+    "key": 105,
+    "kind": 0,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   }
+  }
+ ],
+ "thumbnails": [
+  {
+   "action": 46,
+   "gesture": {
+    "key": 4,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 46,
+   "gesture": {
+    "key": 3,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 47,
+   "gesture": {
+    "key": 28,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   }
+  },
+  {
+   "action": 148,
+   "gesture": {
+    "key": 13,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   },
+   "text": "move the thumbnail focus (move home)"
+  },
+  {
+   "action": 148,
+   "gesture": {
+    "key": 13,
+    "kind": 2,
+    "modifiers": [
+     2
+    ],
+    "press": 0
+   },
+   "text": "move the thumbnail focus (shift-select home)"
+  },
+  {
+   "action": 148,
+   "gesture": {
+    "key": 14,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   },
+   "text": "move the thumbnail focus (move end)"
+  },
+  {
+   "action": 148,
+   "gesture": {
+    "key": 14,
+    "kind": 2,
+    "modifiers": [
+     2
+    ],
+    "press": 0
+   },
+   "text": "move the thumbnail focus (shift-select end)"
+  },
+  {
+   "action": 148,
+   "gesture": {
+    "key": 11,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   },
+   "text": "move the thumbnail focus (move left)"
+  },
+  {
+   "action": 148,
+   "gesture": {
+    "key": 11,
+    "kind": 2,
+    "modifiers": [
+     2
+    ],
+    "press": 0
+   },
+   "text": "move the thumbnail focus (shift-select left)"
+  },
+  {
+   "action": 148,
+   "gesture": {
+    "key": 12,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   },
+   "text": "move the thumbnail focus (move right)"
+  },
+  {
+   "action": 148,
+   "gesture": {
+    "key": 12,
+    "kind": 2,
+    "modifiers": [
+     2
+    ],
+    "press": 0
+   },
+   "text": "move the thumbnail focus (shift-select right)"
+  },
+  {
+   "action": 148,
+   "gesture": {
+    "key": 9,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   },
+   "text": "move the thumbnail focus (move up)"
+  },
+  {
+   "action": 148,
+   "gesture": {
+    "key": 9,
+    "kind": 2,
+    "modifiers": [
+     2
+    ],
+    "press": 0
+   },
+   "text": "move the thumbnail focus (shift-select up)"
+  },
+  {
+   "action": 148,
+   "gesture": {
+    "key": 10,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   },
+   "text": "move the thumbnail focus (move down)"
+  },
+  {
+   "action": 148,
+   "gesture": {
+    "key": 10,
+    "kind": 2,
+    "modifiers": [
+     2
+    ],
+    "press": 0
+   },
+   "text": "move the thumbnail focus (shift-select down)"
+  },
+  {
+   "action": 148,
+   "gesture": {
+    "key": 15,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   },
+   "text": "move the thumbnail focus (move page up)"
+  },
+  {
+   "action": 148,
+   "gesture": {
+    "key": 15,
+    "kind": 2,
+    "modifiers": [
+     2
+    ],
+    "press": 0
+   },
+   "text": "move the thumbnail focus (shift-select page up)"
+  },
+  {
+   "action": 148,
+   "gesture": {
+    "key": 16,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   },
+   "text": "move the thumbnail focus (move page down)"
+  },
+  {
+   "action": 148,
+   "gesture": {
+    "key": 16,
+    "kind": 2,
+    "modifiers": [
+     2
+    ],
+    "press": 0
+   },
+   "text": "move the thumbnail focus (shift-select page down)"
+  },
+  {
+   "action": 150,
+   "gesture": {
+    "key": 13,
+    "kind": 2,
+    "modifiers": [
+     1
+    ],
+    "press": 0
+   },
+   "text": "move thumbnails (home)"
+  },
+  {
+   "action": 150,
+   "gesture": {
+    "key": 14,
+    "kind": 2,
+    "modifiers": [
+     1
+    ],
+    "press": 0
+   },
+   "text": "move thumbnails (end)"
+  },
+  {
+   "action": 150,
+   "gesture": {
+    "key": 11,
+    "kind": 2,
+    "modifiers": [
+     1
+    ],
+    "press": 0
+   },
+   "text": "move thumbnails (left)"
+  },
+  {
+   "action": 150,
+   "gesture": {
+    "key": 12,
+    "kind": 2,
+    "modifiers": [
+     1
+    ],
+    "press": 0
+   },
+   "text": "move thumbnails (right)"
+  },
+  {
+   "action": 149,
+   "gesture": {
+    "key": 97,
+    "kind": 0,
+    "modifiers": [
+     0
+    ],
+    "press": 0
+   },
+   "text": "select files (all)"
+  },
+  {
+   "action": 149,
+   "gesture": {
+    "key": 6,
+    "kind": 2,
+    "modifiers": [],
+    "press": 0
+   },
+   "text": "select files (none)"
+  }
+ ]
+}

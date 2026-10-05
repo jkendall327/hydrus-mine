@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "agent": "database-vacuum",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 1,
+  "claims": [
+    {
+      "id": "audit-media-database-maintenance-vacuum-run",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database > db maintenance > review vacuum data: the reference's explanation, a row per database file with size, internal free space and percentage, last vacuum ('never done' / time ago), 'can vacuum?' ('yes!' or CheckHasSpaceForDBTransaction's reason) and GetApproxVacuumIntoDuration's 'N to M' estimate; 'vacuum' enabled when every selected file can be vacuumed, asks 'Do vacuum now? Estimated time to vacuum is ...' (do it/forget it), then closes and vacuums off the UI thread with the 'database maintenance - vacuum' popup, recording vacuum_timestamps.",
+      "source": [
+        "crates/hydrus-store/src/vacuum.rs",
+        "crates/hydrus-gui-model/src/vacuum_review.rs",
+        "crates/hydrus-gui/src/vacuum_review_window.rs",
+        "crates/hydrus-gui/ui/vacuum_review.slint",
+        "crates/hydrus-gui-model/src/main_menu.rs"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/vacuum.rs::tests",
+        "crates/hydrus-gui-model/tests/model/vacuum_review.rs"
+      ],
+      "limits": [
+        "One database file; in-place VACUUM with the store paused rather than VACUUM INTO and swap."
+      ]
+    }
+  ]
+}

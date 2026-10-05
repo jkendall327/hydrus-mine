@@ -1,0 +1,1508 @@
+{
+  "defaults": [
+    {
+      "bindings": [
+        {
+          "action": 42,
+          "has_data": false,
+          "key": 103,
+          "kind": 0,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+g",
+          "text": "global audio: mute/unmute"
+        }
+      ],
+      "name": "global"
+    },
+    {
+      "bindings": [
+        {
+          "action": 2,
+          "has_data": false,
+          "key": 0,
+          "kind": 1,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "left-click",
+          "text": "archive/delete filter: keep"
+        },
+        {
+          "action": 2,
+          "has_data": false,
+          "key": 0,
+          "kind": 1,
+          "modifiers": [],
+          "press": 2,
+          "shortcut_text": "double left-click",
+          "text": "archive/delete filter: keep"
+        },
+        {
+          "action": 1,
+          "has_data": false,
+          "key": 1,
+          "kind": 1,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "right-click",
+          "text": "archive/delete filter: delete"
+        },
+        {
+          "action": 0,
+          "has_data": false,
+          "key": 2,
+          "kind": 1,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "middle-click",
+          "text": "archive/delete filter: back"
+        },
+        {
+          "action": 2,
+          "has_data": false,
+          "key": 23,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "f7",
+          "text": "archive/delete filter: keep"
+        },
+        {
+          "action": 1,
+          "has_data": false,
+          "key": 8,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "delete",
+          "text": "archive/delete filter: delete"
+        },
+        {
+          "action": 0,
+          "has_data": false,
+          "key": 1,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "backspace",
+          "text": "archive/delete filter: back"
+        },
+        {
+          "action": 3,
+          "has_data": false,
+          "key": 9,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "up",
+          "text": "archive/delete filter: skip"
+        },
+        {
+          "action": 6,
+          "has_data": false,
+          "key": 28,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "f12",
+          "text": "close media viewer"
+        }
+      ],
+      "name": "archive_delete_filter"
+    },
+    {
+      "bindings": [
+        {
+          "action": 23,
+          "has_data": false,
+          "key": 0,
+          "kind": 1,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "left-click",
+          "text": "duplicate filter: this is better, delete other"
+        },
+        {
+          "action": 23,
+          "has_data": false,
+          "key": 0,
+          "kind": 1,
+          "modifiers": [],
+          "press": 2,
+          "shortcut_text": "double left-click",
+          "text": "duplicate filter: this is better, delete other"
+        },
+        {
+          "action": 17,
+          "has_data": false,
+          "key": 1,
+          "kind": 1,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "right-click",
+          "text": "duplicate filter: set as alternates"
+        },
+        {
+          "action": 18,
+          "has_data": false,
+          "key": 2,
+          "kind": 1,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "middle-click",
+          "text": "duplicate filter: back"
+        },
+        {
+          "action": 22,
+          "has_data": false,
+          "key": 9,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "up",
+          "text": "duplicate filter: skip"
+        }
+      ],
+      "name": "duplicate_filter"
+    },
+    {
+      "bindings": [
+        {
+          "action": 16,
+          "has_data": false,
+          "key": 8,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "delete",
+          "text": "delete file"
+        },
+        {
+          "action": 95,
+          "has_data": false,
+          "key": 8,
+          "kind": 2,
+          "modifiers": [
+            2
+          ],
+          "press": 0,
+          "shortcut_text": "shift+delete",
+          "text": "undelete file"
+        },
+        {
+          "action": 49,
+          "has_data": false,
+          "key": 20,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "f4",
+          "text": "manage file ratings"
+        },
+        {
+          "action": 50,
+          "has_data": false,
+          "key": 19,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "f3",
+          "text": "manage file tags"
+        },
+        {
+          "action": 4,
+          "has_data": false,
+          "key": 23,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "f7",
+          "text": "archive file"
+        },
+        {
+          "action": 45,
+          "has_data": false,
+          "key": 23,
+          "kind": 2,
+          "modifiers": [
+            2
+          ],
+          "press": 0,
+          "shortcut_text": "shift+f7",
+          "text": "inbox file"
+        },
+        {
+          "action": 61,
+          "has_data": false,
+          "key": 101,
+          "kind": 0,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+e",
+          "text": "open file in external program"
+        },
+        {
+          "action": 81,
+          "has_data": false,
+          "key": 114,
+          "kind": 0,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+r",
+          "text": "remove file from current view"
+        },
+        {
+          "action": 10,
+          "has_data": true,
+          "key": 99,
+          "kind": 0,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+c",
+          "text": "copy file (selected files)"
+        }
+      ],
+      "name": "media"
+    },
+    {
+      "bindings": [
+        {
+          "action": 126,
+          "has_data": false,
+          "key": 0,
+          "kind": 2,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+space",
+          "text": "force-fetch tag autocomplete results"
+        },
+        {
+          "action": 127,
+          "has_data": false,
+          "key": 7,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "insert",
+          "text": "IME-friendly mode: flip on/off (this disables extra shortcut processing so you can do IME popup stuff)"
+        },
+        {
+          "action": 128,
+          "has_data": false,
+          "key": 11,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "left",
+          "text": "if input is empty, move left one autocomplete dropdown tab"
+        },
+        {
+          "action": 129,
+          "has_data": false,
+          "key": 12,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "right",
+          "text": "if input is empty, move right one autocomplete dropdown tab"
+        },
+        {
+          "action": 130,
+          "has_data": false,
+          "key": 9,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "up",
+          "text": "if input & results list are empty, move to left one service page"
+        },
+        {
+          "action": 131,
+          "has_data": false,
+          "key": 10,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "down",
+          "text": "if input & results list are empty, move to right one service page"
+        },
+        {
+          "action": 132,
+          "has_data": false,
+          "key": 15,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "page up",
+          "text": "if input & results list are empty and in media viewer manage tags dialog, move to previous media"
+        },
+        {
+          "action": 133,
+          "has_data": false,
+          "key": 16,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "page down",
+          "text": "if input & results list are empty and in media viewer manage tags dialog, move to previous media"
+        },
+        {
+          "action": 93,
+          "has_data": false,
+          "key": 105,
+          "kind": 0,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+i",
+          "text": "switch between searching a page immediately on new tags and waiting"
+        }
+      ],
+      "name": "tags_autocomplete"
+    },
+    {
+      "bindings": [
+        {
+          "action": 78,
+          "has_data": false,
+          "key": 21,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "f5",
+          "text": "refresh page search/sort"
+        },
+        {
+          "action": 56,
+          "has_data": false,
+          "key": 25,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "f9",
+          "text": "open a new page: choose a page"
+        },
+        {
+          "action": 83,
+          "has_data": false,
+          "key": 109,
+          "kind": 0,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+m",
+          "text": "keyboard focus: to the thumbnail grid"
+        },
+        {
+          "action": 89,
+          "has_data": false,
+          "key": 114,
+          "kind": 0,
+          "modifiers": [
+            0,
+            2
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+shift+r",
+          "text": "show/hide the left page panel and preview canvas"
+        },
+        {
+          "action": 84,
+          "has_data": false,
+          "key": 115,
+          "kind": 0,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+s",
+          "text": "keyboard focus: to the default text entry of page/dialog"
+        },
+        {
+          "action": 56,
+          "has_data": false,
+          "key": 116,
+          "kind": 0,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+t",
+          "text": "open a new page: choose a page"
+        },
+        {
+          "action": 94,
+          "has_data": false,
+          "key": 117,
+          "kind": 0,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+u",
+          "text": "pages: unclose the most recently closed"
+        },
+        {
+          "action": 7,
+          "has_data": false,
+          "key": 119,
+          "kind": 0,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+w",
+          "text": "pages: close current"
+        },
+        {
+          "action": 77,
+          "has_data": false,
+          "key": 121,
+          "kind": 0,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+y",
+          "text": "redo (limited support)"
+        },
+        {
+          "action": 96,
+          "has_data": false,
+          "key": 122,
+          "kind": 0,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+z",
+          "text": "undo (limited support)"
+        },
+        {
+          "action": 137,
+          "has_data": false,
+          "key": 112,
+          "kind": 0,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+p",
+          "text": "open the command palette"
+        },
+        {
+          "action": 183,
+          "has_data": false,
+          "key": 111,
+          "kind": 0,
+          "modifiers": [
+            0,
+            2
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+shift+o",
+          "text": "open the options dialog"
+        },
+        {
+          "action": 121,
+          "has_data": false,
+          "key": 15,
+          "kind": 2,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+page up",
+          "text": "move page selection left (cycles up through page of pages at boundaries)"
+        },
+        {
+          "action": 122,
+          "has_data": false,
+          "key": 16,
+          "kind": 2,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+page down",
+          "text": "move page selection right (cycles up through page of pages at boundaries)"
+        }
+      ],
+      "name": "main_gui"
+    },
+    {
+      "bindings": [
+        {
+          "action": 100,
+          "has_data": false,
+          "key": 9,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "up",
+          "text": "media navigation: previous"
+        },
+        {
+          "action": 100,
+          "has_data": false,
+          "key": 11,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "left",
+          "text": "media navigation: previous"
+        },
+        {
+          "action": 100,
+          "has_data": false,
+          "key": 15,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "page up",
+          "text": "media navigation: previous"
+        },
+        {
+          "action": 90,
+          "has_data": false,
+          "key": 1,
+          "kind": 1,
+          "modifiers": [],
+          "press": 1,
+          "shortcut_text": "release right-click",
+          "text": "show menu"
+        },
+        {
+          "action": 100,
+          "has_data": false,
+          "key": 3,
+          "kind": 1,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "scroll up",
+          "text": "media navigation: previous"
+        },
+        {
+          "action": 99,
+          "has_data": false,
+          "key": 10,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "down",
+          "text": "media navigation: next"
+        },
+        {
+          "action": 99,
+          "has_data": false,
+          "key": 12,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "right",
+          "text": "media navigation: next"
+        },
+        {
+          "action": 99,
+          "has_data": false,
+          "key": 16,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "page down",
+          "text": "media navigation: next"
+        },
+        {
+          "action": 99,
+          "has_data": false,
+          "key": 4,
+          "kind": 1,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "scroll down",
+          "text": "media navigation: next"
+        },
+        {
+          "action": 97,
+          "has_data": false,
+          "key": 13,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "home",
+          "text": "media navigation: first"
+        },
+        {
+          "action": 98,
+          "has_data": false,
+          "key": 14,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "end",
+          "text": "media navigation: last"
+        },
+        {
+          "action": 6,
+          "has_data": false,
+          "key": 0,
+          "kind": 1,
+          "modifiers": [],
+          "press": 2,
+          "shortcut_text": "double left-click",
+          "text": "close media viewer"
+        },
+        {
+          "action": 6,
+          "has_data": false,
+          "key": 2,
+          "kind": 1,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "middle-click",
+          "text": "close media viewer"
+        }
+      ],
+      "name": "media_viewer_browser"
+    },
+    {
+      "bindings": [
+        {
+          "action": 75,
+          "has_data": false,
+          "key": 0,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "space",
+          "text": "pause/play media"
+        },
+        {
+          "action": 134,
+          "has_data": true,
+          "key": 11,
+          "kind": 2,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+left",
+          "text": "seek media (back 2.5 seconds)"
+        },
+        {
+          "action": 134,
+          "has_data": true,
+          "key": 12,
+          "kind": 2,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+right",
+          "text": "seek media (forwards 5 seconds)"
+        },
+        {
+          "action": 53,
+          "has_data": false,
+          "key": 98,
+          "kind": 0,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+b",
+          "text": "move animation one frame back"
+        },
+        {
+          "action": 52,
+          "has_data": false,
+          "key": 110,
+          "kind": 0,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+n",
+          "text": "move animation one frame forward"
+        },
+        {
+          "action": 92,
+          "has_data": false,
+          "key": 102,
+          "kind": 0,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "f",
+          "text": "switch between fullscreen borderless and regular framed window"
+        },
+        {
+          "action": 91,
+          "has_data": false,
+          "key": 122,
+          "kind": 0,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "z",
+          "text": "zoom: switch between 100% and canvas fit"
+        },
+        {
+          "action": 101,
+          "has_data": false,
+          "key": 43,
+          "kind": 0,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "+",
+          "text": "zoom: in"
+        },
+        {
+          "action": 102,
+          "has_data": false,
+          "key": 45,
+          "kind": 0,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "-",
+          "text": "zoom: out"
+        },
+        {
+          "action": 101,
+          "has_data": false,
+          "key": 3,
+          "kind": 1,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+scroll up",
+          "text": "zoom: in"
+        },
+        {
+          "action": 102,
+          "has_data": false,
+          "key": 4,
+          "kind": 1,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+scroll down",
+          "text": "zoom: out"
+        },
+        {
+          "action": 72,
+          "has_data": false,
+          "key": 9,
+          "kind": 2,
+          "modifiers": [
+            2
+          ],
+          "press": 0,
+          "shortcut_text": "shift+up",
+          "text": "pan file up"
+        },
+        {
+          "action": 65,
+          "has_data": false,
+          "key": 10,
+          "kind": 2,
+          "modifiers": [
+            2
+          ],
+          "press": 0,
+          "shortcut_text": "shift+down",
+          "text": "pan file down"
+        },
+        {
+          "action": 67,
+          "has_data": false,
+          "key": 11,
+          "kind": 2,
+          "modifiers": [
+            2
+          ],
+          "press": 0,
+          "shortcut_text": "shift+left",
+          "text": "pan file left"
+        },
+        {
+          "action": 69,
+          "has_data": false,
+          "key": 12,
+          "kind": 2,
+          "modifiers": [
+            2
+          ],
+          "press": 0,
+          "shortcut_text": "shift+right",
+          "text": "pan file right"
+        },
+        {
+          "action": 6,
+          "has_data": false,
+          "key": 4,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "enter",
+          "text": "close media viewer"
+        },
+        {
+          "action": 6,
+          "has_data": false,
+          "key": 3,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "return",
+          "text": "close media viewer"
+        },
+        {
+          "action": 6,
+          "has_data": false,
+          "key": 6,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "escape",
+          "text": "close media viewer"
+        }
+      ],
+      "name": "media_viewer"
+    },
+    {
+      "bindings": [
+        {
+          "action": 75,
+          "has_data": false,
+          "key": 0,
+          "kind": 1,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "left-click",
+          "text": "pause/play media"
+        }
+      ],
+      "name": "media_viewer_media_window"
+    },
+    {
+      "bindings": [
+        {
+          "action": 75,
+          "has_data": false,
+          "key": 0,
+          "kind": 1,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "left-click",
+          "text": "pause/play media"
+        },
+        {
+          "action": 46,
+          "has_data": false,
+          "key": 0,
+          "kind": 1,
+          "modifiers": [],
+          "press": 2,
+          "shortcut_text": "double left-click",
+          "text": "launch the media viewer"
+        },
+        {
+          "action": 46,
+          "has_data": false,
+          "key": 2,
+          "kind": 1,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "middle-click",
+          "text": "launch the media viewer"
+        }
+      ],
+      "name": "preview_media_window"
+    },
+    {
+      "bindings": [
+        {
+          "action": 46,
+          "has_data": false,
+          "key": 4,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "enter",
+          "text": "launch the media viewer"
+        },
+        {
+          "action": 46,
+          "has_data": false,
+          "key": 3,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "return",
+          "text": "launch the media viewer"
+        },
+        {
+          "action": 47,
+          "has_data": false,
+          "key": 28,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "f12",
+          "text": "launch the archive/delete filter"
+        },
+        {
+          "action": 148,
+          "has_data": true,
+          "key": 13,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "home",
+          "text": "move the thumbnail focus (move home)"
+        },
+        {
+          "action": 148,
+          "has_data": true,
+          "key": 13,
+          "kind": 2,
+          "modifiers": [
+            2
+          ],
+          "press": 0,
+          "shortcut_text": "shift+home",
+          "text": "move the thumbnail focus (shift-select home)"
+        },
+        {
+          "action": 148,
+          "has_data": true,
+          "key": 14,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "end",
+          "text": "move the thumbnail focus (move end)"
+        },
+        {
+          "action": 148,
+          "has_data": true,
+          "key": 14,
+          "kind": 2,
+          "modifiers": [
+            2
+          ],
+          "press": 0,
+          "shortcut_text": "shift+end",
+          "text": "move the thumbnail focus (shift-select end)"
+        },
+        {
+          "action": 148,
+          "has_data": true,
+          "key": 11,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "left",
+          "text": "move the thumbnail focus (move left)"
+        },
+        {
+          "action": 148,
+          "has_data": true,
+          "key": 11,
+          "kind": 2,
+          "modifiers": [
+            2
+          ],
+          "press": 0,
+          "shortcut_text": "shift+left",
+          "text": "move the thumbnail focus (shift-select left)"
+        },
+        {
+          "action": 148,
+          "has_data": true,
+          "key": 12,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "right",
+          "text": "move the thumbnail focus (move right)"
+        },
+        {
+          "action": 148,
+          "has_data": true,
+          "key": 12,
+          "kind": 2,
+          "modifiers": [
+            2
+          ],
+          "press": 0,
+          "shortcut_text": "shift+right",
+          "text": "move the thumbnail focus (shift-select right)"
+        },
+        {
+          "action": 148,
+          "has_data": true,
+          "key": 9,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "up",
+          "text": "move the thumbnail focus (move up)"
+        },
+        {
+          "action": 148,
+          "has_data": true,
+          "key": 9,
+          "kind": 2,
+          "modifiers": [
+            2
+          ],
+          "press": 0,
+          "shortcut_text": "shift+up",
+          "text": "move the thumbnail focus (shift-select up)"
+        },
+        {
+          "action": 148,
+          "has_data": true,
+          "key": 10,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "down",
+          "text": "move the thumbnail focus (move down)"
+        },
+        {
+          "action": 148,
+          "has_data": true,
+          "key": 10,
+          "kind": 2,
+          "modifiers": [
+            2
+          ],
+          "press": 0,
+          "shortcut_text": "shift+down",
+          "text": "move the thumbnail focus (shift-select down)"
+        },
+        {
+          "action": 148,
+          "has_data": true,
+          "key": 15,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "page up",
+          "text": "move the thumbnail focus (move page up)"
+        },
+        {
+          "action": 148,
+          "has_data": true,
+          "key": 15,
+          "kind": 2,
+          "modifiers": [
+            2
+          ],
+          "press": 0,
+          "shortcut_text": "shift+page up",
+          "text": "move the thumbnail focus (shift-select page up)"
+        },
+        {
+          "action": 148,
+          "has_data": true,
+          "key": 16,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "page down",
+          "text": "move the thumbnail focus (move page down)"
+        },
+        {
+          "action": 148,
+          "has_data": true,
+          "key": 16,
+          "kind": 2,
+          "modifiers": [
+            2
+          ],
+          "press": 0,
+          "shortcut_text": "shift+page down",
+          "text": "move the thumbnail focus (shift-select page down)"
+        },
+        {
+          "action": 150,
+          "has_data": true,
+          "key": 13,
+          "kind": 2,
+          "modifiers": [
+            1
+          ],
+          "press": 0,
+          "shortcut_text": "alt+home",
+          "text": "move thumbnails (home)"
+        },
+        {
+          "action": 150,
+          "has_data": true,
+          "key": 14,
+          "kind": 2,
+          "modifiers": [
+            1
+          ],
+          "press": 0,
+          "shortcut_text": "alt+end",
+          "text": "move thumbnails (end)"
+        },
+        {
+          "action": 150,
+          "has_data": true,
+          "key": 11,
+          "kind": 2,
+          "modifiers": [
+            1
+          ],
+          "press": 0,
+          "shortcut_text": "alt+left",
+          "text": "move thumbnails (left)"
+        },
+        {
+          "action": 150,
+          "has_data": true,
+          "key": 12,
+          "kind": 2,
+          "modifiers": [
+            1
+          ],
+          "press": 0,
+          "shortcut_text": "alt+right",
+          "text": "move thumbnails (right)"
+        },
+        {
+          "action": 149,
+          "has_data": true,
+          "key": 97,
+          "kind": 0,
+          "modifiers": [
+            0
+          ],
+          "press": 0,
+          "shortcut_text": "ctrl+a",
+          "text": "select files (all)"
+        },
+        {
+          "action": 149,
+          "has_data": true,
+          "key": 6,
+          "kind": 2,
+          "modifiers": [],
+          "press": 0,
+          "shortcut_text": "escape",
+          "text": "select files (none)"
+        }
+      ],
+      "name": "thumbnails"
+    }
+  ],
+  "descriptions": {
+    "archive_delete_filter": "Navigation actions for the media viewer during an archive/delete filter. Mouse shortcuts should work.",
+    "duplicate_filter": "Navigation actions for the media viewer during a duplicate filter. Mouse shortcuts should work.",
+    "global": "Actions for the whole program. Should work in the main gui or a media viewer.",
+    "main_gui": "Actions to control pages in the main window of the program.",
+    "media": "Actions to alter metadata for media in the media viewer or the thumbnail grid.",
+    "media_viewer": "Zoom and pan and player actions for any media viewer.",
+    "media_viewer_browser": "Navigation actions for the regular browsable media viewer.",
+    "media_viewer_media_window": "Actions for any video or audio player in a media viewer window. Mouse only!",
+    "preview_media_window": "Actions for any video or audio player in a preview window. Mouse only!",
+    "tags_autocomplete": "Actions to control tag autocomplete when its input text box is focused.",
+    "thumbnails": "Actions that interact with the grid of thumbnails in a normal file page."
+  },
+  "non_dupe": [
+    [
+      "new shortcuts",
+      [],
+      "new shortcuts"
+    ],
+    [
+      "new shortcuts",
+      [
+        "new shortcuts"
+      ],
+      "new shortcuts (1)"
+    ],
+    [
+      "new shortcuts",
+      [
+        "new shortcuts",
+        "new shortcuts (1)"
+      ],
+      "new shortcuts (2)"
+    ],
+    [
+      "rating keys",
+      [
+        "new shortcuts"
+      ],
+      "rating keys"
+    ]
+  ],
+  "pretty_names": {
+    "archive_delete_filter": "media viewers - archive/delete filter",
+    "duplicate_filter": "media viewers - duplicate filter",
+    "global": "global",
+    "main_gui": "the main window",
+    "media": "media actions, either thumbnails or the viewer",
+    "media_viewer": "media viewers - all",
+    "media_viewer_browser": "media viewers - 'normal' browser",
+    "media_viewer_media_window": "the actual media in a media viewer (mouse only)",
+    "preview_media_window": "the actual media in a preview window (mouse only)",
+    "tags_autocomplete": "tag autocomplete",
+    "thumbnails": "thumbnails"
+  },
+  "reserved": [
+    "global",
+    "archive_delete_filter",
+    "duplicate_filter",
+    "media",
+    "thumbnails",
+    "tags_autocomplete",
+    "main_gui",
+    "media_viewer_browser",
+    "media_viewer",
+    "media_viewer_media_window",
+    "preview_media_window"
+  ],
+  "simple_names": {
+    "0": "archive/delete filter: back",
+    "1": "archive/delete filter: delete",
+    "10": "copy file",
+    "100": "media navigation: previous",
+    "101": "zoom: in",
+    "102": "zoom: out",
+    "103": "exit program: close and force shutdown maintenance",
+    "104": "zoom: in with forced media viewer center",
+    "105": "zoom: out with forced media viewer center",
+    "106": "zoom: switch 100% and canvas fit with forced media viewer center",
+    "107": "file relationships: dissolve alternate group (just focused file)",
+    "108": "file relationships: completely dissolve alternate groups",
+    "109": "file relationships: dissolve duplicate group (just focused file)",
+    "11": "copy md5 hash",
+    "110": "file relationships: completely dissolve duplicate groups",
+    "111": "file relationships: remove from alternate group (just focused file)",
+    "112": "file relationships: remove from duplicate group (just focused file)",
+    "113": "file relationships: reset potential search (just focused file)",
+    "114": "file relationships: reset potential searches",
+    "115": "file relationships: remove from potential duplicate pairs (just focused file)",
+    "116": "file relationships: remove files from potential duplicate pairs",
+    "117": "file relationships: set files as potential duplicates",
+    "118": "file relationships: delete all false positives",
+    "119": "file relationships: clear all false positives (just focused file)",
+    "12": "copy file paths",
+    "120": "run all export folders now",
+    "121": "move page selection left (cycles up through page of pages at boundaries)",
+    "122": "move page selection right (cycles up through page of pages at boundaries)",
+    "123": "move selection to leftmost page",
+    "124": "move selection to rightmost page",
+    "125": "refresh manage tags' related tags with thorough duration",
+    "126": "force-fetch tag autocomplete results",
+    "127": "IME-friendly mode: flip on/off (this disables extra shortcut processing so you can do IME popup stuff)",
+    "128": "if input is empty, move left one autocomplete dropdown tab",
+    "129": "if input is empty, move right one autocomplete dropdown tab",
+    "13": "copy sha1 hash",
+    "130": "if input & results list are empty, move to left one service page",
+    "131": "if input & results list are empty, move to right one service page",
+    "132": "if input & results list are empty and in media viewer manage tags dialog, move to previous media",
+    "133": "if input & results list are empty and in media viewer manage tags dialog, move to previous media",
+    "134": "seek media",
+    "135": "profile mode: flip on/off",
+    "136": "force the animation scanbar to show: flip on/off",
+    "137": "open the command palette",
+    "138": "zoom: switch between 100% and max zoom",
+    "139": "zoom: switch between canvas fit and max zoom",
+    "14": "copy sha256 hash",
+    "140": "zoom: max",
+    "141": "zoom: canvas fit",
+    "142": "zoom: 100%",
+    "143": "zoom: default",
+    "144": "file relationships: show",
+    "145": "manage file times",
+    "146": "open file in file explorer",
+    "147": "copy small bmp of image for quick source lookups",
+    "148": "move the thumbnail focus",
+    "149": "select files",
+    "15": "copy sha512 hash",
+    "150": "move thumbnails",
+    "151": "open quick look for selected file (macOS only)",
+    "152": "copy file known urls",
+    "153": "open file in web browser",
+    "154": "open files in a new duplicates filter page",
+    "155": "open similar looking files in a new page",
+    "156": "copy file hashes",
+    "157": "copy file bitmap",
+    "158": "copy file id",
+    "159": "copy ipfs multihash",
+    "16": "delete file",
+    "160": "open file properties",
+    "161": "open in another program",
+    "162": "reload current qss stylesheet",
+    "163": "apply image ICC Profile colour adjustments: flip on/off",
+    "164": "zoom to 100% with forced media viewer center",
+    "165": "zoom to fit canvas with forced media viewer center",
+    "166": "fill canvas horizontally",
+    "167": "fill canvas horizontally with forced media viewer center",
+    "168": "fill canvas vertically",
+    "169": "fill canvas vertically with forced media viewer center",
+    "17": "duplicate filter: set as alternates",
+    "170": "auto-fill closest dimension",
+    "171": "auto-fill closest dimension with forced media viewer center",
+    "172": "zoom: switch 100% and canvas fit/fill",
+    "173": "zoom: switch 100% and canvas fit/fill with forced media viewer center",
+    "174": "zoom: default with forced media viewer center",
+    "175": "recenter media",
+    "176": "close media viewer and focus the tab the media came from, if possible",
+    "177": "zoom: set to percentage",
+    "178": "zoom: set to percentage with forced media viewer center",
+    "179": "resize window to fit current media perfectly",
+    "18": "duplicate filter: back",
+    "180": "resize window to fit current media perfectly and recenter it in the viewer",
+    "181": "resize window to fit current media zoomed to a specific percent",
+    "182": "resize window to fit media at specified zoom and recenter it in the viewer",
+    "183": "open the options dialog",
+    "184": "file relationships: delete false positives within selection",
+    "185": "close media viewer and focus the tab the media came from, if possible, and focus the media",
+    "186": "media navigation: random",
+    "187": "media navigation: undo random",
+    "188": "focus the tab the media came from, if possible, and focus the media",
+    "189": "duplicate filter: approve auto-resolution pair",
+    "19": "duplicate filter: do custom action",
+    "190": "duplicate filter: deny auto-resolution pair",
+    "191": "drawing transparency as checkerboard: flip on/off",
+    "192": "drawing transparency as checkerboard (duplicate filter): flip on/off",
+    "193": "drawing transparency as greenscreen: flip on/off",
+    "195": "window \"always on top\": flip on/off",
+    "196": "window \"always on top\": set on",
+    "197": "window \"always on top\": set off",
+    "198": "window \"frameless\": flip on/off",
+    "199": "pages: rename current",
+    "2": "archive/delete filter: keep",
+    "20": "duplicate filter: set as the same",
+    "200": "slideshow shuffle: override/flip for current window",
+    "201": "slideshow shuffle: flip global option (and apply to current window)",
+    "202": "always play media once through: override/flip for current window",
+    "203": "always play media once through: flip global option (and apply to current window)",
+    "204": "per-player audio: mute",
+    "205": "per-player audio: mute/unmute",
+    "206": "per-player audio: unmute",
+    "207": "window \"always on top while playing\": flip on/off",
+    "208": "open detailed embedded file metadata window",
+    "21": "duplicate filter: set as not related/false positive",
+    "22": "duplicate filter: skip",
+    "23": "duplicate filter: this is better, delete other",
+    "24": "duplicate filter: this is better, keep both",
+    "25": "file relationships: set files as alternates",
+    "26": "file relationships: set collects as separate alternate groups",
+    "27": "file relationships: do custom action",
+    "28": "file relationships: the focused file is a better duplicate",
+    "29": "file relationships: set the focused file as king duplicate",
+    "3": "archive/delete filter: skip",
+    "30": "file relationships: set files as the same quality duplicates",
+    "31": "exit program: close",
+    "32": "export these files",
+    "33": "export these files (quick auto-export)",
+    "34": "flip fixed darkmode colours",
+    "35": "force debug idle mode (do not use this!)",
+    "36": "keyboard focus: to the media viewer",
+    "37": "show similar files: 0 (exact)",
+    "38": "show similar files: 4 (similar)",
+    "39": "show similar files: 8 (speculative)",
+    "4": "archive file",
+    "40": "show similar files: 2 (very similar)",
+    "41": "global audio: mute",
+    "42": "global audio: mute/unmute",
+    "43": "global audio: unmute",
+    "44": "hide to system tray",
+    "45": "inbox file",
+    "46": "launch the media viewer",
+    "47": "launch the archive/delete filter",
+    "48": "manage file notes",
+    "49": "manage file ratings",
+    "5": "check all import folders now",
+    "50": "manage file tags",
+    "51": "manage file urls",
+    "52": "move animation one frame forward",
+    "53": "move animation one frame back",
+    "54": "open a new page: duplicate filter",
+    "55": "open a new page: gallery downloader",
+    "56": "open a new page: choose a page",
+    "57": "open a new page: page of pages",
+    "58": "open a new page: simple downloader",
+    "59": "open a new page: url downloader",
+    "6": "close media viewer",
+    "60": "open a new page: thread watcher",
+    "61": "open file in external program",
+    "62": "open known url",
+    "63": "open files in a new page",
+    "64": "pan file to bottom edge",
+    "65": "pan file down",
+    "66": "pan file left/right to center",
+    "67": "pan file left",
+    "68": "pan file to left edge",
+    "69": "pan file right",
+    "7": "pages: close current",
+    "70": "pan file to right edge",
+    "71": "pan file to top edge",
+    "72": "pan file up",
+    "73": "pan file up/down to center",
+    "74": "pause media",
+    "75": "pause/play media",
+    "76": "pause/play slideshow",
+    "77": "redo (limited support)",
+    "78": "refresh page search/sort",
+    "79": "refresh all pages",
+    "8": "copy bmp of image",
+    "80": "refresh all pages on current page of pages",
+    "81": "remove file from current view",
+    "82": "exit program: restart",
+    "83": "keyboard focus: to the thumbnail grid",
+    "84": "keyboard focus: to the default text entry of page/dialog",
+    "85": "keyboard focus: to manage tags' favourite tags",
+    "86": "keyboard focus: to manage tags' file lookup scripts",
+    "87": "keyboard focus: to manage tags' recent tags",
+    "88": "keyboard focus: to manage tags' related tags",
+    "89": "show/hide the left page panel and preview canvas",
+    "9": "copy bmp of image; otherwise copy file",
+    "90": "show menu",
+    "91": "zoom: switch between 100% and canvas fit",
+    "92": "switch between fullscreen borderless and regular framed window",
+    "93": "switch between searching a page immediately on new tags and waiting",
+    "94": "pages: unclose the most recently closed",
+    "95": "undelete file",
+    "96": "undo (limited support)",
+    "97": "media navigation: first",
+    "98": "media navigation: last",
+    "99": "media navigation: next"
+  },
+  "sorted": [
+    "global",
+    "main_gui",
+    "tags_autocomplete",
+    "media",
+    "thumbnails",
+    "media_viewer",
+    "media_viewer_browser",
+    "archive_delete_filter",
+    "duplicate_filter",
+    "preview_media_window",
+    "media_viewer_media_window"
+  ]
+}

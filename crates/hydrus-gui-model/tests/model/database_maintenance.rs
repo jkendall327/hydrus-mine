@@ -175,5 +175,11 @@ fn the_menus_enable_the_jobs_hydrus_rs_runs() {
             matches!(entry, Entry::Item { command: Some(Command::DatabaseMaintenance(j)), .. } if *j == job)
         );
     }
-    assert!(!find(&menus, "review vacuum data\u{2026}").unwrap().usable());
+    assert!(matches!(
+        find(&menus, "review vacuum data\u{2026}").unwrap(),
+        Entry::Item {
+            command: Some(Command::ReviewVacuum),
+            ..
+        }
+    ));
 }

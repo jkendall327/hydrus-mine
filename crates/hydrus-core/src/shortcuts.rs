@@ -123,11 +123,15 @@ fn hydrus_casefold(character: char) -> char {
         .expect("nonempty casefold")
 }
 
-/// One supported simple application command bound to a gesture.
+/// A simple application command bound to a gesture. A command with data
+/// (a seek's distance, a focus move's direction) keeps the reference's
+/// text for it, and is shown but not run.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Binding {
     pub gesture: Gesture,
     pub action: i32,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub text: Option<String>,
 }
 /// Staged named sets and the original capture/display policies.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -142,18 +146,22 @@ impl Default for Settings {
         Self {
             merge_numpad: true,
             primary_labels: false,
-            sets: BTreeMap::from([
-                ("main_gui".into(), Vec::new()),
-                ("media_viewer".into(), Vec::new()),
-            ]),
+            sets: default_sets(),
         }
     }
+}
+
+/// The reference's built-in sets as a new client has them
+/// (`ClientDefaults.GetDefaultShortcuts`, `oracle/dump_shortcut_sets.py`).
+pub fn default_sets() -> BTreeMap<String, Vec<Binding>> {
+    serde_json::from_str(include_str!("default_shortcuts.json")).expect("valid default shortcuts")
 }
 impl Settings {
     pub fn command(&self, name: &str, gesture: &Gesture) -> Option<i32> {
         let bindings = self.sets.get(name)?;
         bindings
             .iter()
+            .filter(|binding| binding.text.is_none())
             .find(|binding| {
                 binding.gesture == *gesture
                     || (self.merge_numpad

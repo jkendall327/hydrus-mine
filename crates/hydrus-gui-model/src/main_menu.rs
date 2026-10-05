@@ -289,6 +289,8 @@ pub enum Command {
     TagDisplaySyncNow,
     /// Tags > sibling/parent sync > review current sibling/parent sync.
     TagSyncReview,
+    /// Database > db maintenance > review vacuum data.
+    ReviewVacuum,
     /// Database > file maintenance > clear orphan files.
     ClearOrphanFiles,
     /// Database > locations.
@@ -1068,7 +1070,7 @@ fn database_menu(facts: &Facts) -> Entry {
                     ),
                     SEP,
                     job("analyze"),
-                    job("review vacuum data"),
+                    item(dots("review vacuum data"), Command::ReviewVacuum),
                     SEP,
                     job("clear/fix orphan file records"),
                     job("clear orphan URL mappings"),

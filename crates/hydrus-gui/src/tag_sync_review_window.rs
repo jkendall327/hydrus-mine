@@ -58,7 +58,8 @@ fn reload(state: &mut State) {
 
 /// Open the review, or raise it if it is open.
 pub(crate) fn open(store: &Arc<Store>) {
-    if let Some(window) = OPEN.with_borrow(|w| w.as_ref().map(ComponentHandle::clone_strong)) {
+    if let Some(window) = OPEN.with_borrow(|w| w.as_ref().map(slint::ComponentHandle::clone_strong))
+    {
         let _ = window.show();
         return;
     }

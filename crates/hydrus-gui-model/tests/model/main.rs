@@ -74,6 +74,7 @@ mod session_saving;
 mod session_weight;
 mod set_password;
 mod shortcut_capture;
+mod shortcut_sets;
 mod shutdown_work;
 mod sidecar_descriptions;
 mod sidecar_editors;
@@ -129,6 +130,7 @@ mod tag_dialog_preferences;
 mod tag_suggestions;
 mod tag_sync_review;
 mod unselected_tag_cap;
+mod vacuum_review;
 
 mod write_autocomplete;
 

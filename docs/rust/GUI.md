@@ -3608,9 +3608,21 @@ casefolds characters, and applies the non-number numpad policy. Child OK updates
 the set draft; set OK updates Options; only Options Apply persists. Cancel and
 closed owners reject retained child callbacks. Saved main GUI bindings call the
 existing refresh, close-page and new-page callbacks; saved media viewer bindings
-call close, navigation, zoom and fullscreen callbacks. This slice offers only
-those commands and the two reserved sets, leaving broader set/command management
-Partial. Existing hardcoded shortcuts remain fallbacks for unmatched bindings.
+call close, navigation, zoom and fullscreen callbacks. Existing hardcoded
+shortcuts remain fallbacks for unmatched bindings.
+
+The page lists the sets as the reference does. "built-in hydrus shortcut sets"
+shows each built-in set the client has, by its pretty name in the reference's
+order, with its number of shortcuts; "edit" (or a double-click) opens that set
+with its description, and "restore defaults" offers every default set: one the
+client lacks is restored after saying so, one it has asks "Are you certain you
+want to restore the defaults for "…"? Any custom shortcuts you have set will be
+wiped." "custom user sets" explains that they are advanced, and adds ("new
+shortcuts"), edits, renames and deletes ("Remove all selected?") custom sets;
+names are made unique as "name (1)", "name (2)". A "help" button shows the
+reference's help. A new client starts with the reference's eleven default sets
+(107 shortcuts); a command with data (a seek's distance, a thumbnail focus
+move) is listed with the reference's text.
 
 Mouse capture includes press/release, double-click and vertical wheel gestures,
 with the recorded strict small-wheel accumulation and disabled release selector
@@ -4229,6 +4241,15 @@ with Options.
 Tags > sync's "sync tag display during idle time" and "during normal time"
 switch the same sibling/parent sync settings, and "sync now" says "Seems
 like we are all synced already!", as the reference does with no work left.
+Database > db maintenance > "review vacuum data…" opens the reference's
+explanation and a list of the database file: its size, internal free space
+(with the percentage), last vacuum ("never done" or how long ago), "can
+vacuum?" ("yes!" or the reference's not-enough-disk-space reason) and the
+vacuum time estimate. "vacuum", for selected files that can all be
+vacuumed, asks "Do vacuum now? Estimated time to vacuum is …" (do it/forget
+it); "do it" closes the window and vacuums with a "database maintenance -
+vacuum" popup ("vacuuming main", then "done!"), recording the time.
+
 Tags > sync > "review current sibling/parent sync" opens "tag display sync":
 the reference's explanation, a line saying when sync runs (green when it runs
 all the time, orange otherwise), and a tab (or listbook entry) per tag
