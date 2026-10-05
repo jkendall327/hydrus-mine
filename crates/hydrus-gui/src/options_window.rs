@@ -295,6 +295,8 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                 }
                 (Kind::Sort, Value::Sort(sort)) => {
                     out.kind = 10;
+                    out.sort_wheel_count =
+                        i32::try_from(crate::sort::known_choice_count(store)).unwrap_or(i32::MAX);
                     out.sort_cog = !hydrus_gui_model::sort_cog::groups(sort).is_empty();
                     let choices = crate::sort::page_choices(store, &sort.by);
                     let names: Vec<SharedString> =
@@ -1298,8 +1300,8 @@ pub(crate) fn open(
             }
         }
     });
-    // a sort's type (in its default order, as the reference's control
-    // sets it), or its order; the row shows the type's orders
+    // A type change preserves the order when both labels match the previous
+    // choices; otherwise it selects the new type's default order.
     let sort_edited = {
         let session_choices = session_choices.clone();
         let editor = editor.clone();
@@ -1338,8 +1340,9 @@ pub(crate) fn open(
         move |i, index| {
             sort_edited(i, &|sort, choices| {
                 if let Some(choice) = choices.get(at(index)) {
+                    let ascending = crate::sort::type_ascending(sort, choices, choice);
                     sort.by = choice.by.clone();
-                    sort.ascending = choice.default_ascending;
+                    sort.ascending = ascending;
                 }
             });
         }

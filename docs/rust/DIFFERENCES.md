@@ -3118,17 +3118,18 @@ introduced. Store import/load uses typed-native precedence over retained legacy
 ClientOptions, and staged Apply/Cancel preserves concurrent other settings.
 
 Only actual represented Qt MenuChoiceButton counterparts are wrapped: media
-order (not the ordinary media sort-type button), Options tag-sort controls and
+type and order (including the actual Qt container wheel producer), Options tag-sort controls and
 live ManageTags and manual-export tag sorting. Other ordinary ComboBoxes remain unchanged. Qt's absent
 native duplicate-filter grouping/potential-duplicate sort, metadata-importer
 tag-display and inline main/viewer TagSortControl surfaces remain outside this
 finite control scope and their broader families stay Partial. The per-row Options
 text/count-order memory correction is necessary reference behavior, with zero
-additional completion credit. Exactly one original wheel-preference leaf is
-proposed; no GUI/options parent, generic ComboBox or platform-menu credit.
+additional completion credit. The one original wheel-preference leaf remains
+Partial with zero completion credit; no GUI/options parent, generic ComboBox or platform-menu credit.
 
 Actual Qt recording covers eleven handler cases, ten live TagSortControl transitions,
-three media-order events, staged defaults/Cancel/Apply/reopen and a saved false
+three media-order events, nine represented media-type events with all 33 flat
+identities, staged defaults/Cancel/Apply/reopen and a saved false
 legacy tuple. The offscreen QWindow transport did not automatically forward an
 ignored child wheel to QScrollArea; the recorder explicitly delivers that ignored
 event to the unchanged real parent viewport and discloses this adapter. It is not
@@ -3138,3 +3139,13 @@ and tag-row consumers, and owner retirement; their execution and exact-source
 PNG inspection are pending hosted CI. Pointer popup-row probing is bounded to a
 160px band covering the native two-row menu across widget styles and retains mandatory exact
 selection/results assertions.
+
+The actual Qt media-type Random roundtrip is recorded separately as a remaining
+limitation: SHA-256 hash sort (system20) ASC → Random (system4) → hash ASC
+retains the hidden lexicographic/reverse lexicographic choices. Native controls
+show Random order choices and infer labels from the current sort, so they cannot
+restore that retained hidden order on return. The successful non-Random type
+consumer paths do not establish full MediaSortControl parity. No completion
+claim is made for the preference, absent sort surfaces, generic ComboBoxes or
+parents. Final actual Qt run was 2026-10-05 14:05:36–38 UTC; the two Random
+steps remain reference-only evidence rather than passing native parity tests.

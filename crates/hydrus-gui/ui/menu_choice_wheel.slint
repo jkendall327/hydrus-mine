@@ -12,6 +12,7 @@ export component WheelMenuChoice inherits TouchArea {
     out property <MenuChoiceFrame> frame: {x:self.absolute-position.x,y:self.absolute-position.y,w:self.width,h:self.height};
     in property <[string]> model <=> choice.model;
     in property <int> current-index;
+    in property <int> wheel-count: root.model.length;
     out property <string> current-value: choice.current-value;
     out property <bool> popup-open: choice.accessible-expanded;
     callback selected(int);
@@ -45,7 +46,7 @@ export component WheelMenuChoice inherits TouchArea {
                 root.pass-wheel = true;
                 return reject;
             }
-            let next = MenuChoicePolicy.next(root.current-index, root.model.length, event.delta-y / 1px);
+            let next = MenuChoicePolicy.next(root.current-index, root.wheel-count, event.delta-y / 1px);
             if next >= 0 { root.selected(next); }
             return accept;
         }

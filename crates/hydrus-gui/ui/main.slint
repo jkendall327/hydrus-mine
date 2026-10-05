@@ -657,6 +657,8 @@ export component MainWindow inherits Window {
     in property <string> question;
     callback sort-chosen(int);
     callback order-chosen(int);
+    out property <MenuChoiceFrame> sort-type-frame: type-choice.frame;
+    in property <int> sort-wheel-count;
     out property <MenuChoiceFrame> sort-order-frame: order-choice.frame;
     out property <bool> sort-order-popup-open: order-choice.popup-open;
     callback search-edited(string);
@@ -1193,10 +1195,11 @@ export component MainWindow inherits Window {
                     // the sort control, as at the top of the reference's sidebar
                     HorizontalLayout {
                         spacing: 4px;
-                        ComboBox {
+                        type-choice := WheelMenuChoice {
                             model: root.sort-names;
                             current-index: root.sort-index;
-                            selected => { root.sort-chosen(self.current-index); }
+                            wheel-count: root.sort-wheel-count;
+                            selected(index) => { root.sort-chosen(index); }
                         }
                         order-choice := WheelMenuChoice {
                             width: 130px;

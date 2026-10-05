@@ -176,3 +176,74 @@ fn staged_setting_saves_only_its_key_and_unchanged_draft_preserves_live_value() 
             .enabled
     );
 }
+
+fn media_type(value: &serde_json::Value) -> hydrus_core::pages::PageSortBy {
+    use hydrus_core::pages::PageSortBy;
+    match value["type"].as_str().unwrap() {
+        "system" => PageSortBy::System(value["data"].as_i64().unwrap()),
+        "rating" => PageSortBy::Rating(
+            hydrus_core::ServiceKey::from_hex(value["data"].as_str().unwrap()).unwrap(),
+        ),
+        "namespaces" => PageSortBy::Namespaces {
+            namespaces: value["data"]["namespaces"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|v| v.as_str().unwrap().to_owned())
+                .collect(),
+            tag_display_type: value["data"]["tag_display_type"].as_i64().unwrap(),
+        },
+        _ => panic!("recorded sort type"),
+    }
+}
+#[test]
+fn real_media_type_flat_order_unknown_current_and_matching_order_labels_match_qt() {
+    use hydrus_core::pages::{PageSort, PageSortBy};
+    use hydrus_gui_model::sort;
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let directory = tempfile::tempdir().unwrap();
+    hydrus_store::import::import_legacy(
+        legacy.path(),
+        &directory.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(directory.path()).unwrap();
+    let recorded = hydrus_testkit::fixture_json("menu_choice_wheel.json");
+    let types = &recorded["media_types"];
+    let expected: Vec<_> = types["choices"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(media_type)
+        .collect();
+    let choices = sort::page_choices(&store, &PageSortBy::System(0));
+    assert_eq!(
+        choices.iter().map(|c| c.by.clone()).collect::<Vec<_>>(),
+        expected
+    );
+    assert_eq!(sort::known_choice_count(&store), expected.len());
+    for case in types["cases"].as_array().unwrap() {
+        let mut current = PageSort {
+            by: media_type(&case["before"]),
+            ascending: case["before_order"] == 0,
+            tag_context: Default::default(),
+        };
+        let choices = sort::page_choices(&store, &current.by);
+        let at = choices.iter().position(|c| c.by == current.by).unwrap();
+        if case["enabled"] == true
+            && let Some(next) = menu_choice_wheel::next(
+                at,
+                sort::known_choice_count(&store),
+                case["dy"].as_f64().unwrap() as f32,
+            )
+        {
+            let chosen = &choices[next];
+            current.ascending = sort::type_ascending(&current, &choices, chosen);
+            current.by = chosen.by.clone();
+        }
+        assert_eq!(current.by, media_type(&case["after"]), "{case}");
+        assert_eq!(current.ascending, case["after_order"] == 0, "{case}");
+        assert_eq!(case["accepted"], case["enabled"]);
+        assert!(case["over_type"].as_bool().unwrap());
+    }
+}
