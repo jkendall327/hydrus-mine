@@ -77,7 +77,7 @@ fn save_png(windows: &headless::Windows, index: usize, name: &str, width: u32, h
     let adapter = windows.get(index).unwrap();
     let pixels = headless::render(&adapter, width, height);
     headless::save_png(
-        &hydrus_testkit::artifacts_dir().join(name),
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(name),
         &pixels,
         width,
         height,
@@ -634,7 +634,7 @@ fn fresh_local_membership_live_roles_and_existing_owned_windows_paint_without_pa
         "actual tag containers paint saved role"
     );
     headless::save_png(
-        &hydrus_testkit::artifacts_dir().join("gui-coloursets-live-main.png"),
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("gui-coloursets-live-main.png"),
         &pixels,
         1100,
         700,
@@ -656,7 +656,7 @@ fn fresh_local_membership_live_roles_and_existing_owned_windows_paint_without_pa
         );
     }
     headless::save_png(
-        &hydrus_testkit::artifacts_dir().join("gui-coloursets-live-viewer.png"),
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("gui-coloursets-live-viewer.png"),
         &viewer_pixels,
         800,
         600,

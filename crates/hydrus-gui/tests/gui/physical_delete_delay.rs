@@ -85,7 +85,8 @@ fn actual_fields_cancel_raw_apply_reopen_hidden_retired_and_rebind_ownership() {
     assert_eq!(values(&w, row), [1, 28]);
     let image = headless::render(&windows.get(windows.count() - 1).unwrap(), 900, 640);
     headless::save_png(
-        &hydrus_testkit::artifacts_dir().join("physical_delete_delay_options.png"),
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("physical_delete_delay_options.png"),
         &image,
         900,
         640,
