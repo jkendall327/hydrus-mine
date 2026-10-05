@@ -292,9 +292,13 @@ fn hidden_prompt_cancel_rebind_close_and_final_binding_clone_retire_override() {
     assert!(!bound.force_idle.toggle());
     assert!(bound.force_idle.enabled());
     ui.show().unwrap();
+    ui.set_tag_menu_question("owned tag-menu prompt".into());
+    assert!(!bound.force_idle.toggle());
+    assert!(bound.force_idle.enabled());
+    ui.set_tag_menu_question("".into());
     ui.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
-    assert!(ui.get_question_visible());
+    assert!(!ui.get_question().is_empty());
     assert!(!bound.force_idle.toggle());
     assert!(bound.force_idle.enabled());
     ui.invoke_answer(false);

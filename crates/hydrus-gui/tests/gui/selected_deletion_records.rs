@@ -141,7 +141,7 @@ fn actual_menu_and_answer_replay_clear_only_captured_records_and_enable_reimport
         if case["case"] == "mixed" {
             let adapter = windows.get(0).unwrap();
             let pixels = headless::render(&adapter, 1100, 700);
-            assert!(ui.get_question_visible());
+            assert!(!ui.get_question().is_empty());
             headless::save_png(
                 &Path::new(env!("CARGO_TARGET_TMPDIR"))
                     .join("selected_deletion_records_question.png"),
@@ -344,7 +344,16 @@ fn tab_roundtrip_permanently_invalidates_menu_and_answer_and_advanced_child_bloc
     let queue = seed::queue(&store);
     ui.invoke_menu_chosen(id);
     ui.invoke_answer(true);
-    assert!(ui.get_warning().contains("scripted selected clear failure"));
+    let failure = ui.get_question();
+    assert!(failure.contains("scripted selected clear failure"));
+    // A retained menu cannot replace the pending failure with another deletion
+    // question. Acknowledgment dismisses it without retrying the failed writer.
+    ui.invoke_menu_chosen(id);
+    assert_eq!(ui.get_question(), failure);
+    assert_eq!(seed::state(&store, &files), before);
+    assert_eq!(seed::queue(&store), queue);
+    ui.invoke_answer(true);
+    assert!(ui.get_question().is_empty());
     assert_eq!(seed::state(&store, &files), before);
     assert_eq!(seed::queue(&store), queue);
     store

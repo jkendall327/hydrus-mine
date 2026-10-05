@@ -67,8 +67,8 @@ impl Control {
         if !self.0.live.get()
             || !self.0.active.get()
             || !window.window().is_visible()
-            || window.get_question_visible()
-            || window.get_warning_visible()
+            || !window.get_question().is_empty()
+            || !window.get_tag_menu_question().is_empty()
         {
             return false;
         }
