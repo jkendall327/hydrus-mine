@@ -322,6 +322,73 @@ fn accepted_close_and_rebinding_retire_queued_calls_even_with_retained_windows_a
 }
 
 #[test]
+fn cloned_bound_keeps_popup_actions_live_until_its_last_owner_drops() {
+    let (_directories, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let producer = Working::new(&store, "shared binding", true);
+    let called = Arc::new(AtomicUsize::new(0));
+    producer.set_user_callable("run", {
+        let called = called.clone();
+        move || {
+            called.fetch_add(1, Ordering::SeqCst);
+        }
+    });
+    producer.show();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let original = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let retained = original.clone();
+    let row = ui.get_popups().row_data(0).unwrap();
+    assert!(row.has_callable);
+    let call = || {
+        ui.invoke_popup_call(
+            row.key.clone(),
+            row.action_owner.clone(),
+            row.gui_owner.clone(),
+        );
+    };
+
+    drop(original);
+    call();
+    producer.poll_actions();
+    assert_eq!(
+        called.load(Ordering::SeqCst),
+        1,
+        "dropping one Bound clone preserves the shared live popup owner"
+    );
+
+    call(); // A queued call from this GUI must also retire with the final owner.
+    drop(retained);
+    assert!(ui.window().is_visible());
+    assert_eq!(
+        ui.get_popups().row_data(0).unwrap().gui_owner,
+        row.gui_owner
+    );
+    call(); // The same retained visible window and displayed token are now inert.
+    producer.poll_actions();
+    assert_eq!(called.load(Ordering::SeqCst), 1);
+
+    let job = current(&store);
+    let key = job.key;
+    let owner = job.action_owner.unwrap();
+    assert_eq!(job.user_callable_label.as_deref(), Some("run"));
+    assert!(
+        store
+            .write(move |ctx| hydrus_store::popup_actions::request(
+                ctx.conn(),
+                &key,
+                &owner,
+                hydrus_core::TimestampMs::now().0 / 1000,
+                hydrus_store::popup_actions::Request::Call,
+            ))
+            .unwrap(),
+        "retiring the GUI does not retire its independent producer"
+    );
+    producer.poll_actions();
+    assert_eq!(called.load(Ordering::SeqCst), 2);
+}
+
+#[test]
 fn long_question_and_action_controls_render_with_fixed_and_narrow_popup_caps() {
     // This integration regression also uses the separately implemented width
     // preferences and live geometry observers; those APIs are in the combined tree.
