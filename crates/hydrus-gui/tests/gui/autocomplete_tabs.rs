@@ -538,6 +538,29 @@ fn literal_batches_and_empty_activation_preserve_typed_tags_query_and_or_history
             case["draft"]
         );
         ui.invoke_search_edited("empty batch retained input".into());
+        assert_eq!(
+            json!(ui.get_autocomplete_tab()),
+            case["input_transition"]["results_tab"]
+        );
+        // Typing moves to results in Qt. Return to the visible favourites pane
+        // before exercising its empty-selection broadcast rather than a tag result.
+        ui.invoke_autocomplete_tab_chosen(1);
+        assert_eq!(
+            json!(ui.get_autocomplete_tab()),
+            case["input_transition"]["favourites_tab"]
+        );
+        let selected: Vec<_> = page
+            .borrow()
+            .autocomplete()
+            .selected_suggestions()
+            .iter()
+            .map(|row| row.predicate.clone())
+            .collect();
+        assert_eq!(json!(selected), case["input_transition"]["selected"]);
+        assert_eq!(
+            ui.get_search_text().as_str(),
+            case["input_transition"]["text"].as_str().unwrap()
+        );
         assert!(ui.invoke_suggestions_deselected());
         for attempt in case["empty_attempts"].as_array().unwrap() {
             let history = bound.pages.borrow().predicate_history();

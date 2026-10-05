@@ -152,7 +152,6 @@ pub fn open(
     });
     window.on_action({
         let active = active.clone();
-        let parent = parent.clone();
         let weak = window.as_weak();
         let editor = editor.clone();
         let question = question.clone();
