@@ -2708,3 +2708,19 @@ a fresh binding after accepted close, and advanced deletion emits from a visible
 main owner. Every existing assertion, count and deadline is preserved, with an
 additional real pending-viewer/session-replacement regression authored. Hosted
 execution remains pending; no local Rust/Cargo runs or new completion credit.
+
+The selected collapsed-sibling fade probe measures pixels inside the actual
+painted tag-text rectangle. The outer selection strips use the palette blue and
+also matched the old colour-only gradient classifier. Exact hosted 760px and
+1100px snapshots both show the suffix gradient at x306–377; only the selection
+strip moved with the viewport. The unchanged fade-extent equality and trailing
+solid-colour assertions still verify rendering. Production paint is unchanged;
+cached Slint/static checks are separate from pending hosted Rust execution.
+
+The overflow-tab pointer replay waits for its actual strip and tab measurements
+to match the current viewport and wheel offset before delivering input. Headless
+paint pumps timers before layout; hit rectangles are published on a following
+1ms timer, so one render does not guarantee current geometry. The bounded wait
+keeps the exact full-name hover, target-key, clipped-target and captured-drag
+assertions, and leaves production pointer routing and paint unchanged. Hosted
+execution must validate this replay correction; no local Rust tests were run.
