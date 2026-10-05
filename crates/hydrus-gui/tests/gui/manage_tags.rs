@@ -158,6 +158,109 @@ fn most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers() {
 }
 
 #[test]
+fn switching_from_empty_service_restores_the_only_suggestion_page() {
+    let (_dirs, store) = crate::subscriptions::store();
+    let fixture = hydrus_testkit::fixture_json("tag_suggestions.json");
+    let windows = headless::init();
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .to_hex();
+    let tags: Vec<String> = serde_json::from_value(fixture["edited"]["tags"].clone()).unwrap();
+    store
+        .write(move |writer| {
+            let mut lists: hydrus_store::settings::TagAutocompleteTabs =
+                hydrus_store::settings::get(writer.conn())?;
+            lists.most_used.clear();
+            lists.most_used.insert(key, tags);
+            hydrus_store::settings::set(writer.conn(), &lists)?;
+            hydrus_store::settings::set(
+                writer.conn(),
+                &hydrus_store::settings::TagSuggestionSettings {
+                    columns: false,
+                    recent_limit: None,
+                    default_page: "favourites".into(),
+                    ..hydrus_store::settings::TagSuggestionSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let mut page = SearchPage::new(store.clone());
+    page.enter();
+    let files = page.results().to_vec();
+    assert!(!files.is_empty());
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(page));
+    ui.show().unwrap();
+    ui.invoke_select_all();
+    ui.invoke_manage_tags_selected();
+    let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    let service = |name| {
+        i32::try_from(
+            manage
+                .get_service_names()
+                .iter()
+                .position(|value| value == name)
+                .unwrap(),
+        )
+        .unwrap()
+    };
+    let mine = service("my tags");
+    let empty = service("second tags");
+    assert!(!manage.get_suggested_columns());
+    assert!(!manage.get_recent_tags_enabled());
+    for _ in 0..2 {
+        manage.invoke_service_chosen(empty);
+        assert!(!manage.get_most_used_enabled());
+        assert_eq!(manage.get_most_used_rows().row_count(), 0);
+        manage.invoke_service_chosen(mine);
+        assert!(manage.get_most_used_enabled());
+        assert_eq!(
+            manage.get_suggested_page(),
+            0,
+            "a disabled recent page cannot hide the only list"
+        );
+        assert!(manage.get_most_used_rows().row_count() > 0);
+    }
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 1100, 700);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("suggested_tags_service_switch.png"),
+        &pixels,
+        1100,
+        700,
+    )
+    .unwrap();
+    let staged = manage
+        .get_most_used_rows()
+        .row_data(0)
+        .unwrap()
+        .cells
+        .row_data(0)
+        .unwrap()
+        .to_string();
+    manage.invoke_side_clicked(0, 0, false, false);
+    manage.invoke_side_activated(0, 0);
+    assert!(
+        files
+            .iter()
+            .all(|file| !tags_of(&store, *file, "my tags").contains(&staged))
+    );
+    manage.invoke_cancel();
+    assert!(bound.manage_tags.borrow().is_none());
+    assert!(
+        files
+            .iter()
+            .all(|file| !tags_of(&store, *file, "my tags").contains(&staged)),
+        "parent Cancel discards the suggestion activation"
+    );
+    ui.hide().unwrap();
+}
+
+#[test]
 fn tags_are_added_and_removed_as_the_reference_does() {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();

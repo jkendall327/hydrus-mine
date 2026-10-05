@@ -134,6 +134,10 @@ pub(crate) fn open(
             w.set_most_used_enabled(enabled);
             if !enabled {
                 w.set_suggested_page(1);
+            } else if !w.get_recent_tags_enabled() {
+                // Each Qt service owns its notebook. A shared native notebook
+                // must return to its only available page after service changes.
+                w.set_suggested_page(0);
             }
             let mut lists = lists.borrow_mut();
             for (i, list) in lists.iter_mut().enumerate() {
