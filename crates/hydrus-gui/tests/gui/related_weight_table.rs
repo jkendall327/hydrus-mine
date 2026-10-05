@@ -1,7 +1,7 @@
 //! Actual Qt table sorting/selection replay through an owned detached weight child.
 use hydrus_gui::{RelatedWeightsWindow, headless, related_weights_window};
 use hydrus_store::related_tags::Weights;
-use slint::{ComponentHandle as _, Model as _};
+use slint::Model as _;
 use std::{
     cell::{Cell, RefCell},
     rc::Rc,
