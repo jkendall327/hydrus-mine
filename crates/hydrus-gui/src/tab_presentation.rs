@@ -37,6 +37,46 @@ fn step(text: &str, mut fit: TabFit, measured: f32, room: f32) -> TabFit {
     fit
 }
 
+fn vertical_label(
+    text: &str,
+    clockwise: bool,
+    selected: bool,
+    colour: slint::Color,
+    span: f32,
+    font_size: f32,
+) -> slint::Image {
+    if !span.is_finite()
+        || span <= 0.0
+        || !font_size.is_finite()
+        || font_size <= 0.0
+        || text.is_empty()
+    {
+        return slint::Image::default();
+    }
+    // These are the same native sans-serif/default-size glyphs that the tab's
+    // Text uses. SVG text is resolved by Slint's font context, not a second
+    // font engine or a separate window. Escape page names as text, never SVG.
+    let text = text
+        .replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;");
+    let transform = if clockwise {
+        "translate(26 0) rotate(90)".to_owned()
+    } else {
+        format!("translate(0 {span}) rotate(-90)")
+    };
+    let weight = if selected { 600 } else { 400 };
+    let red = colour.red();
+    let green = colour.green();
+    let blue = colour.blue();
+    let opacity = f32::from(colour.alpha()) / 255.0;
+    let centre = span / 2.0;
+    let svg = format!(
+        r#"<svg xmlns="http://www.w3.org/2000/svg" width="26" height="{span}"><g transform="{transform}"><text x="{centre}" y="13" dominant-baseline="central" text-anchor="middle" font-family="sans-serif" font-size="{font_size}" font-weight="{weight}" fill="rgb({red},{green},{blue})" fill-opacity="{opacity}">{text}</text></g></svg>"#
+    );
+    slint::Image::load_from_svg_data(svg.as_bytes()).unwrap_or_default()
+}
+
 pub(crate) fn bind_names(window: &MainWindow) {
     let names = window.global::<TabNames<'_>>();
     names.on_begin(|text| begin(&text));
@@ -45,6 +85,9 @@ pub(crate) fn bind_names(window: &MainWindow) {
             .into()
     });
     names.on_step(|text, fit, measured, room| step(&text, fit, measured, room));
+    names.on_vertical_label(|text, clockwise, selected, colour, span, font_size| {
+        vertical_label(&text, clockwise, selected, colour, span, font_size)
+    });
 }
 
 pub(crate) fn show(window: &MainWindow, pages: &Pages) {

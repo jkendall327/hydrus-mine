@@ -536,7 +536,7 @@ export component MainWindow inherits Window {
     in property <[PopupData]> popups;
     in property <[float]> popup-card-widths;
     in property <[float]> popup-card-caps;
-    callback popup-card-measured(int,length,length);
+    callback popup-card-measured(int,string,string,length,length);
     in property <string> popup-summary;
     callback popup-dismiss(int);
     callback popup-pause-play(int);
@@ -2147,7 +2147,7 @@ export component MainWindow inherits Window {
             x: parent.width - self.width - 20px;
             y: parent.height - self.height - 25px;
             popups: root.popups;
-            card-measured(i,w,c) => { root.popup-card-measured(i,w,c); }
+            card-measured(i,key,owner,w,c) => { root.popup-card-measured(i,key,owner,w,c); }
             summary: root.popup-summary;
             dismiss(i) => { root.popup-dismiss(i); }
             pause-play(i) => { root.popup-pause-play(i); }

@@ -279,11 +279,17 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> Binding {
     window.set_popup_card_widths(ModelRc::from(card_widths.clone()));
     window.set_popup_card_caps(ModelRc::from(card_caps.clone()));
     window.on_popup_card_measured({
+        let active = active.clone();
+        let model = model.clone();
         let widths = card_widths.clone();
         let caps = card_caps.clone();
-        move |i, w, c| {
-            if let Ok(i) = usize::try_from(i)
+        move |i, key, owner, w, c| {
+            if active.get()
+                && let Ok(i) = usize::try_from(i)
                 && i < widths.row_count()
+                && let Some(row) = model.row_data(i)
+                && row.key == key
+                && row.gui_owner == owner
             {
                 widths.set_row_data(i, w);
                 caps.set_row_data(i, c);
@@ -329,6 +335,10 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> Binding {
                     .or_insert_with(|| preferences.clone());
                 let row = data(view, policy, &gui_owner);
                 if i < model.row_count() {
+                    if model.row_data(i).is_some_and(|old| old.key != row.key) {
+                        card_widths.set_row_data(i, 0.0);
+                        card_caps.set_row_data(i, 0.0);
+                    }
                     if model.row_data(i).as_ref() != Some(&row) {
                         model.set_row_data(i, row);
                     }

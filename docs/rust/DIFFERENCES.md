@@ -2135,6 +2135,10 @@ native font metrics and equal overflow budgets differ from Qt's tab allocation,
 so the exact retained substring at a given pixel width can differ. Middle fitting
 preserves Unicode scalar boundaries, but does not yet preserve combining-grapheme
 clusters. Labels and persisted page names are never replaced by fitted text.
+Slint's software renderer does not implement item rotation. Vertical tab labels
+therefore use SVG text resolved by Slint's own native font context and rasterized
+with the appropriate quarter turn, preserving native font size, fitted labels,
+selection weight and palette colour. Horizontal tabs retain native Text items.
 Native hover text always supplies the cleaned full page name (joined lines,
 maximum 256 characters); Qt may retain an empty or older tooltip when its stored
 tab text did not change. Small native overflow arrows replace Qt's styled arrows.
@@ -2693,3 +2697,14 @@ files with retained bytes and accepts restored membership after Store reopen.
 Existing exact OS launch vectors and registered process deadlines are unchanged;
 a focused native deletion/restoration/retirement regression is authored for hosted
 CI. No local Cargo/Rust/mutation runs or additional completion credit are claimed.
+
+Delayed file-view removal callbacks now retain a weak source-page handle instead
+of keeping a replaced panel alive through its viewer. They still verify active
+binding and open-page identity before removing rows, including externally retained
+forgotten pages; they never redirect to the successor current page. Native replay
+fixtures that assert trash pruning explicitly enable the saved removal policy,
+whose reference default is false for both page and viewer lists. Exit cases start
+a fresh binding after accepted close, and advanced deletion emits from a visible
+main owner. Every existing assertion, count and deadline is preserved, with an
+additional real pending-viewer/session-replacement regression authored. Hosted
+execution remains pending; no local Rust/Cargo runs or new completion credit.

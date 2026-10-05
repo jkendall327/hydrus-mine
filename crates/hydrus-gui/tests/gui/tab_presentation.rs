@@ -147,6 +147,19 @@ fn apply_cancel_reopen_and_four_sides_preserve_real_nested_selection_and_full_na
     seed(&store, &original);
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let tab_frames = std::rc::Rc::new(std::cell::RefCell::new(std::collections::HashMap::new()));
+    // This is the separate measurement observer. Production drag/pointer hit
+    // tracking remains installed on tab_geometry and receives the same frames.
+    ui.on_tab_geometry_measured({
+        let tab_frames = tab_frames.clone();
+        move |key, _, _, _, x, y, width, height| {
+            if !key.is_empty() {
+                tab_frames
+                    .borrow_mut()
+                    .insert(key.to_string(), (x, y, width, height));
+            }
+        }
+    });
     ui.show().unwrap();
     ui.invoke_tab_chosen(0, 1);
     ui.invoke_tab_chosen(1, 1);
@@ -219,6 +232,32 @@ fn apply_cancel_reopen_and_four_sides_preserve_real_nested_selection_and_full_na
                 dimension(width, 56.0);
                 dimension(x, ui.get_page_content_x() + ui.get_page_content_width());
             }
+        }
+        if matches!(alignment, TabAlignment::Left | TabAlignment::Right) {
+            let (x, y, width, height) = tab_frames.borrow()[&original.pages[0].key.to_hex()];
+            // Long Qt reference names must paint glyphs along the vertical
+            // axis, not merely a horizontal fragment in the middle of a tab.
+            // Exclude the tab border and sample actual rendered interior ink.
+            let interior_rows: Vec<_> = (0_u16..600)
+                .filter(|&row| f32::from(row) >= y + 4.0 && f32::from(row) < y + height - 4.0)
+                .collect();
+            let ink_rows = interior_rows
+                .iter()
+                .filter(|&&row| {
+                    (0_u16..900).any(|column| {
+                        if f32::from(column) < x + 4.0 || f32::from(column) >= x + width - 4.0 {
+                            return false;
+                        }
+                        let pixel =
+                            &pixels[(usize::from(row) * 900 + usize::from(column)) * 4..][..3];
+                        pixel.iter().all(|&channel| channel < 150)
+                    })
+                })
+                .count();
+            assert!(
+                ink_rows > interior_rows.len() / 3,
+                "long vertical tab label must paint along its length: {ink_rows} ink rows"
+            );
         }
         if let Some(previous) = previous {
             assert_ne!(pixels, previous, "actual rendered layout changes sides");

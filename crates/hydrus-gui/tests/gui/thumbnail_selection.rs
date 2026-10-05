@@ -32,6 +32,7 @@ fn several_thumbnails_are_selected_and_acted_on() {
     )
     .unwrap();
     let store: Arc<Store> = Store::open(native.path()).unwrap();
+    super::common::remove_trashed_from_view(&store);
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     slint::ComponentHandle::show(&ui).unwrap();

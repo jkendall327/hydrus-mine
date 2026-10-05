@@ -9,6 +9,7 @@ export global TabNames {
     pure callback begin(string) -> TabFit;
     pure callback middle(string,int) -> string;
     callback step(string,TabFit,float,float) -> TabFit;
+    pure callback vertical-label(string,bool,bool,color,float,float) -> image;
 }
 
 component NotebookTab inherits Rectangle {
@@ -67,17 +68,23 @@ component NotebookTab inherits Rectangle {
     accessible-action-default => { root.chosen(); }
     full-measure := Text { visible: false; text: root.text; font-weight: root.selected ? 600 : 400; }
     candidate-measure := Text { visible: false; text: TabNames.middle(root.text,root.fitting.candidate); font-weight: root.selected ? 600 : 400; }
-    Text {
+    if !root.vertical: Text {
         text: root.cap > 0px ? root.fitting.display : root.text;
         font-weight: root.selected ? 600 : 400;
-        width: root.vertical ? root.height : root.width;
-        height: root.vertical ? root.width : root.height;
-        x: root.vertical ? (root.width - root.height) / 2 : 0px;
-        y: root.vertical ? (root.height - root.width) / 2 : 0px;
-        transform-rotation: root.vertical ? (root.clockwise ? 90deg : -90deg) : 0deg;
+        width: root.width;
+        height: root.height;
         vertical-alignment: center;
         horizontal-alignment: center;
         color: Theme.text;
+    }
+    // The software renderer does not implement item transforms. SVG text uses
+    // Slint's native font resolver, and its quarter turn is rasterized before
+    // reaching that renderer, preserving the existing fit and tab hit box.
+    if root.vertical: Image {
+        width: root.width;
+        height: root.height;
+        source: TabNames.vertical-label(root.cap > 0px ? root.fitting.display : root.text,root.clockwise,root.selected,Theme.text,root.height / 1px,1rem / 1px);
+        image-fit: fill;
     }
     touch := TouchArea {
         property <bool> hover: self.has-hover;

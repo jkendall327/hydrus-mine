@@ -286,7 +286,42 @@ fn actual_namespace_questions_cancel_retired_owners_reopen_and_live_colours_repl
     options.invoke_namespace_colour_clicked(i32::try_from(index).unwrap(), false, false);
     options.invoke_namespace_colour_action("delete".into());
     assert!(bound.options_colour_child.borrow().is_none());
-    let pixels = headless::render(&windows.get(1).unwrap(), 950, 1600);
+    let noneable_frames =
+        std::rc::Rc::new(std::cell::RefCell::new(std::collections::HashMap::new()));
+    options.on_noneable_text_geometry({
+        let frames = noneable_frames.clone();
+        move |index, x, y, width, preferred| {
+            frames.borrow_mut().insert(index, (x, y, width, preferred));
+        }
+    });
+    let connector = options
+        .get_rows()
+        .iter()
+        .position(|row| row.none_phrase == "use ideal tag colour")
+        .unwrap();
+    let connector = i32::try_from(connector).unwrap();
+    let started = std::time::Instant::now();
+    let pixels = loop {
+        let pixels = headless::render(&windows.get(1).unwrap(), 950, 1600);
+        if noneable_frames.borrow().contains_key(&connector) {
+            break pixels;
+        }
+        assert!(
+            started.elapsed() < std::time::Duration::from_secs(1),
+            "initial native checkbox measurement must be published"
+        );
+        std::thread::yield_now();
+    };
+    let (x, y, width, preferred) = noneable_frames.borrow()[&connector];
+    assert!(y > 0.0 && y < 1600.0, "actual checkbox is in the viewport");
+    assert!(
+        width + 0.1 >= preferred,
+        "full checkbox caption fits its native preferred width"
+    );
+    assert!(
+        x + width <= 950.0,
+        "full checkbox remains inside the actual window"
+    );
     assert!(pixels.chunks_exact(4).any(|pixel| pixel != &pixels[..4]));
     headless::save_png(
         &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("namespace-colours-draft.png"),

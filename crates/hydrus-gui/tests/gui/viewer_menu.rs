@@ -147,6 +147,7 @@ fn a_right_click_shows_the_viewer_s_menu_and_its_entries_act() {
     )
     .unwrap();
     let store: Arc<Store> = Store::open(native.path()).unwrap();
+    super::common::remove_trashed_from_view(&store);
     let copied: Rc<RefCell<Vec<Clip>>> = Rc::default();
     hydrus_gui::set_clipper({
         let copied = copied.clone();
