@@ -1,0 +1,2877 @@
+{
+  "search_context": {
+    "service": "616c6c206b6e6f776e2074616773",
+    "display_service": "616c6c206b6e6f776e2074616773",
+    "include_current": true,
+    "include_pending": true
+  },
+  "locked": true,
+  "services": [
+    {
+      "name": "downloader tags",
+      "key": "646f776e6c6f616465722074616773",
+      "type": 5
+    },
+    {
+      "name": "my tags",
+      "key": "6c6f63616c2074616773",
+      "type": 5
+    },
+    {
+      "name": "second tags",
+      "key": "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+      "type": 5
+    },
+    {
+      "name": "all known tags",
+      "key": "616c6c206b6e6f776e2074616773",
+      "type": 10
+    }
+  ],
+  "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2"
+  ],
+  "fallback": {
+    "type": "system",
+    "data": 20,
+    "order": 0,
+    "tag_context": {
+      "service": "616c6c206b6e6f776e2074616773",
+      "display_service": "616c6c206b6e6f776e2074616773",
+      "include_current": true,
+      "include_pending": true
+    }
+  },
+  "states": [
+    {
+      "kind": "filesize",
+      "visible": false,
+      "menu": []
+    },
+    {
+      "kind": "num_tags",
+      "visible": true,
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "namespaces",
+      "visible": true,
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": true
+            }
+          ]
+        },
+        {
+          "menu": "ADVANCED: tag display type",
+          "entries": [
+            {
+              "check": "display tags",
+              "checked": true
+            },
+            {
+              "check": "multiple media view tags",
+              "checked": false
+            },
+            {
+              "check": "single media view tags",
+              "checked": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sorts": [
+    {
+      "kind": "num_tags",
+      "service": "downloader tags",
+      "sort": {
+        "type": "system",
+        "data": 9,
+        "order": 0,
+        "tag_context": {
+          "service": "646f776e6c6f616465722074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": true
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": false
+            }
+          ]
+        }
+      ],
+      "media": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+        "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+        "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+        "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+      ]
+    },
+    {
+      "kind": "num_tags",
+      "service": "my tags",
+      "sort": {
+        "type": "system",
+        "data": 9,
+        "order": 0,
+        "tag_context": {
+          "service": "6c6f63616c2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": true
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": false
+            }
+          ]
+        }
+      ],
+      "media": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+        "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc"
+      ]
+    },
+    {
+      "kind": "num_tags",
+      "service": "second tags",
+      "sort": {
+        "type": "system",
+        "data": 9,
+        "order": 0,
+        "tag_context": {
+          "service": "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": true
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": false
+            }
+          ]
+        }
+      ],
+      "media": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+        "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+        "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf"
+      ]
+    },
+    {
+      "kind": "num_tags",
+      "service": "all known tags",
+      "sort": {
+        "type": "system",
+        "data": 9,
+        "order": 0,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": true
+            }
+          ]
+        }
+      ],
+      "media": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+        "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc"
+      ]
+    },
+    {
+      "kind": "namespaces",
+      "service": "downloader tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 1
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "646f776e6c6f616465722074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": true
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "menu": "ADVANCED: tag display type",
+          "entries": [
+            {
+              "check": "display tags",
+              "checked": true
+            },
+            {
+              "check": "multiple media view tags",
+              "checked": false
+            },
+            {
+              "check": "single media view tags",
+              "checked": false
+            }
+          ]
+        }
+      ],
+      "media": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+        "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+        "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+        "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+      ]
+    },
+    {
+      "kind": "namespaces",
+      "service": "downloader tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 3
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "646f776e6c6f616465722074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": true
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "menu": "ADVANCED: tag display type",
+          "entries": [
+            {
+              "check": "display tags",
+              "checked": false
+            },
+            {
+              "check": "multiple media view tags",
+              "checked": true
+            },
+            {
+              "check": "single media view tags",
+              "checked": false
+            }
+          ]
+        }
+      ],
+      "media": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+        "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+        "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+        "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+      ]
+    },
+    {
+      "kind": "namespaces",
+      "service": "downloader tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 2
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "646f776e6c6f616465722074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": true
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "menu": "ADVANCED: tag display type",
+          "entries": [
+            {
+              "check": "display tags",
+              "checked": false
+            },
+            {
+              "check": "multiple media view tags",
+              "checked": false
+            },
+            {
+              "check": "single media view tags",
+              "checked": true
+            }
+          ]
+        }
+      ],
+      "media": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+        "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+        "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+        "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+      ]
+    },
+    {
+      "kind": "namespaces",
+      "service": "my tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 1
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "6c6f63616c2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": true
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "menu": "ADVANCED: tag display type",
+          "entries": [
+            {
+              "check": "display tags",
+              "checked": true
+            },
+            {
+              "check": "multiple media view tags",
+              "checked": false
+            },
+            {
+              "check": "single media view tags",
+              "checked": false
+            }
+          ]
+        }
+      ],
+      "media": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+        "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+        "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce"
+      ]
+    },
+    {
+      "kind": "namespaces",
+      "service": "my tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 3
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "6c6f63616c2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": true
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "menu": "ADVANCED: tag display type",
+          "entries": [
+            {
+              "check": "display tags",
+              "checked": false
+            },
+            {
+              "check": "multiple media view tags",
+              "checked": true
+            },
+            {
+              "check": "single media view tags",
+              "checked": false
+            }
+          ]
+        }
+      ],
+      "media": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+        "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+        "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce"
+      ]
+    },
+    {
+      "kind": "namespaces",
+      "service": "my tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 2
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "6c6f63616c2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": true
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "menu": "ADVANCED: tag display type",
+          "entries": [
+            {
+              "check": "display tags",
+              "checked": false
+            },
+            {
+              "check": "multiple media view tags",
+              "checked": false
+            },
+            {
+              "check": "single media view tags",
+              "checked": true
+            }
+          ]
+        }
+      ],
+      "media": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+        "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+        "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce"
+      ]
+    },
+    {
+      "kind": "namespaces",
+      "service": "second tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 1
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": true
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "menu": "ADVANCED: tag display type",
+          "entries": [
+            {
+              "check": "display tags",
+              "checked": true
+            },
+            {
+              "check": "multiple media view tags",
+              "checked": false
+            },
+            {
+              "check": "single media view tags",
+              "checked": false
+            }
+          ]
+        }
+      ],
+      "media": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+        "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+        "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+        "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+      ]
+    },
+    {
+      "kind": "namespaces",
+      "service": "second tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 3
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": true
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "menu": "ADVANCED: tag display type",
+          "entries": [
+            {
+              "check": "display tags",
+              "checked": false
+            },
+            {
+              "check": "multiple media view tags",
+              "checked": true
+            },
+            {
+              "check": "single media view tags",
+              "checked": false
+            }
+          ]
+        }
+      ],
+      "media": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+        "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+        "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+        "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+      ]
+    },
+    {
+      "kind": "namespaces",
+      "service": "second tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 2
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": true
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "menu": "ADVANCED: tag display type",
+          "entries": [
+            {
+              "check": "display tags",
+              "checked": false
+            },
+            {
+              "check": "multiple media view tags",
+              "checked": false
+            },
+            {
+              "check": "single media view tags",
+              "checked": true
+            }
+          ]
+        }
+      ],
+      "media": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+        "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+        "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+        "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+      ]
+    },
+    {
+      "kind": "namespaces",
+      "service": "all known tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 1
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": true
+            }
+          ]
+        },
+        {
+          "menu": "ADVANCED: tag display type",
+          "entries": [
+            {
+              "check": "display tags",
+              "checked": true
+            },
+            {
+              "check": "multiple media view tags",
+              "checked": false
+            },
+            {
+              "check": "single media view tags",
+              "checked": false
+            }
+          ]
+        }
+      ],
+      "media": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+        "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+        "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce"
+      ]
+    },
+    {
+      "kind": "namespaces",
+      "service": "all known tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 3
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": true
+            }
+          ]
+        },
+        {
+          "menu": "ADVANCED: tag display type",
+          "entries": [
+            {
+              "check": "display tags",
+              "checked": false
+            },
+            {
+              "check": "multiple media view tags",
+              "checked": true
+            },
+            {
+              "check": "single media view tags",
+              "checked": false
+            }
+          ]
+        }
+      ],
+      "media": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+        "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+        "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce"
+      ]
+    },
+    {
+      "kind": "namespaces",
+      "service": "all known tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 2
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": true
+            }
+          ]
+        },
+        {
+          "menu": "ADVANCED: tag display type",
+          "entries": [
+            {
+              "check": "display tags",
+              "checked": false
+            },
+            {
+              "check": "multiple media view tags",
+              "checked": false
+            },
+            {
+              "check": "single media view tags",
+              "checked": true
+            }
+          ]
+        }
+      ],
+      "media": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+        "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+        "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce"
+      ]
+    }
+  ],
+  "collects": [
+    {
+      "service": "downloader tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 2
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "collect": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": true,
+        "tag_context": {
+          "service": "646f776e6c6f616465722074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": true
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "menu": "unmatched files",
+          "entries": [
+            {
+              "check": "collect into one group",
+              "checked": true
+            },
+            {
+              "check": "leave separate",
+              "checked": false
+            }
+          ]
+        }
+      ],
+      "media": [
+        [
+          "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+          "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+          "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+          "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+          "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+          "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+          "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+          "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+          "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+          "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+          "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+          "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+          "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+          "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+          "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+          "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+          "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+          "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+          "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+          "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+          "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+          "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+          "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+          "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+          "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+          "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce"
+        ]
+      ]
+    },
+    {
+      "service": "downloader tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 2
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "collect": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": false,
+        "tag_context": {
+          "service": "646f776e6c6f616465722074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": true
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "menu": "unmatched files",
+          "entries": [
+            {
+              "check": "collect into one group",
+              "checked": false
+            },
+            {
+              "check": "leave separate",
+              "checked": true
+            }
+          ]
+        }
+      ],
+      "media": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+        "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+        "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce"
+      ]
+    },
+    {
+      "service": "my tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 2
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "collect": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": true,
+        "tag_context": {
+          "service": "6c6f63616c2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": true
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "menu": "unmatched files",
+          "entries": [
+            {
+              "check": "collect into one group",
+              "checked": true
+            },
+            {
+              "check": "leave separate",
+              "checked": false
+            }
+          ]
+        }
+      ],
+      "media": [
+        [
+          "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+          "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+          "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+          "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+          "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+          "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+          "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+          "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+          "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+          "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+          "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+          "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+          "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+          "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+          "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+        ],
+        [
+          "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+          "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+          "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+          "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+          "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+          "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a"
+        ],
+        [
+          "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+          "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+          "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc"
+        ],
+        [
+          "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+          "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce"
+        ]
+      ]
+    },
+    {
+      "service": "my tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 2
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "collect": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": false,
+        "tag_context": {
+          "service": "6c6f63616c2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": true
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "menu": "unmatched files",
+          "entries": [
+            {
+              "check": "collect into one group",
+              "checked": false
+            },
+            {
+              "check": "leave separate",
+              "checked": true
+            }
+          ]
+        }
+      ],
+      "media": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        [
+          "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+          "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+          "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+          "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+          "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+          "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a"
+        ],
+        [
+          "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+          "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+          "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc"
+        ],
+        [
+          "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+          "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce"
+        ]
+      ]
+    },
+    {
+      "service": "second tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 2
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "collect": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": true,
+        "tag_context": {
+          "service": "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": true
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "menu": "unmatched files",
+          "entries": [
+            {
+              "check": "collect into one group",
+              "checked": true
+            },
+            {
+              "check": "leave separate",
+              "checked": false
+            }
+          ]
+        }
+      ],
+      "media": [
+        [
+          "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+          "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+          "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+          "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+          "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+          "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+          "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+          "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+          "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+          "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+          "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+          "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+          "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+          "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+          "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+          "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+          "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+          "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+          "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+          "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+          "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+          "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+          "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+          "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+          "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+          "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce"
+        ]
+      ]
+    },
+    {
+      "service": "second tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 2
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "collect": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": false,
+        "tag_context": {
+          "service": "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": true
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "menu": "unmatched files",
+          "entries": [
+            {
+              "check": "collect into one group",
+              "checked": false
+            },
+            {
+              "check": "leave separate",
+              "checked": true
+            }
+          ]
+        }
+      ],
+      "media": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+        "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+        "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+        "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+        "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+        "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+        "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+        "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce"
+      ]
+    },
+    {
+      "service": "all known tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 2
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "collect": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": true,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": true
+            }
+          ]
+        },
+        {
+          "menu": "unmatched files",
+          "entries": [
+            {
+              "check": "collect into one group",
+              "checked": true
+            },
+            {
+              "check": "leave separate",
+              "checked": false
+            }
+          ]
+        }
+      ],
+      "media": [
+        [
+          "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+          "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+          "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+          "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+          "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+          "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+          "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+          "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+          "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+          "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+          "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+          "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+          "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+          "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+          "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+          "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+        ],
+        [
+          "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+          "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+          "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+          "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+          "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+          "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a"
+        ],
+        [
+          "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+          "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+          "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc"
+        ],
+        [
+          "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+          "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce"
+        ]
+      ]
+    },
+    {
+      "service": "all known tags",
+      "sort": {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 2
+        },
+        "order": 0,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "collect": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": false,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": true
+            }
+          ]
+        },
+        {
+          "menu": "unmatched files",
+          "entries": [
+            {
+              "check": "collect into one group",
+              "checked": false
+            },
+            {
+              "check": "leave separate",
+              "checked": true
+            }
+          ]
+        }
+      ],
+      "media": [
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+        "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+        "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+        "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+        "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+        "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+        "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+        "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+        [
+          "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+          "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+          "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+          "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+          "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+          "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a"
+        ],
+        [
+          "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+          "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+          "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc"
+        ],
+        [
+          "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+          "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce"
+        ]
+      ]
+    }
+  ],
+  "mouse": [
+    {
+      "role": "sort",
+      "button": "right",
+      "menus": []
+    },
+    {
+      "role": "sort",
+      "button": "left",
+      "menus": [
+        [
+          {
+            "menu": "tag service",
+            "entries": [
+              {
+                "check": "downloader tags",
+                "checked": false
+              },
+              {
+                "check": "my tags",
+                "checked": false
+              },
+              {
+                "check": "second tags",
+                "checked": false
+              },
+              "---",
+              {
+                "check": "all known tags",
+                "checked": true
+              }
+            ]
+          },
+          {
+            "menu": "ADVANCED: tag display type",
+            "entries": [
+              {
+                "check": "display tags",
+                "checked": false
+              },
+              {
+                "check": "multiple media view tags",
+                "checked": false
+              },
+              {
+                "check": "single media view tags",
+                "checked": true
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "role": "collect",
+      "button": "right",
+      "menus": []
+    },
+    {
+      "role": "collect",
+      "button": "left",
+      "menus": [
+        [
+          {
+            "menu": "tag service",
+            "entries": [
+              {
+                "check": "downloader tags",
+                "checked": false
+              },
+              {
+                "check": "my tags",
+                "checked": false
+              },
+              {
+                "check": "second tags",
+                "checked": false
+              },
+              "---",
+              {
+                "check": "all known tags",
+                "checked": true
+              }
+            ]
+          },
+          {
+            "menu": "unmatched files",
+            "entries": [
+              {
+                "check": "collect into one group",
+                "checked": false
+              },
+              {
+                "check": "leave separate",
+                "checked": true
+              }
+            ]
+          }
+        ]
+      ]
+    }
+  ],
+  "options": [
+    {
+      "service": "downloader tags",
+      "before": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": false,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "staged": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": false,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "draft": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": false,
+        "tag_context": {
+          "service": "646f776e6c6f616465722074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": true
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": false
+            }
+          ]
+        },
+        {
+          "menu": "unmatched files",
+          "entries": [
+            {
+              "check": "collect into one group",
+              "checked": false
+            },
+            {
+              "check": "leave separate",
+              "checked": true
+            }
+          ]
+        }
+      ],
+      "saved": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": false,
+        "tag_context": {
+          "service": "646f776e6c6f616465722074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "round_trip": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": false,
+        "tag_context": {
+          "service": "646f776e6c6f616465722074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "reopened": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": false,
+        "tag_context": {
+          "service": "646f776e6c6f616465722074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      }
+    },
+    {
+      "service": "all known tags",
+      "before": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": false,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "staged": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": false,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "draft": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": false,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "menu": [
+        {
+          "menu": "tag service",
+          "entries": [
+            {
+              "check": "downloader tags",
+              "checked": false
+            },
+            {
+              "check": "my tags",
+              "checked": false
+            },
+            {
+              "check": "second tags",
+              "checked": false
+            },
+            "---",
+            {
+              "check": "all known tags",
+              "checked": true
+            }
+          ]
+        },
+        {
+          "menu": "unmatched files",
+          "entries": [
+            {
+              "check": "collect into one group",
+              "checked": false
+            },
+            {
+              "check": "leave separate",
+              "checked": true
+            }
+          ]
+        }
+      ],
+      "saved": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": false,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "round_trip": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": false,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      },
+      "reopened": {
+        "namespaces": [
+          "series"
+        ],
+        "ratings": [],
+        "unmatched": false,
+        "tag_context": {
+          "service": "616c6c206b6e6f776e2074616773",
+          "display_service": "616c6c206b6e6f776e2074616773",
+          "include_current": false,
+          "include_pending": false
+        }
+      }
+    }
+  ],
+  "cancel_before": {
+    "namespaces": [
+      "series"
+    ],
+    "ratings": [],
+    "unmatched": false,
+    "tag_context": {
+      "service": "616c6c206b6e6f776e2074616773",
+      "display_service": "616c6c206b6e6f776e2074616773",
+      "include_current": false,
+      "include_pending": false
+    }
+  },
+  "cancel_draft": {
+    "namespaces": [
+      "series"
+    ],
+    "ratings": [],
+    "unmatched": false,
+    "tag_context": {
+      "service": "646f776e6c6f616465722074616773",
+      "display_service": "616c6c206b6e6f776e2074616773",
+      "include_current": false,
+      "include_pending": false
+    }
+  },
+  "cancel_after": {
+    "namespaces": [
+      "series"
+    ],
+    "ratings": [],
+    "unmatched": false,
+    "tag_context": {
+      "service": "616c6c206b6e6f776e2074616773",
+      "display_service": "616c6c206b6e6f776e2074616773",
+      "include_current": false,
+      "include_pending": false
+    }
+  }
+}

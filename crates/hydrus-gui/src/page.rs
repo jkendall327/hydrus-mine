@@ -1966,6 +1966,16 @@ impl SearchPage {
         self.sort_changed_search_or_resort();
     }
 
+    /// Apply the page sort's independent cog choice and run its real consumer.
+    pub fn apply_sort_cog(&mut self, action: &hydrus_gui_model::sort_cog::Action) -> bool {
+        if !hydrus_gui_model::sort_cog::choose(&mut self.sort, action) {
+            return false;
+        }
+        self.sort_changed = true;
+        self.sort_changed_search_or_resort();
+        true
+    }
+
     pub fn set_sort_order(&mut self, order: SortOrder) {
         self.sort.ascending = order == SortOrder::Ascending;
         self.sort_changed = true;

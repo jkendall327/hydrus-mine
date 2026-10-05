@@ -127,6 +127,7 @@ mod gallery_source;
 mod namespace_sorts;
 mod tag_list_display_types;
 
+mod sidebar_context_cogs;
 mod sort_cog;
 
 mod command_palette;

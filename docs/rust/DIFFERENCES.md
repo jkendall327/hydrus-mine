@@ -320,7 +320,7 @@ search.
   the work slots; and on the media playback page, the preview's zoom,
   re-centring, the checkerboard, animations, mpv, Qt's player and the
   system settings; the system page omits filesystem wake waiting, and the GUI
-  has no periodic sleep checker of its own (the downloader daemon does); on the file sort/collect page, the default collect's tag service; on the tag sort page, the
+  has no periodic sleep checker of its own (the downloader daemon does); on the tag sort page, the
   manage tags dialogs' sorts (ours sort as the media viewer's list) and
   the namespace grouping list; on the ratings page, the example
   rating service's dropdown, the clickable examples, and the preview
@@ -1795,7 +1795,16 @@ keys. This backend boundary is recorded by `sort_cogs.json`; the Options-owned
 cogs now edit both contexts transactionally. Their two-level native popups
 use the reference service groups, separators, checks and advanced-view order.
 They edit each sort independently and preserve its full saved context metadata.
-The page-level sort cog remains a separate, unclaimed workflow.
+The page-level sort and collect cogs now reach actual sorting and grouping,
+recorded through a real Qt sidebar and media panel in
+`sidebar_sort_collect_cogs.json`. Default Collect’s service cog stages the full
+independent context through Options Apply/Cancel and reopening. Native cogs use
+a shared grouped popup rather than Qt widgets; they open through normal button
+activation, and refresh checks before every popup. The two service-menu rows are
+excluded menu nodes, not completion-count leaves. This slice claims only the
+concrete namespace advanced-display action; broader search/sidebar and Options
+sort/collect parents remain Partial. Repository metadata is offered by the menu
+without implementing remote repository work.
 
 Command-palette preferences and snapshot-based provider/queue models are now
 present, with fresh Qt recordings. The Options editor now stages and persists these

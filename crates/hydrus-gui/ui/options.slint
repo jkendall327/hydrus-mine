@@ -1,3 +1,4 @@
+import { SortCollectCog, ContextCogServices, ContextCogItem } from "sort_collect_cog.slint";
 import { FrameLocationsTable } from "frame_locations.slint";
 // The options window (file > options, `src/options.rs`), as the
 // reference's "manage options" dialog: its pages listed on the left, the
@@ -151,6 +152,10 @@ export component OptionsWindow inherits Window {
     callback collect-toggled(int, int, bool);
     // (a tag sort's type, order or grouping: the row, which, the choice)
     callback tag-sort-chosen(int, int, int);
+    in property <ContextCogServices> collect-cog-services;
+    in property <[ContextCogItem]> collect-cog-extra;
+    callback collect-cog-opened(int);
+    callback collect-cog-chosen(int, int);
     callback unmatched-chosen(int, int);
     // (a time's field: the row, the field, its value)
     callback field-edited(int, int, int);
@@ -464,10 +469,14 @@ export component OptionsWindow inherits Window {
                             if row.kind == 11: VerticalLayout {
                                 width: 260px;
                                 spacing: 2px;
-                                Text {
-                                    text: row.text;
-                                    vertical-alignment: center;
-                                    min-height: 26px;
+                                HorizontalLayout {
+                                    Text { text: row.text; vertical-alignment: center; min-height: 26px; horizontal-stretch:1; }
+                                    SortCollectCog {
+                                        collect: true;
+                                        services:root.collect-cog-services; extra:root.collect-cog-extra;
+                                        opened => {root.collect-cog-opened(i);}
+                                        chosen(id) => {root.collect-cog-chosen(i,id);}
+                                    }
                                 }
                                 for name[c] in row.items: CheckBox {
                                     text: name;

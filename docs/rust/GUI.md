@@ -794,13 +794,13 @@ page's, so ties fall in the fallback's order, with files that have no value
 placed as the reference's pages place them (never viewed as no views, the
 inbox before the archive). A new page sorts by your default sort (hydrus's
 own: file size, smallest first). A namespace sort orders files by their
-subtags in each namespace in turn (current and pending, in all known tags,
+subtags in each namespace in turn (current and pending, in its independently selected tag service,
 in human order, as the reference's `GetComparableNamespaceSlice`); a rating
 sort by the rating, unrated files counting as -1 (0 on an inc/dec
 service). Under the sort control, the collect control ("no collections",
 or "collect by series-stars") opens the reference's choices: the
 namespaces in your namespace sorts, then the like/dislike and numerical
-rating services, each checked to collect by it; its ⚙ says whether files
+rating services, each checked to collect by it; its ⚙ chooses its own tag service and whether files
 matching none collect into one group or stay separate. A page collects as
 the reference's pages do (`MediaList.Collect`, checked against it through
 the page): files group by their tags in those namespaces and their
@@ -3066,3 +3066,14 @@ end; enabled scrolling moves the overflowing bar's viewport and preserves page
 selection. This works on horizontal and vertical notebook rows; Apply refreshes
 the live bars and Cancel leaves saved settings unchanged.
 Options > tag suggestions opens an owned related-weight draft with separate search/suggested namespace tables. Reserved and duplicate namespace warnings, 0–10,000 percent values, protected catch-all rows, add/edit/delete, and question Cancel follow the recorded Qt editor. Child Apply stages the tables; parent Apply persists them, while parent Cancel closes and invalidates the child. Already-open Manage Tags related lists re-query saved weight changes through one owned worker. Related suggestions preserve score order, filter tags already present on all captured files, and only add mappings when activated.
+
+The search sidebar’s sort cog appears for namespace and number-of-tags sorts.
+Its tag-service submenu groups local tags, repositories and all known tags;
+namespace sorts also offer display, multiple-media and single-media tag views.
+Each choice immediately sorts the actual page using its independent context.
+The collect cog changes its own service or unmatched-files policy and immediately
+regroups the page. Every opening refreshes checks; retained actions cannot change
+a different page, a changed control or a hidden owner. The Default collect cog in
+Options uses the same service choices, staged until Apply, preserved after
+reopening, and discarded by Cancel. Both controls preserve the full tag-context
+metadata independently from the page’s search context.
