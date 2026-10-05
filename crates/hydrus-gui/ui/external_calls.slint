@@ -27,7 +27,7 @@ export component ExternalCallsTable inherits Rectangle {
         Text {text:root.error;wrap:word-wrap;}
         HorizontalLayout {
             Button{text:"add";enabled:!root.child-open;clicked=>{root.action("add");}}
-            Button{text:"edit";enabled:root.single && !root.child-open;clicked=>{root.action("edit");}}
+            Button{text:"edit";enabled:root.selected && !root.child-open;clicked=>{root.action("edit");}}
             Button{text:"delete";enabled:root.selected && !root.child-open;clicked=>{root.action("delete");}}
             Button{text:"export";enabled:root.selected && !root.child-open;clicked=>{root.action("export");}}
             Button{text:"import";enabled:!root.child-open;clicked=>{root.action("import");}}
@@ -126,13 +126,23 @@ export component ExternalCommandWindow inherits Window {
     width:760px;height:590px;
     in-out property <string> executable;
     in property <[TableRow]> rows;
+    in property <bool> mac-delete-key;
     in property <bool> selected;
     in property <bool> single;
     in property <bool> child-open;
     in property <string> full-template;
     in property <string> error;
+    out property <float> parameter-list-x: parameter-list.absolute-position.x / 1px;
+    out property <float> parameter-list-y: parameter-list.absolute-position.y / 1px;
+    in-out property <string> feedback;
+    in-out property <int> feedback-generation;
+    property <bool> feedback-visible;
+    changed feedback-generation => { root.feedback-visible=false; }
+    Timer { interval:50ms;running:root.feedback != "" && !root.feedback-visible;triggered=>{root.feedback-visible=true;} }
+    Timer { interval:3000ms;running:root.feedback-visible;triggered=>{root.feedback="";root.feedback-visible=false;} }
     callback changed();
     callback clicked(int,bool,bool);
+    callback navigated(string,bool,bool);
     callback action(string);
     callback apply();
     callback cancel();
@@ -141,19 +151,42 @@ export component ExternalCommandWindow inherits Window {
         Text{text:"Set the command and its parameters. Do not put parameters in the command input section. Put the %path% or %url% style parameter replacement token in the appropriate place in your parameter list.";wrap:word-wrap;}
         HorizontalLayout{Text{text:"executable command/path: ";}LineEdit{text<=>root.executable;enabled:!root.child-open;edited=>{root.changed();}}}
         Text{text:"parameters: ";}
-        ListTable{rows:root.rows;columns:[{title:"parameter",width:550px,stretch:true}];row-clicked(i,c,s)=>{if !root.child-open{root.clicked(i,c,s);}}row-activated(i)=>{if !root.child-open{root.clicked(i,false,false);root.action("edit");}}}
+        FocusScope {
+            min-height: 150px;
+            capture-key-pressed(event) => {
+                if root.child-open { return accept; }
+                if event.modifiers.control && (event.text == "c" || event.text == "C" || event.text == Key.Insert) { root.action("copy-selected"); return accept; }
+                if event.modifiers.control && (event.text == "a" || event.text == "A") { root.action("select-all"); return accept; }
+                if event.modifiers.control && event.text == " " { root.action("toggle-current"); return accept; }
+                if event.text == Key.UpArrow { root.navigated("previous",event.modifiers.control,event.modifiers.shift); return accept; }
+                if event.text == Key.DownArrow { root.navigated("next",event.modifiers.control,event.modifiers.shift); return accept; }
+                if event.text == Key.Home { root.navigated("home",event.modifiers.control,event.modifiers.shift); return accept; }
+                if event.text == Key.End { root.navigated("end",event.modifiers.control,event.modifiers.shift); return accept; }
+                if event.text == Key.Delete || (root.mac-delete-key && event.text == Key.Backspace) { root.action("delete"); return accept; }
+                reject
+            }
+            parameter-list := ListTable{rows:root.rows;columns:[{title:"parameter",width:550px,stretch:true}];row-clicked(i,c,s)=>{if !root.child-open{root.clicked(i,c,s);}}row-activated(i)=>{if !root.child-open{root.clicked(i,false,false);root.action("edit");}}delete-pressed=>{if !root.child-open{root.action("delete");}}}
+        }
         HorizontalLayout{
             Button{text:"add";enabled:!root.child-open;clicked=>{root.action("add");}}
-            Button{text:"edit";enabled:root.single && !root.child-open;clicked=>{root.action("edit");}}
+            Button{text:"edit";enabled:root.selected && !root.child-open;clicked=>{root.action("edit");}}
             Button{text:"delete";enabled:root.selected && !root.child-open;clicked=>{root.action("delete");}}
             Button{text:"↑";enabled:root.selected && !root.child-open;clicked=>{root.action("up");}}
             Button{text:"↓";enabled:root.selected && !root.child-open;clicked=>{root.action("down");}}
         }
         HorizontalLayout{Text{text:"current full template: ";}LineEdit{text:root.full-template;read-only:true;}}
-        HorizontalLayout{Button{text:"copy";enabled:!root.child-open;clicked=>{root.action("copy");}}Button{text:"paste";enabled:!root.child-open;clicked=>{root.action("paste");}}}
+        HorizontalLayout{copy-button := Button{text:"copy";enabled:!root.child-open;clicked=>{root.action("copy");}}paste-button := Button{text:"paste";enabled:!root.child-open;clicked=>{root.action("paste");}}}
         Text{text:root.error;wrap:word-wrap;}
         HorizontalLayout{alignment:end;Button{text:"apply";enabled:!root.child-open;clicked=>{root.apply();}}Button{text:"cancel";clicked=>{root.cancel();}}}
     }
+    if root.feedback-visible && root.feedback != "": Rectangle {
+        x: root.feedback == "Copied!" ? copy-button.absolute-position.x : paste-button.absolute-position.x;
+        y: copy-button.absolute-position.y + copy-button.height;
+        width: feedback-label.preferred-width + 16px; height:feedback-label.preferred-height + 12px;
+        background:#ffffdc; border-width:1px; border-color:#888;
+        feedback-label := Text { x:8px;y:6px;text:root.feedback;color:#000; }
+    }
+
 }
 export component ExternalDefaultsWindow inherits Window {
     title:"select the defaults to add";

@@ -326,3 +326,131 @@ fn duplicate_import_warnings_match_python_repr_and_all_size_boundaries() {
         );
     }
 }
+
+#[test]
+fn command_clipboard_review_and_cleaned_example_match_actual_qt() {
+    use hydrus_gui_model::external_command::{Paste, Queue};
+    let reference = hydrus_testkit::fixture_json("external_command.json");
+    for event in reference["clipboard"].as_array().unwrap() {
+        let paste = Paste::parse(event["raw"].as_str().unwrap());
+        assert_eq!(
+            paste.question(),
+            event["questions"][0]["message"].as_str().unwrap()
+        );
+        let (executable, queue) = if event["accepted"].as_bool().unwrap() {
+            (paste.executable, Queue::new(paste.arguments))
+        } else {
+            ("before".into(), Queue::new(vec!["before".into()]))
+        };
+        assert_eq!(
+            serde_json::to_value(&queue.arguments).unwrap(),
+            event["raw_arguments"]
+        );
+        assert_eq!(
+            serde_json::json!([executable, clean_arguments(&queue.arguments)]),
+            event["value"]
+        );
+        assert_eq!(
+            queue.full_template(&executable),
+            event["example"].as_str().unwrap()
+        );
+        assert_eq!(
+            queue.full_template(&executable),
+            event["copies"][0][1].as_str().unwrap()
+        );
+    }
+}
+
+#[test]
+fn command_parameter_queue_selection_reorder_and_keyboard_match_actual_qt() {
+    use hydrus_gui_model::external_command::Queue;
+    let reference = hydrus_testkit::fixture_json("external_command.json");
+    let mut queue = Queue::new(["zero", "one", "two", "three"].map(str::to_owned).to_vec());
+    for event in reference["queue"].as_array().unwrap() {
+        match event["action"].as_str().unwrap() {
+            "initial" | "cancel_edit" | "decline_delete" => {}
+            "select_top_pair" => {
+                queue.selection.select_many(&[0, 1]);
+            }
+            "up_at_top" | "up_after_bottom" | "clicked_up" => {
+                queue.reorder(false);
+            }
+            "down_after_top" => {
+                queue.reorder(true);
+            }
+            "clicked_down" => {
+                queue = Queue::new(
+                    ["alpha", "beta", "gamma", "delta"]
+                        .map(str::to_owned)
+                        .to_vec(),
+                );
+                queue.click(1, false, false);
+                queue.reorder(true);
+            }
+            "down_at_bottom" => {
+                queue.selection.select_many(&[2, 3]);
+                queue.reorder(true);
+            }
+            "edit_first_of_multiple" => {
+                queue.selection.select_many(&[1, 3]);
+                let first = queue.selected()[0];
+                queue.arguments[first] = "edited 日本😀".into();
+            }
+            "add_unselected" => {
+                queue.arguments.push("added value".into());
+            }
+            "accept_delete" | "delete_key" => {
+                queue.delete(&queue.selected());
+            }
+            "mouse_beta" | "click_before_reorder" => {
+                queue = Queue::new(
+                    ["alpha", "beta", "gamma", "delta"]
+                        .map(str::to_owned)
+                        .to_vec(),
+                );
+                queue.click(1, false, false);
+            }
+            "shift_down" | "shift_after_reorder" => {
+                queue.navigate("next", false, true);
+            }
+            "ctrl_home" => {
+                queue.navigate("home", true, false);
+            }
+            "ctrl_space" => {
+                queue.toggle_current();
+            }
+            "select_all" => {
+                queue.select_all();
+            }
+            "copy_selected" | "copy_insert" | "copy_after_ctrl_space" => {
+                assert_eq!(
+                    queue.copy_selected().unwrap(),
+                    event["copies"][0][1].as_str().unwrap()
+                );
+            }
+            "plain_end" => {
+                queue.navigate("end", false, false);
+            }
+            "shift_up" => {
+                queue.navigate("previous", false, true);
+            }
+            _ => panic!("unexpected queue step {event}"),
+        }
+        assert_eq!(
+            serde_json::to_value(&queue.arguments).unwrap(),
+            event["rows"],
+            "{}",
+            event["action"]
+        );
+        let mut expected: Vec<usize> = serde_json::from_value(event["selected"].clone()).unwrap();
+        assert_eq!(queue.selection.selected_order(), expected);
+        expected.sort_unstable();
+        assert_eq!(queue.selected(), expected, "{}", event["action"]);
+        assert_eq!(
+            queue.current.map_or(-1, |i| i64::try_from(i).unwrap()),
+            event["current"].as_i64().unwrap(),
+            "{}",
+            event["action"]
+        );
+    }
+}

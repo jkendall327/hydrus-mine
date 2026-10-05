@@ -64,6 +64,12 @@ impl<T: Copy + PartialEq> ListSelection<T> {
         self.anchor = None;
     }
 
+    /// Reset the next Shift range origin without changing selected rows.
+    /// Queue reordering keeps Qt's numeric current row as this origin.
+    pub fn set_anchor(&mut self, item: Option<T>) {
+        self.anchor = item;
+    }
+
     /// Select only `item` (or nothing).
     pub fn select_only(&mut self, item: Option<T>) {
         self.selected = item.into_iter().collect();
@@ -72,6 +78,11 @@ impl<T: Copy + PartialEq> ListSelection<T> {
 
     pub fn is_selected(&self, item: T) -> bool {
         self.selected.contains(&item)
+    }
+
+    /// Selection insertion order, as Qt's selectedItems used for list copying.
+    pub fn selected_order(&self) -> &[T] {
+        &self.selected
     }
 
     /// Those selected, in the list's order.

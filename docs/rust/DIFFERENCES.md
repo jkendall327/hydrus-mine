@@ -2225,9 +2225,8 @@ Partial. Recognized unsupported string-converter steps are preserved in native
 registered definitions but rejected by reference export encoding; mixed valid
 and wrong-class imports are rejected atomically instead of accepting the valid
 prefix, and unusually large imports do not offer the reference override question.
-Per-call PNG batches, drop import, input-rule clipboard controls, complete
-argument keyboard/multiple-row edit interactions and timeout minutes controls
-are not implemented. The native process test runs saved argument vectors with a
+Per-call PNG batches, drop import, input-rule clipboard controls and timeout
+minutes controls are not implemented. The native process test runs saved argument vectors with a
 single owner-scoped worker, a fallible thread start and bounded wait, discarding
 stdout/stderr. Cancellation owns/reaps the direct child only; descendant process
 groups, full reference output/error presentation and OS default-launch tests are
@@ -2264,3 +2263,15 @@ still use default formatting, so the two global controls remain Partial and
 add zero completed original leaves. The Qt fixture was recorded in UTC; native
 production ISO formatting follows the system timezone. Integer-locale, radio
 Return force and menu-button wheel preferences are outside this slice.
+
+The external-command argument and template-clipboard controls are replayed against
+`external_command.json`: actual Qt CRUD/reordering and current-row/Shift behavior,
+list keyboard copy/delete, exact parameter text prompts, and ten split-space
+paste inputs accepted or declined. The native command draft keeps raw pasted rows
+until acceptance while its example/copy and saved arguments use the reference
+cleaning. Clipboard access errors are explicitly owned and do not alter the draft.
+Qt's platform-specific list PageUp/PageDown, type-ahead/scroll-to-current details,
+physical tooltip placement, executable picker/PATH and complete command-dialog
+geometry remain outside these two control leaves; the broad command parent stays
+Partial. Native real key/owner/store regressions and the command PNG are authored
+for hosted CI, without local Rust execution or mutation testing.

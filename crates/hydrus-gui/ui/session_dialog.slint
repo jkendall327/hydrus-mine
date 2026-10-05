@@ -16,6 +16,8 @@ export component SessionDialog inherits Window {
     in property <string> message;
     // asking a name (else a question), its text, and a warning over it
     in property <bool> asking-name;
+    // A critical clipboard notice shares the owned close/cancel boundary.
+    in property <bool> notice-only;
     in-out property <string> text;
     in property <string> warning;
     in property <string> name-ok-label: "apply";
@@ -71,6 +73,7 @@ export component SessionDialog inherits Window {
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
+            if root.notice-only: Button { text: "ok"; clicked => { root.cancelled(); } }
             if root.asking-name: Button {
                 enabled: !root.child-open;
                 text: root.name-ok-label;
@@ -81,11 +84,11 @@ export component SessionDialog inherits Window {
                 text: "cancel";
                 clicked => { root.cancelled(); }
             }
-            if !root.asking-name: Button {
+            if !root.asking-name && !root.notice-only: Button {
                 text: root.yes-label;
                 clicked => { root.answered(true); }
             }
-            if !root.asking-name: Button {
+            if !root.asking-name && !root.notice-only: Button {
                 text: root.no-label;
                 clicked => { root.answered(false); }
             }
