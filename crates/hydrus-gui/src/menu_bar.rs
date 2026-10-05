@@ -20,6 +20,7 @@ type ShownLines = Rc<RefCell<Vec<(Vec<MenuLine>, ModelRc<MenuLine>)>>>;
 
 /// What the menu bar works with.
 pub(crate) struct Hooks {
+    pub quick_export_directory: crate::quick_export_directory::Control,
     pub sidebar_layout: Rc<dyn Fn(hydrus_gui_model::page_layout::Action)>,
     /// Open the siblings or parents editor.
     pub tag_display: Rc<dyn Fn(bool)>,
@@ -631,6 +632,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             Err(e) => eprintln!("could not find the installation directory: {e}"),
         },
         Command::OpenDatabaseDirectory => crate::launch(&store.dir().to_string_lossy()),
+        Command::OpenQuickExportDirectory => hooks.quick_export_directory.open(),
         Command::Exit => {
             let _ = window
                 .window()

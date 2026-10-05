@@ -2836,3 +2836,24 @@ paint pumps timers before layout; hit rectangles are published on a following
 keeps the exact full-name hover, target-key, clipped-target and captured-drag
 assertions, and leaves production pointer routing and paint unchanged. Hosted
 execution must validate this replay correction; no local Rust tests were run.
+
+
+The original File > open > quick export directory action now has a native command
+and an owned saved-directory consumer. It shares ExportSettings with the existing
+Default export directory editor/manual export consumer; no second last-used path
+or new preference is introduced. Configured missing paths are opened without a
+validation dialog or creation. On non-Windows platforms, reference legacy
+backslash recovery only applies when the original spelling does not exist.
+The fallback is created only for an unset preference. Home lookup is owner-local:
+POSIX HOME/account fallback and Windows USERPROFILE/HOMEDRIVE+HOMEPATH follow
+Python expanduser rules without changing process environment. The POSIX resolver
+uses the standard-library home API with a local deprecation allowance; its
+Windows ambiguity does not apply to that cfg-limited branch. An unavailable home
+reports the reference text. Missing
+home and creation/read errors use the existing popup queue; OS opener failure
+handling remains the existing platform launch behavior. This menu action has no
+Cancel dialog of its own; recorded Options Cancel preserves the saved consumer
+path. Hidden/rebound/accepted-close owners and resolver-induced hiding reject the
+launch and fallback creation. Broader File/database menu families remain Partial.
+Rust/native render regressions are authored for hosted validation; local checks
+used actual Qt, Python/source invariants, rustfmt and diff inspection only.
