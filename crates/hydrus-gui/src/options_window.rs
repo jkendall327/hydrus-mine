@@ -1165,7 +1165,7 @@ pub(crate) fn open(
     });
     window.on_choice_chosen({
         let session_choices=session_choices.clone();
-        let active=active.clone();let weak=window.as_weak();let gui_colours_open=gui_colour_list.has_open.clone();
+        let active=active.clone();let gui_colours_open=gui_colour_list.has_open.clone();
         let editor = editor.clone();
         let store = store.clone();
         let weak=window.as_weak();
