@@ -3392,7 +3392,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                 )
                             },
                             |s, v| {
-                                s.downloader_update_times.gallery_minimum_ms = (v * 1000.0) as i64
+                                s.downloader_update_times.gallery_minimum_ms = (v * 1000.0) as i64;
                             },
                         ),
                         int(
@@ -3410,7 +3410,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                 )
                             },
                             |s, v| {
-                                s.downloader_update_times.watcher_minimum_ms = (v * 1000.0) as i64
+                                s.downloader_update_times.watcher_minimum_ms = (v * 1000.0) as i64;
                             },
                         ),
                         int(

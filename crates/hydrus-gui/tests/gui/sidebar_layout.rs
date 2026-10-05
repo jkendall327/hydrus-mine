@@ -484,6 +484,8 @@ fn live_hide_setting_keeps_accepted_preview_refuses_replacements_and_collapse_re
 
 #[test]
 fn pressed_old_handle_cannot_resize_same_key_successor_binding_or_same_session_reload() {
+    use slint::platform::{PointerEventButton as B, WindowEvent as E};
+
     let (_dirs, store) = crate::subscriptions::store();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
@@ -497,7 +499,6 @@ fn pressed_old_handle_cannot_resize_same_key_successor_binding_or_same_session_r
     first.pages.borrow_mut().save(1).unwrap();
     let key = ui.get_layout_page_key();
     let epoch = ui.get_layout_epoch();
-    use slint::platform::{PointerEventButton as B, WindowEvent as E};
     let start = slint::LogicalPosition::new(
         ui.get_sidebar_handle_x() + 3.0,
         ui.get_sidebar_handle_y() + 150.0,

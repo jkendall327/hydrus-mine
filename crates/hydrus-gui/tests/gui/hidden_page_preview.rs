@@ -380,7 +380,7 @@ fn pending_hidden_decode_is_page_owned_and_same_key_successor_retires_snapshots_
     assert_eq!(totals(&store, first), (1, 1500));
     // Persist the real page key then rebind the same MainWindow with fresh live
     // SearchPage identities. The successor cannot inherit accepted state.
-    bound.pages.borrow_mut().sync().unwrap();
+    bound.pages.borrow_mut().sync(now.get() / 1000).unwrap();
     let old_key = bound.pages.borrow().shown().key;
     now.set(3000);
     let retired = bound.preview.clone();

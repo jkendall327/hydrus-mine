@@ -194,7 +194,8 @@ fn staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retiremen
         &pixels,
         1100,
         900,
-    );
+    )
+    .expect("save preview selection evidence");
     applied.invoke_apply();
     let saved: Preferences = store.read(settings::get).unwrap();
     assert_eq!(
@@ -365,7 +366,7 @@ fn live_store_collection_gate_uses_all_members_and_preserves_zero_duration_disti
             namespaces: vec!["synthetic-no-namespace".into()],
             ratings: Vec::new(),
             collect_unmatched: true,
-            tag_context: Default::default(),
+            tag_context: hydrus_core::search::context::TagContext::default(),
         });
         assert_eq!(page.results().len(), 1);
         assert_eq!(
