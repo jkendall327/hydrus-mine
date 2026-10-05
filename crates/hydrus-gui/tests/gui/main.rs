@@ -35,6 +35,7 @@ mod filesize_predicate;
 mod folder_manager_lifecycle;
 mod folders;
 mod force_filetype;
+mod force_idle;
 mod formula_editors;
 mod hash_predicate;
 mod import_files;

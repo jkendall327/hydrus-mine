@@ -21,6 +21,7 @@ type ShownLines = Rc<RefCell<Vec<(Vec<MenuLine>, ModelRc<MenuLine>)>>>;
 /// What the menu bar works with.
 pub(crate) struct Hooks {
     pub debug_long_popup: crate::debug_long_popup::Control,
+    pub force_idle: crate::force_idle::Control,
     pub quick_export_directory: crate::quick_export_directory::Control,
     pub darkmode: Rc<dyn Fn()>,
     pub sidebar_layout: Rc<dyn Fn(hydrus_gui_model::page_layout::Action)>,
@@ -118,6 +119,12 @@ pub(crate) fn facts(pages: &RefCell<Pages>, weigh: bool) -> Facts {
     facts
 }
 
+fn owned_facts(hooks: &Hooks, weigh: bool) -> Facts {
+    let mut facts = facts(&hooks.pages, weigh);
+    facts.force_idle = hooks.force_idle.enabled();
+    facts
+}
+
 /// Bind the menu bar; returns what shows its titles again (as what they
 /// say changes: the undo menu with pages to reopen, the pending menu).
 pub(crate) fn bind(
@@ -203,7 +210,7 @@ pub(crate) fn bind(
         let titles_model: Rc<VecModel<MenuTitle>> = Rc::new(VecModel::default());
         window.set_menu_titles(ModelRc::from(titles_model.clone()));
         Rc::new(move || {
-            let titles: Vec<MenuTitle> = main_menu::menubar(&facts(&hooks.pages, false))
+            let titles: Vec<MenuTitle> = main_menu::menubar(&owned_facts(&hooks, false))
                 .iter()
                 .map(|menu| MenuTitle {
                     label: main_menu::title(menu.label()).into(),
@@ -232,7 +239,7 @@ pub(crate) fn bind(
         let hooks = hooks.clone();
         let titles = titles.clone();
         move |top: usize, x: f32, y: f32| {
-            let menus = main_menu::menubar(&facts(&hooks.pages, true));
+            let menus = main_menu::menubar(&owned_facts(&hooks, true));
             open.borrow_mut().open(menus, top, x, y);
             titles();
         }
@@ -412,7 +419,7 @@ pub(crate) fn bind(
                 open.borrow_mut().key(MenuKey::Down);
             };
             if alt {
-                let menus = main_menu::menubar(&facts(&hooks.pages, false));
+                let menus = main_menu::menubar(&owned_facts(&hooks, false));
                 if let Some(top) = main_menu::mnemonic(&menus, &text) {
                     by_key(top);
                     show();
@@ -754,6 +761,9 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::RepairArchiveTimes => (hooks.repair_archive_times)(),
         Command::ClearThumbnailCache => (hooks.clear_thumbnail_cache)(),
         Command::DebugLongTextPopup => hooks.debug_long_popup.start(),
+        Command::DebugForceIdleMode => {
+            hooks.force_idle.toggle();
+        }
         Command::DebugDelayedTextPopup => hooks.debug_long_popup.start_delayed_popup(),
         Command::DebugDelayedNewPage(location) => {
             hooks.debug_long_popup.start_delayed_page(location)

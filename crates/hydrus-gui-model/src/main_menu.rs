@@ -261,6 +261,8 @@ pub enum Command {
     ClearThumbnailCache,
     /// Publish two real cards and grow their text/title at the recorded cadence.
     DebugLongTextPopup,
+    /// Override the current owned live idle decision until toggled or retired.
+    DebugForceIdleMode,
     /// Publish the actual delayed message after five seconds.
     DebugDelayedTextPopup,
     /// Freeze the Help menu's default location for a delayed real query page.
@@ -320,6 +322,8 @@ pub struct Pending {
 #[derive(Debug, Clone, Default)]
 pub struct Facts {
     pub darkmode: bool,
+    /// Current unpersisted main-binding debug idle override.
+    pub force_idle: bool,
     pub advanced: bool,
     pub folders: FolderSettings,
     /// The import and export folders' names.
@@ -1259,6 +1263,14 @@ fn help_menu(facts: &Facts) -> Entry {
             menu(
                 "debug",
                 vec![
+                    menu(
+                        "debug modes",
+                        vec![check(
+                            "force idle mode",
+                            Some(Command::DebugForceIdleMode),
+                            facts.force_idle,
+                        )],
+                    ),
                     menu(
                         "gui actions",
                         vec![
