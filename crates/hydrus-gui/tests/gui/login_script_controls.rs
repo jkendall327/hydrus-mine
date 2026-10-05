@@ -211,7 +211,7 @@ fn actual_login_cog_targets_isolated_http_request_and_drops_stale_command() {
         "Qt login jobs bypass startup bandwidth immediately"
     );
     assert_eq!(window.get_test_cog().actions.row_count(), 0);
-    let mut tracker = first
+    let tracker = first
         .usage
         .iter()
         .find(|(context, _)| *context == hydrus_core::network::NetworkContext::global())
