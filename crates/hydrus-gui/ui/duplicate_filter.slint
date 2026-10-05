@@ -11,6 +11,7 @@
 
 import { Button } from "std-widgets.slint";
 import { Theme } from "theme.slint";
+import { TransparencyBackdrop } from "transparency_backdrop.slint";
 
 export struct Statement {
     text: string,
@@ -26,7 +27,9 @@ export component DuplicateFilterWindow inherits Window {
     title: "duplicate filter";
     preferred-width: 1200px;
     preferred-height: 800px;
-    background: #202020;
+    in property <brush> canvas-background: #ffffff;
+    background: root.canvas-background;
+    in property <int> transparency-mode;
 
     in property <image> media;
     // e.g. "File One - 3/100 - 2 decisions"
@@ -133,6 +136,15 @@ export component DuplicateFilterWindow inherits Window {
                 clip: true;
                 changed width => { root.canvas-resized(self.width, self.height); }
                 changed height => { root.canvas-resized(self.width, self.height); }
+                if root.transparency-mode > 0: TransparencyBackdrop {
+                    x: root.media-x;
+                    y: root.media-y;
+                    width: root.media-width;
+                    height: root.media-height;
+                    canvas-width: area.width;
+                    canvas-height: area.height;
+                    mode: root.transparency-mode;
+                }
                 Image {
                     x: root.media-x;
                     y: root.media-y;

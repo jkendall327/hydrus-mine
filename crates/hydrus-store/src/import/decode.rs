@@ -620,6 +620,39 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .map(legacy::ClientOptions::thumbnail_rating_settings)
             .unwrap_or_default(),
     )?;
+    let mut duplicate_colours = crate::settings::DuplicateColourSettings::default();
+    if let Some(options) = &options {
+        for (key, field) in [
+            (
+                "duplicate_background_switch_intensity_a",
+                &mut duplicate_colours.intensity_a,
+            ),
+            (
+                "duplicate_background_switch_intensity_b",
+                &mut duplicate_colours.intensity_b,
+            ),
+        ] {
+            if let Some(value) = options.noneable_integers.get(key) {
+                *field = value.map(|v| v.clamp(0, 9) as u8);
+            }
+        }
+        if let Some(value) = options
+            .booleans
+            .get("draw_transparency_checkerboard_media_canvas_duplicates")
+        {
+            duplicate_colours.checkerboard = *value;
+        }
+        if options.booleans.get("override_stylesheet_colours") == Some(&true)
+            && let Some(colourset) = options.strings.get("current_colourset")
+            && let Some(background) = options
+                .colours
+                .get(colourset)
+                .and_then(|colours| colours.get(&10))
+        {
+            duplicate_colours.background = crate::services::Rgb(*background);
+        }
+    }
+    insert_setting(&mut input, &duplicate_colours)?;
     let mut note_preferences = crate::settings::NotePreferences::default();
     if let Some(options) = &options {
         for (key, field) in [
@@ -3050,6 +3083,85 @@ mod tests {
             [dump.into_bytes()],
         )
         .unwrap();
+    }
+
+    #[test]
+    fn duplicate_colours_import_none_zero_and_explicit_preferences_then_reopen() {
+        let fixture = hydrus_testkit::fixture_json("duplicate_colours.json");
+        for (index, case) in [
+            fixture["initial"].clone(),
+            fixture["options"][1]["saved"].clone(),
+            fixture["options"][3]["saved"].clone(),
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            let source = hydrus_testkit::legacy_fixture("basic");
+            let keys = [
+                "duplicate_background_switch_intensity_a",
+                "duplicate_background_switch_intensity_b",
+                "draw_transparency_checkerboard_media_canvas_duplicates",
+            ];
+            let edits = keys
+                .iter()
+                .enumerate()
+                .map(|(index, key)| {
+                    (
+                        format!(r#"[[0, "{key}"], [0, {}]]"#, fixture["initial"][index]),
+                        format!(r#"[[0, "{key}"], [0, {}]]"#, case[index]),
+                    )
+                })
+                .collect::<Vec<_>>();
+            let edits = edits
+                .iter()
+                .map(|(from, to)| (from.as_str(), to.as_str()))
+                .collect::<Vec<_>>();
+            edit_client_options(source.path(), &edits);
+            if index == 2 {
+                edit_client_options(
+                    source.path(),
+                    &[
+                        (
+                            r#"[[0, "override_stylesheet_colours"], [0, false]]"#,
+                            r#"[[0, "override_stylesheet_colours"], [0, true]]"#,
+                        ),
+                        (
+                            r#"[[0, "current_colourset"], [0, "default"]]"#,
+                            r#"[[0, "current_colourset"], [0, "darkmode"]]"#,
+                        ),
+                    ],
+                );
+            }
+            let destination = tempfile::tempdir().unwrap();
+            crate::import::import_legacy(
+                source.path(),
+                &destination.path().join(crate::store::DB_FILE_NAME),
+            )
+            .unwrap();
+            let store = crate::Store::open(destination.path()).unwrap();
+            let preferences: crate::settings::DuplicateColourSettings =
+                store.read(crate::settings::get).unwrap();
+            assert_eq!(
+                serde_json::json!([
+                    preferences.intensity_a,
+                    preferences.intensity_b,
+                    preferences.checkerboard
+                ]),
+                case
+            );
+            assert_eq!(
+                preferences.background,
+                crate::services::Rgb([if index == 2 { 52 } else { 255 }; 3])
+            );
+            drop(store);
+            assert_eq!(
+                crate::Store::open(destination.path())
+                    .unwrap()
+                    .read(crate::settings::get::<crate::settings::DuplicateColourSettings>)
+                    .unwrap(),
+                preferences
+            );
+        }
     }
 
     #[test]

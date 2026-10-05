@@ -14,6 +14,7 @@ mod clipboard_urls;
 mod collect;
 mod downloader_definitions;
 mod downloader_lists;
+mod duplicate_colours;
 mod duplicate_filter;
 mod duplicates_page;
 mod edit_subscription;

@@ -107,6 +107,21 @@ macro_rules! settings {
             hydrus_store::settings::set($conn, &latest)?;
         }
     };
+    (@save $conn:ident, $after:ident, $before:ident, duplicate_colours) => {
+        if $after.duplicate_colours != $before.duplicate_colours {
+            let mut latest: hydrus_store::settings::DuplicateColourSettings = hydrus_store::settings::get($conn)?;
+            if $after.duplicate_colours.intensity_a != $before.duplicate_colours.intensity_a {
+                latest.intensity_a = $after.duplicate_colours.intensity_a;
+            }
+            if $after.duplicate_colours.intensity_b != $before.duplicate_colours.intensity_b {
+                latest.intensity_b = $after.duplicate_colours.intensity_b;
+            }
+            if $after.duplicate_colours.checkerboard != $before.duplicate_colours.checkerboard {
+                latest.checkerboard = $after.duplicate_colours.checkerboard;
+            }
+            hydrus_store::settings::set($conn, &latest)?;
+        }
+    };
     (@save $conn:ident, $after:ident, $before:ident, $field:ident) => {
         if $after.$field != $before.$field {hydrus_store::settings::set($conn, &$after.$field)?;}
     };
@@ -147,6 +162,7 @@ settings! {
     deletion: hydrus_store::settings::DeletionPreferences,
     downloader_pages: DownloaderPageSettings,
     duplicate_filter: DuplicateFilterSettings,
+    duplicate_colours: hydrus_store::settings::DuplicateColourSettings,
     export: ExportSettings,
     file_handling: FileHandlingSettings,
     file_maintenance: FileMaintenanceSettings,
@@ -1545,6 +1561,28 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         page(
             "duplicates",
             vec![
+                boxed(
+                    "colours",
+                    vec![
+                        noneable(
+                            "background light/dark switch intensity for A:",
+                            none("do not change", 3, (1, 9), None),
+                            |s| s.duplicate_colours.intensity_a.map(i64::from),
+                            |s, v| s.duplicate_colours.intensity_a = v.map(|n| n as u8),
+                        ),
+                        noneable(
+                            "background light/dark switch intensity for B:",
+                            none("do not change", 3, (1, 9), None),
+                            |s| s.duplicate_colours.intensity_b.map(i64::from),
+                            |s, v| s.duplicate_colours.intensity_b = v.map(|n| n as u8),
+                        ),
+                        check(
+                            "draw image transparency as checkerboard in the duplicate filter:",
+                            |s| s.duplicate_colours.checkerboard,
+                            |s, v| s.duplicate_colours.checkerboard = v,
+                        ),
+                    ],
+                ),
                 boxed(
                     "open in a new duplicates filter page",
                     vec![check(
@@ -3265,6 +3303,9 @@ pub fn values(pages: &[Page], settings: &Settings) -> Vec<Vec<Value>> {
                 .map(|option| match (&option.kind, (option.get)(settings)) {
                     (Kind::Int { min, max }, Value::Int(number)) => {
                         Value::Int(number.clamp(*min, *max))
+                    }
+                    (Kind::Noneable { min, max, .. }, Value::Noneable(number)) => {
+                        Value::Noneable(number.map(|number| number.clamp(*min, *max)))
                     }
                     (
                         Kind::NoneableDuration { units, min, .. },

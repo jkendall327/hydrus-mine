@@ -212,3 +212,16 @@ add-only selected activation, recent data and a populated PNG. Recent worker
 scheduling alone is made synchronous; real reads/publishers and all parsing,
 sorting, list, options and activation handlers remain intact. Run with the shared
 oracle lock on a fresh basic fixture.
+
+`record_duplicate_colours.py` drives real `DuplicatesPanel` NoneableSpinCtrl
+and checkbox fields, UpdateOptions/serialisation/reopen, and an abandoned page
+draft. It creates a real `CanvasFilterDuplicates` over the basic fixture's
+transparent PNG A and opaque JPEG B, switches with `SwitchMedia`, and records
+its colour generator and `StaticImage._DrawBackground` painter. No canvas
+business handler or colour function is replaced. The final v688 offscreen run
+used `/workspace/parallel/with-oracle` on 2026-10-05 00:18:52–00:18:54 UTC;
+`duplicate_colours.json` has five Options cases, 143 colour cases and eight
+canvas cases; `duplicate_colours.png` is the actual Qt canvas. The sandbox's
+unrelated Client API bind failed; recording and clean client shutdown completed.
+The abandoned Qt page is not a claim of the full Manage Options modal Cancel
+path; native tests separately cover the actual Options owner Cancel route.

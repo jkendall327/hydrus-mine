@@ -2077,3 +2077,14 @@ collapse-all-descendants behavior remain unported. The native sidebar uses a fix
 190px width, text toolbar buttons and 26px rows rather than Qt's splitter and
 configurable tree geometry. Broader navigation/tree families remain Partial;
 this slice changes only the original experimental show-tree option proposal.
+
+Duplicate-filter background A/B intensity controls and the independent
+transparency policy now reach the native duplicate canvas. Saved reference
+zero is retained until Options Apply normalises the displayed value; None is
+preserved. The adjustment follows QColor's 16-bit HSV rounding, including
+black's initial lightness and saturation reduction on overflow. The normal
+base is canvas white or an imported active override background. Arbitrary QSS
+stylesheet palettes and the broader colour Options editor remain Partial, as
+do other duplicate-filter presentation/actions. This slice does not claim
+those parent rows. Actual Qt recording ran on 2026-10-05; Rust regression
+source was authored but awaits hosted CI (no local Cargo execution).
