@@ -2,7 +2,7 @@
   "schema_version": 1,
   "agent": "login-workflows",
   "baseline_git_head": "d50df26b",
-  "implementation_git_head": "a4ac962341c5d54a2920cb75c6521c8847b9055a",
+  "implementation_git_head": "0db6ef2ebb47141b7be0904f1ce6fb66c919739f",
   "implementation_commits": [
     "44840f22",
     "da3c06f2",
@@ -33,17 +33,19 @@
     "faf4c1a0",
     "515f637e",
     "964669bb",
-    "a4ac962341c5d54a2920cb75c6521c8847b9055a"
+    "a4ac962341c5d54a2920cb75c6521c8847b9055a",
+    "0db6ef2ebb47141b7be0904f1ce6fb66c919739f"
   ],
   "validation": {
-    "referenceRecording": "oracle/record_login_editors.py executed through shared with-oracle lock using the real Qt client; fixture oracle/fixtures/login_editors.json; oracle/record_login_execution.py executed actual reference HTTP jobs and real Qt result reviews on synthetic loopback, fixture oracle/fixtures/login_execution.json; oracle/record_login_sessions.py executed through shared with-oracle lock, real Qt manager rows/actions and real session-manager resets on synthetic domains; oracle/fixtures/login_sessions.json; oracle/record_login_domains.py executed 15 real Qt domain Add/change-script/Delete chains through shared with-oracle lock; oracle/fixtures/login_domains.json; login_sessions recording rerun with other.example.net (a genuinely separate registrable session), and explicit reference resolved session contexts; seeded native fixtures use session_for exactly like real consumers.; oracle/record_login_execution.py rerun actual loopback reference execution with per-step callback timing/counts; oracle/fixtures/login_execution.json; oracle/record_login_test_prompts.py executed through shared with-oracle lock, real Qt _DoTest/domain text/credentials and queued-worker launch capture (6 chains); oracle/fixtures/login_test_prompts.json; oracle/record_login_demand.py executed actual Qt managers, ordinary/subscription jobs, loopback engine demand HTTP and global JobStatus cancellation; oracle/fixtures/login_demand.json; oracle/record_login_demand.py re-executed actual Qt ForceLogins/global slot followed by ordinary demand and repeated ForceLogins with an existing cookie; login_demand.json forced.requests/repeat_requests. oracle/record_mixed_login_packages.py executed 2026-10-05 through shared with-oracle lock on a fresh basic fixture. Actual registered login multi-select Cancel/Add/remaining choices, nested GUG dependencies, exporter summary confirmation and PNGExportPanel.Export; actual ReviewDownloaderImport._ImportPaths PNG ingestion, declined/accepted import, script duplicate comparison ignoring name/key, regenerated script identity and matching-name existing-domain links. Real dialogs answered by Qt timers; all business/codec/manager handlers unchanged. oracle/fixtures/mixed_login_packages.json and mixed_login_packages.png; dummy credentials and reserved synthetic domains only. No native executable was built locally.",
+    "referenceRecording": "oracle/record_login_editors.py executed through shared with-oracle lock using the real Qt client; fixture oracle/fixtures/login_editors.json; oracle/record_login_execution.py executed actual reference HTTP jobs and real Qt result reviews on synthetic loopback, fixture oracle/fixtures/login_execution.json; oracle/record_login_sessions.py executed through shared with-oracle lock, real Qt manager rows/actions and real session-manager resets on synthetic domains; oracle/fixtures/login_sessions.json; oracle/record_login_domains.py executed 15 real Qt domain Add/change-script/Delete chains through shared with-oracle lock; oracle/fixtures/login_domains.json; login_sessions recording rerun with other.example.net (a genuinely separate registrable session), and explicit reference resolved session contexts; seeded native fixtures use session_for exactly like real consumers.; oracle/record_login_execution.py rerun actual loopback reference execution with per-step callback timing/counts; oracle/fixtures/login_execution.json; oracle/record_login_test_prompts.py executed through shared with-oracle lock, real Qt _DoTest/domain text/credentials and queued-worker launch capture (6 chains); oracle/fixtures/login_test_prompts.json; oracle/record_login_demand.py executed actual Qt managers, ordinary/subscription jobs, loopback engine demand HTTP and global JobStatus cancellation; oracle/fixtures/login_demand.json; oracle/record_login_demand.py re-executed actual Qt ForceLogins/global slot followed by ordinary demand and repeated ForceLogins with an existing cookie; login_demand.json forced.requests/repeat_requests. oracle/record_mixed_login_packages.py executed 2026-10-05 through shared with-oracle lock on a fresh basic fixture. Actual registered login multi-select Cancel/Add/remaining choices, nested GUG dependencies, exporter summary confirmation and PNGExportPanel.Export; actual ReviewDownloaderImport._ImportPaths PNG ingestion, declined/accepted import, script duplicate comparison ignoring name/key, regenerated script identity and matching-name existing-domain links. Real dialogs answered by Qt timers; all business/codec/manager handlers unchanged. oracle/fixtures/mixed_login_packages.json and mixed_login_packages.png; dummy credentials and reserved synthetic domains only. No native executable was built locally.; 0db6ef2eb login-script controls: actual Qt recorder executed 2026-10-05 04:37:02 UTC through shared with-oracle; cached Slint source compilation, rustfmt --check, git diff --check and Python syntax passed. Independent source review accepted after fresh isolated-store epoch-alias repair; authored successive-real-HTTP run, stale-command, auto-policy, exact owned notice, Return/Escape once-only and local-help regressions await hosted CI. No local Cargo/Rust/mutation runs. Existing original IDs updated in place, frozen before=missing preserved, both parents Partial/count0; no canonical inventory writes.",
     "cargo_fmt": "passed",
-    "rust_tests": "Root parity-models SUCCESS for corrected cookie session fixtures. New domain-chain/stream/prompt assertions await root asynchronous CI. No local Cargo builds/tests. Automatic admission, monitor and lifecycle assertions await root CI; lifecycle source review covered Request constructors, Snapshot defaults, exhaustive actions, shared state/retries, unpolled worker retirement and sibling-owner cancellation. Durable lease, independently reopened store handles, queued manual cancellation, forced/live consumers and monitor without daemon snapshot publishing await root CI.",
-    "slint_syntax": "Cached source compiler passed owned runtime domain prompt, default-preserving SessionDialog label hook, LoginDomainEntryWindow and login result consumers; no Cargo builds.",
+    "rust_tests": "Root parity-models SUCCESS for corrected cookie session fixtures. New domain-chain/stream/prompt assertions await root asynchronous CI. No local Cargo builds/tests. Automatic admission, monitor and lifecycle assertions await root CI; lifecycle source review covered Request constructors, Snapshot defaults, exhaustive actions, shared state/retries, unpolled worker retirement and sibling-owner cancellation. Durable lease, independently reopened store handles, queued manual cancellation, forced/live consumers and monitor without daemon snapshot publishing await root CI. Login-script-control regressions authored and unexecuted locally, awaiting hosted CI.",
+    "slint_syntax": "Cached source compiler passed owned runtime domain prompt, default-preserving SessionDialog label hook, LoginDomainEntryWindow and login result consumers; no Cargo builds. Login-script shared cog and notice-only Return/Escape FocusScope passed cached source compiler.",
     "checks": [
       "New demand/monitor slice: cargo fmt, git diff --check and cached Slint compilation passed; actual Qt demand recording executed successfully; authored backend/native runtime assertions await root GitHub CI, no local Cargo builds/tests.",
       "515f637e/964669bb: no process-global login registry or static epoch counter; source review found real manual execution routed through owned durable lease, isolated test execution retained. cargo fmt, git diff --check and cached Slint source compilation passed; new forced/global reference recording actually executed.",
-      "a4ac96234 mixed login packages: executed actual Qt chooser/export/import, inspected real PNG; rustfmt --check, git diff --check, Python syntax and cached Slint source compilation passed. New codec/model/native regression sources await hosted CI; no local Cargo builds/Rust tests/mutation tests. Existing exchange-login ID updated in place, preserving frozen before=missing; no canonical inventory/ledger writes."
+      "a4ac96234 mixed login packages: executed actual Qt chooser/export/import, inspected real PNG; rustfmt --check, git diff --check, Python syntax and cached Slint source compilation passed. New codec/model/native regression sources await hosted CI; no local Cargo builds/Rust tests/mutation tests. Existing exchange-login ID updated in place, preserving frozen before=missing; no canonical inventory/ledger writes.",
+      "0db6ef2eb login-script controls: actual Qt recorder executed 2026-10-05 04:37:02 UTC through shared with-oracle; cached Slint source compilation, rustfmt --check, git diff --check and Python syntax passed. Independent source review accepted after fresh isolated-store epoch-alias repair; authored successive-real-HTTP run, stale-command, auto-policy, exact owned notice, Return/Escape once-only and local-help regressions await hosted CI. No local Cargo/Rust/mutation runs. Existing original IDs updated in place, frozen before=missing preserved, both parents Partial/count0; no canonical inventory writes."
     ]
   },
   "claims": [
@@ -93,7 +95,7 @@
       "proposedStatus": "partial",
       "exactBehavior": "Real network menu opens sorted list; CRUD/extended selection, unique imported names/new keys, preserved edit keys and staged scripts-only save retaining domain fields.",
       "limits": [
-        "List behavior is implemented; broader script-editor NetworkJobControl/help/final-popup and child step interactions remain partial. Test domain prompt and per-step results are now implemented."
+        "List behavior is implemented; the script editor now has isolated NetworkJobControl and owned Information completion. Local Markdown help works; packaged HTML/online/build-guide fallback and broader child-editor boundaries remain Partial. No parent promotion."
       ],
       "source": [
         "crates/hydrus-gui/src/login_credential_window.rs:42",
@@ -112,9 +114,9 @@
       "id": "login-script",
       "before": "missing",
       "proposedStatus": "partial",
-      "exactBehavior": "Script identity/credential definitions/step queue and response parsers editable, invalid-script advisory; real HTTP test consumer with credential entry, isolated cookie store, domain input, Run/Cancel/live job status, final results and review; staged fields preserved. Step-completion events stream to the owning GUI before the reference two-second wait/next request, including failures; result review is available while later steps run. Cancellation retains finished results and stops later requests; retired owners discard queued callbacks. Exact runtime Edit-the-domain prompt before credentials; initial first-sorted example and accepted-domain/credential memory; Cancel or accepted blank aborts before HTTP, credentials Cancel retains completed results, and only an accepted run clears them. Parent/stale prompt cancellation cannot launch requests; loopback runs prove the accepted URL and credentials reach the executor.",
+      "exactBehavior": "Script identity/credential definitions/step queue and response parsers editable, invalid-script advisory; real HTTP test consumer with credential entry, isolated cookie store, domain input, Run/Cancel/live job status, final results and review; staged fields preserved. Step-completion events stream to the owning GUI before the reference two-second wait/next request, including failures; result review is available while later steps run. Cancellation retains finished results and stops later requests; retired owners discard queued callbacks. Exact runtime Edit-the-domain prompt before credentials; initial first-sorted example and accepted-domain/credential memory; Cancel or accepted blank aborts before HTTP, credentials Cancel retains completed results, and only an accepted run clears them. Parent/stale prompt cancellation cannot launch requests; loopback runs prove the accepted URL and credentials reach the executor. Real isolated-engine NetworkJobControl: reviewed cog/URL copy/global bandwidth rule editors/Cancel/strict-five-second retained auto policy, explicit owner error show/copy/clear, and per-run generations rejecting fresh-store epoch/request-ID aliases. Login requests bypass startup request admission immediately while retaining usage accounting and response-body throttling. Owned exact Information/OK completion precedes final label update and Run re-enable, preserving the previous final label throughout the next run. Owner Cancel retires notices and request callbacks. Help launches existing local docs/downloader_login.md through the native launcher.",
       "limits": [
-        "The full reference test NetworkJobControl cog/error control and help-documentation button remain unported in this editor; final completion is inline rather than its informational popup. Sequential native prompts otherwise preserve recorded staging/ownership."
+        "Qt platform notice icon/decoration is absent. Existing local Markdown help is reachable, but the reference missing-HTML online/build-guide chooser and packaged HTML route remain Partial. Broader child-editor boundaries remain Partial; original login-script/login-scripts parents stay Partial, with zero new completed originals. Native regression sources await hosted CI; no local Cargo builds, Rust tests or mutation tests."
       ],
       "source": [
         "crates/hydrus-gui/src/login_credential_window.rs:42",
@@ -126,7 +128,14 @@
         "crates/hydrus-net/src/login.rs:381",
         "crates/hydrus-gui/src/login_test_window.rs:192",
         "crates/hydrus-gui/src/login_test_window.rs:309",
-        "crates/hydrus-gui/src/login_workflows_window.rs:824"
+        "crates/hydrus-gui/src/login_workflows_window.rs:824",
+        "crates/hydrus-gui/src/login_script_controls.rs:23",
+        "crates/hydrus-gui/src/login_script_controls.rs:289",
+        "crates/hydrus-gui/src/login_script_controls.rs:365",
+        "crates/hydrus-gui/src/login_test_window.rs:188",
+        "crates/hydrus-gui-model/src/login_workflows.rs:987",
+        "crates/hydrus-net/src/engine.rs:1226",
+        "crates/hydrus-net/src/engine.rs:1608"
       ],
       "testAnchors": [
         "crates/hydrus-gui-model/tests/model/login_workflows.rs:16",
@@ -136,9 +145,12 @@
         "crates/hydrus-gui/tests/gui/login_workflows.rs:1178",
         "crates/hydrus-net/tests/login.rs:450",
         "crates/hydrus-gui/tests/gui/login_workflows.rs:626",
-        "crates/hydrus-gui/tests/gui/login_workflows.rs:1744"
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:1744",
+        "crates/hydrus-gui-model/tests/model/login_script_controls.rs:41",
+        "crates/hydrus-gui/tests/gui/login_script_controls.rs:16",
+        "crates/hydrus-gui/tests/gui/login_script_controls.rs:158"
       ],
-      "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json; oracle/record_login_execution.py rerun with per-step callback name/result/request counts in oracle/fixtures/login_execution.json; oracle/record_login_test_prompts.py executed actual Qt _DoTest and text/credential panels with captured worker queue launch (HTTP execution separately recorded); oracle/fixtures/login_test_prompts.json"
+      "referenceRecording": "oracle/record_login_editors.py; oracle/fixtures/login_editors.json; oracle/record_login_execution.py rerun with per-step callback name/result/request counts in oracle/fixtures/login_execution.json; oracle/record_login_test_prompts.py executed actual Qt _DoTest and text/credential panels with captured worker queue launch (HTTP execution separately recorded); oracle/fixtures/login_test_prompts.json; Executed oracle/record_login_script_controls.py actual Qt controls/cog/errors/help and Information/OK cleanup on 2026-10-05 04:37:02 UTC; oracle/fixtures/login_script_controls.json. Start return/exception is scripted only for presentation; existing login_execution.json remains actual HTTP/stream/timing proof."
     },
     {
       "id": "exchange-login",
@@ -331,11 +343,15 @@
       "component": "LoginScriptWindow",
       "file": "crates/hydrus-gui/ui/login_workflows.slint",
       "source": [
-        "crates/hydrus-gui/src/login_workflows_window.rs:256"
+        "crates/hydrus-gui/src/login_workflows_window.rs:256",
+        "crates/hydrus-gui/src/login_script_controls.rs:318",
+        "crates/hydrus-gui/src/login_test_window.rs:188"
       ],
       "testAnchors": [
         "crates/hydrus-gui/tests/gui/login_workflows.rs:233",
-        "crates/hydrus-gui/tests/gui/login_workflows.rs:1744"
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:1744",
+        "crates/hydrus-gui/tests/gui/login_script_controls.rs:16",
+        "crates/hydrus-gui/tests/gui/login_script_controls.rs:158"
       ],
       "child_control_groups": [
         "Name and credential-definition extended list/CRUD",
@@ -346,7 +362,10 @@
         "Completed test result list/review; invalid-script advisory; parent Apply/Cancel",
         "Per-step results streamed before next wait/request; review while run is active",
         "Owned remembered runtime domain text prompt before credentials; Cancel/blank abort before HTTP",
-        "Accepted-domain/credential memory and completed-result retention until actual run"
+        "Accepted-domain/credential memory and completed-result retention until actual run",
+        "Isolated runtime NetworkJobControl cog/copy/rules/Cancel and retained auto override",
+        "Explicit owned Network Error show/copy/clear; owned Information/OK acknowledgement before final update",
+        "Exact help menu and existing local Markdown launcher"
       ],
       "shared_editor_refs": [
         "LoginCredentialDefinitionWindow",
@@ -358,7 +377,7 @@
         "SessionDialog"
       ],
       "limits": [
-        "Test NetworkJobControl cog/errors/help and informational completion popup remain partial."
+        "Qt platform notice icon/decoration is absent. Existing local Markdown help is reachable, but the reference missing-HTML online/build-guide chooser and packaged HTML route remain Partial. Broader child-editor boundaries remain Partial; original login-script/login-scripts parents stay Partial, with zero new completed originals. Native regression sources await hosted CI; no local Cargo builds, Rust tests or mutation tests."
       ]
     },
     {
