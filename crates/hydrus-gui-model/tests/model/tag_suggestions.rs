@@ -150,7 +150,16 @@ fn most_used_options_merge_per_service_and_reach_filtered_add_only_media() {
     model.apply().unwrap();
     let mut reopened = ManageTags::new(Store::open(store.dir()).unwrap(), files).unwrap();
     reopened.choose_service(index).unwrap();
-    assert_eq!(reopened.tags().get(&activated[0]), Some(&2));
+    let presentation: hydrus_core::tag_presentation::TagPresentation =
+        reopened.store().read(settings::get).unwrap();
+    assert_eq!(
+        reopened
+            .rows()
+            .into_iter()
+            .find(|(tag, _)| tag == &activated[0])
+            .map(|(_, label)| label),
+        Some(format!("{} (2)", presentation.render(&activated[0])))
+    );
     assert!(
         tag_suggestions::recent(&store, service, 20)
             .unwrap()

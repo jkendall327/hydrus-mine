@@ -10,7 +10,7 @@ use std::time::Duration;
 
 use hydrus_core::HashId;
 use hydrus_store::sessions;
-use slint::{ModelRc, SharedString, VecModel};
+use slint::{Model, ModelRc, SharedString, VecModel};
 
 /// The UI compiled from `ui/` (generated code).
 #[allow(missing_debug_implementations)]
@@ -4838,7 +4838,6 @@ fn open_viewer(
     window.on_url_clicked({
         let weak = window.as_weak();
         move |index| {
-            use slint::Model as _;
             if let (Some(window), Ok(index)) = (weak.upgrade(), usize::try_from(index))
                 && let Some(link) = window.get_url_links().row_data(index)
                 && hydrus_core::url::functions::check_full_url(link.url.as_str()).is_ok()

@@ -78,18 +78,19 @@ pub fn scan(conn: &Connection, roles: &DomainRoles, cancel: &AtomicBool) -> Resu
     for row in rows {
         check_cancel(cancel)?;
         let (hash, imported_ms, deleted_ms) = row?;
-        let (population, suggested_ms) = if imported_ms < TRACKING_STARTED_MS {
-            let end = deleted_ms.unwrap_or(TRACKING_STARTED_MS);
-            (
-                Population::Legacy,
-                (imported_ms <= end).then(|| {
-                    (imported_ms as f64 + (end as f64 - imported_ms as f64) / 5.0).trunc() as i64
-                }),
-            )
-        } else if imported_ms > TRACKING_STARTED_MS {
-            (Population::Import, Some(imported_ms))
-        } else {
-            continue;
+        let (population, suggested_ms) = match imported_ms.cmp(&TRACKING_STARTED_MS) {
+            std::cmp::Ordering::Less => {
+                let end = deleted_ms.unwrap_or(TRACKING_STARTED_MS);
+                (
+                    Population::Legacy,
+                    (imported_ms <= end).then(|| {
+                        (imported_ms as f64 + (end as f64 - imported_ms as f64) / 5.0).trunc()
+                            as i64
+                    }),
+                )
+            }
+            std::cmp::Ordering::Greater => (Population::Import, Some(imported_ms)),
+            std::cmp::Ordering::Equal => continue,
         };
         candidates.push(Candidate {
             hash,
