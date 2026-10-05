@@ -1968,6 +1968,29 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     |s| s.file_viewing.media_max_ms,
                     |s, v| s.file_viewing.media_max_ms = v,
                 ),
+                noneable_duration(
+                    "Min time to view on preview viewer to count as a view:",
+                    &[Unit::Minutes, Unit::Seconds, Unit::Milliseconds],
+                    0.05,
+                    5.0,
+                    "count every view",
+                    |s| s.file_viewing.preview_min_ms,
+                    |s, v| s.file_viewing.preview_min_ms = v,
+                ),
+                noneable_duration(
+                    "Cap any view on the preview viewer to this maximum time:",
+                    &[
+                        Unit::Hours,
+                        Unit::Minutes,
+                        Unit::Seconds,
+                        Unit::Milliseconds,
+                    ],
+                    1.0,
+                    60.0,
+                    "no limit",
+                    |s| s.file_viewing.preview_max_ms,
+                    |s, v| s.file_viewing.preview_max_ms = v,
+                ),
                 choice(
                     "Show viewing stats on media right-click menus?:",
                     &[

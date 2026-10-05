@@ -141,6 +141,7 @@ pub mod viewer_focus;
 pub mod viewer_menu;
 mod viewer_presentation;
 mod viewer_tag_wheel;
+pub mod viewing_maintenance_window;
 mod viewing_tracking;
 mod watcher;
 pub mod windows;
@@ -301,6 +302,7 @@ pub struct Bound {
     pub services_editor: services_editor_window::Slots,
     /// Owned global archive-time maintenance window.
     pub archive_repair: archive_repair_window::Slot,
+    pub viewing_maintenance: viewing_maintenance_window::Slot,
     /// Independent global file-history frame.
     pub file_history: file_history_window::Slot,
     /// The checker options editor while one is open (from the options
@@ -1837,6 +1839,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let services_review: Rc<RefCell<Option<ServicesReviewWindow>>> = Rc::default();
     let services_editor = services_editor_window::Slots::default();
     let archive_repair = archive_repair_window::Slot::default();
+    let viewing_maintenance = viewing_maintenance_window::Slot::default();
     let file_history = file_history_window::Slot::default();
     let network_data = network_data_window::Slots::default();
     let checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>> = Rc::default();
@@ -2240,6 +2243,33 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         archive_repair_window::open(pages.borrow().store(), &slot, changed, valid)
                     {
                         eprintln!("could not repair archive times: {error}");
+                    }
+                })
+            },
+            viewing_maintenance: {
+                let pages = pages.clone();
+                let slot = viewing_maintenance.clone();
+                let weak = window.as_weak();
+                Rc::new(move |cull| {
+                    if slot.borrow().is_some() {
+                        return;
+                    }
+                    let valid = Rc::new({
+                        let weak = weak.clone();
+                        move || weak.upgrade().is_some_and(|w| w.window().is_visible())
+                    });
+                    let operation = if cull {
+                        hydrus_gui_model::viewing_maintenance::Operation::Cull
+                    } else {
+                        hydrus_gui_model::viewing_maintenance::Operation::Clear
+                    };
+                    if let Err(error) = viewing_maintenance_window::open(
+                        pages.borrow().store(),
+                        &slot,
+                        operation,
+                        valid,
+                    ) {
+                        eprintln!("could not open viewing statistics maintenance: {error}");
                     }
                 })
             },
@@ -3954,6 +3984,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         network_controls,
         services_editor,
         archive_repair,
+        viewing_maintenance,
         file_history,
         checker_options,
         session_dialog,

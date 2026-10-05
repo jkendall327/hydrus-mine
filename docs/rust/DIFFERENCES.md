@@ -2392,3 +2392,15 @@ updates also qualify the seed by its queue. Pending-pause, deleted-owner replace
 retained Options callbacks after reopening are covered by authored regressions.
 FIFO fairness and background repeater scheduling cadence remain outside this
 five-control slice.
+
+The two global viewing-statistics cleanup actions now use owned confirmation and
+completion notices. Culling preserves the reference's minimum-before-maximum
+order, separate media/preview rules, zero/None limits and invalid-bound errors.
+Native SQL writes are atomic and reject time bounds outside its integer range;
+errors are shown in the owned warning notice instead of a global Python traceback.
+The existing timed preview-display consumer remains unported, so adding its two
+stored rules gives no completion credit to the preview-tracking Options leaves.
+Broader database maintenance and viewing-statistics families remain Partial.
+Actual Qt handlers and the reference SQLite module were recorded on eight cases;
+native/model regressions and a question PNG are authored for hosted CI. No local
+Cargo build, Rust test or mutation run was performed.

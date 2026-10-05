@@ -56,6 +56,7 @@ pub mod text;
 pub mod transfer;
 pub mod trash;
 pub mod urls;
+pub mod viewing_maintenance;
 pub mod watchers;
 
 pub use conn::{Db, Paused, WriteCtx};

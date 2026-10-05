@@ -1364,6 +1364,14 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
                 "file_viewing_statistics_media_max_time_ms",
                 &mut viewing.media_max_ms,
             ),
+            (
+                "file_viewing_statistics_preview_min_time_ms",
+                &mut viewing.preview_min_ms,
+            ),
+            (
+                "file_viewing_statistics_preview_max_time_ms",
+                &mut viewing.preview_max_ms,
+            ),
         ] {
             if let Some(value) = options.noneable_integers.get(key) {
                 *field = value.and_then(|v| u64::try_from(v).ok());

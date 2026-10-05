@@ -252,6 +252,8 @@ pub enum Command {
     FileMaintenance(bool),
     /// Scan and optionally fill missing global archive times.
     RepairArchiveTimes,
+    ClearViewingStatistics,
+    CullViewingStatistics,
     FileHistory,
     /// Forget a repository's pending content, asking first.
     ForgetPending(ServiceKey),
@@ -960,10 +962,16 @@ fn database_menu(facts: &Facts) -> Entry {
             ),
             menu(
                 "clear",
-                all_todo(&[
-                    &dots("clear all file viewing statistics"),
-                    &dots("cull file viewing statistics based on current min/max values"),
-                ]),
+                vec![
+                    item(
+                        dots("clear all file viewing statistics"),
+                        Command::ClearViewingStatistics,
+                    ),
+                    item(
+                        dots("cull file viewing statistics based on current min/max values"),
+                        Command::CullViewingStatistics,
+                    ),
+                ],
             ),
             SEP,
             todo(dots("set a password")),
