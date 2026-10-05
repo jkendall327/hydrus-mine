@@ -55,12 +55,21 @@ fn pretty(value: &PyJson, out: &mut String, depth: usize) {
 /// Inspect fetched bytes through the existing media engine, off the GUI thread.
 /// HTML/JSON takes precedence over a file signature, as in the reference.
 pub fn detect_mime(text: &str, bytes: &[u8]) -> Option<Mime> {
+    detect_mime_with_tools(text, bytes, &hydrus_media::MediaTools::new())
+}
+
+/// Detect with a caller-owned Store policy, preserving the standalone API.
+pub fn detect_mime_with_tools(
+    text: &str,
+    bytes: &[u8],
+    tools: &hydrus_media::MediaTools,
+) -> Option<Mime> {
     if text.is_empty() || PyJson::parse(text).is_ok() || looks_like_html(text) {
         return None;
     }
     let mut file = tempfile::NamedTempFile::new().ok()?;
     file.write_all(bytes).ok()?;
-    hydrus_media::MediaTools::new()
+    tools
         .detect_mime(file.path())
         .ok()
         .filter(|mime| hydrus_media::mimes::is_allowed(*mime))

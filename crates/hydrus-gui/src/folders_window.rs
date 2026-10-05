@@ -822,11 +822,14 @@ fn open_import_folder(
         let sidecars = slots.sidecars.clone();
         move || {
             let routers = state.borrow().folder.settings.routers.clone();
-            sidecars.set_test_objects(crate::sidecar_editors::folder_test_objects(
+            let tools = hydrus_media::MediaTools::new()
+                .with_ffmpeg_timeout_reader(hydrus_store::ffmpeg_policy::reader(&store));
+            sidecars.set_test_objects(crate::sidecar_editors::folder_test_objects_with_tools(
                 &weak
                     .upgrade()
                     .map(|window| window.get_path().to_string())
                     .unwrap_or_default(),
+                &tools,
             ));
             let applied: Rc<dyn Fn(Vec<hydrus_parse::sidecar::Router>)> = {
                 let weak = weak.clone();

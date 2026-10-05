@@ -113,3 +113,49 @@ fn qt_options_cancel_bounds_reopen_and_concurrent_changes() {
     apply(&implicit, &store);
     assert_eq!(store.read(ffmpeg_policy::load).unwrap().seconds, 24);
 }
+
+#[cfg(unix)]
+#[test]
+fn already_open_import_review_uses_live_store_deadline_for_real_metadata_detection() {
+    use hydrus_gui_model::local_import::{Parse, Review};
+    use hydrus_media::{Ffmpeg, MediaTools};
+    use std::{os::unix::fs::PermissionsExt as _, process::Command, sync::mpsc, time::Duration};
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let fifo = dir.path().join("gate");
+    assert!(
+        Command::new("mkfifo")
+            .arg(&fifo)
+            .status()
+            .unwrap()
+            .success()
+    );
+    let exe = dir.path().join("ffmpeg");
+    std::fs::write(
+        &exe,
+        format!("#!/bin/sh\nread -r reply < '{}'\n", fifo.display()),
+    )
+    .unwrap();
+    std::fs::set_permissions(&exe, std::fs::Permissions::from_mode(0o755)).unwrap();
+    // Real MP4 signature chooses GetMimeFromFFMPEG, not a mocked Review result.
+    let input = dir.path().join("input.mp4");
+    std::fs::write(&input, b"\0\0\0\x18ftypisom\0\0\0\0isommp42").unwrap();
+    let tools = MediaTools::with_ffmpeg(Ffmpeg::with_executable(exe))
+        .with_ffmpeg_timeout_reader(ffmpeg_policy::reader(&store));
+    let mut review = Review::with_tools(tools);
+    review.add_paths([input.to_string_lossy().into_owned()]);
+    store
+        .write(|c| settings::set(c.conn(), &FfmpegPolicy { seconds: 1 }))
+        .unwrap();
+    let (sender, result) = mpsc::channel();
+    let worker = std::thread::spawn(move || {
+        review.work(Duration::from_millis(1));
+        sender.send(review).unwrap();
+    });
+    let review = result.recv_timeout(Duration::from_secs(5)).unwrap();
+    worker.join().unwrap();
+    assert_eq!(review.parsed().len(), 1);
+    assert_eq!(review.parsed()[0].result, Parse::Unimportable);
+    assert!(!review.working());
+    assert!(review.good_paths().is_empty());
+}

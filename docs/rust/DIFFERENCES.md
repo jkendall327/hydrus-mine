@@ -3180,3 +3180,11 @@ rather than showing the reference’s diagnostic path string. This records a rea
 local executable transport, not a codec benchmark or network request. Other
 FFMPEG executable-discovery controls and broader media playback remain Partial;
 only the original call-timeout leaf is proposed conditionally on hosted validation.
+The deadline reader is shared by all current Store-aware GUI/model FFmpeg
+construction paths, including review/duplicate/parser/folder helpers. The Store
+keeps a weak self handle solely to support existing borrowed APIs; its database,
+snapshot, construction ordering and ownership stay unchanged, with no new pools
+or strong self cycle. Non-Store helper APIs keep default tools, and explicitly
+configured executable/fixed-deadline APIs remain available. The new decoder
+regressions use disclosed POSIX FIFO executable transports, not assertions of
+codec correctness; platform-specific execution awaits hosted Linux/macOS tests.

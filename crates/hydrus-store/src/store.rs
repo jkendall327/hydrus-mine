@@ -170,6 +170,7 @@ impl Drop for MediaClaim {
 /// A hydrus-rs database directory, open.
 #[derive(Debug)]
 pub struct Store {
+    weak: std::sync::Weak<Self>,
     dir: PathBuf,
     db: Db,
     snapshot: Arc<ArcSwap<Snapshot>>,
@@ -204,7 +205,10 @@ impl Store {
             })?;
         }
         let snapshot = db.read(Snapshot::load)?;
-        Ok(Arc::new(Self {
+        // Borrowed Store APIs can give media providers a weak owner without
+        // retaining a connection or creating a strong self cycle.
+        Ok(Arc::new_cyclic(|weak| Self {
+            weak: weak.clone(),
             dir: dir.to_path_buf(),
             db,
             snapshot: Arc::new(ArcSwap::from_pointee(snapshot)),
@@ -216,6 +220,11 @@ impl Store {
     /// Reserve one migration while leaving at least one pooled reader for the UI.
     pub(crate) fn claim_tag_migration(&self) -> Result<crate::tag_migration::Guard> {
         crate::tag_migration::Guard::claim(self.migration_active.clone())
+    }
+
+    /// A non-owning handle for live settings providers, including borrowed callers.
+    pub fn downgrade(&self) -> std::sync::Weak<Self> {
+        self.weak.clone()
     }
 
     pub fn dir(&self) -> &Path {

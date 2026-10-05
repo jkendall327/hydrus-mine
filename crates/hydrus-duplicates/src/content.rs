@@ -27,10 +27,15 @@ pub struct StoreContent<'s> {
 
 impl<'s> StoreContent<'s> {
     pub fn new(store: &'s Store) -> Self {
+        Self::with_tools(store, MediaTools::new())
+    }
+
+    /// Supply executable/decoder tools while retaining this Store's live policy.
+    pub fn with_tools(store: &'s Store, tools: MediaTools) -> Self {
         Self {
             store,
             snapshot: store.snapshot(),
-            tools: MediaTools::new(),
+            tools: tools.with_ffmpeg_timeout_reader(hydrus_store::ffmpeg_policy::reader(store)),
             jpegs: HashMap::new(),
             visual: HashMap::new(),
             tiled: VecDeque::new(),
@@ -121,5 +126,84 @@ impl std::fmt::Debug for StoreContent<'_> {
             .field("visual", &self.visual.len())
             .field("tiled", &self.tiled.len())
             .finish_non_exhaustive()
+    }
+}
+
+#[cfg(all(test, unix))]
+mod timeout_tests {
+    use super::*;
+    use std::{os::unix::fs::PermissionsExt as _, process::Command, sync::mpsc, time::Duration};
+    #[test]
+    fn retained_store_content_reads_new_policy_before_real_psd_decode() {
+        use hydrus_store::{ffmpeg_policy::FfmpegPolicy, settings};
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::open(dir.path()).unwrap();
+        let importer = hydrus_import::FileImporter::new(store.clone(), MediaTools::new());
+        let imported = importer
+            .import_path(
+                &hydrus_testkit::fixture_path("image_decoder_policies/plain.png"),
+                &hydrus_import::FileImportOptions::default(),
+            )
+            .unwrap();
+        let hash = imported.hash.unwrap();
+        let id = store
+            .read(|conn| hydrus_store::master::hash_id(conn, &hash))
+            .unwrap()
+            .unwrap();
+        let path = store
+            .snapshot()
+            .storage
+            .file_path(&hash, hydrus_core::Mime::ApplicationPsd)
+            .unwrap();
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(&path, b"authored local PSD subprocess transport").unwrap();
+        store
+            .write(move |c| {
+                c.conn().execute(
+                    "UPDATE files SET mime=? WHERE hash_id=?",
+                    rusqlite::params![hydrus_core::Mime::ApplicationPsd as u8, id],
+                )?;
+                Ok(())
+            })
+            .unwrap();
+        let fifo = dir.path().join("gate");
+        assert!(
+            Command::new("mkfifo")
+                .arg(&fifo)
+                .status()
+                .unwrap()
+                .success()
+        );
+        let exe = dir.path().join("ffmpeg");
+        std::fs::write(
+            &exe,
+            format!("#!/bin/sh\nread -r reply < '{}'\n", fifo.display()),
+        )
+        .unwrap();
+        std::fs::set_permissions(&exe, std::fs::Permissions::from_mode(0o755)).unwrap();
+        let tools = MediaTools::with_ffmpeg(hydrus_media::Ffmpeg::with_executable(exe));
+        let (ready, opened) = mpsc::channel();
+        let (start, go) = mpsc::channel();
+        let (sender, result) = mpsc::channel();
+        let current = store.clone();
+        let worker = std::thread::spawn(move || {
+            let content = StoreContent::with_tools(&current, tools);
+            ready.send(()).unwrap();
+            go.recv().unwrap();
+            sender.send(content.image(id)).unwrap();
+        });
+        opened.recv_timeout(Duration::from_secs(2)).unwrap();
+        store
+            .write(|c| settings::set(c.conn(), &FfmpegPolicy { seconds: 1 }))
+            .unwrap();
+        start.send(()).unwrap();
+        assert!(
+            result
+                .recv_timeout(Duration::from_secs(5))
+                .unwrap()
+                .is_none(),
+            "real render process must time out at the newly saved policy, not old15 seconds"
+        );
+        worker.join().unwrap();
     }
 }
