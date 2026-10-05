@@ -149,7 +149,7 @@ fn clipboard_and_repeatable_current_callable_reach_real_native_controls_and_stor
 #[test]
 fn yes_and_no_dismiss_the_popup_and_reach_the_retained_producer_once() {
     let (_directories, store) = crate::subscriptions::store();
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     for answer in [true, false] {
@@ -160,6 +160,19 @@ fn yes_and_no_dismiss_the_popup_and_reach_the_retained_producer_once() {
         let row = ui.get_popups().row_data(0).unwrap();
         assert!(row.has_question);
         assert_eq!(row.question, "Accept this?");
+        // Capture real Slint yes/no controls once, alongside the existing answer
+        // lifetime regression, then prove dismissal reaches the rendered stack.
+        let question_pixels = answer.then(|| {
+            let pixels = headless::render(&windows.get(0).unwrap(), 1100, 700);
+            headless::save_png(
+                &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("popup_job_question.png"),
+                &pixels,
+                1100,
+                700,
+            )
+            .unwrap();
+            pixels
+        });
         ui.invoke_popup_answer(
             row.key.clone(),
             row.action_owner.clone(),
@@ -173,6 +186,21 @@ fn yes_and_no_dismiss_the_popup_and_reach_the_retained_producer_once() {
             "answer immediately finishes and dismisses"
         );
         assert!(store.read(|conn| popups::all(conn, 0)).unwrap().is_empty());
+        if let Some(before) = question_pixels {
+            let after = headless::render(&windows.get(0).unwrap(), 1100, 700);
+            assert_ne!(
+                before, after,
+                "accepted answer removes the rendered question controls"
+            );
+            headless::save_png(
+                &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                    .join("popup_job_question_dismissed.png"),
+                &after,
+                1100,
+                700,
+            )
+            .unwrap();
+        }
         drop(bound); // An already accepted decision survives closing its GUI.
         assert_eq!(producer.question_answer(), Some(answer));
         ui.invoke_popup_answer(
