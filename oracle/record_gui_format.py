@@ -8,7 +8,7 @@ network request or media deletion is authored. A minimal owned actual Qt dialog
 also probes radio Return routing; identical native-platform outcomes are evidence
 of a boundary, not a completion claim for an unused flag.
 """
-import json,sys,tempfile
+import json,sys,tempfile,os,time,datetime
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
 sys.path.insert(0,str(HERE))
@@ -48,7 +48,20 @@ def record(session):
                 button=QW.QPushButton('ok',dialog);button.setDefault(True);button.clicked.connect(dialog.accept);layout.addWidget(button)
                 accepted=[];dialog.accepted.connect(lambda:accepted.append(True));dialog.show();radio.setFocus();QT.QTest.qWait(20);QT.QTest.keyClick(radio,QC.Qt.Key.Key_Return);QT.QTest.qWait(20)
                 radios.append(dict(force=force,accepted=len(accepted),checked=radio.isChecked(),visible=dialog.isVisible()));dialog.close();dialog.deleteLater()
-            return dict(now=NOW,defaults=defaults,seeds=dict(file=dict(data=fs.file_seed_data,created=fs.created,modified=fs.modified,source_time=fs.source_time),gallery=dict(url=gs.url,created=gs.created,modified=gs.modified)),events=events,cancel_before=before,cancel_after=cancel_after,radio_return=radios)
+            c.new_options.SetBoolean('always_show_iso_time',True);c.ReinitGlobalSettings()
+            timezone_states=[];original_tz=os.environ.get('TZ')
+            try:
+                for zone in ('UTC','America/New_York','Europe/Berlin'):
+                    os.environ['TZ']=zone;time.tzset()
+                    offset=int(datetime.datetime.now().astimezone().utcoffset().total_seconds())
+                    samples=[None,1672574400,1688212800,-1,9223372036854775807]
+                    if zone=='UTC':samples.append(-62135596800)
+                    timezone_states.append(dict(zone=zone,current_offset=offset,samples=[dict(timestamp=t,text=HydrusTime.TimestampToPrettyTimeDelta(t)) for t in samples]))
+            finally:
+                if original_tz is None:os.environ.pop('TZ',None)
+                else:os.environ['TZ']=original_tz
+                time.tzset()
+            return dict(timezone_states=timezone_states,now=NOW,defaults=defaults,seeds=dict(file=dict(data=fs.file_seed_data,created=fs.created,modified=fs.modified,source_time=fs.source_time),gallery=dict(url=gs.url,created=gs.created,modified=gs.modified)),events=events,cancel_before=before,cancel_after=cancel_after,radio_return=radios)
         finally:
             c.new_options=original;c.ReinitGlobalSettings();HydrusTime.GetNow=old_now
             for p in panels:p.deleteLater()

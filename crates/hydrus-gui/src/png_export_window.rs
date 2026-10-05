@@ -74,7 +74,10 @@ pub fn open(
     payload: String,
     closed: Rc<dyn Fn()>,
 ) -> Result<PngExportWindow, String> {
-    let summary = model::payload_description(&payload);
+    let summary = model::payload_description_with_format(
+        &payload,
+        &hydrus_gui_model::gui_format::preferences(store),
+    );
     open_with_summary(slots, store, payload, summary, closed)
 }
 

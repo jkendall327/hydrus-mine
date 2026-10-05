@@ -1,6 +1,6 @@
 //! Service review facts read from one consistent native database snapshot.
 
-use hydrus_core::numbers::human_bytes;
+use hydrus_store::settings::GuiFormatting;
 
 use hydrus_core::{ServiceId, ServiceKey};
 use hydrus_store::services::{ServiceKind, ServiceRegistry};
@@ -107,6 +107,7 @@ fn statistics(
     id: ServiceId,
     kind: &ServiceKind,
     graph: &hydrus_store::display::DisplayGraph,
+    formatting: &GuiFormatting,
 ) -> Result<String> {
     Ok(match kind {
         ServiceKind::LocalFiles
@@ -121,7 +122,7 @@ fn statistics(
             let mut text = format!(
                 "{} files, totalling {}",
                 human_int(files),
-                human_bytes(u64::try_from(size).unwrap_or(0))
+                crate::gui_format::bytes(formatting, u64::try_from(size).unwrap_or(0))
             );
             if !matches!(kind, ServiceKind::LocalUpdates | ServiceKind::Trash) {
                 text.push_str(&format!(
@@ -178,6 +179,7 @@ fn statistics(
 /// Read names, types and counts together, so a concurrent service change cannot mix them.
 pub fn rows(store: &Store) -> Result<Vec<Row>> {
     store.read(|conn| {
+        let formatting: GuiFormatting = hydrus_store::settings::get(conn)?;
         let registry = ServiceRegistry::load(conn)?;
         let graphs = hydrus_store::display::DisplayGraphs::load(conn,&registry)?;
         let mut rows = Vec::new();
@@ -193,7 +195,7 @@ pub fn rows(store: &Store) -> Result<Vec<Row>> {
                 ServiceKind::RatingLike(_) | ServiceKind::RatingNumerical(_) | ServiceKind::RatingIncDec(_) => (2..=4).filter_map(Action::from_index).collect(),
                 _ => Vec::new(),
             };
-            rows.push(Row { actions, id: service.id, key: service.key.clone(), name: service.name.clone(), service_type: service.service_type().name().into(), statistics: statistics(conn, service.id, &service.kind, &graphs.get(service.id))?, unavailable: unavailable.into() });
+            rows.push(Row { actions, id: service.id, key: service.key.clone(), name: service.name.clone(), service_type: service.service_type().name().into(), statistics: statistics(conn, service.id, &service.kind, &graphs.get(service.id), &formatting)?, unavailable: unavailable.into() });
         }
         rows.sort_by(|a,b| a.service_type.cmp(&b.service_type).then_with(|| a.name.cmp(&b.name)));
         Ok(rows)
