@@ -145,7 +145,7 @@ fn constructor_cancel_hidden_and_retired_controls_then_real_next_media_initial_s
     let adapter = windows.get(windows.count() - 1).unwrap();
     let pixels = headless::render(&adapter, 900, 640);
     headless::save_png(
-        &hydrus_testkit::artifacts_dir().join("animation_start_options.png"),
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("animation_start_options.png"),
         &pixels,
         900,
         640,
@@ -165,7 +165,7 @@ fn constructor_cancel_hidden_and_retired_controls_then_real_next_media_initial_s
     let adapter = windows.get(windows.count() - 1).unwrap();
     let pixels = headless::render(&adapter, 600, 420);
     headless::save_png(
-        &hydrus_testkit::artifacts_dir().join("animation_start_viewer.png"),
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("animation_start_viewer.png"),
         &pixels,
         600,
         420,
