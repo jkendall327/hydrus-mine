@@ -6,7 +6,8 @@
   "implementationCommits": [
     "05d0cad18c52ef0ed80153457a03b1a53660e297",
     "96a301e327920347aaff87097d85318e02b1ef1a",
-    "d5913c15d9870a5e4ddcfe92906f7e58c405279d"
+    "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+    "31ca081f1"
   ],
   "claims": [
     {
@@ -101,6 +102,13 @@
           "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "source",
           "symbol": "fn viewport_contains"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/main.slint",
+          "line": 886,
+          "commit": "31ca081f1",
+          "kind": "source",
+          "symbol": "shortcut-keys := FocusScope"
         }
       ],
       "testAnchors": [
@@ -152,6 +160,13 @@
           "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "gui_consumer_regression",
           "symbol": "fn real_wheel_replays"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 424,
+          "commit": "31ca081f1",
+          "kind": "gui_consumer_regression",
+          "symbol": "real_pointer_drag_replays_shift_chase_hover_transfer_disable_and_cancel_with_ordered_media: real Escape and subsequent release"
         }
       ],
       "referenceRecording": {
@@ -170,7 +185,7 @@
           "symbol": "\"keys\""
         },
         "executed": true,
-        "executedAt": "2026-10-05T00:52:50Z–2026-10-05T00:52:53Z",
+        "executedAt": "2026-10-05T00:52:50Z\u20132026-10-05T00:52:53Z",
         "driver": "with-oracle; hydrus_driver.run_client(basic); actual Qt GUIPagesPanel, frame/nested notebooks, wheel/dragMove/drop event consumers; unchanged reference source",
         "eventSeams": [
           "Synthetic QDropEvent overrides source() only to provide the real TabBar normally attached by Qt QDrag execution. No drop/navigation decision handler is replaced.",
@@ -278,6 +293,13 @@
           "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "source",
           "symbol": "fn viewport_contains"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/main.slint",
+          "line": 886,
+          "commit": "31ca081f1",
+          "kind": "source",
+          "symbol": "shortcut-keys := FocusScope"
         }
       ],
       "testAnchors": [
@@ -329,6 +351,13 @@
           "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "gui_consumer_regression",
           "symbol": "fn real_wheel_replays"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 424,
+          "commit": "31ca081f1",
+          "kind": "gui_consumer_regression",
+          "symbol": "real_pointer_drag_replays_shift_chase_hover_transfer_disable_and_cancel_with_ordered_media: real Escape and subsequent release"
         }
       ],
       "referenceRecording": {
@@ -347,7 +376,7 @@
           "symbol": "\"keys\""
         },
         "executed": true,
-        "executedAt": "2026-10-05T00:52:50Z–2026-10-05T00:52:53Z",
+        "executedAt": "2026-10-05T00:52:50Z\u20132026-10-05T00:52:53Z",
         "driver": "with-oracle; hydrus_driver.run_client(basic); actual Qt GUIPagesPanel, frame/nested notebooks, wheel/dragMove/drop event consumers; unchanged reference source",
         "eventSeams": [
           "Synthetic QDropEvent overrides source() only to provide the real TabBar normally attached by Qt QDrag execution. No drop/navigation decision handler is replaced.",
@@ -455,6 +484,13 @@
           "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "source",
           "symbol": "fn viewport_contains"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/main.slint",
+          "line": 886,
+          "commit": "31ca081f1",
+          "kind": "source",
+          "symbol": "shortcut-keys := FocusScope"
         }
       ],
       "testAnchors": [
@@ -506,6 +542,13 @@
           "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "gui_consumer_regression",
           "symbol": "fn real_wheel_replays"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 424,
+          "commit": "31ca081f1",
+          "kind": "gui_consumer_regression",
+          "symbol": "real_pointer_drag_replays_shift_chase_hover_transfer_disable_and_cancel_with_ordered_media: real Escape and subsequent release"
         }
       ],
       "referenceRecording": {
@@ -524,7 +567,7 @@
           "symbol": "\"keys\""
         },
         "executed": true,
-        "executedAt": "2026-10-05T00:52:50Z–2026-10-05T00:52:53Z",
+        "executedAt": "2026-10-05T00:52:50Z\u20132026-10-05T00:52:53Z",
         "driver": "with-oracle; hydrus_driver.run_client(basic); actual Qt GUIPagesPanel, frame/nested notebooks, wheel/dragMove/drop event consumers; unchanged reference source",
         "eventSeams": [
           "Synthetic QDropEvent overrides source() only to provide the real TabBar normally attached by Qt QDrag execution. No drop/navigation decision handler is replaced.",
@@ -632,6 +675,13 @@
           "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "source",
           "symbol": "fn viewport_contains"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/main.slint",
+          "line": 886,
+          "commit": "31ca081f1",
+          "kind": "source",
+          "symbol": "shortcut-keys := FocusScope"
         }
       ],
       "testAnchors": [
@@ -683,6 +733,13 @@
           "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "gui_consumer_regression",
           "symbol": "fn real_wheel_replays"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 424,
+          "commit": "31ca081f1",
+          "kind": "gui_consumer_regression",
+          "symbol": "real_pointer_drag_replays_shift_chase_hover_transfer_disable_and_cancel_with_ordered_media: real Escape and subsequent release"
         }
       ],
       "referenceRecording": {
@@ -701,7 +758,7 @@
           "symbol": "\"keys\""
         },
         "executed": true,
-        "executedAt": "2026-10-05T00:52:50Z–2026-10-05T00:52:53Z",
+        "executedAt": "2026-10-05T00:52:50Z\u20132026-10-05T00:52:53Z",
         "driver": "with-oracle; hydrus_driver.run_client(basic); actual Qt GUIPagesPanel, frame/nested notebooks, wheel/dragMove/drop event consumers; unchanged reference source",
         "eventSeams": [
           "Synthetic QDropEvent overrides source() only to provide the real TabBar normally attached by Qt QDrag execution. No drop/navigation decision handler is replaced.",
@@ -809,6 +866,13 @@
           "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "source",
           "symbol": "fn viewport_contains"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/main.slint",
+          "line": 886,
+          "commit": "31ca081f1",
+          "kind": "source",
+          "symbol": "shortcut-keys := FocusScope"
         }
       ],
       "testAnchors": [
@@ -860,6 +924,13 @@
           "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "gui_consumer_regression",
           "symbol": "fn real_wheel_replays"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 424,
+          "commit": "31ca081f1",
+          "kind": "gui_consumer_regression",
+          "symbol": "real_pointer_drag_replays_shift_chase_hover_transfer_disable_and_cancel_with_ordered_media: real Escape and subsequent release"
         }
       ],
       "referenceRecording": {
@@ -878,7 +949,7 @@
           "symbol": "\"keys\""
         },
         "executed": true,
-        "executedAt": "2026-10-05T00:52:50Z–2026-10-05T00:52:53Z",
+        "executedAt": "2026-10-05T00:52:50Z\u20132026-10-05T00:52:53Z",
         "driver": "with-oracle; hydrus_driver.run_client(basic); actual Qt GUIPagesPanel, frame/nested notebooks, wheel/dragMove/drop event consumers; unchanged reference source",
         "eventSeams": [
           "Synthetic QDropEvent overrides source() only to provide the real TabBar normally attached by Qt QDrag execution. No drop/navigation decision handler is replaced.",
@@ -965,6 +1036,13 @@
           "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "source",
           "symbol": "fn viewport_contains"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/main.slint",
+          "line": 886,
+          "commit": "31ca081f1",
+          "kind": "source",
+          "symbol": "shortcut-keys := FocusScope"
         }
       ],
       "testAnchors": [
@@ -995,6 +1073,13 @@
           "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "gui_consumer_regression",
           "symbol": "fn real_wheel_replays"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 424,
+          "commit": "31ca081f1",
+          "kind": "gui_consumer_regression",
+          "symbol": "real_pointer_drag_replays_shift_chase_hover_transfer_disable_and_cancel_with_ordered_media: real Escape and subsequent release"
         }
       ],
       "referenceRecording": {
@@ -1013,7 +1098,7 @@
           "symbol": "\"keys\""
         },
         "executed": true,
-        "executedAt": "2026-10-05T00:52:50Z–2026-10-05T00:52:53Z",
+        "executedAt": "2026-10-05T00:52:50Z\u20132026-10-05T00:52:53Z",
         "driver": "with-oracle; hydrus_driver.run_client(basic); actual Qt GUIPagesPanel, frame/nested notebooks, wheel/dragMove/drop event consumers; unchanged reference source",
         "eventSeams": [
           "Synthetic QDropEvent overrides source() only to provide the real TabBar normally attached by Qt QDrag execution. No drop/navigation decision handler is replaced.",
@@ -1160,7 +1245,7 @@
   },
   "validation": {
     "executed": [
-      "actual Qt recorder rerun2026-10-05T00:52:50Z–00:52:53Z, including raw clipped-hit probe",
+      "actual Qt recorder rerun2026-10-05T00:52:50Z\u201300:52:53Z, including raw clipped-hit probe",
       "cargo fmt --all",
       "git diff --check",
       "Python py_compile",
@@ -1180,8 +1265,14 @@
     {
       "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
       "exactBehavior": "Handle only Down/Up/Cancel as press/release/cancel. Slint pointer-event(Move) runs before moved(); left-pressed Move retains the grab for moved(), while unpressed Move still routes ordinary hover/tooltips. Live cached targets now intersect the matching notebook viewport/parent/depth and reserved40px arrow area. Captured offviewport Move/Up cannot navigate or reorder clipped pages.",
-      "referenceBoundary": "The actual Qt overflow probe returns raw tabAt7 at[300,12] outside a250×26 viewport, with selected0 unchanged. This lookup does not establish OS drop dispatch there. Native viewport rejection is an explicit capture boundary; no platform-routing claim is added.",
-      "recordedAt": "2026-10-05T00:52:50Z–2026-10-05T00:52:53Z"
+      "referenceBoundary": "The actual Qt overflow probe returns raw tabAt7 at[300,12] outside a250\u00d726 viewport, with selected0 unchanged. This lookup does not establish OS drop dispatch there. Native viewport rejection is an explicit capture boundary; no platform-routing claim is added.",
+      "recordedAt": "2026-10-05T00:52:50Z\u20132026-10-05T00:52:53Z"
+    },
+    {
+      "commit": "31ca081f1",
+      "exactBehavior": "The actual notebook pointer route now focuses the structurally persistent outer shortcut FocusScope after a press or active drag move and synchronizes the initial Shift state from pointer modifiers. Slint only dispatches capture-key events through the focused item ancestor chain; TouchArea does not establish keyboard focus, and conditional page/sidebar navigation can retire a former focused item. Escape therefore retains a reachable owner and consumes the captured grab. Existing Move ordering, hover, stable-key and clipped-target guards remain unchanged.",
+      "referenceBoundary": "Qt TabWidgetWithDnD.mouseMoveEvent runs the QDrag.exec_(MoveAction) loop and then clears its owned drag object. Native cancellation follows its existing in-window Escape path; no new execution of an OS Qt drag loop or cross-window drag equivalence is claimed.",
+      "hostedFailure": "Actual old-source a501 macOS run37255122837 failed the retained real Escape dispatch assertion at gui/tab_drag.rs423. This repair has source checks only; hosted Rust replay is pending."
     }
   ]
 }
