@@ -164,6 +164,7 @@ pub(crate) fn bind(
         let slots = slots.clone();
         let weak = parent.as_weak();
         let paint = paint.clone();
+        let snapshot = snapshot.clone();
         move |target| {
             if let Ok(window) = open_set(
                 editor.clone(),
@@ -172,6 +173,7 @@ pub(crate) fn bind(
                 &weak,
                 target,
                 paint.clone(),
+                snapshot.clone(),
             ) {
                 *slots.set.borrow_mut() = Some(window);
                 if let Some(parent) = weak.upgrade() {
