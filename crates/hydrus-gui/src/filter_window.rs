@@ -3,7 +3,7 @@
 //! asks (commit the batch? another group? commit before closing?).
 
 use std::cell::RefCell;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::rc::Rc;
 use std::sync::Arc;
 use std::time::Duration;
@@ -22,7 +22,6 @@ use hydrus_store::duplicates::{ComparisonScores, PairRelationship};
 
 use crate::duplicate_filter::{Decision, DuplicateFilter, Step};
 use crate::playback::Playback;
-use crate::thumbnails::Pixels;
 use crate::ui::{DuplicateFilterWindow, Statement as StatementRow};
 
 /// What the question shown asks.
@@ -111,47 +110,14 @@ impl SlowStatements {
     }
 }
 
-/// Files decoded ahead of showing them, on a thread of their own.
-struct Stills {
-    requests: Sender<(u128, HashId, bool)>,
-    results: Receiver<(u128, HashId, Option<(Pixels, Arc<Raster>)>)>,
-}
-
-/// A file decoded: as shown, and whole.
+/// A current file decoded: as shown, and whole.
 type Decoded = (slint::Image, Option<Arc<Raster>>);
-
 fn decoded(raster: Option<Arc<Raster>>) -> Decoded {
     (
         raster.as_deref().map(crate::image).unwrap_or_default(),
         raster,
     )
 }
-
-impl Stills {
-    fn new(store: &Arc<Store>, image_cache: crate::image_cache::Handle) -> Self {
-        let (requests, jobs) = crossbeam_channel::bounded::<(u128, HashId, bool)>(8);
-        let (done, results) = crossbeam_channel::bounded(8);
-        let store = Arc::clone(store);
-        std::thread::Builder::new()
-            .name("filter stills".into())
-            .spawn(move || {
-                for (generation, id, normalise_icc) in jobs {
-                    let decoded = image_cache
-                        .load(&store, id, normalise_icc)
-                        .map(|r| (Pixels::new(&r), r));
-                    if done.send((generation, id, decoded)).is_err() {
-                        break;
-                    }
-                }
-            })
-            .expect("starting the stills thread");
-        Self { requests, results }
-    }
-}
-
-/// How many pairs past the one shown are decoded ahead (the reference's
-/// default `duplicate_filter_prefetch_num_pairs`).
-const PREFETCH_PAIRS: usize = 3;
 
 struct State {
     viewing_stats: crate::viewing_tracking::CanvasTracker,
@@ -168,12 +134,6 @@ struct State {
     image_cache: crate::image_cache::Handle,
     owns_cache: bool,
     normalise_icc: bool,
-    image_generation: u128,
-    /// Files asked of the stills thread and not yet back.
-    requested: HashSet<HashId>,
-    /// Failed future requests are not retried on every timer tick. This holds
-    /// identities only, not decoded images or presentation ownership.
-    failed_prefetch: HashSet<HashId>,
     /// Video, audio and animations play, as in the media viewer.
     playback: Rc<Playback>,
     animator: Rc<crate::animation::Animator>,
@@ -189,30 +149,6 @@ impl Drop for State {
     fn drop(&mut self) {
         if self.owns_cache {
             self.image_cache.retire();
-        }
-    }
-}
-impl State {
-    /// Ask for the files coming up to be decoded, and forget the ones
-    /// passed.
-    fn prefetch(&mut self, stills: &Stills) {
-        let upcoming: HashSet<HashId> = self.model.upcoming(PREFETCH_PAIRS).into_iter().collect();
-        self.failed_prefetch.retain(|id| upcoming.contains(id));
-        self.images
-            .retain(|id, _| self.shown.is_some_and(|pair| pair.0 == *id));
-        for id in upcoming {
-            if !self.images.contains_key(&id)
-                && !self.failed_prefetch.contains(&id)
-                && !self.image_cache.contains(id)
-                && self.image_cache.prefetch_allowed(self.model.store(), id)
-                && self.requested.insert(id)
-                && stills
-                    .requests
-                    .try_send((self.image_generation, id, self.normalise_icc))
-                    .is_err()
-            {
-                self.requested.remove(&id);
-            }
         }
     }
 }
@@ -293,7 +229,13 @@ fn show(window: &DuplicateFilterWindow, state: &mut State) {
     let (image, raster) = state
         .images
         .entry(shown)
-        .or_insert_with(|| decoded(state.image_cache.load_saved(state.model.store(), shown)))
+        .or_insert_with(|| {
+            decoded(
+                state
+                    .image_cache
+                    .load_current_saved(state.model.store(), shown),
+            )
+        })
         .clone();
     window.set_media(image);
     if !newly_shown {
@@ -473,7 +415,6 @@ pub(crate) fn open_filter_with_cache(
         cache.unwrap_or_else(|| crate::image_cache::Handle::standalone(model.store()));
     let playback_store = model.store().clone();
     let slow = Rc::new(SlowStatements::new(model.store()));
-    let stills = Rc::new(Stills::new(model.store(), image_cache.clone()));
     let settings: hydrus_core::media_viewer::MediaViewerSettings = model
         .store()
         .read(hydrus_store::settings::get)
@@ -504,9 +445,6 @@ pub(crate) fn open_filter_with_cache(
         image_cache,
         owns_cache,
         normalise_icc,
-        image_generation: rand::random(),
-        requested: HashSet::new(),
-        failed_prefetch: HashSet::new(),
         playback: Playback::for_store(playback_store.clone()),
         animator: crate::animation::Animator::for_store(playback_store),
         zoomed,
@@ -543,11 +481,57 @@ pub(crate) fn open_filter_with_cache(
             });
         }
     };
+    let warm_valid: Rc<dyn Fn() -> bool> = Rc::new({
+        let weak = window.as_weak();
+        let slot = Rc::downgrade(slot);
+        let state = Rc::downgrade(&state);
+        move || {
+            state
+                .upgrade()
+                .is_some_and(|state| state.borrow().viewing_stats.active())
+                && weak.upgrade().is_some_and(|window| {
+                    slot.upgrade().is_some_and(|slot| {
+                        slot.borrow()
+                            .as_ref()
+                            .is_some_and(|current| std::ptr::eq(current.window(), window.window()))
+                    })
+                })
+        }
+    });
+    let warm = crate::viewer_prefetch::Control::new(
+        state.borrow().model.store(),
+        state.borrow().image_cache.clone(),
+        warm_valid.clone(),
+        Rc::new({
+            let state = Rc::downgrade(&state);
+            move |preferences| {
+                let Some(state) = state.upgrade() else {
+                    return Vec::new();
+                };
+                let state = state.borrow();
+                let Some((current, other)) = state.model.current() else {
+                    return Vec::new();
+                };
+                let mut files = vec![current, other];
+                files.extend(
+                    state
+                        .model
+                        .upcoming(
+                            usize::try_from(preferences.duplicate_pairs).unwrap_or(usize::MAX),
+                        )
+                        .into_iter()
+                        .skip(2),
+                );
+                files
+            }
+        }),
+    );
     let update = {
+        let warm = warm.clone();
+        let warm_valid = warm_valid.clone();
         let weak = window.as_weak();
         let state = state.clone();
         let request_slow = request_slow.clone();
-        let stills = stills.clone();
         move |change: &dyn Fn(&mut State) -> Option<anyhow::Result<Step>>| {
             let Some(window) = weak.upgrade() else { return };
             let mut state = state.borrow_mut();
@@ -562,7 +546,10 @@ pub(crate) fn open_filter_with_cache(
             if state.shown != before {
                 request_slow(&state);
             }
-            state.prefetch(&stills);
+            drop(state);
+            if warm_valid() {
+                warm.refresh();
+            }
         }
     };
 
@@ -570,7 +557,6 @@ pub(crate) fn open_filter_with_cache(
         let mut s = state.borrow_mut();
         after(&window, &mut s, step);
         request_slow(&s);
-        s.prefetch(&stills);
     }
 
     let collect = Rc::new(slint::Timer::default());
@@ -578,7 +564,6 @@ pub(crate) fn open_filter_with_cache(
         let weak = window.as_weak();
         let state = state.clone();
         let slow = slow.clone();
-        let stills = stills.clone();
         move || {
             let Some(window) = weak.upgrade() else { return };
             if !window.window().is_visible() {
@@ -598,10 +583,7 @@ pub(crate) fn open_filter_with_cache(
                     && state.normalise_icc != policy.normalise_icc
                 {
                     state.normalise_icc = policy.normalise_icc;
-                    state.image_generation = rand::random();
                     state.images.clear();
-                    state.requested.clear();
-                    state.failed_prefetch.clear();
                     let still = state.model.current().is_some_and(|(file, _)| {
                         let store = state.model.store();
                         crate::viewer::playable(store, file).is_none()
@@ -614,24 +596,6 @@ pub(crate) fn open_filter_with_cache(
                     if still {
                         show(&window, &mut state);
                     }
-                }
-                state.prefetch(&stills);
-            }
-            while let Ok((generation, id, decoded)) = stills.results.try_recv() {
-                let mut state = state.borrow_mut();
-                if generation != state.image_generation || !state.viewing_stats.active() {
-                    continue;
-                }
-                state.requested.remove(&id);
-                if decoded.is_none() {
-                    state.failed_prefetch.insert(id);
-                }
-                let entry = match decoded {
-                    Some((pixels, raster)) => (pixels.image(), Some(raster)),
-                    None => (slint::Image::default(), None),
-                };
-                if state.shown.is_some_and(|pair| pair.0 == id) {
-                    state.images.insert(id, entry);
                 }
             }
             while let Ok((pair, made)) = slow.results.try_recv() {
@@ -711,12 +675,14 @@ pub(crate) fn open_filter_with_cache(
         }
     });
     let close = {
+        let warm = warm.clone();
         let weak = window.as_weak();
         let slot = slot.clone();
         let collect = collect.clone();
         let state = state.clone();
         move || {
             let Some(window) = weak.upgrade() else { return };
+            warm.retire();
             state.borrow().viewing_stats.close();
             collect.stop();
             {

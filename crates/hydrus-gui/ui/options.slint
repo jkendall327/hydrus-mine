@@ -109,6 +109,7 @@ export component TimeFields {
 }
 
 export component OptionsWindow inherits Window {
+    in property <string> prefetch-warning;
     title: "manage options";
     preferred-width: 900px;
     preferred-height: 640px;
@@ -375,6 +376,11 @@ export component OptionsWindow inherits Window {
                                 }
                                 }
                                 if row.unit != "": Text {text:row.unit;wrap:word-wrap;}
+                                if row.label == "Num next to prefetch in Media Viewer:": Text {
+                                    text: "Prefetch numbers exceed cache prefetch limit? " + root.prefetch-warning;
+                                    color: root.prefetch-warning == "No, looks good!" ? Theme.text : Theme.error;
+                                    wrap: word-wrap;
+                                }
                             }
                             if row.kind == 3: HorizontalLayout {
                                 width: 260px;

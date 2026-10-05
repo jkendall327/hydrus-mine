@@ -8,6 +8,7 @@ use hydrus_store::Store;
 pub struct MediaViewer {
     store: Arc<Store>,
     image_cache: Option<crate::image_cache::Handle>,
+    owns_cache: bool,
     files: Vec<HashId>,
     index: usize,
     /// The file domains of the page it was opened from.
@@ -35,6 +36,7 @@ impl MediaViewer {
         (index < files.len()).then_some(Self {
             store,
             image_cache: None,
+            owns_cache: false,
             files,
             index,
             location: hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
@@ -52,10 +54,38 @@ impl MediaViewer {
     pub(crate) fn shared_media(&self) -> Option<Arc<hydrus_media::Raster>> {
         self.image_cache.as_ref().map_or_else(
             || self.media().map(Arc::new),
-            |cache| cache.load_saved(&self.store, self.current()),
+            |cache| cache.load_current_saved(&self.store, self.current()),
         )
     }
 
+    pub(crate) fn prefetch_cache(&mut self) -> crate::image_cache::Handle {
+        if self.image_cache.is_none() {
+            self.image_cache = Some(crate::image_cache::Handle::standalone(&self.store));
+            self.owns_cache = true;
+        }
+        self.image_cache.as_ref().unwrap().clone()
+    }
+    pub(crate) fn retire_prefetch_cache(&self) {
+        if self.owns_cache
+            && let Some(cache) = &self.image_cache
+        {
+            cache.retire();
+        }
+    }
+
+    pub(crate) fn prefetch_files(
+        &self,
+        preferences: hydrus_store::viewer_prefetch::Preferences,
+    ) -> Vec<HashId> {
+        let mut files = vec![self.current()];
+        files.extend(hydrus_gui_model::viewer_prefetch::neighbours(
+            &self.files,
+            self.index,
+            preferences.previous,
+            preferences.next,
+        ));
+        files
+    }
     /// Viewing a page searching `location` (where deletions take its files
     /// from).
     #[must_use]
@@ -484,4 +514,10 @@ pub fn playable(store: &Store, id: HashId) -> Option<std::path::PathBuf> {
         return None;
     }
     store.snapshot().storage.file_path(&result.hash, mime)
+}
+
+impl Drop for MediaViewer {
+    fn drop(&mut self) {
+        self.retire_prefetch_cache();
+    }
 }

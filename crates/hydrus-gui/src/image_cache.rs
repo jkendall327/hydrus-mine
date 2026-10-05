@@ -10,7 +10,10 @@ use slint::ComponentHandle as _;
 use std::{
     cell::Cell,
     rc::Rc,
-    sync::{Arc, Condvar, Mutex, Weak},
+    sync::{
+        Arc, Condvar, Mutex, Weak,
+        atomic::{AtomicU64, Ordering},
+    },
     time::{Duration, Instant},
 };
 
@@ -28,12 +31,19 @@ fn estimate_resolution(width: Option<u32>, height: Option<u32>) -> u64 {
         .saturating_mul(3)
 }
 #[derive(Default)]
-struct Loading {
+pub(crate) struct Loading {
     identity: Option<Identity>,
+    cache: Weak<Shared>,
     result: Mutex<Option<Option<Arc<Raster>>>>,
     ready: Condvar,
 }
 impl Loading {
+    pub(crate) fn pending(&self) -> bool {
+        self.result
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .is_none()
+    }
     fn bytes(&self) -> Option<u64> {
         self.result
             .lock()
@@ -46,7 +56,31 @@ impl Loading {
             .result
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner) = Some(raster);
+        if let Some(cache) = self.cache.upgrade() {
+            cache.finished.fetch_add(1, Ordering::AcqRel);
+        }
         self.ready.notify_all();
+    }
+    pub(crate) fn wait_while_active(&self, valid: impl Fn() -> bool) {
+        loop {
+            // Validity may read cache admission state (data→result is the
+            // lookup order), so it must never run while holding result.
+            if !valid() {
+                return;
+            }
+            let result = self
+                .result
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner);
+            if result.is_some() {
+                return;
+            }
+            let (result, _) = self
+                .ready
+                .wait_timeout(result, Duration::from_millis(50))
+                .unwrap_or_else(std::sync::PoisonError::into_inner);
+            drop(result);
+        }
     }
     fn wait(&self) -> Option<Arc<Raster>> {
         let mut result = self
@@ -62,6 +96,22 @@ impl Loading {
         result.as_ref().and_then(Clone::clone)
     }
 }
+impl std::fmt::Debug for Loading {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Loading")
+            .field("identity", &self.identity)
+            .field("pending", &self.pending())
+            .finish_non_exhaustive()
+    }
+}
+struct Completion(Option<Arc<Loading>>);
+impl Drop for Completion {
+    fn drop(&mut self) {
+        if let Some(loading) = self.0.take() {
+            loading.finish(None);
+        }
+    }
+}
 struct Data {
     cache: Cache<Arc<Loading>>,
     normalise_icc: bool,
@@ -70,6 +120,7 @@ struct Data {
 struct Shared {
     data: Mutex<Data>,
     started: Instant,
+    finished: AtomicU64,
     clock: Mutex<Option<Arc<dyn Fn() -> Duration + Send + Sync>>>,
 }
 /// A thread-safe transport to this binding's cache, without extending admission lifetime.
@@ -133,6 +184,15 @@ impl Handle {
         id: HashId,
         normalise_icc: bool,
     ) -> Option<Arc<Raster>> {
+        self.load_using(store, id, normalise_icc, false)
+    }
+    fn load_using(
+        &self,
+        store: &Store,
+        id: HashId,
+        normalise_icc: bool,
+        current: bool,
+    ) -> Option<Arc<Raster>> {
         self.refresh_saved(store)?;
         if self
             .0
@@ -164,11 +224,12 @@ impl Handle {
             return crate::viewer::still_with_icc(store, id, normalise_icc).map(Arc::new);
         }
         let estimated_bytes = estimate(info);
-        self.render(
+        self.render_using(
             id,
             estimated_bytes,
             normalise_icc,
             Some((info.mime, info.width, info.height)),
+            current,
             || crate::viewer::full_still_with_icc(store, &result, normalise_icc).map(Arc::new),
         )
         .or_else(|| {
@@ -184,12 +245,24 @@ impl Handle {
             crate::viewer::thumbnail_still_with_icc(store, &result, normalise_icc).map(Arc::new)
         })
     }
+    #[cfg(test)]
     fn render(
         &self,
         id: HashId,
         estimated_bytes: u64,
         normalise_icc: bool,
         identity: Option<Identity>,
+        decode: impl FnOnce() -> Option<Arc<Raster>>,
+    ) -> Option<Arc<Raster>> {
+        self.render_using(id, estimated_bytes, normalise_icc, identity, false, decode)
+    }
+    fn render_using(
+        &self,
+        id: HashId,
+        estimated_bytes: u64,
+        normalise_icc: bool,
+        identity: Option<Identity>,
+        current: bool,
         decode: impl FnOnce() -> Option<Arc<Raster>>,
     ) -> Option<Arc<Raster>> {
         let now = self.now();
@@ -209,22 +282,20 @@ impl Handle {
             } else {
                 let loading = Arc::new(Loading {
                     identity,
+                    cache: Arc::downgrade(&self.0),
                     ..Loading::default()
                 });
                 data.cache.insert(id, loading.clone(), estimated_bytes, now);
                 (loading, true)
             }
         };
+        if current && !created && loading.pending() {
+            // Keep the pre-existing synchronous current renderer independent
+            // of a held warm worker. Never wait for its completion on the UI.
+            return decode();
+        }
         if created {
             // Complete waiters even if a decoder unwinds, without holding its lock.
-            struct Completion(Option<Arc<Loading>>);
-            impl Drop for Completion {
-                fn drop(&mut self) {
-                    if let Some(loading) = self.0.take() {
-                        loading.finish(None);
-                    }
-                }
-            }
             let mut completion = Completion(Some(loading.clone()));
             let raster = decode();
             // Completion mutates only this pending renderer, never a new epoch's entry.
@@ -250,26 +321,6 @@ impl Handle {
         self.refresh(policy, colour.normalise_icc);
         Some(())
     }
-    pub(crate) fn prefetch_allowed(&self, store: &Store, id: HashId) -> bool {
-        if self.refresh_saved(store).is_none() {
-            return false;
-        }
-        let Ok(results) = store.read(|conn| hydrus_store::media::load_basic(conn, &[id])) else {
-            return false;
-        };
-        let Some(info) = results.first().and_then(|result| result.info.as_ref()) else {
-            return false;
-        };
-        if info.mime.general_class() != Some(hydrus_core::Mime::GeneralImage) {
-            return false;
-        }
-        let data = self
-            .0
-            .data
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        !data.retired && data.cache.admits(estimate(info))
-    }
     pub(crate) fn standalone(store: &Store) -> Self {
         let policy = store
             .read(hydrus_store::image_cache::load)
@@ -284,6 +335,7 @@ impl Handle {
                 retired: false,
             }),
             started: Instant::now(),
+            finished: AtomicU64::new(0),
             clock: Mutex::default(),
         }))
     }
@@ -296,13 +348,136 @@ impl Handle {
             .cache
             .maintain(now);
     }
+    #[cfg(test)]
     pub(crate) fn load_saved(&self, store: &Store, id: HashId) -> Option<Arc<Raster>> {
         let policy = store.read(hydrus_store::image_cache::load).ok()?;
         let colour = store.read(hydrus_store::image_colour::load).ok()?;
         self.refresh(policy, colour.normalise_icc);
         self.load(store, id, colour.normalise_icc)
     }
+    /// Current GUI rendering shares ready pixels, but never waits on warm work.
+    pub(crate) fn load_current_saved(&self, store: &Store, id: HashId) -> Option<Arc<Raster>> {
+        let colour = store.read(hydrus_store::image_colour::load).ok()?;
+        self.load_using(store, id, colour.normalise_icc, true)
+    }
+    /// Finished-image notifications also wake viewers whose last budget pass stopped.
+    pub(crate) fn readiness(&self) -> u64 {
+        self.0.finished.load(Ordering::Acquire)
+    }
+    /// Terminal cache state is shared by all warm owners without retaining its lease.
+    pub(crate) fn active(&self) -> bool {
+        !self
+            .0
+            .data
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .retired
+    }
+    /// One real ordered prefetch pass; cache locks cover only state/admission.
+    pub(crate) fn prefetch_once(
+        &self,
+        store: &Store,
+        plan: &crate::viewer_prefetch::Plan,
+        valid: impl Fn() -> bool,
+    ) -> crate::viewer_prefetch::Outcome {
+        use crate::viewer_prefetch::Outcome;
+        use hydrus_gui_model::viewer_prefetch::{Budget, Entry, Step};
+        if !valid() || self.refresh_saved(store).is_none() {
+            return Outcome::Stop;
+        }
+        let mut budget = Budget::new(plan.policy, plan.preferences.percentage);
+        for candidate in &plan.candidates {
+            if !valid() {
+                return Outcome::Stop;
+            }
+            let now = self.now();
+            let work = {
+                let mut data = self
+                    .0
+                    .data
+                    .lock()
+                    .unwrap_or_else(std::sync::PoisonError::into_inner);
+                if data.retired
+                    || data.normalise_icc != plan.normalise_icc
+                    || data.cache.policy() != plan.policy
+                {
+                    return Outcome::Stop;
+                }
+                data.cache.remove_if(candidate.id, |loading| {
+                    loading.identity != Some(candidate.identity())
+                });
+                if let Some(loading) = data.cache.get(candidate.id, now, |loading| loading.bytes())
+                {
+                    if loading.pending() {
+                        return Outcome::Wait(crate::viewer_prefetch::Pending::new(loading));
+                    }
+                    let Some(bytes) = loading.bytes() else {
+                        return Outcome::Stop;
+                    };
+                    let _ = budget.consider(Entry::Ready(bytes));
+                    continue;
+                }
+                let estimate = candidate
+                    .width
+                    .zip(candidate.height)
+                    .map(|(w, h)| u64::from(w).saturating_mul(u64::from(h)).saturating_mul(3));
+                let Step::Decode(bytes) = budget.consider(Entry::Missing(estimate)) else {
+                    return Outcome::Stop;
+                };
+                if !data
+                    .cache
+                    .try_flush_finished_space(bytes, |loading| !loading.pending())
+                {
+                    return Outcome::Stop;
+                }
+                if !valid() {
+                    return Outcome::Stop;
+                }
+                let loading = Arc::new(Loading {
+                    identity: Some(candidate.identity()),
+                    cache: Arc::downgrade(&self.0),
+                    ..Loading::default()
+                });
+                data.cache.insert(candidate.id, loading.clone(), bytes, now);
+                loading
+            };
+            let mut completion = Completion(Some(work.clone()));
+            let result = store
+                .read(|conn| hydrus_store::media::load_basic(conn, &[candidate.id]))
+                .ok()
+                .and_then(|mut results| results.pop());
+            let raster = result
+                .as_ref()
+                .filter(|result| {
+                    result.info.as_ref().is_some_and(|info| {
+                        (info.mime, info.width, info.height) == candidate.identity()
+                    })
+                })
+                .and_then(|result| {
+                    crate::viewer::full_still_with_icc(store, result, plan.normalise_icc)
+                })
+                .map(Arc::new);
+            if raster.is_none() {
+                self.0
+                    .data
+                    .lock()
+                    .unwrap_or_else(std::sync::PoisonError::into_inner)
+                    .cache
+                    .remove_if(candidate.id, |loading| Arc::ptr_eq(loading, &work));
+            }
+            let decoded = raster.is_some();
+            drop(completion.0.take());
+            work.finish(raster);
+            return if decoded {
+                Outcome::Decoded
+            } else {
+                Outcome::Stop
+            };
+        }
+        Outcome::Stop
+    }
     /// Future decoded copies can only be reused while their cache renderer is present.
+    #[cfg(test)]
     pub(crate) fn contains(&self, id: HashId) -> bool {
         let data = self
             .0
@@ -470,6 +645,99 @@ mod tests {
             .unwrap();
         let cache = Handle::standalone(&store);
         (dir, store, cache)
+    }
+    #[test]
+    fn pending_owner_validity_does_not_hold_the_renderer_lock_against_current_lookup() {
+        let (_dir, _store, cache) = cache();
+        let pending = Arc::new(Loading::default());
+        cache
+            .0
+            .data
+            .lock()
+            .unwrap()
+            .cache
+            .insert(HashId(1), pending.clone(), 30, Duration::ZERO);
+        let (entered, seen) = crossbeam_channel::bounded(1);
+        let (release, held) = crossbeam_channel::bounded(1);
+        let waiter = std::thread::spawn({
+            let cache = cache.clone();
+            move || {
+                pending.wait_while_active(|| {
+                    entered.send(()).unwrap();
+                    held.recv().unwrap();
+                    let _active = cache.active();
+                    false
+                })
+            }
+        });
+        seen.recv_timeout(Duration::from_secs(5)).unwrap();
+        let (done, result) = crossbeam_channel::bounded(1);
+        let lookup = std::thread::spawn({
+            let cache = cache.clone();
+            move || {
+                done.send(cache.render_using(HashId(1), 30, true, None, true, || Some(raster(3))))
+                    .unwrap()
+            }
+        });
+        let current = result.recv_timeout(Duration::from_secs(5));
+        release.send(()).unwrap();
+        waiter.join().unwrap();
+        lookup.join().unwrap();
+        assert!(
+            current
+                .expect("validity held Loading.result and blocked data→result current lookup")
+                .is_some()
+        );
+    }
+    #[test]
+    fn current_render_uses_ready_shared_pixels_but_never_waits_on_a_held_warm_renderer() {
+        let (_dir, _store, cache) = cache();
+        let (started, seen) = crossbeam_channel::bounded(1);
+        let (release, held) = crossbeam_channel::bounded(1);
+        let worker = std::thread::spawn({
+            let cache = cache.clone();
+            move || {
+                cache
+                    .render(HashId(1), 30, true, None, || {
+                        started.send(()).unwrap();
+                        held.recv().unwrap();
+                        Some(raster(4))
+                    })
+                    .unwrap()
+            }
+        });
+        seen.recv_timeout(Duration::from_secs(5)).unwrap();
+        let (done, result) = crossbeam_channel::bounded(1);
+        let current_worker = std::thread::spawn({
+            let cache = cache.clone();
+            move || {
+                done.send(
+                    cache
+                        .render_using(HashId(1), 30, true, None, true, || Some(raster(3)))
+                        .unwrap(),
+                )
+                .unwrap()
+            }
+        });
+        let current = result.recv_timeout(Duration::from_secs(5));
+        release.send(()).unwrap();
+        let warm = worker.join().unwrap();
+        current_worker.join().unwrap();
+        let current = current.expect("current rendering waited for the held warm renderer");
+        assert_eq!(current.channels(), 3);
+        assert_eq!(cache.0.data.lock().unwrap().cache.bytes(), 30);
+        assert!(!Arc::ptr_eq(&current, &warm));
+        let ready = cache
+            .render_using(HashId(1), 30, true, None, true, || {
+                panic!("a ready warm result must be reused")
+            })
+            .unwrap();
+        assert!(Arc::ptr_eq(&warm, &ready));
+        assert_eq!(cache.0.data.lock().unwrap().cache.bytes(), 40);
+        cache.retire();
+        assert_eq!(current.channels(), 3);
+        assert_eq!(warm.channels(), 4);
+        assert!(!cache.contains(HashId(1)));
     }
     #[test]
     fn actual_qt_pending_estimate_uses_full_unknown_resolution_fallback() {

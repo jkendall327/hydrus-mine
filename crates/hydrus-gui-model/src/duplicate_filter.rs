@@ -502,7 +502,11 @@ impl DuplicateFilter {
     /// The files of the pair shown and the next `pairs` pairs, for
     /// decoding ahead (the reference's `duplicate_filter_prefetch_num_pairs`).
     pub fn upcoming(&self, pairs: usize) -> Vec<HashId> {
-        let end = (self.index + 1 + pairs).min(self.batch.len());
+        let end = self
+            .index
+            .saturating_add(1)
+            .saturating_add(pairs)
+            .min(self.batch.len());
         self.batch
             .get(self.index..end)
             .unwrap_or_default()

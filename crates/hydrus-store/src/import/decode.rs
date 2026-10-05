@@ -1008,6 +1008,13 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     )?;
     insert_setting(
         &mut input,
+        &options
+            .as_ref()
+            .map(crate::viewer_prefetch::Preferences::from_legacy)
+            .unwrap_or_default(),
+    )?;
+    insert_setting(
+        &mut input,
         &options.as_ref().map_or_else(
             crate::archive_delete_preferences::Preferences::default,
             crate::archive_delete_preferences::Preferences::from_legacy,
