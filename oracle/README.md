@@ -226,3 +226,14 @@ canvas cases; `duplicate_colours.png` is the actual Qt canvas. The sandbox's
 unrelated Client API bind failed; recording and clean client shutdown completed.
 The abandoned Qt page is not a claim of the full Manage Options modal Cancel
 path; native tests separately cover the actual Options owner Cancel route.
+
+`record_read_tag_tabs.py` additionally records literal `system:inbox` and
+wildcard-parent activation through the actual favourite list, child activation/
+exclusion/removal, and restored negative tag contexts. Its independent `inbox`
+chain establishes that Qt cleans descendant lookup spelling in
+`GetDescendantsForTags`/`GetTagId`, while preserving the literal active predicate.
+The final offscreen run completed on 2026-10-05 at 03:46:56–58 UTC via
+`with-oracle` on a fresh basic fixture with clean shutdown. The unrelated
+sandbox Client API socket bind failed; the DB/Qt recording completed.
+Native/model replay assertions were authored without local Cargo builds, Rust
+tests or mutation runs. This is boundary evidence, with no new parity claim.

@@ -307,3 +307,129 @@ fn real_page_tabs_apply_caps_keep_zero_count_descendants_and_restore_context() {
         Some(1)
     );
 }
+
+fn assert_literal_children_state(ui: &MainWindow, bound: &hydrus_gui::Bound, event: &Value) {
+    use hydrus_core::search::Predicate;
+    let current = bound.current.borrow();
+    let page = current.borrow();
+    let search = page.favourite_to_save().unwrap().search;
+    let mut active: Vec<_> = search
+        .predicates
+        .iter()
+        .map(|predicate| match predicate {
+            Predicate::Tag { tag, inclusive } => {
+                json!({"kind":"tag","value":tag.as_str(),"inclusive":inclusive})
+            }
+            other => panic!("literal tab activated a non-tag predicate: {other:?}"),
+        })
+        .collect();
+    active.sort_by(|a, b| a["value"].as_str().cmp(&b["value"].as_str()));
+    assert_eq!(json!(active), event["active"], "{event}");
+    let rows: Vec<_> = page
+        .autocomplete()
+        .suggestions()
+        .iter()
+        .map(|s| json!({"tag":s.predicate,"rows":[s.label]}))
+        .collect();
+    assert_eq!(json!(rows), event["rows"], "{event}");
+    assert_eq!(json!(ui.get_autocomplete_tab()), event["tab"]);
+    assert_eq!(ui.get_search_text(), event["text"].as_str().unwrap());
+    let labels: Vec<_> = event["rows"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|row| row["rows"][0].as_str().unwrap())
+        .collect();
+    assert_eq!(
+        ui.get_suggestions()
+            .iter()
+            .map(|row| row.text.to_string())
+            .collect::<Vec<_>>(),
+        labels
+    );
+}
+
+#[test]
+fn literal_parent_activation_children_removal_and_negative_restore_match_qt() {
+    use hydrus_core::search::Predicate;
+    let fixture = hydrus_testkit::fixture_json("read_tag_tabs.json");
+    let (_dirs, store, key) = seeded(&fixture);
+    let _windows = headless::init();
+    for case in fixture["literal_cases"].as_array().unwrap() {
+        let parent = case["parent"].as_str().unwrap();
+        let child = case["child"].as_str().unwrap();
+        let favourites = settings::FavouriteTags(vec![parent.into()]);
+        store
+            .write(move |ctx| settings::set(ctx.conn(), &favourites))
+            .unwrap();
+        let context = FileSearchContext {
+            location: LocationContext::single(ServiceKey::new(
+                hydrus_core::service::builtin_keys::MY_FILES,
+            )),
+            tags: TagContext::new(key.clone(), true, true),
+            predicates: Vec::new(),
+        };
+        let ui = MainWindow::new().unwrap();
+        let page = SearchPage::restored(store.clone(), context.clone(), false, None, Vec::new());
+        let bound = bind(&ui, Pages::single(page));
+        for event in case["events"].as_array().unwrap() {
+            match event["action"].as_str().unwrap() {
+                "favourite" => ui.invoke_autocomplete_tab_chosen(1),
+                "activate_parent" => {
+                    ui.invoke_suggestion_selection_clicked(0, false, false);
+                    ui.invoke_suggestions_activated(false);
+                    ui.invoke_autocomplete_tab_chosen(2);
+                }
+                "activate_child" => {
+                    let at = bound
+                        .current
+                        .borrow()
+                        .borrow()
+                        .autocomplete()
+                        .suggestions()
+                        .iter()
+                        .position(|s| s.predicate == child)
+                        .unwrap();
+                    ui.invoke_suggestion_selection_clicked(
+                        i32::try_from(at).unwrap(),
+                        false,
+                        false,
+                    );
+                    ui.invoke_suggestions_activated(false);
+                }
+                "remove_child" | "remove_parent" => {
+                    let tag = if event["action"] == "remove_child" {
+                        child
+                    } else {
+                        parent
+                    };
+                    let at = bound
+                        .current
+                        .borrow()
+                        .borrow()
+                        .predicates()
+                        .iter()
+                        .position(|p| p == tag)
+                        .unwrap();
+                    ui.invoke_remove_predicate(i32::try_from(at).unwrap());
+                }
+                "restore_negative_parent" => {
+                    let mut search = context.clone();
+                    search.predicates = vec![Predicate::Tag {
+                        tag: Tag::from_clean(parent),
+                        inclusive: false,
+                    }];
+                    let restored_ui = MainWindow::new().unwrap();
+                    let restored_page =
+                        SearchPage::restored(store.clone(), search, false, None, Vec::new());
+                    let restored = bind(&restored_ui, Pages::single(restored_page));
+                    restored_ui.invoke_autocomplete_tab_chosen(2);
+                    assert_literal_children_state(&restored_ui, &restored, event);
+                    continue;
+                }
+                action => panic!("unrecorded literal child action {action}"),
+            }
+            assert_literal_children_state(&ui, &bound, event);
+        }
+    }
+}

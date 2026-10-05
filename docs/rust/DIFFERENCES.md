@@ -2150,10 +2150,16 @@ The read autocomplete favourite/children panes now support selected batches and
 favourite editing, with a stable pointer surface and actual SearchPage/OR
 consumers. Existing favourite/child values are wrapped directly as typed tags;
 new entry cleaning remains separate, including its removal of a leading
-`system:` prefix. Settings notifications use one owner-held 100ms revision watcher
-for visible main read panes and detached write editors rather than Qt pubsub.
-Favourite-menu commits advance that revision just as accepted Options do;
-plain database writes do not publish an accepted-settings notification. Count
+`system:` prefix. The children consumer intentionally cleans lookup spelling,
+as Qt's `GetDescendantsForTags` calls `GetTagId`: literal `system:inbox` supplies
+the `inbox` parent chain without changing its active predicate. Actual Qt
+`read_tag_tabs.json` covers that boundary, wildcard parents, child removal and
+restored negative tags; native/model replay assertions are authored but were
+not executed locally. No broader parity count changes. Settings notifications
+use one owner-held 100ms revision watcher for visible main read panes and detached
+write editors rather than Qt pubsub. Favourite-menu commits advance that revision
+just as accepted Options do; plain database writes do not publish an accepted-settings
+notification. Count
 queries remain synchronous, tab selection uses the native picker, and this
 slice does not add the full inherited read-list copy/open/relationship,
 decoration/display-mode, drag, or asynchronous child-query menus. Basic OR

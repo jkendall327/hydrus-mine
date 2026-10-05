@@ -375,6 +375,9 @@ impl Autocomplete {
                 };
                 self.store
                     .read(|conn| {
+                        // Qt's descendant lookup calls GetTagId, which cleans the
+                        // lookup spelling even for an already-literal active tag.
+                        // Keep this boundary distinct from pane activation.
                         let tags: Vec<_> = self
                             .context_tags
                             .iter()

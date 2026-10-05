@@ -1582,4 +1582,55 @@ fn read_favourite_and_children_tabs_replay_real_qt_lists_and_context_changes() {
     assert_eq!(input.suggestions().len(), 3);
     input.set_text("unknown typed draft");
     assert_eq!(input.tab(), Tab::Tags);
+
+    // Literal activation and the DB's cleaned child lookup are distinct boundaries.
+    // In particular, system:inbox retains its spelling as an active predicate,
+    // but Qt GetDescendantsForTags/GetTagId follows the inbox parent chain.
+    let context = hydrus_core::search::context::TagContext::new(service.key.clone(), true, true);
+    for case in fixture["literal_cases"].as_array().unwrap() {
+        let parent = case["parent"].as_str().unwrap();
+        let child = case["child"].as_str().unwrap();
+        let favourites = settings::FavouriteTags(vec![parent.into()]);
+        store
+            .write(move |ctx| settings::set(ctx.conn(), &favourites))
+            .unwrap();
+        let mut input = hydrus_gui_model::autocomplete::Autocomplete::new(store.clone());
+        input.set_context(&location, &context);
+        for event in case["events"].as_array().unwrap() {
+            match event["action"].as_str().unwrap() {
+                "favourite" => input.set_tab(Tab::Favourites),
+                "activate_parent" => {
+                    assert_eq!(input.selected_suggestions()[0].predicate, parent);
+                    input.set_context_tags([parent.into()]);
+                    input.clear();
+                    input.set_tab(Tab::Children);
+                }
+                "activate_child" => {
+                    let at = input
+                        .suggestions()
+                        .iter()
+                        .position(|s| s.predicate == child)
+                        .unwrap();
+                    input.click(at, false, false);
+                    assert_eq!(input.selected_suggestions()[0].predicate, child);
+                    input.set_context_tags([parent.into(), child.into()]);
+                    input.clear();
+                }
+                "remove_child" | "restore_negative_parent" => {
+                    input.set_context_tags([parent.into()]);
+                }
+                "remove_parent" => input.set_context_tags(Vec::new()),
+                action => panic!("unrecorded literal child action {action}"),
+            }
+            assert_eq!(json!(input.tab().index()), event["tab"]);
+            assert_eq!(input.text(), event["text"].as_str().unwrap());
+            let rows: Vec<_> = input
+                .suggestions()
+                .iter()
+                .map(|s| json!({"tag":s.predicate,"rows":[s.label]}))
+                .collect();
+            assert_eq!(json!(rows), event["rows"], "{event}");
+            assert!(input.suggestions().iter().all(|s| s.editor.is_none()));
+        }
+    }
 }
