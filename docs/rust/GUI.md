@@ -3751,3 +3751,5 @@ successor's buttons. Actual Qt recorded 48 finish cases and both independent
 controls; Rust/native regressions and finish PNGs await hosted validation.
 
 Repeated main F12 brings the same active filter and its finish/Forget question forward; it never replaces an unanswered owner. Retired source pages are discarded before opening a fresh filter. Mixed current/deleted search scopes retain their complete context identity and exact label, so their current-only deletion alternatives and activation delay are not collapsed.
+
+Popup cards now measure their body at the resolved card width before the outer stack allocates their height. The narrow long-question regression checks all five actual action-button bounds, the rendered lower stop border and a pointer delivered near that lower edge; the fixed-width and width-cap checks remain. This is a layout repair with no new coverage claim. Native execution is pending hosted CI.

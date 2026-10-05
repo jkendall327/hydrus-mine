@@ -24,7 +24,7 @@ import { TableColumn, TableRow } from "list_table.slint";
 import { NotebookNavigation, NotebookTree, TabRow, PageTreeRow } from "notebook_tabs.slint";
 export { TabRow, PageTreeRow, TabNames, TabFit } from "notebook_tabs.slint";
 import { MenuBarRow, MenuLine, MenuPane, MenuPanes, MenuTitle } from "main_menu.slint";
-import { PopupData, PopupStack } from "popups.slint";
+import { PopupBounds, PopupData, PopupStack } from "popups.slint";
 import { DuplicatesData, DuplicatesSidebar } from "duplicates_page.slint";
 export { DuplicatesData }
 import { RatingShape } from "viewer.slint";
@@ -355,6 +355,7 @@ export component MainWindow inherits Window {
     in property <[float]> popup-card-widths;
     in property <[float]> popup-card-caps;
     callback popup-card-measured(int,string,string,length,length);
+    callback popup-control-measured(int,string,string,string,PopupBounds,PopupBounds);
     in property <string> popup-summary;
     callback popup-dismiss(int);
     callback popup-pause-play(int);
@@ -1986,6 +1987,7 @@ export component MainWindow inherits Window {
             y: parent.height - self.height - 25px;
             popups: root.popups;
             card-measured(i,key,owner,w,c) => { root.popup-card-measured(i,key,owner,w,c); }
+            control-measured(i,key,owner,control,b,c) => { root.popup-control-measured(i,key,owner,control,b,c); }
             summary: root.popup-summary;
             dismiss(i) => { root.popup-dismiss(i); }
             pause-play(i) => { root.popup-pause-play(i); }

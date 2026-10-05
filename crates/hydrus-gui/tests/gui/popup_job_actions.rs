@@ -2,11 +2,15 @@
 use hydrus_download::popups::Working;
 use hydrus_gui::{MainWindow, Pages, SearchPage, bind, headless};
 use hydrus_store::popups;
-use slint::{ComponentHandle as _, Model as _};
+use slint::{
+    ComponentHandle as _, Model as _,
+    platform::{PointerEventButton, WindowEvent},
+};
 use std::sync::{
     Arc,
     atomic::{AtomicUsize, Ordering},
 };
+use std::{cell::RefCell, collections::BTreeMap, rc::Rc, time::Duration};
 fn current(store: &hydrus_store::Store) -> popups::Job {
     store
         .read(|conn| popups::all(conn, hydrus_core::TimestampMs::now().0 / 1000))
@@ -402,11 +406,44 @@ fn long_question_and_action_controls_render_with_fixed_and_narrow_popup_caps() {
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let question = "Continue this synthetic worker with its current settings? ".repeat(4);
+    let measured = Rc::new(RefCell::new(BTreeMap::new()));
+    ui.on_popup_control_measured({
+        let weak = ui.as_weak();
+        let measured = measured.clone();
+        move |index, key, owner, control, button, card| {
+            if let Some(ui) = weak.upgrade()
+                && let Ok(index) = usize::try_from(index)
+                && let Some(row) = ui.get_popups().row_data(index)
+                && row.key == key
+                && row.gui_owner == owner
+            {
+                measured
+                    .borrow_mut()
+                    .insert(control.to_string(), (button, card));
+            }
+        }
+    });
+    let reference = hydrus_testkit::fixture_json("popup_question_layout.json");
     let mut previous_cap = None;
-    for (characters, fixed, filename) in [
+    for (case, (characters, fixed, filename)) in [
         (32, true, "popup_job_question_fixed32.png"),
         (16, false, "popup_job_question_narrow16.png"),
-    ] {
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        measured.borrow_mut().clear();
+        let expected = &reference["cases"][case];
+        assert_eq!(expected["characters"], characters);
+        assert_eq!(expected["fixed"], fixed);
+        assert_eq!(expected["question"], question);
+        assert_eq!(expected["cancelled"], true);
+        for value in expected["controls"].as_object().unwrap().values() {
+            assert!(
+                value["y"].as_f64().unwrap() + value["height"].as_f64().unwrap()
+                    <= expected["height"].as_f64().unwrap()
+            );
+        }
         store
             .write(move |ctx| {
                 hydrus_store::settings::set(
@@ -433,7 +470,43 @@ fn long_question_and_action_controls_render_with_fixed_and_narrow_popup_caps() {
         assert_eq!(i64::from(row.width_characters), characters);
         assert_eq!(row.fixed_width, fixed);
         let native = windows.get(0).unwrap();
-        let pixels = crate::popup_width::render_settled(&ui, &native, 1280, 1200);
+        let _first = crate::popup_width::render_settled(&ui, &native, 1280, 1200);
+        // A width notification is not a settled height. Pump actual observers
+        // until all five real Button frames agree across subsequent renders;
+        // containment is asserted afterwards, never used to hide a bad frame.
+        let deadline = std::time::Instant::now() + Duration::from_secs(1);
+        let mut previous = None;
+        let mut unchanged_since = std::time::Instant::now();
+        let pixels = loop {
+            let pixels = headless::render(&native, 1280, 1200);
+            let frames = measured.borrow().clone();
+            if previous.as_ref() != Some(&frames) {
+                unchanged_since = std::time::Instant::now();
+            } else if frames.len() == 5 && unchanged_since.elapsed() >= Duration::from_millis(5) {
+                // Each observer's 1 ms timer has had another opportunity to
+                // publish any layout changed by the preceding render.
+                break pixels;
+            }
+            previous = Some(frames);
+            assert!(
+                std::time::Instant::now() < deadline,
+                "actual popup button frames must settle"
+            );
+            std::thread::yield_now();
+        };
+        for control in ["yes", "no", "clipboard", "callable", "cancel"] {
+            let (button, card) = measured.borrow().get(control).unwrap().clone();
+            assert!(button.width > 0.0 && button.height > 0.0);
+            assert!(
+                button.x >= card.x + 1.0 && button.y >= card.y + 1.0,
+                "{control} starts outside its card: {button:?}, {card:?}"
+            );
+            assert!(
+                button.x + button.width <= card.x + card.width - 1.0
+                    && button.y + button.height <= card.y + card.height - 1.0,
+                "{control} is clipped by its card: {button:?}, {card:?}"
+            );
+        }
         let width = ui.get_popup_card_widths().row_data(0).unwrap();
         let cap = ui.get_popup_card_caps().row_data(0).unwrap();
         assert!(
@@ -460,6 +533,34 @@ fn long_question_and_action_controls_render_with_fixed_and_narrow_popup_caps() {
             1200,
         )
         .unwrap();
+        let (stop, card) = measured.borrow().get("cancel").unwrap().clone();
+        let x = stop.x + stop.width / 2.0;
+        let bottom = stop.y + stop.height - 1.0;
+        let pixel = |x: f32, y: f32| {
+            let offset = (y.floor() as usize * 1280 + x.floor() as usize) * 4;
+            &pixels[offset..offset + 4]
+        };
+        assert_ne!(
+            pixel(x, bottom),
+            pixel(card.x + 8.0, bottom),
+            "the stop button's lower border must actually paint inside its card"
+        );
+        // Deliver a real pointer near the lower edge, which the old clipped
+        // card could neither paint nor route to its Cancel button.
+        let position = slint::LogicalPosition::new(x, stop.y + stop.height * 0.9);
+        ui.window().dispatch_event(WindowEvent::PointerPressed {
+            position,
+            button: PointerEventButton::Left,
+        });
+        ui.window().dispatch_event(WindowEvent::PointerReleased {
+            position,
+            button: PointerEventButton::Left,
+        });
+        producer.poll_actions();
+        assert!(
+            producer.is_cancelled(),
+            "the lower stop-button area must reach the live producer"
+        );
         producer.finish_and_dismiss();
         drop(bound);
     }

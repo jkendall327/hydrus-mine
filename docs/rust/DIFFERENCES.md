@@ -2949,3 +2949,5 @@ archive/delete viewer/shortcut topology is not claimed. Stale replaced service k
 reject the entire transaction instead of selecting a replacement domain. Actual
 Qt controls and 48 finish paths were recorded; source checks and authored tests
 are separate from pending hosted Rust and exact-source native PNG review.
+
+The popup question label continues to wrap in the native client. Actual Qt `PopupMessage._text_yes_no` remains a single-line label at the same narrow/fixed width settings; the new `popup_question_layout.json`/PNG records that distinction and verifies every Qt action control fits within its card. The native layout repair preserves its existing wrapping while preventing the lower stop button from crossing the clipped card boundary. No Options or popup family completion status changes.
