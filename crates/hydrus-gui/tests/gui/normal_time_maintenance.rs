@@ -423,3 +423,68 @@ fn rebind_wakes_previous_pass_and_preserves_queued_pair_for_current_owner() {
     assert!(files[2].1.exists());
     assert!(files[3].1.exists());
 }
+
+#[test]
+fn dropped_binding_retires_retained_control_and_wakes_its_real_held_wait() {
+    let (_dirs, store, files) = owned();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.show().unwrap();
+    queue(&store, files[0].0);
+    queue(&store, files[1].0);
+    store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &Preferences {
+                    trash_normal: false,
+                    deferred_normal: true,
+                },
+            )?;
+            settings::set(
+                ctx.conn(),
+                &hydrus_store::physical_delete::Preferences { wait_ms: 60_000 },
+            )
+        })
+        .unwrap();
+    let retained = bound.maintenance.clone();
+    let now = retained.started_ms() + 30_000;
+    bound.session_autosave.user_at(now);
+    retained.poll_at(now).unwrap();
+    wait(|| !files[0].1.exists());
+    assert!(retained.running(Worker::Deferred));
+    drop(bound);
+    assert!(ui.window().is_visible());
+    assert!(!retained.running(Worker::Deferred));
+    retained.poll_at(now + 1_000_000).unwrap();
+    assert!(files[1].1.exists());
+    assert_eq!(retained.statistics().deferred_passes, 0);
+    // Main callbacks still retain the old Control, but cannot keep its work live.
+    // A new binding alone can admit the still queued next pair.
+    store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &hydrus_store::physical_delete::Preferences { wait_ms: 20 },
+            )
+        })
+        .unwrap();
+    let next = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let due = next.maintenance.started_ms() + 30_000;
+    next.session_autosave.user_at(due);
+    next.maintenance.poll_at(due).unwrap();
+    wait(|| {
+        next.maintenance.poll_at(due).unwrap();
+        next.maintenance.statistics().deferred_passes == 1
+    });
+    assert!(!files[1].1.exists());
+    assert!(files[2].1.exists());
+    assert!(files[3].1.exists());
+    // Dropped emitting Main is discovered by the owned timer/poll even when
+    // its Bound and public Control survive; no successor window is consulted.
+    drop(ui);
+    next.maintenance.poll_at(due + 1_000_000).unwrap();
+    assert!(!next.maintenance.running(Worker::Trash));
+    assert!(!next.maintenance.running(Worker::Deferred));
+}

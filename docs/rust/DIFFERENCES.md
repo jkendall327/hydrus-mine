@@ -3076,3 +3076,10 @@ mid-pass settings and shutdown paths were recorded with an owned synthetic queue
 transport; physical native tests use disposable copied media. Authored Rust/native
 regressions and one Options artifact await hosted execution and render inspection.
 No local Cargo/Rust validation was run; no parent completion is proposed.
+
+The automatic maintenance binding has a private retirement owner: dropping Bound
+permanently cancels its workers even if the MainWindow callbacks or a public
+Control remain retained. A dropped MainWindow is detected by its weak-owner timer
+or the next poll; callbacks never substitute a successor window. An authored
+held-wait regression keeps the emitting main and Control alive, drops Bound,
+checks the remaining queue and lets only a fresh binding consume its next pair.
