@@ -3127,13 +3127,14 @@ metadata independently from the page’s search context.
 Options > tag presentation now stages namespace-colour additions and confirmed
 multi-row deletion. Add uses the reference's namespace cleanup and exact warnings;
 default namespaced and unnamespaced colours are protected from deletion. New
-namespaces receive random RGB colours. Owned Enter Text and confirmation children
-block parent Apply, and Cancel discards the whole Options draft. Accepted colours
+namespaces receive random RGB colours. Rejected input opens an owned Warning
+notice with the exact message and an OK acknowledgement. Enter Text, confirmation
+and warning children block parent Apply, and Cancel discards the Options draft. Accepted colours
 persist across reopening and reach existing media tag and OR predicate rows.
 The OR-row namespace text preserves named, missing and empty namespace choices;
 explicitly entering empty text selects the unnamespaced colour even when the
 saved legacy value was unset.
-Namespace colour Add preserves the reference list’s positional Shift-range bookkeeping after sorting, while selected namespaces follow their rows. Delete stays available for empty or protected selections and quietly leaves those rows alone. Namespace input also accepts the reference’s control-character whitespace trimming before reserved-name and duplicate checks.
+Namespace colour Add preserves the reference list’s positional Shift-range bookkeeping after sorting, while selected namespaces follow their rows. Nested namespaces retain their literal trailing-colon label, as Qt paints them. Delete stays available for empty or protected selections and quietly leaves those rows alone. Namespace input also accepts the reference’s control-character whitespace trimming before reserved-name and duplicate checks.
 
 Options > GUI > frame locations also stages the disable-rescue checkbox,
 rescued-position safety padding and its 0–100 pixel amount. Legacy preferences

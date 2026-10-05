@@ -4,6 +4,7 @@ export struct NamespaceColourRow { label: string, colour: color, selected: bool 
 export component NamespaceColourList inherits Rectangle {
     in property <[NamespaceColourRow]> rows;
     in property <bool> child-open;
+    in property <string> error;
     in property <bool> enabled;
     callback clicked(int,bool,bool);
     callback action(string);
@@ -11,6 +12,7 @@ export component NamespaceColourList inherits Rectangle {
     min-width:360px;
     VerticalLayout {
         spacing:4px;
+        if root.error != "": Text { text:root.error; color:Theme.error; wrap:word-wrap; }
         ScrollView {
             VerticalLayout {
                 for row[index] in root.rows: Rectangle {
