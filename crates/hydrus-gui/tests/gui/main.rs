@@ -3,6 +3,7 @@
 //! and linked separately).
 
 mod common;
+mod headless_lifetime;
 
 mod about;
 mod animation;

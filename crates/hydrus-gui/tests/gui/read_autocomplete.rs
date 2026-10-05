@@ -372,6 +372,23 @@ fn literal_parent_activation_children_removal_and_negative_restore_match_qt() {
         let ui = MainWindow::new().unwrap();
         let page = SearchPage::restored(store.clone(), context.clone(), false, None, Vec::new());
         let bound = bind(&ui, Pages::single(page));
+        // The real Qt recording drives a displayed autocomplete. Hidden native
+        // owners intentionally reject both selection and activation callbacks.
+        ui.invoke_autocomplete_tab_chosen(1);
+        ui.invoke_suggestion_selection_clicked(0, false, false);
+        ui.invoke_suggestions_activated(false);
+        assert!(
+            bound
+                .current
+                .borrow()
+                .borrow()
+                .favourite_to_save()
+                .unwrap()
+                .search
+                .predicates
+                .is_empty()
+        );
+        ui.show().unwrap();
         for event in case["events"].as_array().unwrap() {
             match event["action"].as_str().unwrap() {
                 "favourite" => ui.invoke_autocomplete_tab_chosen(1),
@@ -423,6 +440,7 @@ fn literal_parent_activation_children_removal_and_negative_restore_match_qt() {
                     let restored_page =
                         SearchPage::restored(store.clone(), search, false, None, Vec::new());
                     let restored = bind(&restored_ui, Pages::single(restored_page));
+                    restored_ui.show().unwrap();
                     restored_ui.invoke_autocomplete_tab_chosen(2);
                     assert_literal_children_state(&restored_ui, &restored, event);
                     continue;

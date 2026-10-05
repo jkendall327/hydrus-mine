@@ -19,6 +19,7 @@ export component ReadAutocomplete inherits Rectangle {
     callback move-highlight(int);
     out property <length> results-x: results.results-x;
     out property <length> results-y: results.results-y;
+    callback scroll-geometry(length,length,length);
     callback context-menu(int,length,length);
     in property <bool> or-active;
     in property <bool> advanced-visible;
@@ -46,6 +47,7 @@ export component ReadAutocomplete inherits Rectangle {
             suggestions: root.suggestions;
             highlighted: root.highlighted;
             selected: root.selected;
+            scroll-geometry(y,h,c) => { root.scroll-geometry(y,h,c); }
             move-highlight(by) => { if root.enabled { root.move-highlight(by); } }
             selection-clicked(i,c,s) => { if root.enabled { root.selection-clicked(i,c,s); } }
             activated(s) => { if root.enabled { root.activated(s); } }

@@ -615,6 +615,9 @@ export component MainWindow inherits Window {
     out property <bool> autocomplete-overlay-visible: root.float-autocomplete && (root.search-focused || suggestions-overlay.has-focus) && root.autocomplete-anchor-width > 0px && !root.search-locked && root.note == "" && root.question == "" && root.menu-panes.length == 0 && root.chooser-labels.length == 0;
     out property <length> read-results-x: suggestions-overlay.results-x;
     out property <length> read-results-y: suggestions-overlay.results-y;
+    out property <length> read-scroll-y;
+    out property <length> read-view-height;
+    out property <length> read-content-height;
     in property <int> highlighted: -1;
     in property <[ThumbnailRow]> thumbnail-rows;
     // a thumbnail's cell: the thumbnail bounding box and its border; and
@@ -1539,6 +1542,7 @@ export component MainWindow inherits Window {
                         }
                     }
                     if !root.search-locked && !root.float-autocomplete && root.note == "": embedded-suggestions := ReadAutocomplete {
+                        scroll-geometry(y,h,c) => { if !root.float-autocomplete { root.read-scroll-y=y; root.read-view-height=h; root.read-content-height=c; } }
                         preferred-height: root.autocomplete-preferred-height + (root.or-active ? 108px : 72px);
                         max-height: root.autocomplete-preferred-height + (root.or-active ? 108px : 72px);
                         tab-index: root.autocomplete-tab;
@@ -2127,6 +2131,7 @@ export component MainWindow inherits Window {
             }
         }
         suggestions-overlay := ReadAutocomplete {
+            scroll-geometry(y,h,c) => { if root.float-autocomplete { root.read-scroll-y=y; root.read-view-height=h; root.read-content-height=c; } }
             visible: root.autocomplete-overlay-visible;
             x: root.autocomplete-anchor-x;
             y: root.autocomplete-anchor-y;

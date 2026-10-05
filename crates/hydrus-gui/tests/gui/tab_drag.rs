@@ -263,6 +263,8 @@ fn set_drag(ui: &MainWindow, bound: &hydrus_gui::Bound, prefs: TabDragSettings) 
 }
 #[derive(Clone, Copy)]
 struct TabRect {
+    depth: i32,
+    index: i32,
     x: f32,
     y: f32,
     w: f32,
@@ -273,11 +275,19 @@ fn geometry(ui: &MainWindow) -> Rects {
     let rects = Rects::default();
     ui.on_tab_geometry_measured({
         let rects = rects.clone();
-        move |key, _, _, _, x, y, w, h| {
+        move |key, _, depth, index, x, y, w, h| {
             if !key.is_empty() {
-                rects
-                    .borrow_mut()
-                    .insert(key.to_string(), TabRect { x, y, w, h });
+                rects.borrow_mut().insert(
+                    key.to_string(),
+                    TabRect {
+                        depth,
+                        index,
+                        x,
+                        y,
+                        w,
+                        h,
+                    },
+                );
             }
         }
     });
@@ -285,6 +295,29 @@ fn geometry(ui: &MainWindow) -> Rects {
 }
 fn tab_rect(rects: &Rects, key: PageKey) -> TabRect {
     rects.borrow()[&key.to_hex()]
+}
+fn assert_live_geometry(ui: &MainWindow, rects: &Rects) {
+    for (depth, row) in ui.get_tab_rows().iter().enumerate() {
+        let mut previous = None;
+        for (index, key) in row.keys.iter().enumerate() {
+            let rect = rects.borrow()[key.as_str()];
+            assert_eq!(
+                (rect.depth, rect.index),
+                (i32::try_from(depth).unwrap(), i32::try_from(index).unwrap()),
+                "live geometry for {key}"
+            );
+            assert!(rect.w > 0.0 && rect.h > 0.0);
+            let position = if matches!(ui.get_tab_alignment(), 1 | 2) {
+                rect.y
+            } else {
+                rect.x
+            };
+            if let Some(previous) = previous {
+                assert!(position > previous, "tab geometry follows live row order");
+            }
+            previous = Some(position);
+        }
+    }
 }
 fn pointer(
     native: &slint::platform::software_renderer::MinimalSoftwareWindow,
@@ -444,15 +477,22 @@ fn real_pointer_drag_replays_shift_chase_hover_transfer_disable_and_cancel_with_
         );
         ui.invoke_page_tree_chosen(gamma.to_hex().into());
         settle(&native);
+        assert_live_geometry(&ui, &rects);
         expected(&bound, &step["before"]);
         shift(&native, held);
         pointer(&native, tab_rect(&rects, gamma), 0);
+        assert_eq!(
+            ui.get_tab_drag_hover_key(),
+            gamma.to_hex().as_str(),
+            "real press hits gamma after the previous reorder"
+        );
         std::thread::sleep(std::time::Duration::from_millis(110));
         pointer(&native, tab_rect(&rects, alpha), 2);
         settle(&native);
         pointer(&native, tab_rect(&rects, alpha), 1);
         shift(&native, false);
         settle(&native);
+        assert_live_geometry(&ui, &rects);
         expected(&bound, &step["after"]);
         assert_eq!(
             bound.current.borrow().borrow().files().len(),
@@ -484,11 +524,14 @@ fn real_pointer_drag_replays_shift_chase_hover_transfer_disable_and_cancel_with_
             },
         );
         settle(&native);
+        assert_live_geometry(&ui, &rects);
         pointer(&native, tab_rect(&rects, gamma), 0);
+        assert_eq!(ui.get_tab_drag_hover_key(), gamma.to_hex().as_str());
         std::thread::sleep(std::time::Duration::from_millis(110));
         pointer(&native, tab_rect(&rects, nested), 2);
         assert!(ui.get_tab_drag_active(), "hover keeps capture across rows");
         settle(&native);
+        assert_live_geometry(&ui, &rects);
         expected(&bound, &step["before"]);
         let child = named(&session, "inner one");
         pointer(&native, tab_rect(&rects, child), 2);

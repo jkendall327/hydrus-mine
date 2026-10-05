@@ -667,12 +667,13 @@ fn command_key(
 }
 #[test]
 fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer() {
+    use slint::platform::{Key, PointerEventButton, WindowEvent};
+
     hydrus_gui::set_clipper(|clip| {
         if let hydrus_gui::Clip::Text(text) = clip {
             headless::set_clipboard_text(text);
         }
     });
-    use slint::platform::{Key, PointerEventButton, WindowEvent};
     let (_dirs, store) = store();
     let mut original = seed(&store);
     let ActualCall::Process(ref mut process) = original.call else {
