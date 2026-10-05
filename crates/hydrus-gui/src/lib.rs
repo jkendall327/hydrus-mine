@@ -2629,6 +2629,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         window,
         page().borrow().store().clone(),
         &exit_confirmation,
+        binding_active.clone(),
         Rc::new({
             let ask = ask.clone();
             move |question, then| ask(Asked::Then(question, then))

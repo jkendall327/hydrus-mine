@@ -572,7 +572,9 @@ pages on reopening. The gui page also edits the application name (including
 the reference’s empty-name fallback) and exit confirmation. The main title uses
 that name and the Rust version. Exit and the window close button ask the recorded
 yes/no question when enabled, automatically accepting after 15 seconds; declining
-keeps the client open. Its reference search box ("Search options... (Experimental!)"): as it
+keeps the client open. Exit callbacks and their timeout require the current visible
+main binding; retired callbacks cannot answer a successor's identical question or
+close a retained window shown again. Its reference search box ("Search options... (Experimental!)"): as it
 is typed in, it suggests box titles, option labels, auxiliary unit/none labels
 and current dropdown text whose text has what
 was typed in it (ignoring case), as "text (page)", ten at a time; the

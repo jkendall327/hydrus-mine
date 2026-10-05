@@ -379,7 +379,7 @@ async fn overlength(Path(kind): Path<String>) -> Response {
     Response::builder()
         .status(StatusCode::PARTIAL_CONTENT)
         .header(header::CONTENT_RANGE, range)
-        .body(Body::from(vec![0; 243201]))
+        .body(Body::from(vec![0; 243_201]))
         .unwrap()
 }
 

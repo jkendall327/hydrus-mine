@@ -675,13 +675,13 @@ mod formatting_tests {
             let saved: GuiFormatting = reopened.read(settings::get).unwrap();
             for (kind, size, mime) in [
                 ("minimum", 1536, Mime::ImagePng),
-                ("maximum", 188213746, Mime::ImagePng),
-                ("gif", 188213746, Mime::AnimationGif),
+                ("maximum", 188_213_746, Mime::ImagePng),
+                ("gif", 188_213_746, Mime::AnimationGif),
             ] {
                 let rules = FileImportOptions {
-                    min_size: (kind == "minimum").then_some(243200),
-                    max_size: (kind == "maximum").then_some(243200),
-                    max_gif_size: (kind == "gif").then_some(243200),
+                    min_size: (kind == "minimum").then_some(243_200),
+                    max_size: (kind == "maximum").then_some(243_200),
+                    max_gif_size: (kind == "gif").then_some(243_200),
                     ..Default::default()
                 };
                 assert_eq!(
@@ -703,7 +703,7 @@ mod formatting_tests {
                 .check_storage_space(
                     Path::new("/synthetic/media/file.png"),
                     &Sha256([17; 32]),
-                    188213746,
+                    188_213_746,
                     Some(0),
                 )
                 .unwrap_err();
