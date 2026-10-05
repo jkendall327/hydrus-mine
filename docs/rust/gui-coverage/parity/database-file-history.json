@@ -4,7 +4,8 @@
   "baseline": "8e4d1d3d",
   "implementation_commits": [
     "7ba0e3eaa22460c325c23ee1a3d6967db5dfcb7e",
-    "123e96d5cb89270250c0890de9d4a6a102c9e31e"
+    "123e96d5cb89270250c0890de9d4a6a102c9e31e",
+    "a2e4d1216514f378527475474e42e889db7ca7fd"
   ],
   "completed_original_leaves": 0,
   "claims": [
@@ -14,7 +15,7 @@
       "previous_status": "missing",
       "proposedStatus": "partial",
       "proposed_status": "partial",
-      "exactBehavior": "Database view file history opens a real independent local-domain chart. Native current/deleted search consumers produce the four reference sampled cumulative series from actual import, deletion, inbox and archive metadata. Visibility changes refit Y only while automatic; custom date/count ranges survive refresh; refit restores automatic ranges. Cancelled, superseded or retired jobs cannot publish; replacing/closing/hiding owners invalidates callbacks. Typed tag/system predicate edits do not alter the main page query or session tree. Full original history leaf remains incomplete; see explicit child hierarchy and limitations. History queries bypass the normal implicit search cap while retaining explicit system:limit predicates; ordinary file searches retain their existing cap.",
+      "exactBehavior": "Database view file history opens a real independent local-domain chart. Native current/deleted search consumers produce the four reference sampled cumulative series from actual import, deletion, inbox and archive metadata. Visibility changes refit Y only while automatic; custom date/count ranges survive refresh; refit restores automatic ranges. Cancelled, superseded or retired jobs cannot publish; replacing/closing/hiding owners invalidates callbacks. Typed tag/system predicate edits do not alter the main page query or session tree. Full original history leaf remains incomplete; see explicit child hierarchy and limitations. History queries bypass the normal implicit search cap while retaining explicit system:limit predicates; ordinary file searches retain their existing cap. One owned worker per window coalesces requests to the newest pending query, cancels superseded work and keeps only one result slot. Closing or dropping disconnects work without joining the UI thread; fallible worker startup displays an error and Refresh retries.",
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-store/src/file_history.rs",
@@ -51,6 +52,24 @@
           "line": 128,
           "symbol": "pub fn search_files_without_implicit_limit(",
           "commit": "123e96d5cb89270250c0890de9d4a6a102c9e31e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/file_history_worker.rs",
+          "line": 32,
+          "symbol": "pub struct Worker",
+          "commit": "a2e4d1216514f378527475474e42e889db7ca7fd"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/file_history_worker.rs",
+          "line": 54,
+          "symbol": "pub fn start_with(",
+          "commit": "a2e4d1216514f378527475474e42e889db7ca7fd"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/file_history_window.rs",
+          "line": 51,
+          "symbol": "pub fn open_with_worker(",
+          "commit": "a2e4d1216514f378527475474e42e889db7ca7fd"
         }
       ],
       "test_anchors": [
@@ -77,6 +96,24 @@
           "line": 90,
           "symbol": "prefs.implicit_limit = Some(1);",
           "commit": "123e96d5cb89270250c0890de9d4a6a102c9e31e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_history.rs",
+          "line": 139,
+          "symbol": "fn owned_worker_runs_only_latest",
+          "commit": "a2e4d1216514f378527475474e42e889db7ca7fd"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_history.rs",
+          "line": 235,
+          "symbol": "fn dropping_worker_cancels",
+          "commit": "a2e4d1216514f378527475474e42e889db7ca7fd"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_history.rs",
+          "line": 136,
+          "symbol": "let failed = file_history_window::open_with_worker(",
+          "commit": "a2e4d1216514f378527475474e42e889db7ca7fd"
         }
       ],
       "referenceRecording": {
@@ -280,6 +317,60 @@
           "component": "location/tag context source editors",
           "status": "not embedded in FileHistoryWindow"
         }
+      ]
+    }
+  ],
+  "continuation_evidence": [
+    {
+      "scope": "Native history worker ownership, request coalescing and fallible startup",
+      "completed_original_leaves": 0,
+      "implementation_commit": "a2e4d1216514f378527475474e42e889db7ca7fd",
+      "reference_recording": "Reuses the executed file_history.json cancellation/refit/refresh outcomes; this is a native resource/lifecycle repair, not a new reference completion claim.",
+      "exact_behavior": "One Builder thread per successfully opened worker; capacity-one wakeup channel plus one replaceable pending request/result. Superseded tokens are cancelled and discarded. Close/drop clear slots and disconnect without UI join. Startup failure leaves an owned, visible error window with working Refresh retry and Close. Native snapshot/range/refit/PNG assertions preserved.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/file_history_worker.rs",
+          "line": 32,
+          "symbol": "pub struct Worker",
+          "commit": "a2e4d1216514f378527475474e42e889db7ca7fd"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/file_history_worker.rs",
+          "line": 54,
+          "symbol": "pub fn start_with(",
+          "commit": "a2e4d1216514f378527475474e42e889db7ca7fd"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/file_history_window.rs",
+          "line": 51,
+          "symbol": "pub fn open_with_worker(",
+          "commit": "a2e4d1216514f378527475474e42e889db7ca7fd"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_history.rs",
+          "line": 139,
+          "symbol": "fn owned_worker_runs_only_latest",
+          "commit": "a2e4d1216514f378527475474e42e889db7ca7fd"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_history.rs",
+          "line": 235,
+          "symbol": "fn dropping_worker_cancels",
+          "commit": "a2e4d1216514f378527475474e42e889db7ca7fd"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_history.rs",
+          "line": 136,
+          "symbol": "let failed = file_history_window::open_with_worker(",
+          "commit": "a2e4d1216514f378527475474e42e889db7ca7fd"
+        }
+      ],
+      "verification": "Executed cargo fmt, git diff --check and cached Slint source compiler only. Rust queue/drop/native startup-failure regressions authored for hosted CI, not run locally.",
+      "limits": [
+        "History remains Partial with the same uncovered shared search/chart child controls.",
+        "The current in-flight search query must finish before cancellation is observed; its result is discarded. No global pool or blocking UI join."
       ]
     }
   ]
