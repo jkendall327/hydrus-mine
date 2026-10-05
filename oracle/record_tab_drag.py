@@ -16,6 +16,7 @@ def record(session):
     from hydrus.client import ClientConstants as CC,ClientLocation
     from hydrus.client.gui.panels.options.GUIPagesPanel import GUIPagesPanel
     from hydrus.client.gui.pages import ClientGUIPages
+    from hydrus.core import HydrusTime
     from hydrus.core import HydrusSerialisable
     c=session.controller;original=c.new_options
     def drive():
@@ -72,6 +73,33 @@ def record(session):
                 before=snapshot();dest_index=next(i for i,p in enumerate(root.GetPages()) if p.GetName()=='alpha')
                 pos=root.mapFromGlobal(source.mapToGlobal(source.tabRect(dest_index).center()))
                 event=Drop(pos,source,shift);root.dropEvent(event);drops.append(dict(shift=shift,chase=chase,source_index=source_index,target='alpha',before=before,after=snapshot(),accepted=event.isAccepted()))
+        transfers=[]
+        gamma=next(p for p in root.GetPages() if p.GetName()=='gamma')
+        for chase in [False,True]:
+            if gamma not in root.GetPages():root._MovePage(gamma,root,2,follow_dropped_page=True)
+            source=root.tabBar();source_index=root.indexOf(gamma)
+            QtTest.QTest.mouseClick(source,QC.Qt.MouseButton.LeftButton,pos=source.tabRect(source_index).center())
+            # Real page-drag hover selects the destination notebook first.
+            draft.SetBoolean('page_drag_change_tab_normally',True)
+            point=root.mapFromGlobal(source.mapToGlobal(source.tabRect(root.indexOf(nested)).center()))
+            event=QG.QDragMoveEvent(point,QC.Qt.DropAction.MoveAction,mime,QC.Qt.MouseButton.LeftButton,QC.Qt.KeyboardModifier.NoModifier);root.dragMoveEvent(event)
+            draft.SetBoolean('page_drop_chase_normally',chase);settle();before=snapshot()
+            pos=nested.mapFromGlobal(nested.tabBar().mapToGlobal(nested.tabBar().tabRect(0).center()))
+            drop=Drop(pos,source,False);nested.dropEvent(drop);transfers.append(dict(chase=chase,source_index=source_index,before=before,after=snapshot(),accepted=drop.isAccepted()))
+        launches=[];original_drag=QG.QDrag
+        class ObservedDrag(original_drag):
+            def exec_(self,*args):launches.append(list(self.mimeData().formats()));return QC.Qt.DropAction.IgnoreAction
+        try:
+            QG.QDrag=ObservedDrag
+            for disabled in [False,True]:
+                draft.SetBoolean('disable_page_tab_dnd',disabled);bar=root.tabBar()
+                QtTest.QTest.mouseClick(bar,QC.Qt.MouseButton.LeftButton,pos=bar.tabRect(0).center())
+                bar._last_clicked_timestamp_ms=HydrusTime.GetNowMS()-200
+                point=root.mapFromGlobal(bar.mapToGlobal(bar.tabRect(0).center()))
+                event=QG.QMouseEvent(QC.QEvent.Type.MouseMove,QC.QPointF(point),QC.QPointF(root.mapToGlobal(point)),QC.Qt.MouseButton.NoButton,QC.Qt.MouseButton.LeftButton,QC.Qt.KeyboardModifier.NoModifier)
+                count=len(launches);root.mouseMoveEvent(event)
+                launches.append(dict(disabled=disabled,launched=len(launches)>count))
+        finally:QG.QDrag=original_drag
         # An unattached real notebook allows actual overflow, unlike frame layout.
         overflow_book=ClientGUIPages.PagesNotebook(c.gui,'wheel recorder')
         draft.SetInteger('max_page_name_chars',256)
@@ -84,7 +112,7 @@ def record(session):
             event=QG.QWheelEvent(point,QC.QPointF(bar.mapToGlobal(point.toPoint())),QC.QPoint(),QC.QPoint(0,delta),QC.Qt.MouseButton.NoButton,QC.Qt.KeyboardModifier.NoModifier,QC.Qt.ScrollPhase.NoScrollPhase,False)
             bar.wheelEvent(event);settle();overflow.append(dict(delta=delta,before=before,after=[bar.tabRect(i).x() for i in range(bar.count())],selected=bar.currentIndex()))
         overflow_book.hide();overflow_book.deleteLater()
-        return dict(keys=KEYS,labels=labels,defaults=defaults,cancelled=cancelled,saved=saved,reopened=reopen,navigation=navigation,wheels=wheels,drops=drops,overflow=overflow,limits=['synthetic QDropEvent source bar seam; native OS drag loop not recorded'])
+        return dict(keys=KEYS,labels=labels,defaults=defaults,cancelled=cancelled,saved=saved,reopened=reopen,navigation=navigation,wheels=wheels,drops=drops,transfers=transfers,launches=launches,overflow=overflow,limits=['synthetic QDropEvent source bar seam; native OS drag loop not recorded','QDrag exec instrumentation records offered drag MIME while preserving real source-start decisions'])
     try:return c.CallBlockingToQt(c.gui,drive)
     finally:c.new_options=original
 

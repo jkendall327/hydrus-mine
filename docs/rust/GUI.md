@@ -3052,7 +3052,15 @@ colours are preserved. `duplicate_colours.json` records actual Qt controls,
 143 QColor adjustment cases and eight A/B painter outcomes; model, Options
 owner and native filter painter regressions replay those outputs.
 GUI Pages navigation now stages the six drag/wheel preference checkboxes with
-independent ordinary/Shift choices. The wheel preference reaches the actual
+independent ordinary/Shift choices. Pressing and holding a notebook tab starts
+an owned drag after the reference's 100ms threshold. Moving over another tab can
+navigate to it; releasing reorders or transfers the original page, including
+between nested notebooks. The normal and Shift chase choices independently
+select the moved page or retain the reference's source-notebook selection.
+Escape cancels, and disabling page-tab drag/drop prevents the gesture. Pointer
+capture survives navigation that replaces the visible nested tab rows; release
+uses live geometry and stable page keys, preserving media order and selection.
+The wheel preference reaches the actual
 notebook bars: default wheel input selects the adjacent tab and clamps at either
 end; enabled scrolling moves the overflowing bar's viewport and preserves page
 selection. This works on horizontal and vertical notebook rows; Apply refreshes

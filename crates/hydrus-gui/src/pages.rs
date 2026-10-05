@@ -90,6 +90,8 @@ fn tab_kind(page: &Page) -> TabKind {
 /// One notebook's tabs: its pages' names, and which is shown.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Tabs {
+    pub parent: Option<PageKey>,
+    pub keys: Vec<PageKey>,
     pub names: Vec<String>,
     pub selected: usize,
 }
@@ -344,11 +346,15 @@ impl Pages {
     pub fn tabs(&self) -> Vec<Tabs> {
         let mut rows = Vec::new();
         let mut pages = self.session.pages.as_slice();
+        let mut parent = None;
         for &selected in &self.path {
             rows.push(Tabs {
+                parent,
+                keys: pages.iter().map(|page| page.key).collect(),
                 names: pages.iter().map(|p| p.name.clone()).collect(),
                 selected,
             });
+            parent = Some(pages[selected].key);
             match &pages[selected].content {
                 PageContent::Pages(children) => pages = children,
                 _ => break,
@@ -2432,6 +2438,142 @@ impl Pages {
         Ok(())
     }
 
+    /// Parent notebook of a stable page key (`None` is the frame notebook).
+    pub fn tab_parent(&self, key: PageKey) -> Option<Option<PageKey>> {
+        let path = page_path(&self.session.pages, key)?;
+        if path.len() == 1 {
+            return Some(None);
+        }
+        let mut pages = self.session.pages.as_slice();
+        for &index in &path[..path.len() - 2] {
+            let PageContent::Pages(children) = &pages[index].content else {
+                return None;
+            };
+            pages = children;
+        }
+        Some(Some(pages[path[path.len() - 2]].key))
+    }
+    fn children(&self, parent: Option<PageKey>) -> Option<&[Page]> {
+        let Some(key) = parent else {
+            return Some(&self.session.pages);
+        };
+        let page = self
+            .session
+            .all_pages()
+            .into_iter()
+            .find(|page| page.key == key)?;
+        if let PageContent::Pages(children) = &page.content {
+            Some(children)
+        } else {
+            None
+        }
+    }
+    /// Move the original page object between notebooks; queues/media keep keys.
+    pub fn drop_tab(
+        &mut self,
+        source: PageKey,
+        parent: Option<PageKey>,
+        target: Option<PageKey>,
+        edge: hydrus_gui_model::tab_drag::Edge,
+        chase: bool,
+    ) -> bool {
+        let Some(source_parent) = self.tab_parent(source) else {
+            return false;
+        };
+        if let Some(parent) = parent {
+            let Some(parent_path) = page_path(&self.session.pages, parent) else {
+                return false;
+            };
+            let Some(source_path) = page_path(&self.session.pages, source) else {
+                return false;
+            };
+            if parent_path.starts_with(&source_path) {
+                return false;
+            }
+        }
+        let Some(siblings) = self.children(source_parent) else {
+            return false;
+        };
+        let Some(source_index) = siblings.iter().position(|page| page.key == source) else {
+            return false;
+        };
+        let shown = self.shown().key;
+        let source_path = page_path(&self.session.pages, source).expect("validated source");
+        let was_shown = page_path(&self.session.pages, shown)
+            .is_some_and(|path| path.starts_with(&source_path));
+        let remembered_child = source_parent
+            .and_then(|key| self.remembered.get(&key))
+            .and_then(|index| siblings.get(*index))
+            .map(|page| page.key);
+        let neighbour = siblings
+            .get(source_index + 1)
+            .or_else(|| {
+                source_index
+                    .checked_sub(1)
+                    .and_then(|index| siblings.get(index))
+            })
+            .map(|page| page.key);
+        let Some(destination) = self.children(parent) else {
+            return false;
+        };
+        let count = destination.len();
+        let target_index = match target {
+            Some(key) => {
+                let Some(index) = destination.iter().position(|page| page.key == key) else {
+                    return false;
+                };
+                Some(index)
+            }
+            None => None,
+        };
+        let Some(insertion) = hydrus_gui_model::tab_drag::insertion(
+            (source_parent == parent).then_some(source_index),
+            target_index,
+            edge,
+            count,
+        ) else {
+            return false;
+        };
+        self.remember();
+        let moving = children_mut(&mut self.session.pages, source_parent)
+            .expect("validated source")
+            .remove(source_index);
+        let destination = children_mut(&mut self.session.pages, parent)
+            .expect("validated independent destination");
+        destination.insert(insertion.min(destination.len()), moving);
+        if let Some(parent) = source_parent {
+            let keep = remembered_child.filter(|key| *key != source).or(neighbour);
+            if let Some(index) = keep.and_then(|key| {
+                self.children(source_parent)?
+                    .iter()
+                    .position(|page| page.key == key)
+            }) {
+                self.remembered.insert(parent, index);
+            }
+        }
+        if was_shown {
+            if let Some(key) = neighbour {
+                self.show(&key);
+            }
+        } else {
+            self.show(&shown);
+        }
+        if chase || count == 0 {
+            self.show(&source);
+        } else if source_index > 1 {
+            if let Some(key) = self
+                .children(source_parent)
+                .and_then(|pages| pages.get(source_index - 1))
+                .map(|page| page.key)
+            {
+                self.show(&key);
+            }
+        } else if let Some(key) = source_parent {
+            self.show(&key);
+        }
+        true
+    }
+
     /// Qt wheel selection clamps at the ends of the hovered notebook bar.
     pub fn wheel_tab(&mut self, depth: usize, step: i32) {
         let Some(pages) = self.notebook_at(depth) else {
@@ -2807,6 +2949,23 @@ fn page_path(pages: &[Page], key: PageKey) -> Option<Vec<usize>> {
         {
             path.insert(0, index);
             return Some(path);
+        }
+    }
+    None
+}
+
+fn children_mut(pages: &mut Vec<Page>, parent: Option<PageKey>) -> Option<&mut Vec<Page>> {
+    let Some(key) = parent else {
+        return Some(pages);
+    };
+    for page in pages {
+        if let PageContent::Pages(children) = &mut page.content {
+            if page.key == key {
+                return Some(children);
+            }
+            if let Some(found) = children_mut(children, Some(key)) {
+                return Some(found);
+            }
         }
     }
     None

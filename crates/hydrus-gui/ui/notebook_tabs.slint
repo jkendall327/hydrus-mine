@@ -1,7 +1,7 @@
 import { ScrollView, ListView, Button } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 
-export struct TabRow { names: [string], full-names: [string], selected: int }
+export struct TabRow { names: [string], full-names: [string], keys: [string], parent: string, selected: int }
 export struct PageTreeRow { key: string, name: string, depth: int, selected: bool, branch: bool, expanded: bool }
 export struct TabFit { low: int, high: int, candidate: int, display: string, done: bool }
 // No application state: each tab owns its independent measured fit search.
@@ -12,8 +12,14 @@ export global TabNames {
 }
 
 component NotebookTab inherits Rectangle {
+    in property <string> key;
+    in property <bool> geometry-enabled;
+    callback geometry(length,length,length,length);
+    property <{key:string,on:bool,x:length,y:length,w:length,h:length}> frame: {key:root.key,on:root.geometry-enabled,x:root.absolute-position.x,y:root.absolute-position.y,w:root.width,h:root.height};
+    changed frame => { if root.frame.on { root.geometry(root.frame.x,root.frame.y,root.frame.w,root.frame.h); } }
     in property <string> text;
     in property <string> full-name;
+    in property <bool> pointer-hover;
     in property <bool> selected;
     in property <bool> vertical;
     in property <bool> clockwise;
@@ -38,7 +44,7 @@ component NotebookTab inherits Rectangle {
     width: root.vertical ? 26px : root.span;
     height: root.vertical ? root.span : 26px;
     clip: true;
-    background: root.selected ? Theme.panel : touch.has-hover ? Theme.hover : Theme.window;
+    background: root.selected ? Theme.panel : (root.pointer-hover || touch.has-hover) ? Theme.hover : Theme.window;
     border-width: 1px;
     border-color: Theme.border;
     accessible-role: tab;
@@ -74,7 +80,12 @@ component NotebookTab inherits Rectangle {
 }
 
 component NotebookStrip inherits Rectangle {
+    in property <string> hover-key;
     in property <TabRow> data;
+    in property <bool> geometry-enabled;
+    callback geometry(string,string,int,length,length,length,length);
+    property <{parent:string,on:bool,x:length,y:length,w:length,h:length}> frame: {parent:root.data.parent,on:root.geometry-enabled,x:root.absolute-position.x,y:root.absolute-position.y,w:root.width,h:root.height};
+    changed frame => { if root.frame.on { root.geometry("",root.frame.parent,-1,root.frame.x,root.frame.y,root.frame.w,root.frame.h); } }
     in property <bool> vertical;
     in property <bool> clockwise;
     in property <bool> elide;
@@ -115,6 +126,9 @@ component NotebookStrip inherits Rectangle {
         HorizontalLayout {
             padding-left: 4px; padding-top: 2px; spacing: 2px;
             for name[index] in root.data.names: NotebookTab {
+                pointer-hover: root.data.keys[index] == root.hover-key;
+                key: root.data.keys[index]; geometry-enabled: root.geometry-enabled && !root.vertical;
+                geometry(x,y,w,h) => { root.geometry(root.data.keys[index],root.data.parent,index,x,y,w,h); }
                 text: name; full-name: root.data.full-names[index]; selected: index == root.data.selected;
                 cap: root.cap;
                 wheel(step) => { root.scroll-wheel(step); }
@@ -142,6 +156,9 @@ component NotebookStrip inherits Rectangle {
         VerticalLayout {
             padding-top: 4px; padding-left: 2px; spacing: 2px;
             for name[index] in root.data.names: NotebookTab {
+                pointer-hover: root.data.keys[index] == root.hover-key;
+                key: root.data.keys[index]; geometry-enabled: root.geometry-enabled && root.vertical;
+                geometry(x,y,w,h) => { root.geometry(root.data.keys[index],root.data.parent,index,x,y,w,h); }
                 text: name; full-name: root.data.full-names[index]; selected: index == root.data.selected;
                 vertical: true; clockwise: root.clockwise; cap: root.cap;
                 wheel(step) => { root.scroll-wheel(step); }
@@ -187,6 +204,7 @@ component NotebookStrip inherits Rectangle {
 }
 
 export component NotebookNavigation inherits Rectangle {
+    in property <string> hover-key;
     in property <[TabRow]> rows;
     in property <bool> vertical;
     in property <bool> clockwise;
@@ -196,6 +214,9 @@ export component NotebookNavigation inherits Rectangle {
     callback wheel(int,int);
     callback scrolled(int,float);
     callback chosen(int,int);
+    in property <bool> shift;
+    callback geometry(string,string,int,int,length,length,length,length);
+    callback pointer(int,int,length,length,bool);
     callback measured(int,float,float,float);
     callback context-menu(int,int,length,length);
     callback close(int,int);
@@ -206,6 +227,9 @@ export component NotebookNavigation inherits Rectangle {
         y: root.vertical ? 0px : (root.reverse-levels ? root.rows.length - level - 1 : level) * 28px;
         width: root.vertical ? 28px : parent.width;
         height: root.vertical ? parent.height : 28px;
+        hover-key: root.hover-key;
+        geometry-enabled: root.visible;
+        geometry(key,parent,index,x,y,w,h) => { root.geometry(key,parent,level,index,x,y,w,h); }
         data: row; vertical: root.vertical; clockwise: root.clockwise; elide: root.elide; wheel-scroll: root.wheel-scroll;
         wheel(step) => { root.wheel(level,step); }
         scrolled(offset) => { root.scrolled(level,offset); }
@@ -215,6 +239,16 @@ export component NotebookNavigation inherits Rectangle {
         close(index) => { root.close(level,index); }
         space-pressed(middle) => { root.space-pressed(level,middle); }
         hovered(name,x,y,on) => { root.hovered(name,x,y,on); }
+    }
+    // Persistent capture survives selected-path repeater/layout changes.
+    drag-touch := TouchArea {
+        width: root.vertical ? parent.width : max(0px,parent.width - 40px);
+        height: root.vertical ? max(0px,parent.height - 40px) : parent.height;
+        scroll-event(event) => { return reject; }
+        moved => { root.pointer(2,-1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y,root.shift); }
+        pointer-event(event) => {
+            root.pointer(event.kind == PointerEventKind.down ? 0 : event.kind == PointerEventKind.up ? 1 : 3,event.button == PointerEventButton.left ? 0 : event.button == PointerEventButton.right ? 1 : event.button == PointerEventButton.middle ? 2 : -1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y,event.modifiers.shift);
+        }
     }
 }
 
