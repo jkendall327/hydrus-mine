@@ -1,0 +1,484 @@
+{
+  "schema_version": 1,
+  "task": "Supported-platform minimized popup toaster freeze; Partial zero completion credit",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "implementation_base": "ac7d2b5c5d3c157aea4c8ff4b5925310bdc01bd3",
+  "source_commit": "234cb452d17eb497b1d1233a81a1aa9679750634",
+  "implementation_commits": [
+    "5f7faf3a1c52d7bd6c28cdb348b77959ed4cc636",
+    "ea36c55e90db9cbf78b8942e2038e5e4609a83c8",
+    "234cb452d17eb497b1d1233a81a1aa9679750634"
+  ],
+  "eligible_concrete_first_pass_count": 0,
+  "parent_promotions": 0,
+  "unpromoted_families": [
+    "audit-options-popups-freeze",
+    "audit-options-popup-notifications"
+  ],
+  "eligibility": {
+    "frozen_before": {
+      "audit-options-popup-notifications-popup-window-toaster-freeze-the-popup-toaster-when-the-main-gui-is-minimised": "missing"
+    },
+    "kind": "control",
+    "checked_completed_ledger": "Both completed arrays (240/51) in overnight/progress.json",
+    "checked_prior_packets": "All105 base parity JSON schemas recursively, including every string-valued claim/entry/alias context",
+    "result": "Exact original435 concrete Missing control, absent both completed arrays and every predecessor packet. No full family/structural alias or completion claim."
+  },
+  "claims": [
+    {
+      "id": "audit-options-popup-notifications-popup-window-toaster-freeze-the-popup-toaster-when-the-main-gui-is-minimised",
+      "reference_id": "audit-options-popup-notifications-popup-window-toaster-freeze-the-popup-toaster-when-the-main-gui-is-minimised",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "change_kind": "implementation",
+      "behavior": "Default-off typed minimized-toaster freeze is imported and loaded with native precedence over retained legacy, staged in actual popup Options and saved field-scoped with Cancel/reopen/concurrent other-key preservation. Existing250ms owned refresh reads saved policy and genuine platform minimized state. Hidden freezes unconditionally. Frozen model retains cards/text/summary/construction width and does not admit pending jobs, while Store producers still change, finish and strictly expire. Restore/live false resumes reconciliation and queued admission. Hidden/minimized retained input is refused, and rebind/accepted-close retire the old shared GUI owner without confusing temporary hide with retirement. Available native platform state is used; WaylandNone, missing other-display and bulk-reconciliation difference keep the exact leaf Partial/zero credit.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/PopupPanel.py",
+        "line": 52,
+        "symbol": "rows.append( ( 'Freeze the popup toaster when the main gui is minimised:",
+        "line_sha256": "e31c6f4deaf3f90f802d4d775f7b73894f240d92bc3101d28e89849e7dc02f4b",
+        "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/popup_freeze.rs",
+          "line": 15,
+          "symbol": "pub struct Preferences",
+          "line_sha256": "373d023fffe3d1204eadbb5fe34e74a9fe3d7451eeb8676b7a53ed040046ce76",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/popup_freeze.rs",
+          "line": 22,
+          "symbol": "pub fn from_legacy",
+          "line_sha256": "45934f85d2ad25c5548d1765fc3941e10df4f692bfe052dd0d38c1c5b5fcd18b",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/popup_freeze.rs",
+          "line": 33,
+          "symbol": "pub fn load(",
+          "line_sha256": "d4f306aeea39dff3f571f7beaf1ea1ddae58efd8e524f63b9e0b0f63eb189b68",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 773,
+          "symbol": "&crate::popup_freeze::Preferences::from_legacy(options)",
+          "line_sha256": "ab262f270f7dad7ffcffc4b2f44dc31a2fb2219f1d640ee01a4594a288a55e28",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 325,
+          "symbol": "popup_freeze: hydrus_store",
+          "line_sha256": "fde13edcd19815d56167121badd829ace4b1c2ed665a237258d9c81f93211fca",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options_popup_width.rs",
+          "line": 23,
+          "symbol": "|s| s.popup_freeze.minimized",
+          "line_sha256": "68a77722884c358e53186e8af7b34732db122f0caf66f84e192ca4e6836a57d0",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/popup_freeze.rs",
+          "line": 3,
+          "symbol": "pub fn can_alter",
+          "line_sha256": "5c3b317c317dccfff4a3019b0583a2ef609fd6743c2b10e3ade4300b80677f7d",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/popup_freeze.rs",
+          "line": 6,
+          "symbol": "pub(crate) fn minimized",
+          "line_sha256": "bccbffaafbcb645f9f4027a0790fd40008bcb96d9ba16bc7478834c094c70d15",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/popup_freeze.rs",
+          "line": 8,
+          "symbol": "Some(value) => value",
+          "line_sha256": "c78472dbcf09daa33cb0884540fd3037ce058ecdf5d96c9603402ec75d3515b1",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/popup_freeze.rs",
+          "line": 9,
+          "symbol": "None => Some(window.is_minimized())",
+          "line_sha256": "e5cacddda88f3c3ba0685fdd748d576e8a8e02e9b4444e884b4b189b81cde46f",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/popup_freeze.rs",
+          "line": 12,
+          "symbol": "pub(crate) fn can_alter",
+          "line_sha256": "cdaaec10d4c3f1278d6375324b7f02c2487b1523529c3ee1e711dba6750e4699",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/popup_freeze.rs",
+          "line": 22,
+          "symbol": "pub(crate) fn accepts_input",
+          "line_sha256": "1010c6b5daf04390ca031acf3148417f56717888d66df4222a96ce2bf3ddfdcb",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/popups.rs",
+          "line": 279,
+          "symbol": "let input_valid: Rc<dyn Fn() -> bool>",
+          "line_sha256": "359d24b63f44a232a0dc502af45f54328e58382c435ce288fc981390193beefe",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/popups.rs",
+          "line": 329,
+          "symbol": "if !crate::popup_freeze::can_alter",
+          "line_sha256": "421e136daa8827786eb1c92dc1eab2f86c4b10ca6fa67d985faf3218839e364d",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/popups.rs",
+          "line": 347,
+          "symbol": "policies.retain(",
+          "line_sha256": "78014c4cf94cd0b4ecd6929dee834e295f38264fa2164e85756615ea80d1e838",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/popups.rs",
+          "line": 234,
+          "symbol": "pub(crate) fn retire_callback",
+          "line_sha256": "54cad3eb7cda7b6e89e1e830353367b134dfa09b99086f276e55f9858880f583",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/popups.rs",
+          "line": 268,
+          "symbol": "window.invoke_popup_retire_owner();",
+          "line_sha256": "d0bc1c1c3a7ba4c9426e49130900d7fb8d3982c54ea5fd1a25427335df884b5a",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/popups.rs",
+          "line": 291,
+          "symbol": "window.set_popup_summary(SharedString::default());",
+          "line_sha256": "018216c30993607ad698ef9f2f236a6d124387592a4f0963da54c820a99aabc7",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/popups.rs",
+          "line": 440,
+          "symbol": "window.on_popups_dismiss_all",
+          "line_sha256": "384f282af13397212e1acf20cb69db2d8ad8e226e188cad85003a71e50cc67ce",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/popups.rs",
+          "line": 487,
+          "symbol": "window.on_popup_show_files",
+          "line_sha256": "0e355224286ed45f6b6743478f4931c8c6df8077d8341783e6dd0a0b7a7ce82a",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/popups.rs",
+          "line": 456,
+          "symbol": "window.on_popup_copy_traceback",
+          "line_sha256": "20ff63f34d1424987079a544a51010cb832d3143becd3a38bd35a8e10ead5092",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/popup_job_actions.rs",
+          "line": 30,
+          "symbol": "crate::popup_freeze::accepts_input",
+          "line_sha256": "22f90241dd8729e20d08a15ca96a43c93458fdda3d11c2682e0e674b948ab028",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 3063,
+          "symbol": "let retire_popups = popup_timer.retire_callback();",
+          "line_sha256": "0da8360e113dd2616ad718d8ca420c52585009cdebb7242775d25e871a846827",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/popups.rs",
+          "line": 130,
+          "symbol": "pub fn is_dismissed",
+          "line_sha256": "6b7c679cb411d8b1f6e64b570ece6a29bf7c7f8a5809c3d119baf6e3a0b471ec",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/popup_freeze.rs",
+          "line": 56,
+          "symbol": "fn actual_saved_true_legacy_native_override_and_durable_reopen",
+          "line_sha256": "55719379ba3331b4abafa9fb6d5aff970326c231b2e3ded7a79d47cf4b5ea592",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/popup_freeze.rs",
+          "line": 28,
+          "symbol": "fn real_qt_hidden_and_minimized_states_do_not_use_focus_and_unknown_is_explicit",
+          "line_sha256": "ba5f4777815efcdae9679b651dd792dc840667b8b5ca7bf16f90f8af05f83a2c",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/popup_freeze.rs",
+          "line": 71,
+          "symbol": "fn staged_cancel_save_reopen_and_concurrent_popup_fields_are_preserved",
+          "line_sha256": "fad503095386326edff373d7189ee32c2b50bfaf74f8c9b94bea62270e913e70",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/popup_freeze.rs",
+          "line": 79,
+          "symbol": "fn queued_jobs_expire_and_change_under_frozen_cards_then_restore_and_live_false_resume",
+          "line_sha256": "6acd729fdae5cbc4397f1baadda46b12632c9d6f1bb0a2c99ec63fb4ab9d1dff",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/popup_freeze.rs",
+          "line": 205,
+          "symbol": "fn real_options_cancel_reopen_concurrent_fields_hidden_and_retired_children_do_not_write",
+          "line_sha256": "636b97a36f5adf9d987c71e0b68647c34417d72ca5fe538a84d4cd72a41ea559",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/popup_freeze.rs",
+          "line": 272,
+          "symbol": "fn hidden_rebind_and_accepted_close_retire_ui_only_and_never_admit_to_a_successor",
+          "line_sha256": "68f062476956d30a0e2f83bae0ee529b19112d966109f3e9293b333676be47d9",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/popup_freeze.rs",
+          "line": 56,
+          "symbol": "ui.invoke_menu_title_pressed(0, 20., 22.);",
+          "line_sha256": "fb650be7a51008e6300d22a2a268ebfcd6bb6a671d764037b1606c4a95512c3b",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/popup_freeze.rs",
+          "line": 64,
+          "symbol": "let window = bound.options.borrow().as_ref().unwrap().clone_strong();",
+          "line_sha256": "a17908f76ef34270770adfd357b0c73243edb45875a3153b82d8cfbc82f1b96b",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/popup_freeze.rs",
+          "line": 70,
+          "symbol": "window.invoke_page_chosen(",
+          "line_sha256": "69eb11140bb0e4befabace6185b5b6401fac53e9b320a73c2eaa14b563dc54ca",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/popup_freeze.rs",
+          "line": 294,
+          "symbol": "This card has no registered question;",
+          "line_sha256": "f3b10a95eaec1d54e59a1ab628645037ef960468dc41db44900ef63c4167c5e0",
+          "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_popup_freeze.py",
+        "fixture": "oracle/fixtures/popup_freeze.json",
+        "screenshots": [
+          "oracle/fixtures/popup-freeze-options-qt.png",
+          "oracle/fixtures/popup-freeze-toaster-qt.png"
+        ],
+        "commit": "234cb452d17eb497b1d1233a81a1aa9679750634",
+        "executed": true,
+        "executed_utc": "2026-10-05T14:26:48Z",
+        "result": "Real PopupPanel five staged states and true legacy tuple; real private PopupMessageManager twelve states for shown/minimized/cache/admission/strict expiry/restore/hidden/live-policy/unfocused behavior. Both PNG individually inspected. Clean shutdown.",
+        "transport": "Serialized with-oracle offscreen; real window state methods, manual captured constructor scheduler, held integer time and explicitly due private job checker; unchanged AddMessage and REPEATINGUpdate."
+      },
+      "limits": [
+        "Exactly one original concrete Missing\u2192Partial improvement; countAsCompletedLeaf=false and eligible FirstPass count0. No parent/family/alias completion credit. Hidden freeze consumer correction earns zero additional credit.",
+        "Native Winit minimized state is genuine on Windows/macOS/X11 but explicitly unavailable (None) on Wayland. Unknown is not substituted with focus, occlusion or presumed minimization; external Wayland minimization cannot be frozen faithfully, so the control remains Partial.",
+        "The software-window native regression drives Slint set_minimized/is_minimized and actual owned timer/model/Store paths. It is not a physical OS minimized-event attestation; hosted platform/Rust/native/render execution remains pending.",
+        "Other-display freezing needs a global cursor-monitor signal absent from the current backend and remains Missing. Broad audit-options-popups-freeze is unpromoted; focus loss is not a Qt freeze condition.",
+        "Native keeps its existing bulk expired-card reconciliation, while Qt removes one dismissed card per update before admitting pending jobs. Construction-time card widths, pending job Store state and strict expiry are preserved; no whole toaster-family parity is claimed.",
+        "Actual recorder captures constructor timers for manual unchanged manager ticks, holds integer time and makes only the private expiring job regular checker due. Global float scheduling clock remains unchanged. Qt show/hide/minimized/unfocused state signals are real; no manager handler is replaced.",
+        "Retained no-question stale answer in the new native test is only a no-mutation/row-owner check, not independent registered-question action proof. Existing popup_job_actions authored tests retain real producer/action ownership coverage unchanged.",
+        "Existing popup first replay plus initial/reopened session-warning owners gain three show() setup calls only. All historical assertions, counts and bounded waits remain byte-preserved; already-visible API/debug/width/job-action fixtures remain untouched.",
+        "No local Cargo/Rust tests/builds/mutation runs, pushes or canonical inventory/ledger writes. The authored restored-toaster native PNG is not executed evidence."
+      ]
+    }
+  ],
+  "consumer_reference_anchors": [
+    {
+      "relativepath": "hydrus/client/ClientOptions.py",
+      "line": 162,
+      "symbol": "'freeze_message_manager_when_main_gui_minimised' : False",
+      "line_sha256": "984a55f5e81184959425096770f586eb03fddee336be0180fdca40da83337219",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/PopupPanel.py",
+      "line": 28,
+      "symbol": "self._freeze_message_manager_when_main_gui_minimised = QW.QCheckBox",
+      "line_sha256": "0578962b45a7b4701c3eed884798df7c13931f9fa76ad1f46db265520eb23b2e",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/PopupPanel.py",
+      "line": 52,
+      "symbol": "rows.append( ( 'Freeze the popup toaster when the main gui is minimised:",
+      "line_sha256": "e31c6f4deaf3f90f802d4d775f7b73894f240d92bc3101d28e89849e7dc02f4b",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/PopupPanel.py",
+      "line": 74,
+      "symbol": "self._new_options.SetBoolean( 'freeze_message_manager_when_main_gui_minimised'",
+      "line_sha256": "d42571cc1ebf9bec6b9330d3a0bc3f78e07cbc0d713737c5bd06acd167a81f90",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "hydrus/client/gui/ClientGUIPopupMessages.py",
+      "line": 1033,
+      "symbol": "def _OKToAlterUI(",
+      "line_sha256": "ef9b272d1918ca4a78bcdeaf7d976cd19309448ed2c65463fae253f2649f8aac",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "hydrus/client/gui/ClientGUIPopupMessages.py",
+      "line": 1037,
+      "symbol": "if main_gui.isHidden():",
+      "line_sha256": "d0c41c2d41da49c78c672e26c735a5d4932aec6bb3122a1906841e9dcb457a3c",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "hydrus/client/gui/ClientGUIPopupMessages.py",
+      "line": 1054,
+      "symbol": "main_gui_up = not main_gui.isMinimized()",
+      "line_sha256": "14cc5a44d723df94812c4d62947a04dd5d430fdd1875fcd70589b7be14dbb3e0",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "hydrus/client/gui/ClientGUIPopupMessages.py",
+      "line": 1264,
+      "symbol": "def REPEATINGUpdate(",
+      "line_sha256": "53b6c6596da0f23e9ac569181e85c8a47dab08db57d9be72e10b8e2afe28dec6",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "hydrus/client/gui/ClientGUIPopupMessages.py",
+      "line": 1065,
+      "symbol": "def _Update(",
+      "line_sha256": "c33d0227ffd1bb5c24f4b79014006ecdb990805d9ea1b0e658f9ac2c04290b2f",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "hydrus/client/gui/ClientGUIPopupMessages.py",
+      "line": 888,
+      "symbol": "def _CheckPending(",
+      "line_sha256": "2576e801fd34291fcbaa875639d5ec28f13e68ee0ba1bbff5615f17397b34b79",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "hydrus/client/gui/ClientGUIPopupMessages.py",
+      "line": 1096,
+      "symbol": "def AddMessage(",
+      "line_sha256": "f595fdc0b080b71a832909d93f08c50fc28576cb77c441ca018d95b8ba91d2a5",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "hydrus/client/gui/ClientGUIPopupMessages.py",
+      "line": 677,
+      "symbol": "def ClearAllDeleted(",
+      "line_sha256": "d7d03df9473b77aac8cddbefee7d81d5389a9e1568718fae211038ccef3eaf2d",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "hydrus/client/gui/ClientGUIPopupMessages.py",
+      "line": 1154,
+      "symbol": "def _RemovePopupWindow(",
+      "line_sha256": "99f29c62bea38c6da33406a6d965830454e4167c7c38714de4a8f75d6bace81a",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "hydrus/client/ClientThreading.py",
+      "line": 298,
+      "symbol": "def IsDismissed(",
+      "line_sha256": "88853d6021b6fa38627ba70e56daa2eb8b100d40ca5076c02d95aad68a882f85",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    }
+  ],
+  "validation": {
+    "source_checks": "Cached Slint source compilation, targeted rustfmt check, git diff check, Python recorder syntax/12-state/5-control invariants and three historical setup-only line preservation passed.",
+    "reference": "Final actual Qt2026-10-05 14:26:46\u201348 clean; both PNG individually inspected.",
+    "rust_tests": "Authored only; hosted compiled/native/platform/runtime/render execution pending.",
+    "independent_review": "appearance_final_review accepted immutable234cb452d source atop5f7/ea36 as bounded Partial0: actual Qt12states/5Options and both PNG individually inspected, generated API/helper and GUI-owner argument corrections, native-wins/import/staged/live policy, genuine optional minimized state/no focus substitute, cached cards/expiry/admission, weak hidden/rebind/accepted-close owner gates and historical setup-only preservation reviewed. Final packet audit independently verified49 raw-line/symbol occurrences plus8 whole-file hashes, all3 implementation ancestors, exact frozen Missing control, both completed arrays240/51 and all105 predecessor packet schemas including raw setting alias absence. Exactlyone Missing\u2192Partial/countfalse, zero completions/parents. No Rust/native/platform/runtime attestation.",
+    "burndown": "Read-only scripts/gui_burndown.py classifies only this exact Partial improvement. Validated source028/completions240 remain unchanged; this packet contributes zero completion proposals."
+  },
+  "evidence_hashes": [
+    {
+      "relativepath": "docs/rust/gui-coverage/overnight/baseline.json",
+      "sha256": "f809e51c0fd3de7068d30f5cbac4dacb043859c3f85c5357d60c6474b804c8e5",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "docs/rust/gui-coverage/audit/options-patch.json",
+      "sha256": "05fb770dc87d8b03cd0e1a4dbd509de61d48e0dc1c87c7c7032a9aeb4adce20b",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "docs/rust/gui-coverage/reference-inventory.json",
+      "sha256": "9ea46cfbc10569c9838458526653f1d0aa80a31924f82a46f14c95209b857400",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "docs/rust/gui-coverage/overnight/progress.json",
+      "sha256": "168d8057e3b023cf822af82b703b4fe018baba266694d06b5c7ae79bf1d20ca6",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "oracle/record_popup_freeze.py",
+      "sha256": "0a1363558b32a4700f29e65c31b1f8284128f8d74e0839a1f13093271914b6fc",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "oracle/fixtures/popup_freeze.json",
+      "sha256": "51a8665ec2daaf8eb28afc7923925b6ccb4ef32a5594b97ae0ad7be06cc7b351",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "oracle/fixtures/popup-freeze-options-qt.png",
+      "sha256": "96df49350c740f3e8ed5f09a428f844498aa2b5e44405b08a973b35abc6662d0",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    },
+    {
+      "relativepath": "oracle/fixtures/popup-freeze-toaster-qt.png",
+      "sha256": "7c4078e6796130e05ccb1edafeea4c04f029366f98c37c2ad2a99b695d2c89dd",
+      "commit": "234cb452d17eb497b1d1233a81a1aa9679750634"
+    }
+  ],
+  "native_hierarchy_support": {
+    "MainWindow": [
+      "existing bottom-right owned PopupStack/cards/summary",
+      "shared Rc binding with weak window and GUI-incarnation retirement",
+      "existing250ms refresh gate; cached rows while hidden or supported minimized",
+      "legacy and keyed job input guards"
+    ],
+    "OptionsWindow": [
+      "actual File\u2192options\u2026 owned opener",
+      "popup notifications page/checkbox",
+      "Apply/Cancel/reopen and captured retired/hidden owner guards"
+    ]
+  },
+  "expected_native_renders": [
+    {
+      "artifact": "popup-freeze-restored-native.png",
+      "status": "authored_not_executed",
+      "size": [
+        1000,
+        700
+      ]
+    }
+  ],
+  "platform_source_inspection": "Installed Slint1.18.1 api.rs is_minimized/set_minimized and WinitWindowAccessor; Winit0.30.13 window.rs is_minimized docs explicitly Wayland alwaysNone; Slint winitwindowadapter.rs window_state_event syncs only Some native states. No platform focus substitute or OS attestation."
+}
