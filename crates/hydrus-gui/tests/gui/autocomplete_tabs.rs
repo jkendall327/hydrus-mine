@@ -516,7 +516,7 @@ fn literal_batches_and_empty_activation_preserve_typed_tags_query_and_or_history
     store
         .write(move |ctx| settings::set(ctx.conn(), &settings::FavouriteTags(tags)))
         .unwrap();
-    headless::init();
+    let _headless_windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(

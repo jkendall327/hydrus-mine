@@ -3961,3 +3961,13 @@ the consumer live; accepted exit and rebind retire its GUI incarnation.
 authenticated resource-handler requests, including late-error partial header
 acceptance and exact messages. Store, model, API-router and native toaster/render
 regressions are authored; Rust execution and native PNG inspection await hosted CI.
+
+Headless UI tests retain the returned window collector for the complete UI scope.
+Its final stack-scope drop hides visible components and releases callbacks, pages
+and workers before the UI thread returns. Helpers returning windows leave that
+collector in the caller's scope. This cleanup preserves the Store writer's normal
+shutdown and joins; it no longer runs from a thread-local destructor. A bounded
+Windows lifetime replay precedes the unchanged default-parallel native suite.
+The retained-component, callback/Store release and two-second worker-release
+assertions remain, with an additional explicit pre-thread-exit component check.
+Hosted execution remains pending; this repair proposes no feature completion.

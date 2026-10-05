@@ -151,6 +151,13 @@ jobs:
         env:
           CARGO_BUILD_JOBS: 1
         run: cargo build --workspace --all-targets --locked --keep-going
+      - name: Windows headless owner lifetime replay
+        if: runner.os == 'Windows'
+        timeout-minutes: 5
+        env:
+          CARGO_BUILD_JOBS: 1
+        run: |
+          cargo test -p hydrus-gui --test gui --locked headless_lifetime:: -- --nocapture
       - name: test
         env:
           CARGO_BUILD_JOBS: 1

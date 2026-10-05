@@ -189,7 +189,7 @@ fn unchanged_options_acceptance_normalises_raw_seconds_and_changes_the_existing_
             )
         })
         .unwrap();
-    headless::init();
+    let _headless_windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     let activity = bound.session_autosave.next().unwrap();

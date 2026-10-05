@@ -178,7 +178,7 @@ fn blacklist_extra_panels_and_all_four_paste_controls_follow_the_recording() {
     let fixture = hydrus_testkit::fixture_json("tag_filter_favourites.json");
     let dir = tempfile::tempdir().unwrap();
     let store = Arc::new(Store::open(dir.path()).unwrap());
-    headless::init();
+    let _headless_windows = headless::init();
     store
         .write(|ctx| {
             hydrus_store::settings::set(ctx.conn(), &hydrus_store::settings::AdvancedMode(true))
