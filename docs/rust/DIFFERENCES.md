@@ -2574,3 +2574,11 @@ files with retained bytes and accepts restored membership after Store reopen.
 Existing exact OS launch vectors and registered process deadlines are unchanged;
 a focused native deletion/restoration/retirement regression is authored for hosted
 CI. No local Cargo/Rust/mutation runs or additional completion credit are claimed.
+
+The selected collapsed-sibling fade probe measures pixels inside the actual
+painted tag-text rectangle. The outer selection strips use the palette blue and
+also matched the old colour-only gradient classifier. Exact hosted 760px and
+1100px snapshots both show the suffix gradient at x306–377; only the selection
+strip moved with the viewport. The unchanged fade-extent equality and trailing
+solid-colour assertions still verify rendering. Production paint is unchanged;
+cached Slint/static checks are separate from pending hosted Rust execution.
