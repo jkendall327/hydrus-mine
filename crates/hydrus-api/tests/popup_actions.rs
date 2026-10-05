@@ -41,7 +41,7 @@ async fn callable_dispatch_requires_permission_and_a_current_producer_and_report
             basic: if permitted {
                 [Permission::ManagePopups].into()
             } else {
-                Default::default()
+                std::collections::BTreeSet::default()
             },
             search_filter: hydrus_core::TagFilter::default(),
         };

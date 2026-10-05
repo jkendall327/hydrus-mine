@@ -91,10 +91,10 @@ pub fn open_with_choice(
         .read(hydrus_store::settings::get)
         .map_err(|e| e.to_string())?;
     if draft.already_resolved(preferences.confirm_trash) {
-        if guard() {
-            if let Some(choice) = draft.apply_with_choice(store).map_err(|e| e.to_string())? {
-                applied(&choice);
-            }
+        if guard()
+            && let Some(choice) = draft.apply_with_choice(store).map_err(|e| e.to_string())?
+        {
+            applied(&choice);
         }
         return Ok(None);
     }
