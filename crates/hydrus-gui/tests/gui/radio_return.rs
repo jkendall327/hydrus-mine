@@ -184,6 +184,46 @@ fn all_recorded_filesize_hash_groups_accept_with_live_policy_and_preserve_multil
             .row_data(field)
             .unwrap()
             .chosen;
+        let count = w
+            .get_panels()
+            .row_data(0)
+            .unwrap()
+            .fields
+            .row_data(field)
+            .unwrap()
+            .options
+            .row_count() as i32;
+        assert!(count > 1);
+        let down = before + 1 < count;
+        key(
+            w.window(),
+            if down { Key::DownArrow } else { Key::UpArrow }.into(),
+        );
+        assert_eq!(
+            w.get_panels()
+                .row_data(0)
+                .unwrap()
+                .fields
+                .row_data(field)
+                .unwrap()
+                .chosen,
+            before + if down { 1 } else { -1 },
+            "real {kind} group must have keyboard focus"
+        );
+        key(
+            w.window(),
+            if down { Key::UpArrow } else { Key::DownArrow }.into(),
+        );
+        assert_eq!(
+            w.get_panels()
+                .row_data(0)
+                .unwrap()
+                .fields
+                .row_data(field)
+                .unwrap()
+                .chosen,
+            before
+        );
         save(&store, case["saved_at_key"].as_bool().unwrap());
         assert_eq!(
             w.invoke_force_radio_ok(0),
@@ -320,6 +360,37 @@ fn actual_advanced_delete_action_reason_defaults_and_retained_owners_follow_live
         }
         let native = windows.get(windows.count() - 1).unwrap();
         headless::render(&native, 720, 640);
+        let reason = case["kind"] == "delete_reason";
+        let before = if reason {
+            w.get_selected_reason()
+        } else {
+            w.get_selected_action()
+        };
+        let count = if reason {
+            w.get_reasons().row_count()
+        } else {
+            w.get_actions().row_count()
+        } as i32;
+        assert!(count > 1);
+        key(w.window(), Key::DownArrow.into());
+        assert_eq!(
+            if reason {
+                w.get_selected_reason()
+            } else {
+                w.get_selected_action()
+            },
+            (before + 1) % count,
+            "real deletion radio group must consume arrows"
+        );
+        key(w.window(), Key::UpArrow.into());
+        assert_eq!(
+            if reason {
+                w.get_selected_reason()
+            } else {
+                w.get_selected_action()
+            },
+            before
+        );
         save(&store, case["saved_at_key"].as_bool().unwrap());
         assert_eq!(
             w.invoke_force_radio_ok(),

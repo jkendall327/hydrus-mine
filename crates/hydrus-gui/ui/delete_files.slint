@@ -49,7 +49,7 @@ export component DeleteFilesWindow inherits Window {
     in property <string> error;
     callback action-selected(int);
     callback reason-selected(int);
-    in-out property <int> radio-focus: 0;
+    in-out property <int> radio-focus: -1;
     callback force-radio-ok() -> bool;
     callback accept-deletion();
     callback cancel();
