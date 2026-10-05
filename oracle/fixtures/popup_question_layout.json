@@ -1,0 +1,145 @@
+{
+  "cases": [
+    {
+      "characters": 32,
+      "fixed": true,
+      "question": "Continue this synthetic worker with its current settings? Continue this synthetic worker with its current settings? Continue this synthetic worker with its current settings? Continue this synthetic worker with its current settings? ",
+      "width": 246,
+      "height": 143,
+      "controls": {
+        "yes": {
+          "x": 5,
+          "y": 39,
+          "width": 117,
+          "height": 23
+        },
+        "no": {
+          "x": 124,
+          "y": 39,
+          "width": 117,
+          "height": 23
+        },
+        "clipboard": {
+          "x": 3,
+          "y": 66,
+          "width": 240,
+          "height": 23
+        },
+        "callable": {
+          "x": 3,
+          "y": 91,
+          "width": 240,
+          "height": 23
+        },
+        "cancel": {
+          "x": 209,
+          "y": 116,
+          "width": 34,
+          "height": 24
+        }
+      },
+      "question_word_wrap": false,
+      "question_bounds": {
+        "x": 3,
+        "y": 20,
+        "width": 240,
+        "height": 15
+      },
+      "cancelled": true
+    },
+    {
+      "characters": 16,
+      "fixed": false,
+      "question": "Continue this synthetic worker with its current settings? Continue this synthetic worker with its current settings? Continue this synthetic worker with its current settings? Continue this synthetic worker with its current settings? ",
+      "width": 123,
+      "height": 143,
+      "controls": {
+        "yes": {
+          "x": 5,
+          "y": 39,
+          "width": 56,
+          "height": 23
+        },
+        "no": {
+          "x": 63,
+          "y": 39,
+          "width": 55,
+          "height": 23
+        },
+        "clipboard": {
+          "x": 3,
+          "y": 66,
+          "width": 117,
+          "height": 23
+        },
+        "callable": {
+          "x": 3,
+          "y": 91,
+          "width": 117,
+          "height": 23
+        },
+        "cancel": {
+          "x": 86,
+          "y": 116,
+          "width": 34,
+          "height": 24
+        }
+      },
+      "question_word_wrap": false,
+      "question_bounds": {
+        "x": 3,
+        "y": 20,
+        "width": 117,
+        "height": 15
+      },
+      "cancelled": true
+    },
+    {
+      "characters": 16,
+      "fixed": true,
+      "question": "Continue this synthetic worker with its current settings? Continue this synthetic worker with its current settings? Continue this synthetic worker with its current settings? Continue this synthetic worker with its current settings? ",
+      "width": 123,
+      "height": 143,
+      "controls": {
+        "yes": {
+          "x": 5,
+          "y": 39,
+          "width": 56,
+          "height": 23
+        },
+        "no": {
+          "x": 63,
+          "y": 39,
+          "width": 55,
+          "height": 23
+        },
+        "clipboard": {
+          "x": 3,
+          "y": 66,
+          "width": 117,
+          "height": 23
+        },
+        "callable": {
+          "x": 3,
+          "y": 91,
+          "width": 117,
+          "height": 23
+        },
+        "cancel": {
+          "x": 86,
+          "y": 116,
+          "width": 34,
+          "height": 24
+        }
+      },
+      "question_word_wrap": false,
+      "question_bounds": {
+        "x": 3,
+        "y": 20,
+        "width": 117,
+        "height": 15
+      },
+      "cancelled": true
+    }
+  ]
+}

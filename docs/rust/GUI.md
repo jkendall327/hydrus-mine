@@ -3864,3 +3864,5 @@ consumers; presentation saves preserve concurrent unrelated fields. Actual Qt
 queue/prompt/sort recording and authored model/native regressions cover this
 finite scope, including real Enter Text blank/whitespace Apply and Cancel
 handlers with their “apply”/“cancel” buttons. Hosted Rust execution and native PNG review remain pending.
+
+Popup cards now measure their body at the resolved card width before the outer stack allocates their height. The narrow long-question regression checks all five actual action-button bounds, the rendered lower stop border and a pointer delivered near that lower edge; the fixed-width and width-cap checks remain. This is a layout repair with no new coverage claim. Native execution is pending hosted CI.

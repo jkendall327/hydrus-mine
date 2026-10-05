@@ -3051,3 +3051,5 @@ radio-Enter policy, aliases, or any parent. Actual Qt recorded 18 queue paths an
 six downstream sort orders plus three real modal Enter Text handlers and both Qt
 PNGs; authored Rust/native assertions and PNG captures
 await hosted execution and exact-source rendered review.
+
+The popup question label continues to wrap in the native client. Actual Qt `PopupMessage._text_yes_no` remains a single-line label at the same narrow/fixed width settings; the new `popup_question_layout.json`/PNG records that distinction and verifies every Qt action control fits within its card. The native layout repair preserves its existing wrapping while preventing the lower stop button from crossing the clipped card boundary. No Options or popup family completion status changes.
