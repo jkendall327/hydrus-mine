@@ -3550,3 +3550,13 @@ receive no row removals. Accepted client exit permanently retires its binding;
 a reopened client starts a fresh binding.
 
 Popup cards now measure their body at the resolved card width before the outer stack allocates their height. The narrow long-question regression checks all five actual action-button bounds, the rendered lower stop border and a pointer delivered near that lower edge; the fixed-width and width-cap checks remain. This is a layout repair with no new coverage claim. Native execution is pending hosted CI.
+
+Headless UI tests retain the returned window collector for the complete UI scope.
+Its final stack-scope drop hides visible components and releases callbacks, pages
+and workers before the UI thread returns. Helpers returning windows leave that
+collector in the caller's scope. This cleanup preserves the Store writer's normal
+shutdown and joins; it no longer runs from a thread-local destructor. A bounded
+Windows lifetime replay precedes the unchanged default-parallel native suite.
+The retained-component, callback/Store release and two-second worker-release
+assertions remain, with an additional explicit pre-thread-exit component check.
+Hosted execution remains pending; this repair proposes no feature completion.
