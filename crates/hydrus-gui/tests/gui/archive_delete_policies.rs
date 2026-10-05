@@ -259,6 +259,60 @@ fn saved_all_domains_single_choice_and_forget_question_are_owned_across_rebind()
     old.hide().unwrap();
 }
 #[test]
+fn retained_finish_cannot_write_after_its_main_owner_is_dropped() {
+    let (_dir, store, files, ids) = setup();
+    let _windows = headless::init();
+    store
+        .write(|tx| {
+            settings::set(
+                tx.conn(),
+                &Preferences {
+                    all_domains: true,
+                    ..Default::default()
+                },
+            )
+        })
+        .unwrap();
+    let (ui, bound) = ui(&store, &files, ids[0]);
+    let weak_main = ui.as_weak();
+    let filter = open_filter(&ui, &bound);
+    filter.invoke_keep();
+    filter.invoke_delete();
+    assert!(filter.get_commit_ready());
+    let before = store
+        .read(|conn| hydrus_store::media::current_domains(conn, &files))
+        .unwrap();
+    let inbox_count = || {
+        store
+            .read(|conn| {
+                Ok(
+                    conn.query_row("SELECT count(*) FROM file_inbox", [], |row| {
+                        row.get::<_, i64>(0)
+                    })?,
+                )
+            })
+            .unwrap()
+    };
+    let inbox_before = inbox_count();
+    ui.hide().unwrap();
+    drop(ui);
+    assert!(weak_main.upgrade().is_none());
+    assert!(!filter.invoke_owner_valid());
+    filter.invoke_commit();
+    filter.invoke_commit_choice(0);
+    assert_eq!(
+        store
+            .read(|conn| hydrus_store::media::current_domains(conn, &files))
+            .unwrap(),
+        before
+    );
+    assert_eq!(inbox_count(), inbox_before, "kept files must not archive");
+    assert!(bound.archive_delete.borrow().is_some());
+    filter.invoke_retire();
+    assert!(bound.archive_delete.borrow().is_none());
+}
+
+#[test]
 fn staged_options_cancel_save_hidden_callbacks_and_reopen_reach_next_finish() {
     let (dir, store, _files, _ids) = setup();
     let _windows = headless::init();
