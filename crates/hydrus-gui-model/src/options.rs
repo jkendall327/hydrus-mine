@@ -95,6 +95,9 @@ macro_rules! settings {
             $after.thumbnail_preview_selection.save_changed($conn, &$before.thumbnail_preview_selection)?;
         }
     };
+    (@save $conn:ident, $after:ident, $before:ident, thumbnail_appearance) => {
+        $after.thumbnail_appearance.save_changed($conn, &$before.thumbnail_appearance)?;
+    };
     (@save $conn:ident, $after:ident, $before:ident, windows) => {
         if $after.windows != $before.windows {
             let mut windows: WindowSettings = hydrus_store::settings::get($conn)?;
@@ -306,6 +309,7 @@ settings! {
     thumbnail_layout: ThumbnailLayout,
     thumbnail_navigation: hydrus_store::settings::ThumbnailNavigation,
     thumbnail_preview_selection: hydrus_store::thumbnail_preview_selection::Preferences,
+    thumbnail_appearance: hydrus_store::thumbnail_appearance::Preferences => hydrus_store::thumbnail_appearance::load,
     downloader_update_times: hydrus_store::downloader_update_times::Preferences,
     thumbnail_ratings: ThumbnailRatingSettings,
     rating_context_sizes: hydrus_store::settings::RatingContextSizes,
@@ -428,6 +432,8 @@ pub enum Kind {
     Text,
     /// An editable folder path with the shared native directory picker.
     Directory,
+    /// One editable image path with an owned native file picker.
+    FilePath,
     NoneableText {
         none_phrase: &'static str,
     },
@@ -3834,6 +3840,14 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             "thumbnails",
             vec![
                 boxed(
+                    "New Rendering Tech",
+                    vec![check(
+                        "Use the new thumbnail rendering tech (only applies to new pages): ",
+                        |s| s.thumbnail_appearance.new_renderer,
+                        |s, v| s.thumbnail_appearance.new_renderer = v,
+                    )],
+                ),
+                boxed(
                     "appearance",
                     vec![
                         int(
@@ -3882,6 +3896,16 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             (0, 100),
                             |s| i64::from(s.thumbnails.video_percentage_in),
                             |s, v| s.thumbnails.video_percentage_in = v as u32,
+                        ),
+                        check(
+                            "Fade thumbnails: ",
+                            |s| s.thumbnail_appearance.fade,
+                            |s, v| s.thumbnail_appearance.fade = v,
+                        ),
+                        check(
+                            "Use blurhash missing thumbnail fallback: ",
+                            |s| s.thumbnail_appearance.blurhash,
+                            |s, v| s.thumbnail_appearance.blurhash = v,
                         ),
                     ],
                 ),
@@ -3947,6 +3971,30 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             },
                         ),
                     ],
+                ),
+                boxed(
+                    "media background",
+                    vec![opt(
+                        "EXPERIMENTAL: Image path for thumbnail panel background image (set blank to clear): ",
+                        Kind::FilePath,
+                        Rc::new(|s| {
+                            Value::Text(
+                                s.thumbnail_appearance
+                                    .background
+                                    .clone()
+                                    .unwrap_or_default(),
+                            )
+                        }),
+                        Rc::new(|s, v| {
+                            if let Value::Text(v) = v {
+                                s.thumbnail_appearance.background =
+                                    (!v.is_empty()).then(|| v.to_owned());
+                                Ok(())
+                            } else {
+                                Err(wrong("image path"))
+                            }
+                        }),
+                    )],
                 ),
             ],
         ),

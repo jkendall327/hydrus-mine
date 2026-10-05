@@ -1175,6 +1175,9 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         let mut preview_selection = crate::thumbnail_preview_selection::Preferences::default();
         preview_selection.apply_legacy(&options.booleans);
         insert_setting(&mut input, &preview_selection)?;
+        let mut appearance = crate::thumbnail_appearance::Preferences::default();
+        appearance.apply_legacy(&options.booleans, &options.noneable_strings);
+        insert_setting(&mut input, &appearance)?;
         let mut search_defaults = crate::settings::SearchDefaults::default();
         if let Some(key) = options.keys.get("default_tag_service_search_page") {
             search_defaults.tag_service = ServiceKey::new(key.clone());

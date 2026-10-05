@@ -41,7 +41,7 @@ mod thumbnail;
 mod tools;
 pub mod visual;
 
-pub use blurhash::blurhash;
+pub use blurhash::{blurhash, decode_blurhash};
 pub use detect::set_comic_book_detection;
 pub use error::MediaError;
 pub use ffmpeg::Ffmpeg;

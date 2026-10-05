@@ -221,7 +221,7 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                         .position(|(value, _)| value == name)
                         .map_or(-1, |index| int(index as i64));
                 }
-                (Kind::Directory, Value::Text(text)) => {
+                (Kind::Directory | Kind::FilePath, Value::Text(text)) => {
                     out.kind = 20;
                     out.text = text.as_str().into();
                 }
@@ -1012,6 +1012,8 @@ pub(crate) fn open(
         let external_open = external_table.has_open.clone();
         let shortcuts_open = shortcuts.has_open.clone();
         move |i, checked| {
+            let appearance = matches!(editor.borrow().rows().get(at(i)), Some(Row::Opt { option, .. }) if matches!(option.label.trim(), "Fade thumbnails:" | "Use blurhash missing thumbnail fallback:" | "Use the new thumbnail rendering tech (only applies to new pages):"));
+            if appearance && !weak.upgrade().is_some_and(|window| window.window().is_visible()) { return; }
             if !active.get()
                 || colours_open()
                 || reasons_open()
@@ -1071,11 +1073,46 @@ pub(crate) fn open(
             }
         }
     });
+    window.on_background_path_pick({
+        let active = active.clone();
+        let weak = window.as_weak();
+        move |current| {
+            if !active.get()
+                || !weak
+                    .upgrade()
+                    .is_some_and(|window| window.window().is_visible())
+            {
+                return SharedString::new();
+            }
+            crate::thumbnail_background::pick(&current)
+                .unwrap_or_default()
+                .into()
+        }
+    });
     window.on_directory_browse({
         let editor = editor.clone();
         let active = active.clone();
         let show_page = show_page.clone();
+        let weak = window.as_weak();
         move |i| {
+            let file = matches!(editor.borrow().rows().get(at(i)), Some(Row::Opt { option, .. }) if option.kind == Kind::FilePath);
+            if file {
+                let Some(window) = weak.upgrade().filter(|window| active.get() && window.window().is_visible()) else { return; };
+                let page = editor.borrow().page();
+                let current = match editor.borrow().rows().get(at(i)) {
+                    Some(Row::Opt { value: Value::Text(value), .. }) => value.clone(),
+                    _ => return,
+                };
+                let path = window.invoke_background_path_pick(current.into());
+                if !path.is_empty()
+                    && active.get() && window.window().is_visible()
+                    && editor.borrow().page() == page
+                    && matches!(editor.borrow().rows().get(at(i)), Some(Row::Opt { option, .. }) if option.kind == Kind::FilePath)
+                {
+                    editor.borrow_mut().text(at(i), &crate::thumbnail_background::normalized_path(&path)); show_page();
+                }
+                return;
+            }
             if !active.get() || !matches!(editor.borrow().rows().get(at(i)), Some(Row::Opt { option, .. }) if option.kind == Kind::Directory) {
                 return;
             }

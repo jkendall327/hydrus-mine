@@ -140,8 +140,20 @@ pub mod tag_migration_window;
 pub(crate) mod tag_relationships_window;
 pub mod tag_suggestions_window;
 mod tag_text;
+pub mod thumbnail_background;
+
+/// Missing-thumbnail recovery, independent of stored image colour policy.
+pub fn thumbnail_recovery(
+    store: &hydrus_store::Store,
+    id: hydrus_core::HashId,
+    settings: &hydrus_core::thumbnail::ThumbnailSettings,
+    allow: bool,
+) -> hydrus_media::Raster {
+    thumbnails::recovery(store, id, settings, allow)
+}
 pub mod thumbnail_menu;
 mod thumbnail_navigation;
+pub mod thumbnail_paint;
 mod thumbnails;
 mod unlock;
 mod viewer;
@@ -470,6 +482,32 @@ fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store, rows: &T
     window.set_banner_top_text(colour(summaries.thumbnail_top.text));
     window.set_banner_bottom_background(colour(summaries.thumbnail_bottom_right.background));
     window.set_banner_bottom_text(colour(summaries.thumbnail_bottom_right.text));
+    let theme = window.global::<Theme>();
+    rows.set_paint_palette(thumbnail_paint::Palette {
+        fill: theme.get_panel(),
+        selected_fill: theme.get_panel(),
+        remote_fill: theme.get_panel(),
+        remote_selected_fill: theme.get_panel(),
+        border: theme.get_border(),
+        selected_border: theme.get_accent(),
+        remote_border: theme.get_border(),
+        remote_selected_border: theme.get_accent(),
+        window: theme.get_window(),
+        text: theme.get_text(),
+        grid: theme.get_panel(),
+        banners: [
+            colour(summaries.thumbnail_top.background),
+            colour(summaries.thumbnail_top.text),
+            colour(summaries.thumbnail_bottom_right.background),
+            colour(summaries.thumbnail_bottom_right.text),
+        ],
+    });
+    rows.set_appearance(
+        store
+            .read(hydrus_store::thumbnail_appearance::load)
+            .unwrap_or_default(),
+    );
+    window.set_thumbnail_background(rows.background());
     rows.set_summaries(summaries);
     window.set_thumbnail_width(width as f32);
     window.set_thumbnail_height(height as f32);
@@ -533,10 +571,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let rows = rows.clone();
         let launcher = external_launches.clone();
         let binding_active = binding_active.clone();
+        let weak = window.as_weak();
         move || {
             binding_active.set(false);
             launcher.cancel();
             rows.retire();
+            if let Some(window) = weak.upgrade() {
+                window.set_thumbnail_background(slint::Image::default());
+            }
             let child = options
                 .borrow()
                 .as_ref()
@@ -571,6 +613,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     return;
                 };
                 rows.set_scale(window.window().scale_factor());
+                rows.paint_tick(
+                    window.window().is_visible(),
+                    window.get_grid_first_row().max(0) as usize,
+                    window.get_grid_visible_rows().max(0) as usize,
+                );
                 rows.receive();
             }
         },
@@ -684,6 +731,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let scroll = scrolls.borrow().get(&key).copied().unwrap_or(0.0);
             rows.set_page(opened.clone());
             if let Some(window) = weak.upgrade() {
+                window.set_thumbnail_background(rows.background());
                 // A conditional sidebar may initialize after the property-change
                 // notification. Its initial input focus uses this same eligibility.
                 window.set_page_focus_on_show(focus_on_change);
@@ -807,6 +855,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
             *current.borrow_mut() = opened.clone();
             rows.set_page(opened);
+            window.set_thumbnail_background(rows.background());
             show_tabs(&window, &pages.borrow());
             window.set_grid_scroll(0.0);
             refresh(&window, &current.borrow().borrow());

@@ -28,6 +28,9 @@ use crate::watcher::WatcherView;
 
 pub struct SearchPage {
     store: Arc<Store>,
+    /// Qt chooses its thumbnail renderer when creating a page, never on Apply.
+    new_thumbnail_renderer: bool,
+    faded_thumbnails: RefCell<(std::rc::Weak<()>, HashMap<HashId, u64>)>,
     autocomplete: Autocomplete,
     or_draft: hydrus_gui_model::search_or::Construction,
     /// The page's file and tag domains (its predicates are `predicates`).
@@ -233,7 +236,12 @@ impl SearchPage {
         autocomplete.set_context(&context.location, &context.tags);
         let presentation: hydrus_core::tag_presentation::TagPresentation =
             store.read(hydrus_store::settings::get).unwrap_or_default();
+        let appearance = store
+            .read(hydrus_store::thumbnail_appearance::load)
+            .unwrap_or_default();
         Self {
+            new_thumbnail_renderer: appearance.new_renderer,
+            faded_thumbnails: RefCell::default(),
             autocomplete,
             or_draft: hydrus_gui_model::search_or::Construction::default(),
             store,
@@ -304,6 +312,26 @@ impl SearchPage {
         page.duplicates = Some(duplicates);
         page.empty_status.set(Some("no dupes found"));
         page
+    }
+
+    /// The renderer admitted when this page was created.
+    pub fn new_thumbnail_renderer(&self) -> bool {
+        self.new_thumbnail_renderer
+    }
+
+    /// A completed cache admission survives scrolling without keeping a bitmap.
+    /// Weak owner identity prevents collisions when a retained page is rebound.
+    pub fn admit_thumbnail_fade(&self, id: HashId, owner: &Rc<()>, admission: u64) -> bool {
+        let mut faded = self.faded_thumbnails.borrow_mut();
+        if !faded
+            .0
+            .upgrade()
+            .is_some_and(|previous| Rc::ptr_eq(&previous, owner))
+        {
+            faded.0 = Rc::downgrade(owner);
+            faded.1.clear();
+        }
+        faded.1.insert(id, admission) != Some(admission)
     }
 
     /// A duplicates page's filtering.

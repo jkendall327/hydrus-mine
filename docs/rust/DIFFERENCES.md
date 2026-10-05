@@ -323,9 +323,8 @@ search.
   has no periodic sleep checker of its own (the downloader daemon does); on the tag sort page,
   the namespace grouping list; on the ratings page, the example
   rating service's dropdown, the clickable examples, and the preview
-  window's and dialogs' sizes; and on the thumbnails page, fading and the blurhash fallback,
-  key navigation's scrolling, the scroll rate, the background image and
-  the rendering tech). Options' tooltips aren't shown;
+  window's and dialogs' sizes; and on the thumbnails page, exact whole-bitmap fading
+  and the rendering tech). Options' tooltips aren't shown;
   a box's title is a heading over its options rather than a frame around
   them; a sort's type is a dropdown of the types a page's sort control
   lists, where the reference's is a button opening a menu of them, and a
@@ -2770,3 +2769,28 @@ a fresh binding after accepted close, and advanced deletion emits from a visible
 main owner. Every existing assertion, count and deadline is preserved, with an
 additional real pending-viewer/session-replacement regression authored. Hosted
 execution remains pending; no local Rust/Cargo runs or new completion credit.
+
+Thumbnail appearance: saved blurhash fallback and the editable/browsable
+background path now reach real native loader and viewport consumers. Existing
+imported stores recover their retained reference preferences if the new native
+key is absent; an edited native value wins. Background decoding uses Slint's
+image formats and the native file dialog, with a path-keyed owner cache matching
+the recorded cache behavior. Both reference renderers inherit/use the fixed
+viewport background; it is not conditional on the renderer preference.
+
+Fade and the new-rendering-tech checkbox remain Partial, with zero completion
+credit. The native page admits a creation-time paint policy and the full
+decorated cell participates in its transition, but Slint's software renderer
+multiplies primitive opacity rather than blending Qt's already-painted QPixmap.
+The old-mode cumulative alpha is an effective-opacity approximation, including
+its frame-count accumulation; repeated Qt integer pixel compositing is not
+reproduced. Native virtual rows do not implement Qt's manual canvas pages or
+QGraphicsScene layout/performance engine. The owned snapshots and lightweight
+cache-admission identities do preserve decoded-image/selection transitions,
+interruption, cache eviction/reset, cached scroll revisits and GUI retirement.
+
+This slice proposes only the two concrete blurhash/background leaves for
+FirstPass after exact hosted execution and native rendered inspection; it adds
+no completion credit for fade, renderer tech, parents, aliases or cache breadth.
+The new native tests/three native PNG artifacts are authored and unexecuted here;
+no local Cargo/Rust tests/builds or canonical status writes were performed.

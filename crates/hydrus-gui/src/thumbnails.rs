@@ -70,6 +70,44 @@ pub fn thumbnail(store: &Arc<Store>, id: HashId) -> Option<hydrus_media::Raster>
     hydrus_media::decode_image(&bytes).ok()
 }
 
+/// Recovery after the normal stored-thumbnail/regeneration path fails. This
+/// never writes/regenerates a blurhash into physical thumbnail storage.
+pub fn recovery(
+    store: &Store,
+    id: HashId,
+    settings: &ThumbnailSettings,
+    allow: bool,
+) -> hydrus_media::Raster {
+    if allow {
+        let media = store
+            .read(|conn| hydrus_store::media::load_basic(conn, &[id]))
+            .ok()
+            .and_then(|media| media.into_iter().next());
+        if let Some(info) = media.and_then(|media| media.info)
+            && let Some(code) = info.blurhash.as_deref()
+            && let Ok(image) = {
+                let (width, height) = settings.resolution(info.width, info.height);
+                hydrus_media::decode_blurhash(code, width, height)
+            }
+        {
+            return image;
+        }
+    }
+    let image = hydrus_media::decode_image(include_bytes!("../../../static/hydrus.png"))
+        .expect("bundled default thumbnail is valid");
+    let (width, height) = settings.resolution(Some(image.width()), Some(image.height()));
+    resize(
+        &image,
+        width,
+        height,
+        if width > image.height() || height > image.width() {
+            Interpolation::Lanczos4
+        } else {
+            Interpolation::Area
+        },
+    )
+}
+
 /// The size, in the screen's pixels, to show a stored thumbnail of
 /// `stored` pixels at: the reference draws it at its own size (over its
 /// DPR), centred in the bounding box, and never stretches it to fill; a
@@ -185,8 +223,17 @@ fn refit(store: &Arc<Store>, id: HashId) {
 pub type Loaded = (HashId, f32, u64, Option<Pixels>);
 
 pub struct ThumbnailLoader {
-    requests: Sender<(HashId, f32, u64)>,
+    requests: Sender<Request>,
     results: Receiver<Loaded>,
+    store: std::sync::Weak<Store>,
+}
+
+struct Request {
+    id: HashId,
+    scale: f32,
+    generation: u64,
+    settings: ThumbnailSettings,
+    blurhash: bool,
 }
 
 impl std::fmt::Debug for ThumbnailLoader {
@@ -201,21 +248,33 @@ impl std::fmt::Debug for ThumbnailLoader {
 impl ThumbnailLoader {
     /// Workers for `store`'s thumbnails; they end when the loader does.
     pub fn new(store: &Arc<Store>, workers: usize) -> Self {
-        let (requests, jobs) = crossbeam_channel::unbounded::<(HashId, f32, u64)>();
+        let (requests, jobs) = crossbeam_channel::unbounded::<Request>();
         let (done, results) = crossbeam_channel::unbounded();
         for _ in 0..workers.max(1) {
             let (store, jobs, done) = (store.clone(), jobs.clone(), done.clone());
             thread::Builder::new()
                 .name("thumbnails".into())
                 .spawn(move || {
-                    for (id, scale, generation) in jobs {
-                        let settings = store.snapshot().thumbnails;
+                    for Request {
+                        id,
+                        scale,
+                        generation,
+                        settings,
+                        blurhash,
+                    } in jobs
+                    {
                         let mut wrong_size = false;
-                        let pixels = thumbnail(&store, id).map(|raster| {
+                        let pixels = if let Some(raster) = thumbnail(&store, id) {
                             let (raster, wrong) = fitted(&store, id, raster, &settings);
                             wrong_size = wrong;
-                            Pixels::new(&for_display(raster, &settings, scale))
-                        });
+                            Some(Pixels::new(&for_display(raster, &settings, scale)))
+                        } else {
+                            Some(Pixels::new(&for_display(
+                                recovery(&store, id, &settings, blurhash),
+                                &settings,
+                                scale,
+                            )))
+                        };
                         if done.send((id, scale, generation, pixels)).is_err() {
                             break;
                         }
@@ -226,14 +285,29 @@ impl ThumbnailLoader {
                 })
                 .expect("starting a thumbnail worker");
         }
-        Self { requests, results }
+        Self {
+            requests,
+            results,
+            store: Arc::downgrade(store),
+        }
     }
 
     /// Decode `id`'s thumbnail for a screen scaled by `scale`, under the
     /// grid's `generation` of thumbnail settings.
     pub fn request(&self, id: HashId, scale: f32, generation: u64) {
-        // (the workers outlive every sender, so this can't fail)
-        let _ = self.requests.send((id, scale, generation));
+        let Some(store) = self.store.upgrade() else {
+            return;
+        };
+        let appearance = store
+            .read(hydrus_store::thumbnail_appearance::load)
+            .unwrap_or_default();
+        let _ = self.requests.send(Request {
+            id,
+            scale,
+            generation,
+            settings: store.snapshot().thumbnails,
+            blurhash: appearance.blurhash,
+        });
     }
 
     /// A thumbnail that is ready, if any.

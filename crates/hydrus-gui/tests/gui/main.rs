@@ -90,6 +90,7 @@ mod subscriptions;
 mod subscriptions_dedupe;
 mod subscriptions_duplicate;
 mod subscriptions_separate;
+mod thumbnail_appearance;
 mod thumbnail_cache;
 mod thumbnail_icons;
 mod thumbnail_menu;
