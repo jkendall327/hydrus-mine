@@ -261,19 +261,25 @@ fn saved_preview_options_reach_open_display_duration_cap_cancel_and_confirmed_cl
     let (_directories, store) = store();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    // Qt's recorder supplies these media directly to its viewing-statistics
+    // policy, including a trashed video outside the current local-file search.
+    let first = file(&store, fixture["file"].as_str().unwrap());
+    let video = file(&store, fixture["video"].as_str().unwrap());
     let bound = bind(
         &ui,
-        Pages::single(super::common::all_local_page(store.clone())),
+        Pages::single(hydrus_gui::SearchPage::fixed(
+            store.clone(),
+            "preview interval recording",
+            None,
+            vec![first, video],
+        )),
     );
     let clock = Rc::new(Cell::new(200_000));
     bound.preview.set_clock(Rc::new({
         let clock = clock.clone();
         move || clock.get()
     }));
-    ui.invoke_search_edited("system:everything".into());
-    ui.invoke_search_accepted();
     ui.show().unwrap();
-    let first = file(&store, fixture["file"].as_str().unwrap());
     select(&ui, &bound, first);
     let edit = options(&ui, &bound);
     let minimum = row(
@@ -321,7 +327,6 @@ fn saved_preview_options_reach_open_display_duration_cap_cancel_and_confirmed_cl
         saved,
         "cancelled editor callbacks are retired"
     );
-    let video = file(&store, fixture["video"].as_str().unwrap());
     let duration = store
         .read(|conn| hydrus_store::media::load_basic(conn, &[video]))
         .unwrap()[0]

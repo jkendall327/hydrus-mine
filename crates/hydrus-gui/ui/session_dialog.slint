@@ -84,7 +84,14 @@ export component SessionDialog inherits Window {
             HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
-                if root.notice-only: Button { text: root.notice-ok-label; clicked => { root.cancelled(); } }
+                // The name editor is hidden for notices. Give their visible
+                // button a focus path so the ancestor handles Enter/Escape.
+                if root.notice-only: FocusScope {
+                    init => { self.focus(); }
+                    HorizontalLayout {
+                        Button { text: root.notice-ok-label; clicked => { root.cancelled(); } }
+                    }
+                }
                 if root.asking-name: Button {
                     enabled: !root.child-open;
                     text: root.name-ok-label;

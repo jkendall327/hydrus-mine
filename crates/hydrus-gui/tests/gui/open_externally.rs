@@ -607,6 +607,82 @@ fn saved_routes_reach_main_and_live_viewer_os_fallback_and_missing_owned_notice(
     hydrus_gui::set_launcher(|_| {});
 }
 
+#[test]
+fn live_local_membership_restore_reaches_the_same_launcher_after_store_reopen() {
+    let _windows = headless::init();
+    let (directories, store) = super::subscriptions::store();
+    store
+        .write(|ctx| settings::set(ctx.conn(), &Routing::default()))
+        .unwrap();
+    let file = store
+        .read(|conn| {
+            let services = hydrus_store::services::ServiceRegistry::load(conn)?;
+            let local = hydrus_store::content::DomainRoles::new(&services)?.local_file_storage;
+            Ok(conn.query_row(
+                "SELECT f.hash_id FROM files f JOIN file_domain_current d USING(hash_id)
+                 WHERE d.service_id=?1 ORDER BY f.hash_id LIMIT 1",
+                [local],
+                |row| row.get::<_, hydrus_core::HashId>(0),
+            )?)
+        })
+        .unwrap();
+    let path = hydrus_gui::thumbnail_menu::paths(&store, &[file])
+        .pop()
+        .unwrap();
+    let observed = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::set_launcher({
+        let observed = observed.clone();
+        move |target| observed.borrow_mut().push(target.to_owned())
+    });
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let launcher = hydrus_gui::open_externally_launch::Launcher::new(Rc::new({
+        let weak = ui.as_weak();
+        move || {
+            weak.upgrade()
+                .is_some_and(|owner| owner.window().is_visible())
+        }
+    }));
+    assert!(launcher.file(&store, file));
+    assert_eq!(observed.borrow().as_slice(), std::slice::from_ref(&path));
+    store
+        .write_content(move |writer| {
+            writer.delete_files(writer.roles().local_file_storage, &[file], None)
+        })
+        .unwrap();
+    assert_eq!(
+        hydrus_gui::thumbnail_menu::paths(&store, &[file]),
+        [path.clone()]
+    );
+    assert!(!launcher.file(&store, file));
+    assert_eq!(observed.borrow().as_slice(), std::slice::from_ref(&path));
+    let notice = launcher.notice().unwrap();
+    assert_eq!(
+        notice.get_message(),
+        "Sorry, could not open that file: This file is not local--it cannot be opened!"
+    );
+    notice.invoke_cancelled();
+    store
+        .write_content(move |writer| writer.add_files(writer.roles().local[0], &[(file, None)]))
+        .unwrap();
+    let reopened = Store::open(directories[1].path()).unwrap();
+    assert!(
+        launcher.file(&reopened, file),
+        "restored persisted membership is read by the existing owner"
+    );
+    assert_eq!(observed.borrow().as_slice(), [path.clone(), path]);
+    launcher.cancel();
+    ui.hide().unwrap();
+    ui.show().unwrap();
+    assert!(!launcher.file(&reopened, file));
+    assert_eq!(
+        observed.borrow().len(),
+        2,
+        "a retired owner cannot launch the restored file"
+    );
+    hydrus_gui::set_launcher(|_| {});
+}
+
 #[cfg(unix)]
 fn capture_process(output: &std::path::Path, parameters: &[Parameter], template: &str) -> Process {
     Process {
