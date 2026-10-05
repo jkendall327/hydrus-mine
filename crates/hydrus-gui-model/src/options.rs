@@ -42,11 +42,17 @@ use hydrus_store::tag_editing::TagEditingSettings;
 use hydrus_store::trash::TrashSettings;
 use rusqlite::Connection;
 
+#[path = "options_popup_width.rs"]
+mod popup_width;
+
 fn normalise_idle_timeout(seconds: Option<u64>) -> Option<u64> {
     seconds.map(|seconds| (seconds / 60).clamp(1, 1000) * 60)
 }
 
 macro_rules! settings {
+    (@save $conn:ident, $after:ident, $before:ident, popup_width) => {
+        hydrus_store::popup_width::save_changed($conn, &$after.popup_width, &$before.popup_width)?;
+    };
     (@save $conn:ident, $after:ident, $before:ident, related_tags) => {
         if $after.related_tags.weights != $before.related_tags.weights {
             let mut current: hydrus_store::related_tags::Settings = hydrus_store::settings::get($conn)?;
@@ -235,6 +241,7 @@ settings! {
     options_preferences: OptionsPreferences,
     page_names: PageNameSettings,
     page_settings: PageSettings,
+    popup_width: hydrus_store::popup_width::PopupWidth,
     regex_favourites: RegexFavourites => hydrus_store::regex_favourites::load,
     session_backups: SessionBackupSettings,
     search_defaults: SearchDefaults,
@@ -3120,6 +3127,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 ),
             ],
         ),
+        popup_width::page(),
         page(
             "ratings",
             vec![

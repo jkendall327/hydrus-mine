@@ -84,6 +84,13 @@ in a new page
 it while it runs; a right click dismisses one that is done, and the line
 under them counts them, with "dismiss all" (those done) and an arrow to
 hide or show them. They update four times a second.
+Options > popup notifications stages the approximate maximum width (16–256
+characters, default 56) and the force-fixed-width switch (default off). Apply
+persists both. Each card captures these settings when it first enters the oldest
+ten shown, so existing cards retain their policy across Apply and later text or
+progress updates; newly shown cards use the saved policy. Wrapped text respects
+the cap and gauges reserve 90% of it. The native bold title font supplies the
+character measurement.
 
 The status bar at the bottom says, as the reference's does, the page's
 status (its files, or the selection's) and, on the right, the network's:

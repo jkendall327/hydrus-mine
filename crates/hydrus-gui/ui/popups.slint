@@ -9,6 +9,8 @@ import { Theme } from "theme.slint";
 import { DownloadControl, DownloadLine } from "importing.slint";
 
 export struct PopupData {
+    width-characters: int,
+    fixed-width: bool,
     title: string,
     text-1: string,
     // a gauge: shown, how far, or going with no end known
@@ -46,8 +48,17 @@ export component PopupStack inherits Rectangle {
     callback show-files(int);
     callback copy-traceback(int);
     callback dismiss-all();
-    // (as the reference's 56 characters)
-    width: 400px;
+    callback card-measured(int,length,length);
+    // Bold title font, as Qt's character-width conversion. Slint exposes text
+    // measurement rather than Qt's averageCharWidth; approximate its padded
+    // average using the same character sample, with native font metrics.
+    character-sample := Text {
+        visible: false;
+        text: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        font-weight: 700;
+    }
+    property <length> character-width: character-sample.preferred-width / 62 * 1.1;
+    width: layout.preferred-width;
     height: layout.preferred-height;
     background: Theme.window;
     border-width: 1px;
@@ -60,6 +71,16 @@ export component PopupStack inherits Rectangle {
         if root.expanded: VerticalLayout {
             spacing: 4px;
             for popup[i] in root.popups: card := Rectangle {
+                clip: true;
+                property <length> cap: round(popup.width-characters * root.character-width / 1px) * 1px;
+                property <length> measured-width: self.width;
+                property <length> measured-cap: self.cap;
+                changed measured-width => { root.card-measured(i,self.width,self.cap); }
+                changed measured-cap => { root.card-measured(i,self.width,self.cap); }
+                max-width: self.cap;
+                min-width: popup.fixed-width ? self.cap : (popup.has-gauge-1 || popup.has-gauge-2 ? self.cap * 0.9 + 4px : 0px);
+                preferred-width: popup.fixed-width ? self.cap : min(self.cap,body.preferred-width);
+                horizontal-stretch: 0;
                 border-width: 1px;
                 border-color: Theme.border;
                 property <bool> traceback-shown: false;
@@ -71,16 +92,18 @@ export component PopupStack inherits Rectangle {
                         }
                     }
                 }
-                VerticalLayout {
+                body := VerticalLayout {
                     padding: 2px;
                     spacing: 2px;
                     if popup.title != "": Text {
+                        max-width: card.cap - 4px;
                         text: popup.title;
                         font-weight: 700;
                         horizontal-alignment: center;
                         wrap: word-wrap;
                     }
                     if popup.text-1 != "": Text {
+                        max-width: card.cap - 4px;
                         text: popup.text-1;
                         wrap: word-wrap;
                     }
@@ -89,6 +112,7 @@ export component PopupStack inherits Rectangle {
                         going: popup.gauge-1-going;
                     }
                     if popup.text-2 != "": Text {
+                        max-width: card.cap - 4px;
                         text: popup.text-2;
                         wrap: word-wrap;
                     }
@@ -108,6 +132,7 @@ export component PopupStack inherits Rectangle {
                         clicked => { card.traceback-shown = !card.traceback-shown; }
                     }
                     if popup.traceback != "" && card.traceback-shown: Text {
+                        max-width: card.cap - 4px;
                         text: popup.traceback;
                         wrap: word-wrap;
                     }

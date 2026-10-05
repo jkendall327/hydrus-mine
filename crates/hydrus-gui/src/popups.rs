@@ -147,7 +147,7 @@ fn now() -> i64 {
     hydrus_core::time::TimestampMs::now().millis() / 1000
 }
 
-fn data(view: &PopupView) -> crate::PopupData {
+fn data(view: &PopupView, width: &hydrus_store::popup_width::PopupWidth) -> crate::PopupData {
     let gauge = |g: Option<Gauge>| match g {
         None => (false, 0.0, false),
         Some(Gauge::Going) => (true, 0.0, true),
@@ -157,6 +157,8 @@ fn data(view: &PopupView) -> crate::PopupData {
     let (has_gauge_2, gauge_2, gauge_2_going) = gauge(view.gauge_2);
     let text = |t: &Option<String>| t.clone().unwrap_or_default().into();
     crate::PopupData {
+        width_characters: width.effective_characters(),
+        fixed_width: width.fixed,
         title: text(&view.title),
         text_1: text(&view.text_1),
         has_gauge_1,
@@ -192,12 +194,30 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> std::rc::Rc<slin
     let hooks = Rc::new(hooks);
     let model: Rc<VecModel<crate::PopupData>> = Rc::new(VecModel::default());
     window.set_popups(ModelRc::from(model.clone()));
+    let card_widths = Rc::new(VecModel::<f32>::default());
+    let card_caps = Rc::new(VecModel::<f32>::default());
+    window.set_popup_card_widths(ModelRc::from(card_widths.clone()));
+    window.set_popup_card_caps(ModelRc::from(card_caps.clone()));
+    window.on_popup_card_measured({
+        let widths = card_widths.clone();
+        let caps = card_caps.clone();
+        move |i, w, c| {
+            if let Ok(i) = usize::try_from(i)
+                && i < widths.row_count()
+            {
+                widths.set_row_data(i, w);
+                caps.set_row_data(i, c);
+            }
+        }
+    });
+    let policies = Rc::new(RefCell::new(std::collections::HashMap::new()));
     // (those shown, to act on by their place)
     let shown: Rc<RefCell<Vec<PopupView>>> = Rc::default();
     let store = move |hooks: &Hooks| hooks.pages.borrow().store().clone();
     let refresh: Rc<dyn Fn()> = {
         let hooks = hooks.clone();
         let shown = shown.clone();
+        let policies = policies.clone();
         let weak = window.as_weak();
         Rc::new(move || {
             let Some(window) = weak.upgrade() else { return };
@@ -210,20 +230,34 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> std::rc::Rc<slin
             };
             let formatting = hydrus_gui_model::gui_format::preferences(&store(&hooks));
             let (views, summary) = self::shown_with_figures(&jobs, formatting.figures);
+            let preferences = store(&hooks)
+                .read(hydrus_store::settings::get::<hydrus_store::popup_width::PopupWidth>)
+                .unwrap_or_default();
+            let mut policies = policies.borrow_mut();
+            // Qt creates a card when it first enters the oldest-ten window.
+            // Later text/progress updates and Options Apply preserve that card.
+            policies.retain(|key, _| views.iter().any(|view| &view.key == key));
             // (changed in place: rows made anew under the pointer would
             // lose its press)
             for (i, view) in views.iter().enumerate() {
-                let row = data(view);
+                let policy = policies
+                    .entry(view.key)
+                    .or_insert_with(|| preferences.clone());
+                let row = data(view, policy);
                 if i < model.row_count() {
                     if model.row_data(i).as_ref() != Some(&row) {
                         model.set_row_data(i, row);
                     }
                 } else {
+                    card_widths.push(0.0);
+                    card_caps.push(0.0);
                     model.push(row);
                 }
             }
             while model.row_count() > views.len() {
                 model.remove(model.row_count() - 1);
+                card_widths.remove(card_widths.row_count() - 1);
+                card_caps.remove(card_caps.row_count() - 1);
             }
             let summary = if jobs.is_empty() {
                 String::new()

@@ -1,0 +1,883 @@
+{
+  "defaults": {
+    "characters": 56,
+    "fixed": false
+  },
+  "range": [
+    16,
+    256
+  ],
+  "events": [
+    {
+      "input": [
+        16,
+        false
+      ],
+      "before": {
+        "characters": 56,
+        "fixed": false
+      },
+      "staged": {
+        "characters": 56,
+        "fixed": false
+      },
+      "draft": {
+        "characters": 16,
+        "fixed": false
+      },
+      "saved": {
+        "characters": 16,
+        "fixed": false
+      },
+      "round_trip": {
+        "characters": 16,
+        "fixed": false
+      },
+      "reopened": {
+        "characters": 16,
+        "fixed": false
+      },
+      "samples": [
+        {
+          "text": "short",
+          "gauge": false,
+          "expected_cap": 123,
+          "minimum": 0,
+          "maximum": 123,
+          "width": 35,
+          "hint": 35,
+          "title_maximum": 119,
+          "text_maximum": 119,
+          "gauge_minimum": 110
+        },
+        {
+          "text": "synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words ",
+          "gauge": false,
+          "expected_cap": 123,
+          "minimum": 0,
+          "maximum": 123,
+          "width": 96,
+          "hint": 96,
+          "title_maximum": 119,
+          "text_maximum": 119,
+          "gauge_minimum": 110
+        },
+        {
+          "text": "short",
+          "gauge": true,
+          "expected_cap": 123,
+          "minimum": 0,
+          "maximum": 123,
+          "width": 116,
+          "hint": 116,
+          "title_maximum": 119,
+          "text_maximum": 119,
+          "gauge_minimum": 110
+        }
+      ]
+    },
+    {
+      "input": [
+        56,
+        false
+      ],
+      "before": {
+        "characters": 16,
+        "fixed": false
+      },
+      "staged": {
+        "characters": 16,
+        "fixed": false
+      },
+      "draft": {
+        "characters": 56,
+        "fixed": false
+      },
+      "saved": {
+        "characters": 56,
+        "fixed": false
+      },
+      "round_trip": {
+        "characters": 56,
+        "fixed": false
+      },
+      "reopened": {
+        "characters": 56,
+        "fixed": false
+      },
+      "samples": [
+        {
+          "text": "short",
+          "gauge": false,
+          "expected_cap": 431,
+          "minimum": 0,
+          "maximum": 431,
+          "width": 35,
+          "hint": 35,
+          "title_maximum": 427,
+          "text_maximum": 427,
+          "gauge_minimum": 387
+        },
+        {
+          "text": "synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words ",
+          "gauge": false,
+          "expected_cap": 431,
+          "minimum": 0,
+          "maximum": 431,
+          "width": 415,
+          "hint": 415,
+          "title_maximum": 427,
+          "text_maximum": 427,
+          "gauge_minimum": 387
+        },
+        {
+          "text": "short",
+          "gauge": true,
+          "expected_cap": 431,
+          "minimum": 0,
+          "maximum": 431,
+          "width": 393,
+          "hint": 393,
+          "title_maximum": 427,
+          "text_maximum": 427,
+          "gauge_minimum": 387
+        }
+      ]
+    },
+    {
+      "input": [
+        256,
+        false
+      ],
+      "before": {
+        "characters": 56,
+        "fixed": false
+      },
+      "staged": {
+        "characters": 56,
+        "fixed": false
+      },
+      "draft": {
+        "characters": 256,
+        "fixed": false
+      },
+      "saved": {
+        "characters": 256,
+        "fixed": false
+      },
+      "round_trip": {
+        "characters": 256,
+        "fixed": false
+      },
+      "reopened": {
+        "characters": 256,
+        "fixed": false
+      },
+      "samples": [
+        {
+          "text": "short",
+          "gauge": false,
+          "expected_cap": 1971,
+          "minimum": 0,
+          "maximum": 1971,
+          "width": 35,
+          "hint": 35,
+          "title_maximum": 1967,
+          "text_maximum": 1967,
+          "gauge_minimum": 1773
+        },
+        {
+          "text": "synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words ",
+          "gauge": false,
+          "expected_cap": 1971,
+          "minimum": 0,
+          "maximum": 1971,
+          "width": 540,
+          "hint": 540,
+          "title_maximum": 1967,
+          "text_maximum": 1967,
+          "gauge_minimum": 1773
+        },
+        {
+          "text": "short",
+          "gauge": true,
+          "expected_cap": 1971,
+          "minimum": 0,
+          "maximum": 1971,
+          "width": 1779,
+          "hint": 1779,
+          "title_maximum": 1967,
+          "text_maximum": 1967,
+          "gauge_minimum": 1773
+        }
+      ]
+    },
+    {
+      "input": [
+        16,
+        true
+      ],
+      "before": {
+        "characters": 256,
+        "fixed": false
+      },
+      "staged": {
+        "characters": 256,
+        "fixed": false
+      },
+      "draft": {
+        "characters": 16,
+        "fixed": true
+      },
+      "saved": {
+        "characters": 16,
+        "fixed": true
+      },
+      "round_trip": {
+        "characters": 16,
+        "fixed": true
+      },
+      "reopened": {
+        "characters": 16,
+        "fixed": true
+      },
+      "samples": [
+        {
+          "text": "short",
+          "gauge": false,
+          "expected_cap": 123,
+          "minimum": 123,
+          "maximum": 123,
+          "width": 123,
+          "hint": 35,
+          "title_maximum": 119,
+          "text_maximum": 119,
+          "gauge_minimum": 110
+        },
+        {
+          "text": "synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words ",
+          "gauge": false,
+          "expected_cap": 123,
+          "minimum": 123,
+          "maximum": 123,
+          "width": 123,
+          "hint": 96,
+          "title_maximum": 119,
+          "text_maximum": 119,
+          "gauge_minimum": 110
+        },
+        {
+          "text": "short",
+          "gauge": true,
+          "expected_cap": 123,
+          "minimum": 123,
+          "maximum": 123,
+          "width": 123,
+          "hint": 116,
+          "title_maximum": 119,
+          "text_maximum": 119,
+          "gauge_minimum": 110
+        }
+      ]
+    },
+    {
+      "input": [
+        80,
+        true
+      ],
+      "before": {
+        "characters": 16,
+        "fixed": true
+      },
+      "staged": {
+        "characters": 16,
+        "fixed": true
+      },
+      "draft": {
+        "characters": 80,
+        "fixed": true
+      },
+      "saved": {
+        "characters": 80,
+        "fixed": true
+      },
+      "round_trip": {
+        "characters": 80,
+        "fixed": true
+      },
+      "reopened": {
+        "characters": 80,
+        "fixed": true
+      },
+      "samples": [
+        {
+          "text": "short",
+          "gauge": false,
+          "expected_cap": 616,
+          "minimum": 616,
+          "maximum": 616,
+          "width": 616,
+          "hint": 35,
+          "title_maximum": 612,
+          "text_maximum": 612,
+          "gauge_minimum": 554
+        },
+        {
+          "text": "synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words ",
+          "gauge": false,
+          "expected_cap": 616,
+          "minimum": 616,
+          "maximum": 616,
+          "width": 616,
+          "hint": 540,
+          "title_maximum": 612,
+          "text_maximum": 612,
+          "gauge_minimum": 554
+        },
+        {
+          "text": "short",
+          "gauge": true,
+          "expected_cap": 616,
+          "minimum": 616,
+          "maximum": 616,
+          "width": 616,
+          "hint": 560,
+          "title_maximum": 612,
+          "text_maximum": 612,
+          "gauge_minimum": 554
+        }
+      ]
+    },
+    {
+      "input": [
+        256,
+        true
+      ],
+      "before": {
+        "characters": 80,
+        "fixed": true
+      },
+      "staged": {
+        "characters": 80,
+        "fixed": true
+      },
+      "draft": {
+        "characters": 256,
+        "fixed": true
+      },
+      "saved": {
+        "characters": 256,
+        "fixed": true
+      },
+      "round_trip": {
+        "characters": 256,
+        "fixed": true
+      },
+      "reopened": {
+        "characters": 256,
+        "fixed": true
+      },
+      "samples": [
+        {
+          "text": "short",
+          "gauge": false,
+          "expected_cap": 1971,
+          "minimum": 1971,
+          "maximum": 1971,
+          "width": 1971,
+          "hint": 35,
+          "title_maximum": 1967,
+          "text_maximum": 1967,
+          "gauge_minimum": 1773
+        },
+        {
+          "text": "synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words ",
+          "gauge": false,
+          "expected_cap": 1971,
+          "minimum": 1971,
+          "maximum": 1971,
+          "width": 1971,
+          "hint": 540,
+          "title_maximum": 1967,
+          "text_maximum": 1967,
+          "gauge_minimum": 1773
+        },
+        {
+          "text": "short",
+          "gauge": true,
+          "expected_cap": 1971,
+          "minimum": 1971,
+          "maximum": 1971,
+          "width": 1971,
+          "hint": 1779,
+          "title_maximum": 1967,
+          "text_maximum": 1967,
+          "gauge_minimum": 1773
+        }
+      ]
+    },
+    {
+      "input": [
+        0,
+        false
+      ],
+      "before": {
+        "characters": 256,
+        "fixed": true
+      },
+      "staged": {
+        "characters": 256,
+        "fixed": true
+      },
+      "draft": {
+        "characters": 16,
+        "fixed": false
+      },
+      "saved": {
+        "characters": 16,
+        "fixed": false
+      },
+      "round_trip": {
+        "characters": 16,
+        "fixed": false
+      },
+      "reopened": {
+        "characters": 16,
+        "fixed": false
+      },
+      "samples": [
+        {
+          "text": "short",
+          "gauge": false,
+          "expected_cap": 123,
+          "minimum": 0,
+          "maximum": 123,
+          "width": 35,
+          "hint": 35,
+          "title_maximum": 119,
+          "text_maximum": 119,
+          "gauge_minimum": 110
+        },
+        {
+          "text": "synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words ",
+          "gauge": false,
+          "expected_cap": 123,
+          "minimum": 0,
+          "maximum": 123,
+          "width": 96,
+          "hint": 96,
+          "title_maximum": 119,
+          "text_maximum": 119,
+          "gauge_minimum": 110
+        },
+        {
+          "text": "short",
+          "gauge": true,
+          "expected_cap": 123,
+          "minimum": 0,
+          "maximum": 123,
+          "width": 116,
+          "hint": 116,
+          "title_maximum": 119,
+          "text_maximum": 119,
+          "gauge_minimum": 110
+        }
+      ]
+    },
+    {
+      "input": [
+        999,
+        true
+      ],
+      "before": {
+        "characters": 16,
+        "fixed": false
+      },
+      "staged": {
+        "characters": 16,
+        "fixed": false
+      },
+      "draft": {
+        "characters": 256,
+        "fixed": true
+      },
+      "saved": {
+        "characters": 256,
+        "fixed": true
+      },
+      "round_trip": {
+        "characters": 256,
+        "fixed": true
+      },
+      "reopened": {
+        "characters": 256,
+        "fixed": true
+      },
+      "samples": [
+        {
+          "text": "short",
+          "gauge": false,
+          "expected_cap": 1971,
+          "minimum": 1971,
+          "maximum": 1971,
+          "width": 1971,
+          "hint": 35,
+          "title_maximum": 1967,
+          "text_maximum": 1967,
+          "gauge_minimum": 1773
+        },
+        {
+          "text": "synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words synthetic words ",
+          "gauge": false,
+          "expected_cap": 1971,
+          "minimum": 1971,
+          "maximum": 1971,
+          "width": 1971,
+          "hint": 540,
+          "title_maximum": 1967,
+          "text_maximum": 1967,
+          "gauge_minimum": 1773
+        },
+        {
+          "text": "short",
+          "gauge": true,
+          "expected_cap": 1971,
+          "minimum": 1971,
+          "maximum": 1971,
+          "width": 1971,
+          "hint": 1779,
+          "title_maximum": 1967,
+          "text_maximum": 1967,
+          "gauge_minimum": 1773
+        }
+      ]
+    }
+  ],
+  "loaded": [
+    {
+      "before": {
+        "characters": -1,
+        "fixed": true
+      },
+      "shown": {
+        "characters": 16,
+        "fixed": true
+      },
+      "saved": {
+        "characters": 16,
+        "fixed": true
+      }
+    },
+    {
+      "before": {
+        "characters": 0,
+        "fixed": true
+      },
+      "shown": {
+        "characters": 16,
+        "fixed": true
+      },
+      "saved": {
+        "characters": 16,
+        "fixed": true
+      }
+    },
+    {
+      "before": {
+        "characters": 15,
+        "fixed": true
+      },
+      "shown": {
+        "characters": 16,
+        "fixed": true
+      },
+      "saved": {
+        "characters": 16,
+        "fixed": true
+      }
+    },
+    {
+      "before": {
+        "characters": 257,
+        "fixed": true
+      },
+      "shown": {
+        "characters": 256,
+        "fixed": true
+      },
+      "saved": {
+        "characters": 256,
+        "fixed": true
+      }
+    },
+    {
+      "before": {
+        "characters": 999,
+        "fixed": true
+      },
+      "shown": {
+        "characters": 256,
+        "fixed": true
+      },
+      "saved": {
+        "characters": 256,
+        "fixed": true
+      }
+    }
+  ],
+  "cancel": {
+    "before": {
+      "characters": 56,
+      "fixed": false
+    },
+    "draft": {
+      "characters": 100,
+      "fixed": true
+    },
+    "after": {
+      "characters": 56,
+      "fixed": false
+    }
+  },
+  "live": {
+    "before": {
+      "minimum": 0,
+      "maximum": 431,
+      "width": 35,
+      "hint": 35,
+      "title_maximum": 427,
+      "text_maximum": 427,
+      "gauge_minimum": 387
+    },
+    "after": {
+      "minimum": 0,
+      "maximum": 431,
+      "width": 418,
+      "hint": 418,
+      "title_maximum": 427,
+      "text_maximum": 427,
+      "gauge_minimum": 387
+    },
+    "successor": {
+      "minimum": 770,
+      "maximum": 770,
+      "width": 770,
+      "hint": 35,
+      "title_maximum": 766,
+      "text_maximum": 766,
+      "gauge_minimum": 693
+    },
+    "saved": {
+      "characters": 100,
+      "fixed": true
+    }
+  },
+  "pending": {
+    "before": [
+      {
+        "text": "synthetic popup 0",
+        "minimum": 0,
+        "maximum": 431,
+        "width": 100,
+        "hint": 106,
+        "title_maximum": 427,
+        "text_maximum": 427,
+        "gauge_minimum": 387
+      },
+      {
+        "text": "synthetic popup 1",
+        "minimum": 0,
+        "maximum": 431,
+        "width": 100,
+        "hint": 102,
+        "title_maximum": 427,
+        "text_maximum": 427,
+        "gauge_minimum": 387
+      },
+      {
+        "text": "synthetic popup 2",
+        "minimum": 0,
+        "maximum": 431,
+        "width": 100,
+        "hint": 105,
+        "title_maximum": 427,
+        "text_maximum": 427,
+        "gauge_minimum": 387
+      },
+      {
+        "text": "synthetic popup 3",
+        "minimum": 0,
+        "maximum": 431,
+        "width": 100,
+        "hint": 105,
+        "title_maximum": 427,
+        "text_maximum": 427,
+        "gauge_minimum": 387
+      },
+      {
+        "text": "synthetic popup 4",
+        "minimum": 0,
+        "maximum": 431,
+        "width": 100,
+        "hint": 105,
+        "title_maximum": 427,
+        "text_maximum": 427,
+        "gauge_minimum": 387
+      },
+      {
+        "text": "synthetic popup 5",
+        "minimum": 0,
+        "maximum": 431,
+        "width": 100,
+        "hint": 105,
+        "title_maximum": 427,
+        "text_maximum": 427,
+        "gauge_minimum": 387
+      },
+      {
+        "text": "synthetic popup 6",
+        "minimum": 0,
+        "maximum": 431,
+        "width": 100,
+        "hint": 105,
+        "title_maximum": 427,
+        "text_maximum": 427,
+        "gauge_minimum": 387
+      },
+      {
+        "text": "synthetic popup 7",
+        "minimum": 0,
+        "maximum": 431,
+        "width": 100,
+        "hint": 104,
+        "title_maximum": 427,
+        "text_maximum": 427,
+        "gauge_minimum": 387
+      },
+      {
+        "text": "synthetic popup 8",
+        "minimum": 0,
+        "maximum": 431,
+        "width": 100,
+        "hint": 105,
+        "title_maximum": 427,
+        "text_maximum": 427,
+        "gauge_minimum": 387
+      },
+      {
+        "text": "synthetic popup 9",
+        "minimum": 0,
+        "maximum": 431,
+        "width": 100,
+        "hint": 105,
+        "title_maximum": 427,
+        "text_maximum": 427,
+        "gauge_minimum": 387
+      }
+    ],
+    "after": [
+      {
+        "text": "synthetic popup 1",
+        "minimum": 0,
+        "maximum": 431,
+        "width": 431,
+        "hint": 102,
+        "title_maximum": 427,
+        "text_maximum": 427,
+        "gauge_minimum": 387
+      },
+      {
+        "text": "synthetic popup 2",
+        "minimum": 0,
+        "maximum": 431,
+        "width": 431,
+        "hint": 105,
+        "title_maximum": 427,
+        "text_maximum": 427,
+        "gauge_minimum": 387
+      },
+      {
+        "text": "synthetic popup 3",
+        "minimum": 0,
+        "maximum": 431,
+        "width": 431,
+        "hint": 105,
+        "title_maximum": 427,
+        "text_maximum": 427,
+        "gauge_minimum": 387
+      },
+      {
+        "text": "synthetic popup 4",
+        "minimum": 0,
+        "maximum": 431,
+        "width": 431,
+        "hint": 105,
+        "title_maximum": 427,
+        "text_maximum": 427,
+        "gauge_minimum": 387
+      },
+      {
+        "text": "synthetic popup 5",
+        "minimum": 0,
+        "maximum": 431,
+        "width": 431,
+        "hint": 105,
+        "title_maximum": 427,
+        "text_maximum": 427,
+        "gauge_minimum": 387
+      },
+      {
+        "text": "synthetic popup 6",
+        "minimum": 0,
+        "maximum": 431,
+        "width": 431,
+        "hint": 105,
+        "title_maximum": 427,
+        "text_maximum": 427,
+        "gauge_minimum": 387
+      },
+      {
+        "text": "synthetic popup 7",
+        "minimum": 0,
+        "maximum": 431,
+        "width": 431,
+        "hint": 104,
+        "title_maximum": 427,
+        "text_maximum": 427,
+        "gauge_minimum": 387
+      },
+      {
+        "text": "synthetic popup 8",
+        "minimum": 0,
+        "maximum": 431,
+        "width": 431,
+        "hint": 105,
+        "title_maximum": 427,
+        "text_maximum": 427,
+        "gauge_minimum": 387
+      },
+      {
+        "text": "synthetic popup 9",
+        "minimum": 0,
+        "maximum": 431,
+        "width": 431,
+        "hint": 105,
+        "title_maximum": 427,
+        "text_maximum": 427,
+        "gauge_minimum": 387
+      },
+      {
+        "text": "synthetic popup 10",
+        "minimum": 616,
+        "maximum": 616,
+        "width": 616,
+        "hint": 110,
+        "title_maximum": 612,
+        "text_maximum": 612,
+        "gauge_minimum": 554
+      }
+    ],
+    "count": 10,
+    "in_view": 10
+  }
+}

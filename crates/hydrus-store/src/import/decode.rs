@@ -569,6 +569,11 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &formatting)?;
+    let mut popup_width = crate::popup_width::PopupWidth::default();
+    if let Some(options) = &options {
+        popup_width.apply_legacy(&options.integers, &options.booleans);
+    }
+    insert_setting(&mut input, &popup_width)?;
     let mut preferences = crate::settings::OptionsPreferences::default();
     if let Some(options) = &options {
         if let Some(&value) = options.booleans.get("remember_options_window_panel") {
@@ -4470,6 +4475,52 @@ mod tests {
                 .unwrap(),
             limits
         );
+    }
+
+    #[test]
+    fn popup_width_imports_raw_reference_preferences_and_reopens_them() {
+        use crate::popup_width::PopupWidth;
+        for characters in [16, 100, 256, 999] {
+            let source = hydrus_testkit::legacy_fixture("basic");
+            let replacement =
+                format!(r#"[[0, "popup_message_character_width"], [0, {characters}]]"#);
+            edit_client_options(
+                source.path(),
+                &[
+                    (
+                        r#"[[0, "popup_message_character_width"], [0, 56]]"#,
+                        &replacement,
+                    ),
+                    (
+                        r#"[[0, "popup_message_force_min_width"], [0, false]]"#,
+                        r#"[[0, "popup_message_force_min_width"], [0, true]]"#,
+                    ),
+                ],
+            );
+            let destination = tempfile::tempdir().unwrap();
+            crate::import::import_legacy(
+                source.path(),
+                &destination.path().join(crate::store::DB_FILE_NAME),
+            )
+            .unwrap();
+            let store = crate::Store::open(destination.path()).unwrap();
+            let saved = store.read(crate::settings::get::<PopupWidth>).unwrap();
+            assert_eq!(
+                saved,
+                PopupWidth {
+                    characters,
+                    fixed: true
+                }
+            );
+            drop(store);
+            assert_eq!(
+                crate::Store::open(destination.path())
+                    .unwrap()
+                    .read(crate::settings::get::<PopupWidth>)
+                    .unwrap(),
+                saved
+            );
+        }
     }
 
     #[test]

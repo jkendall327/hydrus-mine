@@ -260,6 +260,7 @@ fn the_options_window_applies_its_changes() {
             "media viewer",
             "media viewer hovers",
             "notes",
+            "popup notifications",
             "ratings",
             "regex favourites",
             "system",

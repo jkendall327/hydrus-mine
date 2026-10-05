@@ -975,6 +975,21 @@ Byte ranges are checked by the `file_ranges` conformance scenario, renders by
 
 Checked by the `popups` conformance scenario.
 
+Popup width Options controls are staged, imported and persisted, and reach the
+real oldest-ten popup consumer. Both clients capture a card's width policy at
+construction; Apply affects newly displayed cards while existing cards retain
+their limit. Qt uses padded averageCharWidth with a sample-text fallback; native
+Slint measures the bold-font sample because it has no averageCharWidth API.
+Approximate pixel widths, wrapped-text size hints and the summary-bar minimum
+therefore differ with the platform font/layout. Both support variable width up
+to the cap, forced fixed width, and the gauge's 90% minimum. This two-control
+slice does not add freeze-on-other-monitor, freeze-when-minimised or Client API
+cookie/header notification switches. Popup/notifications parents remain Partial.
+Actual Qt staging, bounds, loaded raw values, serialization/reopen and existing/
+successor card geometry and real pending-eleventh queue admission are recorded
+by `oracle/record_popup_width.py`. Authored
+native/store/model regression source awaits hosted CI; no Rust runs locally.
+
 - **The popups are the store's**, so the daemon's Client API and the
   client share them: the client shows the oldest ten ("in view", as
   `only_in_view` lists them), whether or not it is open, and a dismissed

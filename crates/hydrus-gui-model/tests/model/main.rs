@@ -144,6 +144,7 @@ mod viewer_drag;
 mod window_rescue;
 
 mod gui_format;
+mod popup_width;
 mod viewer_tag_wheel;
 
 mod idle_timeout_options;
