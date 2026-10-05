@@ -1448,3 +1448,7 @@ impl Setting for hydrus_core::external_calls::Manager {
 impl Setting for hydrus_core::tag_presentation::SiblingConnectorColours {
     const KEY: &'static str = "sibling_connector_colours";
 }
+
+impl Setting for hydrus_core::open_externally::Routing {
+    const KEY: &'static str = "open_externally";
+}

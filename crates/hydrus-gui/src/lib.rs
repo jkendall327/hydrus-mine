@@ -86,10 +86,12 @@ pub mod merge_options_window;
 mod metadata_file_jobs;
 pub mod mpv;
 pub mod network_header_approval;
+pub mod open_externally_launch;
 pub mod options_deletion;
 mod options_external_calls;
 pub mod options_frames;
 pub mod options_namespace_colours;
+pub mod options_open_externally;
 mod options_palette;
 mod options_window;
 mod page;
@@ -297,6 +299,8 @@ pub struct Bound {
     pub options_banner_child: tag_banner_window::Slot,
     /// Options-owned registered-call and command child family.
     pub options_external_calls: external_call_window::Slots,
+    pub options_open_externally: options_open_externally::Slots,
+    pub external_launches: open_externally_launch::Launcher,
     pub options_suggested_tags_slot: tag_suggestions_window::Slots,
     /// The Ctrl+P command palette while open.
     pub command_palette: command_palette_window::Slot,
@@ -472,6 +476,18 @@ fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store, rows: &T
 /// Show `pages` in `window`, and let the window change them.
 pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     about_window::note_boot();
+    window.invoke_retire_external_launches();
+    let external_launches = open_externally_launch::Launcher::new(Rc::new({
+        let weak = window.as_weak();
+        move || {
+            weak.upgrade()
+                .is_some_and(|window| window.window().is_visible())
+        }
+    }));
+    window.on_retire_external_launches({
+        let launcher = external_launches.clone();
+        move || launcher.cancel()
+    });
     let pages = Rc::new(RefCell::new(pages));
     let session_autosave = session_autosave::bind(window, &pages);
     let first = pages.borrow_mut().current();
@@ -1746,9 +1762,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         Rc::new({
             let preview = preview.clone();
             let shortcuts = shortcuts.clone();
+            let launcher = external_launches.clone();
             move || {
                 preview.close();
                 shortcuts.retire();
+                launcher.cancel();
             }
         }),
     );
@@ -1885,6 +1903,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let options_frame_child: options_frames::Slot = Rc::default();
     let options_banner_child: tag_banner_window::Slot = Rc::default();
     let options_external_calls = external_call_window::Slots::default();
+    let options_open_externally = options_open_externally::Slots::default();
     let options_suggested_tags_slot = tag_suggestions_window::Slots::default();
     let about: Rc<RefCell<Option<AboutWindow>>> = Rc::default();
     let services_review: Rc<RefCell<Option<ServicesReviewWindow>>> = Rc::default();
@@ -2061,6 +2080,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let frame_slot = options_frame_child.clone();
                 let banner_slot = options_banner_child.clone();
                 let external_slots = options_external_calls.clone();
+                let routing_slots = options_open_externally.clone();
                 let suggested_slot = options_suggested_tags_slot.clone();
                 let checker_slot = checker_options.clone();
                 let viewer = viewer.clone();
@@ -2109,6 +2129,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         &banner_slot,
                         &suggested_slot,
                         &external_slots,
+                        &routing_slots,
                         applied,
                     ) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
@@ -3603,6 +3624,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // (`_HasFocusSingleton`)
     window.on_open_externally({
         let page = page.clone();
+        let external_launches = external_launches.clone();
         move || {
             let page = page();
             let page = page.borrow();
@@ -3610,10 +3632,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 .focused()
                 .map(|i| page.results()[i])
                 .filter(|&item| page.collection(item).is_none());
-            if let Some(path) =
-                focused.and_then(|f| thumbnail_menu::paths(page.store(), &[f]).pop())
-            {
-                launch(&path);
+            if let Some(file) = focused {
+                external_launches.file(page.store(), file);
             }
         }
     });
@@ -3733,6 +3753,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let open_export_files = open_export_files.clone();
         let open_embedded_metadata = open_embedded_metadata.clone();
         let files_changed = files_changed.clone();
+        let external_launches = external_launches.clone();
         move |id| {
             use thumbnail_menu::Action;
             let (Some(window), Ok(id)) = (weak.upgrade(), usize::try_from(id)) else {
@@ -3929,6 +3950,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     let page = page.borrow();
                     let menu = MenuTarget {
                         store: page.store(),
+                        launcher: &external_launches,
                         location: page.location(),
                         selected: page.selected_files(),
                         focused: page.focused().map(|i| page.results()[i]),
@@ -3937,7 +3959,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     };
                     let state = menu_state.borrow();
                     shared_menu_action(action, &label, &menu, &state.2, &change_pages, &|urls| {
-                        ask(Asked::OpenUrls(urls));
+                        ask(Asked::OpenUrls(urls, external_launches.clone()));
                     });
                 }
             }
@@ -4098,6 +4120,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         options_banner_child,
         options_suggested_tags_slot,
         options_external_calls,
+        options_open_externally,
+        external_launches,
         command_palette,
         about,
         services_review,
@@ -4151,6 +4175,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
 /// file, where they are, and (for a page) how it sorts and collects.
 struct MenuTarget<'a> {
     store: &'a hydrus_store::Store,
+    launcher: &'a open_externally_launch::Launcher,
     location: &'a hydrus_search::LocationContext,
     selected: Vec<HashId>,
     focused: Option<HashId>,
@@ -4195,8 +4220,14 @@ fn shared_menu_action(
         Action::OpenExternally | Action::OpenInWebBrowser | Action::OpenInFileBrowser => {
             if let Some(path) = thumbnail_menu::paths(store, &focused).pop() {
                 match action {
-                    Action::OpenExternally => launch(&path),
-                    Action::OpenInWebBrowser => launch(&file_url(&path)),
+                    Action::OpenExternally => {
+                        if let Some(file) = target.focused {
+                            target.launcher.file(store, file);
+                        }
+                    }
+                    Action::OpenInWebBrowser => {
+                        target.launcher.url(store, &file_url(&path));
+                    }
                     _ => show_in_file_browser(&path),
                 }
             }
@@ -4249,7 +4280,9 @@ fn shared_menu_action(
                 urls.sort();
                 match urls.len() {
                     0 => {}
-                    1 => launch(&urls[0]),
+                    1 => {
+                        target.launcher.url(store, &urls[0]);
+                    }
                     _ => ask_urls(urls),
                 }
             }
@@ -4799,7 +4832,7 @@ enum Asked {
     /// Locking the page's search to its files, asking this.
     LockSearch(&'static str),
     /// Opening these URLs in the web browser.
-    OpenUrls(Vec<String>),
+    OpenUrls(Vec<String>, open_externally_launch::Launcher),
     /// Closing the page at this depth and index, asking this.
     ClosePage(usize, usize, String),
     /// Removing a downloader page's searches or watchers, asking this.
@@ -4828,7 +4861,7 @@ impl Asked {
             Self::ClosePage(_, _, question)
             | Self::RemoveQueries(_, question)
             | Self::Then(question, _) => question.clone(),
-            Self::OpenUrls(urls) => {
+            Self::OpenUrls(urls, _) => {
                 let mut question = format!("Open the {} URLs in your web browser?", urls.len());
                 if urls.len() > 10 {
                     question.push_str(" This will take some time.");
@@ -4862,9 +4895,9 @@ impl Asked {
                 then();
                 Ok(())
             }
-            Self::OpenUrls(urls) => {
+            Self::OpenUrls(urls, launcher) => {
                 for url in urls {
-                    launch(url);
+                    launcher.url(store, url);
                 }
                 Ok(())
             }
@@ -4954,6 +4987,20 @@ fn open_viewer(
     } = hooks;
     delete_files_window::cancel(&viewer_delete);
     let window = MediaViewerWindow::new()?;
+    let external_launches = open_externally_launch::Launcher::new(Rc::new({
+        let weak = window.as_weak();
+        let slot = Rc::downgrade(slot);
+        move || {
+            weak.upgrade().is_some_and(|window| {
+                window.window().is_visible()
+                    && slot.upgrade().is_some_and(|slot| {
+                        slot.borrow()
+                            .as_ref()
+                            .is_some_and(|current| std::ptr::eq(current.window(), window.window()))
+                    })
+            })
+        }
+    }));
     let viewing_stats = viewing_tracking::CanvasTracker::new(
         model.store().clone(),
         hydrus_core::CanvasType::MediaViewer,
@@ -5111,13 +5158,15 @@ fn open_viewer(
         }
     });
     window.on_url_clicked({
+        let external_launches = external_launches.clone();
+        let model = model.clone();
         let weak = window.as_weak();
         move |index| {
             if let (Some(window), Ok(index)) = (weak.upgrade(), usize::try_from(index))
                 && let Some(link) = window.get_url_links().row_data(index)
                 && hydrus_core::url::functions::check_full_url(link.url.as_str()).is_ok()
             {
-                launch(link.url.as_str());
+                external_launches.url(model.borrow().store(), link.url.as_str());
             }
         }
     });
@@ -5656,6 +5705,7 @@ fn open_viewer(
     // ctrl+e: the file as the OS opens it, pausing one that plays
     // (`_MediaFocusWentToExternalProgram`)
     window.on_open_externally({
+        let external_launches = external_launches.clone();
         let model = model.clone();
         let playback = playback.clone();
         let animator = animator.clone();
@@ -5664,10 +5714,9 @@ fn open_viewer(
                 let model = model.borrow();
                 (model.store().clone(), model.current())
             };
-            let Some(path) = thumbnail_menu::paths(&store, &[file]).pop() else {
+            if !external_launches.file(&store, file) {
                 return;
-            };
-            launch(&path);
+            }
             if viewer::timing(&store, file).0.is_some_and(|ms| ms > 0) {
                 playback.set_paused(true);
                 animator.set_paused(true);
@@ -5694,6 +5743,7 @@ fn open_viewer(
         let viewer_slot = slot.clone();
         let remove_file = remove_file.clone();
         let show_info = show_info.clone();
+        let external_launches = external_launches.clone();
         move |asked: ViewerAsked| {
             if let Some(window) = weak.upgrade() {
                 if let ViewerAsked::Delete(deletion, file) = &asked {
@@ -5752,7 +5802,9 @@ fn open_viewer(
                 }
                 let question = match &asked {
                     ViewerAsked::Delete(deletion, _) => deletion.question(1),
-                    ViewerAsked::OpenUrls(urls) => Asked::OpenUrls(urls.clone()).question(),
+                    ViewerAsked::OpenUrls(urls) => {
+                        Asked::OpenUrls(urls.clone(), external_launches.clone()).question()
+                    }
                 };
                 let auto_accept = if let ViewerAsked::Delete(deletion, file) = &asked {
                     !media_actions::confirm_deletion(model.borrow().store(), &[*file], deletion)
@@ -5867,6 +5919,7 @@ fn open_viewer(
         let show_audio = show_audio.clone();
         let ask = ask.clone();
         let weak = window.as_weak();
+        let external_launches = external_launches.clone();
         move |id| {
             use thumbnail_menu::Action;
             use viewer_menu::ViewerAction;
@@ -5981,6 +6034,7 @@ fn open_viewer(
                     let model = model.borrow();
                     let target = MenuTarget {
                         store: model.store(),
+                        launcher: &external_launches,
                         location: model.location(),
                         selected: vec![file],
                         focused: Some(file),
@@ -6054,6 +6108,7 @@ fn open_viewer(
         let model = model.clone();
         let show_info = show_info.clone();
         let weak = window.as_weak();
+        let external_launches = external_launches.clone();
         move |yes| {
             let asked = pending.borrow_mut().take();
             let Some(window) = weak.upgrade() else {
@@ -6064,7 +6119,7 @@ fn open_viewer(
                 Some(ViewerAsked::Delete(deletion, file)) => (deletion, file),
                 Some(ViewerAsked::OpenUrls(urls)) => {
                     let store = model.borrow().store().clone();
-                    Asked::OpenUrls(urls).act(&store, &|_| {});
+                    Asked::OpenUrls(urls, external_launches.clone()).act(&store, &|_| {});
                     return;
                 }
                 None => return,
@@ -6115,12 +6170,14 @@ fn open_viewer(
         let viewing = viewing.clone();
         let model = model.clone();
         let viewer_delete = viewer_delete.clone();
+        let external_launches = external_launches.clone();
         move || {
             let Some(window) = weak.upgrade() else { return };
             let current = slot
                 .borrow()
                 .as_ref()
                 .is_some_and(|current| std::ptr::eq(current.window(), window.window()));
+            external_launches.cancel();
             viewing_stats.close();
             // Own resources belong to this viewer, even after another viewer
             // occupies the shared slot. Its close must not leave a shown Slint

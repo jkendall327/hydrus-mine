@@ -138,6 +138,7 @@ mod related_weights;
 
 mod autocomplete_tabs;
 mod external_calls;
+mod open_externally;
 
 mod viewer_drag;
 mod window_rescue;

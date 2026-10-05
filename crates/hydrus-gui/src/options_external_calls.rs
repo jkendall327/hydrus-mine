@@ -202,9 +202,17 @@ pub(crate) fn bind(
     let show: Rc<dyn Fn()> = Rc::new({
         let weak = w.as_weak();
         let table = table.clone();
+        let editor = editor.clone();
         let has_open = has_open.clone();
         move || {
             if let Some(w) = weak.upgrade() {
+                let manager = editor.borrow().edited_external_calls();
+                if table.borrow().manager != manager {
+                    let mut table = table.borrow_mut();
+                    table.manager = manager;
+                    let (column, ascending) = (table.sort_column, table.ascending);
+                    table.sort(column, ascending);
+                }
                 let table = table.borrow();
                 w.set_external_call_rows(ModelRc::new(VecModel::from(
                     table

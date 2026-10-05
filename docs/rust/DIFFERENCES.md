@@ -2287,12 +2287,37 @@ multi-monitor reference cases supply only QApplication screen geometry; the actu
 GetSafePosition decision handler is unchanged. Native OS movement and authored
 Rust regressions remain pending hosted validation.
 
+Options > open externally now edits registered URL and MIME-specific file-call
+queues with owned choosers and a staged nested calls child. The eight finite
+Add/Edit/Delete/choose/order controls have executable Qt recordings and authored
+native/model persistence/consumer regressions; broader page/list parents remain
+Partial. The first/default route reaches main thumbnail and live viewer buttons,
+shortcuts and existing default menu actions; missing configured identities produce
+owned Information notices, while empty routes use the OS launcher. Specific empty
+filetype rows suppress inherited custom routes. Names wash only on parent Apply,
+with stable-key deduplication and no same-name remapping of deleted definitions.
+
+OS calls are regenerated only in the opened routing draft, then persisted on
+Apply, preserving registered-call-only transactions. Native regeneration assigns
+the correct single-file pipeline; the reference manager's missing-file-OS branch
+incorrectly assigns its generated file call the URL pipeline. Native choice
+windows use an owned scrollable button list; Qt dialog decorations, MIME column
+sorting/persistence, full inherited queue keyboard controls, deeper per-call
+menus and legacy executable-manager/routing import remain unported. Registered
+process launches run off the GUI thread and discard output, as the existing
+bounded executor does; asynchronous spawn/runtime failures show a visible owned
+notice if the owner survives. Viewer pause follows successful submission rather
+than waiting for a bounded external process to finish. Closing an owner suppresses
+late notices without closing an already submitted external program. Native
+regression sources and PNG render assertions await hosted CI; no local Cargo,
+Rust test or mutation execution is claimed.
+
 The registered external-call Options list now implements ordinary deletion,
 warning-aware duplication and both Add Defaults menu routes against executed Qt
 list-panel callbacks. Typed callable/process drafts and supported reference
 clipboard/JSON/PNG exchange are available, with independently owned children and
 parent Apply/Cancel. The broader list/reopen remains Partial: legacy executable
-manager settings are not migrated, opening Options does not regenerate missing
+manager settings are not migrated, opening only the registered-call page does not regenerate missing
 Default OS launch calls, and reference column-state persistence is absent.
 Supported column sorting itself uses the reference casefolded full-tuple tie
 break and writes the sorted Options draft.

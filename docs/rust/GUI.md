@@ -3234,6 +3234,32 @@ event geometry, defers zero-sized openings, and retains the one-shot decision.
 The headless regression verifies the exact rescue result and drop forwarding;
 its adapter cannot verify OS window positioning.
 
+Options > open externally now stages an ordered registered URL-call queue and
+single-file routes by filetype. Add/Edit show the registered-call chooser even
+with one remaining choice, excluding every identity already in that queue.
+Filetype Add keeps the reference general-class and searchable-type order and
+opens an owned calls child; Edit keeps the existing order, and Cancel discards
+that child. Queue arrows change the first/default call; removal captures the
+selection and asks first. Any selection containing “all files” protects all
+selected MIME rows from deletion. Parent Apply alone saves routes, washes removed
+or wrong-type keys and updates renamed labels; Cancel discards accepted children.
+The opened routing draft supplies registered OS defaults for empty queues.
+
+The main thumbnail and viewer default-open actions read current saved routes.
+Specific filetype entries replace general-class entries, then “all files”;
+an explicit empty specific entry uses the OS default. The first URL/file call
+receives typed URL or path/URI/hash/file-id inputs through the existing process
+pipeline. A configured missing or wrong-type call shows an owned Information/OK
+notice instead of silently trying another call. OS defaults use the existing
+native launcher. Dispatch rechecks current local storage membership even when
+file bytes remain. Accepted client close, main-window rebind and viewer close
+permanently retire their launchers and notice/completion callbacks;
+submitted external programs retain their own lifetime. Options children reject
+hidden and retired owners. Deeper per-call media/URL menus, routing import,
+column/keyboard persistence and full process output/error presentation remain
+Partial. `open_externally.json` and its Qt PNG record the list/chooser behavior;
+authored native replays await hosted CI.
+
 Options > external programs now has a staged registered-call table with name,
 job and command columns. Add/Edit own a detached callable editor and command
 queue; parent Cancel discards accepted child drafts, and parent Apply persists
@@ -3265,7 +3291,7 @@ direct child; output is discarded, and long-lived test calls use a 15 second
 deadline. Clipboard/JSON-file/PNG exchange reviews supported callable exports
 before changing the Options draft. These editor/exchange/runtime families remain
 partial: legacy executable-manager import and missing OS-call regeneration,
-per-type launch routing, OS-launch test execution, rule clipboard controls,
+deeper per-call launch menus and routing import, OS-launch test execution, rule clipboard controls,
 full process output/error handling and some command/dialog interactions are not
 ported. The complete scope is recorded in the external-call parity proposal.
 Options > media viewer > mouse behaviour now stages cursor anchoring and its

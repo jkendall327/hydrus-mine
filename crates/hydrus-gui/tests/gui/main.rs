@@ -163,6 +163,7 @@ mod gui_format;
 mod related_weight_table;
 
 mod external_calls;
+mod open_externally;
 mod viewer_drag;
 mod window_rescue;
 
