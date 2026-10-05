@@ -36,6 +36,7 @@ fn add(
 }
 #[test]
 fn keyboard_capture_applies_through_owned_set_then_options_and_saved_main_executor() {
+    use slint::platform::{Key, WindowEvent};
     let (_dirs, store) = crate::subscriptions::store();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
@@ -52,7 +53,6 @@ fn keyboard_capture_applies_through_owned_set_then_options_and_saved_main_execut
     let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 700, 330);
     assert!(!pixels.is_empty());
     // Dispatch real widget keys, rather than calling its capture callback directly.
-    use slint::platform::{Key, WindowEvent};
     for text in [Key::Control.into(), Key::Shift.into(), "q".into()] {
         command
             .window()
