@@ -33,12 +33,12 @@ fn row(options: &OptionsWindow) -> i32 {
     )
     .unwrap()
 }
-fn choose(ui: &MainWindow, bound: &hydrus_gui::Bound, code: i32) {
+pub(super) fn choose(ui: &MainWindow, bound: &hydrus_gui::Bound, code: i32) {
     let options = options(ui, bound);
     options.invoke_choice_chosen(row(&options), code);
     options.invoke_apply();
 }
-fn wheel(viewer: &hydrus_gui::MediaViewerWindow) {
+pub(super) fn wheel(viewer: &hydrus_gui::MediaViewerWindow) {
     viewer
         .window()
         .dispatch_event(WindowEvent::PointerScrolled {

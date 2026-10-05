@@ -5019,7 +5019,7 @@ fn open_viewer(
     // what the file shown is, for the slideshow's timing: one the viewer
     // plays (`CurrentlyPresentingMediaWithDuration`), with its duration
     let presenting = Rc::new(std::cell::Cell::new(slideshow::Shown::Still));
-    viewer_tag_wheel::bind(&window, slot);
+    viewer_tag_wheel::bind(&window, &viewing_stats, model.borrow().store());
     let last_tag_file = Rc::new(std::cell::Cell::new(None));
     let show = {
         let last_tag_file = last_tag_file.clone();
@@ -5119,7 +5119,7 @@ fn open_viewer(
     };
     show();
     bind_zoom!(window, zoomed);
-    viewer_drag::bind(&window, slot);
+    viewer_drag::bind(&window, &viewing_stats, model.borrow().store());
     window.on_zoom_switch_requested({
         let zoomed = zoomed.clone();
         // The reference captures this command when the top hover is built.

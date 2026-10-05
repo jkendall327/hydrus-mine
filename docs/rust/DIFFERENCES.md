@@ -1567,10 +1567,11 @@ dependency with subsequent startup copies. Other imported saved sessions still
 use the existing placeholder conversion for downloader pages; historical legacy
 session backups remain deferred.
 The native viewer now consumes the duration drag-blocking and drag cursor-hiding
-preferences. Cursor anchoring/warping, touchscreen unanchoring and idle cursor
-hide delay are separate unclaimed controls. This slice uses ordinary unanchored
-pointer movement and preserves the reference's blank cursor after release until
-another movement. The animation start percentage remains unimplemented: the
+preferences, cursor anchoring/touchscreen override and the independently scoped
+idle cursor timer. Drag cursor hiding preserves the reference's blank cursor
+after release until another movement; anchoring now uses the saved preference
+instead of assuming ordinary unanchored movement. Wider touch and mouse-control
+families remain independently scoped. The animation start percentage remains unimplemented: the
 fresh recording also captures v688's cold-start zero frame and warm-start
 previous-frame-count ordering, rather than treating the control's intended
 percentage of the new animation as proven behavior.
@@ -2264,3 +2265,11 @@ still use default formatting, so the two global controls remain Partial and
 add zero completed original leaves. The Qt fixture was recorded in UTC; native
 production ISO formatting follows the system timezone. Integer-locale, radio
 Return force and menu-button wheel preferences are outside this slice.
+
+Drag and hover-wheel input now use each viewer's own active/closed lifetime,
+rather than the main window's latest-viewer slot. Several visible viewers keep
+independent drag/wheel state and read saved preferences on every input, as Qt
+does. Applying Options therefore reaches earlier visible viewers; drafts and
+Cancel do not. Closing an earlier viewer retires only its own handlers, leaves
+the successor active, and retained/re-shown closed handles cannot act. The
+focused two-owner native replay is authored for hosted CI, not locally executed.
