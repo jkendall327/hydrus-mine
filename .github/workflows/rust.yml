@@ -27,7 +27,7 @@ env:
 
 jobs:
   quick-check:
-    # Implementation mode: one current Linux lane, with no GUI code generation,
+    # Implementation mode: one current Linux lane, with no native GUI binaries,
     # native GUI suite, platform matrix, render review or parity audit.
     if: (github.event_name != 'workflow_dispatch' || !inputs.full_validation) && (github.event_name != 'push' || (github.ref != 'refs/heads/codex/overnight-gui-burndown' && !startsWith(github.ref, 'refs/heads/codex/parity-')))
     runs-on: ubuntu-24.04

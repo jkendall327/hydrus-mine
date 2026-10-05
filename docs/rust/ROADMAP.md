@@ -64,7 +64,7 @@ unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in
 [gui-coverage/README.md](gui-coverage/README.md).
 
-Continuous source work now proposes 132 further original leaf completions over
+Continuous source work now implements 134 further original leaf proposals over
 that validated 240 checkpoint: 53 on `codex/parity-more-controls`, five more
 on the dependent `codex/parity-next-details` branch, and 13 more on
 `codex/parity-preview-and-launching`, plus nine on
@@ -83,6 +83,13 @@ on the dependent `codex/parity-next-details` branch, and 13 more on
 deletion records in durable 64-record batches, the three saved viewer-prefetch
 count/budget controls reaching owned real image consumers, and the Help debug
 GET action with ordinary network policy and byte-save/text-copy response choices.
+The same integration adds compatible-subset sidecar-router imports from ordered
+PNG selections and actual current-session snapshot/reconstruction, contributing
+two more original implementation proposals. Session reload resets current tabs
+and thumbnail selection as the recorded reference does, while retaining old Undo
+pages. Scheduled file-maintenance review adds a substantive Partial improvement
+with zero completion credit; batch-refresh and independent-process lock boundaries
+remain explicit. The complete continuation contains 63 Partial improvements.
 Current-image asynchronous rendering, other cache families and the embedded
 network widget remain Partial. The latest integration consolidates work after
 the separately validating preview/launching checkpoint, preserving authored
@@ -180,7 +187,7 @@ and mouse idle tracking remains Partial because it observes application windows.
 Broader external
 call/editor boundaries also remain Partial. Inspect the current branch with
 `python3 scripts/gui_burndown.py --commit HEAD`; do not substitute its proposed
-total of 372 for the validated 240 ledger. The embedded-ICC leaf adds the saved policy with real importer, preview,
+total of 374 for the validated 240 ledger. The embedded-ICC leaf adds the saved policy with real importer, preview,
 viewer and maintenance consumers. The viewer tag-list now opens owned search
 pages and requests main-window activation on supported native platforms; that
 activation remains Partial because Wayland activation is unresolved. Application
