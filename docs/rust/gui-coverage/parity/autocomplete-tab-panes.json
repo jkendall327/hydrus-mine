@@ -1,0 +1,267 @@
+{
+  "schema": 1,
+  "agent": "overnight_tag_filters",
+  "baseline": "fec9a3071",
+  "implementation_commits": [
+    "c684f8ec79b4e32ed26830e91b07bcf56c504e9a",
+    "16c868523ca8b6005a57097072224204727f9083"
+  ],
+  "completed_original_leaves_proposed": 2,
+  "claims": [
+    {
+      "reference_id": "audit-options-search-tag-tabs-children",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exactBehavior": "The native children pane resolves transitive descendants for top-level context tags in the current tag service/display graph, excludes context tags, ranks by real local display counts while keeping zero-count known children, and renders countless rows. Configured finite/zero/unlimited cap is consumed. Reversible Ctrl/Shift selection and select-all now broadcast complete selected batches through the real SearchPage AND/OR path; committed child tags disappear from the descendant list. Shift batches remain drafts until committed and Cancel leaves query/history unchanged. Existing read current/pending independence and captured service/domain consumers remain intact. Shared write children selections broadcast to owned staged lists, with child Cancel and retired Apply unable to commit.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/autocomplete.rs",
+          "line": 153,
+          "symbol": "pub fn click(",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 2154,
+          "symbol": "pub fn activate_suggestions(",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/autocomplete_tabs.rs",
+          "line": 13,
+          "symbol": "pub(crate) fn bind(",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/autocomplete_tabs.rs",
+          "line": 213,
+          "symbol": "pub(crate) fn watch(",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/read_suggestions.slint",
+          "line": 5,
+          "symbol": "export component ReadSuggestions",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/autocomplete.rs",
+          "line": 354,
+          "symbol": "fn tab_suggestions(",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
+          "line": 438,
+          "symbol": "pub fn chosen_tags(",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/autocomplete_tabs.rs",
+          "line": 19,
+          "symbol": "fn read_and_write_selection_replay",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/autocomplete_tabs.rs",
+          "line": 54,
+          "symbol": "fn read_batches_favourite_questions",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/read_autocomplete.rs",
+          "line": 108,
+          "symbol": "fn real_page_tabs_apply_caps",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_autocomplete_tab_selection.py",
+        "fixture": "oracle/fixtures/autocomplete_tab_selection.json",
+        "commit": "c684f8ec79b4e32ed26830e91b07bcf56c504e9a",
+        "executed_at": "2026-10-05 01:11:52 UTC",
+        "result": "Executed actual Qt read and write dropdowns on a copied basic fixture with synthetic local tag mappings and sibling/parent chains. Actual list _Hit/_Activate, read broadcast/OR/cancellation, real favourite QAction dispatch and exact No/Yes removal questions, window reopen, selected children and actual query count. Children AsyncQtJob work/publish scheduling is synchronous for stable capture; DB queries, selection and broadcast/persistence logic are not replaced. Favourite set and active-predicate set output are sorted for stable comparison; visible logical row order is preserved. Expected local API listen warnings are unrelated to direct Qt/DB recording."
+      },
+      "limitations": [
+        "Native tab picker replaces Qt notebook headers; count fetches remain synchronous.",
+        "Broader shared read/write autocomplete parents remain Partial: full inherited read copy/open/relationship/decorator/display-mode menus, result dragging and asynchronous child-query presentation are not promoted.",
+        "Basic OR owners share selection/broadcast but retain their existing context-menu boundary.",
+        "Visible main read panes and detached write editors use one owner-held 100ms settings revision watcher; Manage Tags related/suggestion workers are outside this slice.",
+        "Recorded file-domain ranking is the supported simple local domain. Multi-domain fallback ranking remains an explicitly unclaimed broader autocomplete boundary.",
+        "Model/native regressions and PNG capture are authored for hosted CI; no local Cargo build/test or mutation run."
+      ]
+    },
+    {
+      "reference_id": "audit-options-search-tag-tabs-favourites",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exactBehavior": "Sorted unfiltered favourite tags are selectable in read/write panes. Read selected batches now broadcast together to active predicates or an OR draft. Single-tag read context menus reuse global/per-service most-used favourite add/remove actions; remove asks the exact recorded question, No leaves settings unchanged, Yes rereads settings inside the store write to preserve concurrent edits. Immediate favourite changes refresh the current pane without consuming its input/query draft and persist across fresh Store/dropdown opens. Visible read and detached write owners refresh external favourite/cap changes. Delayed read actions are gated against hidden/locked/switched/retired owners. Existing Options favourite-list child remains staged: Apply updates the parent draft, Cancel discards it, parent Apply persists/reopens and parent Cancel preserves saved settings.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/autocomplete.rs",
+          "line": 153,
+          "symbol": "pub fn click(",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 2154,
+          "symbol": "pub fn activate_suggestions(",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/autocomplete_tabs.rs",
+          "line": 13,
+          "symbol": "pub(crate) fn bind(",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/autocomplete_tabs.rs",
+          "line": 213,
+          "symbol": "pub(crate) fn watch(",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/read_suggestions.slint",
+          "line": 5,
+          "symbol": "export component ReadSuggestions",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_tag_menu.rs",
+          "line": 114,
+          "symbol": "pub fn favourite_entries(",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_tag_menu.rs",
+          "line": 69,
+          "symbol": "pub fn persist(",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/write_tag_window.rs",
+          "line": 67,
+          "symbol": "pub fn open_favourites(",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/autocomplete_tabs.rs",
+          "line": 19,
+          "symbol": "fn read_and_write_selection_replay",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/autocomplete_tabs.rs",
+          "line": 54,
+          "symbol": "fn read_batches_favourite_questions",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_autocomplete_tab_selection.py",
+        "fixture": "oracle/fixtures/autocomplete_tab_selection.json",
+        "commit": "c684f8ec79b4e32ed26830e91b07bcf56c504e9a",
+        "executed_at": "2026-10-05 01:11:52 UTC",
+        "result": "Executed actual Qt read and write dropdowns on a copied basic fixture with synthetic local tag mappings and sibling/parent chains. Actual list _Hit/_Activate, read broadcast/OR/cancellation, real favourite QAction dispatch and exact No/Yes removal questions, window reopen, selected children and actual query count. Children AsyncQtJob work/publish scheduling is synchronous for stable capture; DB queries, selection and broadcast/persistence logic are not replaced. Favourite set and active-predicate set output are sorted for stable comparison; visible logical row order is preserved. Expected local API listen warnings are unrelated to direct Qt/DB recording."
+      },
+      "limitations": [
+        "Native tab picker replaces Qt notebook headers; count fetches remain synchronous.",
+        "Broader shared read/write autocomplete parents remain Partial: full inherited read copy/open/relationship/decorator/display-mode menus, result dragging and asynchronous child-query presentation are not promoted.",
+        "Basic OR owners share selection/broadcast but retain their existing context-menu boundary.",
+        "Visible main read panes and detached write editors use one owner-held 100ms settings revision watcher; Manage Tags related/suggestion workers are outside this slice.",
+        "Recorded file-domain ranking is the supported simple local domain. Multi-domain fallback ranking remains an explicitly unclaimed broader autocomplete boundary.",
+        "Model/native regressions and PNG capture are authored for hosted CI; no local Cargo build/test or mutation run."
+      ]
+    }
+  ],
+  "executed_checks": [
+    "Actual Qt recorder via shared with-oracle lock",
+    "Warning-aware cached Slint source compiler",
+    "cargo fmt --all (formatting only)",
+    "git diff --check",
+    "Python recorder syntax"
+  ],
+  "nativeComponents": [
+    {
+      "component": "ReadAutocomplete / ReadSuggestions",
+      "source": "crates/hydrus-gui/ui/read_autocomplete.slint",
+      "native_parent": "MainWindow > sidebar > read autocomplete; SearchOrWindow > basic search",
+      "status": "partial",
+      "groups": [
+        "results/favourites/children tab picker",
+        "stable result hit surface: plain/Ctrl/Shift selection, Ctrl+A, Escape, Enter/double-click",
+        "favourites: global and per-service most-used add/remove; exact owned removal question",
+        "children: current top-level parent context, count-ranked countless descendants, configured cap, selected AND/OR batch broadcast",
+        "shared Options > Tag autocomplete tabs > favourite list editor (staged child Apply/Cancel, parent Apply/Cancel)"
+      ],
+      "reference_ids": [
+        "audit-options-search-tag-tabs-children",
+        "audit-options-search-tag-tabs-favourites"
+      ],
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/autocomplete.rs",
+          "line": 153,
+          "symbol": "pub fn click(",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 2154,
+          "symbol": "pub fn activate_suggestions(",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/autocomplete_tabs.rs",
+          "line": 13,
+          "symbol": "pub(crate) fn bind(",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/autocomplete_tabs.rs",
+          "line": 213,
+          "symbol": "pub(crate) fn watch(",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/read_suggestions.slint",
+          "line": 5,
+          "symbol": "export component ReadSuggestions",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/autocomplete_tabs.rs",
+          "line": 54,
+          "symbol": "fn read_batches_favourite_questions",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/autocomplete_tabs.rs",
+          "line": 19,
+          "symbol": "fn read_and_write_selection_replay",
+          "commit": "16c868523ca8b6005a57097072224204727f9083"
+        }
+      ],
+      "remaining": [
+        "Full inherited read context menu and asynchronous loading controls remain in the broader Partial autocomplete parent."
+      ]
+    }
+  ],
+  "screenshots_authored": [
+    "CARGO_TARGET_TMPDIR/autocomplete_tab_select_all.png",
+    "CARGO_TARGET_TMPDIR/autocomplete_tab_children.png"
+  ]
+}
