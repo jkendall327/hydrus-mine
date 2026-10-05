@@ -1,0 +1,567 @@
+{
+  "schema_version": 1,
+  "agent": "downloader-update-times",
+  "baseline_git_head": "641d6b670c6422c58e3ea2256ee92760c0ccd9e8",
+  "source_commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4",
+  "implementation_commits": [
+    "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+  ],
+  "frozen_original_inventory": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "frozen_options_audit": {
+    "path": "docs/rust/gui-coverage/audit/options-patch.json",
+    "baseline_git_head": "5079206dc1d0c2d2614b428632dc9499cb9ad3f8",
+    "sha256": "05fb770dc87d8b03cd0e1a4dbd509de61d48e0dc1c87c7c7032a9aeb4adce20b",
+    "before": {
+      "audit-options-speed-and-memory-download-pages-update-experimental-minimum-gallery-importer-update-time": "missing",
+      "audit-options-speed-and-memory-download-pages-update-experimental-gallery-importer-magic-update-time-denominator": "missing",
+      "audit-options-speed-and-memory-download-pages-update-experimental-minimum-watcher-importer-update-time": "missing",
+      "audit-options-speed-and-memory-download-pages-update-experimental-watcher-importer-magic-update-time-denominator": "missing"
+    }
+  },
+  "eligibility": {
+    "completed_ledger_path": "docs/rust/gui-coverage/overnight/progress.json",
+    "completed_ledger_at_base_sha256": "168d8057e3b023cf822af82b703b4fe018baba266694d06b5c7ae79bf1d20ca6",
+    "listed_ids_already_completed": [],
+    "existing_parity_packets_with_listed_ids": [],
+    "note": "The frozen baseline, completed ledger and every prior parity packet were checked before source edits; exactly these four original Missing IDs are eligible."
+  },
+  "eligible_concrete_first_pass_count": 4,
+  "parent_promotions": 0,
+  "claims": [
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-minimum-gallery-importer-update-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Exact independent staged gallery seconds/milliseconds minimum with a 250 ms lower bound and 59 s/999 ms constructor fields; reference defaults 1000 ms/30, typed raw legacy import, cancelled/retained Apply rejection, unchanged constructor-bound acceptance, field-scoped concurrent merge and save/reopen. Saved values reach the real visible current-page gallery list/totals scheduler: every 250 ms GUI tick checks strict now>pending deadline, samples displayed row count before refresh, sets next=now+max(minimum_ms/1000,rows/denominator), uses 1 s zero-denominator fallback, and force refresh resets the deadline to 0. Saved changes preserve the pending deadline and affect the next period. Highlighted jobs/tab progress/close eligibility stay live separately. Same-binding tab roundtrips retain offscreen/pre-deadline snapshots and refresh overdue returns. Hidden owners skip reads; rebind and accepted close permanently reject old retained refresh/sync, including close/re-show; cancelled close stays live.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/SpeedAndMemoryPanel.py",
+        "line": 304,
+        "symbol": "EXPERIMENTAL: Minimum gallery importer update time:",
+        "line_sha256": "c348f5e0076bb17a20166a4bc4ecca48b9890a4a006640923c7cc3769881ab0b"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3344,
+          "symbol": "\"EXPERIMENTAL: Minimum gallery importer update time:\",",
+          "line_sha256": "59c80a2ec954de93bb771734d38089c18fa9d3fd8ad35e564ae1acd45e2d4889",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/downloader_update_times.rs",
+          "line": 15,
+          "symbol": "pub struct Preferences",
+          "line_sha256": "373d023fffe3d1204eadbb5fe34e74a9fe3d7451eeb8676b7a53ed040046ce76",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/downloader_update_times.rs",
+          "line": 66,
+          "symbol": "pub fn save_changed(",
+          "line_sha256": "08e2bff97a10b960d0be360e429c2c1bbfd487d034ab23583ca073a2ccd1e427",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 1150,
+          "symbol": "update_times.apply_legacy(&options.integers);",
+          "line_sha256": "5c54b279b6904a7c784684608ebbe684c54806548936e8fec1cc82a3f340294f",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3928,
+          "symbol": "let accept_displayed = matches!(",
+          "line_sha256": "7ff6748b0b70daf432caa7ceac6a5c299e5bf620fc85499667f404ca33800157",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/downloader_update_times.rs",
+          "line": 17,
+          "symbol": "pub fn advance(",
+          "line_sha256": "593a3be29184e6a8eefb43ba6b6b2f62daa8b5c7d9481ba113d31911cc73c9eb",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 1243,
+          "symbol": "pub fn refresh_import_status_at(",
+          "line_sha256": "4554431c5e9d2f30c88ea5f674241697c1ce07f2c9e48adbd77f742de0dc8b5b",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_update_times.rs",
+          "line": 24,
+          "symbol": "fn refresh(&self, force: bool)",
+          "line_sha256": "3766621fc64be95350cba6c11f32b01e7a9e43794f31955e5c9d88f21b9a6ad9",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 576,
+          "symbol": "downloader_updates.refresh();",
+          "line_sha256": "1e6e0ab66bda2e3255d891d658ee594390db9330c5bbd8d9529199abb0992679",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/downloader_update_times.rs",
+          "line": 126,
+          "symbol": "fn strict_deadlines_ratios_minimum_fallback_saved_changes_and_forcing_match_qt()",
+          "line_sha256": "190c6aba392f93186c68b3a2bc34f76fc42b57bc9a0260227374c234390ad3a7",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 4791,
+          "symbol": "fn downloader_update_time_import_preserves_raw_fields_and_reopens()",
+          "line_sha256": "0f721b2f78a70618ea77454bcbd79558ba42d763b2f86f4b12fc122a6d95c656",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/downloader_update_times.rs",
+          "line": 555,
+          "symbol": "fn gallery_owned_timer_reads_rows_at_deadline_keeps_live_details_and_retires()",
+          "line_sha256": "6b539e5c5a4762c160ca8acc186c154efa7513cdad05ead3fd83d7b7223a9179",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        }
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/downloader_update_times.rs",
+        "crates/hydrus-gui/tests/gui/downloader_update_times.rs",
+        "crates/hydrus-gui/tests/gui/downloader_lists.rs",
+        "crates/hydrus-store/src/import/decode.rs::tests::downloader_update_time_import_preserves_raw_fields_and_reopens"
+      ],
+      "limits": [
+        "Conditional proposal: authored Rust/model/Store/native regressions await exact hosted CI and native PNG review; no local Cargo/build/Rust/mutation execution.",
+        "Only these four status list scheduling preferences are claimed. Existing actual downloader/daemon work is unchanged; broader speed/memory, gallery/watcher/sidebar and Options families receive no parent or alias credit.",
+        "The native uses a binding-owned 250ms Slint timer and synchronous Store status snapshots rather than Qt sidebar objects; current visible-page scheduling, explicit-force and permanently retired ownership boundaries are preserved."
+      ]
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-gallery-importer-magic-update-time-denominator",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Exact independent staged gallery integer denominator 1..99; reference defaults 1000 ms/30, typed raw legacy import, cancelled/retained Apply rejection, unchanged constructor-bound acceptance, field-scoped concurrent merge and save/reopen. Saved values reach the real visible current-page gallery list/totals scheduler: every 250 ms GUI tick checks strict now>pending deadline, samples displayed row count before refresh, sets next=now+max(minimum_ms/1000,rows/denominator), uses 1 s zero-denominator fallback, and force refresh resets the deadline to 0. Saved changes preserve the pending deadline and affect the next period. Highlighted jobs/tab progress/close eligibility stay live separately. Same-binding tab roundtrips retain offscreen/pre-deadline snapshots and refresh overdue returns. Hidden owners skip reads; rebind and accepted close permanently reject old retained refresh/sync, including close/re-show; cancelled close stays live.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/SpeedAndMemoryPanel.py",
+        "line": 305,
+        "symbol": "EXPERIMENTAL: Gallery importer magic update time denominator:",
+        "line_sha256": "b405c6eb8d6d8d74ce7708fe6749d4e41e5c59cac3c4a6af83105a1633f80f3f"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3356,
+          "symbol": "\"EXPERIMENTAL: Gallery importer magic update time denominator:\",",
+          "line_sha256": "17cfd87b1d88d50d723287150b1416859d081bbf72e2590e4a1f36d00099ff50",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/downloader_update_times.rs",
+          "line": 15,
+          "symbol": "pub struct Preferences",
+          "line_sha256": "373d023fffe3d1204eadbb5fe34e74a9fe3d7451eeb8676b7a53ed040046ce76",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/downloader_update_times.rs",
+          "line": 66,
+          "symbol": "pub fn save_changed(",
+          "line_sha256": "08e2bff97a10b960d0be360e429c2c1bbfd487d034ab23583ca073a2ccd1e427",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 1150,
+          "symbol": "update_times.apply_legacy(&options.integers);",
+          "line_sha256": "5c54b279b6904a7c784684608ebbe684c54806548936e8fec1cc82a3f340294f",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3928,
+          "symbol": "let accept_displayed = matches!(",
+          "line_sha256": "7ff6748b0b70daf432caa7ceac6a5c299e5bf620fc85499667f404ca33800157",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/downloader_update_times.rs",
+          "line": 17,
+          "symbol": "pub fn advance(",
+          "line_sha256": "593a3be29184e6a8eefb43ba6b6b2f62daa8b5c7d9481ba113d31911cc73c9eb",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 1243,
+          "symbol": "pub fn refresh_import_status_at(",
+          "line_sha256": "4554431c5e9d2f30c88ea5f674241697c1ce07f2c9e48adbd77f742de0dc8b5b",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_update_times.rs",
+          "line": 24,
+          "symbol": "fn refresh(&self, force: bool)",
+          "line_sha256": "3766621fc64be95350cba6c11f32b01e7a9e43794f31955e5c9d88f21b9a6ad9",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 576,
+          "symbol": "downloader_updates.refresh();",
+          "line_sha256": "1e6e0ab66bda2e3255d891d658ee594390db9330c5bbd8d9529199abb0992679",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/downloader_update_times.rs",
+          "line": 126,
+          "symbol": "fn strict_deadlines_ratios_minimum_fallback_saved_changes_and_forcing_match_qt()",
+          "line_sha256": "190c6aba392f93186c68b3a2bc34f76fc42b57bc9a0260227374c234390ad3a7",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 4791,
+          "symbol": "fn downloader_update_time_import_preserves_raw_fields_and_reopens()",
+          "line_sha256": "0f721b2f78a70618ea77454bcbd79558ba42d763b2f86f4b12fc122a6d95c656",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/downloader_update_times.rs",
+          "line": 555,
+          "symbol": "fn gallery_owned_timer_reads_rows_at_deadline_keeps_live_details_and_retires()",
+          "line_sha256": "6b539e5c5a4762c160ca8acc186c154efa7513cdad05ead3fd83d7b7223a9179",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        }
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/downloader_update_times.rs",
+        "crates/hydrus-gui/tests/gui/downloader_update_times.rs",
+        "crates/hydrus-gui/tests/gui/downloader_lists.rs",
+        "crates/hydrus-store/src/import/decode.rs::tests::downloader_update_time_import_preserves_raw_fields_and_reopens"
+      ],
+      "limits": [
+        "Conditional proposal: authored Rust/model/Store/native regressions await exact hosted CI and native PNG review; no local Cargo/build/Rust/mutation execution.",
+        "Only these four status list scheduling preferences are claimed. Existing actual downloader/daemon work is unchanged; broader speed/memory, gallery/watcher/sidebar and Options families receive no parent or alias credit.",
+        "The native uses a binding-owned 250ms Slint timer and synchronous Store status snapshots rather than Qt sidebar objects; current visible-page scheduling, explicit-force and permanently retired ownership boundaries are preserved."
+      ]
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-minimum-watcher-importer-update-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Exact independent staged watcher seconds/milliseconds minimum with a 250 ms lower bound and 59 s/999 ms constructor fields; reference defaults 1000 ms/30, typed raw legacy import, cancelled/retained Apply rejection, unchanged constructor-bound acceptance, field-scoped concurrent merge and save/reopen. Saved values reach the real visible current-page watcher list/totals scheduler: every 250 ms GUI tick checks strict now>pending deadline, samples displayed row count before refresh, sets next=now+max(minimum_ms/1000,rows/denominator), uses 1 s zero-denominator fallback, and force refresh resets the deadline to 0. Saved changes preserve the pending deadline and affect the next period. Highlighted jobs/tab progress/close eligibility stay live separately. Same-binding tab roundtrips retain offscreen/pre-deadline snapshots and refresh overdue returns. Hidden owners skip reads; rebind and accepted close permanently reject old retained refresh/sync, including close/re-show; cancelled close stays live.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/SpeedAndMemoryPanel.py",
+        "line": 307,
+        "symbol": "EXPERIMENTAL: Minimum watcher importer update time:",
+        "line_sha256": "ccca0110f59d8b6a02401fb8bac4ff49f7b136fe85c06850029f253507e74697"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3362,
+          "symbol": "\"EXPERIMENTAL: Minimum watcher importer update time:\",",
+          "line_sha256": "97fbcce4d6703beaabfd5147e84cba1b9e4b8bab875abb108e83f5f71eb4df63",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/downloader_update_times.rs",
+          "line": 15,
+          "symbol": "pub struct Preferences",
+          "line_sha256": "373d023fffe3d1204eadbb5fe34e74a9fe3d7451eeb8676b7a53ed040046ce76",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/downloader_update_times.rs",
+          "line": 66,
+          "symbol": "pub fn save_changed(",
+          "line_sha256": "08e2bff97a10b960d0be360e429c2c1bbfd487d034ab23583ca073a2ccd1e427",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 1150,
+          "symbol": "update_times.apply_legacy(&options.integers);",
+          "line_sha256": "5c54b279b6904a7c784684608ebbe684c54806548936e8fec1cc82a3f340294f",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3928,
+          "symbol": "let accept_displayed = matches!(",
+          "line_sha256": "7ff6748b0b70daf432caa7ceac6a5c299e5bf620fc85499667f404ca33800157",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/downloader_update_times.rs",
+          "line": 17,
+          "symbol": "pub fn advance(",
+          "line_sha256": "593a3be29184e6a8eefb43ba6b6b2f62daa8b5c7d9481ba113d31911cc73c9eb",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 1243,
+          "symbol": "pub fn refresh_import_status_at(",
+          "line_sha256": "4554431c5e9d2f30c88ea5f674241697c1ce07f2c9e48adbd77f742de0dc8b5b",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_update_times.rs",
+          "line": 24,
+          "symbol": "fn refresh(&self, force: bool)",
+          "line_sha256": "3766621fc64be95350cba6c11f32b01e7a9e43794f31955e5c9d88f21b9a6ad9",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 576,
+          "symbol": "downloader_updates.refresh();",
+          "line_sha256": "1e6e0ab66bda2e3255d891d658ee594390db9330c5bbd8d9529199abb0992679",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/downloader_update_times.rs",
+          "line": 126,
+          "symbol": "fn strict_deadlines_ratios_minimum_fallback_saved_changes_and_forcing_match_qt()",
+          "line_sha256": "190c6aba392f93186c68b3a2bc34f76fc42b57bc9a0260227374c234390ad3a7",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 4791,
+          "symbol": "fn downloader_update_time_import_preserves_raw_fields_and_reopens()",
+          "line_sha256": "0f721b2f78a70618ea77454bcbd79558ba42d763b2f86f4b12fc122a6d95c656",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/downloader_update_times.rs",
+          "line": 559,
+          "symbol": "fn watcher_owned_timer_reads_rows_at_deadline_keeps_live_details_and_retires()",
+          "line_sha256": "849efbd26b96e9b6de24c7f0270d057c8089dedb95e6c074cfb50ccfa876b2ee",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        }
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/downloader_update_times.rs",
+        "crates/hydrus-gui/tests/gui/downloader_update_times.rs",
+        "crates/hydrus-gui/tests/gui/downloader_lists.rs",
+        "crates/hydrus-store/src/import/decode.rs::tests::downloader_update_time_import_preserves_raw_fields_and_reopens"
+      ],
+      "limits": [
+        "Conditional proposal: authored Rust/model/Store/native regressions await exact hosted CI and native PNG review; no local Cargo/build/Rust/mutation execution.",
+        "Only these four status list scheduling preferences are claimed. Existing actual downloader/daemon work is unchanged; broader speed/memory, gallery/watcher/sidebar and Options families receive no parent or alias credit.",
+        "The native uses a binding-owned 250ms Slint timer and synchronous Store status snapshots rather than Qt sidebar objects; current visible-page scheduling, explicit-force and permanently retired ownership boundaries are preserved."
+      ]
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-watcher-importer-magic-update-time-denominator",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Exact independent staged watcher integer denominator 1..99; reference defaults 1000 ms/30, typed raw legacy import, cancelled/retained Apply rejection, unchanged constructor-bound acceptance, field-scoped concurrent merge and save/reopen. Saved values reach the real visible current-page watcher list/totals scheduler: every 250 ms GUI tick checks strict now>pending deadline, samples displayed row count before refresh, sets next=now+max(minimum_ms/1000,rows/denominator), uses 1 s zero-denominator fallback, and force refresh resets the deadline to 0. Saved changes preserve the pending deadline and affect the next period. Highlighted jobs/tab progress/close eligibility stay live separately. Same-binding tab roundtrips retain offscreen/pre-deadline snapshots and refresh overdue returns. Hidden owners skip reads; rebind and accepted close permanently reject old retained refresh/sync, including close/re-show; cancelled close stays live.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/SpeedAndMemoryPanel.py",
+        "line": 308,
+        "symbol": "EXPERIMENTAL: Watcher importer magic update time denominator:",
+        "line_sha256": "f19c96570a673a645c09319b11c403a7a353aa1ede7b62d5be8c95bdbda7e122"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3374,
+          "symbol": "\"EXPERIMENTAL: Watcher importer magic update time denominator:\",",
+          "line_sha256": "b9cca7da061da3da2b3ce46f3dbf4264e32f63465762ab615db87768a166b020",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/downloader_update_times.rs",
+          "line": 15,
+          "symbol": "pub struct Preferences",
+          "line_sha256": "373d023fffe3d1204eadbb5fe34e74a9fe3d7451eeb8676b7a53ed040046ce76",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/downloader_update_times.rs",
+          "line": 66,
+          "symbol": "pub fn save_changed(",
+          "line_sha256": "08e2bff97a10b960d0be360e429c2c1bbfd487d034ab23583ca073a2ccd1e427",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 1150,
+          "symbol": "update_times.apply_legacy(&options.integers);",
+          "line_sha256": "5c54b279b6904a7c784684608ebbe684c54806548936e8fec1cc82a3f340294f",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3928,
+          "symbol": "let accept_displayed = matches!(",
+          "line_sha256": "7ff6748b0b70daf432caa7ceac6a5c299e5bf620fc85499667f404ca33800157",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/downloader_update_times.rs",
+          "line": 17,
+          "symbol": "pub fn advance(",
+          "line_sha256": "593a3be29184e6a8eefb43ba6b6b2f62daa8b5c7d9481ba113d31911cc73c9eb",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 1243,
+          "symbol": "pub fn refresh_import_status_at(",
+          "line_sha256": "4554431c5e9d2f30c88ea5f674241697c1ce07f2c9e48adbd77f742de0dc8b5b",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_update_times.rs",
+          "line": 24,
+          "symbol": "fn refresh(&self, force: bool)",
+          "line_sha256": "3766621fc64be95350cba6c11f32b01e7a9e43794f31955e5c9d88f21b9a6ad9",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 576,
+          "symbol": "downloader_updates.refresh();",
+          "line_sha256": "1e6e0ab66bda2e3255d891d658ee594390db9330c5bbd8d9529199abb0992679",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/downloader_update_times.rs",
+          "line": 126,
+          "symbol": "fn strict_deadlines_ratios_minimum_fallback_saved_changes_and_forcing_match_qt()",
+          "line_sha256": "190c6aba392f93186c68b3a2bc34f76fc42b57bc9a0260227374c234390ad3a7",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 4791,
+          "symbol": "fn downloader_update_time_import_preserves_raw_fields_and_reopens()",
+          "line_sha256": "0f721b2f78a70618ea77454bcbd79558ba42d763b2f86f4b12fc122a6d95c656",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/downloader_update_times.rs",
+          "line": 559,
+          "symbol": "fn watcher_owned_timer_reads_rows_at_deadline_keeps_live_details_and_retires()",
+          "line_sha256": "849efbd26b96e9b6de24c7f0270d057c8089dedb95e6c074cfb50ccfa876b2ee",
+          "commit": "7543cf2f39e3a26418a5eba34234d9bf486291d4"
+        }
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/downloader_update_times.rs",
+        "crates/hydrus-gui/tests/gui/downloader_update_times.rs",
+        "crates/hydrus-gui/tests/gui/downloader_lists.rs",
+        "crates/hydrus-store/src/import/decode.rs::tests::downloader_update_time_import_preserves_raw_fields_and_reopens"
+      ],
+      "limits": [
+        "Conditional proposal: authored Rust/model/Store/native regressions await exact hosted CI and native PNG review; no local Cargo/build/Rust/mutation execution.",
+        "Only these four status list scheduling preferences are claimed. Existing actual downloader/daemon work is unchanged; broader speed/memory, gallery/watcher/sidebar and Options families receive no parent or alias credit.",
+        "The native uses a binding-owned 250ms Slint timer and synchronous Store status snapshots rather than Qt sidebar objects; current visible-page scheduling, explicit-force and permanently retired ownership boundaries are preserved."
+      ]
+    }
+  ],
+  "parentsRemainPartial": [
+    "options-speed-and-memory",
+    "audit-options-speed-and-memory-download-pages-update",
+    "audit-options-downloading-gallery-downloader",
+    "audit-options-downloading-watchers"
+  ],
+  "canonical_files_changed": false,
+  "reference_consumer_anchors": [
+    {
+      "relativepath": "hydrus/client/ClientOptions.py",
+      "line": 597,
+      "symbol": "'gallery_page_status_update_time_minimum_ms' : 1000,",
+      "line_sha256": "e072d808764f8f61bd91646a371a6b62f0718612f20ff4457bf6b4fefdf52817"
+    },
+    {
+      "relativepath": "hydrus/client/ClientOptions.py",
+      "line": 600,
+      "symbol": "'watcher_page_status_update_time_ratio_denominator' : 30,",
+      "line_sha256": "019814d7904c7ae0e8b577fcb4320dc29be8a3d21f183f3c505b4102be7df4dd"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/SpeedAndMemoryPanel.py",
+      "line": 129,
+      "symbol": "self._gallery_page_status_update_time_minimum = ClientGUITime.TimeDeltaWidget(",
+      "line_sha256": "e8ef74c8dd0cc4d9b99152e29cedc2472d2966079ce30d64d2e6887ef2bdb270"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/SpeedAndMemoryPanel.py",
+      "line": 133,
+      "symbol": "self._watcher_page_status_update_time_ratio_denominator = ClientGUICommon.BetterSpinBox(",
+      "line_sha256": "76aba5d9d280d1800a231deadb31a6314f2bd4be2dc0645e3706c758667bef29"
+    },
+    {
+      "relativepath": "hydrus/client/gui/metadata/ClientGUITime.py",
+      "line": 1210,
+      "symbol": "class TimeDeltaWidget( QW.QWidget ):",
+      "line_sha256": "4e2271c9ca07a81d2220c70ff17d3db4796c98d106e86b05d3ee2cadeb4d33d8"
+    },
+    {
+      "relativepath": "hydrus/client/gui/pages/ClientGUISidebarImporters.py",
+      "line": 1193,
+      "symbol": "min_time = HydrusTime.SecondiseMSFloat( CG.client_controller.new_options.GetInteger( 'gallery_page_status_update_time_minimum_ms' ) )",
+      "line_sha256": "0dca0de8ac030d50ca8ff490572433460bd939047385464b1cae70ea5e9714a4"
+    },
+    {
+      "relativepath": "hydrus/client/gui/pages/ClientGUISidebarImporters.py",
+      "line": 2286,
+      "symbol": "min_time = HydrusTime.SecondiseMSFloat( CG.client_controller.new_options.GetInteger( 'watcher_page_status_update_time_minimum_ms' ) )",
+      "line_sha256": "f8165f49ab0240e07aca2066ca364fc1ed3090b9d82179cf74729c3a4788f9f2"
+    },
+    {
+      "relativepath": "hydrus/client/gui/ClientGUI.py",
+      "line": 652,
+      "symbol": "self._page_update_repeating_job = self._controller.CallRepeatingQtSafe(",
+      "line_sha256": "d970c51c1dda2a57798f3aeba7bb8f6e9075d14d6cce06fb3ffb8c436bfb9393"
+    },
+    {
+      "relativepath": "hydrus/client/gui/ClientGUI.py",
+      "line": 8926,
+      "symbol": "def REPEATINGPageUpdate( self ):",
+      "line_sha256": "c0382c219b6c93f3dddbd8a5b9d24e3c3fa2623474343db202b465c8a31a687e"
+    },
+    {
+      "relativepath": "hydrus/core/HydrusTime.py",
+      "line": 164,
+      "symbol": "def TimeHasPassedFloat( timestamp ):",
+      "line_sha256": "57ce7d7cdad02ec4b737821663ac3f5dec267f3b150d3127b648c726a35dc45e"
+    }
+  ],
+  "referenceRecording": {
+    "recorder": "oracle/record_downloader_update_times.py",
+    "fixture": "oracle/fixtures/downloader_update_times.json",
+    "image": "oracle/fixtures/downloader_update_times_reference.png",
+    "executed": true,
+    "executedAtUtc": "2026-10-05T08:09:53Z",
+    "finishedAtUtc": "2026-10-05T08:09:55Z",
+    "reference": "Actual SpeedAndMemoryPanel controls/UpdateOptions and serialized reopen; defaults/enabled/bounds, five raw constructor cases and abandoned edits. Actual paused gallery/watcher sidebar status methods with0/3/12 real list rows, fourteen strict/ratio/minimum/zero/negative-denominator/force/live-change histories under a restored synthetic clock. Private actual importer managers remain populated and paused; no network requested. Normal shutdown; sandbox denied the unrelated Client API startup bind.",
+    "limits": [
+      "Private actual list subsets represent different UI row counts; actual importer managers remain populated and paused",
+      "Deadline methods run on Qt thread under a restored synthetic clock; no downloader work or real network requested"
+    ]
+  },
+  "authored_native_artifacts": [
+    "downloader_update_times_options.png",
+    "downloader_gallery_update_times.png",
+    "downloader_watcher_update_times.png"
+  ],
+  "authored_native_artifact_count": 3,
+  "validation": {
+    "reference": "Actual Qt recording completed and reference PNG inspected.",
+    "source_checks": "Python syntax, JSON deadline/eligibility invariants, direct rustfmt --check, git diff --check and cached warning-aware Slint compilation passed.",
+    "rust_tests": "Meaningful Store/model/native tests authored only. Exact hosted CI and three native render inspections remain pending; no local Rust/Cargo/mutation execution.",
+    "independent_review": "repair_namespace_contract independently accepted final source 7543cf2f39e3a26418a5eba34234d9bf486291d4, actual Qt image/control/deadline boundaries, live companion consumers, same-binding tab roundtrips, hidden/rebind/accepted-close lifetime guards and final packet. All 48 source anchors and 14 reference anchors verified, exactly four unique unclaimed frozen original Missing leaves; no remaining source blocker. Hosted Rust/native execution and render review remain pending."
+  },
+  "claimsPromotion": "Only four original concrete Missing controls are conditional first-pass proposals; broad parents and aliases receive zero credit, and no canonical status/ledger files change."
+}
