@@ -2160,6 +2160,9 @@ merges incoming custom kinds, and replace-paste fills currently inherited kinds.
 The real Qt recording is `oracle/record_subscription_import_options.py`; native
 regressions cover clipboard output, all three modes, invalid input, declined
 clearing, reopening and callbacks retained after the owner closes.
+The recorded containers also exercise both blacklist and whitelist rules in
+global tag filtering, parsed-tag filtering and the existing-tag test. Text/PNG
+interchange retains their reference rule codes and behavior.
 
 File Search can set an implicit search limit (none by default; 1–100,000,000).
 The shared query engine applies it only without an explicit `system:limit`, so an

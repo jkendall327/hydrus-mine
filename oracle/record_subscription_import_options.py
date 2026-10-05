@@ -35,6 +35,7 @@ def record(session):
     def qt():
         from qtpy import QtWidgets as W
         from hydrus.core import HydrusConstants as HC
+        from hydrus.core import HydrusTags
         from hydrus.client import ClientLocation
         from hydrus.client.gui import ClientGUISubscriptions as G
         from hydrus.client.gui import ClientGUIDialogsQuick as Q
@@ -100,6 +101,24 @@ def record(session):
         deleted_locations.SetDestinationLocationContext(deleted_context)
         with_deleted.SetImportOptions(deleted_locations)
         variants.append(with_deleted.GetSerialisableTuple())
+
+        # Real reference rules in every import-options TagFilter position.
+        # Both polarities must survive interchange, not only empty filters.
+        with_filters = varied.Duplicate()
+        mixed_filter = HydrusTags.TagFilter()
+        mixed_filter.SetRule(':', HC.FILTER_BLACKLIST)
+        mixed_filter.SetRule('creator:allowed', HC.FILTER_WHITELIST)
+        with_filters.SetImportOptions(TF.TagFilteringImportOptions(
+            tag_blacklist=mixed_filter.Duplicate(), tag_whitelist=['plain']))
+        filtered_tags = T.ServiceTagImportOptions(
+            get_tags=True, get_tags_filter=mixed_filter.Duplicate(),
+            only_add_existing_tags=True,
+            only_add_existing_tags_filter=mixed_filter.Duplicate())
+        filtered_import = T.TagImportOptions()
+        filtered_import._service_keys_to_service_tag_import_options = {
+            local_tag_key: filtered_tags}
+        with_filters.SetImportOptions(filtered_import)
+        variants.append(with_filters.GetSerialisableTuple())
 
         existing = C.ImportOptionsContainer()
         existing.SetImportOptions(PF.PrefetchImportOptions())

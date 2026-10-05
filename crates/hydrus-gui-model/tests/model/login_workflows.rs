@@ -6,6 +6,15 @@ use hydrus_legacy::{objects::logins as legacy, serialisable::SerialisableObject}
 use hydrus_parse::login::CredentialKind;
 use serde_json::{Value, json};
 use std::collections::BTreeMap;
+fn fixed_editor_value(
+    original: &hydrus_core::url::strings::StringMatch,
+    text: &str,
+) -> hydrus_core::url::strings::StringMatch {
+    let mut child = hydrus_gui_model::string_editors::MatchEditor::new(original);
+    child.set_type(1);
+    text.clone_into(&mut child.fixed);
+    child.value().expect("the recorded fixed matcher is valid")
+}
 fn manager(fixture: &Value) -> hydrus_parse::login::LoginManager {
     legacy::manager(&SerialisableObject::from_tuple_str(&fixture["manager"].to_string()).unwrap())
         .unwrap()
@@ -362,9 +371,8 @@ fn cookie_requirements_match_real_qt_pair_edits_cancel_and_duplicate_looking_key
                 },
                 |i| editor.rows[i].clone(),
             );
-            cookie.name.kind =
-                hydrus_core::url::strings::MatchKind::Fixed(values[0].as_str().unwrap().to_owned());
-            cookie.value.kind = hydrus_core::url::strings::MatchKind::Fixed(value.to_owned());
+            cookie.name = fixed_editor_value(&cookie.name, values[0].as_str().unwrap());
+            cookie.value = fixed_editor_value(&cookie.value, value);
             cookie.reference_auxiliary = None;
             editor.put(index, cookie);
         }
@@ -438,11 +446,10 @@ fn embedded_step_cookie_list_replays_sorted_pair_actions_and_confirmed_bulk_dele
                     },
                     |i| editor.cookies.rows[i].clone(),
                 );
-                // Editing fixed text leaves the matchers' examples and limits intact.
-                cookie.name.kind = hydrus_core::url::strings::MatchKind::Fixed(
-                    answers[0].as_str().unwrap().to_owned(),
-                );
-                cookie.value.kind = hydrus_core::url::strings::MatchKind::Fixed(value.to_owned());
+                // Replay the real matcher child: fixed text becomes its example
+                // and clears length limits, as the recorded Qt GetValue does.
+                cookie.name = fixed_editor_value(&cookie.name, answers[0].as_str().unwrap());
+                cookie.value = fixed_editor_value(&cookie.value, value);
                 cookie.reference_auxiliary = None;
                 editor.cookies.put(index, cookie);
             }

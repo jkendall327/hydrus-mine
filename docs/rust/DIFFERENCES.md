@@ -1483,6 +1483,9 @@ importer editors. Their clipboard errors use the native inline error presentatio
 Favourite naming and overwrite semantics have reference recordings and model
 replays; the favourites popup and durable save/edit/delete GUI remain pending,
 so the broad favourites item is not yet complete.
+Import-option tag filters now encode the reference whitelist/blacklist polarity
+in every supported container field; the extended Qt recording covers both
+polarities. This repair does not expand the favourites or overwrite editor scope.
 
 Page-parser network error popups use native Rust failure diagnostics and response
 text instead of Python traceback frames. Error ownership, show/copy, completion
