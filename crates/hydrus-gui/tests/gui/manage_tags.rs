@@ -65,6 +65,13 @@ fn most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers() {
             hydrus_store::settings::set(ctx.conn(), &tabs)?;
             hydrus_store::settings::set(
                 ctx.conn(),
+                &hydrus_store::related_tags::Settings {
+                    enabled: false,
+                    ..hydrus_store::related_tags::Settings::default()
+                },
+            )?;
+            hydrus_store::settings::set(
+                ctx.conn(),
                 &hydrus_store::settings::TagSuggestionSettings {
                     width: 240,
                     columns: true,

@@ -21,6 +21,7 @@ struct Shared {
 }
 pub(crate) struct Worker {
     shared: Arc<Shared>,
+    thread: Option<std::thread::JoinHandle<()>>,
 }
 impl std::fmt::Debug for Worker {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -40,7 +41,7 @@ impl Worker {
         });
         let state = shared.clone();
         let store = store.clone();
-        std::thread::Builder::new()
+        let thread = std::thread::Builder::new()
             .name("related-tags".into())
             .spawn(move || {
                 loop {
@@ -70,7 +71,10 @@ impl Worker {
                     }
                 }
             })?;
-        Ok(Self { shared })
+        Ok(Self {
+            shared,
+            thread: Some(thread),
+        })
     }
     pub(crate) fn request(&self, query: Query) -> u64 {
         let id = self.shared.generation.fetch_add(1, Ordering::AcqRel) + 1;
@@ -100,5 +104,8 @@ impl Worker {
 impl Drop for Worker {
     fn drop(&mut self) {
         self.close();
+        // Detach only after cancellation; the owned worker leaves its read loop
+        // without blocking the UI on shutdown. No replacement thread is started.
+        self.thread.take();
     }
 }

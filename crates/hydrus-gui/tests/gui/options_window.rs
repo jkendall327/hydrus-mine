@@ -5925,6 +5925,18 @@ fn related_weight_drafts_cancel_reopen_and_re_rank_an_already_open_service_panel
     manage.invoke_service_chosen(second);
     manage.set_related_display(false);
     manage.invoke_related_search();
+    let mine = i32::try_from(
+        manage
+            .get_service_names()
+            .iter()
+            .position(|n| n == "my tags")
+            .unwrap(),
+    )
+    .unwrap();
+    for _ in 0..3 {
+        manage.invoke_service_chosen(mine);
+        manage.invoke_service_chosen(second);
+    }
     let related_rows = || {
         manage
             .get_related_tag_rows()
@@ -5956,6 +5968,24 @@ fn related_weight_drafts_cancel_reopen_and_re_rank_an_already_open_service_panel
         ]
     );
     assert_eq!(manage.get_suggested_page(), 2);
+    assert_eq!(
+        serde_json::json!(
+            related_rows()
+                .into_iter()
+                .map(|row| row.split(" (").next().unwrap().to_owned())
+                .collect::<Vec<_>>()
+        ),
+        f["consumer"]["initial"]
+    );
+    let related_window = windows.get(windows.count() - 1).unwrap();
+    let pixels = headless::render(&related_window, 1100, 700);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("related_tag_suggestions.png"),
+        &pixels,
+        1100,
+        700,
+    )
+    .unwrap();
     open(&ui);
     let options = bound.options.borrow().as_ref().unwrap().clone_strong();
     show_page(&options, "tag suggestions");
@@ -5967,6 +5997,30 @@ fn related_weight_drafts_cancel_reopen_and_re_rank_an_already_open_service_panel
         .as_ref()
         .unwrap()
         .clone_strong();
+    let count = child.get_rows().row_count();
+    child.invoke_action("add".into());
+    child.set_namespace(":".into());
+    child.invoke_action("accept-question".into());
+    assert_eq!(
+        child.get_error(),
+        hydrus_gui_model::related_weights::RESERVED
+    );
+    assert_eq!(child.get_rows().row_count(), count);
+    child.invoke_action("add".into());
+    child.set_namespace("probe".into());
+    child.invoke_action("accept-question".into());
+    child.set_weight(0);
+    child.invoke_action("cancel-question".into());
+    assert_eq!(child.get_rows().row_count(), count);
+    let protected = child
+        .get_rows()
+        .iter()
+        .position(|row| row.cells.row_data(0).unwrap() == "unnamespaced tags")
+        .unwrap();
+    child.invoke_clicked(i32::try_from(protected).unwrap(), false, false);
+    assert!(!child.get_can_delete());
+    child.invoke_action("delete".into());
+    assert_eq!(child.get_rows().row_count(), count);
     child.invoke_action("add".into());
     child.set_namespace("probe".into());
     child.invoke_action("accept-question".into());
