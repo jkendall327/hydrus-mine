@@ -282,7 +282,7 @@ fn archive_delete_uses_saved_neighbour_counts_and_retains_current_media_after_wa
             settings::set(ctx.conn(), &layout)
         })
         .unwrap();
-    headless::init();
+    let _headless_windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(
@@ -363,7 +363,7 @@ fn actual_duplicate_filter_uses_the_same_saved_percentage_for_future_images_with
             )
         })
         .unwrap();
-    headless::init();
+    let _headless_windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
