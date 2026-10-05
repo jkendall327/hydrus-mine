@@ -3025,3 +3025,5 @@ that notebook/page. Switching ordinary tabs reveals the active page's ancestors,
 and changes to the session retain the cursor by page key. The hierarchy remains
 available when main navigation tabs are hidden. Options Apply/Cancel, saved
 settings and reopening use the existing staged tab-presentation controls.
+
+Options > tag suggestions opens an owned related-weight draft with separate search/suggested namespace tables. Reserved and duplicate namespace warnings, 0–10,000 percent values, protected catch-all rows, add/edit/delete, and question Cancel follow the recorded Qt editor. Child Apply stages the tables; parent Apply persists them, while parent Cancel closes and invalidates the child. Already-open Manage Tags related lists re-query saved weight changes through one owned worker. Related suggestions preserve score order, filter tags already present on all captured files, and only add mappings when activated.

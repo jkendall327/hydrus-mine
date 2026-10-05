@@ -71,7 +71,7 @@ impl crate::settings::Setting for Settings {
 }
 
 /// A captured service/context; changing the UI cannot retarget a running query.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Query {
     pub service: hydrus_core::ServiceKey,
     pub searches: Vec<String>,
@@ -92,6 +92,14 @@ pub fn rank(
     query: &Query,
     cancelled: &dyn Fn() -> bool,
 ) -> Vec<Suggestion> {
+    rank_excluding(files, query, cancelled, &std::collections::BTreeSet::new())
+}
+fn rank_excluding(
+    files: &std::collections::BTreeMap<String, std::collections::BTreeSet<hydrus_core::HashId>>,
+    query: &Query,
+    cancelled: &dyn Fn() -> bool,
+    excluded: &std::collections::BTreeSet<String>,
+) -> Vec<Suggestion> {
     let searches: Vec<_> = query
         .searches
         .iter()
@@ -106,7 +114,10 @@ pub fn rank(
         if cancelled() {
             return Vec::new();
         }
-        if candidate.is_empty() || query.searches.contains(tag) {
+        if candidate.is_empty()
+            || excluded.contains(tag)
+            || searches.iter().any(|(search, _, _)| *search == tag)
+        {
             continue;
         }
         let mut score = 0.0;
@@ -177,6 +188,13 @@ pub fn query(
                 crate::master::tag_id(conn,&tag).map(|id| id.and_then(|id| names.get(&graph.ideal(id))).map_or_else(|| tag.as_str().to_owned(),|t| t.as_str().to_owned()))
             }).collect::<crate::Result<Vec<_>>>()?;
         }
-        Ok(rank(&files,&request,cancelled))
+        let mut excluded=BTreeSet::new();
+        for tag in &request.searches {
+            if Weights::percent(&request.weights.search,tag)==0 {continue;}
+            if let Some(tag)=hydrus_core::Tag::new(tag) && let Some(id)=crate::master::tag_id(conn,&tag)? {
+                excluded.extend(graph.ancestors(id).iter().filter_map(|ancestor|names.get(ancestor).map(|tag|tag.as_str().to_owned())));
+            }
+        }
+        Ok(rank_excluding(&files,&request,cancelled,&excluded))
     })
 }

@@ -177,6 +177,14 @@ fn switching_from_empty_service_restores_the_only_suggestion_page() {
             lists.most_used.clear();
             lists.most_used.insert(key, tags);
             hydrus_store::settings::set(writer.conn(), &lists)?;
+            // The recorded most-used/recent notebook deliberately disables related.
+            hydrus_store::settings::set(
+                writer.conn(),
+                &hydrus_store::related_tags::Settings {
+                    enabled: false,
+                    ..hydrus_store::related_tags::Settings::default()
+                },
+            )?;
             hydrus_store::settings::set(
                 writer.conn(),
                 &hydrus_store::settings::TagSuggestionSettings {

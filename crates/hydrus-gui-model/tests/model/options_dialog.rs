@@ -391,6 +391,7 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
                 | Kind::FrameLocations
                 | Kind::FavouriteTags
                 | Kind::MostUsedTags
+                | Kind::RelatedWeights
                 | Kind::GallerySource
                 | Kind::ImportOptions
                 | Kind::NamespaceSorts

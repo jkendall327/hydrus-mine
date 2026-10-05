@@ -42,6 +42,13 @@ use hydrus_store::trash::TrashSettings;
 use rusqlite::Connection;
 
 macro_rules! settings {
+    (@save $conn:ident, $after:ident, $before:ident, related_tags) => {
+        if $after.related_tags.weights != $before.related_tags.weights {
+            let mut current: hydrus_store::related_tags::Settings = hydrus_store::settings::get($conn)?;
+            current.weights.clone_from(&$after.related_tags.weights);
+            hydrus_store::settings::set($conn, &current)?;
+        }
+    };
     (@save $conn:ident, $after:ident, $before:ident, tag_autocomplete_tabs) => {
         if $after.tag_autocomplete_tabs != $before.tag_autocomplete_tabs {
             let mut current: TagAutocompleteTabs = hydrus_store::settings::get($conn)?;
@@ -176,6 +183,7 @@ settings! {
     tag_editing: TagEditingSettings,
     tag_autocomplete_tabs: TagAutocompleteTabs,
     tag_suggestions: hydrus_store::settings::TagSuggestionSettings,
+    related_tags: hydrus_store::related_tags::Settings,
     favourite_tags: FavouriteTags,
     similar_files: SimilarFilesSettings,
     slideshow: SlideshowSettings,
@@ -249,6 +257,7 @@ pub enum Value {
     /// Shared favourite tags, staged until the parent options dialog applies.
     FavouriteTags(FavouriteTags),
     MostUsedTags(std::collections::BTreeMap<String, Vec<String>>),
+    RelatedWeights(hydrus_store::related_tags::Weights),
     ImportOptions(crate::import_options_panel::Value),
     NamespaceSorts(Vec<PageSort>),
     TagBanner(hydrus_core::tag_summary::TagSummaryGenerator),
@@ -328,6 +337,7 @@ pub enum Kind {
     /// A detached tag list editor sharing write autocomplete.
     FavouriteTags,
     MostUsedTags,
+    RelatedWeights,
     /// The transactional manager page, including simple-mode presentation.
     ImportOptions,
     NamespaceSorts,
@@ -3164,6 +3174,19 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         },
                     ),
                     opt(
+                        "adjust scores by search tags / adjust scores by suggested tags",
+                        Kind::RelatedWeights,
+                        Rc::new(|s| Value::RelatedWeights(s.related_tags.weights.clone())),
+                        Rc::new(|s, v| {
+                            if let Value::RelatedWeights(weights) = v {
+                                s.related_tags.weights.clone_from(weights);
+                                Ok(())
+                            } else {
+                                Err(wrong("related tag weights"))
+                            }
+                        }),
+                    ),
+                    opt(
                         "Add your most used tags for each particular service here, and then you can just double-click to add, rather than typing every time.",
                         Kind::MostUsedTags,
                         Rc::new(|s| Value::MostUsedTags(s.tag_autocomplete_tabs.most_used.clone())),
@@ -4025,6 +4048,29 @@ impl Editor {
                 }
             })
             .unwrap_or_else(|| self.before.favourite_tags.clone())
+    }
+
+    /// Detached namespace tables; child acceptance stages, parent acceptance saves.
+    pub fn edited_related_weights(&self) -> hydrus_store::related_tags::Weights {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|v| {
+                if let Value::RelatedWeights(weights) = v {
+                    Some(weights.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| self.before.related_tags.weights.clone())
+    }
+    pub fn set_related_weights(&mut self, weights: hydrus_store::related_tags::Weights) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::RelatedWeights(_)) {
+                *value = Value::RelatedWeights(weights);
+                return;
+            }
+        }
     }
 
     /// Per-service most-used draft; accepting a child never writes preferences.

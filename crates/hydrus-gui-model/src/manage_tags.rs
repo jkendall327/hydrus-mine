@@ -460,6 +460,55 @@ impl ManageTags {
         &self.suggestion_preferences
     }
 
+    /// Capture the service and current/pending selected-file context for a worker.
+    pub fn related_query(
+        &self,
+        local: bool,
+        display: bool,
+    ) -> hydrus_store::Result<hydrus_store::related_tags::Query> {
+        let preferences: hydrus_store::related_tags::Settings =
+            self.store.read(hydrus_store::settings::get)?;
+        let mut tags = self.current_tags();
+        for (tag, files) in status_tags(
+            &self.store,
+            self.services[self.service].0,
+            &self.files,
+            hydrus_core::ContentStatus::Pending,
+        ) {
+            tags.entry(tag).or_default().extend(files);
+        }
+        Ok(hydrus_store::related_tags::Query {
+            service: self.migration_service_key().ok_or_else(|| {
+                hydrus_store::StoreError::Invalid("The tag service has been removed.".into())
+            })?,
+            searches: tags.into_keys().collect(),
+            local,
+            display,
+            weights: preferences.weights,
+            concurrence_percent: preferences.concurrence_percent,
+        })
+    }
+    /// Filter related results with the same add-only current/pending rule as other sides.
+    pub fn useful_related(&self, source: Vec<String>) -> Vec<String> {
+        let mut counts = self.current_tags();
+        for (tag, files) in status_tags(
+            &self.store,
+            self.services[self.service].0,
+            &self.files,
+            hydrus_core::ContentStatus::Pending,
+        ) {
+            counts.entry(tag).or_default().extend(files);
+        }
+        crate::tag_suggestions::useful(
+            source,
+            &counts
+                .into_iter()
+                .map(|(tag, files)| (tag, files.len()))
+                .collect(),
+            self.files.len(),
+        )
+    }
+
     /// Re-read broadcast most-used changes, filtering current/pending tags on every file.
     pub fn side_suggestions(&self, recent: bool) -> Vec<String> {
         let snapshot = self.store.snapshot();

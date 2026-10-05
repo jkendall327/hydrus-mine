@@ -5844,3 +5844,254 @@ fn eye_menu_mixed_root_boundaries_match_the_recorded_menu_and_real_declaration_o
         }
     }
 }
+
+#[test]
+fn related_weight_drafts_cancel_reopen_and_re_rank_an_already_open_service_panel() {
+    use hydrus_store::related_tags::{Settings as Related, Weights};
+    let (_dirs, store) = store();
+    let f = hydrus_testkit::fixture_json("related_tag_weights.json");
+    let files: Vec<hydrus_core::HashId> = store
+        .read(|conn| {
+            Ok(conn
+                .prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT 6")?
+                .query_map([], |r| r.get(0))?
+                .collect::<rusqlite::Result<_>>()?)
+        })
+        .unwrap();
+    assert_eq!(files.len(), 6);
+    for (tag, indices) in [
+        ("source:seed", vec![0, 1, 2, 3]),
+        ("context:seed", vec![2, 3, 4, 5]),
+        ("alpha:first", vec![0, 1, 2]),
+        ("beta:second", vec![3, 4, 5]),
+        ("alpha:third", vec![4, 5]),
+        ("zero:hidden", vec![0, 1]),
+    ] {
+        let mut model = hydrus_gui::manage_tags::ManageTags::new(
+            store.clone(),
+            indices.into_iter().map(|i| files[i]).collect(),
+        )
+        .unwrap();
+        let i = model
+            .service_names()
+            .iter()
+            .position(|n| n == "second tags")
+            .unwrap();
+        model.choose_service(i).unwrap();
+        model.add_side_suggestions(&[tag.into()]);
+        model.apply().unwrap();
+    }
+    let weights = Weights {
+        search: serde_json::from_value(f["ranking"][0]["search_weights"].clone()).unwrap(),
+        result: serde_json::from_value(f["ranking"][0]["result_weights"].clone()).unwrap(),
+    };
+    let initial = weights.clone();
+    store
+        .write(move |ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &Related {
+                    weights,
+                    ..Related::default()
+                },
+            )?;
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::settings::TagSuggestionSettings {
+                    default_page: "related".into(),
+                    recent_limit: None,
+                    ..hydrus_store::settings::TagSuggestionSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let windows = headless::init();
+    let mut page = hydrus_gui::SearchPage::new(store.clone());
+    page.enter();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(page));
+    ui.show().unwrap();
+    bound.current.borrow().borrow_mut().select_files(&files);
+    ui.invoke_manage_tags_selected();
+    let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    let second = i32::try_from(
+        manage
+            .get_service_names()
+            .iter()
+            .position(|n| n == "second tags")
+            .unwrap(),
+    )
+    .unwrap();
+    manage.invoke_service_chosen(second);
+    manage.set_related_display(false);
+    manage.invoke_related_search();
+    let related_rows = || {
+        manage
+            .get_related_tag_rows()
+            .iter()
+            .map(|row| row.cells.row_data(0).unwrap().to_string())
+            .collect::<Vec<_>>()
+    };
+    let wait_for = |first: &str| {
+        for _ in 0..600 {
+            slint::platform::update_timers_and_animations();
+            if related_rows().first().is_some_and(|row| row == first) {
+                return;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(5));
+        }
+        panic!(
+            "related query did not settle: {:?} / {}",
+            related_rows(),
+            manage.get_related_status()
+        );
+    };
+    wait_for("alpha:first (1,154)");
+    assert_eq!(
+        related_rows(),
+        [
+            "alpha:first (1,154)",
+            "beta:second (1,154)",
+            "alpha:third (707)"
+        ]
+    );
+    assert_eq!(manage.get_suggested_page(), 2);
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "tag suggestions");
+    options.invoke_related_weights_clicked();
+    let child = bound
+        .options_suggested_tags_slot
+        .weights
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    child.invoke_action("add".into());
+    child.set_namespace("probe".into());
+    child.invoke_action("accept-question".into());
+    assert_eq!(child.get_question(), "set weight");
+    assert_eq!(child.get_weight(), 100);
+    child.set_weight(10_000);
+    child.invoke_action("accept-question".into());
+    options.invoke_apply();
+    assert!(
+        bound.options.borrow().is_some(),
+        "owner Apply is blocked by its child"
+    );
+    let child_window = windows.get(windows.count() - 1).unwrap();
+    let pixels = headless::render(&child_window, 650, 520);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("related_tag_weights.png"),
+        &pixels,
+        650,
+        520,
+    )
+    .unwrap();
+    child.invoke_action("apply".into());
+    options.invoke_cancel();
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<Related>)
+            .unwrap()
+            .weights,
+        initial
+    );
+    // A retained component handle cannot publish after its owner/slot retired.
+    child.invoke_action("add".into());
+    child.invoke_action("apply".into());
+    assert!(bound.options_suggested_tags_slot.weights.borrow().is_none());
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "tag suggestions");
+    options.invoke_related_weights_clicked();
+    let child = bound
+        .options_suggested_tags_slot
+        .weights
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    child.invoke_choose(true);
+    let edit = |slice: &str, weight| {
+        let index = child
+            .get_rows()
+            .iter()
+            .position(|row| row.cells.row_data(0).unwrap() == slice)
+            .unwrap();
+        child.invoke_clicked(i32::try_from(index).unwrap(), false, false);
+        child.invoke_action("edit".into());
+        assert_eq!(child.get_question(), "edit weight");
+        child.set_weight(weight);
+        child.invoke_action("accept-question".into());
+    };
+    edit("'alpha' tags", 50);
+    edit("'beta' tags", 400);
+    child.invoke_action("apply".into());
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<Related>)
+            .unwrap()
+            .weights,
+        initial,
+        "child acceptance only stages"
+    );
+    options.invoke_apply();
+    wait_for("beta:second (4,616)");
+    assert_eq!(
+        related_rows(),
+        [
+            "beta:second (4,616)",
+            "alpha:first (577)",
+            "alpha:third (353)"
+        ]
+    );
+    let persisted: Related = hydrus_store::Store::open(store.dir())
+        .unwrap()
+        .read(hydrus_store::settings::get)
+        .unwrap();
+    let expected: Vec<(String, u16)> =
+        serde_json::from_value(f["ranking"][2]["result_weights"].clone()).unwrap();
+    assert_eq!(
+        persisted
+            .weights
+            .result
+            .into_iter()
+            .collect::<std::collections::BTreeMap<_, _>>(),
+        expected
+            .into_iter()
+            .collect::<std::collections::BTreeMap<_, _>>()
+    );
+    manage.invoke_side_clicked(2, 0, false, false);
+    manage.invoke_side_activated(2, 0);
+    let committed = || {
+        store.read(|conn| {let id=store.snapshot().services.by_name("second tags").unwrap().id;let table=hydrus_store::schema::MappingTables::new(id).current;Ok(conn.query_row(&format!("SELECT COUNT(*) FROM {table} WHERE tag_id=(SELECT tag_id FROM tags WHERE namespace_id=(SELECT namespace_id FROM namespaces WHERE namespace='beta') AND subtag_id=(SELECT subtag_id FROM subtags WHERE subtag='second'))"),[],|r|r.get::<_,i64>(0))?)}).unwrap()
+    };
+    assert_eq!(committed(), 3, "activation stays staged");
+    manage.invoke_apply();
+    assert_eq!(committed(), i64::try_from(files.len()).unwrap());
+    manage.invoke_related_search();
+    assert_eq!(committed(), 6, "retired request cannot add again");
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "tag suggestions");
+    options.invoke_related_weights_clicked();
+    let child = bound
+        .options_suggested_tags_slot
+        .weights
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(child.get_rows().row_count(), initial.search.len());
+    child.invoke_choose(true);
+    assert!(
+        child
+            .get_rows()
+            .iter()
+            .any(|row| row.cells.row_data(0).unwrap() == "'beta' tags"
+                && row.cells.row_data(1).unwrap() == "400%")
+    );
+    options.invoke_cancel();
+    assert!(bound.options_suggested_tags_slot.weights.borrow().is_none());
+}

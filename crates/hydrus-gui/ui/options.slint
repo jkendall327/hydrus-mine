@@ -161,6 +161,7 @@ export component OptionsWindow inherits Window {
     callback local-location-clicked(int);
     callback favourite-tags-clicked();
     callback most-used-tags-clicked();
+    callback related-weights-clicked();
     callback import-options-clicked();
     callback namespace-sorts-clicked();
     callback banner-clicked(int);
@@ -355,6 +356,7 @@ export component OptionsWindow inherits Window {
                                 text: row.text;
                                 clicked => { root.banner-clicked(i); }
                             }
+                            if row.kind == 29: Button { text: "edit related tag weights"; clicked => { root.related-weights-clicked(); } }
                             if row.kind == 28: Button { text: "edit most used tags"; clicked => { root.most-used-tags-clicked(); } }
                             if row.kind == 21: Button {
                                 text: row.text;

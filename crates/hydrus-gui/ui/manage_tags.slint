@@ -82,6 +82,12 @@ export component ManageTagsWindow inherits Window {
     in property <[TableRow]> recent-tag-rows;
     in property <bool> most-used-enabled;
     in property <bool> recent-tags-enabled;
+    in property <[TableRow]> related-tag-rows;
+    in property <bool> related-tags-enabled;
+    in property <string> related-status;
+    in-out property <bool> related-local:true;
+    in-out property <bool> related-display:true;
+    callback related-search();
     in property <bool> suggested-columns;
     in property <length> suggested-width:300px;
     in-out property <int> suggested-page;
@@ -185,9 +191,11 @@ export component ManageTagsWindow inherits Window {
                     }
                 }
               }
-              if root.most-used-enabled || root.recent-tags-enabled: TagSuggestionPanels {
+              if root.most-used-enabled || root.recent-tags-enabled || root.related-tags-enabled: TagSuggestionPanels {
                 most-used:root.most-used-rows;recent:root.recent-tag-rows;
                 most-used-enabled:root.most-used-enabled;recent-enabled:root.recent-tags-enabled;
+                related:root.related-tag-rows;related-enabled:root.related-tags-enabled;related-status:root.related-status;
+                related-local<=>root.related-local;related-display<=>root.related-display;related-search=>{root.related-search();}
                 columns:root.suggested-columns;column-width:root.suggested-width;selected:root.suggested-page;
                 selected-page(i)=>{root.suggested-page=i;}
                 clicked(p,i,c,s)=>{root.side-clicked(p,i,c,s);}

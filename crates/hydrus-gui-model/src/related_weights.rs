@@ -62,8 +62,11 @@ impl Editor {
         Ok(slice)
     }
     pub fn add(&mut self, slice: String, weight: u16) {
-        self.rows_mut().push((slice, weight));
+        self.rows_mut().push((slice.clone(), weight));
         self.sort();
+        if let Some(index) = self.rows().iter().position(|(tag, _)| tag == &slice) {
+            self.selected.select_many(&[index]);
+        }
     }
     pub fn edit(&mut self, index: usize, weight: u16) {
         if let Some(row) = self.rows_mut().get_mut(index) {
@@ -99,8 +102,19 @@ impl Editor {
         }
     }
     pub fn sort(&mut self) {
+        let selected: Vec<_> = self
+            .selection()
+            .into_iter()
+            .map(|i| self.rows()[i].0.clone())
+            .collect();
         self.rows_mut()
             .sort_by_cached_key(|(slice, weight)| (Self::pretty(slice), *weight));
-        self.selected = crate::list_selection::ListSelection::default();
+        let selected: Vec<_> = self
+            .rows()
+            .iter()
+            .enumerate()
+            .filter_map(|(i, (slice, _))| selected.contains(slice).then_some(i))
+            .collect();
+        self.selected.select_many(&selected);
     }
 }
