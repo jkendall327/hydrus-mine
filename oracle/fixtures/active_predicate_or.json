@@ -1,0 +1,3321 @@
+{
+  "ors": [
+    {
+      "name": "edit_empty",
+      "command": "edit",
+      "selected": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "accepted": false,
+      "mutate_size": false,
+      "or_keep": [],
+      "before": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              30,
+              [
+                26,
+                3,
+                [
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active alpha",
+                        true
+                      ]
+                    ]
+                  ],
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active beta",
+                        true
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "series:active alpha OR series:active beta",
+          "system:inbox"
+        ],
+        "query_count": 0
+      },
+      "menu": [
+        {
+          "label": "copy",
+          "separator": false,
+          "children": [
+            {
+              "label": "2 selected",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "2 selected subtags",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "2 selected subtags with underscores",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "1 selected, with OR predicates collapsed",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "all tags",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "all subtags",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "",
+          "separator": true,
+          "children": []
+        },
+        {
+          "label": "open",
+          "separator": false,
+          "children": [
+            {
+              "label": "open a new search page for 1 selected, with OR predicates collapsed",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "open a new duplicate filter page for 1 selected, with OR predicates collapsed",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "search",
+          "separator": false,
+          "children": [
+            {
+              "label": "edit series:active alpha OR series:active beta",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "remove series:active alpha OR series:active beta from current search",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "dissolve series:active alpha OR series:active beta into single predicates",
+              "separator": false,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "screenshot": false,
+      "png": "active_predicate_or_qt.png",
+      "title": "edit OR predicate",
+      "panels": [
+        "ORPredicateControl"
+      ],
+      "initial": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "initial_labels": [
+        "series:active alpha OR series:active beta"
+      ],
+      "invertible_before": [],
+      "value": [],
+      "invertible_after": [],
+      "after": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              30,
+              [
+                26,
+                3,
+                [
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active alpha",
+                        true
+                      ]
+                    ]
+                  ],
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active beta",
+                        true
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "series:active alpha OR series:active beta",
+          "system:inbox"
+        ],
+        "query_count": 0
+      }
+    },
+    {
+      "name": "edit_empty",
+      "command": "edit",
+      "selected": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "accepted": true,
+      "mutate_size": false,
+      "or_keep": [],
+      "before": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              30,
+              [
+                26,
+                3,
+                [
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active alpha",
+                        true
+                      ]
+                    ]
+                  ],
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active beta",
+                        true
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "series:active alpha OR series:active beta",
+          "system:inbox"
+        ],
+        "query_count": 0
+      },
+      "menu": [
+        {
+          "label": "copy",
+          "separator": false,
+          "children": [
+            {
+              "label": "2 selected",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "2 selected subtags",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "2 selected subtags with underscores",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "1 selected, with OR predicates collapsed",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "all tags",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "all subtags",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "",
+          "separator": true,
+          "children": []
+        },
+        {
+          "label": "open",
+          "separator": false,
+          "children": [
+            {
+              "label": "open a new search page for 1 selected, with OR predicates collapsed",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "open a new duplicate filter page for 1 selected, with OR predicates collapsed",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "search",
+          "separator": false,
+          "children": [
+            {
+              "label": "edit series:active alpha OR series:active beta",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "remove series:active alpha OR series:active beta from current search",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "dissolve series:active alpha OR series:active beta into single predicates",
+              "separator": false,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "screenshot": false,
+      "png": "active_predicate_or_qt.png",
+      "title": "edit OR predicate",
+      "panels": [
+        "ORPredicateControl"
+      ],
+      "initial": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "initial_labels": [
+        "series:active alpha OR series:active beta"
+      ],
+      "invertible_before": [],
+      "value": [],
+      "invertible_after": [],
+      "after": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "system:inbox"
+        ],
+        "query_count": 14
+      }
+    },
+    {
+      "name": "edit_single",
+      "command": "edit",
+      "selected": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "accepted": false,
+      "mutate_size": false,
+      "or_keep": [
+        0
+      ],
+      "before": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              30,
+              [
+                26,
+                3,
+                [
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active alpha",
+                        true
+                      ]
+                    ]
+                  ],
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active beta",
+                        true
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "series:active alpha OR series:active beta",
+          "system:inbox"
+        ],
+        "query_count": 0
+      },
+      "menu": [
+        {
+          "label": "copy",
+          "separator": false,
+          "children": [
+            {
+              "label": "2 selected",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "2 selected subtags",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "2 selected subtags with underscores",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "1 selected, with OR predicates collapsed",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "all tags",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "all subtags",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "",
+          "separator": true,
+          "children": []
+        },
+        {
+          "label": "open",
+          "separator": false,
+          "children": [
+            {
+              "label": "open a new search page for 1 selected, with OR predicates collapsed",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "open a new duplicate filter page for 1 selected, with OR predicates collapsed",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "search",
+          "separator": false,
+          "children": [
+            {
+              "label": "edit series:active alpha OR series:active beta",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "remove series:active alpha OR series:active beta from current search",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "dissolve series:active alpha OR series:active beta into single predicates",
+              "separator": false,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "screenshot": false,
+      "png": "active_predicate_or_qt.png",
+      "title": "edit OR predicate",
+      "panels": [
+        "ORPredicateControl"
+      ],
+      "initial": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "initial_labels": [
+        "series:active alpha OR series:active beta"
+      ],
+      "invertible_before": [],
+      "value": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active alpha",
+            true
+          ]
+        ]
+      ],
+      "invertible_after": [],
+      "after": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              30,
+              [
+                26,
+                3,
+                [
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active alpha",
+                        true
+                      ]
+                    ]
+                  ],
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active beta",
+                        true
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "series:active alpha OR series:active beta",
+          "system:inbox"
+        ],
+        "query_count": 0
+      }
+    },
+    {
+      "name": "edit_single",
+      "command": "edit",
+      "selected": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "accepted": true,
+      "mutate_size": false,
+      "or_keep": [
+        0
+      ],
+      "before": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              30,
+              [
+                26,
+                3,
+                [
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active alpha",
+                        true
+                      ]
+                    ]
+                  ],
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active beta",
+                        true
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "series:active alpha OR series:active beta",
+          "system:inbox"
+        ],
+        "query_count": 0
+      },
+      "menu": [
+        {
+          "label": "copy",
+          "separator": false,
+          "children": [
+            {
+              "label": "2 selected",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "2 selected subtags",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "2 selected subtags with underscores",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "1 selected, with OR predicates collapsed",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "all tags",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "all subtags",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "",
+          "separator": true,
+          "children": []
+        },
+        {
+          "label": "open",
+          "separator": false,
+          "children": [
+            {
+              "label": "open a new search page for 1 selected, with OR predicates collapsed",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "open a new duplicate filter page for 1 selected, with OR predicates collapsed",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "search",
+          "separator": false,
+          "children": [
+            {
+              "label": "edit series:active alpha OR series:active beta",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "remove series:active alpha OR series:active beta from current search",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "dissolve series:active alpha OR series:active beta into single predicates",
+              "separator": false,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "screenshot": false,
+      "png": "active_predicate_or_qt.png",
+      "title": "edit OR predicate",
+      "panels": [
+        "ORPredicateControl"
+      ],
+      "initial": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "initial_labels": [
+        "series:active alpha OR series:active beta"
+      ],
+      "invertible_before": [],
+      "value": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active alpha",
+            true
+          ]
+        ]
+      ],
+      "invertible_after": [],
+      "after": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              0,
+              "series:active alpha",
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "series:active alpha",
+          "system:inbox"
+        ],
+        "query_count": 0
+      }
+    },
+    {
+      "name": "edit_or",
+      "command": "edit",
+      "selected": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "accepted": false,
+      "mutate_size": false,
+      "or_keep": [
+        0,
+        1
+      ],
+      "before": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              30,
+              [
+                26,
+                3,
+                [
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active alpha",
+                        true
+                      ]
+                    ]
+                  ],
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active beta",
+                        true
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "series:active alpha OR series:active beta",
+          "system:inbox"
+        ],
+        "query_count": 0
+      },
+      "menu": [
+        {
+          "label": "copy",
+          "separator": false,
+          "children": [
+            {
+              "label": "2 selected",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "2 selected subtags",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "2 selected subtags with underscores",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "1 selected, with OR predicates collapsed",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "all tags",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "all subtags",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "",
+          "separator": true,
+          "children": []
+        },
+        {
+          "label": "open",
+          "separator": false,
+          "children": [
+            {
+              "label": "open a new search page for 1 selected, with OR predicates collapsed",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "open a new duplicate filter page for 1 selected, with OR predicates collapsed",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "search",
+          "separator": false,
+          "children": [
+            {
+              "label": "edit series:active alpha OR series:active beta",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "remove series:active alpha OR series:active beta from current search",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "dissolve series:active alpha OR series:active beta into single predicates",
+              "separator": false,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "screenshot": false,
+      "png": "active_predicate_or_qt.png",
+      "title": "edit OR predicate",
+      "panels": [
+        "ORPredicateControl"
+      ],
+      "initial": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "initial_labels": [
+        "series:active alpha OR series:active beta"
+      ],
+      "invertible_before": [],
+      "value": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "invertible_after": [],
+      "after": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              30,
+              [
+                26,
+                3,
+                [
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active alpha",
+                        true
+                      ]
+                    ]
+                  ],
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active beta",
+                        true
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "series:active alpha OR series:active beta",
+          "system:inbox"
+        ],
+        "query_count": 0
+      }
+    },
+    {
+      "name": "edit_or",
+      "command": "edit",
+      "selected": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "accepted": true,
+      "mutate_size": false,
+      "or_keep": [
+        0,
+        1
+      ],
+      "before": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              30,
+              [
+                26,
+                3,
+                [
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active alpha",
+                        true
+                      ]
+                    ]
+                  ],
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active beta",
+                        true
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "series:active alpha OR series:active beta",
+          "system:inbox"
+        ],
+        "query_count": 0
+      },
+      "menu": [
+        {
+          "label": "copy",
+          "separator": false,
+          "children": [
+            {
+              "label": "2 selected",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "2 selected subtags",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "2 selected subtags with underscores",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "1 selected, with OR predicates collapsed",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "all tags",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "all subtags",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "",
+          "separator": true,
+          "children": []
+        },
+        {
+          "label": "open",
+          "separator": false,
+          "children": [
+            {
+              "label": "open a new search page for 1 selected, with OR predicates collapsed",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "open a new duplicate filter page for 1 selected, with OR predicates collapsed",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "search",
+          "separator": false,
+          "children": [
+            {
+              "label": "edit series:active alpha OR series:active beta",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "remove series:active alpha OR series:active beta from current search",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "dissolve series:active alpha OR series:active beta into single predicates",
+              "separator": false,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "screenshot": true,
+      "png": "active_predicate_or_qt.png",
+      "title": "edit OR predicate",
+      "panels": [
+        "ORPredicateControl"
+      ],
+      "initial": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "initial_labels": [
+        "series:active alpha OR series:active beta"
+      ],
+      "invertible_before": [],
+      "value": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "invertible_after": [],
+      "after": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              30,
+              [
+                26,
+                3,
+                [
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active alpha",
+                        true
+                      ]
+                    ]
+                  ],
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active beta",
+                        true
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "series:active alpha OR series:active beta",
+          "system:inbox"
+        ],
+        "query_count": 0
+      }
+    },
+    {
+      "name": "start_single",
+      "command": "start_or_predicate",
+      "selected": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active alpha",
+            true
+          ]
+        ]
+      ],
+      "accepted": false,
+      "mutate_size": false,
+      "or_keep": [
+        0
+      ],
+      "before": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              0,
+              "series:active alpha",
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "series:active alpha",
+          "system:inbox"
+        ],
+        "query_count": 0
+      },
+      "menu": [
+        {
+          "label": "copy",
+          "separator": false,
+          "children": [
+            {
+              "label": "series:active alpha",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "active alpha",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "active_alpha",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "all tags",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "all subtags",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "siblings",
+          "separator": false,
+          "children": [
+            {
+              "label": "add siblings to series:active alpha",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "parents",
+          "separator": false,
+          "children": [
+            {
+              "label": "add parents to series:active alpha",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "",
+          "separator": true,
+          "children": []
+        },
+        {
+          "label": "open",
+          "separator": false,
+          "children": [
+            {
+              "label": "open a new search page for series:active alpha",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "open a new duplicate filter page for series:active alpha",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "search",
+          "separator": false,
+          "children": [
+            {
+              "label": "edit series:active alpha",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "remove series:active alpha from current search",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "invert: add -series:active alpha to current search",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "start an OR predicate with series:active alpha",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "add series:*anything* to current search",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "exclude series:*anything* from the current search",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "select",
+          "separator": false,
+          "children": [
+            {
+              "label": "files with \"series:active alpha\"",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "favourites",
+          "separator": false,
+          "children": [
+            {
+              "label": "add \"series:active alpha\" to favourites",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "add \"series:active alpha\" to most used for \"downloader tags\"",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "add \"series:active alpha\" to most used for \"my tags\"",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "add \"series:active alpha\" to most used for \"second tags\"",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "",
+          "separator": true,
+          "children": []
+        },
+        {
+          "label": "maintenance",
+          "separator": false,
+          "children": [
+            {
+              "label": "regenerate tag display",
+              "separator": false,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "screenshot": false,
+      "png": "active_predicate_or_qt.png",
+      "title": "edit OR predicate",
+      "panels": [
+        "ORPredicateControl"
+      ],
+      "initial": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active alpha",
+            true
+          ]
+        ]
+      ],
+      "initial_labels": [
+        "series:active alpha"
+      ],
+      "invertible_before": [],
+      "value": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active alpha",
+            true
+          ]
+        ]
+      ],
+      "invertible_after": [],
+      "after": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              0,
+              "series:active alpha",
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "series:active alpha",
+          "system:inbox"
+        ],
+        "query_count": 0
+      }
+    },
+    {
+      "name": "start_single",
+      "command": "start_or_predicate",
+      "selected": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active alpha",
+            true
+          ]
+        ]
+      ],
+      "accepted": true,
+      "mutate_size": false,
+      "or_keep": [
+        0
+      ],
+      "before": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              0,
+              "series:active alpha",
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "series:active alpha",
+          "system:inbox"
+        ],
+        "query_count": 0
+      },
+      "menu": [
+        {
+          "label": "copy",
+          "separator": false,
+          "children": [
+            {
+              "label": "series:active alpha",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "active alpha",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "active_alpha",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "all tags",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "all subtags",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "siblings",
+          "separator": false,
+          "children": [
+            {
+              "label": "add siblings to series:active alpha",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "parents",
+          "separator": false,
+          "children": [
+            {
+              "label": "add parents to series:active alpha",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "",
+          "separator": true,
+          "children": []
+        },
+        {
+          "label": "open",
+          "separator": false,
+          "children": [
+            {
+              "label": "open a new search page for series:active alpha",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "open a new duplicate filter page for series:active alpha",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "search",
+          "separator": false,
+          "children": [
+            {
+              "label": "edit series:active alpha",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "remove series:active alpha from current search",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "invert: add -series:active alpha to current search",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "start an OR predicate with series:active alpha",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "add series:*anything* to current search",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "exclude series:*anything* from the current search",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "select",
+          "separator": false,
+          "children": [
+            {
+              "label": "files with \"series:active alpha\"",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "favourites",
+          "separator": false,
+          "children": [
+            {
+              "label": "add \"series:active alpha\" to favourites",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "add \"series:active alpha\" to most used for \"downloader tags\"",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "add \"series:active alpha\" to most used for \"my tags\"",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "add \"series:active alpha\" to most used for \"second tags\"",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "",
+          "separator": true,
+          "children": []
+        },
+        {
+          "label": "maintenance",
+          "separator": false,
+          "children": [
+            {
+              "label": "regenerate tag display",
+              "separator": false,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "screenshot": false,
+      "png": "active_predicate_or_qt.png",
+      "title": "edit OR predicate",
+      "panels": [
+        "ORPredicateControl"
+      ],
+      "initial": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active alpha",
+            true
+          ]
+        ]
+      ],
+      "initial_labels": [
+        "series:active alpha"
+      ],
+      "invertible_before": [],
+      "value": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active alpha",
+            true
+          ]
+        ]
+      ],
+      "invertible_after": [],
+      "after": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              0,
+              "series:active alpha",
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "series:active alpha",
+          "system:inbox"
+        ],
+        "query_count": 0
+      }
+    },
+    {
+      "name": "start_or",
+      "command": "start_or_predicate",
+      "selected": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active alpha",
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active beta",
+            true
+          ]
+        ]
+      ],
+      "accepted": false,
+      "mutate_size": false,
+      "or_keep": [
+        0,
+        1
+      ],
+      "before": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              0,
+              "series:active alpha",
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              0,
+              "series:active beta",
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "series:active alpha",
+          "series:active beta",
+          "system:inbox"
+        ],
+        "query_count": 0
+      },
+      "menu": [
+        {
+          "label": "copy",
+          "separator": false,
+          "children": [
+            {
+              "label": "2 selected",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "2 selected subtags",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "2 selected subtags with underscores",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "all tags",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "all subtags",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "siblings",
+          "separator": false,
+          "children": [
+            {
+              "label": "add siblings to selection",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "parents",
+          "separator": false,
+          "children": [
+            {
+              "label": "add parents to selection",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "",
+          "separator": true,
+          "children": []
+        },
+        {
+          "label": "open",
+          "separator": false,
+          "children": [
+            {
+              "label": "open a new search page for 2 selected",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "open a new OR search page for 2 selected",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "open new search pages for each in selection",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "open a new duplicate filter page for 2 selected",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "search",
+          "separator": false,
+          "children": [
+            {
+              "label": "edit 2 search terms",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "remove selected from current search",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "invert selected and add to current search",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "replace selected with their OR",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "start an OR predicate with selected",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "add series:*anything* to current search",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "exclude series:*anything* from the current search",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "select",
+          "separator": false,
+          "children": [
+            {
+              "label": "files with all of \"series:active alpha, series:active beta\"",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "files with any of \"series:active alpha, series:active beta\"",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "",
+          "separator": true,
+          "children": []
+        },
+        {
+          "label": "maintenance",
+          "separator": false,
+          "children": [
+            {
+              "label": "regenerate tag display",
+              "separator": false,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "screenshot": false,
+      "png": "active_predicate_or_qt.png",
+      "title": "edit OR predicate",
+      "panels": [
+        "ORPredicateControl"
+      ],
+      "initial": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "initial_labels": [
+        "series:active alpha OR series:active beta"
+      ],
+      "invertible_before": [],
+      "value": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "invertible_after": [],
+      "after": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              0,
+              "series:active alpha",
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              0,
+              "series:active beta",
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "series:active alpha",
+          "series:active beta",
+          "system:inbox"
+        ],
+        "query_count": 0
+      }
+    },
+    {
+      "name": "start_or",
+      "command": "start_or_predicate",
+      "selected": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active alpha",
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active beta",
+            true
+          ]
+        ]
+      ],
+      "accepted": true,
+      "mutate_size": false,
+      "or_keep": [
+        0,
+        1
+      ],
+      "before": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              0,
+              "series:active alpha",
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              0,
+              "series:active beta",
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "series:active alpha",
+          "series:active beta",
+          "system:inbox"
+        ],
+        "query_count": 0
+      },
+      "menu": [
+        {
+          "label": "copy",
+          "separator": false,
+          "children": [
+            {
+              "label": "2 selected",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "2 selected subtags",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "2 selected subtags with underscores",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "all tags",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "all subtags",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "siblings",
+          "separator": false,
+          "children": [
+            {
+              "label": "add siblings to selection",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "parents",
+          "separator": false,
+          "children": [
+            {
+              "label": "add parents to selection",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "",
+          "separator": true,
+          "children": []
+        },
+        {
+          "label": "open",
+          "separator": false,
+          "children": [
+            {
+              "label": "open a new search page for 2 selected",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "open a new OR search page for 2 selected",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "open new search pages for each in selection",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "open a new duplicate filter page for 2 selected",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "search",
+          "separator": false,
+          "children": [
+            {
+              "label": "edit 2 search terms",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "remove selected from current search",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "invert selected and add to current search",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "replace selected with their OR",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "start an OR predicate with selected",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "",
+              "separator": true,
+              "children": []
+            },
+            {
+              "label": "add series:*anything* to current search",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "exclude series:*anything* from the current search",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "select",
+          "separator": false,
+          "children": [
+            {
+              "label": "files with all of \"series:active alpha, series:active beta\"",
+              "separator": false,
+              "children": []
+            },
+            {
+              "label": "files with any of \"series:active alpha, series:active beta\"",
+              "separator": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "",
+          "separator": true,
+          "children": []
+        },
+        {
+          "label": "maintenance",
+          "separator": false,
+          "children": [
+            {
+              "label": "regenerate tag display",
+              "separator": false,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "screenshot": false,
+      "png": "active_predicate_or_qt.png",
+      "title": "edit OR predicate",
+      "panels": [
+        "ORPredicateControl"
+      ],
+      "initial": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "initial_labels": [
+        "series:active alpha OR series:active beta"
+      ],
+      "invertible_before": [],
+      "value": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "invertible_after": [],
+      "after": {
+        "predicates": [
+          [
+            14,
+            8,
+            [
+              30,
+              [
+                26,
+                3,
+                [
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active alpha",
+                        true
+                      ]
+                    ]
+                  ],
+                  [
+                    2,
+                    [
+                      14,
+                      8,
+                      [
+                        0,
+                        "series:active beta",
+                        true
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              true
+            ]
+          ],
+          [
+            14,
+            8,
+            [
+              5,
+              null,
+              true
+            ]
+          ]
+        ],
+        "labels": [
+          "series:active alpha OR series:active beta",
+          "system:inbox"
+        ],
+        "query_count": 0
+      }
+    }
+  ]
+}

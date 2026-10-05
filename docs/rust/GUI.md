@@ -3050,6 +3050,17 @@ editor accept/Cancel paths, including the difference between Ctrl inversion
 regressions cover the populated size editor, actual query counts, real row
 pointer selection and retained-owner boundaries; hosted execution is pending. `active_predicate_mixed.json` adds eight actual Qt simple/mixed accept/Cancel paths and fourteen parser/veto cases; native mixed regressions cover atomic invalid-input refusal, hidden controls, Cancel, saved typed recents and rebinding.
 
+A single active OR predicate opens the populated basic OR editor. Its accepted
+zero/one/many terms respectively remove the OR, flatten it, or keep an OR group.
+The search menu’s “start an OR predicate” stages the selected terms and replaces
+them only on Apply. Cancel and hidden callbacks leave the active query unchanged;
+page transitions retire this owned child, and stale/rebound closes cannot unlock
+a successor. Accepted values are kept as typed recents. OR children hold weak
+callbacks to their parent, including nested OR and system editors.
+`active_predicate_or.json` records ten actual Qt populated/start-OR Apply/Cancel
+paths; authored native replay, hidden/page/rebind/Main-drop and last-owner child
+release checks await hosted execution and the new rendered PNG review.
+
 The file-size editor displays `<`, `≈`, `=`, `≠` and `>` as five radio choices,
 with bounded arrow navigation, Space and default Enter acceptance. Its amount
 stays within 0–1,048,576; selecting B/KB/MB/GB/TB changes the binary multiplier

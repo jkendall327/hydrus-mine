@@ -37,7 +37,7 @@ def record(session):
     inbox = P.Predicate(P.PREDICATE_TYPE_SYSTEM_INBOX)
     archive = P.Predicate(P.PREDICATE_TYPE_SYSTEM_ARCHIVE)
     group = P.Predicate(P.PREDICATE_TYPE_OR_CONTAINER, [alpha,beta])
-    events, edits, mixed = [], [], []
+    events, edits, mixed, ors = [], [], [], []
     old_exec, old_popup, old_thread = Windows.DialogEdit.exec, Core.core().PopupMenu, c.CallToThread
     c.CallToThread = lambda fn,*args,**kw: None if fn == AC.ReadFetch else old_thread(fn,*args,**kw)
     plan = None
@@ -65,6 +65,12 @@ def record(session):
             if plan.get('flip'): button.click()
         for panel, value in zip([p for p in panels if type(p).__name__ == 'PanelPredicateSystemSize'], plan.get('sizes', [])):
             panel._sign.SetValue('>'); panel._bytes.SetSeparatedValue(value,1024)
+        if 'or_keep' in plan:
+            for panel in panels:
+                if type(panel).__name__ == 'ORPredicateControl':
+                    predicates=panel._search_control.GetPredicates()
+                    remove=[p for i,p in enumerate(predicates) if i not in plan['or_keep']]
+                    panel._search_control._predicates_listbox.EnterPredicates(remove,permit_add=False)
         if plan['mutate_size']:
             panel = next(p for p in panels if type(p).__name__ == 'PanelPredicateSystemSize')
             panel._sign.SetValue('>');panel._bytes.SetSeparatedValue(11,1024)
@@ -123,7 +129,16 @@ def record(session):
                 menus.clear();box.ShowMenuFromSignal(QC.QPoint(1,1))
                 plan={'name':name,'selected':[p.GetSerialisableTuple() for p in selected],'accepted':accepted,'mutate_size':False,'simple':texts,'sizes':sizes,'flip':flip,'before':snapshot(),'menu':menus[-1],'screenshot':name=='mixed' and accepted,'png':'active_predicate_mixed_qt.png'}
                 box._EditPredicates(selected);plan['after']=snapshot();mixed.append(plan)
-        return {'events':events,'edits':edits,'custom_size_default':('>',99,1024*1024),'mixed':mixed,'simple_cases':simple_cases}
+        for name,selected,keep,command in [('edit_empty',[group],[],'edit'),('edit_single',[group],[0],'edit'),('edit_or',[group],[0,1],'edit'),('start_single',[alpha],[0],'start_or_predicate'),('start_or',[alpha,beta],[0,1],'start_or_predicate')]:
+            for accepted in [False,True]:
+                set_values(selected+[inbox],selected)
+                menus.clear();box.ShowMenuFromSignal(QC.QPoint(1,1))
+                plan={'name':name,'command':command,'selected':[p.GetSerialisableTuple() for p in selected],'accepted':accepted,'mutate_size':False,'or_keep':keep,'before':snapshot(),'menu':menus[-1],'screenshot':name=='edit_or' and accepted,'png':'active_predicate_or_qt.png'}
+                if command=='edit': box._EditPredicates(selected)
+                else: box._ProcessMenuPredicateEvent(command)
+                plan['after']=snapshot();ors.append(plan)
+        return {'events':events,'edits':edits,'custom_size_default':('>',99,1024*1024),'mixed':mixed,'simple_cases':simple_cases,'ors':ors}
+
 
     try: return qt(replay)
     finally:
@@ -132,11 +147,13 @@ def record(session):
 
 if __name__ == '__main__':
     mixed_only='--mixed-only' in sys.argv
+    or_only='--or-only' in sys.argv
     db = record_api.unpack_fixture('basic')
     try:
         result = run_client(db, record)
-        if mixed_only: result={key:result[key] for key in ['mixed','simple_cases','custom_size_default']}
-        filename='active_predicate_mixed.json' if mixed_only else 'active_predicate_edit.json'
+        if or_only: result={'ors':result['ors']}
+        elif mixed_only: result={key:result[key] for key in ['mixed','simple_cases','custom_size_default']}
+        filename='active_predicate_or.json' if or_only else 'active_predicate_mixed.json' if mixed_only else 'active_predicate_edit.json'
         with open(os.path.join(HERE,'fixtures',filename),'w') as stream:
             json.dump(result,stream,indent=2,ensure_ascii=False);stream.write('\n')
     finally: shutil.rmtree(db)

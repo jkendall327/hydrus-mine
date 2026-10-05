@@ -21,6 +21,8 @@ pub enum Command {
     ExcludeNamespace,
     /// Ctrl activation toggles an already-present inverse; the menu only adds.
     InvertToggle,
+    /// Stage the selected terms in the populated OR editor before replacement.
+    StartOr,
 }
 impl Command {
     /// Stable native transport identifier.
@@ -75,6 +77,12 @@ pub fn menu(
         out.push((
             Command::ReplaceOr,
             format!("replace {description} with their OR"),
+        ));
+    }
+    if !selected.iter().any(|p| matches!(p, Predicate::Or(_))) {
+        out.push((
+            Command::StartOr,
+            format!("start an OR predicate with {description}"),
         ));
     }
     if selected.iter().all(|p| matches!(p, Predicate::Or(_))) {
@@ -162,7 +170,7 @@ pub fn apply(
 ) -> bool {
     let before = current.clone();
     match command {
-        Command::Edit => return false,
+        Command::Edit | Command::StartOr => return false,
         Command::Remove => current.retain(|p| !selected.contains(p)),
         Command::Invert => {
             let add: Vec<_> = inverses(selected, text)

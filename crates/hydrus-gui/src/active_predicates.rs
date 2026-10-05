@@ -86,6 +86,7 @@ fn permits_input(window: &MainWindow) -> bool {
 pub(crate) fn bind(
     window: &MainWindow,
     slot: &Rc<RefCell<Option<PredicateEditorWindow>>>,
+    or_slot: &crate::search_or_window::Slot,
     page: impl Fn() -> Rc<RefCell<SearchPage>> + Clone + 'static,
     shown: impl Fn(bool) + Clone + 'static,
     active: Rc<Cell<bool>>,
@@ -110,6 +111,7 @@ pub(crate) fn bind(
         let page = page.clone();
         let slot = Rc::downgrade(slot);
         let active = binding_active.clone();
+        let or_slot = or_slot.clone();
         move || {
             if !active.get() {
                 return;
@@ -125,6 +127,7 @@ pub(crate) fn bind(
                         || state.predicates != current.borrow().active_predicates()
                 };
                 if changed {
+                    crate::search_or_window::cancel(&or_slot);
                     let child = slot.upgrade().and_then(|slot| {
                         slot.borrow()
                             .as_ref()
@@ -167,6 +170,7 @@ pub(crate) fn bind(
         let shown = shown.clone();
         let valid = valid.clone();
         let slot = slot.clone();
+        let or_slot = or_slot.clone();
         move |command, selected| {
             if !valid() || selected.is_empty() {
                 return;
@@ -176,6 +180,93 @@ pub(crate) fn bind(
                 .iter()
                 .all(|p| current.borrow().active_predicates().contains(p))
             {
+                return;
+            }
+            if command == Command::StartOr
+                || (command == Command::Edit
+                    && selected.len() == 1
+                    && matches!(selected[0], Predicate::Or(_)))
+            {
+                let original = Rc::downgrade(&current);
+                let owner: crate::search_or_window::ValidOwner = Rc::new({
+                    let page = page.clone();
+                    let weak = weak.clone();
+                    let selected = selected.clone();
+                    let active = binding_active.clone();
+                    move || {
+                        active.get()
+                            && original.upgrade().is_some_and(|original| {
+                                Rc::ptr_eq(&original, &page())
+                                    && original.borrow().lock().is_none()
+                                    && selected
+                                        .iter()
+                                        .all(|p| original.borrow().active_predicates().contains(p))
+                            })
+                            && weak.upgrade().is_some_and(|w| {
+                                w.window().is_visible()
+                                    && w.get_question().is_empty()
+                                    && w.get_chooser_labels().row_count() == 0
+                            })
+                    }
+                });
+                let applied: crate::search_or_window::Applied = Rc::new({
+                    let owner = owner.clone();
+                    let store = current.borrow().store().clone();
+                    let current = Rc::downgrade(&current);
+                    let selected = selected.clone();
+                    let shown = shown.clone();
+                    move |edited| {
+                        if owner()
+                            && let Some(current) = current.upgrade()
+                        {
+                            let recent_values = edited.clone();
+                            if let Err(error) = store.write(move |tx| {
+                                let mut recent: hydrus_core::search::recent::RecentPredicates =
+                                    hydrus_store::settings::get(tx.conn())?;
+                                recent.push_all(&recent_values);
+                                hydrus_store::settings::set(tx.conn(), &recent)
+                            }) {
+                                eprintln!("could not keep edited OR predicates: {error}");
+                            }
+                            current
+                                .borrow_mut()
+                                .edit_active_predicates(&selected, &edited);
+                            shown(true);
+                        }
+                    }
+                });
+                let context = hydrus_search::FileSearchContext {
+                    location: current.borrow().location().clone(),
+                    tags: current.borrow().tag_context().clone(),
+                    predicates: if command == Command::Edit {
+                        if let Predicate::Or(terms) = &selected[0] {
+                            terms.clone()
+                        } else {
+                            Vec::new()
+                        }
+                    } else {
+                        selected.clone()
+                    },
+                };
+                let store = current.borrow().store().clone();
+                match crate::search_or_window::open(store, context, false, &or_slot, owner, applied)
+                {
+                    Ok(child) => {
+                        if let Some(window) = weak.upgrade() {
+                            window.set_search_or_open(true);
+                        }
+                        let weak = weak.clone();
+                        let active = binding_active.clone();
+                        child.on_closed(move || {
+                            if active.get()
+                                && let Some(window) = weak.upgrade()
+                            {
+                                window.set_search_or_open(false);
+                            }
+                        });
+                    }
+                    Err(error) => eprintln!("could not edit the active OR predicate: {error}"),
+                }
                 return;
             }
             if command != Command::Edit {
@@ -319,20 +410,24 @@ pub(crate) fn bind(
             state.captured = state.selected();
             let page = current.borrow();
             let context = context(&page);
-            let editable = state.captured.iter().any(|p| {
-                Editor::existing(p, &context).is_some()
-                    || matches!(
-                        p,
-                        Predicate::Tag { .. }
-                            | Predicate::Namespace { .. }
-                            | Predicate::Wildcard { .. }
-                    )
-            });
+            let single_or =
+                state.captured.len() == 1 && matches!(state.captured[0], Predicate::Or(_));
+            let editable = single_or
+                || state.captured.iter().any(|p| {
+                    Editor::existing(p, &context).is_some()
+                        || matches!(
+                            p,
+                            Predicate::Tag { .. }
+                                | Predicate::Namespace { .. }
+                                | Predicate::Wildcard { .. }
+                        )
+                });
             let editable_terms = state
                 .captured
                 .iter()
                 .filter(|p| {
-                    Editor::existing(p, &context).is_some()
+                    single_or
+                        || Editor::existing(p, &context).is_some()
                         || matches!(
                             p,
                             Predicate::Tag { .. }

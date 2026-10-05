@@ -54,6 +54,7 @@ pub fn cancel(slot: &Slot) {
     }
 }
 struct State {
+    window: slint::Weak<SearchOrWindow>,
     page: RefCell<SearchPage>,
     text: TextContext,
     active: Rc<Cell<bool>>,
@@ -63,8 +64,15 @@ struct State {
     watch_owner: slint::Timer,
 }
 impl State {
-    fn valid(&self) -> bool {
+    fn owned(&self) -> bool {
         self.active.get() && (self.owner)()
+    }
+    fn valid(&self) -> bool {
+        self.owned()
+            && self
+                .window
+                .upgrade()
+                .is_some_and(|w| w.window().is_visible())
     }
     fn blocked(&self) -> bool {
         self.nested.borrow().is_some() || self.system.borrow().is_some()
@@ -134,9 +142,12 @@ fn system_editor(window: &SearchOrWindow, state: &Rc<State>) {
     );
     let editor = crate::predicate_editors::Editor::new(blank, &context);
     let applied: Applied = Rc::new({
-        let state = state.clone();
+        let state = Rc::downgrade(state);
         let weak = window.as_weak();
         move |predicates| {
+            let Some(state) = state.upgrade() else {
+                return;
+            };
             if !state.valid() {
                 return;
             }
@@ -157,8 +168,8 @@ fn system_editor(window: &SearchOrWindow, state: &Rc<State>) {
         state.text.clone(),
         applied,
         Some(Rc::new({
-            let state = state.clone();
-            move || state.valid()
+            let state = Rc::downgrade(state);
+            move || state.upgrade().is_some_and(|state| state.valid())
         })),
     ) {
         window.set_error(error.into());
@@ -171,8 +182,11 @@ fn system_editor(window: &SearchOrWindow, state: &Rc<State>) {
         if let Some(child) = child {
             window.set_blocked(true);
             let weak = window.as_weak();
-            let state = state.clone();
+            let state = Rc::downgrade(state);
             child.on_closed(move || {
+                let Some(state) = state.upgrade() else {
+                    return;
+                };
                 if state.valid()
                     && let Some(window) = weak.upgrade()
                 {
@@ -220,6 +234,7 @@ pub fn open(
         .into(),
     );
     let state = Rc::new(State {
+        window: window.as_weak(),
         page: RefCell::new(SearchPage::restored(
             store,
             context,
@@ -453,13 +468,16 @@ pub fn open(
                         predicates: Vec::new(),
                     };
                     let owner: ValidOwner = Rc::new({
-                        let state = state.clone();
-                        move || state.valid()
+                        let state = Rc::downgrade(&state);
+                        move || state.upgrade().is_some_and(|state| state.valid())
                     });
                     let applied: Applied = Rc::new({
-                        let state = state.clone();
+                        let state = Rc::downgrade(&state);
                         let weak = window.as_weak();
                         move |predicates| {
+                            let Some(state) = state.upgrade() else {
+                                return;
+                            };
                             if !state.valid() {
                                 return;
                             }
@@ -479,8 +497,11 @@ pub fn open(
                     ) {
                         Ok(child) => {
                             let weak = window.as_weak();
-                            let state = state.clone();
+                            let state = Rc::downgrade(&state);
                             child.on_closed(move || {
+                                let Some(state) = state.upgrade() else {
+                                    return;
+                                };
                                 if state.valid()
                                     && let Some(window) = weak.upgrade()
                                 {
@@ -501,16 +522,19 @@ pub fn open(
         let weak = window.as_weak();
         let close = close.clone();
         move || {
-            if !state.valid() {
+            if !state.owned() {
                 close();
                 return;
             }
-            if state.blocked() {
+            if !state.valid() || state.blocked() {
                 return;
             }
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            if !window.window().is_visible() {
+                return;
+            }
             let result = if window.get_advanced() {
                 advanced::predicates(window.get_input().as_str(), &state.text)
             } else {
