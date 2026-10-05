@@ -5,7 +5,8 @@
   "source_commit": "195723a4fa0051ede79742055b28fb1a63876399",
   "implementation_commits": [
     "580ab59ae1caa8eab6b9d5fc078c0ee66adc116a",
-    "195723a4fa0051ede79742055b28fb1a63876399"
+    "195723a4fa0051ede79742055b28fb1a63876399",
+    "08b67685d2ffe9bf6907a42c9d5f103f158d860f"
   ],
   "eligible_concrete_first_pass_count": 3,
   "parent_promotions": 0,
@@ -382,5 +383,34 @@
     },
     "consumer": "existing ManageTagsWindow > TagSuggestionPanels, most used/recent supported pages",
     "native_png": "most-used-tags-options.png (hosted CARGO_TARGET_TMPDIR; authored, CI pending)"
-  }
+  },
+  "repair_followups": [
+    {
+      "commit": "08b67685d2ffe9bf6907a42c9d5f103f158d860f",
+      "scope": "Existing suggested-list consumer repair; no new claims or count changes.",
+      "cause": "With recent disabled and notebook layout, the shared native notebook retained page1 after visiting a service without an opening most-used list. Returning to a populated service enabled its list but failed to select its only available page.",
+      "behavior": "When most-used is enabled and recent is absent, refresh selects most-used page0. Existing captured panel availability remains unchanged, and unrelated supported panels/preferences retain their prior scope.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/ClientGUITagSuggestions.py",
+        "line": 858,
+        "symbol": "class SuggestedTagsPanel",
+        "behavior": "Each service owns an independent notebook. Construction adds only available panels and falls back to its first tab when the requested page is absent."
+      },
+      "source_anchor": {
+        "relativepath": "crates/hydrus-gui/src/manage_tags_window.rs",
+        "line": 137,
+        "commit": "08b67685d2ffe9bf6907a42c9d5f103f158d860f",
+        "symbol": "else if !w.get_recent_tags_enabled()"
+      },
+      "test_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/manage_tags.rs",
+        "line": 161,
+        "commit": "08b67685d2ffe9bf6907a42c9d5f103f158d860f",
+        "symbol": "fn switching_from_empty_service_restores_the_only_suggestion_page"
+      },
+      "native_png": "suggested_tags_service_switch.png (authored for hosted CARGO_TARGET_TMPDIR)",
+      "validation": "cargo fmt --all, git diff --check and cached warning-aware Slint source compilation passed; no local Cargo builds/tests or new Qt fixture execution. Existing actual Qt fixture and reference constructor inspected. Native execution pending root hosted CI.",
+      "limits": "Default-page remains Partial, including unavailable Related/File Lookup panels. This repairs valid page fallback and does not add independent per-service native notebook-page history."
+    }
+  ]
 }
