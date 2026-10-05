@@ -101,7 +101,9 @@ fn actual_defaults_disabled_values_cancel_reopen_and_edited_field_merge() {
         assert!(errors.is_empty());
         assert_eq!(flags(&after.thumbnail_preview_selection), case["saved"]);
         assert_eq!(store.read(Settings::load).unwrap(), before);
-        store.write(|ctx| after.save(ctx.conn(), &before)).unwrap();
+        store
+            .write(move |ctx| after.save(ctx.conn(), &before))
+            .unwrap();
         let reopened = Store::open(dir.path()).unwrap();
         assert_eq!(
             flags(&reopened.read(settings::get).unwrap()),
@@ -119,9 +121,12 @@ fn actual_defaults_disabled_values_cancel_reopen_and_edited_field_merge() {
         ..before.clone()
     };
     store
-        .write(|ctx| {
-            settings::set(ctx.conn(), &concurrent)?;
-            edited.save_changed(ctx.conn(), &before)
+        .write({
+            let concurrent = concurrent.clone();
+            move |ctx| {
+                settings::set(ctx.conn(), &concurrent)?;
+                edited.save_changed(ctx.conn(), &before)
+            }
         })
         .unwrap();
     assert_eq!(
