@@ -3834,3 +3834,17 @@ Changing the saved value reaches already open dialogs. Options changes remain
 staged until Apply; Cancel discards them. Hash multiline text keeps its normal
 newline behavior. Hidden, cancelled or retired child/parent owners cannot apply
 through these key routes. Other widgets and dialog families receive no new claim.
+
+Options > tag sort now includes the staged namespace grouping queue. Add and
+Edit open owned Enter Text children with the reference's `namespace` default,
+allowing blank, `:` and arbitrary raw namespace strings without normalization or
+deduplication. Blank and colon rows render as “unnamespaced” and “namespaced”.
+Edit captures the first selected row's stable identity, including duplicate rows;
+Up/Down and confirmed removal operate on the same queue. Parent Apply is blocked
+while a child owns input, Cancel discards the draft, and rebind or accepted client
+exit closes the exact children permanently. Hidden or retired callbacks cannot
+stage changes. Saved namespace order reaches the existing sidebar/viewer tag-sort
+consumers; presentation saves preserve concurrent unrelated fields. Actual Qt
+queue/prompt/sort recording and authored model/native regressions cover this
+finite scope, including real Enter Text blank/whitespace Apply and Cancel
+handlers with their “apply”/“cancel” buttons. Hosted Rust execution and native PNG review remain pending.

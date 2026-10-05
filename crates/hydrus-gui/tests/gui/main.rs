@@ -140,6 +140,7 @@ mod sibling_colours;
 mod sibling_connector;
 mod tag_dialog_defaults;
 mod tag_dialog_preferences;
+mod tag_namespace_order;
 mod unselected_tag_cap;
 
 mod write_autocomplete;

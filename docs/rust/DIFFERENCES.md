@@ -3037,3 +3037,19 @@ Hash TextEdit consumes newline before the default route. Other Qt/platform widge
 fallback behavior is not asserted, nor are unrelated dialog families promoted.
 Actual reference recording and authored Store/model/native regressions are pinned;
 local Rust execution is prohibited and hosted execution remains pending.
+
+## User namespace grouping Add/Edit
+
+The tag-sort namespace grouping Add/Edit controls now store the reference's raw
+ordered values, including blanks, colon sentinels, whitespace, case and duplicate
+entries. Their Enter Text and removal questions use owned native SessionDialog
+children; field-scoped TagPresentation saves preserve concurrent sort, display
+and rendering preferences. The existing sort consumer already implements first
+matching namespace precedence and the colon fallback, and remains unchanged.
+The queue's clipboard Paste action is still absent, so the broader grouping and
+Options parents remain Partial. This slice does not claim the already implemented
+nested file-sort parser or its tag-display chooser, generic predicate editing,
+radio-Enter policy, aliases, or any parent. Actual Qt recorded 18 queue paths and
+six downstream sort orders plus three real modal Enter Text handlers and both Qt
+PNGs; authored Rust/native assertions and PNG captures
+await hosted execution and exact-source rendered review.

@@ -14,6 +14,7 @@ import { Button, CheckBox, ComboBox, LineEdit, ListView, ScrollView, SpinBox, St
 import { Theme } from "theme.slint";
 import { TableRow } from "list_table.slint";
 import { DeletionReasonQueue } from "deletion_reasons.slint";
+import { TagNamespaceOrder } from "tag_namespace_order.slint";
 import { PaletteProviderQueue } from "palette_provider_queue.slint";
 
 // a field of a time: its value, largest value, and the unit after it
@@ -156,6 +157,13 @@ export component OptionsWindow inherits Window {
     callback frame-activated(int);
     callback frame-sort(int,bool);
     callback frame-action(string);
+    in property <[TableRow]> tag-namespace-rows;
+    in property <bool> tag-namespace-selected;
+    in property <bool> tag-namespace-child-open;
+    in property <string> tag-namespace-error;
+    callback tag-namespace-clicked(int,bool,bool);
+    callback tag-namespace-activated(int);
+    callback tag-namespace-action(string);
     in property <[TableRow]> reason-rows;
     in property <bool> reason-selected;
     in property <bool> reason-child-open;
@@ -313,6 +321,7 @@ export component OptionsWindow inherits Window {
                         for row[i] in root.rows: VerticalLayout {
                             padding-left: row.depth * 16px;
                             spacing: 2px;
+                          if row.kind == 37: Text { text: row.label; wrap: word-wrap; color: Theme.text; }
                           HorizontalLayout {
                             spacing: 8px;
                             min-height: 26px;
@@ -323,7 +332,7 @@ export component OptionsWindow inherits Window {
                                 horizontal-alignment: center;
                                 horizontal-stretch: 1;
                             }
-                            if row.kind != 0: Rectangle {
+                            if row.kind != 0 && row.kind != 37: Rectangle {
                                 horizontal-stretch: 1;
                                 // (the reference's search highlight)
                                 background: row.found ? #eaea007b : transparent;
@@ -584,6 +593,15 @@ export component OptionsWindow inherits Window {
                                 }
                             }
                           }
+                            if row.kind == 37: TagNamespaceOrder {
+                                rows: root.tag-namespace-rows;
+                                selected: root.tag-namespace-selected;
+                                child-open: root.tag-namespace-child-open;
+                                row-clicked(i,ctrl,shift) => { root.tag-namespace-clicked(i,ctrl,shift); }
+                                row-activated(i) => { root.tag-namespace-activated(i); }
+                                action(action) => { root.tag-namespace-action(action); }
+                            }
+                            if row.kind == 37 && root.tag-namespace-error != "": Text { text: root.tag-namespace-error; wrap: word-wrap; color: Theme.error; }
                             if row.kind == 36: GuiColoursets {
                                 horizontal-stretch:1;
                                 rows:root.gui-colour-rows;colourset<=>root.gui-colour-tab;enabled:root.gui-colour-enabled && !root.gui-colour-child-open;
@@ -761,5 +779,5 @@ export component OptionsWindow inherits Window {
             }
         }
     }
-    if root.gui-colour-child-open: Rectangle { width:root.width;height:root.height;background:transparent;TouchArea{} }
+    if root.gui-colour-child-open || root.tag-namespace-child-open: Rectangle { width:root.width;height:root.height;background:transparent;TouchArea{} }
 }

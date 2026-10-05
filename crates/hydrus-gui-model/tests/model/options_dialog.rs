@@ -463,6 +463,8 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
                 | Kind::GallerySource
                 | Kind::ImportOptions
                 | Kind::NamespaceSorts
+                // Private queue covered by the actual tag_namespace_order recording.
+                | Kind::TagNamespaceOrder
                 | Kind::TagBanner(_)
                 | Kind::ProviderOrder
         ) {
