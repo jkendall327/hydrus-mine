@@ -55,6 +55,11 @@ fn click(
             + (index / columns) as f32 * height
             + height / 2.0,
     );
+    assert!(
+        position.y >= ui.get_grid_origin_y()
+            && position.y < ui.get_grid_origin_y() + ui.get_grid_visible_height(),
+        "pointer target {index} must be inside the visible thumbnail viewport"
+    );
     if shift {
         native.dispatch_event(WindowEvent::KeyPressed {
             text: Key::Shift.into(),
@@ -78,6 +83,16 @@ fn click(
 fn owned_options_replay_cancel_save_reopen_and_real_keyboard_wheel_consumers() {
     let fixture = hydrus_testkit::fixture_json("thumbnail_navigation.json");
     let (_dirs, store) = crate::subscriptions::store();
+    // The recorded pointer targets need two columns in this 700px window.
+    // Keep the original replay's 280px sidebar rather than inheriting the
+    // newly configurable 400px splitter default and clicking below the view.
+    store
+        .write(|ctx| {
+            let mut layout = hydrus_store::page_layout::load(ctx.conn())?;
+            layout.hpos = 280;
+            settings::set(ctx.conn(), &layout)
+        })
+        .unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(
@@ -90,6 +105,8 @@ fn owned_options_replay_cancel_save_reopen_and_real_keyboard_wheel_consumers() {
     let native = windows.get(0).unwrap();
     native.dispatch_event(WindowEvent::WindowActiveChanged(true));
     settle(&native);
+    assert!((ui.get_sidebar_actual_width() - 280.0).abs() < 0.1);
+    assert_eq!(ui.get_grid_columns(), 2);
     assert!(bound.current.borrow().borrow().results().len() > 12);
     let labels = fixture["labels"].as_array().unwrap();
     let before = store.read(settings::get::<ThumbnailNavigation>).unwrap();

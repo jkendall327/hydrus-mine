@@ -535,8 +535,19 @@ fn thumbnails_take_the_size_the_options_give_them() {
 #[allow(clippy::float_cmp)] // (sizes set, not computed)
 fn the_thumbnails_border_and_margin_lay_out_the_grid() {
     let (_dirs, store) = store();
+    // This replay's five/four/three-column geometry used the former fixed
+    // 280px sidebar. Select that layout explicitly now that pages load their
+    // independent saved splitter position (whose default is 400px).
+    store
+        .write(|ctx| {
+            let mut layout = hydrus_store::page_layout::load(ctx.conn())?;
+            layout.hpos = 280;
+            hydrus_store::settings::set(ctx.conn(), &layout)
+        })
+        .unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(
         &ui,
         Pages::single(hydrus_gui::SearchPage::new(store.clone())),
@@ -545,6 +556,7 @@ fn the_thumbnails_border_and_margin_lay_out_the_grid() {
     ui.invoke_search_accepted();
     let main_window = windows.get(0).unwrap();
     headless::render(&main_window, 1100, 700);
+    assert_eq!(ui.get_sidebar_actual_width(), 280.0);
     // (150 by 125 and a pixel's border, two pixels' margin: five across)
     assert_eq!(ui.get_thumbnail_width(), 152.0);
     assert_eq!(ui.get_grid_columns(), 5);
