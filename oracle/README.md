@@ -100,6 +100,17 @@ export QT_QPA_PLATFORM=offscreen
 
 ## The driver
 
+`record_mixed_login_packages.py` records the actual mixed downloader export
+panel's registered login chooser (Cancel, selected Add and remaining choices),
+nested-GUG/class/parser dependencies, summary confirmation and real
+PNGExportPanel.Export. The real mixed import panel ingests that PNG, records
+decline/accept, script key/name duplicate comparison and existing-domain link
+updates while retaining dummy saved credentials/activation/delay. It leaves new
+example domains unconfigured. Real chooser/PNG dialogs are answered by Qt timers;
+business handlers and transport functions remain unchanged. Fixtures:
+`mixed_login_packages.json` and `mixed_login_packages.png`. Native regression
+sources await hosted CI; no Cargo build is needed to execute this recorder.
+
 `hydrus_driver.py` boots the unmodified reference client **in-process** with an
 offscreen Qt platform, then runs a hook on a worker thread with the live
 controller and the client's own Client API (enabled on a local port with fixed

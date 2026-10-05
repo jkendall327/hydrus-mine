@@ -6,6 +6,7 @@ use hydrus_store::Store;
 use slint::ComponentHandle as _;
 use std::{
     cell::{Cell, RefCell},
+    collections::BTreeSet,
     io::Read,
     path::Path,
     rc::Rc,
@@ -525,7 +526,9 @@ fn open_objects<T: Clone + 'static>(
                         w.set_review("".into());
                     }
                     "paste" => w.set_text(crate::from_clipboard()?.into()),
-                    "copy" => crate::copy_to_clipboard(w.get_text().as_str()),
+                    "copy" if !w.get_text().is_empty() => {
+                        crate::copy_to_clipboard(w.get_text().as_str())
+                    }
                     "import-jsons" | "import-pngs" if importing && w.get_json_enabled() => {
                         let png = action == "import-pngs";
                         let title = if png {
@@ -583,19 +586,13 @@ fn open_objects<T: Clone + 'static>(
                             );
                             *overwrite.borrow_mut() = Some(path);
                         } else {
-                            save_json(
-                                &path,
-                                &(codec.encode_text)(&definitions).map_err(|e| e.to_string())?,
-                            )?;
+                            save_json(&path, &export_text(&w, &codec)?)?;
                             w.set_review("JSON saved.".into());
                         }
                     }
                     "yes-json" => {
                         if let Some(path) = overwrite.borrow_mut().take() {
-                            save_json(
-                                &path,
-                                &(codec.encode_text)(&definitions).map_err(|e| e.to_string())?,
-                            )?;
+                            save_json(&path, &export_text(&w, &codec)?)?;
                             w.set_review("JSON saved.".into());
                         }
                         w.set_overwrite_question("".into());
@@ -621,7 +618,9 @@ fn open_objects<T: Clone + 'static>(
                         if path.is_empty() {
                             return Err("Choose an export path first.".into());
                         }
-                        let data = (codec.encode_png)(&definitions).map_err(|e| e.to_string())?;
+                        let selected = (codec.decode_text)(w.get_text().as_str())
+                            .map_err(|e| e.to_string())?;
+                        let data = (codec.encode_png)(&selected).map_err(|e| e.to_string())?;
                         let parent = Path::new(path.as_str())
                             .parent()
                             .filter(|parent| !parent.as_os_str().is_empty())
@@ -666,6 +665,11 @@ fn open_objects<T: Clone + 'static>(
     *slots.0.borrow_mut() = Some(w.clone_strong());
     Ok(w)
 }
+fn export_text<T>(window: &DownloaderExchangeWindow, codec: &Codec<T>) -> Result<String, String> {
+    let selected =
+        (codec.decode_text)(window.get_text().as_str()).map_err(|error| error.to_string())?;
+    (codec.encode_text)(&selected).map_err(|error| error.to_string())
+}
 fn save_json(path: &Path, text: &str) -> Result<(), String> {
     let parent = path
         .parent()
@@ -702,6 +706,9 @@ pub fn package(
     slots: &Slots,
     importing: bool,
 ) -> Result<DownloaderExchangeWindow, String> {
+    if let Some(window) = slots.0.borrow().as_ref() {
+        return Ok(window.clone_strong());
+    }
     let draft = Draft::load(store).map_err(|e| e.to_string())?;
     let definitions = draft.definitions();
     let preview: Preview = Rc::new({
@@ -716,6 +723,7 @@ pub fn package(
             })
         }
     });
+    let export_draft = draft.clone();
     let applied: Apply = Rc::new({
         let store = store.clone();
         move |definitions| {
@@ -724,5 +732,82 @@ pub fn package(
             next.save(&store).map_err(|e| e.to_string())
         }
     });
-    open(slots, importing, definitions, preview, applied)
+    let window = open(slots, importing, definitions.clone(), preview, applied)?;
+    window.set_json_enabled(true);
+    if !importing {
+        let choice_count = definitions.len();
+        let selected = Rc::new(RefCell::new(
+            (0..definitions.len()).collect::<BTreeSet<_>>(),
+        ));
+        let refresh = Rc::new({
+            let weak = window.as_weak();
+            let selected = selected.clone();
+            move || {
+                let Some(window) = weak.upgrade() else {
+                    return;
+                };
+                let selected = selected.borrow();
+                window.set_package_choices(slint::ModelRc::new(slint::VecModel::from(
+                    definitions
+                        .iter()
+                        .enumerate()
+                        .map(|(index, definition)| crate::PackageChoice {
+                            label: format!(
+                                "{}: {}",
+                                model::category(definition),
+                                definition.name()
+                            )
+                            .into(),
+                            included: selected.contains(&index),
+                        })
+                        .collect::<Vec<_>>(),
+                )));
+                let payload = export_draft.export(&selected);
+                window.set_review(
+                    format!("{} component(s) included with dependencies.", payload.len()).into(),
+                );
+                if payload.is_empty() {
+                    window.set_text("".into());
+                } else {
+                    match model::encode_text(&payload) {
+                        Ok(text) => window.set_text(text.into()),
+                        Err(error) => window.set_error(error.to_string().into()),
+                    }
+                }
+            }
+        });
+        refresh();
+        window.set_instructions("Choose the registered components to share. Linked generators, URL classes and parsers are included automatically. Login scripts include their rules, but not saved domain credentials, sessions or activation.".into());
+        window.on_package_chosen({
+            let weak = window.as_weak();
+            move |index, included| {
+                if !weak.upgrade().is_some_and(|window| {
+                    window.get_active()
+                        && !window.get_png_child()
+                        && window.get_overwrite_question().is_empty()
+                }) {
+                    return;
+                }
+                let mut selected = selected.borrow_mut();
+                if index < 0 {
+                    if included {
+                        *selected = (0..choice_count).collect();
+                    } else {
+                        selected.clear();
+                    }
+                } else if let Ok(index) = usize::try_from(index)
+                    && index < choice_count
+                {
+                    if included {
+                        selected.insert(index);
+                    } else {
+                        selected.remove(&index);
+                    }
+                }
+                drop(selected);
+                refresh();
+            }
+        });
+    }
+    Ok(window)
 }

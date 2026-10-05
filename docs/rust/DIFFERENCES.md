@@ -1300,9 +1300,20 @@ earlier unsupported versions must first be re-exported by the reference client.
 Unknown processing steps/conversions are rejected before staging because their
 native execution forms cannot retain all original data. Native/runtime fields
 take precedence over preserved auxiliary editor fields when exporting edits.
-Mixed downloader package import accepts URL classes, GUGs and page parsers;
+Mixed downloader package import accepts URL classes, GUGs, page parsers and login scripts;
 standalone formulas/content nodes belong in their matching native editors.
-Login scripts and domain metadata packages are explicitly unsupported here.
+Domain metadata packages remain unsupported here. The native mixed exporter
+uses component checkboxes with dependency expansion instead of Qt's separate
+Add choosers. Imports review a whole supported package; Qt additionally offers
+optional per-object selection and skips unsupported objects. Mixed login script
+duplicates ignore key/name; new imports keep script names, regenerate keys,
+retarget existing matching example-domain links and preserve current domain
+credentials/activation/delays without configuring new example domains. Standalone
+login-list imports retain their separate nonduplicate-name policy. The actual
+Qt mixed-package recording also captures a repeated nested GUG import creating
+an additional nested generator after child keys change; native retains its
+existing remapped dependency duplicate checks. This login slice does not claim
+domain metadata, bitmap/drag ingestion, or the wider downloader exchange parent.
 
 Tab context menus expose close, select, move-page, sort-pages and send-down submenus,
 rename, duplicate, collapse, grouped close and per-notebook saved-session

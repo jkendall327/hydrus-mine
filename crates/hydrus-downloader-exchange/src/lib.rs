@@ -60,6 +60,7 @@ pub enum Native {
     Content(ContentParser),
     Formula(Formula),
     Simple(hydrus_parse::simple::SimpleFormula),
+    Login(hydrus_parse::login::LoginScript),
 }
 /// A decoded native object together with auxiliary reference editor data.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -84,6 +85,7 @@ impl Definition {
             Native::Content(p) => &p.name,
             Native::Formula(f) => &f.name,
             Native::Simple(f) => &f.name,
+            Native::Login(script) => &script.name,
         }
     }
     /// Encode the native fields while retaining auxiliary reference data.
@@ -158,6 +160,7 @@ fn decode_value(
         30 => Native::Content(parsers::content_parser(&object).map_err(err)?),
         27 | 31 | 59 | 60 | 133 | 136 => Native::Formula(parsers::formula(&object).map_err(err)?),
         63 => Native::Simple(parsers::simple_formula(&object).map_err(err)?),
+        73 => Native::Login(hydrus_legacy::objects::logins::login_script(&object).map_err(err)?),
         code => return Err(Error::Unsupported(format!("object type {code}"))),
     };
     // Encoding is also a losslessness check: unknown processors must never
