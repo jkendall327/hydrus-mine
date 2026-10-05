@@ -881,6 +881,24 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .unwrap_or_default(),
     )?;
     insert_setting(&mut input, &command_palette_preferences(options.as_ref()))?;
+    let mut shortcuts = hydrus_core::shortcuts::Settings::default();
+    if let Some(options) = &options {
+        for (key, field) in [
+            (
+                "shortcuts_merge_non_number_numpad",
+                &mut shortcuts.merge_numpad,
+            ),
+            (
+                "call_mouse_buttons_primary_secondary",
+                &mut shortcuts.primary_labels,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+    }
+    insert_setting(&mut input, &shortcuts)?;
     let mut handling = crate::settings::FileHandlingSettings::default();
     if let Some(options) = &options {
         let boolean = |key: &str| options.booleans.get(key).copied();
@@ -3859,6 +3877,34 @@ mod tests {
                 ),
             }
         );
+    }
+
+    #[test]
+    fn shortcut_capture_policies_import_defaults_and_nondefault_values() {
+        use hydrus_core::shortcuts::Settings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<Settings>(input.settings["shortcuts"].clone()).unwrap()
+        };
+        assert_eq!(decoded(), Settings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "shortcuts_merge_non_number_numpad"], [0, true]]"#,
+                    r#"[[0, "shortcuts_merge_non_number_numpad"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "call_mouse_buttons_primary_secondary"], [0, false]]"#,
+                    r#"[[0, "call_mouse_buttons_primary_secondary"], [0, true]]"#,
+                ),
+            ],
+        );
+        let settings = decoded();
+        assert!(!settings.merge_numpad);
+        assert!(settings.primary_labels);
+        assert!(settings.sets.values().all(Vec::is_empty));
     }
 
     #[test]

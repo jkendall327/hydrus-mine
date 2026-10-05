@@ -56,6 +56,7 @@ mod notebook_refresh;
 mod notebook_sessions;
 mod notes_preferences;
 mod options_window;
+mod shortcut_capture;
 mod page_chooser_options;
 mod page_navigation_options;
 mod page_scroll;

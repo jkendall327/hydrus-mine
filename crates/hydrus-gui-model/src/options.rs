@@ -195,6 +195,7 @@ macro_rules! settings {
 }
 
 settings! {
+    shortcuts: hydrus_core::shortcuts::Settings,
     external_calls: hydrus_core::external_calls::Manager,
     advanced: AdvancedMode,
     auto_resolution: AutoResolutionSettings,
@@ -274,6 +275,7 @@ settings! {
 /// An option's value as its control holds it.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Value {
+    Shortcuts(hydrus_core::shortcuts::Settings),
     Check(bool),
     Int(i64),
     /// A number, or none (the reference's `NoneableSpinCtrl`).
@@ -336,6 +338,7 @@ pub enum Value {
 /// What kind of control an option has.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Kind {
+    Shortcuts,
     Check,
     Int {
         min: i64,
@@ -3195,6 +3198,21 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             )],
         ),
         page(
+            "shortcuts",
+            vec![opt(
+                "shortcuts",
+                Kind::Shortcuts,
+                Rc::new(|s| Value::Shortcuts(s.shortcuts.clone())),
+                Rc::new(|s, value| match value {
+                    Value::Shortcuts(shortcuts) => {
+                        s.shortcuts.clone_from(shortcuts);
+                        Ok(())
+                    }
+                    _ => Err(wrong("shortcuts")),
+                }),
+            )],
+        ),
+        page(
             "system",
             vec![boxed(
                 "system sleep",
@@ -4387,6 +4405,28 @@ impl Editor {
                 *value = Value::NamespaceSorts(sorts);
                 return;
             }
+        }
+    }
+
+    pub fn edited_shortcuts(&self) -> hydrus_core::shortcuts::Settings {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| match value {
+                Value::Shortcuts(settings) => Some(settings.clone()),
+                _ => None,
+            })
+            .unwrap_or_else(|| self.before.shortcuts.clone())
+    }
+
+    pub fn set_shortcuts(&mut self, settings: hydrus_core::shortcuts::Settings) {
+        if let Some(value) = self
+            .values
+            .iter_mut()
+            .flatten()
+            .find(|v| matches!(v, Value::Shortcuts(_)))
+        {
+            *value = Value::Shortcuts(settings);
         }
     }
 

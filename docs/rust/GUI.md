@@ -3386,3 +3386,23 @@ import time, adds the destination before removing the source, and keeps physical
 storage and inbox state. `local_transfer_confirmations.json` records actual Qt
 Options, the local action menu and real migration writes on a copied fixture DB;
 model/native regressions cover those decisions, persistence and stale owners.
+
+Options > shortcuts stages the reference numpad-merge and primary/secondary
+mouse-label policies and opens an owned shortcut-set editor. Each command child
+keeps independent keyboard and mouse captures. Keyboard capture retains raw
+native key location before Slint conversion, records sorted modifier identities,
+casefolds characters, and applies the non-number numpad policy. Child OK updates
+the set draft; set OK updates Options; only Options Apply persists. Cancel and
+closed owners reject retained child callbacks. Saved main GUI bindings call the
+existing refresh, close-page and new-page callbacks; saved media viewer bindings
+call close, navigation, zoom and fullscreen callbacks. This slice offers only
+those commands and the two reserved sets, leaving broader set/command management
+Partial. Existing hardcoded shortcuts remain fallbacks for unmatched bindings.
+
+Mouse capture includes press/release, double-click and vertical wheel gestures,
+with the recorded strict small-wheel accumulation and disabled release selector
+for wheel/double gestures. Native double-click detection uses a 400 ms interval
+and Manhattan distance of five logical pixels in capture (five physical pixels
+in the viewer). Winit wheel lines map to 120 units and pixel deltas use their Y
+value. These fallbacks do not establish Qt platform double-click/angle-delta
+parity; the original mouse leaf remains Partial with zero completion credit.

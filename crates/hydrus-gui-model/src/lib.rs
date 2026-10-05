@@ -51,6 +51,7 @@ pub mod merge_summary;
 pub mod namespace_colours;
 pub mod notes_editor;
 pub mod options;
+pub mod shortcut_capture;
 pub mod page_chooser;
 pub mod page_tree;
 pub mod png_export;
