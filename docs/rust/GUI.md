@@ -3751,3 +3751,25 @@ successor's buttons. Actual Qt recorded 48 finish cases and both independent
 controls; Rust/native regressions and finish PNGs await hosted validation.
 
 Repeated main F12 brings the same active filter and its finish/Forget question forward; it never replaces an unanswered owner. Retired source pages are discarded before opening a fresh filter. Mixed current/deleted search scopes retain their complete context identity and exact label, so their current-only deletion alternatives and activation delay are not collapsed.
+
+Options > files and trash stages “When maintenance physically deletes files,
+wait this long between each delete” in seconds/milliseconds (default 600 ms,
+minimum 20 ms). Cancel preserves imported raw milliseconds; Apply writes the
+actual displayed fields once, including Qt's fractional truncation on reopening.
+An older imported Store reads its retained ClientOptions when no native key
+exists. Explicit edits merge independently; unchanged normalization preserves a
+concurrent policy replacement. Hidden/retired Options cannot edit this control.
+
+Physical maintenance captures the saved wait once per pass and commits each
+file/thumbnail pair before waiting, including the final pair and missing physical
+originals. The wait releases the Store writer, so ordinary writes, re-adds and
+imports can continue. Every subsequent pair rechecks the queue, current local
+membership, shared-media ownership and import claims before filesystem work.
+The daemon owns one worker; shutdown/drop permanently cancels its admissions,
+wakes its wait and joins it on normal server shutdown. A filesystem/metadata failure keeps that pair queued
+and aborts the pass; earlier pairs remain durably cleared. Current filesystem
+operations finish before cancellation takes effect. CLI purge uses the same
+period, while the daemon retains its existing 1024-pair/ten-minute pass schedule.
+Native lifecycle/control/physical-file assertions and one Options image are
+authored for hosted validation. The actual Qt recording covers 16 controls, five
+real disposable-file passes and the actual event wake on shutdown.

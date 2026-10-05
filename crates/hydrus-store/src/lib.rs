@@ -36,6 +36,7 @@ pub mod network_runtime;
 pub mod page_layout;
 pub mod paths;
 pub mod pending;
+pub mod physical_delete;
 pub mod popup_actions;
 pub mod popup_width;
 pub mod popups;
