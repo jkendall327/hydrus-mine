@@ -156,8 +156,24 @@
       "before": "missing",
       "proposedStatus": "partial",
       "countAsCompletedLeaf": false,
-      "implemented": "Typed imported/staged hide preference, Cancel/Apply/reopen, field-only merge preserving live size/exit changes, real new/reset layout consumer and same-page refusal of replacement/clear while retaining accepted media. Page owner invalidation prevents raster/statistics bleed.",
-      "remaining": "Qt owns accepted canvas media per page. Shared native raster clears at real page-owner transitions and cannot restore a previously accepted page image on return while hide=true."
+      "implemented": "Typed imported/staged hide preference, Cancel/Apply/reopen and field-only merge; real new/reset layout consumer; successful rendered previews now retain per-live-page accepted identity, pixels and independent viewing intervals across global-hide A\u2192B\u2192A, whole-window hide/show and live close/unclose. Weak SearchPage incarnation plus Pages membership retire forgotten/fresh same-key owners and stale completions. Shared two-worker/one-queued decoder pool and 64MiB soft LRU snapshots bound residency; evicted identity restoration never starts a new view. Displaced/normal-suspended pending requests retry with their respective original/return timestamps. Independently collapsed splitters retain accepted media/intervals when the global flag is disabled and pages switch; an earlier refused clear is not replayed.",
+      "remaining": "Actual Qt accepts identity/start before first raster readiness; native deliberately preserves successful-raster-only acceptance and failed/cancelled-first-decode no-view assertions. Evicted raster reconstruction can expose a loading/blank frame; failed restoration remains blank. Native forgotten/accepted-close owner retirement finalizes trackers, whereas Qt global hide can reject CleanBeforeDestroy clear. The original hide control remains Partial/count=false; no additional completion credit.",
+      "source": [
+        "crates/hydrus-gui/src/preview_window.rs",
+        "crates/hydrus-gui/src/pages.rs::owns_preview",
+        "crates/hydrus-gui/src/lib.rs::preview_window::Monitor::bind"
+      ],
+      "tests": [
+        "crates/hydrus-gui/tests/gui/hidden_page_preview.rs",
+        "crates/hydrus-gui/tests/gui/sidebar_layout.rs::live_hide_setting_keeps_accepted_preview_refuses_replacements_and_collapse_retains_selection",
+        "crates/hydrus-gui/tests/gui/preview_viewing.rs"
+      ],
+      "evidence": [
+        "oracle/record_hidden_page_preview.py",
+        "oracle/fixtures/hidden_page_preview.json",
+        "oracle/fixtures/hidden_page_preview_reference.png",
+        "oracle/fixtures/hidden_page_preview_fresh_reference.png"
+      ]
     }
   ],
   "parentsRemainPartial": [
@@ -180,5 +196,15 @@
     "finishedAtUtc": "2026-10-05T07:13:04Z",
     "reference": "Actual Page QSplitter handles driven with QTest, real FrameGUI save/show/restore callbacks and GUIPagesPanel abandoned/accepted draft, actual CanvasPanelWithHovers SetMedia/ClearMedia, signed position probes and close/unclose geometry. Client API listen was denied independently by sandbox; no authored network requests. Accepted-exit callback order inspected at FrameGUI._Exit rather than shutting down driver-owned frame."
   },
-  "validation": "Actual Qt fixture + PNG inspection, Python syntax/invariants, direct rustfmt/diff and cached warning-aware Slint compile passed; independent bounded source review accepted five proposals and explicit hide Partial. Hosted Rust/native checks pending."
+  "validation": "Actual Qt fixture + PNG inspection, Python syntax/invariants, direct rustfmt/diff and cached warning-aware Slint compile passed; independent bounded source review accepted five proposals and explicit hide Partial. Hosted Rust/native checks pending.",
+  "hidePreviewContinuation": {
+    "baseline_git_head": "641d6b670c6422c58e3ea2256ee92760c0ccd9e8",
+    "additionalCompletedCount": 0,
+    "canonical_files_changed": false,
+    "referenceExecutedAtUtc": "2026-10-05T08:06:18Z",
+    "referenceFinishedAtUtc": "2026-10-05T08:06:21Z",
+    "reference": "Actual CanvasPanel accepted identity versus pre-event raster readiness, A/B page transitions, global hide refusal, whole-window hide/show, close/unclose, normal intervals, fresh Page manager and still-accepted CleanBeforeDestroy probe. FinishViewing boundary captured from real canvas; manager caps/minimum are covered by existing preview_viewing recordings.",
+    "validation": "Actual Qt20-step recording and accepted/fresh image inspection, Python syntax/invariants, direct rustfmt/diff passed. Independent bounded source review accepted this Partial continuation; hosted Rust/native checks pending. No local Cargo/build/Rust tests/mutation execution.",
+    "fixture_sha256": "7eab352e91e0f2ee11b4db4af679120842df3e5f22ac6e764245b4a9d65db5e6"
+  }
 }
