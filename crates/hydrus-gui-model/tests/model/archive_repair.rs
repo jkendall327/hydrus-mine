@@ -50,7 +50,7 @@ fn times(store: &Store, hashes: &[HashId]) -> Value {
                 batch
                     .results
                     .iter()
-                    .map(|m| m.archived.map(|t| t.millis()))
+                    .map(|m| m.archived.map(hydrus_core::TimestampMs::millis))
                     .collect::<Vec<_>>()
             ))
         })

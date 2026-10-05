@@ -29,7 +29,7 @@ pub fn cancel(slots: &Slots) {
         .editor
         .borrow()
         .as_ref()
-        .map(|child| child.clone_strong());
+        .map(slint::ComponentHandle::clone_strong);
     if let Some(child) = child {
         child.invoke_cancel();
     }
@@ -173,7 +173,7 @@ pub fn open(
                 .tags
                 .borrow()
                 .as_ref()
-                .map(|child| child.clone_strong());
+                .map(slint::ComponentHandle::clone_strong);
             if let Some(child) = child {
                 child.invoke_cancel();
             }
