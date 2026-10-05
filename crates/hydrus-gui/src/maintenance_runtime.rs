@@ -65,7 +65,7 @@ impl std::fmt::Debug for Control {
             .finish_non_exhaustive()
     }
 }
-/// Dropping the binding retires work even if callbacks or a Control are retained.
+/// The final binding clone retires work even if callbacks or a Control are retained.
 #[derive(Debug)]
 pub(crate) struct Owner(Control);
 impl Drop for Owner {

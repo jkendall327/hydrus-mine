@@ -454,7 +454,14 @@ fn dropped_binding_retires_retained_control_and_wakes_its_real_held_wait() {
     retained.poll_at(now).unwrap();
     wait(|| !files[0].1.exists());
     assert!(retained.running(Worker::Deferred));
+    let binding_clone = bound.clone();
     drop(bound);
+    assert!(
+        retained.running(Worker::Deferred),
+        "another Bound clone still owns the admitted pass"
+    );
+    assert!(files[1].1.exists());
+    drop(binding_clone);
     assert!(ui.window().is_visible());
     assert!(!retained.running(Worker::Deferred));
     retained.poll_at(now + 1_000_000).unwrap();
