@@ -11,7 +11,7 @@ impl Default for Weights {
     fn default() -> Self {
         let rows = |unnamespaced, character, creator| {
             vec![
-                ("".into(), unnamespaced),
+                (String::new(), unnamespaced),
                 (":".into(), 100),
                 ("character:".into(), character),
                 ("creator:".into(), creator),

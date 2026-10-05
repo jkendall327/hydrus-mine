@@ -9,7 +9,7 @@ use std::{
 };
 pub type Slot = Rc<RefCell<Option<RelatedWeightsWindow>>>;
 pub fn cancel(slot: &Slot) {
-    let window = slot.borrow().as_ref().map(|window| window.clone_strong());
+    let window = slot.borrow().as_ref().map(ComponentHandle::clone_strong);
     if let Some(window) = window {
         window.invoke_action("cancel".into());
     }
