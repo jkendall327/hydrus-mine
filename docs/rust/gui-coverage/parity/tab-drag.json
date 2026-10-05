@@ -1,0 +1,933 @@
+{
+  "schema_version": 1,
+  "agent": "follow-tab-drag",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "base_checkout": "dde121f153f7c9eeabb12980441ad798a72fc5d1",
+  "implementationCommits": [
+    "05d0cad18c52ef0ed80153457a03b1a53660e297",
+    "96a301e327920347aaff87097d85318e02b1ef1a"
+  ],
+  "claims": [
+    {
+      "reference_id": "audit-options-gui-pages-navigation-and-drag-and-drop-selection-chases-dropped-page-after-drag-and-drop",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "change_kind": "implementation",
+      "implementationCommit": "96a301e327920347aaff87097d85318e02b1ef1a",
+      "exactBehavior": "Options > gui pages stages all six exact checkboxes, imports existing booleans, validates checkbox routing, saves on Apply and preserves saved values on Cancel/reopen. The normal chase preference independently controls actual in-window same-notebook reorder and nested transfers. Chase selects the original moved page; no-chase follows the recorded source-index rule while preserving the child selected by hover when appropriate.",
+      "limits": [
+        "Only the six original preference IDs are proposed: four eligible First Pass leaves and two navigation Partial leaves. Broader GUI Pages/navigation/drag/drop/tree families remain Partial; alignment/elision/hide/tree claims are unchanged.",
+        "Native capture is an owner-local persistent TouchArea outside repeaters, with stable source key/parent and live destination geometry. It supports in-window page-tab reorder/nested transfer, not OS QDrag, pixmaps/cursors, crossing windows, tree drag/drop, media/external-file drags or empty-notebook content-body drops.",
+        "Wheel increments use native 120px steps rather than Qt scroll-button/tab geometry. No platform flags or preview claims.",
+        "Native replay and transfer PNG are authored/pending hosted CI; no local Cargo builds/tests or mutations were run."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 357,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "pub struct TabDragSettings"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 375,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "page_drop_chase_normally"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2164,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "Selection chases dropped page"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/tab_drag.rs",
+          "line": 38,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "pub struct Pointer"
+        },
+        {
+          "path": "crates/hydrus-gui/src/tab_drag.rs",
+          "line": 57,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "pub(crate) fn bind"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 2472,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "pub fn drop_tab"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+          "line": 244,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "drag-touch := TouchArea"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/main.slint",
+          "line": 519,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "callback tab-pointer"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 705,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "tab_drag::bind"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_drag.rs",
+          "line": 11,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "model_regression",
+          "symbol": "fn independent_drag_preferences"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 56,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_wheel_replays_qt_selection_and_staged_scroll_overflow_without_changing_session() {"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_drag.rs",
+          "line": 72,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "model_regression",
+          "symbol": "fn real_drop_order"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_drag.rs",
+          "line": 113,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "model_regression",
+          "symbol": "fn drag_threshold"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 310,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_pointer_drag"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_drag.py",
+          "line": 14,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "reference_recorder",
+          "symbol": "def record("
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_drag.json",
+          "line": 2,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "reference_fixture",
+          "symbol": "\"keys\""
+        },
+        "executed": true,
+        "executedAt": "2026-10-05T00:28:06Z–2026-10-05T00:28:09Z",
+        "driver": "with-oracle; hydrus_driver.run_client(basic); actual Qt GUIPagesPanel, frame/nested notebooks, wheel/dragMove/drop event consumers; unchanged reference source",
+        "eventSeams": [
+          "Synthetic QDropEvent overrides source() only to provide the real TabBar normally attached by Qt QDrag execution. No drop/navigation decision handler is replaced.",
+          "Source-start recording intercepts only QDrag.exec_ to record offered MIME and return IgnoreAction; real widget mouseMoveEvent/disable check runs.",
+          "This evidence does not execute a native OS/platform drag loop."
+        ]
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-navigation-and-drag-and-drop-with-shift-held-down",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "change_kind": "implementation",
+      "implementationCommit": "96a301e327920347aaff87097d85318e02b1ef1a",
+      "exactBehavior": "Options > gui pages stages all six exact checkboxes, imports existing booleans, validates checkbox routing, saves on Apply and preserves saved values on Cancel/reopen. The independent Shift chase checkbox is staged/imported/persisted and consumed from real Shift-modified pointer releases. The same original page object is reordered/transferred; both chase answers replay exact Qt ordering and shown-page decisions.",
+      "limits": [
+        "Only the six original preference IDs are proposed: four eligible First Pass leaves and two navigation Partial leaves. Broader GUI Pages/navigation/drag/drop/tree families remain Partial; alignment/elision/hide/tree claims are unchanged.",
+        "Native capture is an owner-local persistent TouchArea outside repeaters, with stable source key/parent and live destination geometry. It supports in-window page-tab reorder/nested transfer, not OS QDrag, pixmaps/cursors, crossing windows, tree drag/drop, media/external-file drags or empty-notebook content-body drops.",
+        "Wheel increments use native 120px steps rather than Qt scroll-button/tab geometry. No platform flags or preview claims.",
+        "Native replay and transfer PNG are authored/pending hosted CI; no local Cargo builds/tests or mutations were run."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 357,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "pub struct TabDragSettings"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 375,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "page_drop_chase_normally"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2164,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "Selection chases dropped page"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/tab_drag.rs",
+          "line": 38,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "pub struct Pointer"
+        },
+        {
+          "path": "crates/hydrus-gui/src/tab_drag.rs",
+          "line": 57,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "pub(crate) fn bind"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 2472,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "pub fn drop_tab"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+          "line": 244,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "drag-touch := TouchArea"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/main.slint",
+          "line": 519,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "callback tab-pointer"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 705,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "tab_drag::bind"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_drag.rs",
+          "line": 11,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "model_regression",
+          "symbol": "fn independent_drag_preferences"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 56,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_wheel_replays_qt_selection_and_staged_scroll_overflow_without_changing_session() {"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_drag.rs",
+          "line": 72,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "model_regression",
+          "symbol": "fn real_drop_order"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_drag.rs",
+          "line": 113,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "model_regression",
+          "symbol": "fn drag_threshold"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 310,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_pointer_drag"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_drag.py",
+          "line": 14,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "reference_recorder",
+          "symbol": "def record("
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_drag.json",
+          "line": 2,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "reference_fixture",
+          "symbol": "\"keys\""
+        },
+        "executed": true,
+        "executedAt": "2026-10-05T00:28:06Z–2026-10-05T00:28:09Z",
+        "driver": "with-oracle; hydrus_driver.run_client(basic); actual Qt GUIPagesPanel, frame/nested notebooks, wheel/dragMove/drop event consumers; unchanged reference source",
+        "eventSeams": [
+          "Synthetic QDropEvent overrides source() only to provide the real TabBar normally attached by Qt QDrag execution. No drop/navigation decision handler is replaced.",
+          "Source-start recording intercepts only QDrag.exec_ to record offered MIME and return IgnoreAction; real widget mouseMoveEvent/disable check runs.",
+          "This evidence does not execute a native OS/platform drag loop."
+        ]
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-navigation-and-drag-and-drop-navigate-tabs-during-drag-and-drop",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "change_kind": "implementation",
+      "implementationCommit": "96a301e327920347aaff87097d85318e02b1ef1a",
+      "exactBehavior": "Options > gui pages stages all six exact checkboxes, imports existing booleans, validates checkbox routing, saves on Apply and preserves saved values on Cancel/reopen. The normal navigation setting drives real timed page-tab gestures. Hover navigation exposes a nested notebook while the persistent capture stays alive; subsequent moves/releases use live child geometry. Media/external drag consumers remain absent.",
+      "limits": [
+        "Only the six original preference IDs are proposed: four eligible First Pass leaves and two navigation Partial leaves. Broader GUI Pages/navigation/drag/drop/tree families remain Partial; alignment/elision/hide/tree claims are unchanged.",
+        "Native capture is an owner-local persistent TouchArea outside repeaters, with stable source key/parent and live destination geometry. It supports in-window page-tab reorder/nested transfer, not OS QDrag, pixmaps/cursors, crossing windows, tree drag/drop, media/external-file drags or empty-notebook content-body drops.",
+        "Wheel increments use native 120px steps rather than Qt scroll-button/tab geometry. No platform flags or preview claims.",
+        "Native replay and transfer PNG are authored/pending hosted CI; no local Cargo builds/tests or mutations were run."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 357,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "pub struct TabDragSettings"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 375,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "page_drop_chase_normally"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2164,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "Selection chases dropped page"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/tab_drag.rs",
+          "line": 38,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "pub struct Pointer"
+        },
+        {
+          "path": "crates/hydrus-gui/src/tab_drag.rs",
+          "line": 57,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "pub(crate) fn bind"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 2472,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "pub fn drop_tab"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+          "line": 244,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "drag-touch := TouchArea"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/main.slint",
+          "line": 519,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "callback tab-pointer"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 705,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "tab_drag::bind"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_drag.rs",
+          "line": 11,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "model_regression",
+          "symbol": "fn independent_drag_preferences"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 56,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_wheel_replays_qt_selection_and_staged_scroll_overflow_without_changing_session() {"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_drag.rs",
+          "line": 72,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "model_regression",
+          "symbol": "fn real_drop_order"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_drag.rs",
+          "line": 113,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "model_regression",
+          "symbol": "fn drag_threshold"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 310,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_pointer_drag"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_drag.py",
+          "line": 14,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "reference_recorder",
+          "symbol": "def record("
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_drag.json",
+          "line": 2,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "reference_fixture",
+          "symbol": "\"keys\""
+        },
+        "executed": true,
+        "executedAt": "2026-10-05T00:28:06Z–2026-10-05T00:28:09Z",
+        "driver": "with-oracle; hydrus_driver.run_client(basic); actual Qt GUIPagesPanel, frame/nested notebooks, wheel/dragMove/drop event consumers; unchanged reference source",
+        "eventSeams": [
+          "Synthetic QDropEvent overrides source() only to provide the real TabBar normally attached by Qt QDrag execution. No drop/navigation decision handler is replaced.",
+          "Source-start recording intercepts only QDrag.exec_ to record offered MIME and return IgnoreAction; real widget mouseMoveEvent/disable check runs.",
+          "This evidence does not execute a native OS/platform drag loop."
+        ]
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-navigation-and-drag-and-drop-with-shift-held-down-2",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "change_kind": "implementation",
+      "implementationCommit": "96a301e327920347aaff87097d85318e02b1ef1a",
+      "exactBehavior": "Options > gui pages stages all six exact checkboxes, imports existing booleans, validates checkbox routing, saves on Apply and preserves saved values on Cancel/reopen. The Shift navigation checkbox is independent of the normal checkbox; actual Shift and pointer input replays both answers and Escape cancellation without reordering session content. Media/external drag consumers remain absent.",
+      "limits": [
+        "Only the six original preference IDs are proposed: four eligible First Pass leaves and two navigation Partial leaves. Broader GUI Pages/navigation/drag/drop/tree families remain Partial; alignment/elision/hide/tree claims are unchanged.",
+        "Native capture is an owner-local persistent TouchArea outside repeaters, with stable source key/parent and live destination geometry. It supports in-window page-tab reorder/nested transfer, not OS QDrag, pixmaps/cursors, crossing windows, tree drag/drop, media/external-file drags or empty-notebook content-body drops.",
+        "Wheel increments use native 120px steps rather than Qt scroll-button/tab geometry. No platform flags or preview claims.",
+        "Native replay and transfer PNG are authored/pending hosted CI; no local Cargo builds/tests or mutations were run."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 357,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "pub struct TabDragSettings"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 375,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "page_drop_chase_normally"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2164,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "Selection chases dropped page"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/tab_drag.rs",
+          "line": 38,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "pub struct Pointer"
+        },
+        {
+          "path": "crates/hydrus-gui/src/tab_drag.rs",
+          "line": 57,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "pub(crate) fn bind"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 2472,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "pub fn drop_tab"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+          "line": 244,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "drag-touch := TouchArea"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/main.slint",
+          "line": 519,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "callback tab-pointer"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 705,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "tab_drag::bind"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_drag.rs",
+          "line": 11,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "model_regression",
+          "symbol": "fn independent_drag_preferences"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 56,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_wheel_replays_qt_selection_and_staged_scroll_overflow_without_changing_session() {"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_drag.rs",
+          "line": 72,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "model_regression",
+          "symbol": "fn real_drop_order"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_drag.rs",
+          "line": 113,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "model_regression",
+          "symbol": "fn drag_threshold"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 310,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_pointer_drag"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_drag.py",
+          "line": 14,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "reference_recorder",
+          "symbol": "def record("
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_drag.json",
+          "line": 2,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "reference_fixture",
+          "symbol": "\"keys\""
+        },
+        "executed": true,
+        "executedAt": "2026-10-05T00:28:06Z–2026-10-05T00:28:09Z",
+        "driver": "with-oracle; hydrus_driver.run_client(basic); actual Qt GUIPagesPanel, frame/nested notebooks, wheel/dragMove/drop event consumers; unchanged reference source",
+        "eventSeams": [
+          "Synthetic QDropEvent overrides source() only to provide the real TabBar normally attached by Qt QDrag execution. No drop/navigation decision handler is replaced.",
+          "Source-start recording intercepts only QDrag.exec_ to record offered MIME and return IgnoreAction; real widget mouseMoveEvent/disable check runs.",
+          "This evidence does not execute a native OS/platform drag loop."
+        ]
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-navigation-and-drag-and-drop-bugfix-disable-all-page-tab-drag-and-drop",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "change_kind": "implementation",
+      "implementationCommit": "96a301e327920347aaff87097d85318e02b1ef1a",
+      "exactBehavior": "Options > gui pages stages all six exact checkboxes, imports existing booleans, validates checkbox routing, saves on Apply and preserves saved values on Cancel/reopen. The saved disable checkbox prevents page-tab gesture capture/start and drops in the actual main-window consumer, and cancels a pending owner-local gesture when observed. Normal tab selection remains available; the Qt recording verifies disabled/enabled native source-drag offers.",
+      "limits": [
+        "Only the six original preference IDs are proposed: four eligible First Pass leaves and two navigation Partial leaves. Broader GUI Pages/navigation/drag/drop/tree families remain Partial; alignment/elision/hide/tree claims are unchanged.",
+        "Native capture is an owner-local persistent TouchArea outside repeaters, with stable source key/parent and live destination geometry. It supports in-window page-tab reorder/nested transfer, not OS QDrag, pixmaps/cursors, crossing windows, tree drag/drop, media/external-file drags or empty-notebook content-body drops.",
+        "Wheel increments use native 120px steps rather than Qt scroll-button/tab geometry. No platform flags or preview claims.",
+        "Native replay and transfer PNG are authored/pending hosted CI; no local Cargo builds/tests or mutations were run."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 357,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "pub struct TabDragSettings"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 375,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "page_drop_chase_normally"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2164,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "Selection chases dropped page"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/tab_drag.rs",
+          "line": 38,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "pub struct Pointer"
+        },
+        {
+          "path": "crates/hydrus-gui/src/tab_drag.rs",
+          "line": 57,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "pub(crate) fn bind"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 2472,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "pub fn drop_tab"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+          "line": 244,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "drag-touch := TouchArea"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/main.slint",
+          "line": 519,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "callback tab-pointer"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 705,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "source",
+          "symbol": "tab_drag::bind"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_drag.rs",
+          "line": 11,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "model_regression",
+          "symbol": "fn independent_drag_preferences"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 56,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_wheel_replays_qt_selection_and_staged_scroll_overflow_without_changing_session() {"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_drag.rs",
+          "line": 72,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "model_regression",
+          "symbol": "fn real_drop_order"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_drag.rs",
+          "line": 113,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "model_regression",
+          "symbol": "fn drag_threshold"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 310,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_pointer_drag"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_drag.py",
+          "line": 14,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "reference_recorder",
+          "symbol": "def record("
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_drag.json",
+          "line": 2,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "reference_fixture",
+          "symbol": "\"keys\""
+        },
+        "executed": true,
+        "executedAt": "2026-10-05T00:28:06Z–2026-10-05T00:28:09Z",
+        "driver": "with-oracle; hydrus_driver.run_client(basic); actual Qt GUIPagesPanel, frame/nested notebooks, wheel/dragMove/drop event consumers; unchanged reference source",
+        "eventSeams": [
+          "Synthetic QDropEvent overrides source() only to provide the real TabBar normally attached by Qt QDrag execution. No drop/navigation decision handler is replaced.",
+          "Source-start recording intercepts only QDrag.exec_ to record offered MIME and return IgnoreAction; real widget mouseMoveEvent/disable check runs.",
+          "This evidence does not execute a native OS/platform drag loop."
+        ]
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-mouse-wheel-scrolls-tab-bar-not-page-selection",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "change_kind": "implementation",
+      "implementationCommit": "96a301e327920347aaff87097d85318e02b1ef1a",
+      "exactBehavior": "Options > gui pages stages all six exact checkboxes, imports existing booleans, validates checkbox routing, saves on Apply and preserves saved values on Cancel/reopen. The saved wheel checkbox reaches actual native wheel input. Off selects the adjacent notebook page with end clamping; on moves the overflowing bar viewport in either direction and retains the selected page and session. Horizontal and vertical bars use the same setting.",
+      "limits": [
+        "Only the six original preference IDs are proposed: four eligible First Pass leaves and two navigation Partial leaves. Broader GUI Pages/navigation/drag/drop/tree families remain Partial; alignment/elision/hide/tree claims are unchanged.",
+        "Native capture is an owner-local persistent TouchArea outside repeaters, with stable source key/parent and live destination geometry. It supports in-window page-tab reorder/nested transfer, not OS QDrag, pixmaps/cursors, crossing windows, tree drag/drop, media/external-file drags or empty-notebook content-body drops.",
+        "Wheel increments use native 120px steps rather than Qt scroll-button/tab geometry. No platform flags or preview claims.",
+        "Native replay and transfer PNG are authored/pending hosted CI; no local Cargo builds/tests or mutations were run."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 357,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "pub struct TabDragSettings"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 375,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "page_drop_chase_normally"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2164,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "Selection chases dropped page"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 2436,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "pub fn wheel_tab"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+          "line": 84,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "function scroll-wheel"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 693,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "source",
+          "symbol": "on_tab_wheel"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_drag.rs",
+          "line": 11,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "model_regression",
+          "symbol": "fn independent_drag_preferences"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 56,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_wheel_replays_qt_selection_and_staged_scroll_overflow_without_changing_session() {"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_drag.py",
+          "line": 14,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "reference_recorder",
+          "symbol": "def record("
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_drag.json",
+          "line": 2,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "reference_fixture",
+          "symbol": "\"keys\""
+        },
+        "executed": true,
+        "executedAt": "2026-10-05T00:28:06Z–2026-10-05T00:28:09Z",
+        "driver": "with-oracle; hydrus_driver.run_client(basic); actual Qt GUIPagesPanel, frame/nested notebooks, wheel/dragMove/drop event consumers; unchanged reference source",
+        "eventSeams": [
+          "Synthetic QDropEvent overrides source() only to provide the real TabBar normally attached by Qt QDrag execution. No drop/navigation decision handler is replaced.",
+          "Source-start recording intercepts only QDrag.exec_ to record offered MIME and return IgnoreAction; real widget mouseMoveEvent/disable check runs.",
+          "This evidence does not execute a native OS/platform drag loop."
+        ]
+      }
+    }
+  ],
+  "nativeComponents": [
+    {
+      "name": "MainWindow",
+      "existingNativeId": "catalog.mainwindow",
+      "file": "crates/hydrus-gui/ui/main.slint",
+      "newExportedWindows": 0,
+      "controls": [
+        "persistent notebook pointer capture and stable-key live geometry",
+        "real in-window reorder/nested transfer, Shift alternatives and Escape cancellation",
+        "wheel selection/overflow scrolling"
+      ],
+      "referenceRoots": [
+        "audit-options-gui-pages-navigation-and-drag-and-drop-selection-chases-dropped-page-after-drag-and-drop",
+        "audit-options-gui-pages-navigation-and-drag-and-drop-with-shift-held-down",
+        "audit-options-gui-pages-navigation-and-drag-and-drop-navigate-tabs-during-drag-and-drop",
+        "audit-options-gui-pages-navigation-and-drag-and-drop-with-shift-held-down-2",
+        "audit-options-gui-pages-navigation-and-drag-and-drop-bugfix-disable-all-page-tab-drag-and-drop",
+        "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-mouse-wheel-scrolls-tab-bar-not-page-selection"
+      ],
+      "source": {
+        "path": "crates/hydrus-gui/ui/main.slint",
+        "line": 519,
+        "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+        "kind": "source",
+        "symbol": "callback tab-pointer"
+      },
+      "tests": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 310,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_pointer_drag"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 56,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_wheel_replays_qt_selection_and_staged_scroll_overflow_without_changing_session() {"
+        }
+      ]
+    },
+    {
+      "name": "OptionsWindow",
+      "existingNativeId": "catalog.optionswindow",
+      "file": "crates/hydrus-gui/ui/options.slint",
+      "newExportedWindows": 0,
+      "controls": [
+        "six exact staged GUI Pages drag/wheel checkboxes"
+      ],
+      "referenceRoots": [
+        "audit-options-gui-pages-navigation-and-drag-and-drop-selection-chases-dropped-page-after-drag-and-drop",
+        "audit-options-gui-pages-navigation-and-drag-and-drop-with-shift-held-down",
+        "audit-options-gui-pages-navigation-and-drag-and-drop-navigate-tabs-during-drag-and-drop",
+        "audit-options-gui-pages-navigation-and-drag-and-drop-with-shift-held-down-2",
+        "audit-options-gui-pages-navigation-and-drag-and-drop-bugfix-disable-all-page-tab-drag-and-drop",
+        "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-mouse-wheel-scrolls-tab-bar-not-page-selection"
+      ],
+      "source": {
+        "path": "crates/hydrus-gui-model/src/options.rs",
+        "line": 2164,
+        "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+        "kind": "source",
+        "symbol": "Selection chases dropped page"
+      },
+      "tests": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_drag.rs",
+          "line": 11,
+          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "kind": "model_regression",
+          "symbol": "fn independent_drag_preferences"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 56,
+          "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_wheel_replays_qt_selection_and_staged_scroll_overflow_without_changing_session() {"
+        }
+      ]
+    }
+  ],
+  "hierarchySupplement": {
+    "parentReferenceId": "audit-options-gui-pages-navigation-and-drag-and-drop",
+    "originalFeatureIds": [
+      "audit-options-gui-pages-navigation-and-drag-and-drop-selection-chases-dropped-page-after-drag-and-drop",
+      "audit-options-gui-pages-navigation-and-drag-and-drop-with-shift-held-down",
+      "audit-options-gui-pages-navigation-and-drag-and-drop-navigate-tabs-during-drag-and-drop",
+      "audit-options-gui-pages-navigation-and-drag-and-drop-with-shift-held-down-2",
+      "audit-options-gui-pages-navigation-and-drag-and-drop-bugfix-disable-all-page-tab-drag-and-drop",
+      "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-mouse-wheel-scrolls-tab-bar-not-page-selection"
+    ],
+    "existingNativeOwners": [
+      "MainWindow",
+      "OptionsWindow"
+    ],
+    "counting": "Four frozen original Missing eligible leaves proposed First Pass, two Missing leaves proposed Partial and excluded from completion totals. No supporting native gesture/geometry/input helper IDs counted; broader drag/drop remains Partial."
+  },
+  "validation": {
+    "executed": [
+      "actual Qt recorder 2026-10-05T00:28:06Z–00:28:09Z",
+      "cargo fmt --all",
+      "git diff --check",
+      "Python py_compile",
+      "warning-aware cached Slint source compilation"
+    ],
+    "hostedPending": [
+      "exact Qt model/settings/insertion/threshold regressions",
+      "native real pointer/Shift/Escape nested capture/media-order/selected-hash/cancel/reopen replay",
+      "native wheel viewport/selection consumer replay",
+      "tab-drag-transfer.png capture and visual review",
+      "strict Clippy and all-platform compilation"
+    ],
+    "localCargoBuildsOrTests": false
+  }
+}
