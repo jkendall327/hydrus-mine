@@ -64,12 +64,12 @@ unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in
 [gui-coverage/README.md](gui-coverage/README.md).
 
-Continuous source work now proposes 98 further original leaf completions over
+Continuous source work now proposes 99 further original leaf completions over
 that validated 240 checkpoint: 53 on `codex/parity-more-controls`, five more
 on the dependent `codex/parity-next-details` branch, and 13 more on
 `codex/parity-preview-and-launching`, plus nine on
 `codex/parity-popup-and-file-views`, and 12 more on
-`codex/parity-cache-and-favourites`, and six more on
+`codex/parity-cache-and-favourites`, and seven more on
 `codex/parity-tag-sort-and-refresh`. The 71-control branch adds two preview viewing-time
 controls, two saved formatting controls with backend consumers, one keyboard
 capture control, and eight ordered Open Externally routing controls. It includes tab
@@ -86,7 +86,8 @@ Files/Trash view-removal policies with captured-page consumers. The next 12 add 
 thumbnail-cache memory/timeout/debug controls with byte-accounted owned consumers;
 five sidebar splitter and Pages-menu controls with page-local geometry and accepted-exit
 saving; and four Ctrl/Shift preview-focus preferences with duration-aware selection.
-The next six add the separate search/viewer Manage Tags opening sorts and the four
+The next seven add the separate search/viewer Manage Tags opening sorts, the raw
+OR connecting-string editor, and the four
 experimental gallery/watcher list update intervals and denominators. Accepted preview
 images and intervals now survive per-page return under global hide, with a bounded
 frame cache and owned retry paths. That hide preference remains Partial because
@@ -104,7 +105,7 @@ and mouse idle tracking remains Partial because it observes application windows.
 Broader external
 call/editor boundaries also remain Partial. Inspect the current branch with
 `python3 scripts/gui_burndown.py --commit HEAD`; do not substitute its proposed
-total of 338 for the validated 240 ledger. New work and diagnostics continue
+total of 339 for the validated 240 ledger. New work and diagnostics continue
 while hosted validation runs, as authorized by the owner.
 
 The next breadth work, in the owner's existing order:
