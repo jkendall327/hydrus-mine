@@ -32,7 +32,7 @@ pub fn load(
     let service = snapshot
         .services
         .by_key(key)
-        .ok_or_else(|| StoreError::Invalid(COMPLEX_DOMAIN.into()))?
+        .map_err(|_| StoreError::Invalid(COMPLEX_DOMAIN.into()))?
         .id;
     let roles = DomainRoles::new(&snapshot.services)?;
     store.read(|conn| {
