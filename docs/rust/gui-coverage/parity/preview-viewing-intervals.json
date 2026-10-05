@@ -73,7 +73,9 @@
       ]
     }
   ],
-  "parentsRemainPartial": ["options-file-viewing-statistics"],
+  "parentsRemainPartial": [
+    "options-file-viewing-statistics"
+  ],
   "referenceRecording": {
     "recorder": "oracle/record_preview_viewing_intervals.py",
     "fixture": "oracle/fixtures/preview_viewing_intervals.json",
@@ -94,5 +96,15 @@
     "hosted_ci": "pending"
   },
   "canonical_files_changed": false,
-  "claimsPromotion": "Proposed two unique original Missing leaves only, pending hosted validation. Canonical statuses and validated240 remain unchanged."
+  "claimsPromotion": "Proposed two unique original Missing leaves only, pending hosted validation. Canonical statuses and validated240 remain unchanged.",
+  "bounded_decode_followup": {
+    "implementation_commit": "5a616759159c4b0ff48f7ff28dff1e0e5932439b",
+    "behavior": "Lazy owner-local pool caps simultaneous decoders at two, retains only the latest queued request, and bounds replies. Queued decoders are discarded on close; idle workers retain only Weak Store references. Accepted rasters retain the original SetMedia timestamp; stale/blank replies create no views.",
+    "authored_tests": [
+      "crates/hydrus-gui/tests/gui/preview_viewing.rs::preview_workers_bound_slow_decodes_and_coalesce_the_latest_owned_target",
+      "crates/hydrus-gui/src/preview_window.rs::worker_tests::idle_preview_workers_do_not_retain_the_store",
+      "crates/hydrus-gui/src/preview_window.rs::worker_tests::retiring_pool_drops_queued_decoder_and_releases_running_store_after_decode"
+    ],
+    "validation": "Root source review, rustfmt, git diff and cached Slint checks passed. Existing held-decode tests are unchanged. Rust runtime validation remains pending hosted CI; the two original proposals are unchanged."
+  }
 }
