@@ -202,7 +202,8 @@ fn staged_controls_cancel_reopen_hidden_retired_and_peer_merge() {
     let (w, _) = open(&ui, &replacement);
     let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 1000, 1000);
     headless::save_png(
-        &hydrus_testkit::artifacts_dir().join("normal_time_maintenance_options.png"),
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("normal_time_maintenance_options.png"),
         &pixels,
         1000,
         1000,
