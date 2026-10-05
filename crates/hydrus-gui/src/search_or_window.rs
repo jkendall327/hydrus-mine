@@ -187,7 +187,7 @@ fn system_editor(window: &SearchOrWindow, state: &Rc<State>) {
                 let Some(state) = state.upgrade() else {
                     return;
                 };
-                if state.owned()
+                if state.active.get()
                     && let Some(window) = weak.upgrade()
                 {
                     show(&window, &state);
@@ -502,7 +502,7 @@ pub fn open(
                                 let Some(state) = state.upgrade() else {
                                     return;
                                 };
-                                if state.owned()
+                                if state.active.get()
                                     && let Some(window) = weak.upgrade()
                                 {
                                     window.set_blocked(false);
