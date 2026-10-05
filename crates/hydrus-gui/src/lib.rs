@@ -7335,6 +7335,9 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
     let choices = sort::page_choices(page.store(), &sort.by);
     let names: Vec<SharedString> = choices.iter().map(|c| c.name.as_str().into()).collect();
     window.set_sort_names(ModelRc::new(VecModel::from(names)));
+    window.set_sort_wheel_count(
+        i32::try_from(sort::known_choice_count(page.store())).unwrap_or(i32::MAX),
+    );
     if let Some(i) = choices.iter().position(|c| c.by == sort.by) {
         window.set_sort_index(i32::try_from(i).unwrap_or(0));
         let orders: Vec<SharedString> = choices[i].orders.iter().map(|&o| o.into()).collect();

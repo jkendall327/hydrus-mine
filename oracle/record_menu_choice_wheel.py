@@ -81,6 +81,47 @@ def record(session):
             for enabled,dy in [(True,120),(False,-120),(True,-120)]:
                 controller.new_options.SetBoolean(KEY,enabled);before=media.GetSort().sort_order;accepted=wheel(media._sort_order_choice,0,dy,True)
                 out['media'].append(dict(enabled=enabled,dy=dy,before=before,after=media.GetSort().sort_order,choices=media._sort_order_choice.GetChoiceTuples(),accepted=accepted))
+            # The ordinary type button delegates wheels to its real container.
+            # Record the exact flattened menu and the unchanged MouseIsOverWidget gate.
+            def encoded_type(value):
+                kind,data = value
+                if kind == 'rating': data=data.hex()
+                elif kind == 'namespaces': data=dict(namespaces=list(data[0]),tag_display_type=data[1])
+                return dict(type=kind,data=data)
+            flat = media._PopulateSortMenuOrList()
+            out['media_types'] = dict(choices=[encoded_type(value) for value in flat], cases=[])
+            def type_case(name, enabled, dy):
+                controller.new_options.SetBoolean(KEY,enabled)
+                G.QCursor.setPos(media._sort_type_button.mapToGlobal(media._sort_type_button.rect().center()))
+                before=media.GetSort();accepted=wheel(media,0,dy)
+                after=media.GetSort()
+                out['media_types']['cases'].append(dict(name=name,enabled=enabled,dy=dy,
+                    before=encoded_type(before.sort_type),before_order=before.sort_order,
+                    after=encoded_type(after.sort_type),after_order=after.sort_order,
+                    accepted=accepted,order_visible=media._sort_order_choice.isVisible(),retained_order=media._sort_order_choice.GetValue(),retained_order_labels=media._sort_order_choice.GetChoiceTuples(),over_type=media._sort_type_button.rect().contains(media._sort_type_button.mapFromGlobal(G.QCursor.pos()))))
+            media._SetSortType(flat[0]);type_case('first-up-wrap',True,120)
+            type_case('last-down-wrap',True,-120)
+            type_case('live-disable',False,-120)
+            type_case('live-enable',True,-120)
+            media._SetSortType(('system',CC.SORT_FILES_BY_FILESIZE))
+            media._sort_order_choice.SetValue(CC.SORT_ASC)
+            type_case('same-labels-keep-ascending',True,120)
+            type_case('same-labels-return',True,-120)
+            media._SetSortType(('system',CC.SORT_FILES_BY_HAS_AUDIO))
+            media._sort_order_choice.SetValue(CC.SORT_DESC)
+            type_case('different-labels-reset-order',True,-120)
+            type_case('different-labels-return-default',True,120)
+            media._SetSortType(('namespaces',(['parity never offered'],0)))
+            type_case('unoffered-current-no-change',True,-120)
+            # Remaining native limitation: Qt retains the hidden order control
+            # across Random, independently of the effective Random sort order.
+            random_at = flat.index(('system',CC.SORT_FILES_BY_RANDOM))
+            media._SetSortType(flat[random_at-1])
+            media._sort_order_choice.SetValue(CC.SORT_ASC)
+            type_case('random-hides-retained-order',True,-120)
+            type_case('random-return-restores-retained-order',True,120)
+            out['media_types']['remaining_random_roundtrip'] = out['media_types']['cases'][-2:]
+            del out['media_types']['cases'][-2:]
             # The actual viewport consumer is probed with the disclosed offscreen adapter.
             scroll = W.QScrollArea(controller.gui); scroll.setWindowFlag(C.Qt.WindowType.Window,True); windows.append(scroll)
             inner = W.QWidget(); layout = W.QVBoxLayout(inner)

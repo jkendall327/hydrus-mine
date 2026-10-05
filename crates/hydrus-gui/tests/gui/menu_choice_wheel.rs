@@ -712,3 +712,145 @@ fn manual_export_tag_choices_read_live_policy_and_publish_real_sidebar_rows() {
     );
     successor.invoke_dismissed();
 }
+
+fn media_type(value: &serde_json::Value) -> hydrus_core::pages::PageSortBy {
+    use hydrus_core::pages::PageSortBy;
+    match value["type"].as_str().unwrap() {
+        "system" => PageSortBy::System(value["data"].as_i64().unwrap()),
+        "rating" => PageSortBy::Rating(
+            hydrus_core::ServiceKey::from_hex(value["data"].as_str().unwrap()).unwrap(),
+        ),
+        "namespaces" => PageSortBy::Namespaces {
+            namespaces: value["data"]["namespaces"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|v| v.as_str().unwrap().to_owned())
+                .collect(),
+            tag_display_type: value["data"]["tag_display_type"].as_i64().unwrap(),
+        },
+        _ => panic!("recorded sort type"),
+    }
+}
+#[test]
+fn real_media_type_wheels_reach_main_and_staged_options_including_unoffered_current() {
+    use hydrus_core::pages::{PageSort, SortSettings};
+    use hydrus_search::SortOrder;
+    let windows = headless::init();
+    let (_directories, store) = super::namespace_sorts::store();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    let native = windows.get(0).unwrap();
+    let recorded = hydrus_testkit::fixture_json("menu_choice_wheel.json");
+    for case in recorded["media_types"]["cases"].as_array().unwrap() {
+        let current = bound.current.borrow().clone();
+        current
+            .borrow_mut()
+            .set_sort_type(media_type(&case["before"]));
+        current
+            .borrow_mut()
+            .set_sort_order(if case["before_order"] == 0 {
+                SortOrder::Ascending
+            } else {
+                SortOrder::Descending
+            });
+        ui.invoke_search_edited("system:everything".into());
+        ui.invoke_search_accepted();
+        save(&store, case["enabled"].as_bool().unwrap());
+        settle(&native);
+        let mut files = current.borrow().results().to_vec();
+        files.sort();
+        assert!(files.len() > 1);
+        wheel(
+            &native,
+            &ui.get_sort_type_frame(),
+            0.0,
+            case["dy"].as_f64().unwrap() as f32,
+        );
+        assert_eq!(
+            current.borrow().sort().by,
+            media_type(&case["after"]),
+            "{case}"
+        );
+        assert_eq!(
+            current.borrow().sort().ascending,
+            case["after_order"] == 0,
+            "{case}"
+        );
+        let mut after = current.borrow().results().to_vec();
+        after.sort();
+        assert_eq!(after, files);
+        // The extra current item remains offered for ordinary native selection,
+        // but the actual Qt flat wheel traversal never includes it.
+        if case["name"] == "unoffered-current-no-change" {
+            assert_eq!(ui.get_sort_index(), ui.get_sort_wheel_count());
+            assert_eq!(
+                ui.get_sort_names().row_count(),
+                usize::try_from(ui.get_sort_wheel_count() + 1).unwrap()
+            );
+        }
+    }
+    for case in recorded["media_types"]["cases"].as_array().unwrap() {
+        let value = PageSort {
+            by: media_type(&case["before"]),
+            ascending: case["before_order"] == 0,
+            tag_context: Default::default(),
+        };
+        store
+            .write(move |writer| {
+                let mut prefs: SortSettings = settings::get(writer.conn())?;
+                prefs.default_sort = value;
+                settings::set(writer.conn(), &prefs)
+            })
+            .unwrap();
+        save(&store, case["enabled"].as_bool().unwrap());
+        let options = open(&ui, &bound);
+        page(&options, "file sort/collect");
+        let native = windows.get(windows.count() - 1).unwrap();
+        let frames = Rc::new(RefCell::new(std::collections::BTreeMap::new()));
+        options.on_menu_choice_geometry({
+            let frames = frames.clone();
+            move |row, part, frame| {
+                frames.borrow_mut().insert((row, part), frame);
+            }
+        });
+        settle(&native);
+        let row = options
+            .get_rows()
+            .iter()
+            .position(|row| row.kind == 10)
+            .unwrap();
+        let frame = frames
+            .borrow()
+            .get(&(i32::try_from(row).unwrap(), 0))
+            .unwrap()
+            .clone();
+        wheel(&native, &frame, 0.0, case["dy"].as_f64().unwrap() as f32);
+        let actual = options.get_rows().row_data(row).unwrap();
+        let choices = hydrus_gui_model::sort::page_choices(&store, &media_type(&case["before"]));
+        assert_eq!(
+            choices[usize::try_from(actual.index).unwrap()].by,
+            media_type(&case["after"]),
+            "{case}"
+        );
+        assert_eq!(
+            actual.order_index,
+            if case["after_order"] == 0 { 0 } else { 1 },
+            "{case}"
+        );
+        assert_eq!(
+            store
+                .read(settings::get::<SortSettings>)
+                .unwrap()
+                .default_sort
+                .by,
+            media_type(&case["before"]),
+            "native wheel is only an Options draft"
+        );
+        options.invoke_cancel();
+    }
+}

@@ -3856,7 +3856,7 @@ handlers with their “apply”/“cancel” buttons. Hosted Rust execution and 
 
 Options > gui now stages the default-enabled “Mouse wheel can "scroll" through
 menu buttons” preference. Saved changes reach already open represented menu
-choices: the main/file-default media order, both Options tag sorts, both
+choices: the main/file-default media type and order, both Options tag sorts, both
 ManageTags default sorts, the live ManageTags type/order/group/siblings controls,
 and the manual-export tag sidebar. One event moves one choice and wraps; positive vertical motion moves
 backward, while zero vertical motion (including horizontal wheels) moves forward.
@@ -3869,3 +3869,12 @@ input routes. Options keeps independent text/count orders for each tag-sort row,
 as the real TagSortControl does. Actual Qt controls, saved legacy values and
 model/Store/native regressions cover this scope; hosted Rust and native rendered
 review remain pending.
+
+The menu-choice preference remains Partial: the real Qt media type control hides
+its order choices for Random and preserves the previous labels/value across a
+Random roundtrip. Native media sort controls still represent Random with their
+ordinary order choices and do not retain that hidden control state. Type wheels
+otherwise traverse the actual flattened menu; an unoffered current sort remains
+available to pointer selection but does not participate in wheel traversal.
+Matching order labels preserve the existing order; changed labels select the
+new default. This bounded implementation proposes zero completion credit.

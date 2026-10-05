@@ -10473,6 +10473,495 @@
       ]
     ]
   ],
+  "media_types": {
+    "choices": [
+      {
+        "type": "system",
+        "data": 26
+      },
+      {
+        "type": "system",
+        "data": 25
+      },
+      {
+        "type": "system",
+        "data": 24
+      },
+      {
+        "type": "system",
+        "data": 27
+      },
+      {
+        "type": "system",
+        "data": 23
+      },
+      {
+        "type": "system",
+        "data": 17
+      },
+      {
+        "type": "system",
+        "data": 5
+      },
+      {
+        "type": "system",
+        "data": 6
+      },
+      {
+        "type": "system",
+        "data": 8
+      },
+      {
+        "type": "system",
+        "data": 7
+      },
+      {
+        "type": "system",
+        "data": 1
+      },
+      {
+        "type": "system",
+        "data": 15
+      },
+      {
+        "type": "system",
+        "data": 16
+      },
+      {
+        "type": "system",
+        "data": 12
+      },
+      {
+        "type": "system",
+        "data": 0
+      },
+      {
+        "type": "system",
+        "data": 3
+      },
+      {
+        "type": "system",
+        "data": 13
+      },
+      {
+        "type": "system",
+        "data": 22
+      },
+      {
+        "type": "system",
+        "data": 21
+      },
+      {
+        "type": "system",
+        "data": 20
+      },
+      {
+        "type": "system",
+        "data": 4
+      },
+      {
+        "type": "system",
+        "data": 9
+      },
+      {
+        "type": "system",
+        "data": 19
+      },
+      {
+        "type": "system",
+        "data": 2
+      },
+      {
+        "type": "system",
+        "data": 18
+      },
+      {
+        "type": "system",
+        "data": 14
+      },
+      {
+        "type": "system",
+        "data": 10
+      },
+      {
+        "type": "system",
+        "data": 11
+      },
+      {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "series",
+            "creator",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 1
+        }
+      },
+      {
+        "type": "namespaces",
+        "data": {
+          "namespaces": [
+            "creator",
+            "series",
+            "title",
+            "volume",
+            "chapter",
+            "page"
+          ],
+          "tag_display_type": 1
+        }
+      },
+      {
+        "type": "rating",
+        "data": "c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de"
+      },
+      {
+        "type": "rating",
+        "data": "6661766f757269746573"
+      },
+      {
+        "type": "rating",
+        "data": "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2"
+      }
+    ],
+    "cases": [
+      {
+        "name": "first-up-wrap",
+        "enabled": true,
+        "dy": 120,
+        "before": {
+          "type": "system",
+          "data": 26
+        },
+        "before_order": 0,
+        "after": {
+          "type": "rating",
+          "data": "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2"
+        },
+        "after_order": 1,
+        "accepted": true,
+        "order_visible": true,
+        "retained_order": 1,
+        "retained_order_labels": [
+          [
+            "ascending",
+            0
+          ],
+          [
+            "descending",
+            1
+          ]
+        ],
+        "over_type": true
+      },
+      {
+        "name": "last-down-wrap",
+        "enabled": true,
+        "dy": -120,
+        "before": {
+          "type": "rating",
+          "data": "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2"
+        },
+        "before_order": 1,
+        "after": {
+          "type": "system",
+          "data": 26
+        },
+        "after_order": 0,
+        "accepted": true,
+        "order_visible": true,
+        "retained_order": 0,
+        "retained_order_labels": [
+          [
+            "blues first",
+            0
+          ],
+          [
+            "yellows first",
+            1
+          ]
+        ],
+        "over_type": true
+      },
+      {
+        "name": "live-disable",
+        "enabled": false,
+        "dy": -120,
+        "before": {
+          "type": "system",
+          "data": 26
+        },
+        "before_order": 0,
+        "after": {
+          "type": "system",
+          "data": 26
+        },
+        "after_order": 0,
+        "accepted": false,
+        "order_visible": true,
+        "retained_order": 0,
+        "retained_order_labels": [
+          [
+            "blues first",
+            0
+          ],
+          [
+            "yellows first",
+            1
+          ]
+        ],
+        "over_type": true
+      },
+      {
+        "name": "live-enable",
+        "enabled": true,
+        "dy": -120,
+        "before": {
+          "type": "system",
+          "data": 26
+        },
+        "before_order": 0,
+        "after": {
+          "type": "system",
+          "data": 25
+        },
+        "after_order": 0,
+        "accepted": true,
+        "order_visible": true,
+        "retained_order": 0,
+        "retained_order_labels": [
+          [
+            "greens first",
+            0
+          ],
+          [
+            "reds first",
+            1
+          ]
+        ],
+        "over_type": true
+      },
+      {
+        "name": "same-labels-keep-ascending",
+        "enabled": true,
+        "dy": 120,
+        "before": {
+          "type": "system",
+          "data": 0
+        },
+        "before_order": 0,
+        "after": {
+          "type": "system",
+          "data": 12
+        },
+        "after_order": 0,
+        "accepted": true,
+        "order_visible": true,
+        "retained_order": 0,
+        "retained_order_labels": [
+          [
+            "smallest first",
+            0
+          ],
+          [
+            "largest first",
+            1
+          ]
+        ],
+        "over_type": true
+      },
+      {
+        "name": "same-labels-return",
+        "enabled": true,
+        "dy": -120,
+        "before": {
+          "type": "system",
+          "data": 12
+        },
+        "before_order": 0,
+        "after": {
+          "type": "system",
+          "data": 0
+        },
+        "after_order": 0,
+        "accepted": true,
+        "order_visible": true,
+        "retained_order": 0,
+        "retained_order_labels": [
+          [
+            "smallest first",
+            0
+          ],
+          [
+            "largest first",
+            1
+          ]
+        ],
+        "over_type": true
+      },
+      {
+        "name": "different-labels-reset-order",
+        "enabled": true,
+        "dy": -120,
+        "before": {
+          "type": "system",
+          "data": 13
+        },
+        "before_order": 1,
+        "after": {
+          "type": "system",
+          "data": 22
+        },
+        "after_order": 0,
+        "accepted": true,
+        "order_visible": true,
+        "retained_order": 0,
+        "retained_order_labels": [
+          [
+            "lexicographic",
+            0
+          ],
+          [
+            "reverse lexicographic",
+            1
+          ]
+        ],
+        "over_type": true
+      },
+      {
+        "name": "different-labels-return-default",
+        "enabled": true,
+        "dy": 120,
+        "before": {
+          "type": "system",
+          "data": 22
+        },
+        "before_order": 0,
+        "after": {
+          "type": "system",
+          "data": 13
+        },
+        "after_order": 0,
+        "accepted": true,
+        "order_visible": true,
+        "retained_order": 0,
+        "retained_order_labels": [
+          [
+            "audio first",
+            0
+          ],
+          [
+            "silent first",
+            1
+          ]
+        ],
+        "over_type": true
+      },
+      {
+        "name": "unoffered-current-no-change",
+        "enabled": true,
+        "dy": -120,
+        "before": {
+          "type": "namespaces",
+          "data": {
+            "namespaces": [
+              "parity never offered"
+            ],
+            "tag_display_type": 0
+          }
+        },
+        "before_order": 0,
+        "after": {
+          "type": "namespaces",
+          "data": {
+            "namespaces": [
+              "parity never offered"
+            ],
+            "tag_display_type": 0
+          }
+        },
+        "after_order": 0,
+        "accepted": true,
+        "order_visible": true,
+        "retained_order": 0,
+        "retained_order_labels": [
+          [
+            "a-z",
+            0
+          ],
+          [
+            "z-a",
+            1
+          ]
+        ],
+        "over_type": true
+      }
+    ],
+    "remaining_random_roundtrip": [
+      {
+        "name": "random-hides-retained-order",
+        "enabled": true,
+        "dy": -120,
+        "before": {
+          "type": "system",
+          "data": 20
+        },
+        "before_order": 0,
+        "after": {
+          "type": "system",
+          "data": 4
+        },
+        "after_order": 0,
+        "accepted": true,
+        "order_visible": false,
+        "retained_order": 0,
+        "retained_order_labels": [
+          [
+            "lexicographic",
+            0
+          ],
+          [
+            "reverse lexicographic",
+            1
+          ]
+        ],
+        "over_type": true
+      },
+      {
+        "name": "random-return-restores-retained-order",
+        "enabled": true,
+        "dy": 120,
+        "before": {
+          "type": "system",
+          "data": 4
+        },
+        "before_order": 0,
+        "after": {
+          "type": "system",
+          "data": 20
+        },
+        "after_order": 0,
+        "accepted": true,
+        "order_visible": true,
+        "retained_order": 0,
+        "retained_order_labels": [
+          [
+            "lexicographic",
+            0
+          ],
+          [
+            "reverse lexicographic",
+            1
+          ]
+        ],
+        "over_type": true
+      }
+    ]
+  },
   "bubbling": [
     {
       "enabled": false,

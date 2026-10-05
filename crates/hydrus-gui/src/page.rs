@@ -2131,13 +2131,14 @@ impl SearchPage {
         self.set_sort_type(PageSortBy::System(i64::from(by.code())));
     }
 
-    /// Sort by `by` (a system, namespace or rating sort), in its default
-    /// order.
+    /// Sort by `by`, preserving the order for matching choice labels and
+    /// selecting its default order otherwise.
     pub fn set_sort_type(&mut self, by: PageSortBy) {
+        let previous = crate::sort::page_choices(&self.store, &self.sort.by);
         let ascending = crate::sort::page_choices(&self.store, &by)
             .into_iter()
             .find(|c| c.by == by)
-            .is_none_or(|c| c.default_ascending);
+            .is_none_or(|choice| crate::sort::type_ascending(&self.sort, &previous, &choice));
         self.sort = PageSort {
             tag_context: self.sort.tag_context.clone(),
             by,

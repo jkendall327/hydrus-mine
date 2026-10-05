@@ -278,6 +278,32 @@ pub fn page_choices(store: &hydrus_store::Store, current: &PageSortBy) -> Vec<Pa
     out
 }
 
+/// Wheel traversal omits an appended custom current value, as the Qt menu does.
+pub fn known_choice_count(store: &hydrus_store::Store) -> usize {
+    page_choices(
+        store,
+        &PageSortBy::System(i64::from(SortBy::FileSize.code())),
+    )
+    .len()
+}
+
+/// Changing type retains the order when its actual two choice labels are equal.
+pub fn type_ascending(
+    current: &hydrus_core::pages::PageSort,
+    previous: &[PageChoice],
+    chosen: &PageChoice,
+) -> bool {
+    if previous
+        .iter()
+        .find(|choice| choice.by == current.by)
+        .is_some_and(|choice| choice.orders == chosen.orders)
+    {
+        current.ascending
+    } else {
+        chosen.default_ascending
+    }
+}
+
 /// A page's sort as the reference writes it (`MediaSort.ToString`): "sort
 /// by time: import time, newest first".
 pub fn sort_text(store: &hydrus_store::Store, sort: &hydrus_core::pages::PageSort) -> String {
