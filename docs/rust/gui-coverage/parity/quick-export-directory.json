@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "agent": "quick-export-directory",
+  "baseline_git_head": "b937dc6e8979bf165d54b0ee44b7736b3364648e",
+  "frozen_original_inventory": {
+    "path": "docs/rust/gui-coverage/overnight/baseline.json",
+    "git_head": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+    "sha256": "f809e51c0fd3de7068d30f5cbac4dacb043859c3f85c5357d60c6474b804c8e5",
+    "before": {
+      "audit-options-menu-menu-file-quick-export-directory": "missing"
+    }
+  },
+  "eligibility": {
+    "completed_ledger_path": "docs/rust/gui-coverage/overnight/progress.json",
+    "completed_ledger_at_base_sha256": "168d8057e3b023cf822af82b703b4fe018baba266694d06b5c7ae79bf1d20ca6",
+    "listed_ids_already_completed": [],
+    "existing_parity_packets_with_listed_ids": [],
+    "aliases_checked": [
+      "menu.file.quick-export-directory"
+    ],
+    "alias_completion_credit": 0,
+    "note": "Exact original435 menu leaf is Missing, absent completed_feature_ids/all existing parity claims. Native menu.file.quick-export-directory alias is also Missing/unclaimed and is not counted. The existing Default export directory editor leaf is already completed; this adds only the previously disabled File-menu action and real saved consumer. This menu entry is absent options-patch.json; frozen original inventory establishes eligibility."
+  },
+  "proposed_completed_count": 1,
+  "claims": [
+    {
+      "id": "audit-options-menu-menu-file-quick-export-directory",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Enable actual File > open > quick export directory with existing OS opener and saved ExportSettings consumer. Every trigger rereads raw saved preference. Configured absolute/portable/empty/whitespace/missing paths follow recorded resolution without creation or validation/picker/confirmation; conditional non-Windows backslash recovery preserves existing literal spelling. Only unset preference creates home/hydrus_export. Unresolved home and creation/read errors report without launch. Real Options Cancel/Apply/reopen affect only the shared saved path. Hidden/rebound/accepted-close binding and resolver-induced owner hiding cannot launch/create; resolver injection stays owner-local with no environment mutation.",
+      "source": [
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-gui/src/quick_export_directory.rs",
+        "crates/hydrus-gui/src/menu_bar.rs",
+        "crates/hydrus-gui/src/lib.rs"
+      ],
+      "existing_shared_consumer": [
+        "crates/hydrus-store/src/settings.rs::ExportSettings",
+        "crates/hydrus-store/src/import/decode.rs::export_default_directory_import_resolves_recorded_portable_paths",
+        "crates/hydrus-gui-model/src/export_files.rs::default_directory",
+        "crates/hydrus-gui/src/options_window.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/quick_export_directory.rs::actual_file_submenu_enables_and_selects_quick_export_directory",
+        "crates/hydrus-gui/tests/gui/quick_export_directory.rs::actual_file_menu_replays_saved_paths_fallback_errors_cancel_and_reopen",
+        "crates/hydrus-gui/tests/gui/quick_export_directory.rs::hidden_rebound_closed_and_reentrant_resolver_owners_cannot_launch_or_create"
+      ],
+      "limits": [
+        "Conditional on hosted Rust/strict Clippy/native/render validation; no local Cargo, Rust builds/tests or mutations executed.",
+        "Actual Qt recording is Linux; authored expected filesystem targets normalize per platform while raw saved strings remain unchanged. Windows account lookup follows Python USERPROFILE/HOMEDRIVE+HOMEPATH; POSIX standard-library home lookup is cfg-limited with a documented deprecation allowance.",
+        "OS opener behavior is the existing platform launcher; this action does not add file-manager selection, picker/confirmation, a new export path preference or broader File/database menu completion."
+      ],
+      "source_commit": "cf74f083d6c84ea2659b9183a58f327b831fb9e6",
+      "implementation_commits": [
+        "cf74f083d6c84ea2659b9183a58f327b831fb9e6"
+      ]
+    }
+  ],
+  "reference": {
+    "recorder": "oracle/record_quick_export_directory.py",
+    "fixture": "oracle/fixtures/quick_export_directory.json",
+    "fixture_sha256": "30ac0590ff0e91f7b141f445cffd584a1c427e7e03bbb376156888386c248b6e",
+    "render": "oracle/fixtures/quick_export_directory_reference.png",
+    "render_sha256": "68bcb7009f0049e6220b3d9c1d2da92822c807f4ce22bb48ba7b41d2d2742a42",
+    "executed_utc": "2026-10-05 09:56:41\u201309:56:44 UTC",
+    "result": "Actual Qt v688 live File/open QAction with real saved export_path, GetExportPath/portable resolver/fallback creation and ExportingPanel staging/UpdateOptions/reopen.13 synthetic local cases: unset fallback, existing/missing paths, portable, empty, literal spaces, conditional existing/missing backslashes, malformed type, unresolved home, conflicting fallback file, Options Cancel/Apply. No external application launched; only OS launch/home expansion and exception/text reporting boundaries captured. Real menu PNG inspected.",
+    "sources": [
+      "hydrus/client/gui/ClientGUI.py:3480",
+      "hydrus/client/gui/ClientGUI.py:5335",
+      "hydrus/client/exporting/ClientExportingFiles.py:206",
+      "hydrus/core/HydrusPaths.py:119",
+      "hydrus/core/HydrusPaths.py:839",
+      "hydrus/core/HydrusPaths.py:885",
+      "hydrus/client/gui/ClientGUIMenus.py:330"
+    ],
+    "commit": "cf74f083d6c84ea2659b9183a58f327b831fb9e6"
+  },
+  "validation": {
+    "executed": [
+      "Actual Qt13 QAction/path/error/staging recording and menu PNG inspection",
+      "Python syntax and unchanged saved/path/fallback/error invariants",
+      "Frozen inventory/completed ledger/prior packet and native alias eligibility checks",
+      "Direct rustfmt and git diff --check",
+      "Parent bounded source review; Windows expected-path portability correction applied"
+    ],
+    "authored_not_executed": [
+      "Model real enabled command/menu order selection",
+      "Native actual menu path replay, missing settings fallback, missing/invalid paths no-create, typed-corrupt setting error, owned unavailable/conflicting home errors",
+      "Native Options Cancel/Apply/reopen/raw settings and rendered File submenu",
+      "Native hidden/rebound/accepted-close plus resolver-induced hiding before creation"
+    ],
+    "pending": [
+      "Hosted strict Clippy, Rust/native tests and native render inspection"
+    ]
+  },
+  "source_commit": "cf74f083d6c84ea2659b9183a58f327b831fb9e6",
+  "implementation_commits": [
+    "cf74f083d6c84ea2659b9183a58f327b831fb9e6"
+  ],
+  "canonical_changes": false,
+  "completed_ledger_changes": false,
+  "parents_counted": false
+}
