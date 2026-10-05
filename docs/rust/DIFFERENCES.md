@@ -1887,8 +1887,7 @@ by this recording.
 
 Viewing-statistic context-menu style and canvas selection now have native Options
 controls and real menu/search/sort consumers, backed by
-`oracle/fixtures/viewing_statistics_options.json`. Native media-preview rendering
-and its minimum/maximum tracking controls remain absent. The actual media viewer,
+`oracle/fixtures/viewing_statistics_options.json`. The actual media viewer,
 archive/delete filter and duplicate filter now own recorded viewing intervals,
 with reference minimum/cap controls, filter switches, live policy reads,
 cap-before-minimum arithmetic and latest-start preservation across overlapping
@@ -1896,8 +1895,17 @@ canvases. Duration fields retain the reference's float-to-millisecond truncation
 at opening/Apply. Native recording commits at interval boundaries rather than
 buffering Qt's60-second flush; the explicit Client API count/viewtime path keeps
 its existing semantics. Preview statistics imported or supplied by the API can
-still participate in the menu/canvas selection without pretending that a native
-preview renderer exists.
+still participate in the menu/canvas selection alongside native preview intervals.
+The new main-page preview displays decoded stills/posters and consumes the separate
+preview minimum/maximum fields, with the same cap-before-minimum and duration-times-five
+policy. Successful raster presentation accepts the original request timestamp;
+unrenderable files and loading placeholders are rejected rather than counted as
+views. Qt accepts media before its player/decoder renders. The native canvas does
+not yet reproduce preview audio/video playback, embed/external buttons, zoom,
+hovers or rating controls. These broader preview parents remain Partial. Owned
+page/request generations retire late decoded frames and rebound-window callbacks;
+hidden/cleared media and accepted client close finish once. Actual Qt boundary
+recording and authored display/store regressions are in `preview_viewing_intervals`.
 
 Read-search favourites and children now reach actual page predicates, queries,
 shared settings and restored contexts. Their selector is a native dropdown
@@ -2215,7 +2223,7 @@ boundary. Manage Tags' independently owned suggestion/related workers are
 unchanged. Broader shared read/write autocomplete parents remain Partial.
 The three thumbnail-navigation preferences have real staged/imported/persisted
 controls and existing keyboard/wheel consumers. Preview-focus options remain
-Missing because there is no native preview canvas; the broader thumbnail family
+Missing while their configurable focus policies are unported; the broader thumbnail family
 remains Partial. Default selection behavior and its range/ghost invariants use
 the existing API; the optional last-hit origin is a separate live path.
 
@@ -2419,8 +2427,8 @@ completion notices. Culling preserves the reference's minimum-before-maximum
 order, separate media/preview rules, zero/None limits and invalid-bound errors.
 Native SQL writes are atomic and reject time bounds outside its integer range;
 errors are shown in the owned warning notice instead of a global Python traceback.
-The existing timed preview-display consumer remains unported, so adding its two
-stored rules gives no completion credit to the preview-tracking Options leaves.
+The preview rules also feed the owned timed still/poster display consumer described
+above; cleanup remains a separate action rather than the source of timed views.
 Broader database maintenance and viewing-statistics families remain Partial.
 Actual Qt handlers and the reference SQLite module were recorded on eight cases;
 native/model regressions and a question PNG are authored for hosted CI. No local

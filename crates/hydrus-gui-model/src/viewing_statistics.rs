@@ -24,7 +24,7 @@ pub fn completed(
         return None;
     }
     let enabled = match canvas {
-        CanvasType::MediaViewer => true,
+        CanvasType::Preview | CanvasType::MediaViewer => true,
         CanvasType::ArchiveDeleteFilter => settings.archive_delete,
         CanvasType::DuplicatesFilter => settings.duplicates,
         _ => false,
@@ -32,18 +32,26 @@ pub fn completed(
     if !enabled {
         return None;
     }
-    let cap = settings
-        .media_max_ms
-        .map(|cap| cap.max(duration_ms.unwrap_or(0).saturating_mul(5)));
+    let (minimum, maximum, recorded_canvas) = if canvas == CanvasType::Preview {
+        (
+            settings.preview_min_ms,
+            settings.preview_max_ms,
+            CanvasType::Preview,
+        )
+    } else {
+        (
+            settings.media_min_ms,
+            settings.media_max_ms,
+            CanvasType::MediaViewer,
+        )
+    };
+    let cap = maximum.map(|cap| cap.max(duration_ms.unwrap_or(0).saturating_mul(5)));
     let elapsed_ms = cap.map_or(elapsed_ms, |cap| elapsed_ms.min(cap));
-    if settings
-        .media_min_ms
-        .is_some_and(|minimum| elapsed_ms < minimum)
-    {
+    if minimum.is_some_and(|minimum| elapsed_ms < minimum) {
         return None;
     }
     Some(Completed {
-        canvas: CanvasType::MediaViewer,
+        canvas: recorded_canvas,
         elapsed_ms,
     })
 }

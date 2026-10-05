@@ -13,13 +13,20 @@ use crate::MainWindow;
 const QUESTION: &str = "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)";
 type Ask = Rc<dyn Fn(String, Rc<dyn Fn()>)>;
 
-pub(crate) fn bind(window: &MainWindow, store: Arc<Store>, timer: &Rc<slint::Timer>, ask: Ask) {
+pub(crate) fn bind(
+    window: &MainWindow,
+    store: Arc<Store>,
+    timer: &Rc<slint::Timer>,
+    ask: Ask,
+    finished: Rc<dyn Fn()>,
+) {
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let store = store.clone();
         move || {
             let Some(window) = weak.upgrade() else { return };
             crate::windows::save_named(window.window(), &store, "main_gui");
+            finished();
             let _ = window.hide();
         }
     });

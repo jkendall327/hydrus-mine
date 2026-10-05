@@ -59,6 +59,7 @@ mod page_chooser_options;
 mod page_navigation_options;
 mod page_scroll;
 mod popups;
+mod preview_viewing;
 mod predicate_editors;
 mod predicate_history;
 mod rating_sizes;

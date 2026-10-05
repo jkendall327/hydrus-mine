@@ -80,6 +80,117 @@ fn viewing_menu_controls_match_qt_and_preserve_the_parent_draft() {
 }
 
 #[test]
+fn preview_timed_policy_matches_actual_manager_and_keeps_its_own_canvas_category() {
+    use hydrus_gui_model::viewing_statistics::{Completed, completed};
+    let fixture = hydrus_testkit::fixture_json("preview_viewing_intervals.json");
+    for event in fixture["policies"].as_array().unwrap() {
+        let settings = FileViewingStatistics {
+            preview_min_ms: event["minimum_ms"].as_u64(),
+            preview_max_ms: event["maximum_ms"].as_u64(),
+            // Deliberately incompatible media rules reveal misrouting.
+            media_min_ms: Some(u64::MAX),
+            media_max_ms: Some(0),
+            archive_delete: false,
+            duplicates: false,
+            ..Default::default()
+        };
+        let expected = (event["row"][1][1] == 1).then(|| Completed {
+            canvas: CanvasType::Preview,
+            elapsed_ms: event["row"][1][2].as_u64().unwrap(),
+        });
+        assert_eq!(
+            completed(
+                &settings,
+                CanvasType::Preview,
+                event["duration_ms"].as_u64(),
+                event["elapsed_ms"].as_u64().unwrap()
+            ),
+            expected,
+            "{event}"
+        );
+        assert_eq!(
+            completed(
+                &FileViewingStatistics {
+                    active: false,
+                    ..settings
+                },
+                CanvasType::Preview,
+                event["duration_ms"].as_u64(),
+                event["elapsed_ms"].as_u64().unwrap()
+            ),
+            None
+        );
+    }
+}
+
+#[test]
+fn preview_options_replay_actual_none_bounds_conversion_and_cancelled_parent() {
+    let fixture = hydrus_testkit::fixture_json("preview_viewing_intervals.json");
+    let directory = tempfile::tempdir().unwrap();
+    let store = hydrus_store::Store::open(directory.path()).unwrap();
+    for event in fixture["controls"].as_array().unwrap() {
+        assert_eq!(
+            event["reopened_ms"], event["persisted_ms"],
+            "actual typed Options transport preserves the value"
+        );
+        let mut settings = store.read(Settings::load).unwrap();
+        let minimum = event["control"] == "preview_min_time";
+        let requested = event["requested"]
+            .as_f64()
+            .map(|value| (value * 1000.0) as u64);
+        if minimum {
+            settings.file_viewing.preview_min_ms = requested;
+        } else {
+            settings.file_viewing.preview_max_ms = requested;
+        }
+        let mut editor = Editor::new(settings);
+        let page = editor
+            .page_names()
+            .iter()
+            .position(|name| *name == "file viewing statistics")
+            .unwrap();
+        editor.show_page(page);
+        let index = row(
+            &editor,
+            if minimum {
+                "Min time to view on preview viewer to count as a view:"
+            } else {
+                "Cap any view on the preview viewer to this maximum time:"
+            },
+        );
+        let rows = editor.rows();
+        let Row::Opt { value, .. } = &rows[index] else {
+            panic!("preview duration")
+        };
+        let Value::NoneableDuration { none, seconds } = **value else {
+            panic!("duration value")
+        };
+        assert_eq!(none, event["value"].is_null());
+        if let Some(expected) = event["value"].as_f64() {
+            assert!((seconds - expected).abs() < 1e-9, "{event}");
+        }
+        let (applied, _, errors) = editor.applied();
+        assert!(errors.is_empty(), "{errors:?}");
+        assert_eq!(
+            if minimum {
+                applied.file_viewing.preview_min_ms
+            } else {
+                applied.file_viewing.preview_max_ms
+            },
+            event["persisted_ms"].as_u64(),
+            "{event}"
+        );
+    }
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<FileViewingStatistics>)
+            .unwrap(),
+        FileViewingStatistics::default(),
+        "opening/cancelling drafts never writes"
+    );
+}
+
+#[test]
 fn completed_view_policy_matches_real_manager_caps_minima_durations_and_filter_switches() {
     use hydrus_gui_model::viewing_statistics::{Completed, completed};
     let oracle = hydrus_testkit::fixture_json("viewing_statistics_options.json");
