@@ -141,3 +141,5 @@ mod window_rescue;
 
 mod gui_format;
 mod viewer_tag_wheel;
+
+mod idle_timeout_options;

@@ -168,12 +168,25 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
                 ..
             },
             Value::Noneable(n),
-        ) => (theirs.get("noneable").map(Json::as_i64) != Some(*n)
-            || theirs["none_phrase"] != *none_phrase
-            || num("min") != Some(*min as f64)
-            || num("max") != Some(*max as f64)
-            || theirs.get("unit").and_then(Json::as_str) != *unit)
-            .then(|| format!("noneable {n:?} {none_phrase:?} ({min}-{max}) {unit:?}")),
+        ) => {
+            // Qt records GetValue in seconds for these multiplier-60 controls;
+            // native values are displayed minutes. The new Qt replay checks
+            // both the displayed spinner and persisted seconds independently.
+            let multiplier = if matches!(
+                *none_phrase,
+                "ignore normal browsing" | "ignore mouse movements" | "ignore client api"
+            ) {
+                60
+            } else {
+                1
+            };
+            (theirs.get("noneable").map(Json::as_i64) != Some(n.map(|number| number * multiplier))
+                || theirs["none_phrase"] != *none_phrase
+                || num("min") != Some(*min as f64)
+                || num("max") != Some(*max as f64)
+                || theirs.get("unit").and_then(Json::as_str) != *unit)
+                .then(|| format!("noneable {n:?} {none_phrase:?} ({min}-{max}) {unit:?}"))
+        }
         (Kind::Float { min, max }, Value::Float(text)) => (num("float") != text.parse().ok()
             || num("min") != Some(*min)
             || num("max") != Some(*max))

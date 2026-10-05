@@ -322,7 +322,7 @@ export component OptionsWindow inherits Window {
                                     minimum: row.minimum;
                                     maximum: row.maximum;
                                     value: row.number;
-                                    enabled: !none-box.checked;
+                                    enabled: row.enabled && !none-box.checked;
                                     edited(value) => { root.number-edited(i, value); }
                                 }
                                 if row.unit != "": Text {
@@ -330,6 +330,7 @@ export component OptionsWindow inherits Window {
                                     vertical-alignment: center;
                                 }
                                 none-box := CheckBox {
+                                    enabled: row.enabled;
                                     text: row.none-phrase;
                                     checked: row.is-none;
                                     toggled => { root.none-toggled(i, self.checked); }

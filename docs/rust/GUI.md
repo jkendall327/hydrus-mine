@@ -3190,3 +3190,15 @@ on the recorded platform. Broader GUI/misc/menu coverage stays Partial.
 Tag Presentation offers the sibling connector colour controls. Fading disables the optional namespace choice and uses the ideal tag’s colour; turning fading off allows a named, missing, empty, or ideal-tag namespace choice. Apply saves the staged preferences and Cancel discards them. Manage Tags paints raw/count, connector and ideal-tag runs separately with solid colours; shared write-autocomplete rows can fade between namespace colours, including selected backgrounds. Detached tag editors and both relationship inputs share those runs, and open, visible editors refresh after another owner changes the preferences without replacing the input or selected tags.
 
 Selected sibling rows paint solid namespace runs through the remaining row, then overlay each fading run only within its fixed text block. A collapsed-parent suffix can fade to the unnamespaced colour while the preceding ideal tag’s solid colour remains beyond the suffix, including when the viewport widens.
+
+
+Options > maintenance and processing includes separate browsing, mouse movement
+and Client API idle timeouts under “when to run high cpu jobs > idle”. Each accepts
+1–1000 minutes or its own ignore checkbox. Defaults are 30 minutes for browsing,
+10 for mouse movement and ignored API activity; imported values retain their
+stored seconds and the editor displays whole minutes as Qt does. Apply updates
+the existing running idle-only session autosave gate; Cancel keeps the saved
+thresholds. Reopening ignored controls restores the reference's hidden one-minute
+value. The controls are disabled when the stored idle-enable flag is off. Mouse
+activity currently covers native application windows, while browsing and Client
+API activity use the existing all-window and shared API timestamp consumers.

@@ -1311,10 +1311,9 @@ clears that pending position so it cannot affect a subsequent page creation.
 Named GUI session saves now retain selectable immutable snapshots; automatic
 `last session` synchronization writes the live session; a separate historical
 autosave timer now observes the configured period and idle-only preference and
-suppresses unchanged saves. Idle input tracking covers the main window and
-Client API page commands; auxiliary windows and other Client API request kinds
-do not yet reset its activity timestamps. Startup session selection remains
-deferred. Historical
+suppresses unchanged saves. Idle input tracking covers every native application
+window and the shared Client API activity marker; system-wide mouse movement
+outside these windows remains unobserved. Historical
 backups from imported legacy databases are not migrated; the current imported
 session is retained as the first backup when overwritten. Backup loads start fresh transfer/live-job state while retaining saved queue
 settings and file/gallery logs. Early native snapshots without importer-state
@@ -2274,3 +2273,17 @@ focused two-owner native replay is authored for hosted CI, not locally executed.
 The sibling connector fade and custom-namespace preferences now have typed import/persistence, staged Options controls and segmented painting in every existing native sibling-annotation consumer. As in Qt, storage-list terms do not permit fades, while write-autocomplete predicate terms do. The broader Tag Presentation and tag-list families remain Partial: this slice does not add sibling decorations to native surfaces that never had them, expand OR rows, or complete list menus/navigation. Native fonts, palettes and clipping follow the existing Slint lists; the reference and hosted native PNGs expose the rendered solid/gradient states.
 
 Sibling colour replays also capture a selected collapsed-parent suffix with a different namespace colour. Qt and native extent checks keep its gradient fixed while the viewport grows and preserve the earlier solid ideal colour in the trailing area; native font/padding differences remain bounded.
+
+
+Options > maintenance and processing now exposes the three independent browsing,
+mouse and Client API idle timeouts as minute controls (1–1000) with the reference
+ignore choices. The browsing and API thresholds reach the running idle-only
+session autosave monitor on its next check, with the strict two-minute boot guard
+and strict activity boundaries. The mouse timeout uses the same live gate but
+remains Partial because the reference polls the system-wide cursor and native
+tracking only observes movement in application windows. This does not implement
+high-CPU maintenance scheduling, CPU-busy detection or the broader idle settings.
+Ignored controls reopen with a hidden one-minute value, matching the recorded
+Qt constructor/multiplier behavior. Options saves merge only edited idle fields
+so unrelated live changes survive. Native timing/persistence/Cancel/PNG tests are
+authored for hosted CI; only the actual Qt recorder and source checks ran locally.
