@@ -711,8 +711,16 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   JSON and PNG without dropping query history or cached header metadata. Legacy
   subscription type3 versions1–10 now import through the actual list. The original transport menus are wired; native imports still
   pass through a reviewed child instead of adding immediately. Clipboard PNG
-  image precedence and PNG list drops remain absent. Older unsupported seed-cache
-  versions fail explicitly rather than losing history.
+  image precedence and PNG list drops remain absent. Historical file-cache
+  versions 1–7 now upgrade within the exchange codec, with recorded order,
+  timestamp, note, count and example preservation. Later historical caches can
+  contain duplicate identities; native queues cannot preserve those, so these
+  imports fail explicitly instead of dropping entries. Version-1 float/complex
+  notes requiring Python `str()` also fail explicitly; text, integer, boolean
+  and None notes are supported. The codec applies generic URL encoding without
+  a client's URL-class configuration; custom class-specific rewrites remain
+  outside this recorded slice. The read-only database importer's cache decoder
+  remains version 8 only.
   Missing histories now ask the original message, title and decisions before
   staging; accepted missing logs are initialised empty directly on Apply. The list owner now stages modern imports and
   persists both histories. JSON file export/overwrite and multi-file JSON/PNG
