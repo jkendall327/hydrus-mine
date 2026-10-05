@@ -21,6 +21,7 @@ type ShownLines = Rc<RefCell<Vec<(Vec<MenuLine>, ModelRc<MenuLine>)>>>;
 /// What the menu bar works with.
 pub(crate) struct Hooks {
     pub debug_long_popup: crate::debug_long_popup::Control,
+    pub debug_fetch: crate::debug_fetch::Control,
     pub force_idle: crate::force_idle::Control,
     pub quick_export_directory: crate::quick_export_directory::Control,
     pub darkmode: Rc<dyn Fn()>,
@@ -760,6 +761,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::FileHistory => (hooks.file_history)(),
         Command::RepairArchiveTimes => (hooks.repair_archive_times)(),
         Command::ClearThumbnailCache => (hooks.clear_thumbnail_cache)(),
+        Command::DebugFetchUrl => hooks.debug_fetch.open(),
         Command::DebugLongTextPopup => hooks.debug_long_popup.start(),
         Command::DebugForceIdleMode => {
             hooks.force_idle.toggle();

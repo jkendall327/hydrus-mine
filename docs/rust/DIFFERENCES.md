@@ -3301,3 +3301,14 @@ prefetch family, tile/delay/duplicate-count control or parent credit is proposed
 The three control proposals are conditional on independent source review and
 exact hosted Rust/native/physical/rendered validation; canonical coverage is
 unchanged.
+
+The debug fetch action has an owned native response window and system save
+picker rather than the Qt modal questions. Its progress attachment remains the
+shared native display-only download row: the reference's embedded stop/cog is
+not claimed. The native popup's own stop reaches the actual Job cancellation,
+while broader network-control/cog parity remains Partial. Native exception text
+comes from the existing Rust HTTP engine. Each request uses the existing
+GUI-local engine pattern rather than joining a separate daemon's running jobs;
+this does not establish shared-daemon global scheduling parity. Only the original
+“fetch a url” action is considered for conditional first-pass scope after review
+and hosted validation, with no parent/network-control-family promotion.

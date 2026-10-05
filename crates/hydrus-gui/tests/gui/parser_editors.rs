@@ -36,6 +36,10 @@ impl TestDocuments {
         Self::start_with_image(Vec::new())
     }
     pub(super) fn start_with_image(image: Vec<u8>) -> Self {
+        Self::start_with_response(image, "image/png")
+    }
+    /// Actual HTTP bytes/charset transport shared by binary debug-response replays.
+    pub(super) fn start_with_response(image: Vec<u8>, image_type: &'static str) -> Self {
         use std::io::{Read as _, Write as _};
         let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
         let base = format!("http://{}", listener.local_addr().unwrap());
@@ -89,7 +93,7 @@ impl TestDocuments {
                         ("200 OK", b"<p>fetched caf\xe9</p>")
                     };
                     let content_type = if image_request {
-                        "image/png"
+                        image_type
                     } else {
                         "text/html; charset=iso-8859-1"
                     };

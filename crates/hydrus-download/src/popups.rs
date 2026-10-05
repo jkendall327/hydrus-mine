@@ -451,6 +451,22 @@ impl Working {
         self.end(true);
     }
 
+    /// Finish now but leave the completed message visible for this many seconds.
+    /// Uses the same strict deadline boundary as stored JobStatus popups.
+    pub fn finish_and_dismiss_after(&self, seconds: i64) {
+        let mut state = self.state.lock();
+        if state.ended {
+            return;
+        }
+        state
+            .job
+            .finish_and_dismiss(Some(seconds.max(0)), now_whole());
+        state.network = None;
+        state.dirty = true;
+        self.sync(&mut state, true);
+        state.ended = true;
+    }
+
     /// The files it shows, if any.
     pub fn has_files(&self) -> bool {
         self.state.lock().job.files.is_some()
@@ -532,6 +548,9 @@ impl Working {
                     if ours.done {
                         theirs.finish();
                     }
+                    if ours.dismiss_at.is_some() {
+                        theirs.dismiss_at = ours.dismiss_at;
+                    }
                     theirs.dismissed |= ours.dismissed;
                     theirs.cancelled
                 })
@@ -577,6 +596,31 @@ mod tests {
 
     fn shown(store: &Store) -> Vec<Job> {
         store.read(|conn| popups::all(conn, now_whole())).unwrap()
+    }
+
+    #[test]
+    fn completed_deadline_survives_producer_drop_and_uses_strict_stored_boundary() {
+        let directory = tempfile::tempdir().unwrap();
+        let store = Store::open(directory.path()).unwrap();
+        let working = Working::new(&store, "debug network job", true);
+        working.show();
+        working.finish_and_dismiss_after(3);
+        let completed = shown(&store).remove(0);
+        let deadline = completed.dismiss_at.unwrap();
+        assert!(completed.done && !completed.dismissed && !completed.cancellable);
+        drop(working);
+        assert_eq!(
+            store
+                .read(|conn| popups::get(conn, &completed.key, deadline))
+                .unwrap(),
+            Some(completed.clone())
+        );
+        assert!(
+            store
+                .read(|conn| popups::get(conn, &completed.key, deadline + 1))
+                .unwrap()
+                .is_none()
+        );
     }
 
     #[test]

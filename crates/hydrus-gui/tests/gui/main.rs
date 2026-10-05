@@ -211,6 +211,7 @@ mod image_colour;
 
 mod debug_delayed_pages;
 mod debug_delayed_popup;
+mod debug_fetch;
 mod debug_long_popup;
 mod duplicates_progress;
 mod quick_export_directory;

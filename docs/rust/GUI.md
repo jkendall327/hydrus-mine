@@ -4077,3 +4077,17 @@ never publishes SetMedia or starts viewing intervals. Current rendering shares
 ready Arc rasters; when a warm decode is pending, the existing synchronous
 current decoder proceeds independently. Authored Rust/native regressions and
 final native render review await hosted execution.
+
+Help > Debug > Network actions now offers the actual “fetch a url” workflow.
+A normal network-engine GET uses saved cookies, approved headers and bandwidth
+policy, publishes a live “debug network job” popup, then offers save-to-file,
+copy-to-clipboard or forget. Save writes the captured response bytes unchanged;
+clipboard decodes the response's declared charset. Each overlapping request and
+question keeps its own result. Completed progress popups dismiss after three
+seconds. The native popup stop cancels its actual HTTP job. Hidden main windows
+refuse new launches while admitted work can still deliver its response question;
+accepted exit, rebinding and final binding destruction permanently retire work.
+`oracle/record_debug_fetch_url.py` records the genuine Qt QAction/HTTP engine,
+JobStatus deadline, file bytes, decoded clipboard, Cancel/forget and hidden result
+on a disclosed loopback server. Authored native HTTP/Store/toaster regressions
+remain pending hosted execution; no local Rust/native tests were run.

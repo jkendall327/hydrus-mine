@@ -34,6 +34,7 @@ mod client_exit;
 pub mod clipboard_monitor;
 pub mod command_palette_window;
 pub mod daemon;
+pub mod debug_fetch;
 pub mod debug_long_popup;
 pub mod delete_files_window;
 pub mod domain_mask_entry;
@@ -334,6 +335,8 @@ pub struct Bound {
     pub options_open_externally: options_open_externally::Slots,
     pub external_launches: open_externally_launch::Launcher,
     pub quick_export_directory: quick_export_directory::Control,
+    pub debug_fetch: debug_fetch::Control,
+    _debug_fetch_owner: Rc<debug_fetch::Owner>,
     pub debug_long_popup: debug_long_popup::Control,
     _debug_long_popup_owner: Rc<debug_long_popup::Owner>,
     pub options_suggested_tags_slot: tag_suggestions_window::Slots,
@@ -607,6 +610,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         first.borrow().store().clone(),
         binding_active.clone(),
     );
+    let debug_fetch = debug_fetch::Control::new(
+        window,
+        first.borrow().store().clone(),
+        binding_active.clone(),
+    );
     main_identity::bind(
         window,
         first.borrow().store().clone(),
@@ -662,6 +670,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let maintenance = maintenance.clone();
         let force_idle = force_idle.clone();
         let debug_long_popup = debug_long_popup.clone();
+        let debug_fetch = debug_fetch.clone();
         let image_cache = image_cache.clone();
         let options = options.clone();
         let manage_tags = manage_tags.clone();
@@ -676,6 +685,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             maintenance.retire();
             force_idle.retire();
             debug_long_popup.retire();
+            debug_fetch.retire();
             image_cache.retire();
             retire_colours();
             launcher.cancel();
@@ -2386,6 +2396,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         window,
         menu_bar::Hooks {
             debug_long_popup: debug_long_popup.clone(),
+            debug_fetch: debug_fetch.clone(),
             force_idle: force_idle.clone(),
             quick_export_directory: quick_export_directory.clone(),
             darkmode: gui_colour_actions.callback(),
@@ -3079,6 +3090,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     }));
+    debug_fetch.set_published(Rc::new({
+        let popups = Rc::downgrade(&popup_timer);
+        move || {
+            if let Some(popups) = popups.upgrade() {
+                popups.refresh();
+            }
+        }
+    }));
     client_exit::bind(
         window,
         page().borrow().store().clone(),
@@ -3104,6 +3123,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let maintenance = maintenance.clone();
             let force_idle = force_idle.clone();
             let debug_long_popup = debug_long_popup.clone();
+            let debug_fetch = debug_fetch.clone();
             let image_cache = image_cache.clone();
             move || {
                 sidebar_layout.accepted_exit();
@@ -3111,6 +3131,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 maintenance.retire();
                 force_idle.retire();
                 debug_long_popup.retire();
+                debug_fetch.retire();
                 image_cache.retire();
                 retire_colours();
                 rows.retire();
@@ -4879,6 +4900,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         options_open_externally,
         external_launches,
         quick_export_directory,
+        debug_fetch: debug_fetch.clone(),
+        _debug_fetch_owner: Rc::new(debug_fetch.owner()),
         debug_long_popup,
         _debug_long_popup_owner: debug_long_popup_owner,
         command_palette,
@@ -5495,6 +5518,18 @@ pub(crate) fn pick_exchange_export() -> Option<std::path::PathBuf> {
         .set_title(TITLE)
         .add_filter("JSON", &["json"])
         .set_file_name("export.json")
+        .save_file()
+}
+
+/// Save the captured debug response's exact bytes, with the public picker boundary.
+pub(crate) fn pick_debug_response() -> Option<std::path::PathBuf> {
+    const TITLE: &str = "select where to save content";
+    if let Some(picker) = PICKER.with(|p| p.borrow().clone()) {
+        return picker(Pick::Files, TITLE).into_iter().next();
+    }
+    rfd::FileDialog::new()
+        .set_title(TITLE)
+        .set_file_name("output.txt")
         .save_file()
 }
 
