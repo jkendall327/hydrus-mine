@@ -494,7 +494,7 @@ fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store, rows: &T
     window.set_banner_top_text(colour(summaries.thumbnail_top.text));
     window.set_banner_bottom_background(colour(summaries.thumbnail_bottom_right.background));
     window.set_banner_bottom_text(colour(summaries.thumbnail_bottom_right.text));
-    let theme = window.global::<Theme>();
+    let theme = window.global::<Theme<'_>>();
     rows.set_paint_palette(thumbnail_paint::Palette {
         fill: theme.invoke_thumbnail_background(true, false),
         selected_fill: theme.invoke_thumbnail_background(true, true),
