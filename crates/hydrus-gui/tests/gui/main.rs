@@ -6,6 +6,7 @@ mod common;
 mod headless_lifetime;
 
 mod about;
+mod active_predicates;
 mod animation;
 mod archive_delete;
 mod auto_resolution_preview;

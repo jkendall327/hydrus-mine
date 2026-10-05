@@ -21,6 +21,7 @@ mod ui {
 pub use ui::*;
 
 pub mod about_window;
+mod active_predicates;
 mod animation;
 mod archive_delete_window;
 pub mod archive_repair_window;
@@ -702,6 +703,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             if let Some(window) = weak.upgrade() {
                 downloader_updates.refresh();
                 refresh(&window, &current.borrow().borrow());
+                window.invoke_active_predicates_refreshed();
                 if let Some(duplicates) = duplicates.upgrade() {
                     duplicates.show(&window, &current.borrow().borrow());
                 }
@@ -720,6 +722,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     };
     duplicates_sidebar::bind(window, &duplicates, page.clone());
     sidebar_context_cog::bind(window, page.clone(), shown.clone());
+    active_predicates::bind(
+        window,
+        &predicate_editor,
+        page.clone(),
+        shown.clone(),
+        binding_active.clone(),
+    );
     // change the pages, then show whichever page is now shown; a change
     // that can't be made says why
     // (the menu bar's titles, shown again after a change)

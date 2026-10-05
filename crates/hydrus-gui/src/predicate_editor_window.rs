@@ -218,6 +218,7 @@ pub(crate) fn open(
         .map_err(|e| e.to_string())?;
     editor.apply_defaults(&defaults, &context);
     let window = PredicateEditorWindow::new().map_err(|e| e.to_string())?;
+    window.set_editing_existing(editor.supplied.is_some());
     let closed = Rc::new(Cell::new(false));
     let valid: Rc<dyn Fn() -> bool> = Rc::new({
         let closed = closed.clone();
@@ -302,7 +303,7 @@ pub(crate) fn open(
     show_page(0);
     let close = {
         let weak = window.as_weak();
-        let slot = slot.clone();
+        let slot = Rc::downgrade(slot);
         let closed = closed.clone();
         move || {
             if closed.replace(true) {
@@ -312,7 +313,15 @@ pub(crate) fn open(
             if let Some(window) = &window {
                 let _ = window.hide();
             }
-            slot.borrow_mut().take();
+            if let (Some(slot), Some(window)) = (slot.upgrade(), window.as_ref()) {
+                let owns = slot
+                    .borrow()
+                    .as_ref()
+                    .is_some_and(|current| std::ptr::eq(current.window(), window.window()));
+                if owns {
+                    slot.borrow_mut().take();
+                }
+            }
             if let Some(window) = window {
                 window.invoke_closed();
             }

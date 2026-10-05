@@ -4,6 +4,7 @@
 //! seconds; the windows' own tests are hydrus-gui's.
 
 mod about;
+mod active_predicates;
 mod auto_resolution_review;
 mod auto_resolution_rules;
 mod checker_options;

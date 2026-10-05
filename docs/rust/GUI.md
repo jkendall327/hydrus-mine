@@ -3002,6 +3002,22 @@ actual Qt cases in the main read input and basic OR child, including accepted
 system recents surviving outer Cancel. Both callers use the original activation intent. Authored model replay and
 the native 18-case consumer replay await hosted CI; no native render is claimed.
 
+The active search list now selects rows, with Ctrl and Shift selection. Return
+or double-click removes selected terms, Ctrl activation inverts them, and Shift
+activation reopens one represented system value in its populated editor. An
+existing value wins over saved creation defaults; Cancel leaves the query alone
+and accepting an unchanged value keeps it. Accepted edits replace the captured
+term, preserve other query terms, record history and refresh synchronised results.
+The search context menu offers represented edit/remove/invert, replace-with-OR,
+dissolve-OR and common-tag namespace commands. Its captured page and values guard
+against applying a retained menu to a successor. Page transitions cancel an
+existing-value child; hidden, dropped, closed or rebound owners cannot accept it.
+`active_predicate_edit.json` records 13 actual Qt command paths and 12 populated
+editor accept/Cancel paths, including the difference between Ctrl inversion
+(which toggles an existing inverse) and the menu (which only adds it). Native
+regressions cover the populated size editor, actual query counts, real row
+pointer selection and retained-owner boundaries; hosted execution is pending.
+
 The file-size editor displays `<`, `≈`, `=`, `≠` and `>` as five radio choices,
 with bounded arrow navigation, Space and default Enter acceptance. Its amount
 stays within 0–1,048,576; selecting B/KB/MB/GB/TB changes the binary multiplier
