@@ -83,13 +83,41 @@ impl<T> Cache<T> {
     where
         T: Clone,
     {
+        self.get_accounted(id, now, |_| None)
+    }
+    /// Refresh a loaded value's changing footprint at access, as DataCache does.
+    pub fn get_accounted(
+        &mut self,
+        id: HashId,
+        now: Duration,
+        footprint: impl FnOnce(&T) -> Option<u64>,
+    ) -> Option<T>
+    where
+        T: Clone,
+    {
         let entry = self.entries.get_mut(&id)?;
+        if let Some(bytes) = footprint(&entry.value) {
+            self.bytes = self.bytes - entry.bytes + bytes;
+            entry.bytes = bytes;
+        }
         entry.touched = now;
         if let Some(at) = self.order.iter().position(|key| *key == id) {
             self.order.remove(at);
         }
         self.order.push_back(id);
         Some(entry.value.clone())
+    }
+    /// Remove only the captured value, without touching a replacement's LRU time.
+    pub fn remove_if(&mut self, id: HashId, matches: impl FnOnce(&T) -> bool) {
+        if self
+            .entries
+            .get(&id)
+            .is_some_and(|entry| matches(&entry.value))
+            && let Some(entry) = self.entries.remove(&id)
+        {
+            self.bytes -= entry.bytes;
+            self.order.retain(|key| *key != id);
+        }
     }
     /// Drop oldest overflow and entries strictly older than the timeout.
     pub fn maintain(&mut self, now: Duration) {

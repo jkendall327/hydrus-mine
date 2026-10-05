@@ -45,7 +45,11 @@ struct Pending {
 struct Request {
     file: HashId,
     generation: u128,
-    decoder: Decoder,
+    decoder: Backend,
+}
+enum Backend {
+    Injected(Decoder),
+    Shared(crate::image_cache::Handle, bool),
 }
 // One held obsolete decode must not block its successor's presentation. Two
 // workers preserve that behavior, with only the latest queued request retained.
@@ -78,9 +82,15 @@ impl Workers {
                             break;
                         }
                         let Some(store) = store.upgrade() else { break };
-                        let pixels = (request.decoder)(&store, request.file)
-                            .as_ref()
-                            .map(Pixels::new);
+                        let pixels = match request.decoder {
+                            Backend::Injected(decoder) => {
+                                decoder(&store, request.file).as_ref().map(Pixels::new)
+                            }
+                            Backend::Shared(cache, normalise_icc) => cache
+                                .load(&store, request.file, normalise_icc)
+                                .as_deref()
+                                .map(Pixels::new),
+                        };
                         drop(store);
                         if !alive.load(Ordering::Acquire)
                             || send.send((request.generation, pixels)).is_err()
@@ -178,6 +188,7 @@ struct State {
     owner_valid: OwnerValid,
     clock: RefCell<Clock>,
     decoder: RefCell<Option<Decoder>>,
+    image_cache: crate::image_cache::Handle,
     normalise_icc: Cell<bool>,
     canvases: RefCell<HashMap<PageKey, Rc<Canvas>>>,
     current: RefCell<Option<Rc<Canvas>>>,
@@ -307,12 +318,10 @@ impl State {
             generation,
             restore,
         });
-        let decoder = self.decoder.borrow().clone().unwrap_or_else(|| {
-            let normalise_icc = self.normalise_icc.get();
-            Arc::new(move |store: &Store, file| {
-                crate::viewer::still_with_icc(store, file, normalise_icc)
-            })
-        });
+        let decoder = self.decoder.borrow().clone().map_or_else(
+            || Backend::Shared(self.image_cache.clone(), self.normalise_icc.get()),
+            Backend::Injected,
+        );
         let mut workers = self.workers.borrow_mut();
         if workers.is_none() {
             match Workers::new(&self.store) {
@@ -664,6 +673,7 @@ impl Monitor {
         store: Arc<Store>,
         source: Source,
         owner_valid: OwnerValid,
+        image_cache: crate::image_cache::Handle,
     ) -> Self {
         // The window owns this retirement callback. Rebinding retires its prior
         // preview before any successor callback/pixels can be published.
@@ -678,6 +688,7 @@ impl Monitor {
             owner_valid,
             clock: RefCell::new(Rc::new(|| TimestampMs::now().0)),
             decoder: RefCell::new(None),
+            image_cache,
             normalise_icc: Cell::new(policy.normalise_icc),
             canvases: RefCell::new(HashMap::new()),
             current: RefCell::new(None),
@@ -790,7 +801,7 @@ mod worker_tests {
             assert!(workers.submit(Request {
                 file: HashId(1),
                 generation,
-                decoder: held.clone(),
+                decoder: Backend::Injected(held.clone()),
             }));
             entries.recv_timeout(Duration::from_secs(5)).unwrap();
         }
@@ -800,14 +811,14 @@ mod worker_tests {
         assert!(workers.submit(Request {
             file: HashId(2),
             generation: 3,
-            decoder: Arc::new({
+            decoder: Backend::Injected(Arc::new({
                 let called = queued_calls.clone();
                 move |_, _| {
                     queued_resource.store(true, Ordering::Release);
                     called.store(true, Ordering::Release);
                     None
                 }
-            }),
+            })),
         }));
         drop(store);
         assert!(

@@ -359,14 +359,18 @@ export component OptionsWindow inherits Window {
                                 }
                                 Text {text:row.text;}
                             }
-                            if row.kind == 2: HorizontalLayout {
-                                width: 260px;
+                            if row.kind == 2: VerticalLayout {
+                                width: row.unit == "" ? 260px : 400px;
+                                spacing:4px;
+                                HorizontalLayout {
                                 SpinBox {
                                     minimum: row.minimum;
                                     maximum: row.maximum;
                                     value: row.number;
                                     edited(value) => { root.number-edited(i, value); }
                                 }
+                                }
+                                if row.unit != "": Text {text:row.unit;wrap:word-wrap;}
                             }
                             if row.kind == 3: HorizontalLayout {
                                 width: 260px;

@@ -3092,3 +3092,21 @@ Control remain retained. A dropped MainWindow is detected by its weak-owner time
 or the next poll; callbacks never substitute a successor window. An authored
 held-wait regression keeps the emitting main and Control alive, drops each Bound clone,
 checks the remaining queue and lets only a fresh binding consume its next pair.
+
+The three image-cache controls govern real decoded full-resolution raster reuse,
+not the preview's separate 64 MiB per-page accepted-frame snapshots or a viewer's
+current source/resize buffers. Accounting preserves Qt's pre-decode RGB estimate,
+loaded-footprint adjustment at access, strict admission equality, one-item soft
+overflow and strictly older last-access expiry. Raster references are shared
+without copying their pixel vectors; presentation references survive eviction.
+The cache is owned by one main GUI binding, not a process-global controller; filters
+opened independently by auto-resolution own their own policy-bound cache. Existing
+duplicate pair prefetch warms this cache and retains no separate future raster
+store. The total prefetch percentage, controller-wide sharing, image tiles,
+video buffers and complete Qt scheduling/rendering families remain Partial and
+receive no additional credit. Native failed full decodes use an uncached poster
+fallback instead of retaining Qt's synthetic error renderer. Injected public
+preview decoders keep their existing owned test/backend contract independently
+of normal decoded-cache admission. The screen-count caption is omitted when the
+backend has no monitor information (including the headless adapter); the pixel
+budget remains available. Runtime/native render validation remains hosted-only.

@@ -80,6 +80,36 @@ fn refresh_byte_row(
     }
 }
 
+fn image_cache_row(row: &Row) -> bool {
+    matches!(row, Row::Opt { option, .. } if matches!(option.label, "Memory reserved for image cache:" | "Image cache timeout:" | "Maximum image size (in % of cache) that can be cached:"))
+}
+fn refresh_image_cache_rows(window: &OptionsWindow, editor: &Editor) {
+    let policy = editor.applied().0;
+    for (index, row) in editor.rows().iter().enumerate() {
+        if !image_cache_row(row) {
+            continue;
+        }
+        let Some(mut shown) = window.get_rows().row_data(index) else {
+            continue;
+        };
+        if shown.kind == 33 {
+            shown.text = crate::windows::display_size(window.window())
+                .map(|screen| {
+                    hydrus_gui_model::image_cache::screen_estimate(policy.image_cache.bytes, screen)
+                })
+                .unwrap_or_default()
+                .into();
+        } else if shown.kind == 2 {
+            shown.unit = hydrus_gui_model::image_cache::percentage_estimate(
+                policy.image_cache,
+                policy.info_line.nice_resolutions,
+            )
+            .into();
+        }
+        window.get_rows().set_row_data(index, shown);
+    }
+}
+
 fn tag_sort_row(out: &mut OptionRow, sort: hydrus_core::tag_sort::TagSort) {
     out.kind = 12;
     let strings = |items: &[&str]| {
@@ -148,6 +178,9 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                             .collect::<Vec<_>>(),
                     ));
                     out.index = int(*unit as i64);
+                    if option.label == "Memory reserved for image cache:" {
+                        return out;
+                    }
                     let bounds = store.snapshot().thumbnails;
                     let bytes = hydrus_gui_model::thumbnail_cache::combined(*amount, *unit);
                     let per =
@@ -494,6 +527,60 @@ pub(crate) fn open(
     );
     let external_table =
         crate::options_external_calls::bind(store, &window, &editor, &active, external_slots);
+    let image_controls_blocked: Rc<dyn Fn() -> bool> = Rc::new({
+        let active = active.clone();
+        let weak = window.as_weak();
+        let gui_colours = gui_colour_list.has_open.clone();
+        let colours = colour_list.has_open.clone();
+        let frames = frame_table.has_open.clone();
+        let reasons = reason_queue.has_open.clone();
+        let namespaces = tag_namespace_order.has_open.clone();
+        let shortcuts = shortcuts.has_open.clone();
+        let routing = routing_table.has_open.clone();
+        let external = external_table.has_open.clone();
+        let checker = Rc::downgrade(checker_slot);
+        let tag = Rc::downgrade(&tag_slot);
+        let imports = Rc::downgrade(&import_slot);
+        let namespace = Rc::downgrade(&namespace_slot);
+        let gallery = Rc::downgrade(&gallery_slot);
+        let location = Rc::downgrade(&location_slot);
+        let regex = Rc::downgrade(&regex_slot);
+        let banner = Rc::downgrade(banner_slot);
+        move || {
+            !active.get()
+                || !weak
+                    .upgrade()
+                    .is_some_and(|window| window.window().is_visible())
+                || gui_colours()
+                || colours()
+                || frames()
+                || reasons()
+                || namespaces()
+                || shortcuts()
+                || routing()
+                || external()
+                || checker
+                    .upgrade()
+                    .is_some_and(|slot| slot.borrow().is_some())
+                || tag.upgrade().is_some_and(|slot| slot.borrow().is_some())
+                || imports
+                    .upgrade()
+                    .is_some_and(|slot| slot.borrow().is_some())
+                || namespace
+                    .upgrade()
+                    .is_some_and(|slot| slot.borrow().is_some())
+                || gallery
+                    .upgrade()
+                    .is_some_and(|slot| slot.borrow().is_some())
+                || location
+                    .upgrade()
+                    .is_some_and(|slot| slot.borrow().is_some())
+                || regex
+                    .upgrade()
+                    .is_some_and(|slot| crate::regex_favourites_window::has_open(&slot))
+                || banner.upgrade().is_some_and(|slot| slot.borrow().is_some())
+        }
+    });
     // (the rows are made anew only as the page changes: an edit leaves its
     // control as the user left it)
     let show_page = {
@@ -522,6 +609,7 @@ pub(crate) fn open(
                 .collect();
             window.set_page(int(state.page() as i64));
             window.set_rows(ModelRc::new(VecModel::from(rows)));
+            refresh_image_cache_rows(&window, &state);
             show_providers();
             drop(state);
             show_tag_namespace_order();
@@ -1091,15 +1179,18 @@ pub(crate) fn open(
         }
     });
     window.on_number_edited({
+        let image_controls_blocked = image_controls_blocked.clone();
         let editor = editor.clone();
         let weak = window.as_weak();
         let store = store.clone();
         let active = active.clone();
         move |i, n| {
+            if editor.borrow().rows().get(at(i)).is_some_and(image_cache_row) && image_controls_blocked() { return; }
             let start = matches!(editor.borrow().rows().get(at(i)), Some(Row::Opt { option, .. }) if option.label == "Start animations this % in:");
             if start && (!active.get() || !weak.upgrade().is_some_and(|window| window.window().is_visible())) { return; }
             editor.borrow_mut().number(at(i), i64::from(n));
             refresh_byte_row(&weak, &editor, &store, i);
+            if let Some(window) = weak.upgrade() { refresh_image_cache_rows(&window, &editor.borrow()); }
         }
     });
     window.on_none_toggled({
@@ -1168,10 +1259,12 @@ pub(crate) fn open(
         }
     });
     window.on_field_edited({
+        let image_controls_blocked = image_controls_blocked.clone();
         let editor = editor.clone();
         let active = active.clone();
         let weak = window.as_weak();
         move |i, field, n| {
+            if editor.borrow().rows().get(at(i)).is_some_and(image_cache_row) && image_controls_blocked() { return; }
             let deletion = matches!(editor.borrow().rows().get(at(i)), Some(Row::Opt {option,..}) if option.label == "When maintenance physically deletes files, wait this long between each delete: ");
             if deletion && (!active.get() || !weak.upgrade().is_some_and(|w| w.window().is_visible())) {return;}
             editor.borrow_mut().field(at(i), at(field), i64::from(n));
@@ -1228,16 +1321,20 @@ pub(crate) fn open(
         }
     });
     window.on_choice_chosen({
+        let image_controls_blocked = image_controls_blocked.clone();
         let session_choices=session_choices.clone();
         let active=active.clone();let gui_colours_open=gui_colour_list.has_open.clone();
         let editor = editor.clone();
         let store = store.clone();
         let weak=window.as_weak();
         move |i, index| {
+            if editor.borrow().rows().get(at(i)).is_some_and(image_cache_row) && image_controls_blocked() { return; }
             if !active.get()||gui_colours_open()||!weak.upgrade().is_some_and(|window|window.window().is_visible()){return;}
 
             if matches!(editor.borrow().rows().get(at(i)),Some(Row::Opt{option,..}) if matches!(option.kind,Kind::Bytes)) {
-                editor.borrow_mut().choose(at(i),at(index));refresh_byte_row(&weak,&editor,&store,i);return;
+                editor.borrow_mut().choose(at(i),at(index));refresh_byte_row(&weak,&editor,&store,i);
+                if let Some(window) = weak.upgrade() { refresh_image_cache_rows(&window, &editor.borrow()); }
+                return;
             }
             let mut editor = editor.borrow_mut();
             if matches!(editor.rows().get(at(i)),Some(Row::Opt {option,..}) if matches!(option.kind,Kind::SavedSession)) {

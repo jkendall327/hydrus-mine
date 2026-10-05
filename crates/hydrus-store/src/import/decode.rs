@@ -976,6 +976,13 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     insert_setting(&mut input, &thumbnail_cache)?;
     insert_setting(
         &mut input,
+        &options
+            .as_ref()
+            .map(crate::image_cache::Policy::from_legacy)
+            .unwrap_or_default(),
+    )?;
+    insert_setting(
+        &mut input,
         &options.as_ref().map_or_else(
             crate::archive_delete_preferences::Preferences::default,
             crate::archive_delete_preferences::Preferences::from_legacy,
@@ -5012,6 +5019,42 @@ mod tests {
             ThumbnailCacheSettings {
                 bytes: 1024,
                 timeout: 299
+            }
+        );
+    }
+
+    #[test]
+    fn image_cache_size_raw_timeout_and_future_admission_import_independently() {
+        use crate::image_cache::Policy;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<Policy>(input.settings["image_cache"].clone()).unwrap()
+        };
+        assert_eq!(decoded(), Policy::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "image_cache_size"], [0, 1073741824]]"#,
+                    r#"[[0, "image_cache_size"], [0, 1024]]"#,
+                ),
+                (
+                    r#"[[0, "image_cache_timeout"], [0, 600]]"#,
+                    r#"[[0, "image_cache_timeout"], [0, 299]]"#,
+                ),
+                (
+                    r#"[[0, "image_cache_storage_limit_percentage"], [0, 25]]"#,
+                    r#"[[0, "image_cache_storage_limit_percentage"], [0, 10]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            Policy {
+                bytes: 1024,
+                timeout: 299,
+                percentage: 10
             }
         );
     }

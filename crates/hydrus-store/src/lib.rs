@@ -86,6 +86,7 @@ pub mod file_history;
 
 pub mod or_connector;
 
+pub mod image_cache;
 pub mod image_colour;
 
 pub mod duplicates_progress;

@@ -20,6 +20,7 @@ pub(crate) fn open(
     removed: Removed,
     guard: Rc<dyn Fn() -> bool>,
     return_to: Rc<dyn Fn(hydrus_core::HashId)>,
+    image_cache: crate::image_cache::Handle,
 ) -> Result<ArchiveDeleteWindow, slint::PlatformError> {
     let window = ArchiveDeleteWindow::new()?;
     let parent_guard = guard.clone();
@@ -181,6 +182,7 @@ pub(crate) fn open(
         let playback = playback.clone();
         let animator = animator.clone();
         let zoomed = zoomed.clone();
+        let image_cache = image_cache.clone();
         move || {
             let Some(window) = weak.upgrade() else {
                 return;
@@ -201,7 +203,7 @@ pub(crate) fn open(
             let store = model.store();
             let (shape, media) = (
                 crate::viewer::shape(store, file),
-                crate::viewer::still(store, file).map(std::sync::Arc::new),
+                image_cache.load_saved(store, file),
             );
             let (playable, animation) = (
                 crate::viewer::playable(store, file),
@@ -281,7 +283,7 @@ pub(crate) fn open(
                 {
                     return;
                 }
-                let media = crate::viewer::still(store, file).map(std::sync::Arc::new);
+                let media = image_cache.load_saved(store, file);
                 window.set_media(media.as_deref().map(crate::image).unwrap_or_default());
                 zoomed.refresh_still(crate::viewer::still_of(media, shape, true));
             }

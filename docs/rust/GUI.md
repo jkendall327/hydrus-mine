@@ -3908,3 +3908,20 @@ Control remain retained. A dropped MainWindow is detected by its weak-owner time
 or the next poll; callbacks never substitute a successor window. An authored
 held-wait regression keeps the emitting main and Control alive, drops each Bound clone,
 checks the remaining queue and lets only a fresh binding consume its next pair.
+
+Speed and Memory now stages memory reserved for the image cache, idle timeout
+(days/hours/minutes, five-minute editor minimum), and maximum cached image size
+(10–50% of the cache). The pixel-budget estimate follows the reference; the
+screen estimate uses the owning native monitor when available. Cancel discards
+the draft, reopening reads the saved values, and Apply merges only edited fields.
+A decoded full-image cache is shared by the main binding's preview, image viewer,
+archive/delete filter and duplicate filter. Images exactly at the single-file
+threshold render on demand; admitted pending renders share their original RGB
+estimate, then account actual RGB/RGBA bytes when accessed after loading. LRU
+maintenance releases idle/overflow cache references while current canvas pixels,
+zoom and viewing intervals remain owned independently. Size/timeout changes
+maintain immediately; percentage changes affect future admission. ICC changes,
+rebind, accepted exit and final binding-owner drop permanently retire old cache
+admission. Actual Qt controls and renderer accounting are recorded in
+`image_cache.json`; authored native/model/import regressions and the Options PNG
+await hosted execution and inspection.
