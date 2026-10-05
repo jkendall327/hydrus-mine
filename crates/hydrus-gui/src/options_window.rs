@@ -37,6 +37,11 @@ fn int(n: i64) -> i32 {
     i32::try_from(n).unwrap_or(if n < 0 { i32::MIN } else { i32::MAX })
 }
 
+/// Negative native row indexes remain out of range rather than selecting row zero.
+fn at(index: i32) -> usize {
+    usize::try_from(index).unwrap_or(usize::MAX)
+}
+
 /// A collect's choices for the files that match none of it, as the
 /// reference's cog menu has them ("unmatched files").
 type SortCogTarget = (usize, usize, Vec<hydrus_gui_model::sort_cog::Entry>);
@@ -571,7 +576,6 @@ pub(crate) fn open(
             slot.borrow_mut().take();
         }
     };
-    let at = |i: i32| usize::try_from(i).unwrap_or(usize::MAX);
     // the search: suggestions as it is typed in; one chosen shows its page,
     // its row highlighted, and the search is cleared (as the reference's)
     window.set_search_placeholder(SEARCH_PLACEHOLDER.into());
