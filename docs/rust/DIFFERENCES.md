@@ -224,7 +224,8 @@ search.
   arbitrary-float import parity remains unfinished. A file size in
   terabytes, which the reference's editor offers
   but can't write out ("error:cannot render this predicate"), is written
-  "200TB"; neither parser takes "TB". Their radio buttons are drop-downs
+  "200TB"; neither parser takes "TB". File-size comparisons now use five
+  radio choices; the other predicates' radio buttons remain drop-downs
   (as are the like/dislike and star controls of "system:rating"), and an
   editor's rows don't wrap: a narrow window scrolls sideways. A filetype
   group partly ticked shows unticked (Qt's tree shows it part-ticked).
@@ -2907,3 +2908,15 @@ exit Cancel/accept/re-show/fresh-binding coverage is authored; hosted execution
 remains pending. This correction adds no completion credit or renderer fidelity.
 
 The combined colour/thumbnail integration copies all eight saved local/remote and selected/unselected fill/border roles into each owned paint snapshot. Current physical storage membership selects the palette, including collection membership. A colour change clears both old and current copied cells before repaint; the viewport background keeps its saved grid colour behind the clipped image. This integration remains source-only until exact hosted native execution and PNG inspection.
+
+The bounded file-size comparison radio update preserves the existing typed
+query executor and all other predicate widgets. Main-owned predicate children
+now require a visible, current binding before opening and cannot accept across
+rebind or accepted exit. Their existing page-identity and lock checks remain.
+The recorded default Enter path is supported; the separate global radio-Enter
+preference and generic active-predicate editing remain outside this slice.
+Supplied-value reconstruction is covered in the model and saved-default
+reopening in the native owner. The documented reference TB text defect and
+free-text parser limit remain. Structural predicate/Options parents stay
+Partial; no canonical ledger is changed. Rust/native render validation is
+pending hosted CI.
