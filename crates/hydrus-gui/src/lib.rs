@@ -58,6 +58,8 @@ pub mod formula_window;
 mod gallery;
 pub mod gallery_source_window;
 mod grid;
+pub mod gui_colour_actions;
+mod gui_colours;
 pub mod headless;
 pub mod import_options_favourites_window;
 pub mod import_options_overwrite_window;
@@ -91,6 +93,7 @@ pub mod open_externally_launch;
 pub mod options_deletion;
 mod options_external_calls;
 pub mod options_frames;
+pub mod options_gui_colours;
 pub mod options_namespace_colours;
 pub mod options_open_externally;
 mod options_palette;
@@ -255,6 +258,7 @@ pub use viewer::MediaViewer;
 /// and the media viewer while one is open.
 #[derive(Clone)]
 pub struct Bound {
+    _gui_colour_actions: Rc<gui_colour_actions::Binding>,
     /// The displayed page preview, independent of the thumbnail grid/viewer.
     pub preview: preview_window::Monitor,
     pub pages: Rc<RefCell<Pages>>,
@@ -480,6 +484,15 @@ fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store, rows: &T
 /// Show `pages` in `window`, and let the window change them.
 pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     about_window::note_boot();
+    window
+        .global::<TagTextHistory<'_>>()
+        .on_record(write_tag_history::record);
+    window
+        .global::<TagTextHistory<'_>>()
+        .on_undo(write_tag_history::undo);
+    window
+        .global::<TagTextHistory<'_>>()
+        .on_redo(write_tag_history::redo);
     // Retire the old canvas before successor splitter setup can publish a change.
     window.invoke_preview_retired();
     window.invoke_retire_external_launches();
@@ -498,6 +511,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let session_autosave = session_autosave::bind(window, &pages);
     let first = pages.borrow_mut().current();
     let current = Rc::new(RefCell::new(first.clone()));
+    gui_colours::bind(
+        window.global::<Theme<'_>>(),
+        first.borrow().store(),
+        binding_active.clone(),
+    );
     let sidebar_layout = sidebar_layout::Binding::bind(window, pages.clone(), current.clone());
     let preview = preview_window::Monitor::bind(
         window,
@@ -527,14 +545,21 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     );
     let local_transfer: local_transfer_window::Slot = Rc::default();
     let rows = Rc::new(ThumbnailRows::new(first));
+    let gui_colour_actions = gui_colour_actions::Binding::new(
+        window,
+        pages.borrow().store().clone(),
+        binding_active.clone(),
+    );
     window.on_retire_external_launches({
         let options = options.clone();
         let manage_tags = manage_tags.clone();
         let rows = rows.clone();
+        let retire_colours = gui_colour_actions.retire_callback();
         let launcher = external_launches.clone();
         let binding_active = binding_active.clone();
         move || {
             binding_active.set(false);
+            retire_colours();
             launcher.cancel();
             rows.retire();
             let child = options
@@ -558,6 +583,20 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     rows.set_columns(usize::try_from(window.get_grid_columns()).unwrap_or(1));
     rows.set_scale(window.window().scale_factor());
     lay_out_thumbnails(window, current.borrow().borrow().store(), &rows);
+    window.global::<Theme<'_>>().on_colours_changed({
+        let window = window.as_weak();
+        let rows = Rc::downgrade(&rows);
+        let store = Arc::downgrade(current.borrow().borrow().store());
+        let active = binding_active.clone();
+        move || {
+            if active.get()
+                && let (Some(window), Some(rows), Some(store)) =
+                    (window.upgrade(), rows.upgrade(), store.upgrade())
+            {
+                lay_out_thumbnails(&window, &store, &rows);
+            }
+        }
+    });
     let thumbnails = Rc::new(slint::Timer::default());
     thumbnails.start(
         slint::TimerMode::Repeated,
@@ -2061,6 +2100,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
+            darkmode: gui_colour_actions.callback(),
             sidebar_layout: Rc::new({
                 let layout = sidebar_layout.clone();
                 move |action| layout.action(action)
@@ -2750,6 +2790,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             move |question, then| ask(Asked::Then(question, then))
         }),
         Rc::new({
+            let retire_colours = gui_colour_actions.retire_callback();
             let preview = preview.clone();
             let shortcuts = shortcuts.clone();
             let launcher = external_launches.clone();
@@ -2762,6 +2803,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             move || {
                 sidebar_layout.accepted_exit();
                 binding_active.set(false);
+                retire_colours();
                 rows.retire();
                 let child = options
                     .borrow()
@@ -4378,6 +4420,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     Bound {
+        _gui_colour_actions: gui_colour_actions,
         preview,
         session_autosave,
         pages,
@@ -5292,6 +5335,11 @@ fn open_viewer(
         hydrus_core::CanvasType::MediaViewer,
     );
     let model = Rc::new(RefCell::new(model));
+    gui_colours::bind(
+        window.global::<Theme<'_>>(),
+        model.borrow().store(),
+        viewing_stats.active_flag(),
+    );
     viewer_eye_menu::bind(
         &window,
         model.borrow().store(),

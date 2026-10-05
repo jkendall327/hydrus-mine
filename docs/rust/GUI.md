@@ -3594,3 +3594,11 @@ Replacing a session releases that page even when its viewer stays open. A live
 viewer can still act on its files, while its forgotten source and successor page
 receive no row removals. Accepted client exit permanently retires its binding;
 a reopened client starts a fresh binding.
+
+### Legacy coloursets
+
+Options > colours stages the independent override checkbox, current default/darkmode choice, and both sets of thirteen RGB roles. The editing tab starts on default even when darkmode is active. Override disables the swatches, while the current-set choice stays available. RGB pickers own OK/Cancel and the colour buttons retain copy/import-hex actions; Apply writes the changed override, current set and individual RGB roles against the latest Store values. Cancel and retired/hidden child callbacks cannot alter successors. Existing imported stores without the typed setting read their retained ClientOptions colours; native settings take precedence.
+
+Saved roles reach the existing thumbnail grid, autocomplete editor/results, active/selected tag lists, manual export tags, preview, viewer and archive/delete/duplicate canvases through owner-local weak observers (at most 250ms). Thumbnail local/remote fill and border use current physical local-file-storage membership, including trash; retained disk bytes are insufficient. Help > darkmode toggles the legacy colourset, showing the reference warning first when override is off. Accepted close, rebind and the final Bound drop retire that action and its notice. Application Palette, stylesheet and OS colour scheme remain independently owned by their style controls.
+
+The real Qt fixture `gui_coloursets.json` records all 26 RGB values, staged/Cancel/reopen/serialization, actual QColorDialog acceptance/rejection, clipboard parsing, four Help cases and thirteen real backend colour consumers. Native/model regressions additionally cover field merges, retained legacy fallback, hidden/rebound owners, physical deletion/restoration and role painting. Source-only checks are complete; hosted Rust/renderer checks and exact-source PNG review remain required.

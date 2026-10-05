@@ -119,6 +119,11 @@ pub(crate) fn open(
         }
     };
     let active = Rc::new(Cell::new(true));
+    crate::gui_colours::bind(
+        window.global::<crate::Theme<'_>>(),
+        model.borrow().store(),
+        active.clone(),
+    );
     let side_lists = Rc::new(RefCell::new([
         hydrus_gui_model::tag_suggestions::List::default(),
         hydrus_gui_model::tag_suggestions::List::default(),

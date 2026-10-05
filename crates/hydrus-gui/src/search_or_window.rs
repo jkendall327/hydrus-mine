@@ -56,7 +56,7 @@ pub fn cancel(slot: &Slot) {
 struct State {
     page: RefCell<SearchPage>,
     text: TextContext,
-    active: Cell<bool>,
+    active: Rc<Cell<bool>>,
     owner: ValidOwner,
     nested: Slot,
     system: Rc<RefCell<Option<PredicateEditorWindow>>>,
@@ -195,6 +195,16 @@ pub fn open(
         return Ok(window.clone_strong());
     }
     let window = SearchOrWindow::new()?;
+    window
+        .global::<crate::TagTextHistory<'_>>()
+        .on_record(crate::write_tag_history::record);
+    window
+        .global::<crate::TagTextHistory<'_>>()
+        .on_undo(crate::write_tag_history::undo);
+    window
+        .global::<crate::TagTextHistory<'_>>()
+        .on_redo(crate::write_tag_history::redo);
+    let theme_store = store.clone();
     let snapshot = store.snapshot();
     let viewing = store.read(settings::get).unwrap_or_default();
     let text = TextContext::from_store(&snapshot.services, &viewing);
@@ -218,12 +228,17 @@ pub fn open(
             Vec::new(),
         )),
         text,
-        active: Cell::new(true),
+        active: Rc::new(Cell::new(true)),
         owner,
         nested: Slot::default(),
         system: slot.system.clone(),
         watch_owner: slint::Timer::default(),
     });
+    crate::gui_colours::bind(
+        window.global::<crate::Theme<'_>>(),
+        &theme_store,
+        state.active.clone(),
+    );
     *slot.nested.borrow_mut() = Some(state.nested.clone());
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();

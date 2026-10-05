@@ -50,6 +50,9 @@ fn normalise_idle_timeout(seconds: Option<u64>) -> Option<u64> {
 }
 
 macro_rules! settings {
+    (@save $conn:ident, $after:ident, $before:ident, gui_colours) => {
+        $after.gui_colours.save_changed($conn, &$before.gui_colours)?;
+    };
     (@save $conn:ident, $after:ident, $before:ident, page_layout) => {
         hydrus_store::page_layout::save_changed($conn, &$after.page_layout, &$before.page_layout)?;
     };
@@ -240,6 +243,7 @@ macro_rules! settings {
 }
 
 settings! {
+    gui_colours: hydrus_store::gui_colours::Settings => hydrus_store::gui_colours::load,
     shortcuts: hydrus_core::shortcuts::Settings,
     external_calls: hydrus_core::external_calls::Manager,
     open_externally: hydrus_core::open_externally::Routing,
@@ -379,6 +383,7 @@ pub enum Value {
     /// Ordered advanced file-deletion reason suggestions.
     DeletionReasons(Vec<String>),
     NamespaceColours(crate::namespace_colours::Colours),
+    GuiColours([[hydrus_store::services::Rgb; 13]; 2]),
     FrameLocations(std::collections::BTreeMap<String, hydrus_core::windows::FrameLocation>),
     /// Registered external program calls, staged in the parent Options draft.
     ExternalCalls(hydrus_core::external_calls::Manager),
@@ -465,6 +470,7 @@ pub enum Kind {
     /// Inline ordered advanced file-deletion reason queue.
     DeletionReasons,
     NamespaceColours,
+    GuiColours,
     FrameLocations,
     /// Importable current file domains, edited in a child selector.
     LocalLocation,
@@ -1439,6 +1445,37 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 },
             )],
         ),
+        Page {
+            name: "colours",
+            items: vec![
+                check(
+                    "override what is set in the stylesheet with the colours on this page: ",
+                    |s| s.gui_colours.override_stylesheet,
+                    |s, v| s.gui_colours.override_stylesheet = v,
+                ),
+                choice(
+                    "current colourset: ",
+                    &["default", "darkmode"],
+                    |s| s.gui_colours.current.min(1),
+                    |s, v| s.gui_colours.current = v,
+                ),
+                boxed(
+                    "coloursets",
+                    vec![opt(
+                        "",
+                        Kind::GuiColours,
+                        Rc::new(|s| Value::GuiColours(s.gui_colours.sets)),
+                        Rc::new(|s, v| match v {
+                            Value::GuiColours(sets) => {
+                                s.gui_colours.sets = *sets;
+                                Ok(())
+                            }
+                            _ => Err(wrong("coloursets")),
+                        }),
+                    )],
+                ),
+            ],
+        },
         command_palette_page(),
         page(
             "connection",
@@ -4912,6 +4949,20 @@ impl Editor {
         for value in self.values.iter_mut().flatten() {
             if matches!(value, Value::FavouriteTags(_)) {
                 *value = Value::FavouriteTags(FavouriteTags(tags));
+                return;
+            }
+        }
+    }
+
+    pub fn edited_gui_colours(&self) -> hydrus_store::gui_colours::Settings {
+        self.applied().0.gui_colours
+    }
+    pub fn set_gui_colour(&mut self, set: usize, role: usize, rgb: hydrus_store::services::Rgb) {
+        for value in self.values.iter_mut().flatten() {
+            if let Value::GuiColours(sets) = value
+                && let Some(colour) = sets.get_mut(set).and_then(|set| set.get_mut(role))
+            {
+                *colour = rgb;
                 return;
             }
         }

@@ -149,7 +149,7 @@ export component TagRelationshipsWindow inherits Window {
                     VerticalLayout {
                         Text { text: root.siblings ? "set tags to be replaced" : "set children"; color: Theme.text; horizontal-alignment: center; }
                         Rectangle {
-                            height: 84px; background: Theme.panel; border-width: 1px; border-color: Theme.border;
+                            height: 84px; background: Theme.tags-background; border-width: 1px; border-color: Theme.border;
                             ListView {
                                 for tag[i] in root.left-tags: Rectangle {
                                     height: 22px;
@@ -184,7 +184,7 @@ export component TagRelationshipsWindow inherits Window {
                     VerticalLayout {
                         Text { text: root.siblings ? "set new ideal tag" : "set parents"; color: Theme.text; horizontal-alignment: center; }
                         Rectangle {
-                            height: 84px; background: Theme.panel; border-width: 1px; border-color: Theme.border;
+                            height: 84px; background: Theme.tags-background; border-width: 1px; border-color: Theme.border;
                             ListView {
                                 for tag[i] in root.right-tags: Rectangle {
                                     height: 22px;

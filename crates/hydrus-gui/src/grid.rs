@@ -429,6 +429,40 @@ impl Model for ThumbnailRows {
             return None;
         }
         let end = (start + columns).min(results.len());
+        // Collections aggregate current locations; retained bytes do not imply local membership.
+        let members: Vec<Vec<HashId>> = results[start..end]
+            .iter()
+            .map(|file| {
+                page.collection(*file)
+                    .map_or_else(|| vec![*file], |collection| collection.to_vec())
+            })
+            .collect();
+        let files: Vec<HashId> = members.iter().flatten().copied().collect();
+        let storage = page
+            .store()
+            .snapshot()
+            .services
+            .by_key(&hydrus_core::ServiceKey::new(
+                hydrus_core::service::builtin_keys::HYDRUS_LOCAL_FILE_STORAGE,
+            ))
+            .ok()
+            .map(|service| service.id);
+        let current = page
+            .store()
+            .read(move |conn| hydrus_store::media::current_domains(conn, &files))
+            .unwrap_or_default();
+        let local: Vec<bool> = members
+            .iter()
+            .map(|files| {
+                storage.is_some_and(|storage| {
+                    files.iter().any(|file| {
+                        current
+                            .get(file)
+                            .is_some_and(|domains| domains.contains(&storage))
+                    })
+                })
+            })
+            .collect();
         let overlays = self.icons(&page, &results[start..end]);
         let thumbnails: Vec<Thumbnail> = (start..end)
             .zip(overlays)
@@ -444,6 +478,7 @@ impl Model for ThumbnailRows {
                 bottom,
                 image: self.image(results[i], i),
                 selected: page.is_selected(i),
+                local: local[i - start],
                 files: page
                     .collection(results[i])
                     .map_or_else(SharedString::new, |files| {

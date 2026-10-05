@@ -58,6 +58,7 @@ pub fn open(
     }
     let window = ExportFilesWindow::new()?;
     let active = Rc::new(Cell::new(true));
+    crate::gui_colours::bind(window.global::<crate::Theme<'_>>(), store, active.clone());
     window.set_pattern_shortcuts(ModelRc::new(VecModel::from(
         export_files::PATTERN_SHORTCUTS
             .iter()

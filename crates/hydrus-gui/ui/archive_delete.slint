@@ -9,13 +9,13 @@
 // pointer over the window's left fifth, the file's tags show there; near
 // its top, the file's info line.
 
-import { ListText } from "theme.slint";
+import { ListText, Theme } from "theme.slint";
 
 export component ArchiveDeleteWindow inherits Window {
     title: "archive/delete filter " + root.caption;
     preferred-width: 1000px;
     preferred-height: 750px;
-    background: #202020;
+    background: Theme.colour(10,#202020);
 
     in property <image> media;
     in property <string> caption;
@@ -208,7 +208,7 @@ export component ArchiveDeleteWindow inherits Window {
                 x: 12px;
                 width: parent.width - 24px;
                 text: root.info-line;
-                color: #f0f0f0;
+                color: Theme.colour(11,#f0f0f0);
                 horizontal-alignment: center;
                 vertical-alignment: center;
                 overflow: elide;

@@ -19,6 +19,9 @@ pub struct IncrementalTagging {
     pub reverse: bool,
 }
 impl IncrementalTagging {
+    pub fn store(&self) -> &Arc<Store> {
+        &self.store
+    }
     /// Construct from an ordered selection and its frozen storage-tag preview.
     pub fn new(
         store: Arc<Store>,

@@ -58,6 +58,7 @@ pub fn open(
     let draft = Rc::new(RefCell::new(initial));
     let selected = Rc::new(Cell::new(0usize));
     let active = Rc::new(Cell::new(true));
+    crate::gui_colours::bind(w.global::<crate::Theme<'_>>(), store, active.clone());
     w.set_services(ModelRc::new(VecModel::from(
         services
             .iter()

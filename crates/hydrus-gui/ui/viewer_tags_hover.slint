@@ -1,4 +1,4 @@
-import { ListText } from "theme.slint";
+import { ListText, Theme } from "theme.slint";
 // Persistent geometry and hit target, with a clipped, vertically scrollable list.
 export component ViewerTagsHover inherits Rectangle {
     in property <[ListText]> tags;
@@ -8,7 +8,7 @@ export component ViewerTagsHover inherits Rectangle {
     out property <bool> has-hover: touch.has-hover || bar-touch.has-hover;
     callback wheel(float,bool,length,length);
     changed maximum => { root.offset = clamp(root.offset,0px,self.maximum); }
-    background: #202020e8;
+    background: Theme.colour(12,#202020e8);
     clip: true;
     probe := Text { visible: false; text: "Ag"; font-size: 14px; }
     for tag[i] in root.tags: Text {
