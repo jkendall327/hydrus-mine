@@ -304,6 +304,154 @@ fn help_warning_hidden_acknowledgement_toggle_rebind_and_final_bound_drop_are_ow
     drop(windows);
 }
 #[test]
+#[allow(clippy::float_cmp)]
+fn saved_palette_change_during_real_row_fade_discards_old_brushes_without_redecoding() {
+    use std::{cell::Cell, rc::Rc};
+
+    let qt = hydrus_testkit::fixture_json("gui_coloursets.json");
+    let (_directories, store) = super::subscriptions::store();
+    let _windows = headless::init();
+    let file = store
+        .read(|conn| {
+            let registry = hydrus_store::services::ServiceRegistry::load(conn)?;
+            let roles = hydrus_store::content::DomainRoles::new(&registry)?;
+            Ok(conn.query_row(
+                "SELECT hash_id FROM file_domain_current WHERE service_id=?1 ORDER BY hash_id LIMIT 1",
+                [roles.local[0]],
+                |row| row.get::<_, hydrus_core::HashId>(0),
+            )?)
+        })
+        .unwrap();
+    let mut initial = preferences(&qt["saved"]);
+    initial.current = 0;
+    assert!(initial.override_stylesheet);
+    let mut current = initial.clone();
+    store
+        .write(move |tx| settings::set(tx.conn(), &initial))
+        .unwrap();
+    store
+        .write(|tx| {
+            settings::set(
+                tx.conn(),
+                &hydrus_store::thumbnail_appearance::Preferences::default(),
+            )
+        })
+        .unwrap();
+    let page = SearchPage::restored(
+        store.clone(),
+        hydrus_search::FileSearchContext::default(),
+        false,
+        None,
+        vec![file],
+    );
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(page));
+    assert!(bound.current.borrow().borrow().new_thumbnail_renderer());
+    let now = Rc::new(Cell::new(Duration::ZERO));
+    bound.rows.set_paint_clock(Rc::new({
+        let now = now.clone();
+        move || now.get()
+    }));
+    bound.rows.paint_tick(true, 0, 1);
+    bound.rows.row_data(0).unwrap();
+    bound.rows.wait();
+    let first = || {
+        bound
+            .rows
+            .row_data(0)
+            .unwrap()
+            .thumbnails
+            .row_data(0)
+            .unwrap()
+    };
+    let brush =
+        |rgb: [u8; 3]| slint::Brush::from(slint::Color::from_rgb_u8(rgb[0], rgb[1], rgb[2]));
+    let decoded = first().image.to_rgba8().unwrap().as_bytes().to_vec();
+    assert!(!decoded.is_empty());
+    assert!(!first().selected);
+    for remote in [false, true] {
+        if remote {
+            store
+                .write_content(move |writer| {
+                    writer.delete_files(writer.roles().local_file_storage, &[file], None)
+                })
+                .unwrap();
+            // Refresh only the real metadata/paint row; decoded bytes stay cached.
+            bound.rows.file_changed(0);
+            first();
+            now.set(now.get() + Duration::from_secs(1));
+            bound.rows.paint_tick(true, 0, 1);
+        }
+        let normal = usize::from(remote) * 2;
+        assert_eq!(first().local, !remote);
+        assert_eq!(first().paint.fill, brush(current.active()[normal].0));
+        assert_eq!(
+            first().paint.border_brush,
+            brush(current.active()[normal + 4].0)
+        );
+        ui.invoke_thumbnail_clicked(0, false, false);
+        let selected = first();
+        assert!(selected.selected);
+        assert_eq!(selected.fade_opacity, 0.0);
+        assert_eq!(selected.previous.fill, brush(current.active()[normal].0));
+        assert_eq!(selected.paint.fill, brush(current.active()[normal + 1].0));
+        assert_eq!(
+            selected.paint.border_brush,
+            brush(current.active()[normal + 5].0)
+        );
+        assert!(selected.previous.image.size().width > 0);
+        now.set(now.get() + Duration::from_secs_f64(13.0 / 120.0));
+        bound.rows.paint_tick(true, 0, 1);
+        assert!(first().fade_opacity > 0.0 && first().fade_opacity < 1.0);
+        let bytes = bound.rows.cached_bytes();
+        let entries = bound.rows.cached();
+        let old_fill = first().paint.fill;
+        current.flip();
+        let saved = current.clone();
+        store
+            .write(move |tx| settings::set(tx.conn(), &saved))
+            .unwrap();
+        // Exercise the real saved-settings observer and its composed layout hook.
+        ui.global::<Theme<'_>>().invoke_refresh_colours();
+        let refreshed = first();
+        assert_eq!(refreshed.local, !remote);
+        assert!(refreshed.selected);
+        assert_ne!(refreshed.paint.fill, old_fill);
+        assert_eq!(refreshed.paint.fill, brush(current.active()[normal + 1].0));
+        assert_eq!(
+            refreshed.paint.border_brush,
+            brush(current.active()[normal + 5].0)
+        );
+        assert_eq!(refreshed.previous.image.size().width, 0);
+        assert_eq!(refreshed.previous.fill, slint::Brush::default());
+        assert_eq!(refreshed.previous.border_brush, slint::Brush::default());
+        assert_eq!(refreshed.fade_opacity, 1.0);
+        assert_eq!(refreshed.image.to_rgba8().unwrap().as_bytes(), decoded);
+        assert_eq!(bound.rows.cached_bytes(), bytes);
+        assert_eq!(bound.rows.cached(), entries);
+        assert_eq!(
+            ui.global::<Theme<'_>>().get_grid_background(),
+            brush(current.active()[8].0)
+        );
+        ui.invoke_thumbnail_clicked(0, true, false);
+        first();
+        now.set(now.get() + Duration::from_secs(1));
+        bound.rows.paint_tick(true, 0, 1);
+        assert!(!first().selected);
+    }
+    store
+        .write_content(move |writer| writer.add_files(writer.roles().local[0], &[(file, None)]))
+        .unwrap();
+    bound.rows.file_changed(0);
+    let restored = first();
+    assert!(restored.local);
+    assert_eq!(restored.paint.fill, brush(current.active()[0].0));
+    assert_eq!(restored.paint.border_brush, brush(current.active()[4].0));
+    assert_eq!(restored.image.to_rgba8().unwrap().as_bytes(), decoded);
+}
+
+#[test]
 fn fresh_local_membership_live_roles_and_existing_owned_windows_paint_without_palette_changes() {
     let qt = hydrus_testkit::fixture_json("gui_coloursets.json");
     let (_directories, store) = super::subscriptions::store();
@@ -324,6 +472,14 @@ fn fresh_local_membership_live_roles_and_existing_owned_windows_paint_without_pa
     store
         .write(move |tx| settings::set(tx.conn(), &initial))
         .unwrap();
+    // This fixture counts unobscured role colours, independently of animation.
+    store
+        .write(|tx| {
+            let mut appearance = hydrus_store::thumbnail_appearance::load(tx.conn())?;
+            appearance.fade = false;
+            settings::set(tx.conn(), &appearance)
+        })
+        .unwrap();
     let page = SearchPage::restored(
         store.clone(),
         hydrus_search::FileSearchContext::default(),
@@ -336,6 +492,7 @@ fn fresh_local_membership_live_roles_and_existing_owned_windows_paint_without_pa
     let bound = bind(&ui, Pages::single(page));
     let adapter = windows.get(0).unwrap();
     headless::render(&adapter, 1100, 700);
+    bound.rows.wait();
     let first = || {
         bound
             .rows
@@ -347,6 +504,7 @@ fn fresh_local_membership_live_roles_and_existing_owned_windows_paint_without_pa
     };
     let paint = |remote: bool| {
         for selected in [false, true] {
+            bound.rows.file_changed(0);
             if first().selected != selected {
                 ui.invoke_thumbnail_clicked(0, true, false);
             }
@@ -355,6 +513,8 @@ fn fresh_local_membership_live_roles_and_existing_owned_windows_paint_without_pa
             assert_eq!(thumbnail.local, !remote);
             assert_eq!(thumbnail.selected, selected);
             thumbnail.image = slint::Image::default();
+            thumbnail.paint.image = slint::Image::default();
+            thumbnail.previous.image = slint::Image::default();
             row.thumbnails = slint::ModelRc::new(slint::VecModel::from(vec![thumbnail]));
             ui.set_thumbnail_rows(slint::ModelRc::new(slint::VecModel::from(vec![row])));
             let pixels = headless::render(&adapter, 1100, 700);

@@ -462,6 +462,70 @@ fn unscaled_background_clips_oversized_pixels_and_stays_fixed_on_scroll_and_clea
 }
 
 #[test]
+fn exit_cancel_preserves_nonempty_background_and_accepted_exit_permanently_clears_it() {
+    let (dirs, store) = store();
+    let path = dirs[1].path().join("exit-background.png");
+    headless::save_png(&path, &[140, 33, 201, 255].repeat(31 * 17), 31, 17).unwrap();
+    save(
+        &store,
+        Preferences {
+            background: Some(path.to_string_lossy().into_owned()),
+            ..Preferences::default()
+        },
+    );
+    store
+        .write(|ctx| {
+            let mut gui: hydrus_store::settings::GuiSettings = settings::get(ctx.conn())?;
+            gui.confirm_exit = true;
+            settings::set(ctx.conn(), &gui)
+        })
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.show().unwrap();
+    let native = windows.get(0).unwrap();
+    let has_background = |pixels: &[u8]| pixels.chunks_exact(4).any(|p| p == [140, 33, 201, 255]);
+    assert_eq!(ui.get_thumbnail_background().size().width, 31);
+    assert!(has_background(&headless::render(&native, 1000, 700)));
+    let close = || {
+        ui.window()
+            .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+        assert!(
+            ui.get_question()
+                .starts_with("Are you sure you want to exit the client?")
+        );
+    };
+    close();
+    ui.invoke_answer(false);
+    assert!(ui.window().is_visible());
+    assert_eq!(ui.get_thumbnail_background().size().width, 31);
+    assert!(has_background(&headless::render(&native, 1000, 700)));
+    close();
+    ui.invoke_answer(true);
+    assert!(!ui.window().is_visible());
+    assert_eq!(ui.get_thumbnail_background().size().width, 0);
+    assert_eq!(bound.rows.background().size().width, 0);
+    assert!(
+        store
+            .read(hydrus_store::thumbnail_appearance::load)
+            .unwrap()
+            .background
+            .is_some()
+    );
+    ui.show().unwrap();
+    ui.global::<hydrus_gui::Theme<'_>>()
+        .invoke_refresh_colours();
+    bound.rows.receive();
+    assert_eq!(ui.get_thumbnail_background().size().width, 0);
+    assert!(!has_background(&headless::render(&native, 1000, 700)));
+    let fresh = bind(&ui, Pages::single(SearchPage::new(store)));
+    assert_eq!(ui.get_thumbnail_background().size().width, 31);
+    assert_eq!(fresh.rows.background().size().width, 31);
+    assert!(has_background(&headless::render(&native, 1000, 700)));
+}
+
+#[test]
 #[allow(clippy::float_cmp)]
 fn real_main_selection_whole_cell_render_midpoint_finish_hide_and_retire() {
     let (_dirs, store) = store();

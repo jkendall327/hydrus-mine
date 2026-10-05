@@ -2910,11 +2910,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let rows = rows.clone();
             let sidebar_layout = sidebar_layout.clone();
             let binding_active = binding_active.clone();
+            let weak = window.as_weak();
             move || {
                 sidebar_layout.accepted_exit();
                 binding_active.set(false);
                 retire_colours();
                 rows.retire();
+                if let Some(window) = weak.upgrade() {
+                    window.set_thumbnail_background(slint::Image::default());
+                }
                 let child = options
                     .borrow()
                     .as_ref()

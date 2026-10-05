@@ -3698,4 +3698,8 @@ results, current typed browse seeds, hidden/cancelled owners, clipped/nonuniform
 background pixels, real selection transitions, cached revisits and retirement.
 Rust/Clippy/native execution and native PNG inspection are hosted-CI pending.
 
+Accepted client exit also releases the main window's background bitmap; retaining
+and showing the closed component cannot restore it. Cancelling exit keeps the
+current bitmap, while a fresh binding can load the still-saved path.
+
 The combined colour/thumbnail integration copies all eight saved local/remote and selected/unselected fill/border roles into each owned paint snapshot. Current physical storage membership selects the palette, including collection membership. A colour change clears both old and current copied cells before repaint; the viewport background keeps its saved grid colour behind the clipped image. This integration remains source-only until exact hosted native execution and PNG inspection.
