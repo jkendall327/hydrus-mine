@@ -181,7 +181,7 @@ pub fn apply(
             hydrus_search::enter_predicates(current, &add, text);
         }
         Command::InvertToggle => {
-            hydrus_search::enter_predicates(current, &inverses(selected, text), text)
+            hydrus_search::enter_predicates(current, &inverses(selected, text), text);
         }
         Command::ReplaceOr => {
             replace(current, selected, &[Predicate::Or(selected.to_vec())], text);

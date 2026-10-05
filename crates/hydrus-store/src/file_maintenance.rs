@@ -622,9 +622,9 @@ mod tests {
     fn captured_cancel_clears_due_and_future_types_and_keeps_unselected_work() {
         let mut conn = Connection::open_in_memory().unwrap();
         crate::schema::migrate(&mut conn).unwrap();
-        add_jobs(&conn, &[1, 2], JobType::HasExif, 99).unwrap();
-        add_jobs(&conn, &[3], JobType::HasExif, 100).unwrap();
-        add_jobs(&conn, &[4], JobType::HasIccProfile, 101).unwrap();
+        add_jobs(&conn, &[HashId(1), HashId(2)], JobType::HasExif, 99).unwrap();
+        add_jobs(&conn, &[HashId(3)], JobType::HasExif, 100).unwrap();
+        add_jobs(&conn, &[HashId(4)], JobType::HasIccProfile, 101).unwrap();
         assert_eq!(job_counts(&conn, 100).unwrap()[&JobType::HasExif], (2, 1));
         assert_eq!(
             job_counts(&conn, 100).unwrap()[&JobType::HasIccProfile],

@@ -161,6 +161,11 @@ impl FileImporter {
     ) -> Result<MaintenanceReport> {
         // File work happens outside the writer. The crash-safe file lease also
         // excludes the independent daemon's ordinary maintenance pass.
+        let MaintenanceCallbacks {
+            before_batch,
+            before_job,
+            committed,
+        } = callbacks;
         let _lease = loop {
             if !continue_work() {
                 return Ok(MaintenanceReport::default());
@@ -183,7 +188,7 @@ impl FileImporter {
         let mut report = MaintenanceReport::default();
         let mut attempted = 0;
         while report.total() < limit && report.weight < max_weight {
-            (callbacks.before_batch)()?;
+            (before_batch)()?;
             let due: Vec<(HashId, Vec<JobType>)> = self
                 .store
                 .read(|conn| file_maintenance::due_jobs_of(conn, now_s(), wanted))?;
@@ -211,7 +216,7 @@ impl FileImporter {
                     }
                     weight += job.weight();
                     attempted += 1;
-                    (callbacks.before_job)(attempted);
+                    (before_job)(attempted);
                     let result = match media.get(&hash_id) {
                         Some(m) => self.run_job(m, job, &mut pass)?,
                         None => JobResult::Nothing,
@@ -238,7 +243,7 @@ impl FileImporter {
                 })?;
                 report.bad_files = pass.bad_files;
                 report.redownload.clone_from(&pass.redownload);
-                (callbacks.committed)(&report);
+                (committed)(&report);
             }
         }
         report.bad_files = pass.bad_files;

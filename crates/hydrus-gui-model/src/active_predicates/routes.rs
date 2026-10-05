@@ -142,7 +142,8 @@ pub fn copy_text(
     rows.into_iter()
         .filter_map(|mut row| {
             if matches!(copy, Copy::Subtags | Copy::Underscores | Copy::AllSubtags) {
-                row = split_tag(&row).1.to_owned();
+                let namespace_len = row.len() - split_tag(&row).1.len();
+                row.replace_range(..namespace_len, "");
             }
             if copy == Copy::Underscores {
                 row = row.replace(' ', "_");

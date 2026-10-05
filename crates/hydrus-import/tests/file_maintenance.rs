@@ -8,6 +8,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use rusqlite::{Connection, params};
 
+use hydrus_core::HashId;
 use hydrus_import::FileImporter;
 use hydrus_media::MediaTools;
 use hydrus_store::Store;
@@ -18,10 +19,7 @@ type Digests = (Option<Vec<u8>>, Option<Vec<u8>>, Option<Vec<u8>>);
 
 #[test]
 fn controlled_runner_cancels_after_one_committed_file_without_consuming_the_next() {
-    use std::sync::{
-        Arc,
-        atomic::{AtomicBool, Ordering},
-    };
+    use std::sync::atomic::{AtomicBool, Ordering};
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();
     hydrus_store::import::import_legacy(
@@ -29,13 +27,13 @@ fn controlled_runner_cancels_after_one_committed_file_without_consuming_the_next
         &native.path().join(hydrus_store::store::DB_FILE_NAME),
     )
     .unwrap();
-    let store = Arc::new(Store::open(native.path()).unwrap());
+    let store = Store::open(native.path()).unwrap();
     let files = store
         .read(|conn| {
             let mut query = conn.prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT 2")?;
             Ok(query
                 .query_map([], |row| row.get(0))?
-                .collect::<rusqlite::Result<Vec<i64>>>()?)
+                .collect::<rusqlite::Result<Vec<HashId>>>()?)
         })
         .unwrap();
     let captured = files.clone();
@@ -75,7 +73,7 @@ fn controlled_runner_cancels_after_one_committed_file_without_consuming_the_next
     );
 }
 
-fn controlled_fixture() -> ([tempfile::TempDir; 2], std::sync::Arc<Store>, Vec<i64>) {
+fn controlled_fixture() -> ([tempfile::TempDir; 2], std::sync::Arc<Store>, Vec<HashId>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();
     hydrus_store::import::import_legacy(
@@ -83,13 +81,13 @@ fn controlled_fixture() -> ([tempfile::TempDir; 2], std::sync::Arc<Store>, Vec<i
         &native.path().join(hydrus_store::store::DB_FILE_NAME),
     )
     .unwrap();
-    let store = std::sync::Arc::new(Store::open(native.path()).unwrap());
+    let store = Store::open(native.path()).unwrap();
     let files = store
         .read(|conn| {
             let mut query = conn.prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT 3")?;
             Ok(query
                 .query_map([], |row| row.get(0))?
-                .collect::<rusqlite::Result<Vec<i64>>>()?)
+                .collect::<rusqlite::Result<Vec<HashId>>>()?)
         })
         .unwrap();
     store

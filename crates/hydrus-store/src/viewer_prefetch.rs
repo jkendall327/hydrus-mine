@@ -52,6 +52,7 @@ impl Preferences {
         }
     }
     /// Actual initial spinbox bounds; passive Apply normalizes only unchanged fields.
+    #[must_use]
     pub fn displayed(self) -> Self {
         Self {
             previous: self.previous.min(50),

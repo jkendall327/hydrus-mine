@@ -36,7 +36,9 @@ fn signed_wrap_and_empty_single_choice_signals_match_actual_qt() {
 #[test]
 fn simple_options_sort_retains_the_recorded_text_and_count_orders() {
     let fixture = hydrus_testkit::fixture_json("menu_choice_wheel.json");
-    let mut editor = Editor::new(Settings::default());
+    let directory = tempfile::tempdir().unwrap();
+    let store = Store::open(directory.path()).unwrap();
+    let mut editor = Editor::new(store.read(Settings::load).unwrap());
     let page = editor
         .page_names()
         .iter()

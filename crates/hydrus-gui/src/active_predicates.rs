@@ -486,15 +486,16 @@ pub(crate) fn bind(
             .into_iter()
             .map(|(route, label)| (Action::Route(route), label))
             .collect();
+            let search_menu = active_predicates::menu(
+                &state.captured,
+                page.active_predicates(),
+                &page.text_context(),
+                editable.then_some(editable_terms.as_slice()),
+            );
             state.menu.extend(
-                active_predicates::menu(
-                    &state.captured,
-                    page.active_predicates(),
-                    &page.text_context(),
-                    editable.then_some(editable_terms.as_slice()),
-                )
-                .into_iter()
-                .map(|(command, label)| (Action::Search(command), label)),
+                search_menu
+                    .into_iter()
+                    .map(|(command, label)| (Action::Search(command), label)),
             );
             if let Some(window) = weak.upgrade() {
                 state.show(&window);
