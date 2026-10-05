@@ -125,7 +125,7 @@ fn namespace_changes_merge_with_concurrent_presentation_edits_and_unchanged_list
     let before = store.read(Settings::load).unwrap();
     let mut editor = Options::new(before.clone());
     editor.set_tag_namespace_order(vec![
-        "".into(),
+        String::new(),
         ":".into(),
         " CREATOR ".into(),
         "creator".into(),

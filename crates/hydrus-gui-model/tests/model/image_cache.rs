@@ -56,7 +56,7 @@ fn actual_pending_rgb_rgba_touch_admission_soft_overflow_policy_and_expiry() {
                 "clear" => cache.clear(),
                 "loaded accounting unchanged" => {}
                 "external renderer remains" => {
-                    assert_eq!(held["small"].get(), event["external_bytes"].as_u64())
+                    assert_eq!(held["small"].get(), event["external_bytes"].as_u64());
                 }
                 _ => cache.maintain(now),
             }

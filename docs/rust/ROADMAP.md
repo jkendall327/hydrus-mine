@@ -233,7 +233,9 @@ exclude parent groups, aliases and evidence-only reassessments from implementati
 completion goals.
 
 The owner's latest instruction (2026-10-05) is implementation throughput with
-cheap validation: strict Clippy, simple builds and fast tests. Full native GUI,
+cheap validation: strict backend/model Clippy, simple builds and fast tests.
+Generated native GUI Clippy/type checking exceeded the cheap budget and joins
+full native GUI,
 cross-platform, rendered and audit passes are deferred until the end of the
 project. Fix bugs that block ongoing work and record other defects for that pass.
 The integrated implementation count remains separate from the fully validated

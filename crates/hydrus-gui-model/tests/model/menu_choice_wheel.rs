@@ -228,7 +228,7 @@ fn real_media_type_flat_order_unknown_current_and_matching_order_labels_match_qt
         let mut current = PageSort {
             by: media_type(&case["before"]),
             ascending: case["before_order"] == 0,
-            tag_context: Default::default(),
+            tag_context: hydrus_core::search::TagContext::default(),
         };
         let choices = sort::page_choices(&store, &current.by);
         let at = choices.iter().position(|c| c.by == current.by).unwrap();
