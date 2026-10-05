@@ -164,8 +164,10 @@ fn options_cog_cursor_copy_and_live_hover_replay_with_owned_cancel_and_reopen() 
     }
     let dialog = open(&ui, &bound, 0);
     // Replay actual cog mouse routes after another owner changes saved options.
-    // Right-click must leave the rendered window unchanged; left-click reads
+    // Right-click opens neither an embedded nor a separate popup; left-click reads
     // the current store before showing the menu, rather than its opening snapshot.
+    // CI's former whole-frame comparison differed only in the cog's hover/focus
+    // paint (35 x 32 pixels), so inspect Slint's actual popup lifecycle instead.
     let drawn = windows.get(windows.count() - 1).unwrap();
     let _ = headless::render(&drawn, 640, 420);
     for event in fixture["cog_openings"].as_array().unwrap() {
@@ -182,7 +184,12 @@ fn options_cog_cursor_copy_and_live_hover_replay_with_owned_cancel_and_reopen() 
         dialog
             .window()
             .dispatch_event(WindowEvent::PointerMoved { position });
-        let before = headless::render(&drawn, 640, 420);
+        let _ = headless::render(&drawn, 640, 420);
+        let inner = slint::private_unstable_api::re_exports::WindowInner::from_pub(dialog.window());
+        assert!(
+            inner.active_popups().is_empty(),
+            "previous cog popup is closed"
+        );
         let before_windows = windows.count();
         let button = match event["button"].as_str().unwrap() {
             "right" => PointerEventButton::Right,
@@ -192,6 +199,12 @@ fn options_cog_cursor_copy_and_live_hover_replay_with_owned_cancel_and_reopen() 
         dialog
             .window()
             .dispatch_event(WindowEvent::PointerPressed { position, button });
+        if button == PointerEventButton::Right {
+            assert!(
+                inner.active_popups().is_empty(),
+                "right-button down opens no popup"
+            );
+        }
         dialog
             .window()
             .dispatch_event(WindowEvent::PointerReleased { position, button });
@@ -201,12 +214,15 @@ fn options_cog_cursor_copy_and_live_hover_replay_with_owned_cancel_and_reopen() 
                 before_windows,
                 "no right-click popup window"
             );
-            assert_eq!(
-                headless::render_snapshot(&drawn, 640, 420),
-                before,
-                "no right-click popup overlay"
+            assert!(
+                inner.active_popups().is_empty(),
+                "right-button release opens no embedded popup"
             );
         } else {
+            assert!(
+                !inner.active_popups().is_empty(),
+                "left-button activation opens the actual cog popup"
+            );
             assert_eq!(
                 serde_json::json!(dialog.get_cog_checks().iter().collect::<Vec<_>>()),
                 event["menus"][0]
@@ -217,6 +233,10 @@ fn options_cog_cursor_copy_and_live_hover_replay_with_owned_cancel_and_reopen() 
             dialog.window().dispatch_event(WindowEvent::KeyReleased {
                 text: slint::platform::Key::Escape.into(),
             });
+            assert!(
+                inner.active_popups().is_empty(),
+                "Escape closes the cog popup"
+            );
         }
         assert_eq!(
             values(&store.read(settings::get::<NotePreferences>).unwrap()),
