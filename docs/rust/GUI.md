@@ -3794,3 +3794,5 @@ release the producer's timer and queue. Exit Cancel preserves the live sequence.
 The actual Qt recorder captures every setter deadline and presents real popup
 widgets; authored native regressions replay the genuine menu, Store and toaster
 with an owner-local deterministic clock. Hosted Rust execution remains pending.
+
+Popup cards now measure their body at the resolved card width before the outer stack allocates their height. The narrow long-question regression checks all five actual action-button bounds, the rendered lower stop border and a pointer delivered near that lower edge; the fixed-width and width-cap checks remain. This is a layout repair with no new coverage claim. Native execution is pending hosted CI.

@@ -2989,3 +2989,5 @@ existing native font-derived popup width policy; Qt pixel geometry is recorded
 without claiming identical font metrics. Other debug actions and broader popup
 freeze/monitor/API families remain Partial. No MIME-mode reassessment or parent
 completion is claimed. Native regressions are authored; hosted execution is pending.
+
+The popup question label continues to wrap in the native client. Actual Qt `PopupMessage._text_yes_no` remains a single-line label at the same narrow/fixed width settings; the new `popup_question_layout.json`/PNG records that distinction and verifies every Qt action control fits within its card. The native layout repair preserves its existing wrapping while preventing the lower stop button from crossing the clipped card boundary. No Options or popup family completion status changes.
