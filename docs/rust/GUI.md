@@ -3491,3 +3491,9 @@ The actual Qt action recording is `oracle/fixtures/popup_actions.json`.
 Main-window menu titles refresh after page changes while the window is live.
 Releasing the window and its binding also releases its pages and thumbnail
 loaders, including windows opened by native headless tests.
+
+Delayed deletion consumers keep a weak identity for their originating page.
+Replacing a session releases that page even when its viewer stays open. A live
+viewer can still act on its files, while its forgotten source and successor page
+receive no row removals. Accepted client exit permanently retires its binding;
+a reopened client starts a fresh binding.

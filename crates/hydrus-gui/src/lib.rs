@@ -1522,11 +1522,17 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let current = current.clone();
         let shown = shown.clone();
         move |owner| {
+            // A delayed consumer identifies its page without keeping a destroyed
+            // panel alive through a viewer or confirmation callback.
+            let owner = Rc::downgrade(&owner);
             let binding_active = binding_active.clone();
             let pages = pages.clone();
             let current = current.clone();
             let shown = shown.clone();
             Rc::new(move |files| {
+                let Some(owner) = owner.upgrade() else {
+                    return;
+                };
                 if !binding_active.get()
                     || !pages
                         .borrow()

@@ -1102,7 +1102,8 @@ fn gui_identity_and_exit_confirmation_reach_the_main_window() {
     let (_dirs, store) = store();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
-    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.show().unwrap();
+    let mut bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let recorded = hydrus_testkit::fixture_json("gui_settings.json");
     let close = || {
         ui.window()
@@ -1139,6 +1140,10 @@ fn gui_identity_and_exit_confirmation_reach_the_main_window() {
             .confirm_exit
     );
     for case in recorded["exits"].as_array().unwrap() {
+        // Accepted client exit retires its binding permanently. Each replay
+        // case starts a fresh client incarnation rather than reviving it.
+        ui.show().unwrap();
+        bound = bind(&ui, Pages::open(store.clone()).unwrap());
         open(&ui);
         let window = bound.options.borrow().as_ref().unwrap().clone_strong();
         show_page(&window, "gui");
@@ -4850,6 +4855,7 @@ fn files_trash_confirmations_are_staged_reopened_and_consumed() {
     use hydrus_gui::media_actions;
     use hydrus_store::settings::DeletionPreferences;
     let (_dirs, store) = store();
+    super::common::remove_trashed_from_view(&store);
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(
@@ -4957,8 +4963,11 @@ fn files_trash_confirmations_are_staged_reopened_and_consumed() {
 fn advanced_deletion_queue_stages_custom_reason_cancel_and_real_consumer() {
     use hydrus_store::settings::DeletionPreferences;
     let (_dirs, store) = store();
+    super::common::remove_trashed_from_view(&store);
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    // Advanced deletion accepts only while its emitting main owner is visible.
+    ui.show().unwrap();
     let bound = bind(
         &ui,
         Pages::single(super::common::all_local_page(store.clone())),
