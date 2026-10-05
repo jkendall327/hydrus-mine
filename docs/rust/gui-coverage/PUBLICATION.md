@@ -7,11 +7,11 @@ the exact source checkpoint and publication scope.
 
 Historical author commits named by parity packets may differ from the integrated
 commit identities because integration uses cherry-picks. Immutable annotated
-`gui-evidence/eighth-b010/*` tags preserve the original source objects needed by
+`gui-evidence/*` tags preserve the original source objects needed by
 historical hash audits. Fetch these in a fresh clone before inspecting those pins:
 
 ```sh
-git fetch origin 'refs/tags/gui-evidence/eighth-b010/*:refs/tags/gui-evidence/eighth-b010/*'
+git fetch origin 'refs/tags/gui-evidence/*:refs/tags/gui-evidence/*'
 ```
 
 These tags preserve provenance only. They do not attest to runtime validation or

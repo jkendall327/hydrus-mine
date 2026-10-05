@@ -80,6 +80,11 @@ typed searches, selectable deletion domains and an owned 1.2-second button delay
 Repeated F12 preserves the existing filter and pending decisions; a retained
 finish cannot write after its main window is destroyed. Hosted validation and
 exact-source native render review remain pending for these proposals.
+Native WebP/ugoira readers now consume the animation start percentage and the
+reference previous-widget frame count. Apply preserves the actual integer chosen
+in the spinbox, including its floating-point reopening quirks. Unsupported
+animation backends and imported indices keep this original leaf Partial with zero
+completion credit.
 The 71-control branch adds two preview viewing-time
 controls, two saved formatting controls with backend consumers, one keyboard
 capture control, and eight ordered Open Externally routing controls. It includes tab
