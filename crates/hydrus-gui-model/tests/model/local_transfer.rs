@@ -56,7 +56,7 @@ fn seed(store: &Store, case: &Value) -> Vec<HashId> {
                 source,
                 &captured
                     .iter()
-                    .map(|&f| (f, Some(1234567890000)))
+                    .map(|&f| (f, Some(1_234_567_890_000)))
                     .collect::<Vec<_>>(),
             )?;
             writer.clear_local_delete_records(Some(&captured))?;
@@ -240,7 +240,7 @@ fn recorded_copy_strict_and_merge_questions_drive_real_memberships() {
                 .iter_mut()
                 .zip(expected.as_array_mut().unwrap())
             {
-                if expected["imports"]["my files"] == json!(1700000000000_i64) {
+                if expected["imports"]["my files"] == json!(1_700_000_000_000_i64) {
                     assert!(
                         (started..=ended)
                             .contains(&actual["imports"]["my files"].as_i64().unwrap())
@@ -267,7 +267,7 @@ fn deleted_destination_restores_timestamp_and_stale_source_cannot_move() {
     let file = ids[0];
     store
         .write_content(move |w| {
-            w.add_files(destination, &[(file, Some(1234567890200))])?;
+            w.add_files(destination, &[(file, Some(1_234_567_890_200))])?;
             w.delete_files(destination, &[file], None)
         })
         .unwrap();

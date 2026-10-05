@@ -527,7 +527,9 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
             .collect()
     };
     let question = match &open.asking {
-        Some(Asking::DirectImportMissing(subscription, _)) => Some((
+        Some(
+            Asking::DirectImportMissing(subscription, _) | Asking::MissingHistory(subscription, _),
+        ) => Some((
             hydrus_gui_model::subscription_exchange::missing_history_question(&subscription.name),
             false,
         )),
@@ -537,10 +539,6 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
                 message: message.clone(),
                 choices: vec!["ok".into()],
             },
-            false,
-        )),
-        Some(Asking::MissingHistory(subscription, _)) => Some((
-            hydrus_gui_model::subscription_exchange::missing_history_question(&subscription.name),
             false,
         )),
         Some(Asking::Reset) => yes_no(RESET_QUESTION),

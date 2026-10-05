@@ -5,7 +5,7 @@ use hydrus_store::network_runtime::{JobAction, JobControl, NetworkJob, Snapshot,
 
 fn review(now: i64) -> Review {
     Review {
-        settings: Default::default(),
+        settings: hydrus_store::bandwidth::BandwidthSettings::default(),
         usage: Vec::new(),
         live: true,
         runtime: Snapshot {

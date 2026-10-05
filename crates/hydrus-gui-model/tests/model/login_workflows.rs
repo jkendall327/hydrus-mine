@@ -419,12 +419,12 @@ fn embedded_step_cookie_list_replays_sorted_pair_actions_and_confirmed_bulk_dele
     for state in &states[1..] {
         let action = state["action"].as_str().unwrap();
         if action == "delete" {
-            if !state["answer"].as_bool().unwrap() {
+            if state["answer"].as_bool().unwrap() {
+                editor.cookies.delete();
+            } else {
                 let order = editor.cookies.order();
                 editor.cookies.selection.click(&order, 0, false, false);
                 editor.cookies.selection.click(&order, 1, true, false);
-            } else {
-                editor.cookies.delete();
             }
             assert_eq!(state["questions"][0], "Remove all selected?");
         } else {
