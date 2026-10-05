@@ -491,11 +491,11 @@ impl ThumbnailRows {
             .borrow_mut()
             .get(self.appearance.borrow().background.as_deref())
     }
-    /// Palette changes admit a new decorated cell, retaining the old colours during fade.
+    /// Palette changes invalidate copied cells so neither fade layer retains old colours.
     pub fn set_paint_palette(&self, palette: crate::thumbnail_paint::Palette) {
         if self.active.get() && *self.palette.borrow() != palette {
             *self.palette.borrow_mut() = palette;
-            self.paints.borrow_mut().dirty_all();
+            self.paints.borrow_mut().clear();
             self.notify.reset();
         }
     }
@@ -625,10 +625,10 @@ impl Model for ThumbnailRows {
                         }),
                     ..Thumbnail::default()
                 };
-                let paint = self
-                    .palette
-                    .borrow()
-                    .paint(&thumbnail, self.cell.get().0, thumbnail.local);
+                let paint =
+                    self.palette
+                        .borrow()
+                        .paint(&thumbnail, self.cell.get().0, thumbnail.local);
                 let first = thumbnail.image.size().width > 0
                     && page.admit_thumbnail_fade(
                         results[i],
@@ -649,3 +649,194 @@ impl Model for ThumbnailRows {
                     !page.new_thumbnail_renderer() && first,
                 );
                 thumbnail
+            })
+            .collect();
+        Some(ThumbnailRow {
+            first: i32::try_from(start).unwrap_or(i32::MAX),
+            thumbnails: ModelRc::new(VecModel::from(thumbnails)),
+        })
+    }
+
+    fn model_tracker(&self) -> &dyn ModelTracker {
+        &self.notify
+    }
+}
+
+/// What is drawn over a thumbnail: its icons, and its ratings over their
+/// boxes.
+struct Overlay {
+    icons: Vec<ThumbIcon>,
+    ratings: Vec<ThumbRating>,
+    boxes: Vec<ThumbBox>,
+}
+
+/// How wide a rating's "stars/of" is at a pixel size: the reference
+/// measures it in its font; this guesses at the grid's (digits and "/"
+/// about six tenths of the size wide).
+fn text_width(text: &str, pixel_size: i32) -> i32 {
+    let chars = i32::try_from(text.chars().count()).unwrap_or(i32::MAX);
+    (chars * pixel_size * 6 + 9) / 10
+}
+
+/// A rating as the grid draws it.
+fn thumb_rating(drawn: &thumbnail_ratings::Drawn) -> ThumbRating {
+    let colour =
+        |rgb: hydrus_store::services::Rgb| slint::Color::from_rgb_u8(rgb.0[0], rgb.0[1], rgb.0[2]);
+    let mut out = ThumbRating {
+        x: drawn.x as f32,
+        y: drawn.y as f32,
+        ..ThumbRating::default()
+    };
+    let text = match &drawn.look {
+        Look::Shapes {
+            path,
+            first,
+            size,
+            step,
+            shapes,
+            text,
+        } => {
+            out.kind = 0;
+            out.path = (*path).into();
+            out.first = *first as f32;
+            out.size = *size as f32;
+            out.step = *step as f32;
+            out.outline = crate::ratings::outline_width(f64::from(*size)) as f32;
+            let shapes: Vec<RatingShape> = shapes
+                .iter()
+                .map(|s| RatingShape {
+                    pen: colour(s.pen),
+                    brush: colour(s.brush),
+                })
+                .collect();
+            out.shapes = ModelRc::new(VecModel::from(shapes));
+            text.as_ref()
+        }
+        Look::Counter {
+            width,
+            height,
+            colours,
+            text,
+        } => {
+            out.kind = 1;
+            out.width = *width as f32;
+            out.height = *height as f32;
+            out.pen = colour(colours.pen);
+            out.brush = colour(colours.brush);
+            out.text_height = (*height - 1) as f32;
+            Some(text)
+        }
+    };
+    if let Some(text) = text {
+        out.text = text.text.as_str().into();
+        out.text_x = text.x as f32;
+        out.text_y = text.y as f32;
+        out.text_width = text.width as f32;
+        out.text_size = text.pixel_size as f32;
+    }
+    out
+}
+
+#[cfg(test)]
+mod cache_regressions {
+    use super::*;
+    use slint::{Rgb8Pixel, SharedPixelBuffer};
+    fn rows() -> (tempfile::TempDir, ThumbnailRows) {
+        let legacy = hydrus_testkit::legacy_fixture("basic");
+        let dir = tempfile::tempdir().unwrap();
+        hydrus_store::import::import_legacy(
+            legacy.path(),
+            &dir.path().join(hydrus_store::store::DB_FILE_NAME),
+        )
+        .unwrap();
+        let store = hydrus_store::Store::open(dir.path()).unwrap();
+        (
+            dir,
+            ThumbnailRows::new(Rc::new(RefCell::new(SearchPage::new(store)))),
+        )
+    }
+    fn pixels() -> crate::thumbnails::Pixels {
+        crate::thumbnails::Pixels::Rgb(SharedPixelBuffer::<Rgb8Pixel>::new(3, 4))
+    }
+    #[test]
+    fn clear_scale_roundtrip_settings_and_retirement_reject_held_decodes() {
+        let (_dir, rows) = rows();
+        let file = HashId(1);
+        let old = rows.generation.get();
+        rows.pending.borrow_mut().insert(file, 0);
+        rows.show(vec![(file, 1., old, Some(pixels()))]);
+        assert_eq!(rows.cached_bytes(), 36);
+        rows.clear_thumbnail_cache();
+        assert_eq!(rows.cached(), 0);
+        rows.pending.borrow_mut().insert(file, 0);
+        rows.show(vec![(file, 1., old, Some(pixels()))]);
+        assert!(rows.pending.borrow().contains_key(&file));
+        assert_eq!(rows.cached(), 0);
+        let before_roundtrip = rows.generation.get();
+        rows.set_scale(2.);
+        rows.set_scale(1.);
+        rows.pending.borrow_mut().insert(file, 0);
+        rows.show(vec![(file, 1., before_roundtrip, Some(pixels()))]);
+        assert!(rows.pending.borrow().contains_key(&file));
+        assert_eq!(rows.cached(), 0);
+        let before_settings = rows.generation.get();
+        rows.thumbnails_changed();
+        rows.pending.borrow_mut().insert(file, 0);
+        rows.show(vec![(file, 1., before_settings, Some(pixels()))]);
+        assert!(rows.pending.borrow().contains_key(&file));
+        rows.show(vec![(file, 1., rows.generation.get(), Some(pixels()))]);
+        assert!(rows.pending.borrow().is_empty());
+        assert_eq!(rows.cached_bytes(), 36);
+        let retired_generation = rows.generation.get();
+        rows.retire();
+        rows.show(vec![(file, 1., retired_generation, Some(pixels()))]);
+        assert_eq!(rows.cached_bytes(), 0);
+        assert!(rows.pending.borrow().is_empty());
+        assert_eq!(rows.image(file, 0).size().width, 0);
+    }
+    #[test]
+    fn blurhash_apply_rejects_held_result_but_paint_only_changes_preserve_admission() {
+        let (_dir, rows) = rows();
+        let file = HashId(1);
+        let generation = rows.generation.get();
+        let mut appearance = rows.appearance.borrow().clone();
+        appearance.blurhash = !appearance.blurhash;
+        rows.set_appearance(appearance.clone());
+        rows.pending.borrow_mut().insert(file, 0);
+        rows.show(vec![(file, 1., generation, Some(pixels()))]);
+        assert!(rows.pending.borrow().contains_key(&file));
+        assert_eq!(rows.cached(), 0);
+        let admitted = rows.generation.get();
+        appearance.fade = !appearance.fade;
+        appearance.background = Some("synthetic.png".into());
+        rows.set_appearance(appearance);
+        assert_eq!(rows.generation.get(), admitted);
+        rows.show(vec![(file, 1., admitted, Some(pixels()))]);
+        assert!(rows.pending.borrow().is_empty());
+        assert_eq!(rows.cached_bytes(), 36);
+    }
+    #[test]
+    fn receive_maintains_idle_cache_and_counts_missing_thumbnails() {
+        let (_dir, rows) = rows();
+        let file = HashId(1);
+        rows.set_cache_policy(ThumbnailCacheSettings {
+            bytes: 128,
+            timeout: 0,
+        });
+        rows.cache
+            .borrow_mut()
+            .insert(file, slint::Image::default(), 128, Duration::ZERO);
+        assert_eq!(rows.cached_bytes(), 128);
+        rows.receive();
+        assert_eq!(rows.cached_bytes(), 0);
+        assert!(rows.pending.borrow().is_empty());
+        rows.set_cache_policy(ThumbnailCacheSettings {
+            bytes: 1,
+            timeout: 300,
+        });
+        rows.show(vec![(file, 1., rows.generation.get(), None)]);
+        assert_eq!(rows.cached_bytes(), 128);
+        rows.maintain_cache();
+        assert_eq!(rows.cached(), 0);
+    }
+}

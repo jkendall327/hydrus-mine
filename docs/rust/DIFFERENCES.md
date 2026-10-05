@@ -2790,7 +2790,6 @@ main owner. Every existing assertion, count and deadline is preserved, with an
 additional real pending-viewer/session-replacement regression authored. Hosted
 execution remains pending; no local Rust/Cargo runs or new completion credit.
 
-<<<<<<< HEAD
 The finite Media Playback embedded-ICC switch now has typed saved/imported
 state and actual decode consumers. Ignoring an embedded profile still follows
 Qt's separate PNG gamma/chromaticity fallback. A saved policy change refreshes
@@ -2860,7 +2859,7 @@ Rust/native render regressions are authored for hosted validation; local checks
 used actual Qt, Python/source invariants, rustfmt and diff inspection only.
 
 The native legacy **colours** controls and Help **darkmode** action affect the thirteen represented painted roles rather than switching the application style or OS theme, matching Qt's legacy override policy. Native RGB picking uses three bounded channels and a swatch with OK/Cancel; Qt QColorDialog additionally offers HSV/HTML, palette history and its platform picker. The structural coloursets family retains this topology boundary and earns no concrete-leaf credit. Generic controls keep the native application palette; Qt QSS support and whole-platform palette editing are separate unfinished style work. Synthetic preview status text remains native status UI, without claiming a Qt canvas text counterpart. Saved role propagation is owner-local and bounded to 250ms; no process-global mutable colour preferences are introduced.
-=======
+
 Thumbnail appearance: saved blurhash fallback and the editable/browsable
 background path now reach real native loader and viewport consumers. Existing
 imported stores recover their retained reference preferences if the new native
@@ -2885,4 +2884,5 @@ FirstPass after exact hosted execution and native rendered inspection; it adds
 no completion credit for fade, renderer tech, parents, aliases or cache breadth.
 The new native tests/three native PNG artifacts are authored and unexecuted here;
 no local Cargo/Rust tests/builds or canonical status writes were performed.
->>>>>>> 3f5760cf8 (Implement owned thumbnail recovery and viewport backgrounds; document bounded paint parity)
+
+The combined colour/thumbnail integration copies all eight saved local/remote and selected/unselected fill/border roles into each owned paint snapshot. Current physical storage membership selects the palette, including collection membership. A colour change clears both old and current copied cells before repaint; the viewport background keeps its saved grid colour behind the clipped image. This integration remains source-only until exact hosted native execution and PNG inspection.

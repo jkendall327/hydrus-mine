@@ -491,17 +491,17 @@ fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store, rows: &T
     window.set_banner_bottom_text(colour(summaries.thumbnail_bottom_right.text));
     let theme = window.global::<Theme>();
     rows.set_paint_palette(thumbnail_paint::Palette {
-        fill: theme.get_panel(),
-        selected_fill: theme.get_panel(),
-        remote_fill: theme.get_panel(),
-        remote_selected_fill: theme.get_panel(),
-        border: theme.get_border(),
-        selected_border: theme.get_accent(),
-        remote_border: theme.get_border(),
-        remote_selected_border: theme.get_accent(),
+        fill: theme.invoke_thumbnail_background(true, false),
+        selected_fill: theme.invoke_thumbnail_background(true, true),
+        remote_fill: theme.invoke_thumbnail_background(false, false),
+        remote_selected_fill: theme.invoke_thumbnail_background(false, true),
+        border: theme.invoke_thumbnail_border(true, false),
+        selected_border: theme.invoke_thumbnail_border(true, true),
+        remote_border: theme.invoke_thumbnail_border(false, false),
+        remote_selected_border: theme.invoke_thumbnail_border(false, true),
         window: theme.get_window(),
         text: theme.get_text(),
-        grid: theme.get_panel(),
+        grid: theme.get_grid_background(),
         banners: [
             colour(summaries.thumbnail_top.background),
             colour(summaries.thumbnail_top.text),
