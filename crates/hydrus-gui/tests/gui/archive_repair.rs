@@ -32,7 +32,7 @@ fn times(store: &Store, ids: &[HashId]) -> Vec<Option<i64>> {
                 hydrus_store::media::load(conn, &store.snapshot().services, None, ids)?
                     .results
                     .iter()
-                    .map(|m| m.archived.map(|t| t.millis()))
+                    .map(|m| m.archived.map(hydrus_core::TimestampMs::millis))
                     .collect(),
             )
         })
