@@ -73,3 +73,5 @@ pub mod api_permissions;
 pub mod archive_repair;
 
 pub mod file_history;
+
+pub mod or_connector;

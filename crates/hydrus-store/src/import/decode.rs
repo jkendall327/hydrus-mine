@@ -716,6 +716,10 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     if let Some(options) = &options {
         insert_setting(&mut input, &tag_presentation(options))?;
         insert_setting(&mut input, &sibling_connector_colours(options))?;
+        insert_setting(
+            &mut input,
+            &crate::or_connector::Connector::from_legacy(options),
+        )?;
     }
     insert_setting(
         &mut input,

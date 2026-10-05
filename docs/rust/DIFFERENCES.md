@@ -2680,3 +2680,18 @@ row kinds. Their former shared value rendered both unrelated editors on each
 page. Existing native workflows assert the correct page family and keep their
 routing and namespace render captures for hosted review. This integration repair
 adds no original leaf proposal; runtime and rendered verification remain pending.
+
+The finite one-line OR connecting-string editor now stages and saves the raw
+reference `or_connector` value (factory “ OR ”), including blank, whitespace,
+Unicode and programmatically loaded newline content. New legacy imports convert
+the value; previously imported stores read their retained ClientOptions until a
+native override exists. The real Qt renderer's custom-connector loop is inside a
+disabled triple-quoted block: its active predicate list keeps “OR:” and coloured
+member rows, and ToString/copy/export still use literal “ OR ”. Native preserves
+its current one-line OR labels, canonical predicates and separate namespace/OR
+colours for every edited value; it does not activate the reference's dormant
+renderer. The actual Qt recording covers save, Cancel, serialization/reopen,
+labels, member/header colours and default/collapsed copy output. This proposes
+only the original editor control; broader OR list layout and renderer families
+remain Partial. Native rendered regression and Rust tests are authored for hosted
+execution; no local Cargo builds, Rust tests or mutation runs were performed.

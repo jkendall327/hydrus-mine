@@ -3533,3 +3533,12 @@ preserves concurrent size saves and the exit switch; Cancel discards the draft.
 New pages and restore/reveal consume the saved hide flag. Existing accepted preview
 media survives refused SetMedia/clear calls on that same page while globally hidden;
 page-owner transitions still retire the shared native raster (see DIFFERENCES.md).
+
+Tag Presentation > other rendering now includes “OR connecting string (on one
+line)”. Apply saves its raw text; Cancel discards the draft. Blank, whitespace,
+Unicode and previously saved multiline text survive reopening and legacy import.
+This matches the reference editor: Qt currently leaves its custom connector
+renderer disabled, so saving this field preserves existing OR labels, colours
+and copy/export syntax. Namespace formatting and the OR top-row colour remain
+independent live settings. Hidden, cancelled, rebound and closed Options owners
+cannot save a connector draft.

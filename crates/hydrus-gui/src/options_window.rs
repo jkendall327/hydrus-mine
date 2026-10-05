@@ -1050,7 +1050,13 @@ pub(crate) fn open(
     });
     window.on_text_edited({
         let editor = editor.clone();
-        move |i, text| editor.borrow_mut().text(at(i), &text)
+        let active = active.clone();
+        let weak = window.as_weak();
+        move |i, text| {
+            if active.get() && weak.upgrade().is_some_and(|w| w.window().is_visible()) {
+                editor.borrow_mut().text(at(i), &text);
+            }
+        }
     });
     window.on_directory_browse({
         let editor = editor.clone();
