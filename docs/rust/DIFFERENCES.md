@@ -3166,3 +3166,17 @@ refresh regression advances persisted deadlines to verify live removal without
 waiting on wall time. Broader toaster freeze/monitor/position and network backend
 families remain Partial. Hosted exact-source Rust/Clippy/native execution and
 three authored PNG inspections are pending; no local Rust validation was run.
+
+The finite FFMPEG call-timeout preference reproduces the reference subprocess
+runner’s three-second communicate/check slices: a stored/displayed integer n
+supplies ceil(n/3)×3 seconds to bounded default-configured calls. A saved value of
+1 therefore permits a two-second call and times out a four-second call near three
+seconds. The immutable deadline is captured before each subprocess; explicitly
+configured `Ffmpeg::timeout(Duration)` retains its original precise API behavior
+and wins over the Store provider. Streaming frame reads keep their existing fixed
+per-chunk timeout and Drop kill/wait ownership; no player reuse/stream policy is
+claimed. About preserves its pre-existing unavailable-version UI on timeout,
+rather than showing the reference’s diagnostic path string. This records a real
+local executable transport, not a codec benchmark or network request. Other
+FFMPEG executable-discovery controls and broader media playback remain Partial;
+only the original call-timeout leaf is proposed conditionally on hosted validation.

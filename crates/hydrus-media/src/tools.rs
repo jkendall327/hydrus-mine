@@ -150,6 +150,17 @@ impl MediaTools {
         raster_from_bytes_with_icc(bytes, strip_alpha, (self.icc_reader)())
     }
 
+    /// Supply the saved deadline before each ffmpeg process, keeping explicitly
+    /// fixed ffmpeg configurations unchanged.
+    #[must_use]
+    pub fn with_ffmpeg_timeout_reader(
+        mut self,
+        reader: std::sync::Arc<dyn Fn() -> std::time::Duration + Send + Sync>,
+    ) -> Self {
+        self.ffmpeg = self.ffmpeg.with_timeout_reader(reader);
+        self
+    }
+
     /// The ffmpeg configuration in use.
     pub fn ffmpeg(&self) -> &Ffmpeg {
         &self.ffmpeg

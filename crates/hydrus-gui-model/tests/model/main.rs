@@ -182,6 +182,7 @@ mod quick_export_directory;
 
 mod archive_delete_policies;
 
+mod ffmpeg_timeout;
 mod radio_return;
 mod tag_namespace_order;
 

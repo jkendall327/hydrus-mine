@@ -3961,3 +3961,20 @@ the consumer live; accepted exit and rebind retire its GUI incarnation.
 authenticated resource-handler requests, including late-error partial header
 acceptance and exact messages. Store, model, API-router and native toaster/render
 regressions are authored; Rust execution and native PNG inspection await hosted CI.
+
+Options → media playback → system now stages “FFMPEG call timeout:” (1–600 seconds,
+default 15). Cancel, hidden and retired Options callbacks leave the saved value
+alone; Apply normalizes imported out-of-range values and preserves independent
+concurrent settings. Older stores read retained ClientOptions until explicitly
+saved. Existing importers consult a weak Store provider for each bounded ffmpeg
+process, including downloader imports, regenerated thumbnails and maintenance.
+“Paste image!” also uses these configured media tools. About keeps its existing
+synchronous version lookup and absent-version display but now bounds the call.
+Each process captures its policy once; later Apply affects subsequent calls.
+
+`oracle/record_ffmpeg_timeout.py` records the actual Qt spin box, Cancel/save/reopen,
+raw-value normalization and unmodified HydrusFFMPEG/HydrusSubprocess consumers
+against a disclosed local delayed executable. Store/model/native regressions cover
+staging, concurrent saves, a held process across Apply, subsequent timeout and
+kill/reap, fixed API configuration and weak provider lifetime. Hosted Rust/native
+execution remains pending; no local Rust validation was run.

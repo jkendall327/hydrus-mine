@@ -219,6 +219,15 @@ macro_rules! settings {
             hydrus_store::settings::set($conn, &latest)?;
         }
     };
+    (@save $conn:ident, $after:ident, $before:ident, ffmpeg_policy) => {
+        if $after.ffmpeg_policy != $before.ffmpeg_policy {
+            let latest = hydrus_store::ffmpeg_policy::load($conn)?;
+            let implicit_normalisation = $after.ffmpeg_policy.seconds == $before.ffmpeg_policy.seconds.clamp(1,600);
+            if !implicit_normalisation || latest.seconds == $before.ffmpeg_policy.seconds {
+                hydrus_store::settings::set($conn, &$after.ffmpeg_policy)?;
+            }
+        }
+    };
     (@save $conn:ident, $after:ident, $before:ident, gui_idle) => {
         if $after.gui_idle != $before.gui_idle {
             let mut latest: hydrus_store::settings::GuiIdleSettings = hydrus_store::settings::get($conn)?;
@@ -339,6 +348,7 @@ settings! {
     manage_tags_sort: hydrus_store::manage_tags_sort::Settings,
     or_connector: hydrus_store::or_connector::Connector => hydrus_store::or_connector::load,
     image_colour: hydrus_store::image_colour::ImageColour => hydrus_store::image_colour::load,
+    ffmpeg_policy: hydrus_store::ffmpeg_policy::FfmpegPolicy => hydrus_store::ffmpeg_policy::load,
     duplicates_progress: hydrus_store::duplicates_progress::Presentation => hydrus_store::duplicates_progress::load,
     namespace_colours: hydrus_core::tag_presentation::NamespaceColours,
     sibling_connector_colours: hydrus_core::tag_presentation::SiblingConnectorColours,
@@ -3161,11 +3171,19 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 ),
                 boxed(
                     "system",
-                    vec![check(
-                        "Apply image ICC Profile colour adjustments:",
-                        |settings| settings.image_colour.normalise_icc,
-                        |settings, value| settings.image_colour.normalise_icc = value,
-                    )],
+                    vec![
+                        int(
+                            "FFMPEG call timeout:",
+                            (1, 600),
+                            |settings| settings.ffmpeg_policy.seconds.clamp(1, 600),
+                            |settings, value| settings.ffmpeg_policy.seconds = value,
+                        ),
+                        check(
+                            "Apply image ICC Profile colour adjustments:",
+                            |settings| settings.image_colour.normalise_icc,
+                            |settings, value| settings.image_colour.normalise_icc = value,
+                        ),
+                    ],
                 ),
                 boxed(
                     "closing focus",
@@ -4236,7 +4254,8 @@ pub fn applied(
             // truncating an explicitly entered fractional millisecond a second time.
             let accept_displayed = matches!(
                 option.label,
-                "EXPERIMENTAL: Minimum gallery importer update time:"
+                "FFMPEG call timeout:"
+                    | "EXPERIMENTAL: Minimum gallery importer update time:"
                     | "EXPERIMENTAL: Minimum watcher importer update time:"
                     | "Application display name: "
                     | "Start animations this % in:"
