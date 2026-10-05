@@ -3106,6 +3106,8 @@ select the moved page or retain the reference's source-notebook selection.
 Escape cancels, and disabling page-tab drag/drop prevents the gesture. Pointer
 capture survives navigation that replaces the visible nested tab rows; release
 uses live geometry and stable page keys, preserving media order and selection.
+Rebuilt tab rows publish each initial laid-out rectangle with its page identity,
+so repeated pointer drags continue to hit the moved page after a reorder.
 The wheel preference reaches the actual
 notebook bars: default wheel input selects the adjacent tab and clamps at either
 end; enabled scrolling moves the overflowing bar's viewport and preserves page

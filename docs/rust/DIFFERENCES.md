@@ -2150,6 +2150,10 @@ settings and the disable-page-tab-drag flag. The persistent capture surface
 survives nested-row changes, and rejects stale source parents, invalid targets
 and moves into a page's descendants. Reordering/transfers preserve original page
 keys and ordered media/selection rather than cloning pages.
+Tab geometry publication includes the initial frame of rebuilt row items and
+keeps key, parent and index together with the measured rectangle. The existing
+real-pointer fixture replay also checks live row geometry and pressed identity
+after repeated reorders; hosted CI validation remains required.
 
 This consumer does not implement an OS QDrag loop, drag pixmaps/cursors, crossing
 windows, tree drag/drop, media/external-file drags, or dropping into an empty
