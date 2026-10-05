@@ -1784,7 +1784,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             vec![boxed(
                 "external calls",
                 vec![opt(
-                    "This system is under active development. Here we can teach your client about other programs it can call to complete jobs.",
+                    "external calls",
                     Kind::ExternalCalls,
                     Rc::new(|s| Value::ExternalCalls(s.external_calls.clone())),
                     Rc::new(|s, v| match v {
@@ -3334,20 +3334,6 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                 Ok(())
                             },
                         ),
-                        opt(
-                            "Namespace for the OR top row: ",
-                            Kind::Text,
-                            Rc::new(|s| {
-                                Value::PlainNoneableText(s.namespace_colours.or_connector.clone())
-                            }),
-                            Rc::new(|s, value| match value {
-                                Value::PlainNoneableText(text) => {
-                                    s.namespace_colours.or_connector.clone_from(text);
-                                    Ok(())
-                                }
-                                _ => Err(wrong("OR row namespace")),
-                            }),
-                        ),
                         check(
                             "Fade the colour of the sibling connector string on Qt6: ",
                             |s| s.sibling_connector_colours.fade,
@@ -3362,6 +3348,20 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                 |s, value| s.sibling_connector_colours.namespace = value,
                             ),
                             |s| !s.sibling_connector_colours.fade,
+                        ),
+                        opt(
+                            "Namespace for the OR top row: ",
+                            Kind::Text,
+                            Rc::new(|s| {
+                                Value::PlainNoneableText(s.namespace_colours.or_connector.clone())
+                            }),
+                            Rc::new(|s, value| match value {
+                                Value::PlainNoneableText(text) => {
+                                    s.namespace_colours.or_connector.clone_from(text);
+                                    Ok(())
+                                }
+                                _ => Err(wrong("OR row namespace")),
+                            }),
                         ),
                         check(
                             "EXPERIMENTAL: Replace all underscores with spaces: ",
