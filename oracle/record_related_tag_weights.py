@@ -33,6 +33,13 @@ def record(session):
         draft = c.new_options.Duplicate()
         panel = TagSuggestionsPanel(c.gui, draft)
         initial = draft.GetRelatedTagsTagSliceWeights()
+        selection_buttons=[]
+        ctrl=panel._search_tag_slices_weights
+        for selected in [[],[('character:',300)],[('character:',300),('creator:',300)]]:
+            ctrl.SelectDatas(selected,deselect_others=True)
+            ctrl.parentWidget()._UpdateButtons()
+            selection_buttons.append(dict(selected=selected,buttons={b.text():b.isEnabled() for b in ctrl.parentWidget().findChildren(QW.QPushButton)}))
+        ctrl.SelectDatas([],deselect_others=True)
         events, prompts, warnings = [], [], []
         answers, weights = [], []
         old_enter, old_exec, old_warning = Q.EnterText, W.DialogEdit.exec, M.ShowWarning
@@ -113,9 +120,30 @@ def record(session):
             filtered_list=[t.GetTag() for t in consumer._related_tags._ordered_terms]
         finally:
             consumer.hide();consumer.deleteLater();c.CallToThread,c.CallAfterQtSafe=old_thread,old_after
+        import hashlib
+        round_hashes=[hashlib.sha256(f'related-round-{i}'.encode()).digest() for i in range(100)]
+        round_updates=[U.ContentUpdate(HC.CONTENT_TYPE_MAPPINGS,HC.CONTENT_UPDATE_ADD,(tag,set(files))) for tag,files in [('round:search',round_hashes[:1]),('round:alias',round_hashes[:1]),('round:result',round_hashes)]]
+        round_updates.append(U.ContentUpdate(HC.CONTENT_TYPE_TAG_SIBLINGS,HC.CONTENT_UPDATE_ADD,('round:alias','round:search')))
+        c.WriteSynchronous('content_updates',U.ContentUpdatePackage.STATICCreateFromContentUpdates(service.GetServiceKey(),round_updates))
+        for _ in range(12):
+            if not c.WriteSynchronous('sync_tag_display_maintenance',service.GetServiceKey(),.5):break
+        rounding=[]
+        for display,searches in [(False,['round:search']),(False,['round:alias','round:search']),(True,['round:alias','round:search'])]:
+            result=c.Read('related_tags',CC.COMBINED_FILE_SERVICE_KEY,ClientSearchTagContext.TagContext(service_key=service.GetServiceKey(),display_service_key=service.GetServiceKey()),searches,tag_display_type=ClientTags.TAG_DISPLAY_DISPLAY_ACTUAL if display else ClientTags.TAG_DISPLAY_STORAGE,max_time_to_take=5.0,concurrence_threshold=.06,search_tag_slices_weight_dict={'':0,':':0,'round':1.0},result_tag_slices_weight_dict={'':0,':':0,'round':.29})
+            rows=ClientSearchPredicate.SortPredicates(result[3])
+            rounding.append(dict(display=display,searches=searches,rows=[dict(tag=p.GetValue(),score=p.GetCount().GetMinCount()) for p in rows],searched=result[0]))
+        scope_updates=[U.ContentUpdate(HC.CONTENT_TYPE_MAPPINGS,HC.CONTENT_UPDATE_ADD,(tag,{h})) for tag,h in [('scope:ideal',hashes[0]),('scope:alias',hashes[1]),('scope:direct',hashes[0]),('scope:aliasresult',hashes[1])]]
+        scope_updates.append(U.ContentUpdate(HC.CONTENT_TYPE_TAG_SIBLINGS,HC.CONTENT_UPDATE_ADD,('scope:alias','scope:ideal')))
+        c.WriteSynchronous('content_updates',U.ContentUpdatePackage.STATICCreateFromContentUpdates(service.GetServiceKey(),scope_updates))
+        for _ in range(12):
+            if not c.WriteSynchronous('sync_tag_display_maintenance',service.GetServiceKey(),.5):break
+        scope=[]
+        for local,display in [(True,False),(True,True),(False,False),(False,True)]:
+            result=c.Read('related_tags',CC.COMBINED_LOCAL_FILE_DOMAINS_SERVICE_KEY if local else CC.COMBINED_FILE_SERVICE_KEY,ClientSearchTagContext.TagContext(service_key=service.GetServiceKey(),display_service_key=service.GetServiceKey()),['scope:alias','scope:ideal'],tag_display_type=ClientTags.TAG_DISPLAY_DISPLAY_ACTUAL if display else ClientTags.TAG_DISPLAY_STORAGE,max_time_to_take=5.0,concurrence_threshold=.06,search_tag_slices_weight_dict={'':0,':':0,'scope':1.0},result_tag_slices_weight_dict={'':0,':':0,'scope':1.0})
+            rows=ClientSearchPredicate.SortPredicates(result[3]);scope.append(dict(local=local,display=display,rows=[dict(tag=p.GetValue(),score=p.GetCount().GetMinCount()) for p in rows],searched=result[0]))
         panel_consumer=dict(initial=initial_list,activations=activations,after_activate=after_activate,changed=changed_list,present_on_all_filtered=filtered_list)
         return dict(initial=initial, events=events, protected_deletable=protected, normal_deletable=deletable, before=before, saved=saved, reopened=reopened,
-                    service=service.GetName(), files=[h.hex() for h in hashes], corpus=corpus, ranking=ranking, consumer=panel_consumer)
+                    service=service.GetName(), files=[h.hex() for h in hashes], corpus=corpus, ranking=ranking, consumer=panel_consumer, selection_buttons=selection_buttons, rounding=rounding, scope=scope)
     return c.CallBlockingToQt(c.gui, drive)
 
 def main():

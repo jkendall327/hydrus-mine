@@ -1996,5 +1996,150 @@
       "alpha:first",
       "alpha:third"
     ]
-  }
+  },
+  "selection_buttons": [
+    {
+      "selected": [],
+      "buttons": {
+        "add": true,
+        "edit": false,
+        "delete": true
+      }
+    },
+    {
+      "selected": [
+        [
+          "character:",
+          300
+        ]
+      ],
+      "buttons": {
+        "add": true,
+        "edit": true,
+        "delete": true
+      }
+    },
+    {
+      "selected": [
+        [
+          "character:",
+          300
+        ],
+        [
+          "creator:",
+          300
+        ]
+      ],
+      "buttons": {
+        "add": true,
+        "edit": false,
+        "delete": true
+      }
+    }
+  ],
+  "rounding": [
+    {
+      "display": false,
+      "searches": [
+        "round:search"
+      ],
+      "rows": [
+        {
+          "tag": "round:alias",
+          "score": 290
+        },
+        {
+          "tag": "round:result",
+          "score": 28
+        }
+      ],
+      "searched": 1
+    },
+    {
+      "display": false,
+      "searches": [
+        "round:alias",
+        "round:search"
+      ],
+      "rows": [
+        {
+          "tag": "round:result",
+          "score": 57
+        }
+      ],
+      "searched": 2
+    },
+    {
+      "display": true,
+      "searches": [
+        "round:alias",
+        "round:search"
+      ],
+      "rows": [
+        {
+          "tag": "round:result",
+          "score": 28
+        }
+      ],
+      "searched": 1
+    }
+  ],
+  "scope": [
+    {
+      "local": true,
+      "display": false,
+      "rows": [
+        {
+          "tag": "scope:aliasresult",
+          "score": 1000
+        },
+        {
+          "tag": "scope:direct",
+          "score": 1000
+        }
+      ],
+      "searched": 2
+    },
+    {
+      "local": true,
+      "display": true,
+      "rows": [
+        {
+          "tag": "scope:aliasresult",
+          "score": 707
+        },
+        {
+          "tag": "scope:direct",
+          "score": 707
+        }
+      ],
+      "searched": 1
+    },
+    {
+      "local": false,
+      "display": false,
+      "rows": [
+        {
+          "tag": "scope:aliasresult",
+          "score": 1000
+        },
+        {
+          "tag": "scope:direct",
+          "score": 1000
+        }
+      ],
+      "searched": 2
+    },
+    {
+      "local": false,
+      "display": true,
+      "rows": [
+        {
+          "tag": "scope:direct",
+          "score": 707
+        }
+      ],
+      "searched": 1
+    }
+  ]
 }

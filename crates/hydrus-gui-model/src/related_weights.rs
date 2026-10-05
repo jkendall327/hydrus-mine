@@ -76,10 +76,9 @@ impl Editor {
     }
     pub fn can_delete(&self) -> bool {
         let selection = self.selection();
-        !selection.is_empty()
-            && selection
-                .iter()
-                .all(|&index| !matches!(self.rows()[index].0.as_str(), "" | ":"))
+        selection
+            .iter()
+            .all(|&index| !matches!(self.rows()[index].0.as_str(), "" | ":"))
     }
     pub fn delete(&mut self) {
         if !self.can_delete() {

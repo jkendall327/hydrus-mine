@@ -92,23 +92,37 @@ pub fn rank(
     query: &Query,
     cancelled: &dyn Fn() -> bool,
 ) -> Vec<Suggestion> {
-    rank_excluding(files, query, cancelled, &std::collections::BTreeSet::new())
+    rank_excluding(
+        files,
+        files,
+        query,
+        cancelled,
+        &std::collections::BTreeSet::new(),
+    )
 }
 fn rank_excluding(
     files: &std::collections::BTreeMap<String, std::collections::BTreeSet<hydrus_core::HashId>>,
+    counts: &std::collections::BTreeMap<String, std::collections::BTreeSet<hydrus_core::HashId>>,
     query: &Query,
     cancelled: &dyn Fn() -> bool,
     excluded: &std::collections::BTreeSet<String>,
 ) -> Vec<Suggestion> {
-    let searches: Vec<_> = query
+    let mut searches: Vec<_> = query
         .searches
         .iter()
         .filter_map(|tag| {
             let weight = Weights::percent(&query.weights.search, tag);
             let set = files.get(tag)?;
-            (weight > 0 && !set.is_empty()).then_some((tag, set, weight))
+            let total = counts.get(tag)?.len();
+            (weight > 0 && total > 0).then_some((tag, set, weight, total))
         })
         .collect();
+    searches.sort_by(|a, b| {
+        b.2.cmp(&a.2)
+            .then_with(|| a.3.cmp(&b.3))
+            .then_with(|| a.0.cmp(b.0))
+    });
+    searches.dedup_by(|a, b| a.0 == b.0);
     let mut scores = Vec::new();
     for (tag, candidate) in files {
         if cancelled() {
@@ -116,18 +130,20 @@ fn rank_excluding(
         }
         if candidate.is_empty()
             || excluded.contains(tag)
-            || searches.iter().any(|(search, _, _)| *search == tag)
+            || searches.iter().any(|(search, _, _, _)| *search == tag)
         {
             continue;
         }
+        let candidate_total = counts.get(tag).map_or(0, std::collections::BTreeSet::len);
+        if candidate_total == 0 {
+            continue;
+        }
         let mut score = 0.0;
-        for (_, search, weight) in &searches {
+        for (_, search, weight, total) in &searches {
             let matching = search.intersection(candidate).count();
-            if matching as f64 / search.len() as f64 >= f64::from(query.concurrence_percent) / 100.0
-            {
-                score += matching as f64 / ((candidate.len() * search.len()) as f64).sqrt()
-                    * f64::from(*weight)
-                    / 100.0;
+            if matching as f64 / *total as f64 >= f64::from(query.concurrence_percent) / 100.0 {
+                score += matching as f64 / (candidate_total as f64 * *total as f64).sqrt()
+                    * (f64::from(*weight) / 100.0);
             }
         }
         if score > 0.0 {
@@ -142,7 +158,7 @@ fn rank_excluding(
             let weight = Weights::percent(&query.weights.result, tag);
             (weight > 0).then(|| Suggestion {
                 tag: tag.clone(),
-                score: ((score * 1_000.0) as u64 * u64::from(weight)) / 100,
+                score: (((score * 1_000.0) as u64) as f64 * (f64::from(weight) / 100.0)) as u64,
             })
         })
         .collect();
@@ -166,35 +182,45 @@ pub fn query(
     let graph = snapshot.display.get(service.id);
     let tables = crate::schema::MappingTables::new(service.id);
     store.read(|conn| {
-        let mut sets: BTreeMap<TagId,BTreeSet<HashId>> = BTreeMap::new();
+        let mut stored:BTreeMap<TagId,BTreeSet<HashId>>=BTreeMap::new();
         for table in [&tables.current,&tables.pending] {
-            let sql = if request.local { format!("SELECT tag_id,hash_id FROM {table} m WHERE EXISTS (SELECT 1 FROM file_domain_current d WHERE d.hash_id=m.hash_id AND d.service_id=?1)") } else { format!("SELECT tag_id,hash_id FROM {table} WHERE ?1 IS NOT NULL") };
-            let mut stmt = conn.prepare(&sql)?;
-            let mut rows = stmt.query([local.id])?;
-            while let Some(row) = rows.next()? {
-                if cancelled() { return Ok(Vec::new()); }
-                let tag: TagId = row.get(0)?;
-                let file: HashId = row.get(1)?;
-                if request.display {
-                    for shown in graph.display_tags(tag) { sets.entry(shown).or_default().insert(file); }
-                } else { sets.entry(tag).or_default().insert(file); }
+            let sql=if request.local {format!("SELECT tag_id,hash_id FROM {table} m WHERE EXISTS (SELECT 1 FROM file_domain_current d WHERE d.hash_id=m.hash_id AND d.service_id=?1)")} else {format!("SELECT tag_id,hash_id FROM {table} WHERE ?1 IS NOT NULL")};
+            let mut stmt=conn.prepare(&sql)?;
+            let mut rows=stmt.query([local.id])?;
+            while let Some(row)=rows.next()? {
+                if cancelled() {return Ok(Vec::new());}
+                stored.entry(row.get(0)?).or_default().insert(row.get(1)?);
             }
         }
-        let names = crate::master::tags(conn,&sets.keys().copied().collect::<Vec<_>>())?;
-        let files: BTreeMap<_,_> = sets.into_iter().filter_map(|(id,files)| names.get(&id).map(|tag| (tag.as_str().to_owned(),files))).collect();
-        let mut request = request.clone();
+        let mut display:BTreeMap<TagId,BTreeSet<HashId>>=BTreeMap::new();
         if request.display {
-            request.searches = request.searches.iter().filter(|tag| Weights::percent(&request.weights.search,tag)>0).filter_map(|tag| hydrus_core::Tag::new(tag)).map(|tag| {
-                crate::master::tag_id(conn,&tag).map(|id| id.and_then(|id| names.get(&graph.ideal(id))).map_or_else(|| tag.as_str().to_owned(),|t| t.as_str().to_owned()))
+            for (tag,files) in &stored {for shown in graph.display_tags(*tag) {display.entry(shown).or_default().extend(files);}}
+        }
+        let ids:BTreeSet<_>=stored.keys().chain(display.keys()).copied().collect();
+        let names=crate::master::tags(conn,&ids.into_iter().collect::<Vec<_>>())?;
+        let named=|sets:BTreeMap<TagId,BTreeSet<HashId>>| -> BTreeMap<String,BTreeSet<HashId>> {
+            sets.into_iter().filter_map(|(id,files)|names.get(&id).map(|tag|(tag.as_str().to_owned(),files))).collect()
+        };
+        let stored=named(stored);
+        let display=named(display);
+        let counts=if request.display {&display} else {&stored};
+        // Qt's all-known query deliberately uses raw mappings for matching,
+        // even with display totals and sibling-ideal search tags.
+        let matches=if request.display && request.local {&display} else {&stored};
+        let mut request=request.clone();
+        request.searches.retain(|tag|Weights::percent(&request.weights.search,tag)>0);
+        if request.display {
+            request.searches=request.searches.iter().filter_map(|tag|hydrus_core::Tag::new(tag)).map(|tag| {
+                crate::master::tag_id(conn,&tag).map(|id|id.and_then(|id|names.get(&graph.ideal(id))).map_or_else(||tag.as_str().to_owned(),|tag|tag.as_str().to_owned()))
             }).collect::<crate::Result<Vec<_>>>()?;
         }
+        request.searches.sort();request.searches.dedup();
         let mut excluded=BTreeSet::new();
         for tag in &request.searches {
-            if Weights::percent(&request.weights.search,tag)==0 {continue;}
             if let Some(tag)=hydrus_core::Tag::new(tag) && let Some(id)=crate::master::tag_id(conn,&tag)? {
                 excluded.extend(graph.ancestors(id).iter().filter_map(|ancestor|names.get(ancestor).map(|tag|tag.as_str().to_owned())));
             }
         }
-        Ok(rank_excluding(&files,&request,cancelled,&excluded))
+        Ok(rank_excluding(matches,counts,&request,cancelled,&excluded))
     })
 }
