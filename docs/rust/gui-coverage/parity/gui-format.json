@@ -7,20 +7,21 @@
     "7c9621a1f3fd74e461671fa705218601e3b8a3ed",
     "018590b69d439f00be552958bf002e408e0102f7",
     "eeb0299d5774ffafad22fd57c3c1f78258769d56",
-    "2abfe01b231deb4ae1fc652aaa8e5b6c7f8b4b47"
+    "2abfe01b231deb4ae1fc652aaa8e5b6c7f8b4b47",
+    "470f2faa00444dd5f3eaa7439bffee6b8cb5ef96"
   ],
-  "completed_original_leaves_proposed": 0,
+  "completed_original_leaves_proposed": 2,
   "claims": [
     {
       "reference_id": "audit-options-gui-misc-prefer-iso-time-2018-03-01-12-40-23-to-5-days-ago",
       "before": "missing",
       "previous_status": "missing",
-      "proposedStatus": "partial",
-      "proposed_status": "partial",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
       "change_kind": "implementation",
       "eligible_original_leaf": true,
-      "exactBehavior": "Exact checkbox imports always_show_iso_time and stays a private Options draft through Cancel. Apply persists and reopening restores it. Owned preferences reach file/gallery logs, file info/status/menu/hover lines, About boot time, cookie/session expiry rows, subscription/query/delay rows, gallery/watcher created and scheduled/held-off labels, and viewing-statistics last-view menus. ISO uses the current local UTC offset for every target date, matching Python even across opposite DST seasons, and retains recorded unknown/unparseable and POSIX year-one wording. Relative downloader minute/exact/no-prefix variants preserve their original thresholds. Cookie expiry at the exact current second remains expires, matching TimeHasPassed.",
-      "limits": "Daemon-generated network bandwidth/gallery wait status strings still use fixed relative wording (hydrus-net engine), so the global ISO preference stays Partial. Already-rendered cached log/viewer labels are updated through their existing open/data/media refresh paths; immediate whole-application Options broadcast refresh timing is not claimed because the recorded workflow does not prove it. Manage Times picker and duplicate-review deltas intentionally remain relative: the reference explicitly passes force_no_iso=True. Actual native replays assume UTC; timezone math is separately replayed using the recorded current offsets. Full platform-dependent historical/ancient date formatting beyond the recorded POSIX boundary is unclaimed.",
+      "exactBehavior": "Exact checkbox imports always_show_iso_time and stays a private Options draft through Cancel. Apply persists and reopening restores it. Owned preferences reach file/gallery logs, file info/status/menu/hover lines, About boot time, cookie/session expiry rows, subscription/query/delay rows, gallery/watcher created and scheduled/held-off labels, and viewing-statistics last-view menus. ISO uses the current local UTC offset for every target date, matching Python even across opposite DST seasons, and retains recorded unknown/unparseable and POSIX year-one wording. Relative downloader minute/exact/no-prefix variants preserve their original thresholds. Cookie expiry at the exact current second remains expires, matching TimeHasPassed. Saved formatting also reaches daemon-owned bandwidth, delayed bandwidth override and gallery waits, including the recorded two/three-second imminent/checking boundary and gallery no-prefix wording. Settings reload wakes the same waiting jobs without resetting bandwidth accounting, gallery token deadlines, byte gauges, cancellation or other job fields. Shared core ISO formatting preserves the existing local-offset GUI API without a GUI-model dependency.",
+      "limits": "Already-rendered cached log/viewer labels are updated through their existing open/data/media refresh paths; immediate whole-application Options broadcast refresh timing is not claimed because the recorded workflow does not prove it. Manage Times picker and duplicate-review deltas intentionally remain relative: the reference explicitly passes force_no_iso=True. Actual native replays assume UTC; timezone math is separately replayed using the recorded current offsets. Full platform-dependent historical/ancient date formatting beyond the recorded POSIX boundary is unclaimed.",
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-store/src/settings.rs",
@@ -99,6 +100,24 @@
           "line": 514,
           "symbol": "fn views_entries",
           "commit": "2abfe01b231deb4ae1fc652aaa8e5b6c7f8b4b47"
+        },
+        {
+          "relativepath": "crates/hydrus-core/src/time.rs",
+          "line": 183,
+          "symbol": "pub fn timestamp_to_iso(",
+          "commit": "470f2faa00444dd5f3eaa7439bffee6b8cb5ef96"
+        },
+        {
+          "relativepath": "crates/hydrus-net/src/engine.rs",
+          "line": 814,
+          "symbol": "pub fn reload_settings(",
+          "commit": "470f2faa00444dd5f3eaa7439bffee6b8cb5ef96"
+        },
+        {
+          "relativepath": "crates/hydrus-net/src/engine.rs",
+          "line": 861,
+          "symbol": "fn wait_time(",
+          "commit": "470f2faa00444dd5f3eaa7439bffee6b8cb5ef96"
         }
       ],
       "test_anchors": [
@@ -137,6 +156,24 @@
           "line": 612,
           "symbol": "fn formatting_reaches_gallery_added_rows_without_changing_import_state",
           "commit": "2abfe01b231deb4ae1fc652aaa8e5b6c7f8b4b47"
+        },
+        {
+          "relativepath": "crates/hydrus-net/src/engine.rs",
+          "line": 2302,
+          "symbol": "fn saved_formatting_replays_actual_backend_waits",
+          "commit": "470f2faa00444dd5f3eaa7439bffee6b8cb5ef96"
+        },
+        {
+          "relativepath": "crates/hydrus-net/src/engine.rs",
+          "line": 2376,
+          "symbol": "async fn formatting_refresh_keeps_a_bandwidth_wait",
+          "commit": "470f2faa00444dd5f3eaa7439bffee6b8cb5ef96"
+        },
+        {
+          "relativepath": "crates/hydrus-net/src/engine.rs",
+          "line": 2442,
+          "symbol": "async fn formatting_refresh_wakes_a_pending_gallery_label",
+          "commit": "470f2faa00444dd5f3eaa7439bffee6b8cb5ef96"
         }
       ],
       "reference_source": {
@@ -155,18 +192,27 @@
         "finished_at": "2026-10-05T03:00:18Z",
         "command": "/workspace/parallel/with-oracle /workspace/.cloud/hydrus/pyenv/bin/python oracle/record_gui_format.py",
         "environment": "Actual Qt reference client over a temporary imported synthetic test store under the shared oracle lock. HydrusTime.GetNow held at 1700000000 and restored. Real GUIPanel/controller ReinitGlobalSettings, file/gallery conversion methods, FileFilteringImportOptions.GetSummary, TestPanel._SetExampleData and NetworkJobControl._Update ran. The network control used owned stand-in status input objects, matching the existing import_status recorder seam; no request was sent. A private-process TZ loop recorded current offsets in UTC, America/New_York and Europe/Berlin and restored TZ afterward. Hydrus Python source unchanged."
+      },
+      "backendReferenceRecording": {
+        "script": "oracle/record_gui_format_backend.py",
+        "fixture": "oracle/fixtures/gui_format_backend.json",
+        "executed": true,
+        "started_at": "2026-10-05T05:26:55Z",
+        "finished_at": "2026-10-05T05:26:57Z",
+        "command": "/workspace/parallel/with-oracle /workspace/.cloud/hydrus/pyenv/bin/python oracle/record_gui_format_backend.py",
+        "environment": "Actual Qt reference client over a temporary synthetic basic fixture under the shared oracle lock. Real GUIPanel stage/Apply/reopen/Cancel, controller global-settings refresh, NetworkJob.TryToStartBandwidth/TokensOK/_ReadResponse, FileFilteringImportOptions.CheckFileIsValid and ClientFilesManager._AddFile low-space branch ran unchanged. Time held at 1700000000; gate decisions, response bytes, sparse source size, free space and sleeps/critical side effects were scripted inputs. No website contacted or disk filled; all seams and preferences restored."
       }
     },
     {
       "reference_id": "audit-options-gui-misc-experimental-bytes-strings-1kb-pseudo-significant-figures",
       "before": "missing",
       "previous_status": "missing",
-      "proposedStatus": "partial",
-      "proposed_status": "partial",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
       "change_kind": "implementation",
       "eligible_original_leaf": true,
-      "exactBehavior": "Exact 1\u20136 spinbox imports human_bytes_sig_figs, clamps recorded outside-range inputs, stages through Cancel and persists/reopens on Apply. Owned precision reaches page totals, bandwidth status/review/jobs/rules/graphs, file-info hover/status/menu sizes and bitrate, local-import size rows, service totals, import-option/default/favourite summaries, parser/formula raw preview labels, PNG descriptions, live importer/download-review and popup progress. Reference half-even rounding retains whole digits and sub-KB integer wording. Download progress preserves gauges, status first lines and cancellation ownership for quick/unknown-total/zero/error cases.",
-      "limits": "Import-rejection/critical-drive and network over-length error strings generated by backend workers still use fixed default byte formatting (hydrus-import options/lib and hydrus-net engine). This real remaining global-consumer boundary keeps the precision preference Partial. Cached labels change through their existing refresh paths; whole-application immediate broadcast timing is not claimed. The separate integer-locale option is not implemented or claimed.",
+      "exactBehavior": "Exact 1\u20136 spinbox imports human_bytes_sig_figs, clamps recorded outside-range inputs, stages through Cancel and persists/reopens on Apply. Owned precision reaches page totals, bandwidth status/review/jobs/rules/graphs, file-info hover/status/menu sizes and bitrate, local-import size rows, service totals, import-option/default/favourite summaries, parser/formula raw preview labels, PNG descriptions, live importer/download-review and popup progress. Reference half-even rounding retains whole digits and sub-KB integer wording. Download progress preserves gauges, status first lines and cancellation ownership for quick/unknown-total/zero/error cases. FileImporter uses current saved precision for actual min/max/GIF size rejection and critical-drive diagnostics, with the original import-family pause persistence. Both whole-response and range-chunk over-length failures read the engine\u2019s saved precision after settings reload. Existing low-level validation APIs keep their default-three-figure compatibility; saved owning consumers call explicit precision overloads.",
+      "limits": "Cached labels change through their existing refresh paths; whole-application immediate broadcast timing is not claimed. The separate integer-locale option is not implemented or claimed.",
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-store/src/settings.rs",
@@ -251,6 +297,30 @@
           "line": 75,
           "symbol": "pub fn view_with_figures",
           "commit": "2abfe01b231deb4ae1fc652aaa8e5b6c7f8b4b47"
+        },
+        {
+          "relativepath": "crates/hydrus-import/src/options.rs",
+          "line": 123,
+          "symbol": "pub fn check_with_figures(",
+          "commit": "470f2faa00444dd5f3eaa7439bffee6b8cb5ef96"
+        },
+        {
+          "relativepath": "crates/hydrus-import/src/options.rs",
+          "line": 154,
+          "symbol": "pub fn check_values_with_figures(",
+          "commit": "470f2faa00444dd5f3eaa7439bffee6b8cb5ef96"
+        },
+        {
+          "relativepath": "crates/hydrus-import/src/lib.rs",
+          "line": 385,
+          "symbol": "fn check_storage_space(",
+          "commit": "470f2faa00444dd5f3eaa7439bffee6b8cb5ef96"
+        },
+        {
+          "relativepath": "crates/hydrus-net/src/engine.rs",
+          "line": 2206,
+          "symbol": "human_bytes_with_figures(total,",
+          "commit": "470f2faa00444dd5f3eaa7439bffee6b8cb5ef96"
         }
       ],
       "test_anchors": [
@@ -289,6 +359,24 @@
           "line": 425,
           "symbol": "fn popup_download_precision_replays_actual_network_control_output",
           "commit": "2abfe01b231deb4ae1fc652aaa8e5b6c7f8b4b47"
+        },
+        {
+          "relativepath": "crates/hydrus-import/src/lib.rs",
+          "line": 664,
+          "symbol": "fn saved_figures_replay_all_reference_rejections",
+          "commit": "470f2faa00444dd5f3eaa7439bffee6b8cb5ef96"
+        },
+        {
+          "relativepath": "crates/hydrus-import/tests/import.rs",
+          "line": 66,
+          "symbol": "fn saved_precision_reaches_actual_import_rejection",
+          "commit": "470f2faa00444dd5f3eaa7439bffee6b8cb5ef96"
+        },
+        {
+          "relativepath": "crates/hydrus-net/tests/engine.rs",
+          "line": 21,
+          "symbol": "async fn saved_byte_precision_reaches_both_real_overlength_errors",
+          "commit": "470f2faa00444dd5f3eaa7439bffee6b8cb5ef96"
         }
       ],
       "reference_source": {
@@ -307,6 +395,15 @@
         "finished_at": "2026-10-05T03:00:18Z",
         "command": "/workspace/parallel/with-oracle /workspace/.cloud/hydrus/pyenv/bin/python oracle/record_gui_format.py",
         "environment": "Actual Qt reference client over a temporary imported synthetic test store under the shared oracle lock. HydrusTime.GetNow held at 1700000000 and restored. Real GUIPanel/controller ReinitGlobalSettings, file/gallery conversion methods, FileFilteringImportOptions.GetSummary, TestPanel._SetExampleData and NetworkJobControl._Update ran. The network control used owned stand-in status input objects, matching the existing import_status recorder seam; no request was sent. A private-process TZ loop recorded current offsets in UTC, America/New_York and Europe/Berlin and restored TZ afterward. Hydrus Python source unchanged."
+      },
+      "backendReferenceRecording": {
+        "script": "oracle/record_gui_format_backend.py",
+        "fixture": "oracle/fixtures/gui_format_backend.json",
+        "executed": true,
+        "started_at": "2026-10-05T05:26:55Z",
+        "finished_at": "2026-10-05T05:26:57Z",
+        "command": "/workspace/parallel/with-oracle /workspace/.cloud/hydrus/pyenv/bin/python oracle/record_gui_format_backend.py",
+        "environment": "Actual Qt reference client over a temporary synthetic basic fixture under the shared oracle lock. Real GUIPanel stage/Apply/reopen/Cancel, controller global-settings refresh, NetworkJob.TryToStartBandwidth/TokensOK/_ReadResponse, FileFilteringImportOptions.CheckFileIsValid and ClientFilesManager._AddFile low-space branch ran unchanged. Time held at 1700000000; gate decisions, response bytes, sparse source size, free space and sleeps/critical side effects were scripted inputs. No website contacted or disk filled; all seams and preferences restored."
       }
     }
   ],
@@ -316,7 +413,10 @@
       "cargo fmt --all",
       "git diff --check",
       "python -m py_compile oracle/record_gui_format.py",
-      "cached Slint source compiler"
+      "cached Slint source compiler",
+      "actual Qt/backend recorder at 2026-10-05T05:26:55Z\u201305:26:57Z",
+      "rustfmt --check on changed Rust sources",
+      "python -m py_compile oracle/record_gui_format_backend.py"
     ],
     "authored_pending_hosted_ci": [
       "model replay of all 8 staged/bounded/saved/reopened states and byte/time/log outputs",
@@ -326,7 +426,12 @@
       "import summaries, parser previews, About, cookie expiry and subscription/query schedule model consumers",
       "gallery/watcher rows, statuses and checker-line formatting with unchanged import state",
       "native formula preview Cancel and live main-window download fields",
-      "store/popup download formatting with gauge/cancellation/immutable input assertions"
+      "store/popup download formatting with gauge/cancellation/immutable input assertions",
+      "saved/reopened exact backend wait replay including two/three-second thresholds",
+      "actual asynchronous waiting jobs retain accounting, gallery deadline, byte counts and cancellation across formatting reload",
+      "real loopback HTTP whole/range over-length failures use saved precision",
+      "real FileImporter rejects before media/hash import using saved precision",
+      "recorded min/max/GIF diagnostics and critical-drive import-family pauses persist after store reopening"
     ],
     "local_cargo_builds_or_tests": false
   },
@@ -349,6 +454,9 @@
     "hydrus/core/HydrusTime.py:611 TimestampToPrettyTimeDelta precedence/variants",
     "hydrus/client/importing/options/FileFilteringImportOptions.py:215 GetSummary",
     "hydrus/client/gui/parsing/ClientGUIParsingTest.py:231 _SetExampleData",
-    "hydrus/client/gui/networking/ClientGUINetworkJobControl.py:247 _Update"
+    "hydrus/client/gui/networking/ClientGUINetworkJobControl.py:247 _Update",
+    "hydrus/client/networking/ClientNetworkingJobs.py: TryToStartBandwidth, TokensOK, _ReadResponse",
+    "hydrus/client/importing/options/FileFilteringImportOptions.py: CheckFileIsValid",
+    "hydrus/client/ClientFiles.py: ClientFilesManager._AddFile low-space branch"
   ]
 }
