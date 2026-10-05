@@ -4035,3 +4035,21 @@ APIs; GUI owners supply configured tools. Borrowed Store callers can obtain the
 same weak handle without keeping a Store or read connection alive. Authored real
 FIFO transport regressions exercise review metadata and duplicate PSD decoding
 under a preference changed after those consumers were constructed.
+
+Thumbnail context menus offer “clear deletion record” for one selected file and
+“clear deletion record for selected” for multiple flattened files when any has a
+physical local-storage deletion record. Trash-only/current selections do not offer
+it. The exact confirmation captures eligible selected files before the question;
+Cancel changes nothing. Accepted records clear in independent batches of 64,
+preserving unselected files, trash, current/re-added membership and the durable
+physical-deletion queue. The real import-status consumer then permits previously
+deleted files to be imported again. A later batch error leaves earlier batches
+committed and presents a warning. Hidden, retired, rebound or different-page main
+owners cannot execute a retained menu/answer against another page. A tab
+departure permanently invalidates this action even after returning; an owned
+advanced-deletion child also blocks it.
+Actual old/default Qt menu, collection, retained QAction, acceptance, concurrent
+re-add/new-delete and batch/error paths are recorded in
+`selected_deletion_records.json`. Store/model/native replays and the native
+question PNG are authored; hosted Rust execution and rendered inspection remain
+pending. This covers the selected thumbnail action only.

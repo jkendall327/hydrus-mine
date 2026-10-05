@@ -72,6 +72,7 @@ pub mod ratings_editor;
 pub mod related_weights;
 pub mod scanbar;
 pub mod search_log;
+pub mod selected_deletion_records;
 pub mod selection;
 pub mod services_editor;
 pub mod services_review;

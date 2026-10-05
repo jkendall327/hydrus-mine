@@ -3257,3 +3257,19 @@ or strong self cycle. Non-Store helper APIs keep default tools, and explicitly
 configured executable/fixed-deadline APIs remain available. The new decoder
 regressions use disclosed POSIX FIFO executable transports, not assertions of
 codec correctness; platform-specific execution awaits hosted Linux/macOS tests.
+
+The selected thumbnail clear-deletion-record action uses the existing scoped
+local-file writer, distinct from the global all-files service action. Qt captures
+physical-deleted flat media before confirmation and writes 64-record packages;
+the native model preserves those identities, order and independent commits. A
+file newly deleted during confirmation stays outside that plan; a re-added file
+keeps current membership. No filesystem deletion or queue cancellation is added.
+The native main additionally refuses retained hidden/retired/binding-replaced or
+different-current-page callbacks, including a tab departure/return, and
+blocks its owned advanced-deletion child; Qt's modal question ordinarily prevents such
+synthetic dispatch. Both recorded old/default thumbnail menus expose this action;
+no unsupported viewer action or broader media-context parent is claimed. Actual
+Qt recordings completed 2026-10-05 15:27:50–51. The copied fixture's sandbox-denied
+Client API listener logged a nonfatal startup warning; these GUI/SQLite recordings
+make no socket/API attestation. All new Rust/native regressions, including the
+question PNG, remain authored-only until hosted validation.

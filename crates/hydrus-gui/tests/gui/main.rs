@@ -88,6 +88,7 @@ mod search_domains;
 mod search_lock;
 mod search_log;
 mod search_page;
+mod selected_deletion_records;
 mod session;
 mod session_autosave;
 mod session_startup;
