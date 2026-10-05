@@ -15,7 +15,7 @@ use hydrus_store::{
 };
 use serde_json::{Value, json};
 
-fn seeded(fixture: &Value) -> (tempfile::TempDir, Arc<Store>) {
+pub(super) fn seeded(fixture: &Value) -> (tempfile::TempDir, Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let dir = tempfile::tempdir().unwrap();
     hydrus_store::import::import_legacy(

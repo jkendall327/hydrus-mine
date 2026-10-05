@@ -7,7 +7,7 @@
 
 use std::{collections::BTreeSet, sync::Arc};
 
-use crate::write_autocomplete::Tab;
+use crate::write_autocomplete::{Selection, Tab};
 use hydrus_core::mime::SEARCHABLE_MIMES;
 use hydrus_core::search::context::{LocationContext, TagContext};
 use hydrus_core::service::ServiceType;
@@ -44,6 +44,8 @@ pub struct Autocomplete {
     tab: Tab,
     or_draft: Option<String>,
     tab_highlights: [usize; 3],
+    selections: [Selection; 3],
+    tab_rows: [Vec<String>; 3],
     context_tags: BTreeSet<String>,
 }
 
@@ -75,6 +77,8 @@ impl Autocomplete {
             tab: Tab::Tags,
             or_draft: None,
             tab_highlights: [0; 3],
+            selections: std::array::from_fn(|_| Selection::default()),
+            tab_rows: std::array::from_fn(|_| Vec::new()),
             context_tags: BTreeSet::new(),
         }
     }
@@ -101,6 +105,7 @@ impl Autocomplete {
         self.suggestions = self.search(false);
         self.highlighted =
             self.tab_highlights[tab.index()].min(self.suggestions.len().saturating_sub(1));
+        self.sync_selection();
     }
     /// Only top-level tag predicates supply child context; their polarity is immaterial.
     pub fn set_context_tags(&mut self, tags: impl IntoIterator<Item = String>) {
@@ -119,6 +124,7 @@ impl Autocomplete {
                             .position(|suggestion| suggestion.predicate == selected)
                     })
                     .unwrap_or(0);
+                self.sync_selection();
             }
         }
     }
@@ -139,6 +145,75 @@ impl Autocomplete {
     pub fn move_highlight(&mut self, by: isize) {
         if let Some(last) = self.suggestions.len().checked_sub(1) {
             self.highlighted = self.highlighted.saturating_add_signed(by).min(last);
+            self.selections[self.tab.index()].reset(Some(self.highlighted));
+        }
+    }
+
+    /// Shared Qt tag-list selection: Ctrl toggles, Shift adds a reversible range.
+    pub fn click(&mut self, index: usize, ctrl: bool, shift: bool) {
+        if index < self.suggestions.len() {
+            self.highlighted = index;
+            self.selections[self.tab.index()].click(index, ctrl, shift);
+        }
+    }
+
+    /// Selection flags in visible row order, for embedded and floating panes.
+    pub fn selected(&self) -> Vec<bool> {
+        (0..self.suggestions.len())
+            .map(|index| self.selections[self.tab.index()].selected.contains(&index))
+            .collect()
+    }
+
+    /// Selected predicates broadcast together; an empty selection broadcasts nothing.
+    pub fn selected_suggestions(&self) -> Vec<Suggestion> {
+        self.selections[self.tab.index()]
+            .selected
+            .iter()
+            .filter_map(|index| self.suggestions.get(*index).cloned())
+            .collect()
+    }
+
+    /// Select every visible result, as Ctrl+A in the result list does.
+    pub fn select_all(&mut self) {
+        self.selections[self.tab.index()].selected = (0..self.suggestions.len()).collect();
+    }
+
+    /// Escape in the result list clears its selection before closing a caller.
+    pub fn deselect(&mut self) -> bool {
+        let selected = &mut self.selections[self.tab.index()].selected;
+        let had_selection = !selected.is_empty();
+        selected.clear();
+        had_selection
+    }
+
+    /// Re-read immediate favourite changes without destroying the input draft.
+    pub fn refresh_tab(&mut self) {
+        self.suggestions = self.search(false);
+        self.sync_selection();
+    }
+
+    fn sync_selection(&mut self) {
+        let tab = self.tab.index();
+        let rows: Vec<_> = self
+            .suggestions
+            .iter()
+            .map(|row| row.predicate.clone())
+            .collect();
+        if self.tab_rows[tab] != rows {
+            let selected = if self.tab == Tab::Children && self.selections[tab].selected.len() == 1
+            {
+                self.selections[tab]
+                    .selected
+                    .iter()
+                    .next()
+                    .and_then(|index| self.tab_rows[tab].get(*index))
+                    .and_then(|predicate| rows.iter().position(|row| row == predicate))
+            } else {
+                None
+            };
+            self.highlighted = selected.unwrap_or(0);
+            self.selections[tab].reset((!rows.is_empty()).then_some(self.highlighted));
+            self.tab_rows[tab] = rows;
         }
     }
 
@@ -152,9 +227,19 @@ impl Autocomplete {
     }
 
     fn reset_highlight(&mut self) {
+        if self.tab != Tab::Tags {
+            self.sync_selection();
+            return;
+        }
         self.highlighted = usize::from(
             self.tab == Tab::Tags && self.or_draft.is_some() && self.suggestions.len() > 1,
         );
+        self.selections[self.tab.index()].reset(self.highlighted());
+        self.tab_rows[self.tab.index()] = self
+            .suggestions
+            .iter()
+            .map(|row| row.predicate.clone())
+            .collect();
     }
     pub fn clear(&mut self) {
         self.set_text("");

@@ -1,0 +1,590 @@
+{
+  "corpus": [
+    {
+      "tag": "parity:tabs alpha",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+      ]
+    },
+    {
+      "tag": "parity:tabs beta",
+      "hashes": [
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ]
+    },
+    {
+      "tag": "parity:tabs alpha old",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ]
+    }
+  ],
+  "parents": [
+    [
+      "parity:tabs alpha",
+      "parity:tabs root"
+    ],
+    [
+      "parity:tabs beta",
+      "parity:tabs root"
+    ],
+    [
+      "parity:tabs zero",
+      "parity:tabs root"
+    ],
+    [
+      "parity:tabs deep",
+      "parity:tabs alpha"
+    ]
+  ],
+  "siblings": [
+    [
+      "parity:tabs alpha old",
+      "parity:tabs alpha"
+    ]
+  ],
+  "events": [
+    {
+      "action": "favourites",
+      "tab": 1,
+      "rows": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "selected": [
+        "parity:tabs alpha"
+      ],
+      "predicates": [],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "text": ""
+    },
+    {
+      "action": "hit",
+      "tab": 1,
+      "rows": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "selected": [
+        "parity:tabs alpha"
+      ],
+      "predicates": [],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "text": "",
+      "index": 0,
+      "ctrl": false,
+      "shift": false
+    },
+    {
+      "action": "hit",
+      "tab": 1,
+      "rows": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "selected": [
+        "parity:tabs alpha",
+        "parity:tabs unseen"
+      ],
+      "predicates": [],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "text": "",
+      "index": 2,
+      "ctrl": true,
+      "shift": false
+    },
+    {
+      "action": "hit",
+      "tab": 1,
+      "rows": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "selected": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "predicates": [],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "text": "",
+      "index": 1,
+      "ctrl": false,
+      "shift": true
+    },
+    {
+      "action": "hit",
+      "tab": 1,
+      "rows": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "selected": [
+        "parity:tabs unseen"
+      ],
+      "predicates": [],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "text": "",
+      "index": 0,
+      "ctrl": true,
+      "shift": true
+    },
+    {
+      "action": "activate_favourites",
+      "tab": 1,
+      "rows": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "selected": [
+        "parity:tabs unseen"
+      ],
+      "predicates": [
+        "parity:tabs unseen"
+      ],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "text": ""
+    },
+    {
+      "action": "clear_search",
+      "tab": 1,
+      "rows": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "selected": [
+        "parity:tabs unseen"
+      ],
+      "predicates": [],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "text": ""
+    },
+    {
+      "action": "select_all",
+      "tab": 1,
+      "rows": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "selected": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "predicates": [],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "text": ""
+    },
+    {
+      "action": "shift_activate_favourites",
+      "tab": 1,
+      "rows": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "selected": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "predicates": [],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "text": "",
+      "or_terms": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ]
+    },
+    {
+      "action": "cancel_or",
+      "tab": 1,
+      "rows": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "selected": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "predicates": [],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "text": ""
+    },
+    {
+      "action": "deselect",
+      "tab": 1,
+      "rows": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "selected": [],
+      "predicates": [],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "text": ""
+    },
+    {
+      "action": "hit",
+      "tab": 1,
+      "rows": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "selected": [
+        "parity:tabs root"
+      ],
+      "predicates": [],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "text": "",
+      "index": 1,
+      "ctrl": false,
+      "shift": false
+    },
+    {
+      "action": "remove_favourite",
+      "tab": 1,
+      "rows": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "selected": [
+        "parity:tabs root"
+      ],
+      "predicates": [],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs root",
+        "parity:tabs unseen"
+      ],
+      "text": "",
+      "yes": false,
+      "questions": [
+        "Remove \"parity:tabs root\" from the favourites list?"
+      ],
+      "label": "remove \"parity:tabs root\" from favourites"
+    },
+    {
+      "action": "remove_favourite",
+      "tab": 1,
+      "rows": [
+        "parity:tabs alpha",
+        "parity:tabs unseen"
+      ],
+      "selected": [
+        "parity:tabs alpha"
+      ],
+      "predicates": [],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs unseen"
+      ],
+      "text": "",
+      "yes": true,
+      "questions": [
+        "Remove \"parity:tabs root\" from the favourites list?"
+      ],
+      "label": "remove \"parity:tabs root\" from favourites"
+    },
+    {
+      "action": "children",
+      "tab": 2,
+      "rows": [
+        "parity:tabs alpha",
+        "parity:tabs beta",
+        "parity:tabs deep",
+        "parity:tabs zero"
+      ],
+      "selected": [
+        "parity:tabs alpha"
+      ],
+      "predicates": [
+        "parity:tabs root"
+      ],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs unseen"
+      ],
+      "text": ""
+    },
+    {
+      "action": "hit",
+      "tab": 2,
+      "rows": [
+        "parity:tabs alpha",
+        "parity:tabs beta",
+        "parity:tabs deep",
+        "parity:tabs zero"
+      ],
+      "selected": [
+        "parity:tabs alpha"
+      ],
+      "predicates": [
+        "parity:tabs root"
+      ],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs unseen"
+      ],
+      "text": "",
+      "index": 0,
+      "ctrl": false,
+      "shift": false
+    },
+    {
+      "action": "hit",
+      "tab": 2,
+      "rows": [
+        "parity:tabs alpha",
+        "parity:tabs beta",
+        "parity:tabs deep",
+        "parity:tabs zero"
+      ],
+      "selected": [
+        "parity:tabs alpha",
+        "parity:tabs deep"
+      ],
+      "predicates": [
+        "parity:tabs root"
+      ],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs unseen"
+      ],
+      "text": "",
+      "index": 2,
+      "ctrl": true,
+      "shift": false
+    },
+    {
+      "action": "activate_children",
+      "tab": 2,
+      "rows": [
+        "parity:tabs beta",
+        "parity:tabs zero"
+      ],
+      "selected": [
+        "parity:tabs beta"
+      ],
+      "predicates": [
+        "parity:tabs alpha",
+        "parity:tabs deep",
+        "parity:tabs root"
+      ],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs unseen"
+      ],
+      "text": "",
+      "query_count": 0
+    },
+    {
+      "action": "deselect",
+      "tab": 2,
+      "rows": [
+        "parity:tabs beta",
+        "parity:tabs zero"
+      ],
+      "selected": [],
+      "predicates": [
+        "parity:tabs alpha",
+        "parity:tabs deep",
+        "parity:tabs root"
+      ],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs unseen"
+      ],
+      "text": ""
+    },
+    {
+      "action": "hit",
+      "tab": 2,
+      "rows": [
+        "parity:tabs beta",
+        "parity:tabs zero"
+      ],
+      "selected": [
+        "parity:tabs beta"
+      ],
+      "predicates": [
+        "parity:tabs alpha",
+        "parity:tabs deep",
+        "parity:tabs root"
+      ],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs unseen"
+      ],
+      "text": "",
+      "index": 0,
+      "ctrl": false,
+      "shift": false
+    },
+    {
+      "action": "add_child_favourite",
+      "tab": 2,
+      "rows": [
+        "parity:tabs beta",
+        "parity:tabs zero"
+      ],
+      "selected": [
+        "parity:tabs beta"
+      ],
+      "predicates": [
+        "parity:tabs alpha",
+        "parity:tabs deep",
+        "parity:tabs root"
+      ],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs beta",
+        "parity:tabs unseen"
+      ],
+      "text": "",
+      "label": "add \"parity:tabs beta\" to favourites"
+    },
+    {
+      "action": "return_favourites",
+      "tab": 1,
+      "rows": [
+        "parity:tabs alpha",
+        "parity:tabs beta",
+        "parity:tabs unseen"
+      ],
+      "selected": [
+        "parity:tabs alpha"
+      ],
+      "predicates": [
+        "parity:tabs alpha",
+        "parity:tabs deep",
+        "parity:tabs root"
+      ],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs beta",
+        "parity:tabs unseen"
+      ],
+      "text": ""
+    },
+    {
+      "action": "return_children",
+      "tab": 2,
+      "rows": [
+        "parity:tabs beta",
+        "parity:tabs zero"
+      ],
+      "selected": [
+        "parity:tabs beta"
+      ],
+      "predicates": [
+        "parity:tabs alpha",
+        "parity:tabs deep",
+        "parity:tabs root"
+      ],
+      "favourites": [
+        "parity:tabs alpha",
+        "parity:tabs beta",
+        "parity:tabs unseen"
+      ],
+      "text": ""
+    },
+    {
+      "action": "reopen",
+      "rows": [
+        "parity:tabs alpha",
+        "parity:tabs beta",
+        "parity:tabs unseen"
+      ]
+    },
+    {
+      "action": "write_activate",
+      "tab": 1,
+      "selected": [
+        "parity:tabs alpha",
+        "parity:tabs beta"
+      ],
+      "entered": [
+        "parity:tabs alpha",
+        "parity:tabs beta"
+      ],
+      "text": ""
+    },
+    {
+      "action": "write_activate",
+      "tab": 2,
+      "selected": [
+        "parity:tabs alpha",
+        "parity:tabs beta"
+      ],
+      "entered": [
+        "parity:tabs alpha",
+        "parity:tabs beta"
+      ],
+      "text": ""
+    }
+  ]
+}

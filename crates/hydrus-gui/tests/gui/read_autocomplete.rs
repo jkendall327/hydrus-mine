@@ -14,7 +14,7 @@ use serde_json::{Value, json};
 use slint::{ComponentHandle as _, Model as _};
 use std::sync::Arc;
 
-fn seeded(fixture: &Value) -> ([tempfile::TempDir; 2], Arc<Store>, ServiceKey) {
+pub(super) fn seeded(fixture: &Value) -> ([tempfile::TempDir; 2], Arc<Store>, ServiceKey) {
     let (dirs, store) = super::subscriptions::store();
     let service = store
         .snapshot()

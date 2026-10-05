@@ -247,7 +247,31 @@ fn open_internal(
         let tag_menu = tag_menu.clone();
         move || editable() && !tag_menu.busy()
     });
+    let tab_updates = crate::autocomplete_tabs::watch(
+        store,
+        Rc::new({
+            let weak = window.as_weak();
+            let editable = editable.clone();
+            let tag_menu = tag_menu.clone();
+            move || {
+                editable()
+                    && !tag_menu.busy()
+                    && weak
+                        .upgrade()
+                        .is_some_and(|window| window.window().is_visible())
+            }
+        }),
+        Rc::new({
+            let model = model.clone();
+            let refresh = refresh.clone();
+            move || {
+                model.borrow_mut().input.fetch();
+                refresh();
+            }
+        }),
+    );
     let close = Rc::new({
+        let tab_updates = tab_updates.clone();
         let active = active.clone();
         let pending = pending.clone();
         let weak = window.as_weak();
@@ -257,6 +281,7 @@ fn open_internal(
             if !active.replace(false) {
                 return;
             }
+            tab_updates.stop();
             tag_menu.close();
             pending.borrow_mut().take();
             if let Some(w) = weak.upgrade() {

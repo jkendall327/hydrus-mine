@@ -129,3 +129,5 @@ mod archive_repair;
 
 mod file_history;
 mod related_weights;
+
+mod autocomplete_tabs;

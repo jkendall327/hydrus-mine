@@ -27,6 +27,7 @@ pub mod archive_repair_window;
 mod auto_resolution_preview_window;
 mod auto_resolution_review_window;
 mod auto_resolution_rules_window;
+mod autocomplete_tabs;
 mod checker_options_window;
 mod client_exit;
 pub mod clipboard_monitor;
@@ -344,6 +345,7 @@ pub struct Bound {
     /// A system predicate's editor while one is open.
     pub predicate_editor: Rc<RefCell<Option<PredicateEditorWindow>>>,
     pub search_or: search_or_window::Slot,
+    _autocomplete_tabs: Rc<slint::Timer>,
     /// Files dropped on the main window: the "review files to import"
     /// window with them (they join its list if it is open).
     pub drop_files: Rc<dyn Fn(Vec<String>)>,
@@ -936,6 +938,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             });
         }
     });
+    let autocomplete_tabs = autocomplete_tabs::bind(window, page.clone(), shown.clone());
     window.on_autocomplete_tab_chosen({
         let page = page.clone();
         let shown = shown.clone();
@@ -3930,6 +3933,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         auto_resolution_review_filter: duplicates.review_filter.clone(),
         locations,
         favourites: favourite_dialogs,
+        _autocomplete_tabs: autocomplete_tabs,
         predicate_editor,
         search_or,
         drop_files: review_files,
@@ -6332,6 +6336,7 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
         .iter()
         .map(|s| list_text(&s.label, colours.predicate_text(&s.predicate)))
         .collect();
+    window.set_suggestion_selected(ModelRc::new(VecModel::from(autocomplete.selected())));
     window.set_suggestions(ModelRc::new(VecModel::from(suggestions)));
     window.set_highlighted(
         autocomplete
