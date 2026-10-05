@@ -1,0 +1,377 @@
+{
+  "schema_version": 1,
+  "task": "Supporting continuation of original active-edit Partial: mixed/simple edits and populated/start OR ownership",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "implementation_base": "6820bfdbd218f2be07df198e540b75234427ed37",
+  "source_commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+  "implementation_commits": [
+    "117804d1f723cddaad921cdca243756a428e6ca2",
+    "0111ab667c97789f306ec916cb63e5ffcdda69d2",
+    "524fd04bcd1f09599e8456f83179896ebf6f5ac8",
+    "a664b6521aaf9c95a4d9038581d71fb8a6131c69",
+    "532e25f9fc9ab356f9146241a751f368addf0b71",
+    "dffa7404ea740401ed64d02d1647471fec39caac"
+  ],
+  "canonical_claim_packet": "docs/rust/gui-coverage/parity/active-predicate-edit.json",
+  "supported_original_ids": [
+    "audit-options-search-active-edit"
+  ],
+  "claims": [],
+  "eligible_concrete_first_pass_count": 0,
+  "parent_promotions": 0,
+  "parents_remain_partial": [
+    "audit-options-search"
+  ],
+  "scope": "Supporting Partial0 only, no duplicate original claim. Mixed active editing stages simple tag/namespace/wildcard text, invertible buttons and populated system panels in Qt row order. One Apply validates every draft before query replacement; per-panel supplied values preserve repeated families and beat creation defaults. Cancel/invalid/hidden input does not publish. Typed recent history keeps system API/serde and legacy import compatibility. Single active OR values and start-OR use the existing owned OR transport, with zero/one/many normalization and accepted-only recents/query publication. Captured source/terms/main binding guards, page-change cancellation, hidden refusal, weak child backedges and incarnation-scoped closes preserve successor owners.",
+  "limits": [
+    "Original active-edit remains Partial and earns zero completed leaf credit. OR controls embedded inside mixed editing, inherited open/copy/file-selection/tag-maintenance actions and transports remain missing. Historical claim packet remains unchanged; this support packet has claims=[] to avoid duplicate-credit rejection.",
+    "Selection still clears on changed query rather than selecting newly edited terms; remaining list keyboard navigation is unchanged. Single system editors retain existing per-panel OK/star topology; broader existing panel precision/control limits remain.",
+    "Native basic OR transport retains its represented controls rather than claiming every Qt autocomplete decoration/location/context control. Page changes cancel owned native children.",
+    "Hosted Rust/native execution, exact-source rendered PNG inspection and root integration/radio846 composition review remain pending; no local Cargo/Rust/test/mutation execution, push or canonical changes."
+  ],
+  "validation": {
+    "reference": "Actual Qt8 simple/mixed dialogs +14parser/veto cases recorded12:27:52\u201353;10populated/startOR Apply/Cancel zero/one/many shapes recorded12:40:14\u201317 with normal service startup/shutdown. Both Qt PNGs individually viewed; copied basic DB and synthetic tags, only modal responses/foreground edits/menu publication scripted. Earlier13commands/12populated source fixture preserved unchanged.",
+    "source_checks": "Direct rustfmt, git diff --check, Python AST/JSON and cached Slint compiler passed; no local Cargo or Rust execution.",
+    "independent_review": "appearance_final_review accepted mixed117804+0111, OR524+a664+532 and hash draft dffa immutable source by bounded read-only review. Independently replayed14simple parser/veto cases,8mixed dialogs and10OR transformations; both actualQt PNGs individually viewed. Local-live hidden/Main-hide child cleanup and physical-typing hash buffer corrections accepted. All41line fingerprints,5recording byte hashes and6implementation commit pins verified; zero claims and unchanged historical claim/ledger confirmed. Hosted Rust/native/radio composition remains pending.",
+    "rust_tests": "Authored model/native atomic mixed, repeated-family default precedence, hidden/Cancel/rebind, actual10case OR replay, retired source/MainDrop and weak parent-component lifetime regressions. No Rust execution."
+  },
+  "native_hierarchy_support": {
+    "MainWindow": [
+      "mixed selected active search terms",
+      "captured StartOr and single populated OR edit"
+    ],
+    "PredicateEditorWindow": [
+      "simple text and invertible buttons alongside separate supplied system panels",
+      "whole-dialog atomic Apply/Cancel"
+    ],
+    "SearchOrWindow": [
+      "populated current OR terms",
+      "captured selected start-OR draft",
+      "owned recursive OR/system child weak callbacks"
+    ]
+  },
+  "expected_native_renders": [
+    "active-predicate-mixed.png",
+    "active-predicate-populated-or.png"
+  ],
+  "source_anchors": [
+    {
+      "relativepath": "crates/hydrus-gui-model/src/predicate_editors/batch.rs",
+      "line": 8,
+      "symbol": "pub struct Batch",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "4c9b7206f2da71879440d8a8d808e8e14fe710edb3c806bb0f94f73607bdb508"
+    },
+    {
+      "relativepath": "crates/hydrus-gui-model/src/predicate_editors/batch.rs",
+      "line": 17,
+      "symbol": "pub fn simple_predicate(",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "3c1e3b26153852de2c3464ffee91da4d43a8a2e9be611b0045ed0ea15046e450"
+    },
+    {
+      "relativepath": "crates/hydrus-gui-model/src/predicate_editors/batch.rs",
+      "line": 61,
+      "symbol": "pub fn mixed(",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "19406e1f986030841e717170e2471ed426e28895adfcafbc614ff1380f8c11bd"
+    },
+    {
+      "relativepath": "crates/hydrus-gui-model/src/predicate_editors/batch.rs",
+      "line": 113,
+      "symbol": "pub fn mixed_predicates(",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "06b81dc18b7c582cc4ab2d2aced14e25ec4480128f1a7f5e7584ca8187b0b14e"
+    },
+    {
+      "relativepath": "crates/hydrus-gui-model/src/predicate_editors/defaults.rs",
+      "line": 274,
+      "symbol": "panel.supplied = Some(predicate.clone());",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "af890b86cd518805693dd27e463cb8c2c0ee083b49f686ab33d26677708b8dd2"
+    },
+    {
+      "relativepath": "crates/hydrus-gui-model/src/predicate_editors/defaults.rs",
+      "line": 295,
+      "symbol": "panel.initialise(supplied.as_ref(), defaults, context);",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "95afa371abe2492ab61a482ab9676456d54f7c55a90013f4cdb33e47687f5c43"
+    },
+    {
+      "relativepath": "crates/hydrus-core/src/search/recent.rs",
+      "line": 38,
+      "symbol": "pub fn push_all(",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "2c2a631fe89703829997efccc232dbfa801d6905f92978e9dc244afb2462a709"
+    },
+    {
+      "relativepath": "crates/hydrus-legacy/src/objects/client_options.rs",
+      "line": 709,
+      "symbol": "out.non_system.insert(kind, others);",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "13d77d3b17d0198dff1afde43f9dbaed09dbc98f761aaadfe9b2c7a089cbd166"
+    },
+    {
+      "relativepath": "crates/hydrus-gui-model/src/active_predicates.rs",
+      "line": 25,
+      "symbol": "    StartOr,",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "9aa371144c387c2e190eda03d0ebc9e95ca4695fd33a7d2206977b3cb4406bca"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/active_predicates.rs",
+      "line": 130,
+      "symbol": "crate::search_or_window::cancel(&or_slot);",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "9d8239e8066959e391b48b4d2626e86adc8ec8733a0c299dc4856f435f180cd4"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/active_predicates.rs",
+      "line": 185,
+      "symbol": "if command == Command::StartOr",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "7c6157a6de9baa20d4907b7bde5bca1b36751aaff1d7ab971612e1ad64b16655"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/active_predicates.rs",
+      "line": 226,
+      "symbol": "recent.push_all(&recent_values);",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "f33103775f83cab0e1c7315daeecbb1e76946318793a5a65af8da6b4ba61fed9"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/predicate_editor_window.rs",
+      "line": 100,
+      "symbol": "fn hash_text(",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "1381a8d7d1a87427134884d95235fcf6f553d21c25c04d13db6d9e655607dbd6"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/predicate_editor_window.rs",
+      "line": 246,
+      "symbol": "window.set_batch_mode(",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "88934063cb60ec93107858b7077b26b26d87ce2e8e587c935fd6d7ccea0fd4f4"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/predicate_editor_window.rs",
+      "line": 719,
+      "symbol": "window.on_simple_edited(",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "6f31f53353d68c6e983e4a95fa53254ad6a74b9bc05148e8c8023ed503ffcd44"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/predicate_editor_window.rs",
+      "line": 745,
+      "symbol": "window.on_invertible_clicked(",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "3f19b44b499dd86bdab1ce7511d81ede8769891990a7d9db84a8bca37195eae1"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/predicate_editor_window.rs",
+      "line": 801,
+      "symbol": "state.editor.mixed_predicates(",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "9deea647d2b20760db29028ad9c27011a7f4340c2e6b3cfc1194e7f7fabaca78"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/ui/predicate_editor.slint",
+      "line": 188,
+      "symbol": "in property <bool> batch-mode;",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "a20726dfbe3c5391fdb7595def704602f7342cd3bf3f4f90161a644b0d41202d"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/ui/predicate_editor.slint",
+      "line": 341,
+      "symbol": "for row in root.edit-order:",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "acda2e7811e31b9f6c37d5f97957127a1faf5f42a0a5e5d0485f7217353a6cfb"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/ui/predicate_editor.slint",
+      "line": 386,
+      "symbol": "text <=> panel-box.hash-draft;",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "431794479204647277cf8d42075f239afd1e8c124106255a719b12841fe21044"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/ui/predicate_editor.slint",
+      "line": 354,
+      "symbol": "changed panel =>",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "92509bdbe7e1b8119b5e9359bc25b583eaee43e1e6422b96cb2da8662bb7431b"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/search_or_window.rs",
+      "line": 67,
+      "symbol": "fn owned(&self)",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "8a2e4986ab0ef3745b1f6bf5318914dfe01492beccadf874bebf93ebe273f363"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/search_or_window.rs",
+      "line": 70,
+      "symbol": "fn valid(&self)",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "52f42a417c8e6938b7293be2635c48b2ede61288b708b00fe1f7e44b3c8fef63"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/search_or_window.rs",
+      "line": 124,
+      "symbol": "fn system_editor(",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "aceefbb76ff5666b39998c7a1c1480cb346bc03757326baaf0c3b04e3f23eade"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/search_or_window.rs",
+      "line": 449,
+      "symbol": "window.on_or_action(",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "b59c6b0d8d9501941a702fd47aaca298b7cb4ee97e2f06d19e66e29e0c183498"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/lib.rs",
+      "line": 1050,
+      "symbol": "active_predicates::bind(",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "69427ce56996fda208696d26dd18d5c2818bd535bb50ba519acd7e8f025126fe"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/lib.rs",
+      "line": 1376,
+      "symbol": "window.on_search_or_action(",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "3882da987827eb8b8ff41fc77bde1c9d5ca7265929b9d35d257f9ff9aa716187"
+    }
+  ],
+  "reference_anchors": [
+    {
+      "relativepath": "hydrus/client/gui/search/ClientGUIPredicatesSingle.py",
+      "line": 165,
+      "symbol": "def GetPredicateFromSimpleTagText(",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "fd490072b974bb3b7f2c472951b27c4aae1c45150b8a09597e7be1f24b9af60d"
+    },
+    {
+      "relativepath": "hydrus/client/gui/search/ClientGUIPredicatesSingle.py",
+      "line": 129,
+      "symbol": "class InvertiblePredicateButton(",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "806005b45df7f0921712aeadb605ab465fd66952a9066a8ad51516ca2befd038"
+    },
+    {
+      "relativepath": "hydrus/client/gui/search/ClientGUISearch.py",
+      "line": 195,
+      "symbol": "class EditPredicatesPanel(",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "29da0e66e0b11d6f42fbbae6ff7bb08495d523f4bb5526967d77b5044e9e5cde"
+    },
+    {
+      "relativepath": "hydrus/client/gui/search/ClientGUIACDropdown.py",
+      "line": 3370,
+      "symbol": "elif command == 'start_or_predicate':",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "a87065b1420630ab6377eb6aa35762babc486724c82b36b6f2f9bec793026660"
+    },
+    {
+      "relativepath": "hydrus/client/gui/search/ClientGUIPredicatesOR.py",
+      "line": 18,
+      "symbol": "class ORPredicateControl(",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "cc75c35be166d8302663da9f862dc29820e8cf8247513a81846b178f1061b8b0"
+    }
+  ],
+  "test_anchors": [
+    {
+      "relativepath": "crates/hydrus-core/src/search/recent.rs",
+      "line": 143,
+      "symbol": "fn old_system_history_decodes_and_simple_edits",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "fef53361d8d1a43f0ea200e0248d6238c5055ec9cb0c1f58344aa36f4ec2b50d"
+    },
+    {
+      "relativepath": "crates/hydrus-gui-model/tests/model/active_predicates.rs",
+      "line": 146,
+      "symbol": "fn mixed_controls_replay_real_qt",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "8348104abc8c1885999b0d46ea48f10cf3d3dfd334915a1c70bb4067184da0b5"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/active_predicates.rs",
+      "line": 290,
+      "symbol": "fn mixed_apply_is_atomic",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "0de8e2433303627fd5d4f60617ca75c34181b4ec01c4062c95913b6883a3d932"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/active_predicates.rs",
+      "line": 404,
+      "symbol": "fn mixed_same_family_panels",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "965fff68fe14e749ffe57f2bb65217a993c677baacb947fb0e75776962ba2aa9"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/active_predicates.rs",
+      "line": 515,
+      "symbol": "fn populated_or_and_start_or_replay",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "e6eecb4a9e2baab250aa749c355b0f7680fd609b52967a4f4a1b3f2ab0bfe88f"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/active_predicates.rs",
+      "line": 600,
+      "symbol": "fn retained_populated_or_hidden_page",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "79001f515e38eac85a25941a6bb15a1fb5a39b46d6258470794a2179bc3c5487"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/active_predicates.rs",
+      "line": 673,
+      "symbol": "fn retained_or_system_child_does_not_keep",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "902256d7b38a4d28e2fd96d592b4dddcbaafe57c5aa99284025b10e4f83ced68"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/active_predicates.rs",
+      "line": 715,
+      "symbol": "fn hidden_or_parent_reconciles_actual",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "a9d060435892a0a6ec2172bb0f2733393dd5e7662d8ae08cdfd48196bb83f3e0"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/hash_predicate.rs",
+      "line": 234,
+      "symbol": "assert_eq!(window.get_hash_text(), \"x\");",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "line_sha256": "64f338e59fea31a682d965e8e4087382457e8c5eaaca3c53745a6339f8139a34"
+    }
+  ],
+  "reference_recordings": [
+    {
+      "relativepath": "oracle/fixtures/active_predicate_mixed.json",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "sha256": "55e972634c1a0df5a4be72c1d1bcb85731a7604eb90fc17b22df2203882545d4"
+    },
+    {
+      "relativepath": "oracle/fixtures/active_predicate_mixed_qt.png",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "sha256": "3b902c23e6cb5dc626a489db966f061bf99e8b73f53b0e85838e078c9b185703"
+    },
+    {
+      "relativepath": "oracle/fixtures/active_predicate_or.json",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "sha256": "0bd022f2f835ee570ca5221a6c4b6d7d1057733fddecf26f30a1bf42b08d6cfe"
+    },
+    {
+      "relativepath": "oracle/fixtures/active_predicate_or_qt.png",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "sha256": "4e90d28335123403e63e9fb027d02f0fcc017a3bb2ba6d4c309af22fd2edc6e1"
+    },
+    {
+      "relativepath": "oracle/record_active_predicate_edit.py",
+      "commit": "dffa7404ea740401ed64d02d1647471fec39caac",
+      "sha256": "2e5b872a4b359e5cafaa17e80892ede3c6bda4ee47536aac9fbddb7de0d06c06"
+    }
+  ]
+}
