@@ -84,10 +84,11 @@ fn staged_controls_reopen_and_reach_real_log_rows_and_page_size_status() {
                     meta: FileSeedMeta::default(),
                 }],
                 false,
-                0,
+                seeds["file"]["created"].as_i64().unwrap(),
             )?;
             let mut seed = queues::file_seeds(conn, queue)?.remove(0);
-            seed.created = seeds["file"]["created"].as_i64().unwrap();
+            // Creation time belongs to insertion; updates preserve it.
+            assert_eq!(seed.created, seeds["file"]["created"].as_i64().unwrap());
             seed.modified = seeds["file"]["modified"].as_i64().unwrap();
             queues::update_file_seed(conn, &seed)?;
             queues::add_gallery_seeds(
@@ -100,10 +101,10 @@ fn staged_controls_reopen_and_reach_real_log_rows_and_page_size_status() {
                     meta: GallerySeedMeta::default(),
                 }],
                 None,
-                0,
+                seeds["gallery"]["created"].as_i64().unwrap(),
             )?;
             let mut seed = queues::gallery_seeds(conn, queue)?.remove(0);
-            seed.created = seeds["gallery"]["created"].as_i64().unwrap();
+            assert_eq!(seed.created, seeds["gallery"]["created"].as_i64().unwrap());
             seed.modified = seeds["gallery"]["modified"].as_i64().unwrap();
             queues::update_gallery_seed(conn, &seed)
         })
