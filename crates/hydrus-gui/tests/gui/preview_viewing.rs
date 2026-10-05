@@ -52,7 +52,7 @@ fn select(ui: &MainWindow, bound: &hydrus_gui::Bound, file: HashId) {
 }
 fn save_settings(store: &Store, active: bool, minimum: Option<u64>, maximum: Option<u64>) {
     store
-        .write_and_refresh(|ctx| {
+        .write_and_refresh(move |ctx| {
             let mut value: FileViewingStatistics = settings::get(ctx.conn())?;
             value.active = active;
             value.preview_min_ms = minimum;
@@ -288,7 +288,7 @@ fn saved_preview_options_reach_open_display_duration_cap_cancel_and_confirmed_cl
     for field in 0..4 {
         edit.invoke_field_edited(maximum, field, 0);
     }
-    edit.invoke_apply_clicked();
+    edit.invoke_apply();
     let saved: FileViewingStatistics = store.read(settings::get).unwrap();
     assert_eq!(
         (saved.preview_min_ms, saved.preview_max_ms),
@@ -314,8 +314,8 @@ fn saved_preview_options_reach_open_display_duration_cap_cancel_and_confirmed_cl
         ),
         true,
     );
-    edit.invoke_cancel_clicked();
-    edit.invoke_apply_clicked();
+    edit.invoke_cancel();
+    edit.invoke_apply();
     assert_eq!(
         store.read(settings::get::<FileViewingStatistics>).unwrap(),
         saved,
@@ -773,14 +773,14 @@ fn preview_rejects_actual_reference_nonlocal_invalid_resolution_and_do_not_show_
         let first = file(&store, fixture["file"].as_str().unwrap());
         match event["case"].as_str().unwrap() {
             "nonlocal" => store
-                .write(|ctx| {
+                .write(move |ctx| {
                     ctx.conn()
                         .execute("DELETE FROM file_domain_current WHERE hash_id=?1", [first])?;
                     Ok(())
                 })
                 .unwrap(),
             "zero-width" => store
-                .write(|ctx| {
+                .write(move |ctx| {
                     ctx.conn()
                         .execute("UPDATE files SET width=0 WHERE hash_id=?1", [first])?;
                     Ok(())
@@ -795,7 +795,7 @@ fn preview_rejects_actual_reference_nonlocal_invalid_resolution_and_do_not_show_
                     .unwrap()
                     .mime;
                 store
-                    .write(|ctx| {
+                    .write(move |ctx| {
                         let mut settings: hydrus_core::media_viewer::MediaViewerSettings =
                             settings::get(ctx.conn())?;
                         let mut view = settings.view(mime);

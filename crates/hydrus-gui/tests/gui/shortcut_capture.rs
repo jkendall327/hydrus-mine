@@ -43,7 +43,7 @@ fn keyboard_capture_applies_through_owned_set_then_options_and_saved_main_execut
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
-    let before = bound.current.borrow().results().to_vec();
+    let before = bound.current.borrow().borrow().results().to_vec();
     assert!(before.len() > 1);
     let parent = options(&ui, &bound);
     parent.set_shortcuts_merge_numpad(false);
@@ -103,10 +103,10 @@ fn keyboard_capture_applies_through_owned_set_then_options_and_saved_main_execut
     ui.invoke_flip_synchronised();
     ui.invoke_search_edited("system:archive".into());
     ui.invoke_search_accepted();
-    assert_eq!(bound.current.borrow().results(), before);
+    assert_eq!(bound.current.borrow().borrow().results(), before);
     assert!(ui.invoke_shortcut_key("q".into(), 5));
-    assert!(bound.current.borrow().synchronised());
-    assert!(bound.current.borrow().results().len() < before.len());
+    assert!(bound.current.borrow().borrow().synchronised());
+    assert!(bound.current.borrow().borrow().results().len() < before.len());
     let parent = options(&ui, &bound);
     parent.invoke_shortcuts_clicked();
     let reopened = hydrus_gui::shortcut_windows::last_set().unwrap();
@@ -174,7 +174,7 @@ fn saved_mouse_and_keyboard_captures_feed_existing_viewer_navigation_and_guard_c
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
-    assert!(bound.current.borrow().results().len() > 1);
+    assert!(bound.current.borrow().borrow().results().len() > 1);
     let parent = options(&ui, &bound);
     let (sets, mouse) = add(&parent, 1);
     mouse.invoke_mouse_capture(1, 0, 1);
@@ -198,7 +198,7 @@ fn saved_mouse_and_keyboard_captures_feed_existing_viewer_navigation_and_guard_c
     assert_eq!(saved.sets["media_viewer"].len(), 3);
     ui.invoke_thumbnail_activated(0);
     let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
-    let count = bound.current.borrow().results().len();
+    let count = bound.current.borrow().borrow().results().len();
     assert_eq!(viewer.get_caption(), format!("1/{count}"));
     assert!(viewer.invoke_shortcut_mouse(1, 0, 1));
     assert_eq!(viewer.get_caption(), format!("2/{count}"));
@@ -258,11 +258,11 @@ fn accepted_main_close_retires_saved_shortcuts_even_after_show_and_fresh_binding
     );
     ui.invoke_answer(false);
     ui.invoke_flip_synchronised();
-    assert!(!bound.current.borrow().synchronised());
+    assert!(!bound.current.borrow().borrow().synchronised());
     assert!(ui.invoke_shortcut_key(slint::platform::Key::F7.into(), 0));
-    assert!(bound.current.borrow().synchronised());
+    assert!(bound.current.borrow().borrow().synchronised());
     ui.invoke_flip_synchronised();
-    assert!(!bound.current.borrow().synchronised());
+    assert!(!bound.current.borrow().borrow().synchronised());
     ui.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
     assert!(ui.window().is_visible());
@@ -270,17 +270,17 @@ fn accepted_main_close_retires_saved_shortcuts_even_after_show_and_fresh_binding
     assert!(!ui.window().is_visible());
     ui.show().unwrap();
     assert!(!ui.invoke_shortcut_key(slint::platform::Key::F7.into(), 0));
-    assert!(!bound.current.borrow().synchronised());
+    assert!(!bound.current.borrow().borrow().synchronised());
     assert_eq!(
         store.read(hydrus_store::settings::get::<Settings>).unwrap(),
         saved
     );
     let reopened = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_flip_synchronised();
-    assert!(!reopened.current.borrow().synchronised());
+    assert!(!reopened.current.borrow().borrow().synchronised());
     assert!(ui.invoke_shortcut_key(slint::platform::Key::F7.into(), 0));
-    assert!(reopened.current.borrow().synchronised());
-    assert!(!bound.current.borrow().synchronised());
+    assert!(reopened.current.borrow().borrow().synchronised());
+    assert!(!bound.current.borrow().borrow().synchronised());
 }
 #[test]
 fn raw_backend_key_location_and_modifier_identity_reach_the_same_capture_contract() {
