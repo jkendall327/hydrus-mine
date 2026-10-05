@@ -70,7 +70,7 @@ fn staged_exact_controls_import_cancel_invalid_rate_save_and_reopen_match_qt() {
 #[test]
 fn optional_last_hit_origin_preserves_actual_ranges_focus_and_repeated_navigation() {
     let fixture = hydrus_testkit::fixture_json("thumbnail_navigation.json");
-    let files: Vec<hydrus_core::HashId> = (0..20).collect();
+    let files: Vec<hydrus_core::HashId> = (0..20).map(hydrus_core::HashId).collect();
     for case in fixture["selections"].as_array().unwrap() {
         let enabled = case["enabled"].as_bool().unwrap();
         let mut selection = Selection::default();
@@ -81,7 +81,7 @@ fn optional_last_hit_origin_preserves_actual_ranges_focus_and_repeated_navigatio
             } else {
                 selection.hit(
                     &files,
-                    Some(step["index"].as_i64().unwrap()),
+                    Some(files[usize::try_from(step["index"].as_i64().unwrap()).unwrap()]),
                     false,
                     action == "shift",
                 );

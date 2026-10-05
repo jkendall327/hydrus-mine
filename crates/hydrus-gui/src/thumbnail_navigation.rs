@@ -6,6 +6,7 @@ use hydrus_store::{
     settings::{self, ThumbnailNavigation},
 };
 use slint::ComponentHandle as _;
+use std::sync::Arc;
 
 pub(crate) fn show(window: &MainWindow, store: &Store, span: u32) {
     let prefs: ThumbnailNavigation = store.read(settings::get).unwrap_or_default();
@@ -16,7 +17,7 @@ pub(crate) fn show(window: &MainWindow, store: &Store, span: u32) {
     ));
 }
 
-pub(crate) fn bind(window: &MainWindow, store: &Store) {
+pub(crate) fn bind(window: &MainWindow, store: &Arc<Store>) {
     window.on_thumbnail_scroll_target({
         let store = store.clone();
         move |top, span, offset, viewport, content| {
