@@ -50,6 +50,16 @@ fn normalise_idle_timeout(seconds: Option<u64>) -> Option<u64> {
 }
 
 macro_rules! settings {
+    (@save $conn:ident, $after:ident, $before:ident, gui) => {
+        if $after.gui != $before.gui {
+            let mut latest: GuiSettings = hydrus_store::settings::get($conn)?;
+            if $after.gui.confirm_exit != $before.gui.confirm_exit { latest.confirm_exit = $after.gui.confirm_exit; }
+            if $after.gui.application_display_name != $before.gui.application_display_name
+                && (!($before.gui.application_display_name.is_empty() && $after.gui.application_display_name == "hydrus client") || latest.application_display_name == $before.gui.application_display_name)
+            { latest.application_display_name.clone_from(&$after.gui.application_display_name); }
+            hydrus_store::settings::set($conn, &latest)?;
+        }
+    };
     (@save $conn:ident, $after:ident, $before:ident, page_layout) => {
         hydrus_store::page_layout::save_changed($conn, &$after.page_layout, &$before.page_layout)?;
     };
@@ -263,6 +273,7 @@ settings! {
     folders: FolderSettings,
     gallery: GalleryDefaults,
     gui: GuiSettings,
+    tag_search_activation: hydrus_store::settings::TagSearchActivation,
     gui_formatting: hydrus_store::settings::GuiFormatting,
     gui_sessions: hydrus_store::settings::GuiSessionSettings,
     gui_idle: hydrus_store::settings::GuiIdleSettings,
@@ -2286,6 +2297,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s| s.gui.confirm_exit,
                             |s, value| s.gui.confirm_exit = value,
                         ),
+                        check(
+                            "Switch to main window when creating new file search page from media viewer: ",
+                            |s| s.tag_search_activation.activate_main,
+                            |s, value| s.tag_search_activation.activate_main = value,
+                        ),
                     ],
                 ),
                 boxed(
@@ -4028,6 +4044,7 @@ pub fn applied(
                 option.label,
                 "EXPERIMENTAL: Minimum gallery importer update time:"
                     | "EXPERIMENTAL: Minimum watcher importer update time:"
+                    | "Application display name: "
             );
             if ((option.get)(settings) != *value || accept_displayed)
                 && let Err(why) = (option.set)(&mut out, value)

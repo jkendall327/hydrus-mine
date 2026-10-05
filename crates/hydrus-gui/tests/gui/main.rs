@@ -42,6 +42,7 @@ mod list_drag;
 mod login_script_controls;
 mod login_workflows;
 mod main_shortcuts;
+mod main_identity;
 mod manage_notes;
 mod manage_ratings;
 mod manage_tags;

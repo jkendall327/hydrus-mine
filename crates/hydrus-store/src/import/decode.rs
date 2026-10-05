@@ -538,6 +538,18 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         gui.confirm_exit = value;
     }
     insert_setting(&mut input, &gui)?;
+    let tag_search = crate::settings::TagSearchActivation {
+        activate_main: options
+            .as_ref()
+            .and_then(|options| {
+                options
+                    .booleans
+                    .get("activate_window_on_tag_search_page_activation")
+            })
+            .copied()
+            .unwrap_or(false),
+    };
+    insert_setting(&mut input, &tag_search)?;
     let mut rescue = crate::settings::WindowRescueSettings::default();
     if let Some(options) = &options {
         if let Some(&value) = options.booleans.get("disable_get_safe_position_test") {
@@ -4813,6 +4825,53 @@ mod tests {
             )],
         );
         assert!(decoded(source.path()));
+    }
+
+    /// Imported name bytes survive unchanged, independently of the activation flag.
+    #[test]
+    fn main_identity_import_preserves_raw_name_and_saved_tag_activation() {
+        use crate::settings::{GuiSettings, TagSearchActivation};
+        let source = hydrus_testkit::legacy_fixture("basic");
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "app_display_name"], [0, "hydrus client"]]"#,
+                    r#"[[0, "app_display_name"], [0, ""]]"#,
+                ),
+                (
+                    r#"[[0, "activate_window_on_tag_search_page_activation"], [0, false]]"#,
+                    r#"[[0, "activate_window_on_tag_search_page_activation"], [0, true]]"#,
+                ),
+            ],
+        );
+        let destination = tempfile::tempdir().unwrap();
+        crate::import::import_legacy(
+            source.path(),
+            &destination.path().join(crate::store::DB_FILE_NAME),
+        )
+        .unwrap();
+        for _ in 0..2 {
+            let store = crate::Store::open(destination.path()).unwrap();
+            assert_eq!(
+                store
+                    .read(crate::settings::get::<GuiSettings>)
+                    .unwrap()
+                    .application_display_name,
+                ""
+            );
+            assert!(
+                store
+                    .read(crate::settings::get::<TagSearchActivation>)
+                    .unwrap()
+                    .activate_main
+            );
+            drop(store);
+        }
+        assert_eq!(
+            serde_json::from_str::<TagSearchActivation>("{}").unwrap(),
+            TagSearchActivation::default()
+        );
     }
 
     /// Import keeps raw timing fields; only explicit Options acceptance normalizes them.

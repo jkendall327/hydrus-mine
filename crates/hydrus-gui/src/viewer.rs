@@ -175,6 +175,27 @@ impl MediaViewer {
         hover_tags(&self.store, self.current(), self.tag_display_type)
     }
 
+    /// Canonical identity alongside each rendered hover row; never parse its label.
+    pub(crate) fn tag_entries(&self) -> Vec<(String, String, [u8; 3])> {
+        let colours: hydrus_core::tag_presentation::NamespaceColours = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        crate::page::tag_rows(
+            &self.store,
+            &[self.current()],
+            None,
+            crate::page::TagList::MediaViewer,
+            self.tag_display_type,
+        )
+        .into_iter()
+        .map(|(tag, text)| {
+            let colour = colours.tag(&tag);
+            (tag, text, colour)
+        })
+        .collect()
+    }
+
     /// The current file's type and resolution, for zooming it.
     pub fn shape(&self) -> Option<(hydrus_core::Mime, Option<(u32, u32)>)> {
         shape(&self.store, self.current())
