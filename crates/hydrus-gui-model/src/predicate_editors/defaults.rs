@@ -240,11 +240,57 @@ impl Panel {
     }
 }
 impl Editor {
+    /// Reopen one represented system value in its matching populated panel.
+    /// Unsupported predicate families return none rather than a blank editor.
+    pub fn existing(predicate: &Predicate, context: &Context) -> Option<Self> {
+        for blank in super::Blank::ALL {
+            let mut editor = Self::new(blank, context);
+            for page in &editor.pages {
+                for panel in &page.panels {
+                    if !panel.kind.accepts(predicate) {
+                        continue;
+                    }
+                    if let (
+                        Kind::RatingLike(index)
+                        | Kind::RatingNumerical(index)
+                        | Kind::RatingIncDec(index),
+                        Predicate::System(SystemPredicate::Rating { service, .. }),
+                    ) = (panel.kind, predicate)
+                    {
+                        let represented = context.rating_services.get(index)?;
+                        let matches = match service {
+                            hydrus_core::search::predicate::ServiceRef::Key(key) => {
+                                *key == represented.key
+                            }
+                            hydrus_core::search::predicate::ServiceRef::Name(name) => {
+                                name.eq_ignore_ascii_case(&represented.name)
+                            }
+                        };
+                        if !matches {
+                            continue;
+                        }
+                    }
+                    let panel = panel.clone();
+                    editor.pages = vec![super::Page {
+                        name: String::new(),
+                        buttons: Vec::new(),
+                        panels: vec![panel],
+                        recent_types: Vec::new(),
+                    }];
+                    editor.note = None;
+                    editor.supplied = Some(predicate.clone());
+                    return Some(editor);
+                }
+            }
+        }
+        None
+    }
+
     /// Initialise every page before it is displayed, preserving built-in buttons.
     pub fn apply_defaults(&mut self, defaults: &CustomDefaults, context: &Context) {
         for page in &mut self.pages {
             for panel in &mut page.panels {
-                panel.initialise(None, defaults, context);
+                panel.initialise(self.supplied.as_ref(), defaults, context);
             }
         }
     }

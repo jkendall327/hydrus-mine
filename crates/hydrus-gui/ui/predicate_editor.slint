@@ -182,7 +182,8 @@ component DefaultsButton inherits Rectangle {
 }
 
 export component PredicateEditorWindow inherits Window {
-    title: "input predicate";
+    title: root.editing-existing ? "edit predicates" : "input predicate";
+    in property <bool> editing-existing;
     preferred-width: 1020px;
     background: Theme.window;
     in property <string> note;

@@ -6,6 +6,7 @@
 //! re-exports each module under its own name.
 
 pub mod about;
+pub mod active_predicates;
 pub mod archive_delete;
 pub mod audio;
 pub mod auto_resolution_preview;

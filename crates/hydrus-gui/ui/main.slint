@@ -10,6 +10,8 @@ export { NamespaceSortsWindow } from "namespace_sorts.slint";
 // (a sidebar with the search, and the thumbnail grid), and a status bar.
 
 import { PageSplitter } from "page_splitter.slint";
+import { ActivePredicates, ActivePredicateAction } from "active_predicates.slint";
+export { ActivePredicateAction } from "active_predicates.slint";
 import { Button, CheckBox, ComboBox, LineEdit, ListView, ProgressIndicator, ScrollView, VerticalBox } from "std-widgets.slint";
 import { ListText, Theme } from "theme.slint";
 import { WriteTagLineEdit } from "write_tag_line_edit.slint";
@@ -91,26 +93,6 @@ export { ExportFolderWindow, FolderActionRow, FoldersWindow, ImportFolderWindow 
 
 import { ThumbnailCellPaint, ThumbnailPaint, Thumbnail } from "thumbnail_paint.slint";
 export { ThumbIcon, ThumbRating, ThumbBox, Thumbnail, ThumbnailPaint } from "thumbnail_paint.slint";
-
-component Predicate inherits Rectangle {
-    in property <string> text;
-    in property <color> colour: Theme.text;
-    callback remove();
-    height: 22px;
-    background: touch.has-hover ? Theme.hover : transparent;
-    Text {
-        x: 4px;
-        text: root.text;
-        color: root.colour;
-        vertical-alignment: center;
-        overflow: elide;
-        width: parent.width - 8px;
-    }
-    touch := TouchArea {
-        // as in the reference, double-clicking a predicate removes it
-        double-clicked => { root.remove(); }
-    }
-}
 
 // the tags of the selected files (or of the page's), with their counts, as
 // the reference's "selection tags" box; double-clicking one searches for it
@@ -434,6 +416,8 @@ export component MainWindow inherits Window {
     in property <[string]> order-names;
     in property <int> order-index;
     in property <[ListText]> predicates;
+    in property <[bool]> active-predicate-selected;
+    in property <[ActivePredicateAction]> active-predicate-menu;
     in property <[ListText]> tags;
     in property <string> selection-tags-title: "selection tags";
     in property <[ListText]> suggestions;
@@ -453,6 +437,8 @@ export component MainWindow inherits Window {
     // must not depend on a deferred changed handler copying initial geometry.
     out property <length> search-tags-y: search-tags.absolute-position.y;
     out property <length> active-predicate-list-height: active-predicate-list.height;
+    out property <length> active-predicate-list-x: active-predicate-list.absolute-position.x + 3px;
+    out property <length> active-predicate-list-y: active-predicate-list.absolute-position.y + 3px;
     out property <length> autocomplete-anchor-x: search-anchor.absolute-position.x;
     out property <length> autocomplete-anchor-y: search-anchor.absolute-position.y + search-anchor.height;
     out property <length> autocomplete-anchor-width: search-sidebar.visible ? search-anchor.width : 0px;
@@ -690,6 +676,11 @@ export component MainWindow inherits Window {
     callback tag-menu-dismissed();
     callback tag-menu-answered(bool);
     callback remove-predicate(int);
+    callback active-predicates-refreshed();
+    callback active-predicate-clicked(int,bool,bool);
+    callback active-predicate-activated(bool,bool);
+    callback active-predicate-menu-opened(int);
+    callback active-predicate-menu-chosen(int);
     callback tag-activated(int);
     callback launch-filter();
     // the page chooser: its buttons' labels by number - 1 (as on a number
@@ -1291,19 +1282,16 @@ export component MainWindow inherits Window {
                         max-height: root.search-locked ? 0px : root.active-predicate-preferred-height;
                         min-height: root.search-locked ? 0px : 28px;
                         // Configured ideal height; additional predicates scroll.
-                        ScrollView {
+                        ActivePredicates {
                             x: 3px;
                             y: 3px;
                             width: parent.width - 6px;
                             height: parent.height - 6px;
-                            VerticalLayout {
-                                alignment: start;
-                                for predicate[i] in root.predicates: Predicate {
-                                    text: predicate.text;
-                                    colour: predicate.colour;
-                                    remove => { root.remove-predicate(i); }
-                                }
-                            }
+                            rows:root.predicates;selected:root.active-predicate-selected;actions:root.active-predicate-menu;
+                            clicked(i,ctrl,shift)=>{root.active-predicate-clicked(i,ctrl,shift);}
+                            activated(ctrl,shift)=>{root.active-predicate-activated(ctrl,shift);}
+                            menu-opened(i)=>{root.active-predicate-menu-opened(i);}
+                            menu-chosen(id)=>{root.active-predicate-menu-chosen(id);}
                         }
                     }
                     search-anchor := FocusScope {

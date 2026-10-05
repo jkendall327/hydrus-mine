@@ -2596,6 +2596,50 @@ impl SearchPage {
         }
     }
 
+    /// Active values retain their typed identity when an editor is reopened.
+    pub fn active_predicates(&self) -> &[Predicate] {
+        &self.predicates
+    }
+
+    /// Commit one captured active-list delta and refresh only if it changed.
+    pub fn edit_active_predicates(&mut self, original: &[Predicate], edited: &[Predicate]) -> bool {
+        self.change_active_predicates(|predicates, text| {
+            hydrus_gui_model::active_predicates::replace(predicates, original, edited, text)
+        })
+    }
+
+    /// Execute a captured search-submenu command on this page's own query.
+    pub fn active_predicate_command(
+        &mut self,
+        selected: &[Predicate],
+        command: hydrus_gui_model::active_predicates::Command,
+    ) -> bool {
+        self.change_active_predicates(|predicates, text| {
+            hydrus_gui_model::active_predicates::apply(predicates, selected, command, text)
+        })
+    }
+    fn change_active_predicates(
+        &mut self,
+        change: impl FnOnce(&mut Vec<Predicate>, &TextContext) -> bool,
+    ) -> bool {
+        if self.locked || self.note.is_some() {
+            return false;
+        }
+        let before = self.predicates.clone();
+        let text = self.text_context();
+        if !change(&mut self.predicates, &text) {
+            return false;
+        }
+        self.predicate_history
+            .borrow_mut()
+            .record(&before, &self.predicates);
+        self.sync_autocomplete_tags();
+        if self.synchronised {
+            self.search();
+        }
+        true
+    }
+
     /// A plain click on the file at `index`.
     pub fn select(&mut self, index: usize) {
         self.hit(Some(index), false, false);

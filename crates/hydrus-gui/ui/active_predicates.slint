@@ -1,0 +1,52 @@
+import { ScrollView } from "std-widgets.slint";
+import { ListText, Theme } from "theme.slint";
+export struct ActivePredicateAction { id: int, label: string }
+export component ActivePredicates inherits Rectangle {
+    in property <[ListText]> rows;
+    in property <[bool]> selected;
+    in property <[ActivePredicateAction]> actions;
+    callback clicked(int,bool,bool);
+    callback activated(bool,bool);
+    callback menu-opened(int);
+    callback menu-chosen(int);
+    property <bool> ctrl;
+    property <bool> shift;
+    forward-focus: keys;
+    keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Return { root.activated(event.modifiers.control,event.modifiers.shift);return accept; }
+            if event.text == Key.Delete { root.activated(false,false);return accept; }
+            reject
+        }
+        ScrollView {
+            VerticalLayout {
+                alignment: start;
+                for row[i] in root.rows: Rectangle {
+                    height: 22px;
+                    background: root.selected[i] ? Theme.accent : touch.has-hover ? Theme.hover : transparent;
+                    Text { x:4px; width:parent.width - 8px; text:row.text; color:row.colour;vertical-alignment:center;overflow:elide; }
+                    context := ContextMenuArea {
+                        enabled:false;
+                        Menu { title:"search";for action in root.actions: MenuItem {title:action.label;activated=>{root.menu-chosen(action.id);}} }
+                        touch := TouchArea {
+                            double-clicked => {
+                                // Qt reselects a Ctrl double-clicked row if the first click removed it.
+                                if root.ctrl && !root.selected[i] { root.clicked(i,true,false); }
+                                root.activated(root.ctrl,root.shift);
+                            }
+                            pointer-event(event) => {
+                                if event.kind == PointerEventKind.down && event.button == PointerEventButton.left {
+                                    keys.focus();root.ctrl=event.modifiers.control;root.shift=event.modifiers.shift;
+                                    root.clicked(i,root.ctrl,root.shift);
+                                }
+                                if event.kind == PointerEventKind.down && event.button == PointerEventButton.right {
+                                    keys.focus();root.menu-opened(i);context.show({x:self.mouse-x,y:self.mouse-y});
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

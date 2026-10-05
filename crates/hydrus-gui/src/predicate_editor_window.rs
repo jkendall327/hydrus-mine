@@ -225,6 +225,7 @@ pub(crate) fn open(
         .map_err(|e| e.to_string())?;
     editor.apply_defaults(&defaults, &context);
     let window = PredicateEditorWindow::new().map_err(|e| e.to_string())?;
+    window.set_editing_existing(editor.supplied.is_some());
     let closed = Rc::new(Cell::new(false));
     let valid: Rc<dyn Fn() -> bool> = Rc::new({
         let closed = closed.clone();

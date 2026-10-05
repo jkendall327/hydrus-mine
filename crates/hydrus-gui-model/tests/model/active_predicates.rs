@@ -1,0 +1,138 @@
+//! Replay actual selected active-list search commands and populated edit values.
+use hydrus_gui_model::{
+    active_predicates::{self, Command},
+    predicate_editors::{Blank, Context, Editor, defaults::CustomDefaults},
+};
+use hydrus_search::{Predicate, TextContext};
+use serde_json::Value;
+use std::collections::HashSet;
+fn decode(value: &Value) -> Predicate {
+    let object =
+        hydrus_legacy::serialisable::SerialisableObject::from_tuple_str(&value.to_string())
+            .unwrap();
+    hydrus_legacy::objects::predicates::predicate(&object).unwrap()
+}
+fn predicates(value: &Value) -> Vec<Predicate> {
+    value.as_array().unwrap().iter().map(decode).collect()
+}
+fn search(value: &Value) -> Vec<Predicate> {
+    predicates(&value["predicates"])
+}
+fn set(values: Vec<Predicate>) -> HashSet<Predicate> {
+    values.into_iter().collect()
+}
+fn menu_labels(value: &Value) -> Vec<String> {
+    value
+        .as_array()
+        .unwrap()
+        .iter()
+        .flat_map(|row| {
+            let mut labels = vec![row["label"].as_str().unwrap().to_owned()];
+            labels.extend(menu_labels(&row["children"]));
+            labels
+        })
+        .collect()
+}
+fn context() -> Context {
+    Context {
+        file_services: Vec::new(),
+        tag_services: Vec::new(),
+        url_classes: Vec::new(),
+        rating_services: Vec::new(),
+        today: hydrus_search::Clock::system().today(),
+    }
+}
+#[test]
+fn actual_qt_commands_preserve_inverse_add_vs_ctrl_toggle_and_exact_result_sets() {
+    let recording = hydrus_testkit::fixture_json("active_predicate_edit.json");
+    assert_eq!(recording["events"].as_array().unwrap().len(), 13);
+    for event in recording["events"].as_array().unwrap() {
+        let mut current = search(&event["before"]);
+        let selected = predicates(&event["selected"]);
+        let text = TextContext::default();
+        let editable = selected.len() == 1 && Editor::existing(&selected[0], &context()).is_some();
+        let actual_menu = menu_labels(&event["menu"]);
+        for (_, label) in active_predicates::menu(&selected, &current, &text, editable) {
+            assert!(actual_menu.contains(&label), "{}: {label}", event["name"]);
+        }
+        let command = match event["command"].as_str().unwrap() {
+            "remove_predicates" | "activate" => Command::Remove,
+            "add_inverse_predicates" => Command::Invert,
+            "ctrl_activate" => Command::InvertToggle,
+            "replace_or_predicate" => Command::ReplaceOr,
+            "dissolve_or_predicate" => Command::DissolveOr,
+            "add_namespace_predicate" => Command::Namespace,
+            "add_inverse_namespace_predicate" => Command::ExcludeNamespace,
+            "shift_activate" => Command::Edit,
+            unknown => panic!("unrecorded command {unknown}"),
+        };
+        if command == Command::Edit {
+            active_predicates::replace(
+                &mut current,
+                &selected,
+                &active_predicates::inverses(&selected, &text),
+                &text,
+            );
+        } else {
+            active_predicates::apply(&mut current, &selected, command, &text);
+        }
+        assert_eq!(
+            set(current),
+            set(search(&event["after"])),
+            "{}",
+            event["name"]
+        );
+    }
+}
+#[test]
+fn supplied_size_and_limit_reopen_exact_values_despite_saved_creation_defaults() {
+    let recording = hydrus_testkit::fixture_json("active_predicate_edit.json");
+    let context = context();
+    let defaults = CustomDefaults {
+        predicates: hydrus_search::parse_api_search(&serde_json::json!(["system:filesize > 99MB"]))
+            .unwrap(),
+    };
+    for edit in recording["edits"].as_array().unwrap() {
+        let name = edit["name"].as_str().unwrap();
+        let original = predicates(&edit["initial"]);
+        if !matches!(name, "size" | "limit") {
+            assert!(Editor::existing(&original[0], &context).is_none());
+            continue;
+        }
+        let mut editor = Editor::existing(&original[0], &context).unwrap();
+        editor.apply_defaults(&defaults, &context);
+        assert_eq!(editor.pages.len(), 1);
+        assert!(editor.pages[0].buttons.is_empty());
+        assert!(editor.pages[0].recent_types.is_empty());
+        let panel = &mut editor.pages[0].panels[0];
+        assert_eq!(panel.predicates(&context).unwrap(), original);
+        if name == "size" {
+            panel.choose(1, 4);
+            panel.set_number(2, 11);
+        }
+        assert_eq!(
+            set(panel.predicates(&context).unwrap()),
+            set(predicates(&edit["value"]))
+        );
+        let mut current = search(&edit["before"]);
+        let before = current.clone();
+        if edit["accepted"].as_bool().unwrap() {
+            active_predicates::replace(
+                &mut current,
+                &original,
+                &panel.predicates(&context).unwrap(),
+                &TextContext::default(),
+            );
+        }
+        assert_eq!(set(current.clone()), set(search(&edit["after"])));
+        if !edit["accepted"].as_bool().unwrap() {
+            assert_eq!(current, before);
+        }
+    }
+    let mut creation = Editor::new(Blank::Filesize, &context);
+    creation.apply_defaults(&defaults, &context);
+    assert_eq!(
+        creation.pages[0].panels[0].predicates(&context).unwrap(),
+        defaults.predicates
+    );
+}

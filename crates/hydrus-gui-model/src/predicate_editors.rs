@@ -1151,6 +1151,8 @@ pub struct Editor {
     pub blank: Blank,
     pub note: Option<String>,
     pub pages: Vec<Page>,
+    /// An existing active value takes precedence over saved creation defaults.
+    pub supplied: Option<Predicate>,
 }
 
 impl Editor {
@@ -1379,7 +1381,12 @@ impl Editor {
                 ..page
             })
             .collect();
-        Editor { blank, note, pages }
+        Editor {
+            blank,
+            note,
+            pages,
+            supplied: None,
+        }
     }
 }
 
