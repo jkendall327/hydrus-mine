@@ -48,6 +48,14 @@ pub struct Job {
     /// The download it is doing, if any (its network job).
     #[serde(default)]
     pub network_job: Option<crate::live::JobLive>,
+    #[serde(default)]
+    pub popup_clipboard: Option<(String, String)>,
+    #[serde(default)]
+    pub popup_yes_no_question: Option<([u8; 32], String)>,
+    #[serde(default)]
+    pub user_callable_label: Option<String>,
+    #[serde(default)]
+    pub action_owner: Option<[u8; 32]>,
 }
 
 impl Job {
@@ -75,6 +83,10 @@ impl Job {
             traceback: None,
             had_error: false,
             network_job: None,
+            popup_clipboard: None,
+            popup_yes_no_question: None,
+            user_callable_label: None,
+            action_owner: None,
         }
     }
 
@@ -269,12 +281,18 @@ pub fn clear_dismissed(conn: &Connection, now: i64) -> Result<()> {
 /// work they were showing has stopped (the reference's popups go with the
 /// client). Messages and finished work stay to be read.
 pub fn forget_unfinished(conn: &Connection, now: i64) -> Result<()> {
-    for job in all(conn, now)? {
+    for mut job in all(conn, now)? {
         if !job.done {
             conn.prepare_cached("DELETE FROM popups WHERE key = ?1")?
                 .execute([job.key.as_slice()])?;
+        } else if job.action_owner.take().is_some() {
+            job.popup_yes_no_question = None;
+            job.user_callable_label = None;
+            put(conn, &job)?;
         }
     }
+    conn.execute("DELETE FROM popup_action_requests", [])?;
+    conn.execute("DELETE FROM popup_action_owners", [])?;
     clear_dismissed(conn, now)
 }
 

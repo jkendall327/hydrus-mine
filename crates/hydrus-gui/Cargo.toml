@@ -41,6 +41,7 @@ slint = { version = "1.18", default-features = false, features = ["std", "compat
 slint-build = "1.18"
 
 [dev-dependencies]
+hydrus-download.workspace = true
 hydrus-legacy.workspace = true
 hydrus-testkit.workspace = true
 

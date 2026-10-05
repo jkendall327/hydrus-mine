@@ -43,6 +43,7 @@ pub fn to_json(job: &Job) -> Json {
     if job.attached_files_mergable {
         put("attached_files_mergable", json!(true));
     }
+    put("user_callable_label", json!(job.user_callable_label));
     put("api_data", job.api_data.clone().unwrap_or(Json::Null));
     if let Some((hashes, label)) = &job.files {
         put(

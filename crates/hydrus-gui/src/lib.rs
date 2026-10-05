@@ -98,6 +98,7 @@ pub mod parser_editors_window;
 mod parser_test_fetch;
 mod playback;
 pub mod png_export_window;
+mod popup_job_actions;
 mod popup_menu;
 mod popups;
 pub mod predicate_editor_window;
@@ -381,7 +382,7 @@ pub struct Bound {
     /// they change (held likewise).
     _menu_titles: Rc<slint::Timer>,
     /// Shows the popup messages (held likewise).
-    _popups: Rc<slint::Timer>,
+    _popups: popups::Binding,
     /// Automatic recognised URL imports while this desktop window is bound.
     pub clipboard_monitor: clipboard_monitor::Monitor,
     /// Historical autosaves, with real input activity and a bounded timer.

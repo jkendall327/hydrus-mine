@@ -512,6 +512,10 @@ export component MainWindow inherits Window {
     callback popup-cancel(int);
     callback popup-show-files(int);
     callback popup-copy-traceback(int);
+    callback popup-copy-payload(string,string,string);
+    callback popup-retire-owner();
+    callback popup-call(string,string,string);
+    callback popup-answer(string,string,string,string,bool);
     callback popups-dismiss-all();
 
     // the tabs of each notebook on the way to the page shown
@@ -2078,6 +2082,9 @@ export component MainWindow inherits Window {
             cancel(i) => { root.popup-cancel(i); }
             show-files(i) => { root.popup-show-files(i); }
             copy-traceback(i) => { root.popup-copy-traceback(i); }
+            copy-payload(key,owner,gui) => { root.popup-copy-payload(key,owner,gui); }
+            call(key,owner,gui) => { root.popup-call(key,owner,gui); }
+            answer(key,owner,question,gui,yes) => { root.popup-answer(key,owner,question,gui,yes); }
             dismiss-all => { root.popups-dismiss-all(); }
         }
         if root.question != "": Rectangle {

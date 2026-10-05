@@ -3364,3 +3364,14 @@ import time, adds the destination before removing the source, and keeps physical
 storage and inbox state. `local_transfer_confirmations.json` records actual Qt
 Options, the local action menu and real migration writes on a copied fixture DB;
 model/native regressions cover those decisions, persistence and stale owners.
+
+Popup jobs can expose a producer-labelled clipboard button, a repeatable callable
+button, and a yes/no question. Clipboard clicks read the current full payload,
+even while the displayed label awaits refresh. Questions hide while paused;
+answering finishes and dismisses the message and returns the Boolean to its live
+producer. Callable buttons remain usable after work finishes or is cancelled,
+until the message or producer is retired. Action replacements publish immediately.
+Native controls use job, producer, question and GUI incarnation tokens, so old
+rows, closed owners and prior bindings cannot affect successors. Accepted close
+retires pending GUI calls; an already committed answer survives GUI retirement.
+The actual Qt action recording is `oracle/fixtures/popup_actions.json`.

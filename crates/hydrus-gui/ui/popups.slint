@@ -9,6 +9,16 @@ import { Theme } from "theme.slint";
 import { DownloadControl, DownloadLine } from "importing.slint";
 
 export struct PopupData {
+    key: string,
+    gui-owner: string,
+    action-owner: string,
+    question-token: string,
+    has-question: bool,
+    question: string,
+    has-clipboard: bool,
+    clipboard: string,
+    has-callable: bool,
+    callable: string,
     title: string,
     text-1: string,
     // a gauge: shown, how far, or going with no end known
@@ -45,6 +55,9 @@ export component PopupStack inherits Rectangle {
     callback cancel(int);
     callback show-files(int);
     callback copy-traceback(int);
+    callback copy-payload(string,string,string);
+    callback call(string,string,string);
+    callback answer(string,string,string,string,bool);
     callback dismiss-all();
     // (as the reference's 56 characters)
     width: 400px;
@@ -96,13 +109,22 @@ export component PopupStack inherits Rectangle {
                         progress: popup.gauge-2;
                         going: popup.gauge-2-going;
                     }
+                    if popup.has-question: VerticalLayout {
+                        Text { text: popup.question; wrap: word-wrap; }
+                        HorizontalLayout {
+                            Button { text: "yes"; clicked => { root.answer(popup.key,popup.action-owner,popup.question-token,popup.gui-owner,true); } }
+                            Button { text: "no"; clicked => { root.answer(popup.key,popup.action-owner,popup.question-token,popup.gui-owner,false); } }
+                        }
+                    }
                     if popup.has-download: DownloadControl {
                         line: popup.download;
                     }
+                    if popup.has-clipboard: Button { text: popup.clipboard; clicked => { root.copy-payload(popup.key,popup.action-owner,popup.gui-owner); } }
                     if popup.files != "": Button {
                         text: popup.files;
                         clicked => { root.show-files(i); }
                     }
+                    if popup.has-callable: Button { text: popup.callable; clicked => { root.call(popup.key,popup.action-owner,popup.gui-owner); } }
                     if popup.traceback != "": Button {
                         text: card.traceback-shown ? "hide traceback" : "show traceback";
                         clicked => { card.traceback-shown = !card.traceback-shown; }
