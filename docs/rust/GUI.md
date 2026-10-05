@@ -3816,3 +3816,7 @@ period, while the daemon retains its existing 1024-pair/ten-minute pass schedule
 Native lifecycle/control/physical-file assertions and one Options image are
 authored for hosted validation. The actual Qt recording covers 16 controls, five
 real disposable-file passes and the actual event wake on shutdown.
+
+Already restored local media only clears a stale deferred queue; it performs no
+physical deletion and consumes no physical-pair wait. The reference clears those
+queues on local re-add before its deletion loop.

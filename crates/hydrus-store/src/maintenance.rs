@@ -184,8 +184,9 @@ fn purge_with_wait(
             report.files_deleted += step.files_deleted;
             report.thumbnails_deleted += step.thumbnails_deleted;
             report.kept += step.kept;
-            // This includes missing files/thumbnails and the final admitted pair.
-            if !wait(period) {
+            // Missing physical paths and the final attempted pair still wait.
+            // Retained local membership only cleans a stale queue, without IO.
+            if step.kept == 0 && !wait(period) {
                 break;
             }
         }
@@ -270,6 +271,51 @@ mod tests {
                 .query_map([local],|r|Ok((r.get::<_,HashId>(0)?,r.get::<_,Vec<u8>>(1)?,r.get::<_,u8>(2)?)))?.collect::<rusqlite::Result<Vec<_>>>()?;
             Ok(rows.into_iter().map(|(id,hash,mime)| (id,snap.storage.file_path(&Sha256::from_slice(&hash).unwrap(),Mime::from_code(mime).unwrap()).unwrap())).collect())
         }).unwrap()
+    }
+
+    #[test]
+    fn retained_local_queue_cleanup_does_not_wait_or_remove_physical_paths() {
+        let (_source, _directory, store, id, path) = owned_store();
+        let hash = store
+            .read(|conn| crate::master::hash(conn, id))
+            .unwrap()
+            .unwrap();
+        let thumbnail = store.snapshot().storage.thumbnail_path(&hash).unwrap();
+        let had_thumbnail = thumbnail.exists();
+        // Re-add normally removes this queue. An old inconsistent queue must
+        // still preserve restored media without becoming a physical attempt.
+        store
+            .write(move |ctx| {
+                ctx.conn().execute(
+                    "INSERT INTO deferred_physical_deletes(hash_id,queued_ms) VALUES(?,0)",
+                    [id],
+                )?;
+                Ok(())
+            })
+            .unwrap();
+        let report = purge_with_wait(&store, 100, &PurgeControl::default(), &mut |_| {
+            panic!("retained current media is not an attempted physical pair")
+        })
+        .unwrap();
+        assert_eq!(
+            report,
+            PurgeReport {
+                kept: 1,
+                ..PurgeReport::default()
+            }
+        );
+        assert!(path.is_file());
+        assert_eq!(thumbnail.exists(), had_thumbnail);
+        assert_eq!(
+            store
+                .read(|conn| Ok(conn.query_row(
+                    "SELECT count(*) FROM deferred_physical_deletes WHERE hash_id=?",
+                    [id],
+                    |row| row.get::<_, i64>(0),
+                )?))
+                .unwrap(),
+            0
+        );
     }
 
     #[test]
