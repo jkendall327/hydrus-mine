@@ -1366,7 +1366,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
     let retry_range = if advanced { (1, 30 * 86400) } else { (3, 1800) };
     let error_delay_min = if advanced { 1.0 } else { 600.0 };
     let page = |name, items| Page { name, items };
-    vec![
+    let mut pages = vec![
         page(
             "audio",
             vec![text(
@@ -1797,20 +1797,17 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         ),
         page(
             "open externally",
-            vec![boxed(
-                "URL calls and single file calls",
-                vec![opt(
-                    "open externally",
-                    Kind::OpenExternally,
-                    Rc::new(|s| Value::OpenExternally(s.open_externally.clone())),
-                    Rc::new(|s, value| match value {
-                        Value::OpenExternally(routing) => {
-                            s.open_externally = routing.clone();
-                            Ok(())
-                        }
-                        _ => Err(wrong("open externally")),
-                    }),
-                )],
+            vec![opt(
+                "open externally",
+                Kind::OpenExternally,
+                Rc::new(|s| Value::OpenExternally(s.open_externally.clone())),
+                Rc::new(|s, value| match value {
+                    Value::OpenExternally(routing) => {
+                        s.open_externally = routing.clone();
+                        Ok(())
+                    }
+                    _ => Err(wrong("open externally")),
+                }),
             )],
         ),
         page(
@@ -3721,7 +3718,10 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 |s, v| s.advanced.0 = v,
             )],
         ),
-    ]
+    ];
+    // Qt sorts all regular pages, then appends advanced after SortList.
+    pages.sort_by_key(|page| (page.name == "advanced", page.name));
+    pages
 }
 
 /// The options' values as the controls start with them.
@@ -3808,11 +3808,17 @@ pub struct Suggestion {
 pub fn suggestions(pages: &[Page]) -> Vec<Suggestion> {
     fn walk(items: &[Item], page: usize, name: &str, row: &mut usize, out: &mut Vec<Suggestion>) {
         for item in items {
-            let text = match item {
-                Item::Box(title, _) => title,
-                Item::Opt(option) => option.label,
+            // Compound native editors have an internal row label, while Qt's
+            // completer sees their actual embedded group-box titles.
+            let labels: &[&str] = match item {
+                Item::Box(title, _) => std::slice::from_ref(title),
+                Item::Opt(option) => match option.kind {
+                    Kind::OpenExternally => &["URL calls", "single file calls"],
+                    Kind::Shortcuts => &["built-in hydrus shortcut sets", "custom user sets"],
+                    _ => std::slice::from_ref(&option.label),
+                },
             };
-            if !text.is_empty() {
+            for text in labels.iter().filter(|text| !text.is_empty()) {
                 out.push(Suggestion {
                     text: format!("{text} ({name})"),
                     page,
