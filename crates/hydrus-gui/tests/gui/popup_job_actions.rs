@@ -19,6 +19,11 @@ fn current(store: &hydrus_store::Store) -> popups::Job {
 fn clipboard_and_repeatable_current_callable_reach_real_native_controls_and_store_effects() {
     let (_directories, store) = crate::subscriptions::store();
     let windows = headless::init();
+    hydrus_gui::set_clipper(|clip| {
+        if let hydrus_gui::Clip::Text(text) = clip {
+            headless::set_clipboard_text(text);
+        }
+    });
     let producer = Working::new(&store, "live actions", true);
     let fixture = hydrus_testkit::fixture_json("popup_actions.json");
     let payload = fixture["payload"].as_str().unwrap().to_owned();
@@ -428,8 +433,7 @@ fn long_question_and_action_controls_render_with_fixed_and_narrow_popup_caps() {
         assert_eq!(i64::from(row.width_characters), characters);
         assert_eq!(row.fixed_width, fixed);
         let native = windows.get(0).unwrap();
-        headless::render(&native, 1280, 1200);
-        let pixels = headless::render(&native, 1280, 1200);
+        let pixels = crate::popup_width::render_settled(&ui, &native, 1280, 1200);
         let width = ui.get_popup_card_widths().row_data(0).unwrap();
         let cap = ui.get_popup_card_caps().row_data(0).unwrap();
         assert!(

@@ -3488,6 +3488,10 @@ rows, closed owners and prior bindings cannot affect successors. Accepted close
 retires pending GUI calls; an already committed answer survives GUI retirement.
 The actual Qt action recording is `oracle/fixtures/popup_actions.json`.
 
+Popup geometry reports include the job and GUI incarnation alongside their
+measured width. Newly laid-out cards report their initial frame, and moved rows
+report again; retired or displaced cards cannot overwrite successor measurements.
+
 Main-window menu titles refresh after page changes while the window is live.
 Releasing the window and its binding also releases its pages and thumbnail
 loaders, including windows opened by native headless tests.

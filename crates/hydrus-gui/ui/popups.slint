@@ -61,7 +61,7 @@ export component PopupStack inherits Rectangle {
     callback call(string,string,string);
     callback answer(string,string,string,string,bool);
     callback dismiss-all();
-    callback card-measured(int,length,length);
+    callback card-measured(int,string,string,length,length);
     // Bold title font, as Qt's character-width conversion. Slint exposes text
     // measurement rather than Qt's averageCharWidth; approximate its padded
     // average using the same character sample, with native font metrics.
@@ -86,10 +86,20 @@ export component PopupStack inherits Rectangle {
             for popup[i] in root.popups: card := Rectangle {
                 clip: true;
                 property <length> cap: round(popup.width-characters * root.character-width / 1px) * 1px;
-                property <length> measured-width: self.width;
-                property <length> measured-cap: self.cap;
-                changed measured-width => { root.card-measured(i,self.width,self.cap); }
-                changed measured-cap => { root.card-measured(i,self.width,self.cap); }
+                property <{index:int,key:string,owner:string,w:length,cap:length}> frame: {index:i,key:popup.key,owner:popup.gui-owner,w:self.width,cap:self.cap};
+                // Repeated cards may begin with their final layout, without a
+                // changed notification. Report that first frame and carry the
+                // job identity when a surviving card moves to another row.
+                property <bool> measurement-pending: true;
+                changed frame => { card.measurement-pending = true; }
+                Timer {
+                    interval: 1ms;
+                    running: card.measurement-pending;
+                    triggered => {
+                        card.measurement-pending = false;
+                        root.card-measured(card.frame.index,card.frame.key,card.frame.owner,card.frame.w,card.frame.cap);
+                    }
+                }
                 max-width: self.cap;
                 min-width: popup.fixed-width ? self.cap : (popup.has-gauge-1 || popup.has-gauge-2 ? self.cap * 0.9 + 4px : 0px);
                 preferred-width: popup.fixed-width ? self.cap : min(self.cap,body.preferred-width);
