@@ -11,7 +11,98 @@ use hydrus_store::Store;
 
 use crate::MainWindow;
 
-const QUESTION: &str = "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)";
+use hydrus_gui_model::shutdown_work::{self, Decision, ExitMode};
+
+#[cfg(test)]
+const QUESTION: &str = ExitMode::Exit.question();
+
+thread_local! {
+    /// How the next close exits (File > restart, exit/force maintenance).
+    static MODE: Cell<ExitMode> = const { Cell::new(ExitMode::Exit) };
+    /// The "Maintenance is due" question, kept while shown.
+    static MAINTENANCE: std::cell::RefCell<Option<crate::SessionDialog>> =
+        const { std::cell::RefCell::new(None) };
+}
+
+/// Whether the client should start again once it has exited.
+pub static RESTART: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+
+/// Make the next close request exit this way (reset if it is backed out of).
+pub fn set_mode(mode: ExitMode) {
+    MODE.with(|m| m.set(mode));
+}
+
+/// Shutdown maintenance before `then`: run it, ask first, or skip it.
+fn shutdown_work(store: &Arc<Store>, mode: ExitMode, then: Rc<dyn Fn()>) {
+    let now = hydrus_core::time::TimestampMs::now().secs();
+    let settings: hydrus_store::settings::ShutdownWork =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    let work = shutdown_work::work_due(store);
+    let run = {
+        let store = store.clone();
+        move || {
+            if let Err(error) = shutdown_work::run(&store, now) {
+                eprintln!("shutdown maintenance failed: {error}");
+            }
+        }
+    };
+    match shutdown_work::decide(&settings, mode, now, &work) {
+        Decision::Skip => then(),
+        Decision::Run => {
+            run();
+            then();
+        }
+        Decision::Ask(text) => {
+            let Ok(dialog) = crate::SessionDialog::new() else {
+                then();
+                return;
+            };
+            dialog.set_window_title(shutdown_work::ASK_TITLE.into());
+            dialog.set_message(text.into());
+            let answered = Rc::new(Cell::new(false));
+            let answer = Rc::new({
+                let weak = dialog.as_weak();
+                let store = store.clone();
+                let answered = answered.clone();
+                move |yes: bool| {
+                    if answered.replace(true) {
+                        return;
+                    }
+                    if let Some(dialog) = weak.upgrade() {
+                        let _ = dialog.hide();
+                    }
+                    if yes {
+                        run();
+                    } else if let Err(error) = shutdown_work::register(&store, now) {
+                        // (if they said no, don't keep asking)
+                        eprintln!("could not register shutdown maintenance: {error}");
+                    }
+                    then();
+                }
+            });
+            dialog.on_answered({
+                let answer = answer.clone();
+                move |yes| answer(yes)
+            });
+            dialog.on_cancelled({
+                let answer = answer.clone();
+                move || answer(false)
+            });
+            let timer = slint::Timer::default();
+            timer.start(slint::TimerMode::SingleShot, Duration::from_secs(15), {
+                let answer = answer.clone();
+                move || answer(false)
+            });
+            if dialog.show().is_ok() {
+                // (the timer lives as long as the question)
+                std::mem::forget(timer);
+                MAINTENANCE.with(|m| *m.borrow_mut() = Some(dialog));
+            } else {
+                answer(false);
+            }
+        }
+    }
+}
 type Ask = Rc<dyn Fn(String, Rc<dyn Fn()>)>;
 
 pub(crate) fn bind(
@@ -53,9 +144,25 @@ fn bind_with_timeout(
             else {
                 return;
             };
-            crate::windows::save_named(window.window(), &store, "main_gui");
-            finished();
-            let _ = window.hide();
+            let mode = MODE.with(|m| m.replace(ExitMode::Exit));
+            let weak = window.as_weak();
+            let finished = finished.clone();
+            let store_after = store.clone();
+            shutdown_work(
+                &store,
+                mode,
+                Rc::new(move || {
+                    let Some(window) = weak.upgrade() else {
+                        return;
+                    };
+                    crate::windows::save_named(window.window(), &store_after, "main_gui");
+                    if mode == ExitMode::Restart {
+                        RESTART.store(true, std::sync::atomic::Ordering::SeqCst);
+                    }
+                    finished();
+                    let _ = window.hide();
+                }),
+            );
         }
     });
     window.window().on_close_requested({
@@ -72,8 +179,9 @@ fn bind_with_timeout(
             let confirm = store
                 .read(hydrus_store::settings::get::<hydrus_store::settings::GuiSettings>)
                 .is_ok_and(|settings| settings.confirm_exit);
+            let question = MODE.with(Cell::get).question();
             if confirm {
-                ask(QUESTION.into(), close.clone());
+                ask(question.into(), close.clone());
                 timer.start(slint::TimerMode::SingleShot, timeout, {
                     let weak = weak.clone();
                     let active = active.clone();
@@ -81,7 +189,7 @@ fn bind_with_timeout(
                         if active.get()
                             && let Some(window) = weak.upgrade()
                             && window.window().is_visible()
-                            && window.get_question() == QUESTION
+                            && window.get_question() == question
                         {
                             window.invoke_answer(true);
                         }

@@ -240,6 +240,12 @@ macro_rules! settings {
             if $after.gui_idle.enabled != $before.gui_idle.enabled {
                 latest.enabled = $after.gui_idle.enabled;
             }
+            if $after.gui_idle.busy_cpu_percent != $before.gui_idle.busy_cpu_percent {
+                latest.busy_cpu_percent = $after.gui_idle.busy_cpu_percent;
+            }
+            if $after.gui_idle.busy_cpu_count != $before.gui_idle.busy_cpu_count {
+                latest.busy_cpu_count = $after.gui_idle.busy_cpu_count;
+            }
             for (field, value, before) in [
                 (&mut latest.user_seconds, $after.gui_idle.user_seconds, $before.gui_idle.user_seconds),
                 (&mut latest.mouse_seconds, $after.gui_idle.mouse_seconds, $before.gui_idle.mouse_seconds),
@@ -321,6 +327,7 @@ settings! {
     gui_formatting: hydrus_store::settings::GuiFormatting,
     gui_sessions: hydrus_store::settings::GuiSessionSettings,
     gui_idle: hydrus_store::settings::GuiIdleSettings,
+    shutdown_work: hydrus_store::settings::ShutdownWork,
     info_line: InfoLineSettings,
     import_options: hydrus_core::import_options::ImportOptionsManager,
     import_options_ui: hydrus_store::settings::ImportOptionsUiSettings,
@@ -2830,85 +2837,126 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             vec![
                 boxed(
                     "when to run high cpu jobs",
-                    vec![boxed(
-                        "idle",
-                        vec![
-                            check(
-                                "Run maintenance jobs when the client is idle and the system is not otherwise busy: ",
-                                |s| s.gui_idle.enabled,
-                                |s, v| s.gui_idle.enabled = v,
-                            ),
-                            enabled(
-                                noneable(
-                                    "Permit idle mode if no general browsing activity has occurred in the past: ",
-                                    none("ignore normal browsing", 1, (1, 1000), Some("minutes")),
-                                    |settings| {
-                                        settings
-                                            .gui_idle
-                                            .user_seconds
-                                            .map(|seconds| (seconds / 60).clamp(1, 1000) as i64)
-                                    },
-                                    |settings, value| {
-                                        settings.gui_idle.user_seconds =
-                                            value.map(|minutes| minutes as u64 * 60);
-                                    },
+                    vec![
+                        boxed(
+                            "idle",
+                            vec![
+                                check(
+                                    "Run maintenance jobs when the client is idle and the system is not otherwise busy: ",
+                                    |s| s.gui_idle.enabled,
+                                    |s, v| s.gui_idle.enabled = v,
                                 ),
-                                |settings| settings.gui_idle.enabled,
-                            ),
-                            enabled(
-                                noneable(
-                                    "Permit idle mode if your mouse cursor has not been moved in the past: ",
-                                    none("ignore mouse movements", 1, (1, 1000), Some("minutes")),
-                                    |settings| {
-                                        settings
-                                            .gui_idle
-                                            .mouse_seconds
-                                            .map(|seconds| (seconds / 60).clamp(1, 1000) as i64)
-                                    },
-                                    |settings, value| {
-                                        settings.gui_idle.mouse_seconds =
-                                            value.map(|minutes| minutes as u64 * 60);
-                                    },
+                                enabled(
+                                    noneable(
+                                        "Permit idle mode if no general browsing activity has occurred in the past: ",
+                                        none(
+                                            "ignore normal browsing",
+                                            1,
+                                            (1, 1000),
+                                            Some("minutes"),
+                                        ),
+                                        |settings| {
+                                            settings
+                                                .gui_idle
+                                                .user_seconds
+                                                .map(|seconds| (seconds / 60).clamp(1, 1000) as i64)
+                                        },
+                                        |settings, value| {
+                                            settings.gui_idle.user_seconds =
+                                                value.map(|minutes| minutes as u64 * 60);
+                                        },
+                                    ),
+                                    |settings| settings.gui_idle.enabled,
                                 ),
-                                |settings| settings.gui_idle.enabled,
-                            ),
-                            enabled(
-                                noneable(
-                                    "Permit idle mode if no Client API requests in the past: ",
-                                    none("ignore client api", 1, (1, 1000), Some("minutes")),
-                                    |settings| {
-                                        settings
-                                            .gui_idle
-                                            .api_seconds
-                                            .map(|seconds| (seconds / 60).clamp(1, 1000) as i64)
-                                    },
-                                    |settings, value| {
-                                        settings.gui_idle.api_seconds =
-                                            value.map(|minutes| minutes as u64 * 60);
-                                    },
+                                enabled(
+                                    noneable(
+                                        "Permit idle mode if your mouse cursor has not been moved in the past: ",
+                                        none(
+                                            "ignore mouse movements",
+                                            1,
+                                            (1, 1000),
+                                            Some("minutes"),
+                                        ),
+                                        |settings| {
+                                            settings
+                                                .gui_idle
+                                                .mouse_seconds
+                                                .map(|seconds| (seconds / 60).clamp(1, 1000) as i64)
+                                        },
+                                        |settings, value| {
+                                            settings.gui_idle.mouse_seconds =
+                                                value.map(|minutes| minutes as u64 * 60);
+                                        },
+                                    ),
+                                    |settings| settings.gui_idle.enabled,
                                 ),
-                                |settings| settings.gui_idle.enabled,
-                            ),
-                            enabled(
-                                int(
-                                    "Consider the system busy if CPU usage is above: ",
-                                    (5, 99),
-                                    |s| i64::from(s.gui_idle.busy_cpu_percent),
-                                    |s, v| s.gui_idle.busy_cpu_percent = v as u32,
+                                enabled(
+                                    noneable(
+                                        "Permit idle mode if no Client API requests in the past: ",
+                                        none("ignore client api", 1, (1, 1000), Some("minutes")),
+                                        |settings| {
+                                            settings
+                                                .gui_idle
+                                                .api_seconds
+                                                .map(|seconds| (seconds / 60).clamp(1, 1000) as i64)
+                                        },
+                                        |settings, value| {
+                                            settings.gui_idle.api_seconds =
+                                                value.map(|minutes| minutes as u64 * 60);
+                                        },
+                                    ),
+                                    |settings| settings.gui_idle.enabled,
                                 ),
-                                |s| s.gui_idle.enabled && s.gui_idle.busy_cpu_count.is_some(),
-                            ),
-                            enabled(
-                                noneable(
-                                    "% on ",
-                                    none("ignore cpu usage", 1, (1, 64), Some("cores")),
-                                    |s| s.gui_idle.busy_cpu_count.map(i64::from),
-                                    |s, v| s.gui_idle.busy_cpu_count = v.map(|n| n as u32),
+                                enabled(
+                                    int(
+                                        "Consider the system busy if CPU usage is above: ",
+                                        (5, 99),
+                                        |s| i64::from(s.gui_idle.busy_cpu_percent),
+                                        |s, v| s.gui_idle.busy_cpu_percent = v as u32,
+                                    ),
+                                    |s| s.gui_idle.enabled && s.gui_idle.busy_cpu_count.is_some(),
                                 ),
-                                |settings| settings.gui_idle.enabled,
-                            ),
-                        ],
-                    )],
+                                enabled(
+                                    noneable(
+                                        "% on ",
+                                        none("ignore cpu usage", 1, (1, 64), Some("cores")),
+                                        |s| s.gui_idle.busy_cpu_count.map(i64::from),
+                                        |s, v| s.gui_idle.busy_cpu_count = v.map(|n| n as u32),
+                                    ),
+                                    |settings| settings.gui_idle.enabled,
+                                ),
+                            ],
+                        ),
+                        boxed(
+                            "shutdown",
+                            vec![
+                                choice(
+                                    "Run jobs on shutdown: ",
+                                    &crate::shutdown_work::ACTIONS,
+                                    |s| usize::from(s.shutdown_work.action.min(2)),
+                                    |s, i| s.shutdown_work.action = i as u8,
+                                ),
+                                enabled(
+                                    duration(
+                                        "Only run shutdown jobs once per: ",
+                                        time(&[Unit::Days, Unit::Hours, Unit::Minutes], 60.0),
+                                        |s| s.shutdown_work.period_seconds as f64,
+                                        |s, v| s.shutdown_work.period_seconds = whole(v),
+                                    ),
+                                    |s| s.shutdown_work.action != 0,
+                                ),
+                                enabled(
+                                    int(
+                                        "Max number of minutes to run shutdown jobs: ",
+                                        (1, 1440),
+                                        |s| i64::from(s.shutdown_work.max_minutes),
+                                        |s, v| s.shutdown_work.max_minutes = v as u32,
+                                    ),
+                                    |s| s.shutdown_work.action != 0,
+                                ),
+                            ],
+                        ),
+                    ],
                 ),
                 boxed(
                     "file maintenance",

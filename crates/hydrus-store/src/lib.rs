@@ -74,6 +74,7 @@ pub mod thumbnail_appearance;
 pub mod thumbnail_preview_selection;
 pub mod transfer;
 pub mod trash;
+pub mod undo;
 pub mod urls;
 pub mod viewing_maintenance;
 pub mod watchers;

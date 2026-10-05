@@ -549,6 +549,25 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &idle)?;
+    let mut shutdown = crate::settings::ShutdownWork::default();
+    if let Some(action) = legacy_options
+        .get("idle_shutdown")
+        .and_then(hydrus_legacy::objects::YamlValue::as_i64)
+    {
+        shutdown.action = u8::try_from(action).unwrap_or(2);
+    }
+    if let Some(minutes) = legacy_options
+        .get("idle_shutdown_max_minutes")
+        .and_then(hydrus_legacy::objects::YamlValue::as_i64)
+    {
+        shutdown.max_minutes = u32::try_from(minutes).unwrap_or(5);
+    }
+    if let Some(options) = &options
+        && let Some(&period) = options.integers.get("shutdown_work_period")
+    {
+        shutdown.period_seconds = u64::try_from(period).unwrap_or(86_400);
+    }
+    insert_setting(&mut input, &shutdown)?;
     let mut backups = crate::session_backups::SessionBackupSettings::default();
     if let Some(options) = &options
         && let Some(value) = options.integers.get("number_of_gui_session_backups")

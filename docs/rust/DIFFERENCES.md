@@ -3422,3 +3422,20 @@ manual save-last-session action and wider debug GUI/style families remain unclai
   due work at once, so other files already queued for the same job type may run
   with them. There is no popup of its progress, and the focused file isn't
   cleared from the preview first.
+
+## Shutdown maintenance
+
+- The shutdown work is analyzing tables without statistics; there is no
+  repository processing (remote repositories are out of scope). It runs on the
+  UI thread before the window closes, without the reference's exit splash or
+  its cancel button.
+- Restart is offered on every platform (the reference hides it for frozen
+  Linux builds).
+
+## Content undo
+
+- Only archive/inbox (thumbnail, viewer and filter actions through
+  `media_actions`) and Manage Tags' applied changes are recorded; tag changes
+  made elsewhere (write-tag menus, filename tagging, migration) are not yet.
+  A content package listing several actions or services names them sorted,
+  where the reference's set order varies.

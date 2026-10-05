@@ -54,8 +54,9 @@ fn ask(message: &str, yes: impl Fn() + 'static) {
 /// Run `job` on `files` now, off the UI thread, then tell `changed`.
 fn run_now(store: &Arc<Store>, files: Vec<HashId>, job: JobType, changed: Rc<dyn Fn()>) {
     let store = store.clone();
-    let changed = slint::SendWrapper::new(changed);
-    let _ = std::thread::Builder::new()
+    let done = Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let finished = done.clone();
+    let spawned = std::thread::Builder::new()
         .name("thumbnail-maintenance".into())
         .spawn(move || {
             let n = files.len() as u64;
@@ -70,8 +71,30 @@ fn run_now(store: &Arc<Store>, files: Vec<HashId>, job: JobType, changed: Rc<dyn
             if let Err(error) = ran {
                 eprintln!("could not run file maintenance: {error}");
             }
-            let _ = slint::invoke_from_event_loop(move || (changed.take())());
+            finished.store(true, std::sync::atomic::Ordering::SeqCst);
         });
+    if spawned.is_err() {
+        return;
+    }
+    // (the page is told once the work is done)
+    let timer: Rc<RefCell<Option<slint::Timer>>> =
+        Rc::new(RefCell::new(Some(slint::Timer::default())));
+    let held = timer.clone();
+    if let Some(t) = timer.borrow().as_ref() {
+        t.start(
+            slint::TimerMode::Repeated,
+            std::time::Duration::from_millis(250),
+            move || {
+                if done.load(std::sync::atomic::Ordering::SeqCst) {
+                    changed();
+                    // (stopped, not dropped, inside its own callback)
+                    if let Some(t) = held.borrow().as_ref() {
+                        t.stop();
+                    }
+                }
+            },
+        );
+    }
 }
 
 /// Ask about, then run or schedule, `job` on the selected `files`.

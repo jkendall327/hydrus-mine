@@ -4203,3 +4203,22 @@ over 50 files) and runs on the selected files off the UI thread, or schedules
 them in the file maintenance queue. Clearing asks, then deletes only the selected
 files' viewing records. The labels and descriptions are dumped by
 `oracle/dump_regen_jobs.py` and checked in `tests/model/thumbnail_maintenance.rs`.
+
+## Shutdown maintenance, restart and exit/force maintenance
+
+Options > maintenance and processing > shutdown sets whether to run jobs on
+shutdown ("do not run…", "…if needed", "…if needed, but ask first"), at most how
+often and for how many minutes. On exit, when due, the client runs the work or
+asks "Maintenance is due" (auto-no in 15 seconds; no stops it asking until the
+next period) listing the outstanding jobs. The work analyzes the tables that have
+no planner statistics, within the minutes allowed. File > exit/force maintenance
+runs it whatever the schedule, and File > restart asks the restart question,
+exits, and starts the client again once it has let go of the store.
+
+## Content undo and redo
+
+The undo menu now starts with "undo …" and "redo …" for the client's content
+changes: archive/inbox and Manage Tags' applied tag changes, named as the
+reference names them ("undo archive 2 files", "redo my tags->add tags for 3
+files"). Undoing writes the inverse change, redoing the change again; a new
+change forgets what could be redone. `tests/model/content_undo.rs` covers it.

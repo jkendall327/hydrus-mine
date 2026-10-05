@@ -101,6 +101,16 @@ fn main() -> Result<()> {
     // (as hydrus stops its downloads on closing)
     client.daemon.borrow_mut().stop(daemon::GRACE);
     run.finish().context("recording a clean client shutdown")?;
+    drop(client);
+    drop(_open);
+    // File > restart: start again, now this client has let go of the store
+    if hydrus_gui::client_exit::RESTART.load(std::sync::atomic::Ordering::SeqCst) {
+        let exe = std::env::current_exe().context("finding this program to restart it")?;
+        std::process::Command::new(exe)
+            .args(std::env::args_os().skip(1))
+            .spawn()
+            .context("restarting the client")?;
+    }
     Ok(())
 }
 

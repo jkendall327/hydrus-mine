@@ -30,7 +30,7 @@ mod auto_resolution_review_window;
 mod auto_resolution_rules_window;
 mod autocomplete_tabs;
 mod checker_options_window;
-mod client_exit;
+pub mod client_exit;
 pub mod clipboard_monitor;
 pub mod command_palette_window;
 pub mod daemon;

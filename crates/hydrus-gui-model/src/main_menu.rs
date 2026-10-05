@@ -220,9 +220,16 @@ pub enum Command {
     OpenInstallDirectory,
     OpenDatabaseDirectory,
     OpenQuickExportDirectory,
+    /// Exit, then start again.
+    Restart,
+    /// Exit, running shutdown maintenance whether due or not.
+    ExitForceMaintenance,
     Exit,
     /// Forget the closed pages, asking first.
     ClearClosedPages,
+    /// Undo or redo the latest content change.
+    UndoContent,
+    RedoContent,
     /// Toggle one historical predicate on the currently visible media page.
     UndoSearch {
         kind: crate::predicate_history::Kind,
@@ -367,6 +374,9 @@ pub struct Facts {
     pub clipboard_urls: hydrus_store::settings::ClipboardUrls,
     /// The repositories, and their pending content (none: no repositories).
     pub pending: Option<Vec<Pending>>,
+    /// The content undo and redo entries' texts, where there are any.
+    pub undo: Option<String>,
+    pub redo: Option<String>,
 }
 
 impl Facts {
@@ -414,7 +424,10 @@ impl Facts {
                     })
                     .collect()
             });
+            let (undo, redo) = store.undo_log().strings(services);
             Ok(Facts {
+                undo,
+                redo,
                 darkmode: hydrus_store::gui_colours::load(conn)?.current == 1,
                 advanced,
                 folders: settings::get(conn)?,
@@ -619,8 +632,8 @@ fn file_menu(facts: &Facts) -> Entry {
             SEP,
             item(dots("options"), Command::Options),
             SEP,
-            todo("restart"),
-            todo("exit/force maintenance"),
+            item("restart", Command::Restart),
+            item("exit/force maintenance", Command::ExitForceMaintenance),
             item("exit", Command::Exit),
         ],
     )
@@ -632,6 +645,8 @@ fn undo_menu(facts: &Facts) -> Entry {
     if facts.closed_pages.is_empty()
         && facts.search_added.is_empty()
         && facts.search_removed.is_empty()
+        && facts.undo.is_none()
+        && facts.redo.is_none()
     {
         // (as hydrus leaves it: disabled, never filled)
         return Entry::Menu {
@@ -655,6 +670,13 @@ fn undo_menu(facts: &Facts) -> Entry {
         };
     }
     let mut entries = Vec::new();
+    if let Some(undo) = &facts.undo {
+        entries.push(item(undo.clone(), Command::UndoContent));
+    }
+    if let Some(redo) = &facts.redo {
+        entries.push(item(redo.clone(), Command::RedoContent));
+    }
+    entries.push(SEP);
     if !facts.closed_pages.is_empty() {
         let mut closed = vec![item(dots("clear all"), Command::ClearClosedPages), SEP];
         for (index, name) in facts.closed_pages.iter().enumerate().rev() {

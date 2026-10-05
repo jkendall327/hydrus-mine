@@ -172,6 +172,46 @@ pub fn analyze(conn: &Connection, full: bool) -> Result<()> {
     Ok(())
 }
 
+/// Tables with no planner statistics yet (`GetTableNamesDueAnalysis`).
+pub fn tables_due_analysis(conn: &Connection) -> Result<Vec<String>> {
+    let has_stats = conn
+        .query_row(
+            "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'sqlite_stat1'",
+            [],
+            |_| Ok(()),
+        )
+        .is_ok();
+    let sql = if has_stats {
+        "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
+         AND sql NOT LIKE 'CREATE VIRTUAL%'
+         AND name NOT IN (SELECT tbl FROM sqlite_stat1) ORDER BY name"
+    } else {
+        "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
+         AND sql NOT LIKE 'CREATE VIRTUAL%' ORDER BY name"
+    };
+    Ok(conn
+        .prepare(sql)?
+        .query_map([], |r| r.get(0))?
+        .collect::<rusqlite::Result<Vec<String>>>()?)
+}
+
+/// Analyze these tables one at a time until `stop` passes; returns how many.
+pub fn analyze_tables(
+    conn: &Connection,
+    tables: &[String],
+    stop: std::time::Instant,
+) -> Result<usize> {
+    let mut done = 0;
+    for table in tables {
+        if std::time::Instant::now() >= stop {
+            break;
+        }
+        conn.execute_batch(&format!("ANALYZE \"{}\";", table.replace('"', "\"\"")))?;
+        done += 1;
+    }
+    Ok(done)
+}
+
 /// Delete file-URL rows whose URL no longer exists; returns how many.
 pub fn clear_orphan_url_mappings(conn: &Connection) -> Result<usize> {
     Ok(conn.execute(

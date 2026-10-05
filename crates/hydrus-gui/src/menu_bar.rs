@@ -649,10 +649,29 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         },
         Command::OpenDatabaseDirectory => crate::launch(&store.dir().to_string_lossy()),
         Command::OpenQuickExportDirectory => hooks.quick_export_directory.open(),
-        Command::Exit => {
+        Command::Exit | Command::Restart | Command::ExitForceMaintenance => {
+            crate::client_exit::set_mode(match command {
+                Command::Restart => hydrus_gui_model::shutdown_work::ExitMode::Restart,
+                Command::ExitForceMaintenance => {
+                    hydrus_gui_model::shutdown_work::ExitMode::ForceMaintenance
+                }
+                _ => hydrus_gui_model::shutdown_work::ExitMode::Exit,
+            });
             let _ = window
                 .window()
                 .dispatch_event_with_result(slint::platform::WindowEvent::CloseRequested);
+        }
+        Command::UndoContent | Command::RedoContent => {
+            let store = hooks.pages.borrow().store().clone();
+            let done = if command == Command::UndoContent {
+                store.undo()
+            } else {
+                store.redo()
+            };
+            match done {
+                Ok(_) => (hooks.reshow)(),
+                Err(error) => eprintln!("could not undo or redo: {error}"),
+            }
         }
         Command::ClearClosedPages => {
             let count = hooks.pages.borrow_mut().closed_names().len();

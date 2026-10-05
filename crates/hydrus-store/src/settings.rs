@@ -592,6 +592,32 @@ impl Setting for GuiSessionSettings {
     const KEY: &'static str = "gui_sessions";
 }
 
+/// Shutdown maintenance (Options > maintenance and processing > shutdown):
+/// whether to run it (0: never, 1: if needed, 2: if needed but ask first),
+/// at most how many minutes, at most once per how many seconds, and when it
+/// last ran (seconds).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ShutdownWork {
+    pub action: u8,
+    pub max_minutes: u32,
+    pub period_seconds: u64,
+    pub last_done: i64,
+}
+impl Default for ShutdownWork {
+    fn default() -> Self {
+        Self {
+            action: 2,
+            max_minutes: 5,
+            period_seconds: 86_400,
+            last_done: 0,
+        }
+    }
+}
+impl Setting for ShutdownWork {
+    const KEY: &'static str = "shutdown_work";
+}
+
 /// Idle eligibility from the reference's user-action and mouse timers.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

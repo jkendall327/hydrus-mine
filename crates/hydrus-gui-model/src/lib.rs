@@ -83,6 +83,7 @@ pub mod session_lifecycle;
 pub mod session_saving;
 pub mod set_password;
 pub mod shortcut_capture;
+pub mod shutdown_work;
 pub mod sidecar_editors;
 pub mod sidecars;
 pub mod simple_downloader;
