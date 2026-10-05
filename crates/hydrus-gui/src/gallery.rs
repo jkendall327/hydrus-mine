@@ -3,8 +3,10 @@
 //! list, as the daemon works it, and the page's totals.
 
 use hydrus_core::pages::DownloaderPageSettings;
+use hydrus_gui_model::gui_format;
 use hydrus_store::live::{self, QueueLive};
 use hydrus_store::queues::{self, SeedStatus, StatusCounts};
+use hydrus_store::settings::GuiFormatting;
 use rusqlite::Connection;
 
 /// One of a gallery page's searches, as last read.
@@ -326,12 +328,29 @@ impl GalleryQuery {
     /// (starred if shown), its downloader, its files' and search's pause
     /// or finish, its status, its short file log status and when it was
     /// added.
+    #[cfg(test)]
     pub fn row(
         &self,
         highlighted: bool,
         settings: &DownloaderPageSettings,
         short_summary: (bool, bool),
         now: i64,
+    ) -> [String; 7] {
+        self.row_with_format(
+            highlighted,
+            settings,
+            short_summary,
+            now,
+            &GuiFormatting::default(),
+        )
+    }
+    pub fn row_with_format(
+        &self,
+        highlighted: bool,
+        settings: &DownloaderPageSettings,
+        short_summary: (bool, bool),
+        now: i64,
+        formatting: &GuiFormatting,
     ) -> [String; 7] {
         let pause = |finished: bool, paused: bool| match pause_rank(finished, paused) {
             -1 => settings.stop_character.clone(),
@@ -349,7 +368,7 @@ impl GalleryQuery {
             pause(self.gallery_finished(), self.gallery_paused),
             self.simple_status().text().to_owned(),
             queues::file_log_short_status(&self.files, short_summary.0, short_summary.1),
-            hydrus_core::time::timestamp_to_pretty_time_delta_minutes(self.created, now, " ago"),
+            gui_format::timestamp_minutes(formatting, self.created, now),
         ]
     }
 }
@@ -587,6 +606,33 @@ mod tests {
         let names: Vec<String> = offered_gugs(&gugs).into_iter().map(|g| g.1).collect();
         assert_eq!(names, ["alpha", "zed", "hidden"]);
         assert_eq!(offered_gugs(&gugs)[0].2, "alpha tags");
+    }
+
+    #[test]
+    fn formatting_reaches_gallery_added_rows_without_changing_import_state() {
+        let fixture = hydrus_testkit::fixture_json("gui_format.json");
+        let now = fixture["now"].as_i64().unwrap();
+        for event in fixture["events"].as_array().unwrap() {
+            let p: GuiFormatting = serde_json::from_value(event["saved"].clone()).unwrap();
+            for variant in event["consumers"]["variants"].as_array().unwrap() {
+                let q = GalleryQuery {
+                    created: variant["timestamp"].as_i64().unwrap(),
+                    ..GalleryQuery::default()
+                };
+                let original = q.clone();
+                assert_eq!(
+                    q.row_with_format(
+                        false,
+                        &DownloaderPageSettings::default(),
+                        (false, false),
+                        now,
+                        &p
+                    )[6],
+                    variant["minutes"].as_str().unwrap()
+                );
+                assert_eq!(q, original);
+            }
+        }
     }
 
     #[test]

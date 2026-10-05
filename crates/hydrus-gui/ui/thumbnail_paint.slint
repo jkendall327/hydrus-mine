@@ -1,0 +1,228 @@
+import { RatingShape } from "viewer.slint";
+// an icon over a thumbnail (`src/thumbnail_icons.rs`'s `Icon`), and where
+// its top left corner goes in the thumbnail
+export struct ThumbIcon {
+    kind: int,
+    x: length,
+    y: length,
+}
+
+// a rating drawn over a thumbnail (`src/thumbnail_ratings.rs`'s `Drawn`),
+// at (x, y): shapes (kind 0), or a counter (kind 1)
+export struct ThumbRating {
+    kind: int,
+    x: length,
+    y: length,
+    // the shapes: their outline (SVG path commands in a 12x12 box), where
+    // the first goes from x, how big each is and how far apart, how thick
+    // its outline, and each one's colours
+    path: string,
+    first: length,
+    size: length,
+    step: length,
+    outline: length,
+    shapes: [RatingShape],
+    // a counter's box, and its colours
+    width: length,
+    height: length,
+    pen: color,
+    brush: color,
+    // a numerical rating's "stars/of" (from its top left), or a counter's
+    // number (right aligned in its box, which is text-height tall)
+    text: string,
+    text-x: length,
+    text-y: length,
+    text-width: length,
+    text-height: length,
+    text-size: length,
+}
+
+// a box behind a row of ratings
+export struct ThumbBox {
+    x: length,
+    y: length,
+    width: length,
+    height: length,
+}
+
+export struct ThumbnailPaint {
+
+    image: image,
+    selected: bool,
+    // a collection's number of files, as text; empty for a file
+    files: string,
+    icons: [ThumbIcon],
+    ratings: [ThumbRating],
+    rating-boxes: [ThumbBox],
+    // the tag banners' texts (`src/thumbnail_icons.rs`'s `banners`): across
+    // the top, and at the bottom right; empty for none
+    top: string,
+    bottom: string,
+    border: length,
+    fill: brush,
+    border-brush: brush,
+    window-brush: brush,
+    text-brush: brush,
+    banner-top-background: color,
+    banner-top-text: color,
+    banner-bottom-background: color,
+    banner-bottom-text: color,
+}
+export struct Thumbnail {
+    local: bool,
+    paint: ThumbnailPaint,
+    previous: ThumbnailPaint,
+    fade-opacity: float,
+    image: image,
+    selected: bool,
+    // a collection's number of files, as text; empty for a file
+    files: string,
+    icons: [ThumbIcon],
+    ratings: [ThumbRating],
+    rating-boxes: [ThumbBox],
+    // the tag banners' texts (`src/thumbnail_icons.rs`'s `banners`): across
+    // the top, and at the bottom right; empty for none
+    top: string,
+    bottom: string,
+}
+
+
+export component ThumbnailCellPaint inherits Rectangle {
+    in property <ThumbnailPaint> paint;
+    background: root.paint.fill;
+    clip: true;
+                // pixel for pixel (it is decoded at the screen's scale): the
+                // renderer would scale it by picking the nearest pixels
+                Image {
+                    width: self.source.width * 1phx;
+                    height: self.source.height * 1phx;
+                    x: round((parent.width - self.width) / 2 / 1phx) * 1phx;
+                    y: round((parent.height - self.height) / 2 / 1phx) * 1phx;
+                    source: root.paint.image;
+                }
+                // the reference's tag banners: across the top, the text
+                // centred on the thumbnail; and at the bottom right, its
+                // box running two pixels into the border. The reference
+                // paints its border over them, so they are kept inside it.
+                Rectangle {
+                    x: root.paint.border;
+                    y: root.paint.border;
+                    width: parent.width - 2 * root.paint.border;
+                    height: parent.height - 2 * root.paint.border;
+                    clip: true;
+                    if root.paint.top != "": Rectangle {
+                        y: 0;
+                        height: top-text.preferred-height + 2px;
+                        background: root.paint.banner-top-background;
+                        top-text := Text {
+                            x: (parent.width - self.preferred-width) / 2;
+                            y: 1px;
+                            text: root.paint.top;
+                            color: root.paint.banner-top-text;
+                        }
+                    }
+                    if root.paint.bottom != "": Rectangle {
+                        width: bottom-text.preferred-width + 2px;
+                        height: bottom-text.preferred-height + 2px;
+                        x: parent.width - self.width;
+                        y: parent.height - bottom-text.preferred-height;
+                        background: root.paint.banner-bottom-background;
+                        bottom-text := Text {
+                            x: 1px;
+                            y: 1px;
+                            text: root.paint.bottom;
+                            color: root.paint.banner-bottom-text;
+                        }
+                    }
+                }
+                // (over the thumbnail, which may fill the cell; a
+                // selection shows however thin the border)
+                Rectangle {
+                    border-width: root.paint.selected ? max(root.paint.border, 2px) : root.paint.border;
+                    border-color: root.paint.border-brush;
+                }
+                // the ratings at the top right, over their boxes
+                for box in root.paint.rating-boxes: Rectangle {
+                    x: box.x;
+                    y: box.y;
+                    width: box.width;
+                    height: box.height;
+                    background: root.paint.window-brush;
+                }
+                for rating in root.paint.ratings: Rectangle {
+                    x: 0;
+                    y: 0;
+                    if rating.kind == 0: Rectangle {
+                        for shape[k] in rating.shapes: Path {
+                            x: rating.x + rating.first + k * rating.step;
+                            y: rating.y;
+                            width: rating.size;
+                            height: rating.size;
+                            viewbox-width: 12;
+                            viewbox-height: 12;
+                            commands: rating.path;
+                            fill: shape.brush;
+                            stroke: shape.pen;
+                            stroke-width: rating.outline;
+                        }
+                    }
+                    if rating.kind == 1: Rectangle {
+                        x: rating.x;
+                        y: rating.y;
+                        width: rating.width;
+                        height: rating.height;
+                        border-width: 1px;
+                        border-color: rating.pen;
+                        background: rating.brush;
+                    }
+                    if rating.text != "": Text {
+                        x: rating.text-x;
+                        y: rating.text-y;
+                        width: rating.text-width;
+                        height: rating.kind == 1 ? rating.text-height : self.preferred-height;
+                        horizontal-alignment: rating.kind == 1 ? right : left;
+                        vertical-alignment: rating.kind == 1 ? center : top;
+                        text: rating.text;
+                        color: rating.kind == 1 ? rating.pen : root.paint.text-brush;
+                        font-size: rating.text-size;
+                    }
+                }
+                // a collection: its icon and number of files, in a box at
+                // the bottom left (the icon drawn with the others)
+                if root.paint.files != "": Rectangle {
+                    x: root.paint.border;
+                    y: parent.height - root.paint.border - self.height;
+                    width: 16px + count.preferred-width + 3px;
+                    height: 18px;
+                    background: root.paint.window-brush;
+                    count := Text {
+                        x: 18px;
+                        y: 1px;
+                        text: root.paint.files;
+                        color: root.paint.text-brush;
+                        font-size: 11px;
+                    }
+                }
+                // the reference's icons: inbox, trash, notes... at the top
+                // right, sound or play and the file repositories at the top
+                // left
+                for icon in root.paint.icons: Image {
+                    x: icon.x;
+                    y: icon.y;
+                    width: 16px;
+                    height: 16px;
+                    source: icon.kind == 0 ? @image-url("../../../static/inbox.png")
+                        : icon.kind == 1 ? @image-url("../../../static/trash.png")
+                        : icon.kind == 2 ? @image-url("../../../static/notes.png")
+                        : icon.kind == 3 ? @image-url("../../../static/downloading.png")
+                        : icon.kind == 4 ? @image-url("../../../static/sound.png")
+                        : icon.kind == 5 ? @image-url("../../../static/play.png")
+                        : icon.kind == 6 ? @image-url("../../../static/file_repository_small.png")
+                        : icon.kind == 7 ? @image-url("../../../static/file_repository_pending_small.png")
+                        : icon.kind == 8 ? @image-url("../../../static/file_repository_petitioned_small.png")
+                        : icon.kind == 9 ? @image-url("../../../static/ipfs_small.png")
+                        : icon.kind == 10 ? @image-url("../../../static/ipfs_pending_small.png")
+                        : icon.kind == 11 ? @image-url("../../../static/ipfs_petitioned_small.png")
+                        : @image-url("../../../static/collection.png");
+                }
+}

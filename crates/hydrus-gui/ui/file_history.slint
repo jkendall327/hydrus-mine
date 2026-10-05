@@ -1,0 +1,80 @@
+import { Button,CheckBox,ComboBox,LineEdit,SpinBox,ScrollView } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+export component FileHistoryWindow inherits Window {
+    title: "file history";
+    width: 1100px; height: 700px; background: Theme.window;
+    in property <[string]> domains;
+    in-out property <int> domain-index;
+    in-out property <string> input;
+    in property <[string]> predicates;
+    in property <string> status;
+    in property <bool> loading;
+    in property <bool> chart-visible;
+    in property <[string]> paths;
+    in property <[bool]> visible-series;
+    in-out property <int> min-count;
+    in-out property <int> max-count;
+    in-out property <string> start-date;
+    in-out property <string> end-date;
+    callback domain-chosen(int);
+    callback enter();
+    callback remove(int);
+    callback refresh();
+    callback cancel-work();
+    callback toggle(int);
+    callback count-edited(int,int);
+    callback date-edited(string,string);
+    callback refit(bool);
+    callback close-clicked();
+    VerticalLayout { padding: 10px; spacing: 8px;
+        HorizontalLayout { spacing: 10px;
+            VerticalLayout { width: 250px; spacing: 6px;
+                ComboBox { model: root.domains; current-index <=> root.domain-index; selected => { root.domain-chosen(self.current-index); } }
+                ScrollView { vertical-stretch: 1; VerticalLayout {
+                    for text[i] in root.predicates: HorizontalLayout {
+                        Text { text: text; color: Theme.text; wrap: word-wrap; horizontal-stretch: 1; }
+                        Button { text: "×"; clicked => { root.remove(i); } }
+                    }
+                } }
+                LineEdit { placeholder-text: "tag or system predicate"; text <=> root.input; accepted => { root.enter(); } }
+                Button { text: "add predicate"; clicked => { root.enter(); } }
+                Text { text: "Enter a tag or system predicate to filter the chart."; color: Theme.muted; wrap: word-wrap; }
+                HorizontalLayout {
+                    Button { text: "cancel"; enabled: root.loading; clicked => { root.cancel-work(); } }
+                    Button { text: "refresh"; clicked => { root.refresh(); } }
+                }
+            }
+            VerticalLayout { spacing: 6px;
+                Text { text: root.status; color: Theme.text; wrap: word-wrap; }
+                HorizontalLayout {
+                    for label[i] in ["show all","show inbox","show archive","show deleted"]: CheckBox {
+                        text: label; checked: root.visible-series[i]; toggled => { root.toggle(i); }
+                    }
+                }
+                HorizontalLayout {
+                    Text { text: root.max-count; color: Theme.text; }
+                    plot := Rectangle { visible: root.chart-visible; background: Theme.panel; vertical-stretch: 1; horizontal-stretch: 1; clip: true;
+                        for path[i] in root.paths: Path {
+                            width: parent.width; height: parent.height;
+                            viewbox-width: 600; viewbox-height: 320;
+                            commands: path; fill: transparent;
+                            stroke: [#0099dd,#84b643,#ee9900,#8866bb][i]; stroke-width: 2px;
+                        }
+                    }
+                }
+                HorizontalLayout { Text { text: root.start-date; color: Theme.text; } Text { text: root.end-date; color: Theme.text; horizontal-alignment: right; } }
+                HorizontalLayout {
+                    SpinBox { minimum: 0; maximum: 1000000000; value <=> root.min-count; edited => { root.count-edited(root.min-count,root.max-count); } }
+                    SpinBox { minimum: 0; maximum: 1000000000; value <=> root.max-count; edited => { root.count-edited(root.min-count,root.max-count); } }
+                    Button { text: "refit y axis"; clicked => { root.refit(false); } }
+                }
+                HorizontalLayout {
+                    LineEdit { text <=> root.start-date; accepted => { root.date-edited(root.start-date,root.end-date); } }
+                    LineEdit { text <=> root.end-date; accepted => { root.date-edited(root.start-date,root.end-date); } }
+                    Button { text: "refit x axis"; clicked => { root.refit(true); } }
+                }
+            }
+        }
+        Button { text: "close"; clicked => { root.close-clicked(); } }
+    }
+}

@@ -6,7 +6,7 @@ use std::rc::Rc;
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 
 use crate::manage_tags::ManageTags;
-use crate::{ListText, ManageTagsWindow, list_text};
+use crate::{ListText, ManageTagsWindow};
 
 /// Open the window on `model`; it forgets itself from `slot` when closed,
 /// and calls `applied` once changes are written.
@@ -64,10 +64,36 @@ pub(crate) fn open(
             window.set_deleted_count_visible(model.deleted_count() > 0);
             window.set_show_deleted(model.show_deleted());
             window.set_service_index(i32::try_from(model.service()).unwrap_or(0));
+            let sort = model.sort_control().value;
+            window.set_sort_type(
+                i32::try_from(
+                    hydrus_gui_model::options::TAG_SORT_TYPES
+                        .iter()
+                        .position(|(_, kind)| *kind == sort.order.sort_type)
+                        .unwrap_or(0),
+                )
+                .unwrap_or(0),
+            );
+            window.set_sort_order(
+                i32::try_from(hydrus_gui_model::options::tag_sort_orders(&sort.order).1)
+                    .unwrap_or(0),
+            );
+            window.set_sort_group(
+                i32::try_from(
+                    hydrus_gui_model::options::TAG_SORT_GROUPS
+                        .iter()
+                        .position(|(_, group)| *group == sort.order.group_by)
+                        .unwrap_or(0),
+                )
+                .unwrap_or(0),
+            );
+            window.set_sort_siblings(i32::from(!sort.use_siblings));
             let tags: Vec<ListText> = model
                 .display_rows()
                 .iter()
-                .map(|row| list_text(&row.label, colours.tag(&row.colour_tag)))
+                .map(|row| {
+                    crate::styled_list_text(&row.label, colours.tag(&row.colour_tag), &row.parts)
+                })
                 .collect();
             window.set_tags(ModelRc::new(VecModel::from(tags)));
             window
@@ -75,7 +101,7 @@ pub(crate) fn open(
             let suggestions: Vec<ListText> = model
                 .suggestion_rows()
                 .iter()
-                .map(|r| list_text(&r.label, colours.tag(&r.colour_tag)))
+                .map(|r| crate::styled_list_text(&r.label, colours.tag(&r.colour_tag), &r.parts))
                 .collect();
             window.set_suggestions(ModelRc::new(VecModel::from(suggestions)));
             window.set_suggestion_selected(ModelRc::new(VecModel::from(
@@ -93,6 +119,227 @@ pub(crate) fn open(
         }
     };
     let active = Rc::new(Cell::new(true));
+    crate::gui_colours::bind(
+        window.global::<crate::Theme<'_>>(),
+        model.borrow().store(),
+        active.clone(),
+    );
+    let side_lists = Rc::new(RefCell::new([
+        hydrus_gui_model::tag_suggestions::List::default(),
+        hydrus_gui_model::tag_suggestions::List::default(),
+        hydrus_gui_model::tag_suggestions::List::default(),
+    ]));
+    let prefs = model.borrow().suggestion_preferences().clone();
+    window.set_suggested_columns(prefs.columns);
+    window.set_suggested_width(prefs.width.clamp(20, 65535) as f32);
+    window.set_recent_tags_enabled(prefs.recent_limit.is_some());
+    window.set_suggested_page(i32::from(
+        prefs.default_page == "recent" && prefs.recent_limit.is_some(),
+    ));
+    let side_services: hydrus_store::settings::TagAutocompleteTabs = model
+        .borrow()
+        .store()
+        .read(hydrus_store::settings::get)
+        .unwrap_or_default();
+    let side_services: std::collections::BTreeSet<_> = side_services
+        .most_used
+        .into_iter()
+        .filter_map(|(key, tags)| (!tags.is_empty()).then_some(key))
+        .collect();
+    let related_worker = match crate::related_tags_worker::Worker::new(model.borrow().store()) {
+        Ok(worker) => Some(Rc::new(worker)),
+        Err(error) => {
+            window
+                .set_related_status(format!("could not start related-tag search: {error}").into());
+            None
+        }
+    };
+    let related_settings: hydrus_store::related_tags::Settings = model
+        .borrow()
+        .store()
+        .read(hydrus_store::settings::get)
+        .unwrap_or_default();
+    window.set_related_tags_enabled(related_settings.enabled);
+    if prefs.default_page == "related" && related_settings.enabled {
+        window.set_suggested_page(2);
+    }
+    let related_request = Rc::new(RefCell::new(None::<hydrus_store::related_tags::Query>));
+    let related_results = Rc::new(RefCell::new(
+        Vec::<hydrus_store::related_tags::Suggestion>::new(),
+    ));
+    let side_pages = Rc::new(RefCell::new(std::collections::BTreeMap::<
+        hydrus_core::ServiceKey,
+        i32,
+    >::new()));
+    let shown_side_service = Rc::new(RefCell::new(None::<hydrus_core::ServiceKey>));
+    let default_side = window.get_suggested_page();
+    let refresh_sides = Rc::new({
+        let model = model.clone();
+        let weak = window.as_weak();
+        let lists = side_lists.clone();
+        let active = active.clone();
+        let worker = related_worker.clone();
+        let last = related_request.clone();
+        let results = related_results.clone();
+        let pages = side_pages.clone();
+        let shown = shown_side_service.clone();
+        move || {
+            if !active.get() {
+                return;
+            }
+            let Some(w) = weak.upgrade() else {
+                return;
+            };
+            let m = model.borrow();
+            let key = m.migration_service_key();
+            let enabled = key
+                .as_ref()
+                .is_some_and(|key| side_services.contains(&key.to_hex()));
+            w.set_most_used_enabled(enabled);
+            if *shown.borrow() != key {
+                if let Some(previous) = shown.borrow().as_ref() {
+                    pages
+                        .borrow_mut()
+                        .insert(previous.clone(), w.get_suggested_page());
+                }
+                w.set_suggested_page(
+                    key.as_ref()
+                        .and_then(|key| pages.borrow().get(key).copied())
+                        .unwrap_or(default_side),
+                );
+                shown.borrow_mut().clone_from(&key);
+            }
+            let valid = match w.get_suggested_page() {
+                0 => enabled,
+                1 => w.get_recent_tags_enabled(),
+                2 => w.get_related_tags_enabled(),
+                _ => false,
+            };
+            if !valid {
+                w.set_suggested_page(if enabled {
+                    0
+                } else if w.get_related_tags_enabled() {
+                    2
+                } else {
+                    1
+                });
+            }
+            if w.get_related_tags_enabled()
+                && let Some(worker) = &worker
+            {
+                match m.related_query(w.get_related_local(), w.get_related_display()) {
+                    Ok(query) => {
+                        if last.borrow().as_ref() != Some(&query) {
+                            worker.request(query.clone());
+                            *last.borrow_mut() = Some(query);
+                            results.borrow_mut().clear();
+                            w.set_related_status("searching…".into());
+                        }
+                        if let Some(result) = worker.poll() {
+                            match result {
+                                Ok(rows) => {
+                                    w.set_related_status(
+                                        if rows.is_empty() {
+                                            "no related tags found!"
+                                        } else {
+                                            "ready"
+                                        }
+                                        .into(),
+                                    );
+                                    *results.borrow_mut() = rows;
+                                }
+                                Err(error) => {
+                                    results.borrow_mut().clear();
+                                    w.set_related_status(error.into());
+                                }
+                            }
+                        }
+                    }
+                    Err(error) => {
+                        w.set_related_status(error.to_string().into());
+                    }
+                }
+            }
+            let mut lists = lists.borrow_mut();
+            for (i, list) in lists.iter_mut().enumerate().take(2) {
+                list.update(key.clone(), m.side_suggestions(i == 1));
+            }
+            lists[2].update(
+                key.clone(),
+                m.useful_related(results.borrow().iter().map(|row| row.tag.clone()).collect()),
+            );
+            let presentation: hydrus_core::tag_presentation::TagPresentation = m
+                .store()
+                .read(hydrus_store::settings::get)
+                .unwrap_or_default();
+            let rows = |list: &hydrus_gui_model::tag_suggestions::List| {
+                ModelRc::new(VecModel::from(
+                    list.tags
+                        .iter()
+                        .zip(list.mask())
+                        .map(|(tag, selected)| crate::TableRow {
+                            cells: ModelRc::new(VecModel::from(vec![SharedString::from(
+                                presentation.render(tag),
+                            )])),
+                            selected,
+                        })
+                        .collect::<Vec<_>>(),
+                ))
+            };
+            w.set_most_used_rows(rows(&lists[0]));
+            w.set_recent_tag_rows(rows(&lists[1]));
+            w.set_related_tag_rows(ModelRc::new(VecModel::from(
+                lists[2]
+                    .tags
+                    .iter()
+                    .zip(lists[2].mask())
+                    .map(|(tag, selected)| crate::TableRow {
+                        cells: ModelRc::new(VecModel::from(vec![SharedString::from(format!(
+                            "{} ({})",
+                            presentation.render(tag),
+                            hydrus_core::numbers::human_int(
+                                results
+                                    .borrow()
+                                    .iter()
+                                    .find(|r| &r.tag == tag)
+                                    .map_or(0, |r| r.score)
+                            )
+                        ))])),
+                        selected,
+                    })
+                    .collect::<Vec<_>>(),
+            )));
+        }
+    });
+    window.on_related_search({
+        let active = active.clone();
+        let last = related_request.clone();
+        let refresh = refresh_sides.clone();
+        let incremental = incremental_open.clone();
+        move || {
+            if active.get() && !incremental.get() {
+                last.borrow_mut().take();
+                refresh();
+            }
+        }
+    });
+    let base_refresh = refresh.clone();
+    let refresh = {
+        let sides = refresh_sides.clone();
+        move || {
+            base_refresh();
+            sides();
+        }
+    };
+    let side_timer = Rc::new(slint::Timer::default());
+    side_timer.start(
+        slint::TimerMode::Repeated,
+        std::time::Duration::from_millis(200),
+        {
+            let sides = refresh_sides.clone();
+            move || sides()
+        },
+    );
     let pending_paste: Rc<RefCell<Option<Vec<String>>>> = Rc::default();
     let tag_menu = crate::write_tag_menu::TagMenu::new(
         model.borrow().store().clone(),
@@ -142,6 +389,28 @@ pub(crate) fn open(
             }
         }),
     );
+    crate::menu_choice_wheel::bind(
+        window.global::<crate::MenuChoicePolicy<'_>>(),
+        model.borrow().store(),
+        Rc::new({
+            let active = active.clone();
+            let weak = window.as_weak();
+            let incremental = incremental_open.clone();
+            let pending = pending_paste.clone();
+            let menu = tag_menu.clone();
+            move || {
+                active.get()
+                    && !incremental.get()
+                    && pending.borrow().is_none()
+                    && !menu.busy()
+                    && weak.upgrade().is_some_and(|window| {
+                        window.window().is_visible()
+                            && window.get_question().is_empty()
+                            && window.get_tag_menu_question().is_empty()
+                    })
+            }
+        }),
+    );
     crate::write_tag_menu::bind!(window, tag_menu);
     window.on_context_menu({
         let tag_menu = tag_menu.clone();
@@ -182,6 +451,103 @@ pub(crate) fn open(
             menu.open(&entries, x, y);
         }
     });
+    window.on_side_clicked({
+        let active = active.clone();
+        let pending = pending_paste.clone();
+        let menu = tag_menu.clone();
+        let incremental = incremental_open.clone();
+        let lists = side_lists.clone();
+        let refresh = refresh_sides.clone();
+        move |p, i, c, s| {
+            if !active.get() || incremental.get() || pending.borrow().is_some() || menu.busy() {
+                return;
+            }
+            if let Ok(p) = usize::try_from(p)
+                && let Ok(i) = usize::try_from(i)
+                && let Some(list) = lists.borrow_mut().get_mut(p)
+            {
+                list.click(i, c, s);
+            }
+            refresh();
+        }
+    });
+    window.on_side_activated({
+        let active = active.clone();
+        let pending = pending_paste.clone();
+        let menu = tag_menu.clone();
+        let incremental = incremental_open.clone();
+        let lists = side_lists.clone();
+        let model = model.clone();
+        let refresh = refresh.clone();
+        move |p, i| {
+            if !active.get() || incremental.get() || pending.borrow().is_some() || menu.busy() {
+                return;
+            }
+            let tags = if let Ok(p) = usize::try_from(p)
+                && let Ok(i) = usize::try_from(i)
+                && let Some(list) = lists.borrow_mut().get_mut(p)
+            {
+                if list.selected().is_empty() {
+                    list.click(i, false, false);
+                }
+                list.selected()
+            } else {
+                Vec::new()
+            };
+            model.borrow_mut().add_side_suggestions(&tags);
+            refresh();
+        }
+    });
+    window.on_sort_chosen({
+        let model = model.clone();
+        let weak = window.as_weak();
+        let active = active.clone();
+        let incremental_open = incremental_open.clone();
+        let pending = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
+        let refresh = refresh.clone();
+        move |part, index| {
+            if !active.get()
+                || incremental_open.get()
+                || pending.borrow().is_some()
+                || tag_menu.busy()
+                || !weak.upgrade().is_some_and(|window| {
+                    window.window().is_visible() && window.get_question().is_empty()
+                })
+            {
+                return;
+            }
+            if let (Ok(part), Ok(index)) = (usize::try_from(part), usize::try_from(index)) {
+                model.borrow_mut().choose_sort(part, index);
+                refresh();
+            }
+        }
+    });
+    let colour_updates = crate::tag_text::watch(
+        model.borrow().store(),
+        Rc::new({
+            let weak = window.as_weak();
+            let active = active.clone();
+            let incremental_open = incremental_open.clone();
+            let tag_menu = tag_menu.clone();
+            move || {
+                active.get()
+                    && !incremental_open.get()
+                    && !tag_menu.busy()
+                    && weak.upgrade().is_some_and(|window| {
+                        window.window().is_visible() && window.get_question().is_empty()
+                    })
+            }
+        }),
+        Rc::new({
+            let model = model.clone();
+            let refresh = refresh.clone();
+            move || {
+                model.borrow_mut().fetch();
+                refresh();
+            }
+        }),
+    );
     let preference_timer = Rc::new(slint::Timer::default());
     let close = {
         let incremental_slot = incremental_slot.clone();
@@ -192,6 +558,9 @@ pub(crate) fn open(
         let pending_paste = pending_paste.clone();
         let tag_menu = tag_menu.clone();
         let preference_timer = preference_timer.clone();
+        let colour_updates = colour_updates.clone();
+        let side_timer = side_timer.clone();
+        let related_worker = related_worker.clone();
         move || {
             if !active.replace(false) {
                 return;
@@ -199,6 +568,11 @@ pub(crate) fn open(
             incremental_open.set(false);
             crate::incremental_tagging_window::cancel(&incremental_slot);
             preference_timer.stop();
+            colour_updates.stop();
+            side_timer.stop();
+            if let Some(worker) = &related_worker {
+                worker.close();
+            }
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }

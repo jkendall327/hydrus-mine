@@ -1,0 +1,349 @@
+import { ScrollView, ListView, Button } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+export struct TabRow { names: [string], full-names: [string], keys: [string], parent: string, selected: int }
+export struct PageTreeRow { key: string, name: string, depth: int, selected: bool, branch: bool, expanded: bool }
+export struct TabFit { low: int, high: int, candidate: int, display: string, done: bool }
+// No application state: each tab owns its independent measured fit search.
+export global TabNames {
+    pure callback begin(string) -> TabFit;
+    pure callback middle(string,int) -> string;
+    callback step(string,TabFit,float,float) -> TabFit;
+    pure callback vertical-label(string,bool,bool,color,float,float) -> image;
+}
+
+component NotebookTab inherits Rectangle {
+    in property <string> key;
+    in property <string> parent-key;
+    in property <int> tab-index;
+    in property <bool> geometry-enabled;
+    callback geometry(string,string,int,length,length,length,length);
+    property <{key:string,parent:string,index:int,on:bool,x:length,y:length,w:length,h:length}> frame: {key:root.key,parent:root.parent-key,index:root.tab-index,on:root.geometry-enabled,x:root.absolute-position.x,y:root.absolute-position.y,w:root.width,h:root.height};
+    // A rebuilt repeater can begin with its final frame, without a changed
+    // notification. Publish its initial frame too, after layout has settled,
+    // and keep the identity in the same snapshot as the measured rectangle.
+    property <bool> geometry-pending: true;
+    changed frame => { root.geometry-pending = true; }
+    Timer {
+        interval: 1ms;
+        running: root.geometry-enabled && root.geometry-pending;
+        triggered => {
+            root.geometry-pending = false;
+            root.geometry(root.frame.key,root.frame.parent,root.frame.index,root.frame.x,root.frame.y,root.frame.w,root.frame.h);
+        }
+    }
+    in property <string> text;
+    in property <string> full-name;
+    in property <bool> pointer-hover;
+    in property <bool> selected;
+    in property <bool> vertical;
+    in property <bool> clockwise;
+    in property <length> cap;
+    callback wheel(int);
+    callback chosen();
+    callback context-menu(length,length);
+    callback close();
+    callback hovered(string,length,length,bool);
+    property <length> intrinsic: full-measure.preferred-width + 20px;
+    property <length> span: root.cap > 0px ? min(root.intrinsic,root.cap) : root.intrinsic;
+    property <length> room: max(0px,root.span - 16px);
+    property <TabFit> fitting: TabNames.begin(root.text);
+    changed text => { root.fitting=TabNames.begin(root.text); }
+    changed room => { root.fitting=TabNames.begin(root.text); }
+    changed selected => { root.fitting=TabNames.begin(root.text); }
+    Timer {
+        interval: 1ms;
+        running: !root.fitting.done;
+        triggered => { root.fitting=TabNames.step(root.text,root.fitting,candidate-measure.preferred-width / 1px,root.room / 1px); }
+    }
+    width: root.vertical ? 26px : root.span;
+    height: root.vertical ? root.span : 26px;
+    clip: true;
+    background: root.selected ? Theme.panel : (root.pointer-hover || touch.has-hover) ? Theme.hover : Theme.window;
+    border-width: 1px;
+    border-color: Theme.border;
+    accessible-role: tab;
+    accessible-label: root.full-name;
+    accessible-value: root.selected ? "selected" : "";
+    accessible-action-default => { root.chosen(); }
+    full-measure := Text { visible: false; text: root.text; font-weight: root.selected ? 600 : 400; }
+    candidate-measure := Text { visible: false; text: TabNames.middle(root.text,root.fitting.candidate); font-weight: root.selected ? 600 : 400; }
+    if !root.vertical: Text {
+        text: root.cap > 0px ? root.fitting.display : root.text;
+        font-weight: root.selected ? 600 : 400;
+        width: root.width;
+        height: root.height;
+        vertical-alignment: center;
+        horizontal-alignment: center;
+        color: Theme.text;
+    }
+    // The software renderer does not implement item transforms. SVG text uses
+    // Slint's native font resolver, and its quarter turn is rasterized before
+    // reaching that renderer, preserving the existing fit and tab hit box.
+    if root.vertical: Image {
+        width: root.width;
+        height: root.height;
+        source: TabNames.vertical-label(root.cap > 0px ? root.fitting.display : root.text,root.clockwise,root.selected,Theme.text,root.height / 1px,1rem / 1px);
+        image-fit: fill;
+    }
+    touch := TouchArea {
+        property <bool> hover: self.has-hover;
+        changed hover => { root.hovered(root.full-name,self.absolute-position.x,self.absolute-position.y + self.height,self.hover); }
+        scroll-event(event) => { if event.delta-y != 0px { root.wheel(event.delta-y > 0px ? -1 : 1); } return accept; }
+        clicked => { root.chosen(); }
+        pointer-event(event) => {
+            if event.button == PointerEventButton.right && event.kind == PointerEventKind.up {
+                root.context-menu(self.absolute-position.x + self.mouse-x,self.absolute-position.y + self.mouse-y);
+            }
+            if event.button == PointerEventButton.middle && event.kind == PointerEventKind.up { root.close(); }
+        }
+    }
+}
+
+component NotebookStrip inherits Rectangle {
+    in property <string> hover-key;
+    in property <TabRow> data;
+    in property <bool> geometry-enabled;
+    callback geometry(string,string,int,length,length,length,length);
+    property <{parent:string,on:bool,x:length,y:length,w:length,h:length}> frame: {parent:root.data.parent,on:root.geometry-enabled,x:root.absolute-position.x,y:root.absolute-position.y,w:root.width,h:root.height};
+    property <bool> geometry-pending: true;
+    changed frame => { root.geometry-pending = true; }
+    Timer {
+        interval: 1ms;
+        running: root.geometry-enabled && root.geometry-pending;
+        triggered => {
+            root.geometry-pending = false;
+            root.geometry("",root.frame.parent,-1,root.frame.x,root.frame.y,root.frame.w,root.frame.h);
+        }
+    }
+    in property <bool> vertical;
+    in property <bool> clockwise;
+    in property <bool> elide;
+    in property <bool> wheel-scroll;
+    callback wheel(int);
+    callback scrolled(float);
+    function scroll-wheel(step: int) {
+        if root.wheel-scroll {
+            if root.vertical { vertical-scroll.content-y = max(min(0px,root.height - vertical-scroll.content-height),min(0px,vertical-scroll.content-y - step * 120px)); }
+            else { horizontal-scroll.content-x = max(min(0px,root.width - horizontal-scroll.content-width),min(0px,horizontal-scroll.content-x - step * 120px)); }
+        } else { root.wheel(step); }
+    }
+    out property <length> scroll-offset: root.vertical ? vertical-scroll.content-y : horizontal-scroll.content-x;
+    changed scroll-offset => { root.scrolled(root.scroll-offset / 1px); }
+    callback chosen(int);
+    callback measured(float,float,float);
+    callback context-menu(int,length,length);
+    callback close(int);
+    callback space-pressed(bool);
+    callback hovered(string,length,length,bool);
+    property <length> available: root.vertical ? root.height : root.width;
+    property <length> needed: natural.preferred-width + root.data.names.length * 22px + 44px;
+    property <length> cap: root.elide && root.needed > root.available ? max(42px,(root.available - 44px - 2px * root.data.names.length) / max(1,root.data.names.length)) : 0px;
+    property <{needed:length,available:length,cap:length}> sizing: {needed:root.needed,available:root.available,cap:root.cap};
+    changed sizing => { root.measured(root.sizing.needed / 1px,root.sizing.available / 1px,root.sizing.cap / 1px); }
+    clip: true;
+    natural := HorizontalLayout {
+        visible: false;
+        spacing: 0px;
+        for name[index] in root.data.names: Text { text: name; font-weight: index == root.data.selected ? 600 : 400; }
+    }
+    horizontal-scroll := ScrollView {
+        visible: !root.vertical;
+        width: parent.width; height: parent.height;
+        content-height: self.height;
+        vertical-scrollbar-policy: always-off;
+        horizontal-scrollbar-policy: always-off;
+        HorizontalLayout {
+            padding-left: 4px; padding-top: 2px; spacing: 2px;
+            for name[index] in root.data.names: NotebookTab {
+                pointer-hover: root.data.keys[index] == root.hover-key;
+                key: root.data.keys[index]; parent-key: root.data.parent; tab-index: index;
+                geometry-enabled: root.geometry-enabled && !root.vertical;
+                geometry(key,parent,index,x,y,w,h) => { root.geometry(key,parent,index,x,y,w,h); }
+                text: name; full-name: root.data.full-names[index]; selected: index == root.data.selected;
+                cap: root.cap;
+                wheel(step) => { root.scroll-wheel(step); }
+                chosen => { root.chosen(index); }
+                context-menu(x,y) => { root.context-menu(index,x,y); }
+                close => { root.close(index); }
+                hovered(name,x,y,on) => { root.hovered(name,x,y,on); }
+            }
+            TouchArea {
+                horizontal-stretch: 1; min-width: 40px;
+                scroll-event(event) => { if event.delta-y != 0px { root.scroll-wheel(event.delta-y > 0px ? -1 : 1); } return accept; }
+                pointer-event(event) => {
+                    if event.kind == PointerEventKind.down && event.button == PointerEventButton.right { root.context-menu(-1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y); }
+                    if event.kind == PointerEventKind.down && (event.button == PointerEventButton.left || event.button == PointerEventButton.middle) { root.space-pressed(event.button == PointerEventButton.middle); }
+                }
+            }
+        }
+    }
+    vertical-scroll := ScrollView {
+        visible: root.vertical;
+        width: parent.width; height: parent.height;
+        content-width: self.width;
+        vertical-scrollbar-policy: always-off;
+        horizontal-scrollbar-policy: always-off;
+        VerticalLayout {
+            padding-top: 4px; padding-left: 2px; spacing: 2px;
+            for name[index] in root.data.names: NotebookTab {
+                pointer-hover: root.data.keys[index] == root.hover-key;
+                key: root.data.keys[index]; parent-key: root.data.parent; tab-index: index;
+                geometry-enabled: root.geometry-enabled && root.vertical;
+                geometry(key,parent,index,x,y,w,h) => { root.geometry(key,parent,index,x,y,w,h); }
+                text: name; full-name: root.data.full-names[index]; selected: index == root.data.selected;
+                vertical: true; clockwise: root.clockwise; cap: root.cap;
+                wheel(step) => { root.scroll-wheel(step); }
+                chosen => { root.chosen(index); }
+                context-menu(x,y) => { root.context-menu(index,x,y); }
+                close => { root.close(index); }
+                hovered(name,x,y,on) => { root.hovered(name,x,y,on); }
+            }
+            TouchArea {
+                vertical-stretch: 1; min-height: 40px;
+                scroll-event(event) => { if event.delta-y != 0px { root.scroll-wheel(event.delta-y > 0px ? -1 : 1); } return accept; }
+                pointer-event(event) => {
+                    if event.kind == PointerEventKind.down && event.button == PointerEventButton.right { root.context-menu(-1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y); }
+                    if event.kind == PointerEventKind.down && (event.button == PointerEventButton.left || event.button == PointerEventButton.middle) { root.space-pressed(event.button == PointerEventButton.middle); }
+                }
+            }
+        }
+    }
+    if !root.vertical && horizontal-scroll.content-width > root.width + 1px: Rectangle {
+        x: parent.width - 40px; width: 40px; height: 26px;
+        background: Theme.panel;
+        for forward[index] in [false,true]: Rectangle {
+            x: index * 20px; width: 20px; height: 26px;
+            background: arrow-touch.has-hover ? Theme.hover : Theme.panel;
+            accessible-role: button;
+            accessible-label: forward ? "Scroll tabs forward" : "Scroll tabs backward";
+            Text { text: forward ? "›" : "‹"; width: parent.width; height: parent.height; horizontal-alignment: center; vertical-alignment: center; color: Theme.text; }
+            arrow-touch := TouchArea { clicked => { horizontal-scroll.content-x=max(root.width - horizontal-scroll.content-width,min(0px,horizontal-scroll.content-x + (forward ? -120px : 120px))); } }
+        }
+    }
+    if root.vertical && vertical-scroll.content-height > root.height + 1px: Rectangle {
+        y: parent.height - 40px; height: 40px; width: 26px;
+        background: Theme.panel;
+        for forward[index] in [false,true]: Rectangle {
+            y: index * 20px; height: 20px; width: 26px;
+            background: vertical-arrow-touch.has-hover ? Theme.hover : Theme.panel;
+            accessible-role: button;
+            accessible-label: forward ? "Scroll tabs forward" : "Scroll tabs backward";
+            Text { text: forward ? "⌄" : "⌃"; width: parent.width; height: parent.height; horizontal-alignment: center; vertical-alignment: center; color: Theme.text; }
+            vertical-arrow-touch := TouchArea { clicked => { vertical-scroll.content-y=max(root.height - vertical-scroll.content-height,min(0px,vertical-scroll.content-y + (forward ? -120px : 120px))); } }
+        }
+    }
+}
+
+export component NotebookNavigation inherits Rectangle {
+    in property <string> hover-key;
+    in property <[TabRow]> rows;
+    in property <bool> vertical;
+    in property <bool> clockwise;
+    in property <bool> reverse-levels;
+    in property <bool> elide: true;
+    in property <bool> wheel-scroll;
+    callback wheel(int,int);
+    callback scrolled(int,float);
+    callback chosen(int,int);
+    in property <bool> shift;
+    callback geometry(string,string,int,int,length,length,length,length);
+    callback pointer(int,int,length,length,bool);
+    callback measured(int,float,float,float);
+    callback context-menu(int,int,length,length);
+    callback close(int,int);
+    callback space-pressed(int,bool);
+    callback hovered(string,length,length,bool);
+    for row[level] in root.rows: NotebookStrip {
+        x: root.vertical ? (root.reverse-levels ? root.rows.length - level - 1 : level) * 28px : 0px;
+        y: root.vertical ? 0px : (root.reverse-levels ? root.rows.length - level - 1 : level) * 28px;
+        width: root.vertical ? 28px : parent.width;
+        height: root.vertical ? parent.height : 28px;
+        hover-key: root.hover-key;
+        geometry-enabled: root.visible;
+        geometry(key,parent,index,x,y,w,h) => { root.geometry(key,parent,level,index,x,y,w,h); }
+        data: row; vertical: root.vertical; clockwise: root.clockwise; elide: root.elide; wheel-scroll: root.wheel-scroll;
+        wheel(step) => { root.wheel(level,step); }
+        scrolled(offset) => { root.scrolled(level,offset); }
+        chosen(index) => { root.chosen(level,index); }
+        measured(needed,available,cap) => { root.measured(level,needed,available,cap); }
+        context-menu(index,x,y) => { root.context-menu(level,index,x,y); }
+        close(index) => { root.close(level,index); }
+        space-pressed(middle) => { root.space-pressed(level,middle); }
+        hovered(name,x,y,on) => { root.hovered(name,x,y,on); }
+    }
+    // Persistent capture survives selected-path repeater/layout changes.
+    drag-touch := TouchArea {
+        width: root.vertical ? parent.width : max(0px,parent.width - 40px);
+        height: root.vertical ? max(0px,parent.height - 40px) : parent.height;
+        scroll-event(event) => { return reject; }
+        moved => { root.pointer(2,-1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y,root.shift); }
+        pointer-event(event) => {
+            // Slint calls pointer-event(move) before moved: it must retain the grab.
+            if event.kind == PointerEventKind.down || event.kind == PointerEventKind.up || event.kind == PointerEventKind.cancel {
+                root.pointer(event.kind == PointerEventKind.down ? 0 : event.kind == PointerEventKind.up ? 1 : 3,event.button == PointerEventButton.left ? 0 : event.button == PointerEventButton.right ? 1 : event.button == PointerEventButton.middle ? 2 : -1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y,event.modifiers.shift);
+            } else if event.kind == PointerEventKind.move && !self.pressed {
+                // Unpressed hover has no moved() callback in Slint.
+                root.pointer(2,-1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y,event.modifiers.shift);
+            }
+        }
+        changed has-hover => { if !self.has-hover { root.pointer(4,-1,0px,0px,false); } }
+    }
+}
+
+export component NotebookTree inherits Rectangle {
+    in property <[PageTreeRow]> rows;
+    in property <int> current-index: -1;
+    changed current-index => {
+        if root.current-index >= 0 {
+            if root.current-index * 26px < -list.content-y { list.content-y = -root.current-index * 26px; }
+            else if (root.current-index + 1) * 26px > -list.content-y + list.height { list.content-y = -max(0px,(root.current-index + 1) * 26px - list.height); }
+        }
+    }
+    callback chosen(string);
+    callback selected(string);
+    callback toggled(string);
+    callback navigate(int);
+    public function focus-tree() { keys.focus(); }
+    out property <bool> tree-focused: keys.has-focus;
+    background: Theme.panel;
+    border-width: 1px;
+    border-color: Theme.border;
+    keys := FocusScope {
+        width: parent.width; height: parent.height;
+        key-pressed(event) => {
+            if event.modifiers.control || event.modifiers.alt { return reject; }
+            if event.text == Key.UpArrow { root.navigate(0); return accept; }
+            if event.text == Key.DownArrow { root.navigate(1); return accept; }
+            if event.text == Key.LeftArrow { root.navigate(2); return accept; }
+            if event.text == Key.RightArrow { root.navigate(3); return accept; }
+            if event.text == Key.Home { root.navigate(4); return accept; }
+            if event.text == Key.End { root.navigate(5); return accept; }
+            if event.text == Key.Return { root.navigate(6); return accept; }
+            return reject;
+        }
+        HorizontalLayout {
+            height: 28px; spacing: 2px;
+            Button { text: "Collapse all"; clicked => { keys.focus(); root.navigate(7); } }
+            Button { text: "Expand all"; clicked => { keys.focus(); root.navigate(8); } }
+        }
+        list := ListView {
+            y: 28px; height: max(0px,parent.height - 28px);
+            for row in root.rows: Rectangle {
+                height: 26px;
+                background: row.selected ? Theme.highlight : touch.has-hover ? Theme.hover : Theme.panel;
+                accessible-role: list-item;
+                accessible-label: row.name;
+                accessible-value: row.selected ? "selected" : "";
+                accessible-action-default => { root.chosen(row.key); }
+                Text { x: row.depth * 16px + 24px; width: max(0px,parent.width - self.x - 6px); height: parent.height; text: row.name; color: Theme.text; vertical-alignment: center; overflow: elide; }
+                touch := TouchArea {
+                    clicked => { keys.focus(); root.selected(row.key); }
+                    double-clicked => { keys.focus(); root.selected(row.key); if row.branch { root.toggled(row.key); } root.chosen(row.key); }
+                }
+                Text { x: row.depth * 16px + 4px; width: 20px; height: parent.height; text: row.branch ? row.expanded ? "▾" : "▸" : ""; color: Theme.text; vertical-alignment: center; }
+                TouchArea { x: row.depth * 16px + 4px; width: 20px; enabled: row.branch; clicked => { keys.focus(); root.toggled(row.key); } }
+            }
+        }
+    }
+}

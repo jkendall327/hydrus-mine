@@ -12,7 +12,8 @@ use serde_json::{Value, json};
 
 /// Decode one complete reference history container.
 pub fn decode_log(value: &Value) -> Result<QueryLog> {
-    legacy::query_log(&object(value)?).map_err(|e| Error::Unsupported(e.to_string()))
+    let value = crate::subscription_seed_cache::log(value)?;
+    legacy::query_log(&object(&value)?).map_err(|e| Error::Unsupported(e.to_string()))
 }
 
 /// A selected subscription and all its query histories, frozen for exchange.
@@ -204,7 +205,7 @@ pub(crate) fn decode_container(value: &Value, now: i64) -> Result<Subscription> 
     }
     let logs = values(&info[1])?
         .iter()
-        .map(|v| legacy::query_log(&object(v)?).map_err(|e| Error::Unsupported(e.to_string())))
+        .map(decode_log)
         .collect::<Result<Vec<_>>>()?;
     let headers = info[0][3][1]
         .as_array()

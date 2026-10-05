@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "agent": "import-work-slots",
+  "baseline_git_head": "35145a8168fecf40abab54dfc0cb9c644cbde8aa",
+  "frozen_original_inventory": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "frozen_options_audit": {
+    "path": "docs/rust/gui-coverage/audit/options-patch.json",
+    "baseline_git_head": "5079206dc1d0c2d2614b428632dc9499cb9ad3f8",
+    "sha256": "05fb770dc87d8b03cd0e1a4dbd509de61d48e0dc1c87c7c7032a9aeb4adce20b",
+    "before": {
+      "audit-options-importing-work-slots-number-of-gallery-downloader-file-queues-that-can-import-at-the-same-time": "missing",
+      "audit-options-importing-work-slots-number-of-gallery-downloader-searches-that-can-run-at-the-same-time": "missing",
+      "audit-options-importing-work-slots-number-of-watcher-page-file-queues-that-can-run-at-the-same-time": "missing",
+      "audit-options-importing-work-slots-number-of-watcher-page-checkers-that-can-run-at-the-same-time": "missing",
+      "audit-options-importing-work-slots-number-of-other-paged-importer-jobs-that-can-run-at-the-same-time": "missing"
+    }
+  },
+  "claims": [
+    {
+      "id": "audit-options-importing-work-slots-number-of-gallery-downloader-file-queues-that-can-import-at-the-same-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact staged 1\u2013500 integer control; raw legacy integers retained until Options Apply. Saved changes reach the corresponding owned QueueRunner work pool, while active counts survive lowering/growth. Pending jobs own no permits; completion/error/cancellation/owner-close cleanup releases only its own category permit. Watcher checks and files run independently. Monotonic queue allocation and owner-qualified seed writes prevent deleted-worker callbacks affecting successors.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs::ImportWorkSlots",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-download/src/work_slots.rs::Slots",
+        "crates/hydrus-download/src/queue.rs::QueueRunner",
+        "crates/hydrus-store/src/queues.rs::create_queue",
+        "crates/hydrus-store/src/store.rs::Store::open"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/import_work_slots.rs",
+        "crates/hydrus-gui/tests/gui/import_work_slots.rs",
+        "crates/hydrus-download/src/work_slots.rs::tests",
+        "crates/hydrus-download/tests/url_queue.rs::running_file_queues_keep_limits_when_lowered_and_release_on_cancel_or_owner_close",
+        "crates/hydrus-download/tests/url_queue.rs::running_gallery_searches_pick_up_capacity_growth_and_release_on_error",
+        "crates/hydrus-download/tests/watchers.rs::watcher_checks_share_their_own_live_capacity_and_owner_close_releases_it",
+        "crates/hydrus-store/src/import/decode.rs::importing_work_slots_decode_five_legacy_keys_and_persist_native_limits",
+        "crates/hydrus-store/src/queues.rs::deleted_queue_identity_is_not_recycled_and_late_seed_updates_ignore_successors",
+        "crates/hydrus-store/src/store.rs::pre_existing_queue_without_sequence_keeps_its_retired_identity_after_upgrade"
+      ],
+      "limits": [
+        "Authored Rust/native/downloader tests await hosted CI; no local Cargo builds, Rust tests or mutation runs.",
+        "Permits are held through bandwidth/network waits and synchronous local import work. A closing local-import owner may finish its current blocking import before its permit releases.",
+        "Pending workers re-read saved settings and queue/paused state within one second. Network owner-close is detected within 250ms and permits remain held until cancellation cleanup ends.",
+        "Scheduling cadence and FIFO fairness, other importing controls, subscriptions, and global pause controls remain outside this five-control slice. Broader Importing/page families remain Partial."
+      ]
+    },
+    {
+      "id": "audit-options-importing-work-slots-number-of-gallery-downloader-searches-that-can-run-at-the-same-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact staged 1\u2013500 integer control; raw legacy integers retained until Options Apply. Saved changes reach the corresponding owned QueueRunner work pool, while active counts survive lowering/growth. Pending jobs own no permits; completion/error/cancellation/owner-close cleanup releases only its own category permit. Watcher checks and files run independently. Monotonic queue allocation and owner-qualified seed writes prevent deleted-worker callbacks affecting successors.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs::ImportWorkSlots",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-download/src/work_slots.rs::Slots",
+        "crates/hydrus-download/src/queue.rs::QueueRunner",
+        "crates/hydrus-store/src/queues.rs::create_queue",
+        "crates/hydrus-store/src/store.rs::Store::open"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/import_work_slots.rs",
+        "crates/hydrus-gui/tests/gui/import_work_slots.rs",
+        "crates/hydrus-download/src/work_slots.rs::tests",
+        "crates/hydrus-download/tests/url_queue.rs::running_file_queues_keep_limits_when_lowered_and_release_on_cancel_or_owner_close",
+        "crates/hydrus-download/tests/url_queue.rs::running_gallery_searches_pick_up_capacity_growth_and_release_on_error",
+        "crates/hydrus-download/tests/watchers.rs::watcher_checks_share_their_own_live_capacity_and_owner_close_releases_it",
+        "crates/hydrus-store/src/import/decode.rs::importing_work_slots_decode_five_legacy_keys_and_persist_native_limits",
+        "crates/hydrus-store/src/queues.rs::deleted_queue_identity_is_not_recycled_and_late_seed_updates_ignore_successors",
+        "crates/hydrus-store/src/store.rs::pre_existing_queue_without_sequence_keeps_its_retired_identity_after_upgrade"
+      ],
+      "limits": [
+        "Authored Rust/native/downloader tests await hosted CI; no local Cargo builds, Rust tests or mutation runs.",
+        "Permits are held through bandwidth/network waits and synchronous local import work. A closing local-import owner may finish its current blocking import before its permit releases.",
+        "Pending workers re-read saved settings and queue/paused state within one second. Network owner-close is detected within 250ms and permits remain held until cancellation cleanup ends.",
+        "Scheduling cadence and FIFO fairness, other importing controls, subscriptions, and global pause controls remain outside this five-control slice. Broader Importing/page families remain Partial."
+      ]
+    },
+    {
+      "id": "audit-options-importing-work-slots-number-of-other-paged-importer-jobs-that-can-run-at-the-same-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact staged 1\u2013500 integer control; raw legacy integers retained until Options Apply. Saved changes reach the corresponding owned QueueRunner work pool, while active counts survive lowering/growth. Pending jobs own no permits; completion/error/cancellation/owner-close cleanup releases only its own category permit. Watcher checks and files run independently. Monotonic queue allocation and owner-qualified seed writes prevent deleted-worker callbacks affecting successors.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs::ImportWorkSlots",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-download/src/work_slots.rs::Slots",
+        "crates/hydrus-download/src/queue.rs::QueueRunner",
+        "crates/hydrus-store/src/queues.rs::create_queue",
+        "crates/hydrus-store/src/store.rs::Store::open"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/import_work_slots.rs",
+        "crates/hydrus-gui/tests/gui/import_work_slots.rs",
+        "crates/hydrus-download/src/work_slots.rs::tests",
+        "crates/hydrus-download/tests/url_queue.rs::running_file_queues_keep_limits_when_lowered_and_release_on_cancel_or_owner_close",
+        "crates/hydrus-download/tests/url_queue.rs::running_gallery_searches_pick_up_capacity_growth_and_release_on_error",
+        "crates/hydrus-download/tests/watchers.rs::watcher_checks_share_their_own_live_capacity_and_owner_close_releases_it",
+        "crates/hydrus-store/src/import/decode.rs::importing_work_slots_decode_five_legacy_keys_and_persist_native_limits",
+        "crates/hydrus-store/src/queues.rs::deleted_queue_identity_is_not_recycled_and_late_seed_updates_ignore_successors",
+        "crates/hydrus-store/src/store.rs::pre_existing_queue_without_sequence_keeps_its_retired_identity_after_upgrade"
+      ],
+      "limits": [
+        "Authored Rust/native/downloader tests await hosted CI; no local Cargo builds, Rust tests or mutation runs.",
+        "Permits are held through bandwidth/network waits and synchronous local import work. A closing local-import owner may finish its current blocking import before its permit releases.",
+        "Pending workers re-read saved settings and queue/paused state within one second. Network owner-close is detected within 250ms and permits remain held until cancellation cleanup ends.",
+        "Scheduling cadence and FIFO fairness, other importing controls, subscriptions, and global pause controls remain outside this five-control slice. Broader Importing/page families remain Partial."
+      ]
+    },
+    {
+      "id": "audit-options-importing-work-slots-number-of-watcher-page-checkers-that-can-run-at-the-same-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact staged 1\u2013500 integer control; raw legacy integers retained until Options Apply. Saved changes reach the corresponding owned QueueRunner work pool, while active counts survive lowering/growth. Pending jobs own no permits; completion/error/cancellation/owner-close cleanup releases only its own category permit. Watcher checks and files run independently. Monotonic queue allocation and owner-qualified seed writes prevent deleted-worker callbacks affecting successors.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs::ImportWorkSlots",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-download/src/work_slots.rs::Slots",
+        "crates/hydrus-download/src/queue.rs::QueueRunner",
+        "crates/hydrus-store/src/queues.rs::create_queue",
+        "crates/hydrus-store/src/store.rs::Store::open"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/import_work_slots.rs",
+        "crates/hydrus-gui/tests/gui/import_work_slots.rs",
+        "crates/hydrus-download/src/work_slots.rs::tests",
+        "crates/hydrus-download/tests/url_queue.rs::running_file_queues_keep_limits_when_lowered_and_release_on_cancel_or_owner_close",
+        "crates/hydrus-download/tests/url_queue.rs::running_gallery_searches_pick_up_capacity_growth_and_release_on_error",
+        "crates/hydrus-download/tests/watchers.rs::watcher_checks_share_their_own_live_capacity_and_owner_close_releases_it",
+        "crates/hydrus-store/src/import/decode.rs::importing_work_slots_decode_five_legacy_keys_and_persist_native_limits",
+        "crates/hydrus-store/src/queues.rs::deleted_queue_identity_is_not_recycled_and_late_seed_updates_ignore_successors",
+        "crates/hydrus-store/src/store.rs::pre_existing_queue_without_sequence_keeps_its_retired_identity_after_upgrade"
+      ],
+      "limits": [
+        "Authored Rust/native/downloader tests await hosted CI; no local Cargo builds, Rust tests or mutation runs.",
+        "Permits are held through bandwidth/network waits and synchronous local import work. A closing local-import owner may finish its current blocking import before its permit releases.",
+        "Pending workers re-read saved settings and queue/paused state within one second. Network owner-close is detected within 250ms and permits remain held until cancellation cleanup ends.",
+        "Scheduling cadence and FIFO fairness, other importing controls, subscriptions, and global pause controls remain outside this five-control slice. Broader Importing/page families remain Partial."
+      ]
+    },
+    {
+      "id": "audit-options-importing-work-slots-number-of-watcher-page-file-queues-that-can-run-at-the-same-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact staged 1\u2013500 integer control; raw legacy integers retained until Options Apply. Saved changes reach the corresponding owned QueueRunner work pool, while active counts survive lowering/growth. Pending jobs own no permits; completion/error/cancellation/owner-close cleanup releases only its own category permit. Watcher checks and files run independently. Monotonic queue allocation and owner-qualified seed writes prevent deleted-worker callbacks affecting successors.",
+      "source": [
+        "crates/hydrus-store/src/settings.rs::ImportWorkSlots",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-download/src/work_slots.rs::Slots",
+        "crates/hydrus-download/src/queue.rs::QueueRunner",
+        "crates/hydrus-store/src/queues.rs::create_queue",
+        "crates/hydrus-store/src/store.rs::Store::open"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/import_work_slots.rs",
+        "crates/hydrus-gui/tests/gui/import_work_slots.rs",
+        "crates/hydrus-download/src/work_slots.rs::tests",
+        "crates/hydrus-download/tests/url_queue.rs::running_file_queues_keep_limits_when_lowered_and_release_on_cancel_or_owner_close",
+        "crates/hydrus-download/tests/url_queue.rs::running_gallery_searches_pick_up_capacity_growth_and_release_on_error",
+        "crates/hydrus-download/tests/watchers.rs::watcher_checks_share_their_own_live_capacity_and_owner_close_releases_it",
+        "crates/hydrus-store/src/import/decode.rs::importing_work_slots_decode_five_legacy_keys_and_persist_native_limits",
+        "crates/hydrus-store/src/queues.rs::deleted_queue_identity_is_not_recycled_and_late_seed_updates_ignore_successors",
+        "crates/hydrus-store/src/store.rs::pre_existing_queue_without_sequence_keeps_its_retired_identity_after_upgrade"
+      ],
+      "limits": [
+        "Authored Rust/native/downloader tests await hosted CI; no local Cargo builds, Rust tests or mutation runs.",
+        "Permits are held through bandwidth/network waits and synchronous local import work. A closing local-import owner may finish its current blocking import before its permit releases.",
+        "Pending workers re-read saved settings and queue/paused state within one second. Network owner-close is detected within 250ms and permits remain held until cancellation cleanup ends.",
+        "Scheduling cadence and FIFO fairness, other importing controls, subscriptions, and global pause controls remain outside this five-control slice. Broader Importing/page families remain Partial."
+      ]
+    }
+  ],
+  "parentsRemainPartial": [
+    "audit-options-importing",
+    "audit-options-importing-work-slots"
+  ],
+  "canonical_files_changed": false,
+  "claimsPromotion": "Proposed five original Missing controls only; do not promote before hosted source validation.",
+  "defaultsEvidence": "ImportingPanel constructor seeds 5/15/5/15/10, then overwrites with actual loaded ClientOptions defaults 15/5/15/5/10. Recorder separately captures factory and fresh basic loaded defaults. Native uses recorded actual values.",
+  "referenceRecording": {
+    "recorder": "oracle/record_import_work_slots.py",
+    "fixture": "oracle/fixtures/import_work_slots.json",
+    "image": "oracle/fixtures/import_work_slots.png",
+    "executed": true,
+    "reference": "Actual ImportingPanel controls/UpdateOptions, serialization/reopening/abandoned draft and loaded raw-limit unchanged Apply; factory defaults; actual named ClientController AcquireThreadSlot/ReleaseThreadSlot/_UpdateThreadSlotLockLimits on synthetic held permits for all five categories. No authored network request.",
+    "executedAtUtc": "2026-10-05T04:17:32Z",
+    "finishedAtUtc": "2026-10-05T04:17:34Z"
+  },
+  "validation": "Actual Qt recorder and PNG inspection, Python syntax/snapshot invariants, direct rustfmt and diff checks; cached warning-aware Slint source compilation passed. Independent source review accepted five-control scope. Rust execution remains pending hosted CI.",
+  "upgradeBoundary": "Store::open bootstraps the queue high-water mark through the writer before exposing any runner-owned existing identities. Only a current maximum above the saved mark causes a setting write; initialized reopen preserves higher marks unchanged."
+}

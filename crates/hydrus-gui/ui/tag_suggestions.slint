@@ -1,0 +1,72 @@
+import { Button, ComboBox, VerticalBox, HorizontalBox, ListView } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { TableRow, TableColumn, ListTable } from "list_table.slint";
+export component TagSuggestionPanels inherits Rectangle {
+    in property <bool> enabled: true;
+    in property <[TableRow]> most-used;
+    in property <[TableRow]> recent;
+    in property <[TableRow]> related;
+    in property <bool> related-enabled;
+    in property <string> related-status;
+    in-out property <bool> related-local:true;
+    in-out property <bool> related-display:true;
+    callback related-search();
+    in property <bool> most-used-enabled;
+    in property <bool> recent-enabled;
+    in property <bool> columns;
+    in property <length> column-width: 300px;
+    in property <int> selected;
+    callback selected-page(int);
+    callback clicked(int,int,bool,bool);
+    callback activated(int,int);
+    min-width: root.column-width * (root.columns ? (root.most-used-enabled ? 1 : 0) + (root.recent-enabled ? 1 : 0) + (root.related-enabled ? 1 : 0) : 1);
+    horizontal-stretch: 0;
+    VerticalLayout {
+        if !root.columns: HorizontalLayout {
+            if root.most-used-enabled: Button { text:"most used"; primary:root.selected==0; clicked=>{root.selected-page(0);} }
+            if root.related-enabled: Button {text:"related"; primary:root.selected==2; clicked=>{root.selected-page(2);}}
+            if root.recent-enabled: Button { text:"recent"; primary:root.selected==1; clicked=>{root.selected-page(1);} }
+        }
+        HorizontalLayout {
+            spacing:6px;
+            if root.most-used-enabled && (root.columns || root.selected==0): ListTable { background:Theme.tags-background;
+                columns:[{title:"most used",width:root.column-width,stretch:true}]; rows:root.most-used; vertical-stretch:1;
+                row-clicked(i,c,s)=>{root.clicked(0,i,c,s);}
+                row-activated(i)=>{root.activated(0,i);}
+            }
+            if root.related-enabled && (root.columns || root.selected==2): VerticalLayout {
+                horizontal-stretch:0; min-width:root.column-width; max-width:root.column-width;
+                Text {text:root.related-status; color:Theme.text;wrap:word-wrap;}
+                Button {text:"quick"; clicked=>{root.related-search();}}
+                ComboBox {model:["just for my files","all known files"];current-index:root.related-local?0:1;selected(_)=>{root.related-local=self.current-index==0;root.related-search();}}
+                ComboBox {model:["siblings/parents","storage tags"];current-index:root.related-display?0:1;selected(_)=>{root.related-display=self.current-index==0;root.related-search();}}
+                ListTable { background:Theme.tags-background;columns:[{title:"related",width:root.column-width,stretch:true}];rows:root.related;vertical-stretch:1;row-clicked(i,c,s)=>{root.clicked(2,i,c,s);}row-activated(i)=>{root.activated(2,i);}}
+            }
+            if root.recent-enabled && (root.columns || root.selected==1): ListTable { background:Theme.tags-background;
+                columns:[{title:"recent",width:root.column-width,stretch:true}]; rows:root.recent; vertical-stretch:1;
+                row-clicked(i,c,s)=>{root.clicked(1,i,c,s);}
+                row-activated(i)=>{root.activated(1,i);}
+            }
+        }
+    }
+}
+export component MostUsedTagsWindow inherits Window {
+    title: "most used tags";
+    width: 520px; height: 440px; background: Theme.window;
+    in property <[string]> services;
+    in property <int> service;
+    in property <[string]> tags;
+    in property <bool> child-open;
+    callback service-chosen(int);
+    callback edit-tags();
+    callback apply();
+    callback cancel();
+    VerticalBox {
+        padding: 12px; spacing: 8px;
+        Text { text: "Add your most used tags for each particular service here, and then you can just double-click to add, rather than typing every time."; wrap: word-wrap; color: Theme.text; }
+        HorizontalBox { Text {text:"Tag service: "; color:Theme.text;} ComboBox { model:root.services; current-index:root.service; enabled:!root.child-open; selected(_)=>{root.service-chosen(self.current-index);} } }
+        Rectangle { background:Theme.tags-background;vertical-stretch:1; ListView { for tag in root.tags: Text { text:tag; color:Theme.text; } } }
+        Button { text:"edit most used tags"; enabled:!root.child-open && root.services.length > 0; clicked=>{root.edit-tags();} }
+        HorizontalBox { alignment:end; Button {text:"apply"; enabled:!root.child-open; clicked=>{root.apply();}} Button {text:"cancel"; clicked=>{root.cancel();}} }
+    }
+}

@@ -64,6 +64,146 @@ unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in
 [gui-coverage/README.md](gui-coverage/README.md).
 
+Continuous source work now implements 134 further original leaf proposals over
+that validated 240 checkpoint: 53 on `codex/parity-more-controls`, five more
+on the dependent `codex/parity-next-details` branch, and 13 more on
+`codex/parity-preview-and-launching`, plus nine on
+`codex/parity-popup-and-file-views`, and 12 more on
+`codex/parity-cache-and-favourites`, and seven more on
+`codex/parity-tag-sort-and-refresh`, and one on
+`codex/parity-image-and-window-controls`, and seven on
+`codex/parity-appearance-and-file-menu`, and four on
+`codex/parity-preview-and-filter-controls`, and three on
+`codex/parity-predicate-and-job-controls`, and four on
+`codex/parity-deletion-and-dialog-controls`, and five on
+`codex/parity-maintenance-and-menu-controls`, and three on
+`codex/parity-cache-and-runtime-controls`, and one on
+`codex/parity-ffmpeg-timeout`, and five more on
+`codex/parity-prefetch-and-selected-records`. These add clearing captured selected
+deletion records in durable 64-record batches, the three saved viewer-prefetch
+count/budget controls reaching owned real image consumers, and the Help debug
+GET action with ordinary network policy and byte-save/text-copy response choices.
+The same integration adds compatible-subset sidecar-router imports from ordered
+PNG selections and actual current-session snapshot/reconstruction, contributing
+two more original implementation proposals. Session reload resets current tabs
+and thumbnail selection as the recorded reference does, while retaining old Undo
+pages. Scheduled file-maintenance review adds a substantive Partial improvement
+with zero completion credit; batch-refresh and independent-process lock boundaries
+remain explicit. The complete continuation contains 63 Partial improvements.
+Current-image asynchronous rendering, other cache families and the embedded
+network widget remain Partial. The latest integration consolidates work after
+the separately validating preview/launching checkpoint, preserving authored
+branches and evidence tags while avoiding redundant hosted runs for every
+intermediate draft. Windows cleanup now retains explicit stack-scoped collectors;
+the watcher replay waits for final persisted state. Newer hosted compile/lint
+diagnostics have narrow ownership/import/concrete-default repairs. All of this
+remains proposed until exact-source CI and native render review pass.
+The saved FFmpeg timeout now reaches importer and
+maintenance work, About, clipboard image import, import review, duplicate
+auto-resolution, parser fetching and folder-sidecar sampling through weak Store
+readers. Each process captures its deadline once, matching the reference's
+three-second polling boundary; explicit fixed and streaming APIs retain their
+existing deadlines. Independent review closed four omitted consumer paths.
+Hosted Rust and native verification remains pending. The three image-cache controls now
+reach shared pending/full-resolution renderers in preview, viewer, archive/delete
+and duplicate-filter consumers. Budget admission uses the reference RGB estimate;
+loaded footprints update on access, timeout is strict, and cache eviction preserves
+current displayed images and viewing intervals. Live policy, implicit normalization
+merges and owned-child edit guards are independently reviewed. The represented
+viewer-prefetch controls now have scoped proposals; tile, video, delay controls
+and whole-cache families remain Partial. Runtime force-idle and hidden/native
+minimized toaster freezing are further Partial improvements with zero completion
+credit; missing worker-wake/CPU behavior, Wayland minimized state and other-monitor
+freezing remain explicit. The five preceding proposals add the two real
+normal-time maintenance gates, two owned five-second debug actions (popup and
+new search page), and the default-off Client API cookie/header notification
+control. Automatic workers run outside the UI and retire when the final binding
+clone closes; existing delayed actions deliver while Main is hidden and preserve
+open page-chooser destinations. Real authenticated cookie/header routes publish
+reference-matching finished jobs through the existing toaster. Actual Qt traces,
+independent source review and authored hosted regressions cover these bounded
+scopes. The represented menu-choice wheel preference and active-predicate
+copy/open routes are additional Partial improvements with zero completion credit.
+Random hidden-order restoration remains unimplemented. The four preceding proposals add the
+captured physical deletion delay, live radio Enter/Return preference, and raw
+namespace grouping Add/Edit controls. Physical deletion commits each pair before
+waiting outside the writer; shutdown wakes the owned worker and restored-file
+queue cleanup skips unnecessary waits. Radio keys re-read the saved policy;
+unforced keys reach the parent default button, matching recorded Linux behavior.
+Namespace children preserve raw blanks, case, whitespace and duplicates, while
+field-scoped saves preserve concurrent presentation changes. The three preceding
+proposals add the
+reference multiline hash/type controls, owned cleanup warnings and text repaint,
+and the real two-job long-text popup producer. Active predicates now support
+populated system editing, selection, inversion and captured search commands,
+plus simple text editing, atomic mixed-dialog Apply/Cancel, OR reopening and
+start-OR replacement. Hidden-parent child cancellation restores the parent's
+controls; retired descendants release their owned state. Mixed OR and inherited
+menu branches keep that original action Partial with zero completion credit.
+The four earlier preview/filter proposals cover the
+independent preview default zoom, file-size comparison/value/unit editor, and
+both archive/delete finish policies. Saved choices reach actual preview geometry,
+typed searches, selectable deletion domains and an owned 1.2-second button delay.
+Repeated F12 preserves the existing filter and pending decisions; a retained
+finish cannot write after its main window is destroyed. Hosted validation and
+exact-source native render review remain pending for these proposals.
+Native WebP/ugoira readers now consume the animation start percentage and the
+reference previous-widget frame count. Apply preserves the actual integer chosen
+in the spinbox, including its floating-point reopening quirks. Unsupported
+animation backends and imported indices keep this original leaf Partial with zero
+completion credit.
+The 71-control branch adds two preview viewing-time
+controls, two saved formatting controls with backend consumers, one keyboard
+capture control, and eight ordered Open Externally routing controls. It includes tab
+appearance/drag, notebook tree, notes, rating sizes, archive repair, duplicate
+colours, tag suggestions/weights, autocomplete panes, sidebar cogs, thumbnail
+navigation, namespace colour actions, external-call list and command controls,
+sibling connector colours, browsing/API idle timeouts, viewer
+drag/hover-wheel preferences, staged subscription merging, registered login
+scripts in mixed downloader packages, all five importing work-slot limits,
+local-domain copy/move confirmations, the per-service already-exists tag filter,
+and global viewing-statistics clear/cull actions. The nine further controls add saved popup width/fixed-width policies;
+producer-owned clipboard, callable and yes/no job actions; and the four
+Files/Trash view-removal policies with captured-page consumers. The next 12 add three
+thumbnail-cache memory/timeout/debug controls with byte-accounted owned consumers;
+five sidebar splitter and Pages-menu controls with page-local geometry and accepted-exit
+saving; and four Ctrl/Shift preview-focus preferences with duration-aware selection.
+The next seven add the separate search/viewer Manage Tags opening sorts, the raw
+OR connecting-string editor, and the four
+experimental gallery/watcher list update intervals and denominators. Accepted preview
+images and intervals now survive per-page return under global hide, with a bounded
+frame cache and owned retry paths. That hide preference remains Partial because
+first-raster admission, reconstruction and terminal cleanup still differ from Qt. Regex favourite selection
+now uses the reference read-only chooser; that original leaf was already completed
+and receives no additional completion credit. Historical subscription
+seed-cache compatibility, direct ordered subscription imports and login editor
+controls are further parent/Partial improvements with zero leaf credit.
+These remain proposals while exact hosted CI
+runs and rendered review are pending. Window rescue remains a Partial
+improvement with zero completion credit; GUI formatting now has two conditional
+original control proposals after its backend waits and diagnostics were ported. Owned asynchronous
+metadata filesystem jobs also retain their two original Partial assessments,
+and mouse idle tracking remains Partial because it observes application windows.
+Broader external
+call/editor boundaries also remain Partial. Inspect the current branch with
+`python3 scripts/gui_burndown.py --commit HEAD`; do not substitute its proposed
+total of 374 for the validated 240 ledger. The embedded-ICC leaf adds the saved policy with real importer, preview,
+viewer and maintenance consumers. The viewer tag-list now opens owned search
+pages and requests main-window activation on supported native platforms; that
+activation remains Partial because Wayland activation is unresolved. Application
+name raw-empty acceptance and field-specific merging refine its existing Partial
+assessment without earning another completion. Truncated-image loading remains
+Missing, with no inert checkbox or credit. The File menu's quick-export directory
+action now re-reads the saved destination, resolves configured portable paths
+without creating them, and creates only the unset home-directory fallback.
+Reference recordings cover errors, Cancel, Apply and reopening; native validation
+remains pending. This branch also adds the preparation-progress suppression
+checkbox, three legacy colour/darkmode controls, blurhash thumbnail recovery and
+the viewport background image. The fade and renderer-choice controls retain
+Partial assessments because software compositing differs from Qt. These seven
+newest concrete leaves are proposed, with no validated ledger promotion. New work and diagnostics continue
+while hosted validation runs, as authorized by the owner.
+
 The next breadth work, in the owner's existing order:
 
 1. **Network management**: remaining scheduling, complete login execution and
@@ -91,6 +231,17 @@ The owner has authorized continuous work rather than fixed slates. Use concrete
 leaves and their remaining boundaries in the GUI map to choose independent work;
 exclude parent groups, aliases and evidence-only reassessments from implementation
 completion goals.
+
+The owner's latest instruction (2026-10-05) is implementation throughput with
+cheap validation: strict backend/model Clippy, simple builds and fast tests.
+Generated native GUI Clippy/type checking exceeded the cheap budget and joins
+full native GUI,
+cross-platform, rendered and audit passes are deferred until the end of the
+project. Fix bugs that block ongoing work and record other defects for that pass.
+The integrated implementation count remains separate from the fully validated
+240-item ledger. Current work is consolidated into PR #57 following PR #37;
+historical intermediate drafts are superseded. Automatic CI uses one current
+Linux lint/model lane; full jobs require explicit manual validation dispatch.
 
 ## 1. Manage subscriptions (network > subscriptions…)
 

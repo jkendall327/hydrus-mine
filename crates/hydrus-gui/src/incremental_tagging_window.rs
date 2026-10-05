@@ -30,6 +30,11 @@ pub fn open(
     let window = IncrementalTaggingWindow::new()?;
     let model = Rc::new(RefCell::new(model));
     let active = Rc::new(Cell::new(true));
+    crate::gui_colours::bind(
+        window.global::<crate::Theme<'_>>(),
+        model.borrow().store(),
+        active.clone(),
+    );
     let refresh: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let model = model.clone();

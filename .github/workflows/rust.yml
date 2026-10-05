@@ -8,21 +8,70 @@ on:
     paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml']
   # (from the Actions tab)
   workflow_dispatch:
+    inputs:
+      full_validation:
+        description: Run the deferred full workspace and cross-platform validation
+        type: boolean
+        required: false
+        default: false
 
 concurrency:
-  group: rust-${{ github.ref }}-${{ (github.head_ref == 'codex/overnight-gui-burndown' || startsWith(github.head_ref, 'codex/parity-')) && github.event.pull_request.head.sha || 'latest' }}
-  # Overnight implementation continues while earlier checkpoints validate.
-  cancel-in-progress: ${{ github.head_ref != 'codex/overnight-gui-burndown' && github.ref != 'refs/heads/codex/overnight-gui-burndown' && !startsWith(github.head_ref, 'codex/parity-') && !startsWith(github.ref, 'refs/heads/codex/parity-') }}
+  # Each integration PR owns one current run. Separate checkpoint branches still
+  # validate concurrently; repairing a PR supersedes its obsolete running head.
+  group: rust-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   CARGO_TERM_COLOR: always
   RUSTFLAGS: -D warnings
 
 jobs:
+  quick-check:
+    # Implementation mode: one current Linux lane, with no native GUI binaries,
+    # native GUI suite, platform matrix, render review or parity audit.
+    if: (github.event_name != 'workflow_dispatch' || !inputs.full_validation) && (github.event_name != 'push' || (github.ref != 'refs/heads/codex/overnight-gui-burndown' && !startsWith(github.ref, 'refs/heads/codex/parity-')))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      # Bound memory while checking the non-native implementation targets.
+      CARGO_BUILD_JOBS: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: '1.94'
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+          cache-workspace-crates: true
+      - name: install media tools and fontconfig
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg libfontconfig1-dev
+      - name: fmt
+        run: cargo fmt --all --check
+      - name: strict Clippy and type checking
+        run: |
+          set -o pipefail
+          # Generated native GUI metadata exceeded the cheap local budget
+          # (over 12 minutes and about 9 GiB). The manual full lane checks it.
+          cargo clippy --workspace --exclude hydrus-gui --all-targets --locked --keep-going -- -D warnings 2>&1 | tee /tmp/hydrus-quick-clippy.log
+      - name: save cheap compiler diagnostics
+        if: ${{ failure() }}
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: quick-clippy-${{ github.run_id }}-${{ github.run_attempt }}
+          path: /tmp/hydrus-quick-clippy.log
+          if-no-files-found: ignore
+          retention-days: 3
+      - name: fast core and GUI-model tests
+        run: |
+          cargo test -p hydrus-core --lib --locked
+          cargo test -p hydrus-gui-model --test model --locked
+
   check:
-    # This branch has an open PR: run once per checkpoint, rather than both
-    # its push and pull_request events. Other branch pushes still validate.
-    if: github.event_name != 'push' || (github.ref != 'refs/heads/codex/overnight-gui-burndown' && !startsWith(github.ref, 'refs/heads/codex/parity-'))
+    # Deferred until the owner explicitly requests the final validation pass.
+    if: github.event_name == 'workflow_dispatch' && inputs.full_validation
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -78,7 +127,18 @@ jobs:
         # Slint's GUI library and test target together exceeded 16 GiB locally.
         env:
           CARGO_BUILD_JOBS: 1
-        run: cargo test --workspace --locked --no-fail-fast
+        run: |
+          set -o pipefail
+          cargo test --workspace --locked --no-fail-fast 2>&1 | tee /tmp/hydrus-tests.log
+      - name: save immediate test diagnostics
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          path: /tmp/hydrus-tests.log
+          if-no-files-found: ignore
+          retention-days: 3
       - name: parity ratchet
         run: cargo xtask ratchet --check
       - name: save native GUI renders
@@ -94,7 +154,7 @@ jobs:
   # Keep exact-reference backend/model replays moving when GUI compilation
   # needs a repair. This lane is only for the owner's continuing parity work.
   parity-models:
-    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'codex/parity-')
+    if: github.event_name == 'workflow_dispatch' && inputs.full_validation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -115,7 +175,7 @@ jobs:
   # hydrus-rs should build and pass its tests on Windows and macOS too; the
   # Linux job above is the full check (lints and the parity ratchet).
   other-platforms:
-    if: github.event_name != 'push' || (github.ref != 'refs/heads/codex/overnight-gui-burndown' && !startsWith(github.ref, 'refs/heads/codex/parity-'))
+    if: github.event_name == 'workflow_dispatch' && inputs.full_validation
     strategy:
       fail-fast: false
       matrix:
@@ -140,6 +200,13 @@ jobs:
         env:
           CARGO_BUILD_JOBS: 1
         run: cargo build --workspace --all-targets --locked --keep-going
+      - name: Windows headless owner lifetime replay
+        if: runner.os == 'Windows'
+        timeout-minutes: 5
+        env:
+          CARGO_BUILD_JOBS: 1
+        run: |
+          cargo test -p hydrus-gui --test gui --locked headless_lifetime:: -- --nocapture
       - name: test
         env:
           CARGO_BUILD_JOBS: 1

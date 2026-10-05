@@ -22,8 +22,8 @@ fn filter(value: &TagFilter) -> Value {
             json!([
                 slice,
                 match rule {
-                    FilterRule::Blacklist => 0,
-                    FilterRule::Whitelist => 1,
+                    FilterRule::Whitelist => 0,
+                    FilterRule::Blacklist => 1,
                 }
             ])
         })

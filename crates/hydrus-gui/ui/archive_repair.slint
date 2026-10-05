@@ -1,0 +1,29 @@
+import { Button, ScrollView, VerticalBox, HorizontalBox } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+export component ArchiveRepairWindow inherits Window {
+    in property <string> window-title: "missing archive times work";
+    title: root.window-title;
+    width: 680px; height: 480px; background: Theme.window;
+    in property <int> phase;
+    in property <string> question;
+    in property <string> status;
+    in property <[string]> choices;
+    callback scan-answered(bool);
+    callback chosen(int);
+    callback cancel-work();
+    callback close-clicked();
+    VerticalBox { padding: 12px; spacing: 10px;
+        ScrollView { vertical-stretch: 1; Text { text: root.question; color: Theme.text; wrap: word-wrap; } }
+        Text { text: root.status; color: Theme.text; wrap: word-wrap; }
+        if root.phase == 0: HorizontalBox {
+            Button { text: "start the scan"; clicked => { root.scan-answered(true); } }
+            Button { text: "forget it"; clicked => { root.scan-answered(false); } }
+        }
+        if root.phase == 2: VerticalBox {
+            for label[i] in root.choices: Button { text: label; clicked => { root.chosen(i); } }
+            Button { text: "forget it"; clicked => { root.close-clicked(); } }
+        }
+        if root.phase == 1: Button { text: "cancel"; clicked => { root.cancel-work(); } }
+        if root.phase == 3: Button { text: "close"; clicked => { root.close-clicked(); } }
+    }
+}

@@ -1,0 +1,860 @@
+{
+  "initial": [
+    {
+      "number": 30,
+      "minimum": 1,
+      "maximum": 1000,
+      "none": false,
+      "phrase": "ignore normal browsing",
+      "unit": "minutes",
+      "enabled": true,
+      "number_enabled": true,
+      "seconds": 1800
+    },
+    {
+      "number": 10,
+      "minimum": 1,
+      "maximum": 1000,
+      "none": false,
+      "phrase": "ignore mouse movements",
+      "unit": "minutes",
+      "enabled": true,
+      "number_enabled": true,
+      "seconds": 600
+    },
+    {
+      "number": 1,
+      "minimum": 1,
+      "maximum": 1000,
+      "none": true,
+      "phrase": "ignore client api",
+      "unit": "minutes",
+      "enabled": true,
+      "number_enabled": false,
+      "seconds": null
+    }
+  ],
+  "edits": [
+    {
+      "action": "set_seconds",
+      "input": 0,
+      "controls": [
+        {
+          "number": 1,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore normal browsing",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60
+        },
+        {
+          "number": 1,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore mouse movements",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60
+        },
+        {
+          "number": 1,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore client api",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60
+        }
+      ],
+      "saved": [
+        60,
+        60,
+        60
+      ]
+    },
+    {
+      "action": "set_seconds",
+      "input": 59,
+      "controls": [
+        {
+          "number": 1,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore normal browsing",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60
+        },
+        {
+          "number": 1,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore mouse movements",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60
+        },
+        {
+          "number": 1,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore client api",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60
+        }
+      ],
+      "saved": [
+        60,
+        60,
+        60
+      ]
+    },
+    {
+      "action": "set_seconds",
+      "input": 60,
+      "controls": [
+        {
+          "number": 1,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore normal browsing",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60
+        },
+        {
+          "number": 1,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore mouse movements",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60
+        },
+        {
+          "number": 1,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore client api",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60
+        }
+      ],
+      "saved": [
+        60,
+        60,
+        60
+      ]
+    },
+    {
+      "action": "set_seconds",
+      "input": 119,
+      "controls": [
+        {
+          "number": 1,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore normal browsing",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60
+        },
+        {
+          "number": 1,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore mouse movements",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60
+        },
+        {
+          "number": 1,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore client api",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60
+        }
+      ],
+      "saved": [
+        60,
+        60,
+        60
+      ]
+    },
+    {
+      "action": "set_seconds",
+      "input": 120,
+      "controls": [
+        {
+          "number": 2,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore normal browsing",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 120
+        },
+        {
+          "number": 2,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore mouse movements",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 120
+        },
+        {
+          "number": 2,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore client api",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 120
+        }
+      ],
+      "saved": [
+        120,
+        120,
+        120
+      ]
+    },
+    {
+      "action": "set_seconds",
+      "input": 60000,
+      "controls": [
+        {
+          "number": 1000,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore normal browsing",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60000
+        },
+        {
+          "number": 1000,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore mouse movements",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60000
+        },
+        {
+          "number": 1000,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore client api",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60000
+        }
+      ],
+      "saved": [
+        60000,
+        60000,
+        60000
+      ]
+    },
+    {
+      "action": "set_seconds",
+      "input": 60060,
+      "controls": [
+        {
+          "number": 1000,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore normal browsing",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60000
+        },
+        {
+          "number": 1000,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore mouse movements",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60000
+        },
+        {
+          "number": 1000,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore client api",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60000
+        }
+      ],
+      "saved": [
+        60000,
+        60000,
+        60000
+      ]
+    },
+    {
+      "action": "set_seconds",
+      "input": null,
+      "controls": [
+        {
+          "number": 1000,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": true,
+          "phrase": "ignore normal browsing",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": false,
+          "seconds": null
+        },
+        {
+          "number": 1000,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": true,
+          "phrase": "ignore mouse movements",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": false,
+          "seconds": null
+        },
+        {
+          "number": 1000,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": true,
+          "phrase": "ignore client api",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": false,
+          "seconds": null
+        }
+      ],
+      "saved": [
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "action": "edit_minutes",
+      "input": -10,
+      "controls": [
+        {
+          "number": 1,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore normal browsing",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60
+        },
+        {
+          "number": 1,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore mouse movements",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60
+        },
+        {
+          "number": 1,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore client api",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60
+        }
+      ],
+      "saved": [
+        60,
+        60,
+        60
+      ]
+    },
+    {
+      "action": "edit_minutes",
+      "input": 1001,
+      "controls": [
+        {
+          "number": 1000,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore normal browsing",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60000
+        },
+        {
+          "number": 1000,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore mouse movements",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60000
+        },
+        {
+          "number": 1000,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore client api",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 60000
+        }
+      ],
+      "saved": [
+        60000,
+        60000,
+        60000
+      ]
+    },
+    {
+      "action": "edit_minutes",
+      "input": 2,
+      "controls": [
+        {
+          "number": 2,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore normal browsing",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 120
+        },
+        {
+          "number": 2,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore mouse movements",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 120
+        },
+        {
+          "number": 2,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore client api",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 120
+        }
+      ],
+      "saved": [
+        120,
+        120,
+        120
+      ]
+    },
+    {
+      "action": "none",
+      "input": true,
+      "controls": [
+        {
+          "number": 2,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": true,
+          "phrase": "ignore normal browsing",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": false,
+          "seconds": null
+        },
+        {
+          "number": 2,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": true,
+          "phrase": "ignore mouse movements",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": false,
+          "seconds": null
+        },
+        {
+          "number": 2,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": true,
+          "phrase": "ignore client api",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": false,
+          "seconds": null
+        }
+      ],
+      "saved": [
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "action": "none",
+      "input": false,
+      "controls": [
+        {
+          "number": 2,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore normal browsing",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 120
+        },
+        {
+          "number": 2,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore mouse movements",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 120
+        },
+        {
+          "number": 2,
+          "minimum": 1,
+          "maximum": 1000,
+          "none": false,
+          "phrase": "ignore client api",
+          "unit": "minutes",
+          "enabled": true,
+          "number_enabled": true,
+          "seconds": 120
+        }
+      ],
+      "saved": [
+        120,
+        120,
+        120
+      ]
+    }
+  ],
+  "disabled": [
+    {
+      "number": 2,
+      "minimum": 1,
+      "maximum": 1000,
+      "none": false,
+      "phrase": "ignore normal browsing",
+      "unit": "minutes",
+      "enabled": false,
+      "number_enabled": false,
+      "seconds": 120
+    },
+    {
+      "number": 2,
+      "minimum": 1,
+      "maximum": 1000,
+      "none": false,
+      "phrase": "ignore mouse movements",
+      "unit": "minutes",
+      "enabled": false,
+      "number_enabled": false,
+      "seconds": 120
+    },
+    {
+      "number": 2,
+      "minimum": 1,
+      "maximum": 1000,
+      "none": false,
+      "phrase": "ignore client api",
+      "unit": "minutes",
+      "enabled": false,
+      "number_enabled": false,
+      "seconds": 120
+    }
+  ],
+  "gates": [
+    {
+      "values": [
+        null,
+        null,
+        null
+      ],
+      "times": {
+        "last_user_action": 0,
+        "last_mouse_action": 0,
+        "last_client_api_action": 0
+      },
+      "now": 120000,
+      "enabled": true,
+      "eligible": false
+    },
+    {
+      "values": [
+        null,
+        null,
+        null
+      ],
+      "times": {
+        "last_user_action": 0,
+        "last_mouse_action": 0,
+        "last_client_api_action": 0
+      },
+      "now": 120001,
+      "enabled": true,
+      "eligible": true
+    },
+    {
+      "values": [
+        60,
+        null,
+        null
+      ],
+      "times": {
+        "last_user_action": 120001,
+        "last_mouse_action": 999999999,
+        "last_client_api_action": 999999999
+      },
+      "now": 180001,
+      "enabled": true,
+      "eligible": false
+    },
+    {
+      "values": [
+        60,
+        null,
+        null
+      ],
+      "times": {
+        "last_user_action": 120001,
+        "last_mouse_action": 999999999,
+        "last_client_api_action": 999999999
+      },
+      "now": 180002,
+      "enabled": true,
+      "eligible": true
+    },
+    {
+      "values": [
+        null,
+        60,
+        null
+      ],
+      "times": {
+        "last_user_action": 999999999,
+        "last_mouse_action": 120001,
+        "last_client_api_action": 999999999
+      },
+      "now": 180001,
+      "enabled": true,
+      "eligible": false
+    },
+    {
+      "values": [
+        null,
+        60,
+        null
+      ],
+      "times": {
+        "last_user_action": 999999999,
+        "last_mouse_action": 120001,
+        "last_client_api_action": 999999999
+      },
+      "now": 180002,
+      "enabled": true,
+      "eligible": true
+    },
+    {
+      "values": [
+        null,
+        null,
+        60
+      ],
+      "times": {
+        "last_user_action": 999999999,
+        "last_mouse_action": 999999999,
+        "last_client_api_action": 120001
+      },
+      "now": 180001,
+      "enabled": true,
+      "eligible": false
+    },
+    {
+      "values": [
+        null,
+        null,
+        60
+      ],
+      "times": {
+        "last_user_action": 999999999,
+        "last_mouse_action": 999999999,
+        "last_client_api_action": 120001
+      },
+      "now": 180002,
+      "enabled": true,
+      "eligible": true
+    },
+    {
+      "values": [
+        60000,
+        null,
+        null
+      ],
+      "times": {
+        "last_user_action": 0,
+        "last_mouse_action": 999999999,
+        "last_client_api_action": 999999999
+      },
+      "now": 60000000,
+      "enabled": true,
+      "eligible": false
+    },
+    {
+      "values": [
+        60000,
+        null,
+        null
+      ],
+      "times": {
+        "last_user_action": 0,
+        "last_mouse_action": 999999999,
+        "last_client_api_action": 999999999
+      },
+      "now": 60000001,
+      "enabled": true,
+      "eligible": true
+    },
+    {
+      "values": [
+        null,
+        null,
+        60000
+      ],
+      "times": {
+        "last_user_action": 999999999,
+        "last_mouse_action": 999999999,
+        "last_client_api_action": 0
+      },
+      "now": 60000000,
+      "enabled": true,
+      "eligible": false
+    },
+    {
+      "values": [
+        null,
+        null,
+        60000
+      ],
+      "times": {
+        "last_user_action": 999999999,
+        "last_mouse_action": 999999999,
+        "last_client_api_action": 0
+      },
+      "now": 60000001,
+      "enabled": true,
+      "eligible": true
+    },
+    {
+      "values": [
+        null,
+        null,
+        60000
+      ],
+      "times": {
+        "last_user_action": 999999999,
+        "last_mouse_action": 999999999,
+        "last_client_api_action": 0
+      },
+      "now": 60000001,
+      "enabled": false,
+      "eligible": false
+    }
+  ],
+  "reopened_none": [
+    {
+      "number": 1,
+      "none": true,
+      "seconds": null
+    },
+    {
+      "number": 1,
+      "none": true,
+      "seconds": null
+    },
+    {
+      "number": 1,
+      "none": true,
+      "seconds": null
+    }
+  ]
+}

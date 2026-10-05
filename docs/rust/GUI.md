@@ -84,6 +84,13 @@ in a new page
 it while it runs; a right click dismisses one that is done, and the line
 under them counts them, with "dismiss all" (those done) and an arrow to
 hide or show them. They update four times a second.
+Options > popup notifications stages the approximate maximum width (16–256
+characters, default 56) and the force-fixed-width switch (default off). Apply
+persists both. Each card captures these settings when it first enters the oldest
+ten shown, so existing cards retain their policy across Apply and later text or
+progress updates; newly shown cards use the saved policy. Wrapped text respects
+the cap and gauges reserve 90% of it. The native bold title font supplies the
+character measurement.
 
 The status bar at the bottom says, as the reference's does, the page's
 status (its files, or the selection's) and, on the right, the network's:
@@ -158,16 +165,36 @@ import options converted through the reference rules. Historical single-query
 subscriptions acquire checker settings; obsolete gallery identifiers become a
 paused unknown downloader, with the original version-specific limit defaults. Fresh history identities
 invalidate cached velocity exactly as the reference does. Modern containers retain
-settings, query headers, cached example/velocity data and both URL histories. `oracle/record_subscription_exchange.py` records the actual Qt list
+settings, query headers, cached example/velocity data and both URL histories.
+Historical file seed-cache versions 1–7 now pass through the exchange codec's
+reference upgrade rules: first-occurrence deduplication through version 4,
+source-time reset through version 5, old Tumblr spelling migration through version
+6, and URL/path seed construction. Integer/boolean/None version-1 notes convert
+with Python's text spelling. Actual Qt direct conversion and list import/export
+recordings constrain order, timestamps, statuses, counts and examples. Histories
+with duplicate native identities or complex/float Python note representations
+fail explicitly before staging. `oracle/record_subscription_exchange.py` records the actual Qt list
 clipboard flow and reference PNG. Manage subscriptions now exposes the original clipboard/JSON/PNG transport
-menus, dispatching to an owned import/export child: clipboard/JSON text or JSON/PNG files are reviewed, imported
-subscriptions remain staged; JSON export asks before overwriting an existing file,
-and multiple JSON or PNG files can be imported as one reviewed selection. Apply
+menus. Clipboard text and selected JSON/PNG files add permitted objects directly
+to the staged list, without an intermediate review window. Nested lists preserve
+their object order; known unrelated types produce the original type warning.
+Each file's information/error notice finishes before the next file loads. A later
+unreadable or invalid file leaves earlier accepted objects in the draft and stops
+the selection; future-version failures warn once and continue subsequent files.
+The last accepted subscription remains selected. JSON export asks before
+overwriting an existing file. Apply
 persists both URL histories and retained header examples. Reset/retry updates
 file-count and example caches in both staged exports and saved settings; retries
 forget the old file hashes, preserving gallery examples and velocity. Missing query histories ask the original named confirmation
 before that object enters the draft; rejecting leaves it out and accepting
-initialises empty histories on Apply. Cancel invalidates the child and its callbacks.
+initialises empty histories on Apply. Rejecting or dismissing that question
+continues remaining objects; the information count includes permitted objects
+whose missing-log import was rejected, as in Qt. Cancel invalidates pending
+imports and picker/notice callbacks. `oracle/record_subscription_import_flow.py`
+records these direct menu imports, warnings, accepted prefixes and selection.
+The explicit legacy exchange callback still supports its old review child;
+actual import menus use the direct flow. Clipboard bitmap precedence and list
+drag/drop remain absent (see DIFFERENCES.md).
 
 Network > "subscriptions…" opens the manage subscriptions dialog
 (`src/subscriptions_window.rs`, `hydrus-gui-model/src/subscriptions_dialog.rs`),
@@ -179,7 +206,14 @@ any column and selected as the reference's lists select, and warns when
 subscriptions are paused from the network menu. Its buttons delete the
 selected (asking "Remove all selected?"), duplicate them ("name (1)",
 with copies of their queries' file logs), merge those sharing a
-downloader (asking which is primary and its new name), separate one (in
+downloader (asking which is primary and its new name). Merge stages every
+group until all primary choices succeed: cancelling any primary leaves the
+list unchanged; cancelling a name keeps that primary's name and continues.
+Names are allocated after all absorbed owners go, with casefolded collisions
+against surviving original and newly chosen names. Overlapping query texts
+keep independent queue identities and both file and gallery histories on Apply,
+as recorded by `oracle/record_subscription_merge.py`; cancelling the list writes
+nothing. The dialog can also separate one (in
 half, into a subscription a query, named "base: query", or only some
 queries, ticked in a list, into one new subscription or one each), lowercase
 their queries' texts, deduplicate queries with the same text on the same
@@ -391,6 +425,13 @@ exports supply up to 25 local files or media results; previews read their
 sidecars or metadata without exporting. Source/formula and router processor
 children inherit the reference's first-example strings. `oracle/record_sidecar_testing.py`
 records seven file/media, empty-input, processing and parse-error states.
+Router queues accept the compatible subset of mixed clipboard packages, with
+the reference's type and direction warnings. "from pngs" reads selected files
+in order and retains successful earlier packages if a later file fails; later
+files are not read. Review and Cancel remain local to the queue draft, and only
+the owning editor's Apply saves the routers. Hidden, cancelled, replaced or
+dropped queue owners reject retained import callbacks. `record_router_import.py`
+records nine actual Qt subset, ordered-PNG, failure and cancelled-picker cases.
 JSON destination object names are an ordered queue with add/edit text children,
 up/down, deletion confirmation and double-click editing. Literal duplicate,
 whitespace and embedded-newline keys survive staged Apply; empty input receives
@@ -536,9 +577,28 @@ text that may be none has the reference's "none" box. The window opens on
 when edits are canceled. The gui page lets the search appear above or below the
 pages on reopening. The gui page also edits the application name (including
 the reference’s empty-name fallback) and exit confirmation. The main title uses
-that name and the Rust version. Exit and the window close button ask the recorded
+that name and the Rust version. Raw imported empty names remain empty on Cancel;
+unchanged Apply accepts the reference fallback, and field-scoped saving preserves
+concurrent exit changes and externally replaced names. Main-title refresh reads
+the current binding's Store and permanently stops after accepted close.
+The gui page also saves the default-off switch to the main window when a viewer
+tag search creates a page. Middle-clicking a single hover tag creates a real
+search using its canonical identity, originating file location and saved default
+tag service; display connector/underscore substitutions never become predicates.
+Enabled activation requests use native focus/raise on Windows, macOS and X11,
+skipping already-active native windows. Closed/re-shown viewers, stale file
+payloads, hidden owners and retired main bindings refuse searches; a declined
+main close leaves the producer live. Pending questions, warnings, slideshow-period
+input and the viewer's advanced-delete child block retained tag-search callbacks.
+The viewer's file identity is private to its original Store and canvas owner;
+the canonical tag identity stays separate from the rendered label. The API
+corrections add no completion credit and await exact-source hosted validation.
+Wayland activation and multi-tag/child-list
+activation remain unfinished. Exit and the window close button ask the recorded
 yes/no question when enabled, automatically accepting after 15 seconds; declining
-keeps the client open. Its reference search box ("Search options... (Experimental!)"): as it
+keeps the client open. Exit callbacks and their timeout require the current visible
+main binding; retired callbacks cannot answer a successor's identical question or
+close a retained window shown again. Its reference search box ("Search options... (Experimental!)"): as it
 is typed in, it suggests box titles, option labels, auxiliary unit/none labels
 and current dropdown text whose text has what
 was typed in it (ignoring case), as "text (page)", ten at a time; the
@@ -553,7 +613,12 @@ the next session save uses that limit. The regex favourites page opens its
 regex/description list editor; accepting that child stages the parent draft,
 which Apply saves or Cancel forgets. Gui pages also chooses whether closing
 the current tab focuses its left or right neighbour, and whether sending pages
-to a new notebook prompts to rename it.
+to a new notebook prompts to rename it. The regex child blocks parent Apply and page/search navigation; regex, shortcut
+and routing children reject sibling launches while another is open. Hidden/retired owners cannot open, copy from or accept that child. Row editing
+offers a read-only favourites menu from explicitly owned saved preferences,
+with an enabled instruction and phrase copies that leave the input untouched.
+Unsaved list rows do not become menu choices. Descriptions cannot be empty;
+whitespace and advisory invalid regex fragments remain permitted.
 A "checker options"
 button opens the checker options editor (`hydrus-gui-model/src/checker_options.rs`,
 checked against the reference's `EditCheckerOptions`, recorded by
@@ -794,13 +859,13 @@ page's, so ties fall in the fallback's order, with files that have no value
 placed as the reference's pages place them (never viewed as no views, the
 inbox before the archive). A new page sorts by your default sort (hydrus's
 own: file size, smallest first). A namespace sort orders files by their
-subtags in each namespace in turn (current and pending, in all known tags,
+subtags in each namespace in turn (current and pending, in its independently selected tag service,
 in human order, as the reference's `GetComparableNamespaceSlice`); a rating
 sort by the rating, unrated files counting as -1 (0 on an inc/dec
 service). Under the sort control, the collect control ("no collections",
 or "collect by series-stars") opens the reference's choices: the
 namespaces in your namespace sorts, then the like/dislike and numerical
-rating services, each checked to collect by it; its ⚙ says whether files
+rating services, each checked to collect by it; its ⚙ chooses its own tag service and whether files
 matching none collect into one group or stay separate. A page collects as
 the reference's pages do (`MediaList.Collect`, checked against it through
 the page): files group by their tags in those namespaces and their
@@ -844,7 +909,19 @@ reference's tree of filetypes by group (a group's tick box ticking all of
 it); "system:hash" reads hashes one to a line as the reference does
 (a type and colon, or "0x", before each allowed), saying which lines
 aren't hashes or that the hash type looks wrong, with its two clean-up
-buttons; "system:rating" has a panel for each rating service (like or
+buttons. The hash editor now presents vertical is/is-not and SHA-256/MD5/SHA-1/
+SHA-512 radio groups around the multiline input, with both cleanup buttons
+stacked underneath. Arrow keys stop at each group's edges, Space selects, and
+Enter accepts using the existing default radio-key convention. Cleanup replaces
+the live typed input even when removing every bad line; normal cleanup preserves
+bad or mixed input and opens an owned Warning/OK notice. That notice blocks
+editing and acceptance until acknowledged, and closes with its parent on Cancel,
+rebind or accepted client exit. Forced cleanup keeps its existing "You sure?"
+yes/no draft question. Typed inclusive/exclusive queries, explicit reconstruction,
+Cancel, saved-default reopening and ownership boundaries have authored regressions
+against `oracle/record_hash_predicate.py` (actual Qt controls, warning PNG, ten
+file queries and twelve cleanup cases); hosted Rust execution and native rendered
+review remain pending. `system:rating` has a panel for each rating service (like or
 dislike, stars, counts) under the all/any/only panel, whose services are
 chosen in place (the reference's specifier button opens a dialog);
 "system:similar files" takes file hashes, or pixel and perceptual hashes
@@ -1105,12 +1182,22 @@ reference's, `oracle/record_manage_notes.py`): a tab per note by name (a
 lone "notes" tab for a file with none), the note in view edited below.
 "add" asks a name ("Enter the name for the note.", numbered "name (1)"
 if a note has it), "edit current name" (or double-clicking a tab) asks
-a new one, and "delete current note" asks first. "copy" copies every
-note as the reference's JSON, "paste" merges JSON notes in as the
+a new one, and "delete current note" asks first. The cog chooses all/current
+note copying and JSON/human text, starting new editors at the beginning/end,
+and viewer middle-click body-only/title-and-body copying. These four live
+preferences persist immediately, including after note-editor Cancel.
+The cog opens through normal button activation, refreshing checks from saved
+preferences each time; right-click does not open it, as in Qt.
+"paste" merges JSON notes in as the
 reference does (extending a note a pasted one extends, renaming on a
 clash; text it can't read is said so), and "copy URLs" copies the URLs
 in the note in view. "apply" writes the notes (each cleaned, empty ones
 dropped) and deletes the ones gone; "cancel" with changes asks first.
+Options → notes stages the two cursor/hover switches until Apply, preserving
+intervening live cog choices. Imported preferences survive reopening. Existing
+note tabs retain their real cursor/selection when switching or flipping the cog;
+new and pasted tabs use the latest initial-cursor preference. Middle-clicking a
+viewer note copies using the latest saved choice without reopening the viewer.
 
 Manage → "ratings" (there when there are rating services; the selected
 files', in the viewer the file shown's) opens the reference's "manage
@@ -1150,7 +1237,12 @@ copies all the times, or one kind, as the reference's serialised
 timestamp data, and "paste" sets the times it names. "apply" writes the
 times changed (asking first if more than 100 changes), a stepped time
 file by file, and a changed file modified time to the files on disk too
-(as the warning under it says).
+(as the warning under it says). Disk updates run in an owned background worker
+on the accepted ordered targets, with cancellation between files. Its
+"setting file modified dates" popup appears only after three seconds have
+passed; cancellation retains the database updates and completed disk prefix.
+Closing or replacing the date child cancels its draft, and retired dialog
+callbacks cannot apply it or clear a successor.
 
 Manage → "force filetype" (the selected files'; in the viewer the file
 shown's) opens the reference's "force filetypes" dialog
@@ -1163,7 +1255,16 @@ them all to, in the reference's order ("remove all forced filetypes"
 first when some are forced; a single filetype isn't offered itself).
 "apply" forces them (a file forced to the type it was detected as isn't
 forced) and renames each file on disk to its new extension; hydrus-rs
-then shows and searches it as that type, as the reference does.
+then shows and searches it as that type, as the reference does. The accepted
+operation runs in a background worker, committing and moving in blocks of 64.
+Above 64 files, the existing popup shows "forcing filetypes" and allows
+cancellation before the next block. Rename failure preserves a copied file's
+mtime and queues duplicate-extension cleanup one hour later. Imported shared
+media remains copy-only. The accepted file targets are frozen, so changing the
+current selection cannot redirect the work. `oracle/record_metadata_file_jobs.py`
+records these bounded filesystem/popup paths and both rejected dialogs; the
+two original worker leaves remain Partial for the platform and lifecycle
+limits documented in DIFFERENCES.
 
 Urls → "manage" (the selected files'; in the viewer, the file shown's;
 always the urls menu's first entry, as the reference has it) opens the
@@ -1285,7 +1386,12 @@ are also drawn as the reference draws them: the part showing is cut out
 and resized with the file type's zoom qualities (area shrinking, Lanczos
 growing, by default; cubic is drawn with Lanczos), off the UI thread, to
 exactly the pixels it covers, over the quickly scaled still once ready
-(`src/still.rs`; the filters do the same). F3 manages the
+(`src/still.rs`; the filters do the same). Closing a canvas releases its
+resampling worker even when a caller retains the closed window handle. If
+the OS cannot start that worker, the existing image stays visible with
+nearest-pixel scaling; a changed file, zoom or clipping plan can retry.
+Multiple viewer windows remain independently closable without clearing a
+successor's current-viewer slot. F3 manages the
 file's tags, as the reference's dialog does on the local tag services:
 the file's tags on the service chosen, and an input whose tag, entered,
 is added to the file (or removed, if it has it already), the tag as typed
@@ -1311,9 +1417,9 @@ domain and not in the trash: a left click or F7 keeps the file, a right
 click or delete deletes it, a middle click or backspace goes back, up
 skips it, and F12 or escape stops; finishing (or stopping, with anything
 decided) asks, as the reference's "filtering done?" does, to keep N and
-delete M from the page's domain: enter commits (archiving the kept,
+delete M from the chosen local domains: enter commits (archiving the kept,
 deleting the deleted, with the delete lock's "inbox deletees" option
-honoured), f forgets, escape goes back to filtering. The deleted leave
+honoured), f asks to forget, escape goes back to filtering. The deleted leave
 the page. Files zoom and pan there as in the media viewer (but for
 dragging, as a click decides), and enter stops, as the reference's
 media viewer shortcuts have it. With the pointer
@@ -1391,6 +1497,18 @@ asking first. What the tabs say is as
 `oracle/record_duplicates_preparation.py` and
 `oracle/record_auto_resolution_rows.py` recorded the reference's.
 
+Options > duplicates > duplicates filter page includes the reference's
+"Hide the \"x% done\" notification on preparation tab when >99% searched"
+checkbox, enabled by default. Apply updates the current preparation label;
+future pages and reopened stores use the saved value. Exactly 99% still shows
+the percentage, while 99.95% shows "99.9% done" when suppression is disabled.
+The switch changes the label alone, preserving counts, the gauge and search
+availability. Drafts stay local to Options, and Cancel, hidden or retired
+callbacks cannot save them. Imported and retained legacy ClientOptions use
+the same Boolean. `oracle/record_duplicates_progress_option.py` records the
+actual control's save/Cancel/reopen and both policies at thirteen preparation
+boundaries; authored store/model/native regressions await hosted execution.
+
 "edit rules" opens the reference's "edit rules" dialog
 (`src/auto_resolution_rules_window.rs`,
 `hydrus-gui-model/src/auto_resolution_rules.rs`): the rules with their
@@ -1457,7 +1575,7 @@ closed pages (Ctrl+U reopens them one at a time), managing tags on tag
 repositories (pending and petitioning), dragging thumbnails, the rest of
 the thumbnails' menu, system
 predicates in the autocomplete, the rest of the viewer's hover frames
-(the top one's zoom options, volume, shortcuts and view options menus,
+(the top one's zoom options, volume, shortcuts and deeper view-options actions,
 window move and embedded metadata buttons, and its tooltips; editing,
 copying and hiding notes), the volume shortcuts
 other than the global mute, the scanbar's buffering
@@ -1812,6 +1930,19 @@ replacement semantics and Netscape fields; widget tests exercise these controls,
 cancellation and errors. An existing engine test sends imported cookies on its
 next request and suppresses expired, wrong-path and HTTPS-only cookies on HTTP.
 
+The login-script test panel now uses the shared network-job control for its live
+isolated request, with URL copy, context bandwidth-rule editors, phase-specific
+retry commands, cancellation and a retained five-second auto-override policy.
+Login requests bypass request-admission bandwidth limits immediately while still
+counting usage; response-body throttling still applies.
+An explicitly supplied control error can be shown or copied and survives clearing
+the job; a failed login alone does not invent a control error. Completion opens
+an owned Information notice with the exact result and an OK button before the
+run button is re-enabled and the final label changes. Parent Cancel retires the
+notice and any rules draft; retained actions cannot reach a later request or run.
+The help menu opens the existing local `docs/downloader_login.md` page through
+the ordinary OS launcher.
+
 Network > data > manage http headers stages global and domain header names,
 values, approval and reasons, with filter, sorting, duplicate and confirmed
 delete. When a live daemon request waits for pending headers, the desktop opens
@@ -1911,7 +2042,7 @@ dismissal states are recorded in `oracle/fixtures/tag_migration_progress.json`.
 ## Downloader definition interchange
 
 Network > downloaders > import/export downloaders exchanges URL classes,
-page parsers and single/nested gallery URL generators with the reference
+page parsers, registered login scripts and single/nested gallery URL generators with the reference
 client's clipboard JSON and real downloader PNGs. Imports review the concrete
 objects and exact duplicates before saving all definitions, generated keys,
 nested members and parser links atomically. Exact parser duplicates merge
@@ -1926,6 +2057,19 @@ separate from the read-only legacy reader. `record_downloader_interchange.py`
 checks real reference PNG/JSON -> native encoders -> real reference loads;
 codec/model/GUI regressions cover bounds, unsupported data, cancellation,
 duplicates, stale snapshots and live downloader settings reload.
+The mixed exporter offers registered component selection, including login-only
+packages and linked generator/class/parser dependencies, through clipboard JSON,
+JSON files and PNG files. Login scripts contain credential definitions, cookie
+rules, ordered requests and response parsers; saved credentials, sessions and
+domain activation stay in the store. Mixed import reviews login scripts beside
+the other components, skips exact script duplicates without comparing their
+name/key, and regenerates new identities. Existing matching-name example-domain
+links follow imported scripts while retaining current credentials, validity,
+activation and delays; unconfigured example domains remain unconfigured.
+`record_mixed_login_packages.py` drives the actual Qt registered-script chooser,
+dependency expansion, PNG export and mixed import. Native codec/model/window
+replays cover saved script-list consumers, concurrent domain changes, stale
+script lists and retired callbacks; these new assertions await hosted CI.
 
 Tab right-click offers the reference's four move-page destinations and six
 sibling sorts (file count, total size and name, both ways). Actions target the
@@ -2078,6 +2222,9 @@ merges incoming custom kinds, and replace-paste fills currently inherited kinds.
 The real Qt recording is `oracle/record_subscription_import_options.py`; native
 regressions cover clipboard output, all three modes, invalid input, declined
 clearing, reopening and callbacks retained after the owner closes.
+The recorded containers also exercise both blacklist and whitelist rules in
+global tag filtering, parsed-tag filtering and the existing-tag test. Text/PNG
+interchange retains their reference rule codes and behavior.
 
 File Search can set an implicit search limit (none by default; 1–100,000,000).
 The shared query engine applies it only without an explicit `system:limit`, so an
@@ -2612,6 +2759,21 @@ Child Apply returns an Options draft; only the outer Apply saves it. Reopening
 retains the schemes, and new namespaces reach the page's real sort and collect
 controls. The recorded queue is in `oracle/fixtures/namespace_sorts.json`.
 
+Media Playback's “Start animations this % in” uses the actual reference0–100
+spinbox and preserves imported raw fractions until Apply. Cancel keeps the raw
+value; reopening shows its truncated/clamped percentage. Its owned Options
+callback rejects hidden or retired input, and saving merges just this preference.
+The accepted integer is divided once: actual typed29 saves0.29 and reopens as28,
+matching the recorded Qt floating-point truncation; it is not truncated again on save.
+Retained old YAML options remain the fallback when no native preference exists.
+Native animated WebP/ugoira readers seek before first publication in the viewer,
+archive-delete and duplicate filters. Fresh/cleared widgets start at zero even at
+100%; reused widgets use the previous widget metadata count, matching recorded
+Qt ordering. A saved edit affects the next media admission while the current
+paused frame and seek generation remain intact. Impossible initial indices wait
+for explicit seek; close drops their reader ownership. MPV consumes no new seek.
+The broader playback and per-filetype policy families remain independently Partial.
+
 Media Playback's “Always Loop Animations” now reaches native animation players
 in the media viewer, archive/delete filter and duplicate filter. Unchecking it
 respects GIF, APNG and WebP stored play counts; missing GIF counts mean one play,
@@ -2717,6 +2879,11 @@ Login required-cookie Add/Edit now opens the name matcher followed by the value
 matcher, using the reference titles and initial rules. Cancel at either stage
 leaves the pair intact; accepted pairs are sorted and selected. Independent
 matcher objects with identical descriptions remain separate entries.
+The step editor embeds its cookie matcher list with direct Add/Edit/Delete,
+row activation and independent extended selection, as Qt does. Confirmed bulk
+deletion and sequential matcher cancellation replay `login_step_cookies.json`.
+Step Cancel closes matcher descendants and discards the draft; accepted step
+rules reach the existing script persistence and real login executor.
 
 Write autocomplete keyboard selection now follows the result list: arrows wrap,
 Shift and Ctrl+Shift extend or reverse a selection, Home/End select endpoints,
@@ -2754,6 +2921,25 @@ covers480 manager outputs,18 duration widget states and actual displayed canvas
 intervals; native integration renders the Options page and covers Apply,
 Cancel/reopen, real timed viewer caps, filter navigation and stale callbacks.
 
+The main page now displays its focused local file in an owned still/poster
+preview beneath the sidebar. Its separate Preview statistics consume the saved
+minimum and maximum fields (5s/60s by default), including “count every view” and
+“no limit”. Accepted displayed frames keep the original request timestamp;
+loading placeholders and rejected decodes count nothing. Re-selecting the same
+focused file keeps one interval. Page changes, clear, hide and accepted client
+close finish it, while a declined client close keeps it running. Revealing a
+hidden preview splitter waits for a fresh focus change; restoring a page restores
+its focused file. Settings are read at finish, with cap-before-minimum and the
+duration-times-five extension, and Preview rows persist independently of media
+viewer rows. Late frames and callbacks cannot reach a replacement page/request
+or rebound owner. A lazy owner pool caps still decoding at two workers and
+retains only the latest queued target. A held obsolete decode therefore permits
+one successor to display; idle workers retain no Store, and close discards queued
+work and retires running replies. Actual Qt Options, manager and CanvasPanel transitions are
+recorded in `preview_viewing_intervals.json`; native model/display/store regressions
+are authored for hosted CI. Preview playback, audio, zoom and hover/rating controls
+remain Partial.
+
 Search-page autocomplete now shares results, favourites and children tabs in
 both its embedded and floating layouts. Favourites show the full saved list;
 children show count-ranked descendants of top-level search tags, exclude tags
@@ -2763,6 +2949,10 @@ enters its predicate in the actual search; removing a predicate updates children
 Typing returns to results, while choosing a tab preserves the draft. Options
 Cancel/Apply and restored-page consumers are covered against
 `oracle/fixtures/read_tag_tabs.json`. Empty tabs retain the tab selector.
+Accepted favourite-menu edits publish a settings revision to other live read
+and detached write panes, preserving each owner's input. Locked read pages
+consume the pending revision after unlocking; cancelled detached editors stop
+their subscription.
 
 Downloader HTTP requests now perform domain login admission before acquiring a
 connection slot. Active most-specific login domains use current credentials and
@@ -2781,6 +2971,25 @@ are persisted per store. Dropped/unpolled processes retire only their owner;
 stale metadata after a crash cannot keep the admission lock or cancel a new
 process. Queued manual cancellation preserves the current global login, and
 forced login still executes with existing session cookies.
+
+Files and Trash now stages four independent removal preferences, all defaulting
+to false. Archive/delete filtering removes committed keep/delete rows only when
+enabled; its dependent “even skipped files” checkbox preserves its saved value
+while disabled. With skipped removal off, the first surviving skipped file is
+selected in the source page. Forget/resume leave rows untouched. Filters retire
+predecessors and reject hidden, closed-source or retained retired commits; a tab
+switch preserves their original page rather than removing from the new page.
+
+Trash removal uses actual trash membership after successful thumbnail/viewer
+deletions. Deleting from one of several local domains keeps the row while another
+domain owns it; a one-domain trash view keeps newly trashed rows. Physical
+removal still prunes wholly current local views independently of this option.
+Successful thumbnail strict/merge moves remove only actually transferred rows
+from a view including their source domain, when enabled; copying keeps rows.
+Options Apply affects these live consumers, Cancel discards staged edits, and
+legacy preferences migrate. `files_view_removal.json` and its Qt PNG record real
+controls, filter close signals and media-list content updates. General external
+content-update broadcasting and broader Files and Trash behavior remain Partial.
 
 Files and Trash now saves the confirmation preferences for trash and multi-file
 archive/inbox operations. Thumbnail shortcuts and menu actions read the applied
@@ -2826,6 +3035,66 @@ active search alone. `oracle/fixtures/system_or_activation.json` records 18
 actual Qt cases in the main read input and basic OR child, including accepted
 system recents surviving outer Cancel. Both callers use the original activation intent. Authored model replay and
 the native 18-case consumer replay await hosted CI; no native render is claimed.
+
+The active search list now selects rows, with Ctrl and Shift selection. Return
+or double-click removes selected terms, Ctrl activation inverts them, and Shift
+activation reopens a represented system value or stages a mixed edit. Simple tag,
+namespace and wildcard rows use Qt’s text syntax; type and inclusion can change.
+A mixed editor shows invertible terms as flip buttons and populated fields for
+each system value, with one Apply that validates all drafts before changing the
+query. Immutable terms stay unchanged, and two same-family values retain separate
+explicit values. Cancel discards every staged change. An
+existing value wins over saved creation defaults; Cancel leaves the query alone
+and accepting an unchanged value keeps it. Accepted edits replace the captured
+term, preserve other query terms, record history and refresh synchronised results.
+The search context menu offers represented edit/remove/invert, replace-with-OR,
+dissolve-OR and common-tag namespace commands. Its captured page and values guard
+against applying a retained menu to a successor. Page transitions cancel an
+existing-value child; hidden, dropped, closed or rebound owners cannot accept it.
+`active_predicate_edit.json` records 13 actual Qt command paths and 12 populated
+editor accept/Cancel paths, including the difference between Ctrl inversion
+(which toggles an existing inverse) and the menu (which only adds it). Native
+regressions cover the populated size editor, actual query counts, real row
+pointer selection and retained-owner boundaries; hosted execution is pending. `active_predicate_mixed.json` adds eight actual Qt simple/mixed accept/Cancel paths and fourteen parser/veto cases; native mixed regressions cover atomic invalid-input refusal, hidden controls, Cancel, saved typed recents and rebinding.
+
+A single active OR predicate opens the populated basic OR editor. Its accepted
+zero/one/many terms respectively remove the OR, flatten it, or keep an OR group.
+The search menu’s “start an OR predicate” stages the selected terms and replaces
+them only on Apply. Cancel and hidden callbacks leave the active query unchanged;
+page transitions retire this owned child, and stale/rebound closes cannot unlock
+a successor. Accepted values are kept as typed recents. OR children hold weak
+callbacks to their parent, including nested OR and system editors.
+`active_predicate_or.json` records ten actual Qt populated/start-OR Apply/Cancel
+paths; authored native replay, hidden/page/rebind/Main-drop and last-owner child
+release checks await hosted execution and the new rendered PNG review.
+
+The active list also exposes inherited copy and open submenus. Copy preserves
+list order, deduplicates expanded OR members/subtags, supports underscore
+subtags and collapsed OR text, and exports full hashes rather than their display
+summary. Namespace/wildcard rows copy the reference’s raw pattern. Open creates
+an AND/OR search, one search per selected predicate, or a duplicate-filter page,
+keeping source file locations and each predicate’s existing value. New searches
+use saved creation defaults for the tag service; duplicate filters use their own
+reference default tag contexts. The first page may activate the main window
+according to the saved tag-search setting. Captured menus refuse hidden/modal,
+changed-page/query, accepted-close and rebound owners. `active_predicate_routes.json`
+records fourteen real Qt selections, their clipboard/new-page publications, and a
+real new-page consumer. Authored native transport and ownership replay awaits
+hosted execution. The active list’s inherited “select files” method is a no-op
+in Qt (the media tag list owns the working override); it is not represented here
+as a new file-selection action.
+
+The file-size editor displays `<`, `≈`, `=`, `≠` and `>` as five radio choices,
+with bounded arrow navigation, Space and default Enter acceptance. Its amount
+stays within 0–1,048,576; selecting B/KB/MB/GB/TB changes the binary multiplier
+without converting the amount. Typed values and saved custom defaults retain
+the selected unit, including zero KB and unnormalised 1,024 B. Cancel leaves the
+search unchanged. Hidden owners or a pending main question refuse edits/acceptance; rebinding the main
+window or accepting client exit cancels its owned predicate child. A declined
+exit leaves it live. `filesize_predicate.json` records actual Qt controls,
+30 database-query outcomes, numeric bounds, explicit-value reopening, keys and
+Cancel. Authored model/native replays and the native screenshot await hosted
+execution; the actual Qt screenshot has been inspected.
 
 Manage Tags now reads deleted mappings separately for each selected local tag
 service. The count measures tag–file mappings, hides at zero, and follows staged
@@ -2900,3 +3169,982 @@ status transition from deleted to unknown are in `service_deleted.json`.
 Opening another service review cancels the previous owner's pending question;
 retained callbacks from that retired owner cannot clear records or close the
 replacement review.
+
+Numerical rating examples keep their opening allow-zero setting even when the
+live star count drops to one. The displayed sample remains “1/1” for an opening
+nonzero scale; saving the one-star service still forces allow-zero, as Qt does.
+`rating_preview_one_star.json` records all four samples through that transition
+and back to seven stars, including checkbox changes that affect only the saved
+configuration.
+
+Local rating service edits include an expanded “example display” with independent
+Thumbnails, Media Viewer, Preview Window and Dialog (Default) samples. Colours,
+shape, numerical star count, spacing and fraction placement repaint the draft.
+Like/dislike samples toggle; numerical right-click clears; counter clicks add or
+subtract, with middle-click opening an owned value prompt. Sample values are
+never saved as file ratings. Child Apply stages only the service configuration;
+parent Apply persists it. Cancel, reopening and closed-owner callbacks leave
+samples and unapplied configuration behind. The actual three-kind Qt replay is
+`service_rating_preview.json`; hosted native coverage also saves a populated PNG.
+
+
+The browser viewer's eye button now opens view options. The three Media Viewer
+Hovers collapse controls stage independently in Options, save on Apply, and
+reopen with their saved values. A checked control puts window, hovers or rendering
+rows in a submenu; an unchecked control puts that section's rows directly in the
+menu. Each opening reads current preferences, including in an already-open
+viewer. Actions reach native always-on-top/frame properties, new-viewer defaults,
+existing background/pop-in hover consumers and checkerboard/greenscreen drawing.
+Menu callbacks belong to their viewer slot and retire on close. The eight actual
+Qt combinations are recorded in `oracle/fixtures/viewer_eye_menu.json`; authored
+model/native/store regressions cover staging, reopening and real consumers.
+
+Numerical rating examples accept left-button dragging and clicks on either
+fraction label through the same whole-widget control as their star graphics.
+Dragging outside keeps the last valid sample; an outside press clears it. Hover
+motion after release does not change a rating, and each context remains independent.
+The pointer-route Qt recording is `rating_preview_pointer.json`.
+
+
+GUI Pages now stages notebook tab alignment (top, left, right or bottom),
+width-based middle elision, and the experimental hide-navigation-tabs setting.
+Apply persists the choices and refreshes the existing nested notebooks without
+changing their pages or selection; Cancel leaves the open layout unchanged.
+Left/right labels rotate in their corresponding direction, and nested rows sit
+inside their parent row on each side. Their labels are rasterized with the native
+font resolver so the software renderer paints the rotation too. Full names remain
+available as hover text.
+Tabs keep their full stored labels when space is scarce: enabled elision measures
+native glyphs and replaces the middle only for painting; disabled elision offers
+small scrolling arrows without reducing the label height.
+
+The experimental hide flag takes effect only while the tree is enabled, matching
+Qt's gate. Its supporting native hierarchy selector lists every existing page on
+the chosen left/right side and selects by stable page key, including remembered
+children of notebooks. The collapsible tree behavior is described below; broader
+Qt tree drag/drop and context-menu behavior remain unported. Actual Qt choices,
+bar positions, hidden states, selected indices and fitted strings are recorded in
+`tab_presentation.json`, alongside Qt orientation PNGs. Native consumer replays
+capture each side, hidden navigation and overflowing labels for hosted review.
+
+Options → ratings now stages independent Preview Window and Dialog square-icon
+sizes and counter heights. The four controls retain Qt's separate bounds, two
+decimal places and clamping, including Qt’s 31.755 → 31.75 rounding boundary;
+Apply persists them, Cancel discards them, and
+legacy import preserves the saved fractions. Newly opened Manage Ratings uses
+the Dialog preferences for like/numerical graphics, their outlines and counter
+height, with counter width expanding for long values. Held right-button movement
+clears without rating stars; held left movement rates the dialog's draft. All
+four service-editor examples read their corresponding saved sizing preferences.
+The still/poster preview has no rating controls consuming Preview Window sizing yet.
+
+Numerical rating examples also continue a held Left drag across a Right
+press/release while the pointer remains in the sample; a right-only drag does not
+set a rating. The actual Qt chord sequence extends `rating_preview_pointer.json`.
+The cross-edge chord capture boundary is documented separately in DIFFERENCES.
+
+Database > file maintenance > fix missing file archived times runs a global
+scan, with the reference's initial warning and separate legacy/import/both
+choices. The owned window shows scan and repair work, supports cancellation and
+reports completion or no missing times. Current local media, trash and former
+local deletion records use their recorded import/deletion times. Accepted
+repairs go through the content writer and refresh the main page's actual media
+results; an intervening archive/inbox/time edit is preserved. Closing, replacing
+or invalidating the owner prevents a retained confirmation from starting work.
+
+
+Options > tag suggestions now stages the suggested-column width, notebook or
+side-by-side layout, the original four default-page choices, and independent
+most-used tag lists for each real tag service. The owned list editor reuses
+write autocomplete, paste and selected-tag removal; its child Apply accepts a
+list, its own Apply accepts the service drafts, and Options Apply persists them.
+Cancel at any level discards that level and closes its descendants. Saved
+per-service edits merge without replacing concurrently changed other services
+or the children-tab cap.
+
+Manage Tags shows functional most-used and recent suggestion lists. Most-used
+rows follow the search-page tag sort and omit current/pending tags already on
+every selected file. Activating a selected batch only adds missing mappings;
+these additions remain staged until Manage Tags Apply. Existing most-used
+panels refresh immediate shared-menu/Options changes within 200 ms. Recent rows
+read the imported/native history, and accepted tag additions update that history.
+Opening captures width, layout, panel availability and default tab; reopening
+uses saved settings. The actual Qt replay is `tag_suggestions.json`, including
+two service drafts, removed tags, cancellation, all eight recorded available
+layout/default combinations and add-only activation.
+
+The experimental GUI Pages tree-view option now shows a collapsible hierarchy on
+its chosen side. Disclosure arrows and Collapse all/Expand all preserve stable
+page identities and descendants' expansion state. Single click and Up/Down,
+Left/Right, Home/End move a separate tree cursor; Return or double-click activates
+that notebook/page. Switching ordinary tabs reveals the active page's ancestors,
+and changes to the session retain the cursor by page key. The hierarchy remains
+available when main navigation tabs are hidden. Options Apply/Cancel, saved
+settings and reopening use the existing staged tab-presentation controls.
+
+Database > view file history opens an independent local-domain chart. It reads
+current/deleted imports, deletions, inbox and archive memories to draw the four
+reference sampled series. Series toggles, count/date ranges and both refit
+buttons affect the plot; refresh preserves custom ranges. Typed tags and system
+predicates run actual independent current/deleted queries. Cancelling, refreshing
+or closing prevents an older background result from replacing the current chart.
+The parent page's predicates and session tree are unaffected.
+
+Each history window owns one worker. New queries cancel earlier work and replace
+one pending request; rapid refreshes do not start more threads. Closing drops
+the request channel and pending/result slots without joining on the UI thread.
+A worker startup failure leaves the window usable, displays the error and allows
+Refresh to retry.
+
+The duplicate filter's Options page includes the separate A/B background
+light/dark intensities (1–9 or “do not change”) and its independent transparency
+checkerboard preference. They remain drafts until Apply; Cancel retains saved
+zero values, while Apply saves the spin box's displayed minimum of one, as Qt
+does. Existing duplicate-filter canvases, including rule previews/reviews, read
+the saved preferences live. Pair switching applies A/B to the original ordered
+pair, and transparent media show the reference's 16 px checkerboard or shared
+greenscreen brush only within their image box. Imported active override canvas
+colours are preserved. `duplicate_colours.json` records actual Qt controls,
+143 QColor adjustment cases and eight A/B painter outcomes; model, Options
+owner and native filter painter regressions replay those outputs.
+GUI Pages navigation now stages the six drag/wheel preference checkboxes with
+independent ordinary/Shift choices. Pressing and holding a notebook tab starts
+an owned drag after the reference's 100ms threshold. Moving over another tab can
+navigate to it; releasing reorders or transfers the original page, including
+between nested notebooks. The normal and Shift chase choices independently
+select the moved page or retain the reference's source-notebook selection.
+Escape cancels, and disabling page-tab drag/drop prevents the gesture. Pointer
+capture survives navigation that replaces the visible nested tab rows; release
+uses live geometry and stable page keys, preserving media order and selection.
+Rebuilt tab rows publish each initial laid-out rectangle with its page identity,
+so repeated pointer drags continue to hit the moved page after a reorder.
+The wheel preference reaches the actual
+notebook bars: default wheel input selects the adjacent tab and clamps at either
+end; enabled scrolling moves the overflowing bar's viewport and preserves page
+selection. This works on horizontal and vertical notebook rows; Apply refreshes
+the live bars and Cancel leaves saved settings unchanged.
+Options > tag suggestions opens an owned related-weight draft with separate search/suggested namespace tables. Click either header to sort by casefolded namespace or numeric weight, with the full row breaking ties. Each table retains its own selection and sort direction; Add selects only the new row. Reserved and duplicate namespace warnings, 0–10,000 percent values, protected catch-all rows, add/edit/delete, and question Cancel follow the recorded Qt editor. Child Apply stages the tables; parent Apply persists them, while parent Cancel closes and invalidates the child. Already-open Manage Tags related lists re-query saved weight changes through one owned worker. Related suggestions preserve score order, filter tags already present on all captured files, and only add mappings when activated.
+
+Read autocomplete favourites and children now share the write list's reversible
+Ctrl/Shift selection. Enter or double-click broadcasts the selected batch;
+Shift sends it to the current OR draft, and cancelling that draft keeps the
+active search unchanged. Children exclude the tags just committed and keep the
+count-ranked, countless descendant list. Read panes expose the same immediate
+favourite/most-used add and confirmed removal actions as write panes. Visible
+read and detached write owners refresh changed favourites/children limits
+without clearing input drafts. A hidden, replaced, locked or switched read owner
+cannot accept a delayed favourite answer. The shared favourite editor remains
+an Options draft: child Apply stages it, parent Cancel discards it. Favourite and
+child tags containing wildcard or system-looking text remain literal inclusive
+tag predicates, preserving already-stored values such as `system:inbox` without
+reapplying entry cleaning. Children lookup separately follows Qt's database
+cleaning boundary: an active literal `system:inbox` uses the `inbox` parent
+chain, while a wildcard-containing parent retains its literal spelling.
+`read_tag_tabs.json` records activation, child exclusion/removal and restored
+negative-tag contexts across that boundary. Enter with no selected rows leaves
+the active query and OR draft unchanged. Locked read panes defer external
+settings refresh until unlocked.
+Options > thumbnails > interaction now stages the Shift-selection keyboard
+origin, visible-percentage threshold and scroll-rate text. Apply updates the live
+grid; Cancel preserves saved settings and reopening uses them. The origin choice
+keeps preview focus separate from the last hit, so a plain movement key can start
+from the most recent Shift-selected file without changing the selection rules.
+Key navigation uses the saved strict visibility threshold, Qt's reveal margin
+and the content-end clamp. Actual thumbnail wheel events use the saved rate,
+including ties-to-even rounding, zero and negative rates; malformed text retains
+the previous setting. The reference replay is `thumbnail_navigation.json`.
+The four independent Ctrl/Shift preview-focus checkboxes are also staged here.
+The no-duration child is enabled by its own parent and preserves its checked value
+while disabled. Shift focus on all files disables the existing ghost-navigation
+control without changing its saved value. Modifier additions and anchored ranges
+optionally focus their target, including Shift keyboard navigation. Ctrl removal
+clears only that item's current focus; plain clicks and anchorless Shift fallback
+focus normally. The duration restriction examines the clicked item (all members
+for a collection), keeping last hit and the range anchor independent from preview
+focus. The existing preview canvas supplies owned pixels and viewing intervals;
+hidden main-window callbacks leave selection/focus unchanged; re-show stays live.
+An accepted main-window close permanently retires these selection callbacks, while
+Cancel keeps them live. `thumbnail_preview_selection.json` records actual Qt
+checkbox dependencies, save/reopen, ranges, focus publications and duration shapes.
+The search sidebar’s sort cog appears for namespace and number-of-tags sorts.
+Its tag-service submenu groups local tags, repositories and all known tags;
+namespace sorts also offer display, multiple-media and single-media tag views.
+Each choice immediately sorts the actual page using its independent context.
+The collect cog changes its own service or unmatched-files policy and immediately
+regroups the page. Every opening refreshes checks; retained actions cannot change
+a different page, a changed control or a hidden owner. The Default collect cog in
+Options uses the same service choices, staged until Apply, preserved after
+reopening, and discarded by Cancel. Both controls preserve the full tag-context
+metadata independently from the page’s search context.
+
+Options > tag presentation now stages namespace-colour additions and confirmed
+multi-row deletion. Add uses the reference's namespace cleanup and exact warnings;
+default namespaced and unnamespaced colours are protected from deletion. New
+namespaces receive random RGB colours. Rejected input opens an owned Warning
+notice with the exact message and an OK acknowledgement. Enter Text, confirmation
+and warning children block parent Apply, and Cancel discards the Options draft. Accepted colours
+persist across reopening and reach existing media tag and OR predicate rows.
+The OR-row namespace text preserves named, missing and empty namespace choices;
+explicitly entering empty text selects the unnamespaced colour even when the
+saved legacy value was unset.
+Namespace colour Add preserves the reference list’s positional Shift-range bookkeeping after sorting, while selected namespaces follow their rows. Nested namespaces retain their literal trailing-colon label, as Qt paints them. Delete stays available for empty or protected selections and quietly leaves those rows alone. Namespace input also accepts the reference’s control-character whitespace trimming before reserved-name and duplicate checks.
+The sibling connector namespace editor reserves room for the full “use ideal tag
+colour” checkbox caption; its text input shrinks and scrolls within the Options row.
+
+Options > GUI > frame locations also stages the disable-rescue checkbox,
+rescued-position safety padding and its 0–100 pixel amount. Legacy preferences
+import and reopen with their recorded values. Remembered positions for the main
+window and existing named dialog owners now reach an owner-local opening check
+when their Winit window becomes available. It preserves a top left within the
+configured leniency, otherwise tries the three remaining window corners in the
+reference order and falls back to the primary display. The disable checkbox
+preserves the requested position. Hidden owners defer the one-time check.
+`window_rescue.json` records actual Qt Options staging/bounds/serialization/Cancel,
+real offscreen display decisions and the unmodified Qt rescue handler over an
+explicit two-display topology. Native geometry and Options screenshot regressions
+are authored for hosted CI; native OS monitor behavior has not been executed here.
+
+The main opening observer composes with batched file drops in one window-owned
+Winit filter. It reads the native client size before Slint updates its cached
+event geometry, defers zero-sized openings, and retains the one-shot decision.
+The headless regression verifies the exact rescue result and drop forwarding;
+its adapter cannot verify OS window positioning.
+
+Options > open externally now stages an ordered registered URL-call queue and
+single-file routes by filetype. Add/Edit show the registered-call chooser even
+with one remaining choice, excluding every identity already in that queue.
+Filetype Add keeps the reference general-class and searchable-type order and
+opens an owned calls child; Edit keeps the existing order, and Cancel discards
+that child. Queue arrows change the first/default call; removal captures the
+selection and asks first. Any selection containing “all files” protects all
+selected MIME rows from deletion. Parent Apply alone saves routes, washes removed
+or wrong-type keys and updates renamed labels; Cancel discards accepted children.
+The opened routing draft supplies registered OS defaults for empty queues.
+Options page/search navigation and child launch paths keep shortcut and routing
+children mutually exclusive until the active child closes or the parent cancels.
+
+The main thumbnail and viewer default-open actions read current saved routes.
+Specific filetype entries replace general-class entries, then “all files”;
+an explicit empty specific entry uses the OS default. The first URL/file call
+receives typed URL or path/URI/hash/file-id inputs through the existing process
+pipeline. A configured missing or wrong-type call shows an owned Information/OK
+notice instead of silently trying another call. OS defaults use the existing
+native launcher. Dispatch reads live file-domain membership separately from basic
+hash/file metadata, so locally restored files are eligible immediately and deleted
+files remain ineligible even when their bytes remain. Accepted client close, main-window rebind and viewer close
+permanently retire their launchers and notice/completion callbacks;
+submitted external programs retain their own lifetime. Options children reject
+hidden and retired owners. Deeper per-call media/URL menus, routing import,
+column/keyboard persistence and full process output/error presentation remain
+Partial. `open_externally.json` and its Qt PNG record the list/chooser behavior;
+authored native replays await hosted CI.
+
+Options > external programs now has a staged registered-call table with name,
+job and command columns. Add/Edit own a detached callable editor and command
+queue; parent Cancel discards accepted child drafts, and parent Apply persists
+registered calls. Delete uses the reference's ordinary captured-selection
+question, including OS-launch entries. Duplicate generates fresh keys and
+nonduplicate names, retains prior selection and asks about unusually large
+commands; declining a later warning preserves earlier unselected, appended
+copies and aborts the remainder. Add Defaults exposes both “add them all” and
+“select from a list”, with the reference platform question and factory calls.
+Selected defaults gain fresh keys and names alongside the prior selection.
+
+The owned command child edits the first parameter in selection insertion order, keeps
+added rows unselected, captures delete selections, and reorders adjacent selected
+rows at either boundary. Its focused parameter list preserves range origins through select-all, Ctrl
+navigation and deletion, and supports extended selection,
+arrow/Home/End navigation, select-all, selected-text copy and Delete (also
+Backspace on macOS). Preview and full-template copy use cleaned parameters while
+pasted raw rows remain visible until Apply. Paste asks the exact unsorted summary
+question, including quoted, empty, repeated-space and Unicode text; declining it
+keeps the draft. Clipboard failures use an owned Error/ok notice. Copy and accepted
+paste show the reference's brief feedback. Parent Cancel and retired children
+cannot publish drafts; accepted arguments persist and feed actual token expansion.
+
+Supported process calls expose enabled input rules, tokens and the existing
+string-processor child, an ordered command-argument editor, timeout/flags and
+preview/test inputs. Reopening a saved process and pressing its Test Call runs
+its argument vector in an owned worker. Closing the owner cancels and reaps its
+direct child; output is discarded, and long-lived test calls use a 15 second
+deadline. Clipboard/JSON-file/PNG exchange reviews supported callable exports
+before changing the Options draft. These editor/exchange/runtime families remain
+partial: legacy executable-manager import and missing OS-call regeneration,
+deeper per-call launch menus and routing import, OS-launch test execution, rule clipboard controls,
+full process output/error handling and some command/dialog interactions are not
+ported. The complete scope is recorded in the external-call parity proposal.
+Options > media viewer > mouse behaviour now stages cursor anchoring and its
+apparent-touchscreen override. Apply updates an already-open viewer; Cancel
+discards the draft. Anchored drags pan about the press position and request a
+cursor warp back through that viewer's native window. The optional override
+unanchors after a single movement exceeds 50 pixels of Manhattan distance and
+stays unanchored until the next press. Both preferences survive import and
+reopening. The actual Qt replay is `viewer_anchor_options.json`.
+
+Options > media viewer hovers now stages all four taglist wheel propagation
+policies. The raised tag hover is a clipped, scrollable list with a draggable
+scrollbar. Wheel input first scrolls the list; an edge then either stays in the
+list, propagates only without a scrollbar, waits for a quiet same-direction
+wheel, or immediately reaches the viewer's actual next/previous/zoom action.
+The delayed policy preserves Qt's 0.57-second media grace and direction-change
+gate. Apply refreshes an existing viewer, Cancel preserves its current policy,
+and the imported setting survives reopening. Existing scroll position survives
+a media change when it still fits, and clamps when the new list is shorter.
+
+Options > GUI > misc stages the ISO-time checkbox and bytes precision spinbox
+(1–6), imports their exact legacy keys, and preserves Apply/Cancel and reopening.
+Owned formatting reaches existing log, page/status, file-info, service/import,
+network review/rule/job/graph, import-options, parser-preview and PNG labels;
+live download and popup progress preserve gauges and cancellation ownership.
+ISO also reaches About, cookies, subscriptions, downloader timestamps and
+viewing-statistics menus. Python applies the current local offset to every date;
+the native formatter does the same, with recorded opposite-season timezone and
+POSIX year-one cases. Manage Times and duplicate-review relative suffixes stay
+relative because the reference explicitly forces that behavior.
+
+`gui_format.json` records eight actual Qt staged/saved/reopened control states,
+byte/time/log outputs, import summaries, raw parsing previews, expiry and
+relative-time variants. Five owned status inputs per setting pass through the
+actual Qt network-job control; no request is sent. Native consumer replays and
+an Options PNG capture are authored for hosted CI, with no local Rust builds.
+`gui_format_backend.json` additionally records real backend bandwidth/gallery
+waits, file-size rejection, over-length responses and critical-drive messages
+across four staged/saved/reopened settings. The network engine owns saved
+formatting and refreshes waiting labels without replacing job state, bandwidth
+usage or gallery deadlines. File importers read saved precision when rejecting
+a file or reporting a nearly full drive; their pause behavior is preserved.
+Focused asynchronous, loopback HTTP and real file-import regressions are
+authored for hosted CI. Whole-application cached-label broadcast timing is
+unclaimed. The radio Return flag is unclaimed because the reference dialog
+behaved identically in both states on the recorded platform. Broader
+GUI/misc/menu stays Partial.
+Tag Presentation offers the sibling connector colour controls. Fading disables the optional namespace choice and uses the ideal tag’s colour; turning fading off allows a named, missing, empty, or ideal-tag namespace choice. Apply saves the staged preferences and Cancel discards them. Manage Tags paints raw/count, connector and ideal-tag runs separately with solid colours; shared write-autocomplete rows can fade between namespace colours, including selected backgrounds. Detached tag editors and both relationship inputs share those runs, and open, visible editors refresh after another owner changes the preferences without replacing the input or selected tags.
+
+Selected sibling rows paint solid namespace runs from each run’s left edge through the remaining row, then overlay each fading run only within its fixed text block. Explicit background positions keep later solid runs from covering an earlier connector fade. A collapsed-parent suffix can fade to the unnamespaced colour while the preceding ideal tag’s solid colour remains beyond the suffix, including when the viewport widens.
+
+
+Options > maintenance and processing includes separate browsing, mouse movement
+and Client API idle timeouts under “when to run high cpu jobs > idle”. Each accepts
+1–1000 minutes or its own ignore checkbox. Defaults are 30 minutes for browsing,
+10 for mouse movement and ignored API activity; imported values retain their
+stored seconds and the editor displays whole minutes as Qt does. Unchanged Apply
+saves those displayed minute bounds, while Cancel preserves the original seconds.
+Implicit normalization preserves a newer value written while Options was open.
+Apply updates
+the existing running idle-only session autosave gate; Cancel keeps the saved
+thresholds. Reopening ignored controls restores the reference's hidden one-minute
+value. The controls are disabled when the stored idle-enable flag is off. Mouse
+activity currently covers native application windows, while browsing and Client
+API activity use the existing all-window and shared API timestamp consumers.
+
+Options > importing now stages all five work-slot limits (1–500): gallery file
+queues, gallery searches, watcher file queues, watcher checks and other paged
+importer jobs. Apply reaches already-running daemon queues; Cancel preserves
+saved limits, and reopening/import retains them. The actual loaded reference
+defaults are 15/5/15/5/10, replacing its spinner constructor seeds of
+5/15/5/15/10. Imported raw integers remain intact until Apply normalizes the
+shown controls. `import_work_slots.json` and the inspected Qt PNG record the
+controls and the real controller's named acquire/release boundaries.
+
+Each runner owns independent active counters and cancellation-safe permits.
+Lowering a capacity preserves running counts and blocks new work until enough
+permits release; raising it admits pending work. Bandwidth/network waits still
+consume a work slot. Watcher checks and files now run independently, so a
+checker waiting for its own slot does not prevent that watcher's file imports.
+URL and simple-downloader file/page work and local-import files share the other
+paged-job pool. These limits are separate from network connection semaphores.
+
+Database > clear now opens the original clear-all and cull-viewing-statistics
+questions with “do it”/“forget it” choices and the original completion notices.
+Clear removes every canvas's view counts, durations and last-viewed records.
+Cull reads the current saved media and preview rules when accepted, validates
+both before writing, reduces excessive counts before limiting total durations,
+and preserves other canvases and timestamps. Preview minimum/maximum rules are
+editable and migrate from the reference; older native settings use the reference
+5-second/60-second defaults. Decline, closing the owning window and callbacks
+from retired questions preserve the records and any successor question.
+
+An importer's per-service tags page now offers “set a filter for already-exist
+test”. It opens the shared whitelist/blacklist/advanced tag-filter editor with
+the reference explanation and parser namespaces. Accepting the filter enables
+“only add tags that already exist” for that captured service and changes only
+the importer draft. Cancelling the child preserves its filter and toggle;
+cancelling or closing the importer closes the child and invalidates retained
+callbacks. Parent Apply waits for the child. Saved importer options retain the
+filter after reopening and feed the file importer's existing-tag consumer for
+both parsed and additional tags. Only tags admitted by this filter are tested
+against current mappings on the chosen service; excluded tags bypass the test.
+
+Files and Trash now exposes the reference's independent copy and move confirmation
+checkboxes. Both default to enabled; imported values survive reopening. Edits stay
+in the Options draft until Apply, and Cancel or a retired Options callback cannot
+save them. Saving one checkbox preserves a concurrent change to the other.
+
+The thumbnail menu's local `locations` actions read those saved preferences when
+invoked. `add to`, `move (strict)` and `move (merge)` capture their files and explicit
+source/destination. Enabled gates ask the recorded Add/Move/Move-merge question;
+yes applies, while no, Escape, window close, a hidden question or a retired page
+cannot write. Switching away retires the question even if the page is revisited.
+Disabled gates perform the same transfer immediately. The transaction checks live
+local memberships and stable service keys, restores a deleted destination's original
+import time, adds the destination before removing the source, and keeps physical
+storage and inbox state. `local_transfer_confirmations.json` records actual Qt
+Options, the local action menu and real migration writes on a copied fixture DB;
+model/native regressions cover those decisions, persistence and stale owners.
+
+Options > shortcuts stages the reference numpad-merge and primary/secondary
+mouse-label policies and opens an owned shortcut-set editor. Each command child
+keeps independent keyboard and mouse captures. Keyboard capture retains raw
+native key location before Slint conversion, records sorted modifier identities,
+casefolds characters, and applies the non-number numpad policy. Child OK updates
+the set draft; set OK updates Options; only Options Apply persists. Cancel and
+closed owners reject retained child callbacks. Saved main GUI bindings call the
+existing refresh, close-page and new-page callbacks; saved media viewer bindings
+call close, navigation, zoom and fullscreen callbacks. This slice offers only
+those commands and the two reserved sets, leaving broader set/command management
+Partial. Existing hardcoded shortcuts remain fallbacks for unmatched bindings.
+
+Mouse capture includes press/release, double-click and vertical wheel gestures,
+with the recorded strict small-wheel accumulation and disabled release selector
+for wheel/double gestures. Native double-click detection uses a 400 ms interval
+and Manhattan distance of five logical pixels in capture (five physical pixels
+in the viewer). Winit wheel lines map to 120 units and pixel deltas use their Y
+value. These fallbacks do not establish Qt platform double-click/angle-delta
+parity; the original mouse leaf remains Partial with zero completion credit.
+
+Saved shortcut dispatch retains the owning window’s lifetime. Accepted client
+exit retires the main route after confirmation; cancelling exit keeps it live.
+A closed viewer’s canvas retires keyboard, mouse and partial wheel dispatch,
+even if a retained handle is shown again. Fresh bindings and other live viewers
+keep their own routes.
+
+Popup jobs can expose a producer-labelled clipboard button, a repeatable callable
+button, and a yes/no question. Clipboard clicks read the current full payload,
+even while the displayed label awaits refresh. Questions hide while paused;
+answering finishes and dismisses the message and returns the Boolean to its live
+producer. Callable buttons remain usable after work finishes or is cancelled,
+until the message or producer is retired. Action replacements publish immediately.
+Native controls use job, producer, question and GUI incarnation tokens, so old
+rows, closed owners and prior bindings cannot affect successors. Accepted close
+retires pending GUI calls; an already committed answer survives GUI retirement.
+The actual Qt action recording is `oracle/fixtures/popup_actions.json`.
+
+Popup geometry reports include the job and GUI incarnation alongside their
+measured width. Newly laid-out cards report their initial frame, and moved rows
+report again; retired or displaced cards cannot overwrite successor measurements.
+
+Main-window menu titles refresh after page changes while the window is live.
+Releasing the window and its binding also releases its pages and thumbnail
+loaders, including windows opened by native headless tests.
+
+Speed and Memory now stages the thumbnail-cache byte amount and B/KB/MB/GB/TB
+unit, plus its days/hours/minutes timeout. Apply persists the independent values
+and immediately enforces them in the main grid; Cancel keeps the saved policy.
+The grid keeps a byte-accounted least-recently-used decoded cache across its
+pages. Access refreshes the timeout; the existing GUI collection timer also
+expires idle entries. Like the reference, admission may exceed the soft limit
+by one incoming thumbnail until maintenance trims it. Help > debug > memory
+actions > clear thumbnail cache resets the cache and redraws current thumbnails
+without asking. Clear, scale round trips and thumbnail-setting changes reject
+old decode completions; rebinding or accepted client close permanently retires
+the old cache and cancels its staged Options owner and descendants. Raw byte-control
+clamping is saved on unchanged Apply; raw subminimum timeout values stay untouched
+until their fields are edited. Actual Qt controls, cache boundaries and debug QAction are
+recorded in `thumbnail_cache.json` and its PNG.
+
+The main page's sidebar and preview now have drag handles. Each live page keeps
+its own sizes across switches and close/reopen; a newly loaded session uses the
+global saved defaults without changing session content. Double-click a handle to
+hide its pane; hiding clears preview focus while keeping selected files.
+Pages > sidebar toggles the current sidebar, saves its sizes immediately, toggles
+saving on accepted client exit, or restores saved sizes to every live page.
+Cancelling exit saves nothing. A hidden whole sidebar saves width zero and its
+last inner preview height; a separately collapsed preview keeps the saved height.
+Options > gui pages > preview window stages the global hide preference. Apply
+preserves concurrent size saves and the exit switch; Cancel discards the draft.
+New pages and restore/reveal consume the saved hide flag. Existing accepted preview
+media survives refused SetMedia/clear calls while globally hidden. Each live page
+retains its own accepted file and interval across page switches, whole-window hide
+and live close/reopen; returning to that page restores its image without counting a
+second view. Forgetting the page, loading fresh page owners or accepted client close
+retires its state, including late decoder replies. Preview rendering snapshots use a
+64MiB soft LRU budget with the shown frame allowed above the limit; an evicted frame
+re-decodes its accepted file without starting another interval. The existing two
+workers and one latest queued request are shared across all pages. Normal page hide
+with a visible splitter ends its interval, and normal show starts its restored
+successor interval. An already collapsed splitter also refuses clear/update;
+disabling the global flag alone does not replay an earlier refused clear. Pending
+and failed-raster acceptance still differs from Qt (see DIFFERENCES.md).
+
+Tag Sort now includes independent opening defaults for search-page and media-viewer
+Manage Tags dialogs. Both stage tag/subtag/count, text or count order, siblings/tags,
+and namespace grouping in the reference's four-row Options order. Apply saves the
+changed context; Cancel preserves it, and reopening restores it. Each local tag
+service tab captures its opening sort and offers the same choices within the
+Manage Tags window. Switching sort types remembers separate text and count
+orders. A later default change affects new dialogs; an open dialog retains its
+local sort. Search launch uses the selected files; viewer F3 uses its current file.
+Logical storage tags retain their labels, counts and segmented namespace/sibling
+colours while sorting can use their sibling ideals. The actual Qt recording
+`manage_tags_sort.json` covers 72 combinations and both captured-dialog lifetimes;
+`manage_tags_sort_options.png` shows the actual controls.
+
+Speed and Memory > download pages update now stages the four experimental gallery
+and watcher list-update controls: seconds/milliseconds with a 250 ms minimum and
+denominators 1–99, defaulting to one second and 30. Apply accepts displayed imported
+bounds and saves each field independently; Cancel retains raw imports. Only the
+visible current downloader page polls its list/totals on the 250 ms GUI timer. Each
+deadline uses the currently displayed row count and the saved minimum/denominator;
+equality waits for the next tick. Explicit importer actions force an update.
+If a render caller still reads the page, the timer defers without consuming its
+deadline. A deferred explicit refresh belongs only to that page incarnation.
+Highlighted file/job controls, tab progress and close checks stay current while
+the list waits. Hidden windows pause list reads, while rebinding or accepted close
+permanently retires the old scheduler. The actual Qt controls, save/reopen and
+strict/forced gallery/watcher deadlines are recorded in `downloader_update_times.json`
+and its reference PNG. Native/model/store regressions and three native snapshots
+are authored for hosted validation. Fixture JSON parsing preserves the recorded
+floating-point deadlines exactly, including strict equality boundaries.
+
+Tag Presentation > other rendering now includes “OR connecting string (on one
+line)”. Apply saves its raw text; Cancel discards the draft. Blank, whitespace,
+Unicode and previously saved multiline text survive reopening and legacy import.
+This matches the reference editor: Qt currently leaves its custom connector
+renderer disabled, so saving this field preserves existing OR labels, colours
+and copy/export syntax. Namespace formatting and the OR top-row colour remain
+independent live settings. Hidden, cancelled, rebound and closed Options owners
+cannot save a connector draft.
+
+Delayed deletion consumers keep a weak identity for their originating page.
+Replacing a session releases that page even when its viewer stays open. A live
+viewer can still act on its files, while its forgotten source and successor page
+receive no row removals. Accepted client exit permanently retires its binding;
+a reopened client starts a fresh binding.
+
+Media Playback > system now stages “Apply image ICC Profile colour adjustments”.
+It defaults on, imports the saved ClientOptions value, and persists on Apply;
+Cancel keeps the original value. Turning it off ignores embedded profiles while
+retaining PNG gamma/chromaticity normalization. Existing importers and their
+maintenance tools read the saved policy for future image conversions. Existing
+pixel hashes and stored thumbnails remain unchanged; explicit thumbnail
+regeneration uses the current policy and writes profile-free pixels.
+
+Accepted static preview, browser viewer, archive/delete and duplicate-filter
+images refresh after a saved policy change. Sharp tiles refresh at the existing
+zoom/pan, without changing focus or starting another viewing interval. Preview
+and filter decode requests capture the policy, and old replies cannot populate
+new-policy caches or successor owners. Hidden viewers refresh when shown again;
+retired Options and image owners remain retired. Native ugoira and WebP players
+read the policy for future frame conversions while preserving an already paused
+frame and playback position. Actual Qt checkbox staging, save/reopen, decoded
+pixels, animation frames, cache notifications and profile-free thumbnail encoding
+are recorded in `image_decoder_policies.json` and its reference PNG. Truncated
+image loading has no native control or completion claim.
+
+
+File > open > quick export directory now opens the saved Default export directory
+through the existing OS opener. Each click reads the current saved preference;
+Options Cancel and one-off manual export destinations leave it unchanged. Portable
+relative paths resolve against the database directory, while literal whitespace
+and empty imported strings retain the reference's path behavior. A configured
+missing path is passed to the opener without creating it. An unset preference
+creates the resolved home's hydrus_export directory; an undetermined home reports
+the reference message, and a conflicting file reports the creation error without
+launching. The action has no picker or confirmation. Hidden, rebound and accepted-
+closed main bindings cannot launch or create a directory. Actual Qt QAction,
+portable/path/error, Options Cancel/Apply/reopen behavior and menu appearance are
+recorded in quick_export_directory.json and its PNG.
+
+### Legacy coloursets
+
+Options > colours stages the independent override checkbox, current default/darkmode choice, and both sets of thirteen RGB roles. The editing tab starts on default even when darkmode is active. Override disables the swatches, while the current-set choice stays available. RGB pickers own OK/Cancel and the colour buttons retain copy/import-hex actions; Apply writes the changed override, current set and individual RGB roles against the latest Store values. Cancel and retired/hidden child callbacks cannot alter successors. Existing imported stores without the typed setting read their retained ClientOptions colours; native settings take precedence.
+
+Saved roles reach the existing thumbnail grid, autocomplete editor/results, active/selected tag lists, manual export tags, preview, viewer and archive/delete/duplicate canvases through owner-local weak observers (at most 250ms). Thumbnail local/remote fill and border use current physical local-file-storage membership, including trash; retained disk bytes are insufficient. Help > darkmode toggles the legacy colourset, showing the reference warning first when override is off. Accepted close, rebind and the final Bound drop retire that action and its notice. Application Palette, stylesheet and OS colour scheme remain independently owned by their style controls.
+
+The real Qt fixture `gui_coloursets.json` records all 26 RGB values, staged/Cancel/reopen/serialization, actual QColorDialog acceptance/rejection, clipboard parsing, four Help cases and thirteen real backend colour consumers. Native/model regressions additionally cover field merges, retained legacy fallback, hidden/rebound owners, physical deletion/restoration and role painting. Source-only checks are complete; hosted Rust/renderer checks and exact-source PNG review remain required.
+
+Media Playback > zoom and position now stages the separate “Preview Viewer default zoom:” choice: default for filetype, 100%, canvas fit, fill horizontally, fill vertically and canvas fill. Apply saves only the changed preview policy; Cancel and retired callbacks preserve it. New imports and retained legacy stores keep the preview override, with native settings taking precedence. Accepted still/poster previews use their real pane geometry and device pixel ratio, the file type’s preview scale rules and centered/clipped bounds. Saving alone leaves the current canvas alone; the next accepted media or actual resize reads the saved default. Cache/ICC replacements keep accepted geometry and viewing intervals. Full viewer zoom policy remains independent. The actual Qt controls and 48 MediaContainer geometries are recorded in `preview_default_zoom.json`; authored model/native persistence, admission and rendered geometry regressions await hosted CI.
+
+Thumbnail appearance now stages the reference fade, blurhash-recovery, renderer
+choice and background-file controls. File browsing uses the currently typed
+draft, preserves it on picker Cancel, and changes storage only on Apply. Blank
+clears the background; whitespace remains a literal path. The image keeps its
+own dimensions at the clipped viewport's bottom-right, across scrolling and
+resizing. Both old and default-new reference renderers have that background
+consumer. Hidden/cancelled/retired Options owners cannot stage the new controls.
+
+Missing physical thumbnails first use the existing read/regeneration path. If
+that fails, enabled recovery decodes the file's saved blurhash at the reference
+thumbnail resolution (32x32 followed by OpenCV resizing for larger results).
+Disabled, absent or invalid blurhashes show the bundled hydrus thumbnail. This
+recovery never writes blurry pixels to physical thumbnail storage. A policy
+change invalidates cached/in-flight recovery; stored thumbnails remain independent
+of the ICC option. Earlier native imports fall back to retained ClientOptions
+until a native appearance value is saved.
+
+Pages admit their renderer choice at creation, so Apply affects future pages.
+Native decorated-cell snapshots retain image, selection, icons, ratings, banners
+and colours while their owned transition runs. The default transition uses the
+recorded 13/60-second policy; old-mode frame accumulation uses the older policy.
+Fade and renderer-tech parity remain Partial: software rendering applies opacity
+to individual primitives, rather than Qt's precomposed bitmap. This work does
+not claim whole-bitmap blend fidelity or Qt's separate rendering/layout engines.
+
+Actual Qt evidence is recorded in `thumbnail_appearance.json` and its three PNGs;
+the reference painter's inherited new-background method is driven at two scroll
+origins. Authored native regressions cover real loader recovery, held policy
+results, current typed browse seeds, hidden/cancelled owners, clipped/nonuniform
+background pixels, real selection transitions, cached revisits and retirement.
+Rust/Clippy/native execution and native PNG inspection are hosted-CI pending.
+
+Accepted client exit also releases the main window's background bitmap; retaining
+and showing the closed component cannot restore it. Cancelling exit keeps the
+current bitmap, while a fresh binding can load the still-saved path.
+
+The combined colour/thumbnail integration copies all eight saved local/remote and selected/unselected fill/border roles into each owned paint snapshot. Current physical storage membership selects the palette, including collection membership. A colour change clears both old and current copied cells before repaint; the viewport background keeps its saved grid colour behind the clipped image. This integration remains source-only until exact hosted native execution and PNG inspection.
+
+Archive/delete filtering now offers the actual finish deletion scopes: the page's
+local context, each current local domain, and an all-local choice when files span
+domains. The Files and Trash controls can reduce this to all possible domains or
+disable the reference's 1.2-second activation delay for multiple commit buttons.
+Single-choice and keep-only finishes stay enabled. Each choice retains its service
+keys until acceptance; deletion rechecks identities and current membership inside
+the transaction before archiving kept files. Forget asks the reference yes/no
+question, and back returns to filtering. Settings stage/Cancel/reopen independently,
+merge only changed fields, import real ClientOptions keys and preserve older
+retained values when the native key is absent. Closed, rebound, hidden and pending
+child owners cannot commit; owned timers stop on resume/close and cannot enable a
+successor's buttons. Actual Qt recorded 48 finish cases and both independent
+controls; Rust/native regressions and finish PNGs await hosted validation.
+
+Repeated main F12 brings the same active filter and its finish/Forget question forward; it never replaces an unanswered owner. Retired source pages are discarded before opening a fresh filter. Mixed current/deleted search scopes retain their complete context identity and exact label, so their current-only deletion alternatives and activation delay are not collapsed.
+
+## Debug long-text popup
+
+Help > debug > gui actions > make a long text popup publishes two ordinary,
+finished popup jobs to the real Store/toaster. The first body gains a random word
+from the reference's five-word vocabulary every 200 ms for 62 updates; the second
+keeps its “test long title” body while its title grows for the next 62 updates.
+The two jobs are immediately dismissible. Repeated invocations own independent
+sequences. Merely hiding the main window preserves already published backend
+updates, while refusing new launches. Dismissal releases pending updates at the
+next live boundary; accepted exit, binding retirement and owner destruction
+release the producer's timer and queue. Exit Cancel preserves the live sequence.
+The actual Qt recorder captures every setter deadline and presents real popup
+widgets; authored native regressions replay the genuine menu, Store and toaster
+with an owner-local deterministic clock. Hosted Rust execution remains pending.
+
+Options > files and trash stages “When maintenance physically deletes files,
+wait this long between each delete” in seconds/milliseconds (default 600 ms,
+minimum 20 ms). Cancel preserves imported raw milliseconds; Apply writes the
+actual displayed fields once, including Qt's fractional truncation on reopening.
+An older imported Store reads its retained ClientOptions when no native key
+exists. Explicit edits merge independently; unchanged normalization preserves a
+concurrent policy replacement. Hidden/retired Options cannot edit this control.
+
+Physical maintenance captures the saved wait once per pass and commits each
+file/thumbnail pair before waiting, including the final pair and missing physical
+originals. The wait releases the Store writer, so ordinary writes, re-adds and
+imports can continue. Every subsequent pair rechecks the queue, current local
+membership, shared-media ownership and import claims before filesystem work.
+The daemon owns one worker; shutdown/drop permanently cancels its admissions,
+wakes its wait and joins it on normal server shutdown. A filesystem/metadata failure keeps that pair queued
+and aborts the pass; earlier pairs remain durably cleared. Current filesystem
+operations finish before cancellation takes effect. CLI purge uses the same
+period, while the daemon retains its existing 1024-pair/ten-minute pass schedule.
+Native lifecycle/control/physical-file assertions and one Options image are
+authored for hosted validation. The actual Qt recording covers 16 controls, five
+real disposable-file passes and the actual event wake on shutdown.
+
+Already restored local media only clears a stale deferred queue; it performs no
+physical deletion and consumes no physical-pair wait. The reference clears those
+queues on local re-add before its deletion loop.
+
+## Enter/Return on radio lists
+
+GUI > misc exposes the saved “Force that hitting Enter/Return on radio button
+lists triggers a dialog ok” preference. It defaults to on and is read on each
+key event by the filesize comparison, both hash groups, and advanced deletion's
+action/reason lists. Enabled takes the explicit native OK route; disabled
+lets the event reach the surrounding dialog's default button. In the recorded
+Linux Qt modal dialogs, both settings accept via the default Apply button;
+disabling this preference does not promise that Return will keep a dialog open.
+Changing the saved value reaches already open dialogs. Options changes remain
+staged until Apply; Cancel discards them. Hash multiline text keeps its normal
+newline behavior. Hidden, cancelled or retired child/parent owners cannot apply
+through these key routes. Other widgets and dialog families receive no new claim.
+
+Options > tag sort now includes the staged namespace grouping queue. Add and
+Edit open owned Enter Text children with the reference's `namespace` default,
+allowing blank, `:` and arbitrary raw namespace strings without normalization or
+deduplication. Blank and colon rows render as “unnamespaced” and “namespaced”.
+Edit captures the first selected row's stable identity, including duplicate rows;
+Up/Down and confirmed removal operate on the same queue. Parent Apply is blocked
+while a child owns input, Cancel discards the draft, and rebind or accepted client
+exit closes the exact children permanently. Hidden or retired callbacks cannot
+stage changes. Saved namespace order reaches the existing sidebar/viewer tag-sort
+consumers; presentation saves preserve concurrent unrelated fields. Actual Qt
+queue/prompt/sort recording and authored model/native regressions cover this
+finite scope, including real Enter Text blank/whitespace Apply and Cancel
+handlers with their “apply”/“cancel” buttons. Hosted Rust execution and native PNG review remain pending.
+
+Popup cards now measure their body at the resolved card width before the outer stack allocates their height. The narrow long-question regression checks all five actual action-button bounds, the rendered lower stop border and a pointer delivered near that lower edge; the fixed-width and width-cap checks remain. This is a layout repair with no new coverage claim. Native execution is pending hosted CI.
+
+Options > files and trash now stages “Allow trash maintenance during normal time”
+and “Allow deferred file deletes during normal time”, both checked by default.
+Apply saves each changed flag without replacing its concurrently changed peer;
+Cancel, hidden callbacks and retired owners cannot save. Saved legacy flags survive
+upgrading an already imported store.
+
+The flags control real automatic maintenance: busy GUI passes require the relevant
+flag, while the current owned idle decision allows either job. The daemon honors
+them as normal-time jobs; explicit purge remains available independently. Trash
+cleanup and physical deletion run on bounded background workers, allowing Options
+and other Store writes during a physical wait. Accepted exit and rebind retire
+the old jobs and retain the next queued pair; Cancel keeps the current job live.
+Current passes finish their admitted work using their captured policy. Broader
+maintenance scheduling and idle/system-busy behavior remain Partial. Actual Qt
+controls and entry/shutdown paths are recorded; model, Store, daemon and native
+regressions are authored and await hosted execution.
+
+Help → Debug → GUI actions now offers “make a popup in five seconds”. Each activation queues the exact reference message without publishing early; overlapping activations keep separate deadlines and independent dismissible jobs. Existing delayed work progresses while Main is hidden, while new hidden-window launches are refused. The existing debug producer owns the timer and permanently cancels pending work on accepted exit, rebind and owner destruction; Exit Cancel preserves it. Authored native deadline/Store/toaster/ownership regressions await hosted CI.
+
+The automatic maintenance binding has a private shared retirement owner: dropping the final Bound clone
+permanently cancels its workers even if the MainWindow callbacks or a public
+Control remain retained. A dropped MainWindow is detected by its weak-owner timer
+or the next poll; callbacks never substitute a successor window. An authored
+held-wait regression keeps the emitting main and Control alive, drops each Bound clone,
+checks the remaining queue and lets only a fresh binding consume its next pair.
+
+Help → debug → gui actions now includes “make a new page in five seconds”.
+Its real menu captures the saved default file location when constructed, then an
+owned monotonic deadline creates and selects a blank search page in the notebook
+current at delivery. The page reads the current default tag service and uses the
+existing query/autocomplete path. Hidden Main refuses new launches but existing
+work continues without raising it; rebind, accepted exit and owner destruction
+permanently retire queued page requests. Overlaps share the existing popup timer
+without changing its dismissal pruning or delayed/long-text publications.
+Actual Qt hidden/minimized delivery is recorded in `debug_delayed_pages.json`;
+authored native query and lifecycle regressions await hosted execution.
+
+Options > gui now stages the default-enabled “Mouse wheel can "scroll" through
+menu buttons” preference. Saved changes reach already open represented menu
+choices: the main/file-default media type and order, both Options tag sorts, both
+ManageTags default sorts, the live ManageTags type/order/group/siblings controls,
+and the manual-export tag sidebar. One event moves one choice and wraps; positive vertical motion moves
+backward, while zero vertical motion (including horizontal wheels) moves forward.
+A single choice still publishes its signal, and an enabled empty choice consumes
+without selecting. Disabled wheels leave the choice unchanged and can scroll
+the actual Options scroll area. Ordinary pointer popup selection and native
+arrow/Return menu input remain available with the preference disabled. Hidden,
+modal-blocked, cancelled, rebound and accepted-close owners reject these new
+input routes. Options keeps independent text/count orders for each tag-sort row,
+as the real TagSortControl does. Actual Qt controls, saved legacy values and
+model/Store/native regressions cover this scope; hosted Rust and native rendered
+review remain pending.
+
+The menu-choice preference remains Partial: the real Qt media type control hides
+its order choices for Random and preserves the previous labels/value across a
+Random roundtrip. Native media sort controls still represent Random with their
+ordinary order choices and do not retain that hidden control state. Type wheels
+otherwise traverse the actual flattened menu; an unoffered current sort remains
+available to pointer selection but does not participate in wheel traversal.
+Matching order labels preserve the existing order; changed labels select the
+new default. This bounded implementation proposes zero completion credit.
+
+
+Options → popup notifications now stages “Make a short-lived popup on cookie/header
+updates through the Client API”. It defaults off. Apply saves the preference;
+Cancel, hidden editors and retired bindings cannot change it. Previously imported
+ClientOptions supply the value until a native preference has been saved.
+Authenticated cookie/header update routes publish real finished popup jobs when
+this preference is enabled. Domain/header categories are deduplicated and sorted;
+repeated cookie sets still notify, while identical header values and missing-header
+removals do not. These jobs use the existing owned toaster and expire after five
+seconds, with the reference’s strict passed-deadline boundary. Exit Cancel keeps
+the consumer live; accepted exit and rebind retire its GUI incarnation.
+
+`oracle/record_api_update_toasts.py` records eight real Qt Options paths and twenty
+authenticated resource-handler requests, including late-error partial header
+acceptance and exact messages. Store, model, API-router and native toaster/render
+regressions are authored; Rust execution and native PNG inspection await hosted CI.
+
+Speed and Memory now stages memory reserved for the image cache, idle timeout
+(days/hours/minutes, five-minute editor minimum), and maximum cached image size
+(10–50% of the cache). The pixel-budget estimate follows the reference; the
+screen estimate uses the owning native monitor when available. Cancel discards
+the draft, reopening reads the saved values, and Apply merges only edited fields.
+A decoded full-image cache is shared by the main binding's preview, image viewer,
+archive/delete filter and duplicate filter. Images exactly at the single-file
+threshold render on demand; admitted pending renders share their original RGB
+estimate, then account actual RGB/RGBA bytes when accessed after loading. LRU
+maintenance releases idle/overflow cache references while current canvas pixels,
+zoom and viewing intervals remain owned independently. Size/timeout changes
+maintain immediately; percentage changes affect future admission. ICC changes,
+rebind, accepted exit and final binding-owner drop permanently retire old cache
+admission. Actual Qt controls and renderer accounting are recorded in
+`image_cache.json`; authored native/model/import regressions and the Options PNG
+await hosted execution and inspection.
+
+
+Help → Debug → debug modes offers the checked “force idle mode” runtime action.
+It overrides the current main binding’s actual idle Monitor before the boot wait,
+disabled normal-idle setting and recent user/mouse/API checks. Activity continues
+to be recorded while forced; switching off resumes the original decision from
+those timestamps. Existing session autosave and automatic trash/deferred workers
+consume the override at their unchanged scheduled admissions. Ordinary hiding
+preserves the mode but refuses new hidden-window toggle requests; pending main
+prompts also refuse toggles. Exit Cancel preserves it, while accepted exit, rebind,
+missing main owner and the final Bound clone’s drop permanently retire it. A new
+binding starts off; no saved option or mutable global is introduced.
+The actual Qt recording captures four QAction toggles and fresh menu checks,
+sixteen controller idle/busy cases and sixteen genuine worker entry paths. Model
+and native real archive/deletion/ownership regressions are authored; runtime and
+one native menu PNG await hosted validation. This remains Partial with no
+completion credit.
+
+Options → popup notifications now stages the default-off “Freeze the popup
+toaster when the main gui is minimised” control. Saved changes reach the current
+owned toaster on its existing 250 ms tick. When enabled and the native main
+window reports minimized, existing cards, their widths, summary and pending-card
+admission remain unchanged. Background jobs still update, finish and expire;
+restore reconciles those changes and admits queued jobs. Hidden main windows
+always freeze this UI, including with the checkbox off; show resumes it. Hiding
+is temporary and does not retire jobs or the binding. Retained hidden/minimized
+input is refused; rebind and accepted close permanently retire the old UI owner.
+Options Cancel/reopen and unrelated concurrent popup settings retain their usual
+transactions. This supported-platform control remains Partial with zero credit:
+Winit cannot read minimized state on Wayland, and the separate other-display
+freeze option is absent. Focus loss is not used as a freeze signal. Actual Qt
+recording covers twelve queue/window states and five Options states; authored
+Rust/native regressions and native rendered review await hosted execution.
+
+Options → media playback → system now stages “FFMPEG call timeout:” (1–600 seconds,
+default 15). Cancel, hidden and retired Options callbacks leave the saved value
+alone; Apply normalizes imported out-of-range values and preserves independent
+concurrent settings. Older stores read retained ClientOptions until explicitly
+saved. Existing importers consult a weak Store provider for each bounded ffmpeg
+process, including downloader imports, regenerated thumbnails and maintenance.
+“Paste image!” also uses these configured media tools. About keeps its existing
+synchronous version lookup and absent-version display but now bounds the call.
+Each process captures its policy once; later Apply affects subsequent calls.
+
+`oracle/record_ffmpeg_timeout.py` records the actual Qt spin box, Cancel/save/reopen,
+raw-value normalization and unmodified HydrusFFMPEG/HydrusSubprocess consumers
+against a disclosed local delayed executable. Store/model/native regressions cover
+staging, concurrent saves, a held process across Apply, subsequent timeout and
+kill/reap, fixed API configuration and weak provider lifetime. Hosted Rust/native
+execution remains pending; no local Rust validation was run.
+The same weak deadline reader also reaches import-review MIME parsing, duplicate
+comparison/auto-resolution image decoding, parser fetched-file detection and
+import-folder sidecar sampling. Standalone no-Store helpers retain their existing
+APIs; GUI owners supply configured tools. Borrowed Store callers can obtain the
+same weak handle without keeping a Store or read connection alive. Authored real
+FIFO transport regressions exercise review metadata and duplicate PSD decoding
+under a preference changed after those consumers were constructed.
+
+Thumbnail context menus offer “clear deletion record” for one selected file and
+“clear deletion record for selected” for multiple flattened files when any has a
+physical local-storage deletion record. Trash-only/current selections do not offer
+it. The exact confirmation captures eligible selected files before the question;
+Cancel changes nothing. Accepted records clear in independent batches of 64,
+preserving unselected files, trash, current/re-added membership and the durable
+physical-deletion queue. The real import-status consumer then permits previously
+deleted files to be imported again. A later batch error leaves earlier batches
+committed and presents its error in the main question dialog until acknowledged;
+acknowledgment does not retry deletion. Hidden, retired, rebound or different-page main
+owners cannot execute a retained menu/answer against another page. A tab
+departure permanently invalidates this action even after returning; an owned
+advanced-deletion child also blocks it.
+Actual old/default Qt menu, collection, retained QAction, acceptance, concurrent
+re-add/new-delete and batch/error paths are recorded in
+`selected_deletion_records.json`. Store/model/native replays and the native
+question PNG are authored; hosted Rust execution and rendered inspection remain
+pending. This covers the selected thumbnail action only.
+
+Options → speed and memory now stages the per-viewer image-cache percentage
+(default 25%, 10–50%) and previous/next image-prefetch counts (defaults 2/3,
+0–50), with the reference pixel estimate and over-budget warning. Cancel,
+reopen, imported ClientOptions, typed native precedence and per-field concurrent
+saves apply to these controls. A passive normalization does not overwrite a
+concurrent explicit setting. Retained hidden Options or a parent with an owned
+child cannot stage these values.
+
+Normal media viewers and archive/delete filters warm their real saved circular
+neighbourhood: next precedes previous at each distance, encountered neighbours
+are suppressed, and the current image prefix is retained exactly. The duplicate
+filter uses the same percentage for its current pair and future pairs; its
+separate pair-count control remains absent, while its imported/default value is
+respected. Each owner creates at most one warm worker lazily. A pass counts ready
+images' actual bytes, waits off the UI on pending renderers, and admits at most
+one miss. Finished-renderer notifications resume the captured navigation pass.
+Only finished cache entries may be evicted for prefetch; insufficient space
+leaves all entries intact. Hidden viewers may continue warming, matching Qt.
+Close, replacement, rebind and final binding drop retire admission. Warming
+never publishes SetMedia or starts viewing intervals. Current rendering shares
+ready Arc rasters; when a warm decode is pending, the existing synchronous
+current decoder proceeds independently. Authored Rust/native regressions and
+final native render review await hosted execution.
+
+Help > Debug > Network actions now offers the actual “fetch a url” workflow.
+A normal network-engine GET uses saved cookies, approved headers and bandwidth
+policy, publishes a live “debug network job” popup, then offers save-to-file,
+copy-to-clipboard or forget. Save writes the captured response bytes unchanged;
+clipboard decodes the response's declared charset. Each overlapping request and
+question keeps its own result. Completed progress popups dismiss after three
+seconds. The native popup stop cancels its actual HTTP job. Hidden main windows
+refuse new launches while admitted work can still deliver its response question;
+accepted exit, rebinding and final binding destruction permanently retire work.
+`oracle/record_debug_fetch_url.py` records the genuine Qt QAction/HTTP engine,
+JobStatus deadline, file bytes, decoded clipboard, Cancel/forget and hidden result
+on a disclosed loopback server. Authored native HTTP/Store/toaster regressions
+remain pending hosted execution; no local Rust/native tests were run.
+
+Headless UI tests retain the returned window collector for the complete UI scope.
+Its final stack-scope drop hides visible components and releases callbacks, pages
+and workers before the UI thread returns. Helpers returning windows leave that
+collector in the caller's scope. This cleanup preserves the Store writer's normal
+shutdown and joins; it no longer runs from a thread-local destructor. A bounded
+Windows lifetime replay precedes the unchanged default-parallel native suite.
+The retained-component, callback/Store release and two-second worker-release
+assertions remain, with an additional explicit pre-thread-exit component check.
+Hosted execution remains pending; this repair proposes no feature completion.
+
+
+Database → file maintenance → manage scheduled jobs now opens the scheduled-work
+review. Rows show real job types, due counts and future counts; type identities
+survive refresh and sorting. Clear asks “Clear all the selected scheduled work?”
+and cancels both due and future jobs of the captured types. Selected/all work
+runs the existing physical maintenance runners off the UI, with a real
+cancellable file-maintenance toaster, pre-work job gauge, committed results and
+five-second finish.
+A crash-safe file lease excludes the daemon's simultaneous physical pass.
+Integrity redownload results reach a named URL-import page without selecting it;
+matching named pages are reused and URL requests feed the existing importer.
+Closing the review leaves accepted work with its Main binding; accepted exit,
+rebind and final binding drop cancel admission at the next file boundary. Hidden
+input and retained callbacks cannot target a successor review or Main binding.
+The actual Qt recording is file_maintenance_current.json; native/model/Store
+regressions and file-maintenance-current.png are authored and hosted execution
+and final rendered review remain pending. New scheduling/search and the parent
+maintenance family remain incomplete.
+Accepted Clear/Refresh commands are serviced between fetched batches while the
+same actor retains its physical lease; Clear never races that actor's in-flight
+file results. Ordinary daemon passes defer on lease contention, and forced waits
+remain cancellable. Each redownload URL is dispatched independently, so one
+invalid URL reports its error without suppressing other useful URLs.
+This current-work leaf remains Partial with zero completion credit: counts refresh
+only between native batches, independent-process Clear waits for its physical
+pass, and the waiting-for-lease popup is published before admission.
+
+Help > Debug > gui actions > close and reload current gui session saves an
+immutable ordered page/media/importer snapshot through the Store worker, then
+forcibly closes the current pages and constructs fresh page and queue identities.
+It asks no close question. As recorded from Qt, the first root page and each
+fresh notebook's first child are selected, and thumbnail selection clears. Old
+pages remain available through Undo with their original importer queues paused.
+Already admitted reloads complete while Main is hidden; rebind, accepted exit,
+Main destruction or final binding-clone release reject late delivery. The private
+saved reload slot is removed before reconstruction. The real Qt recorder is
+`oracle/record_debug_session_reload.py`; Store isolation and native reconstruction,
+importer, hidden/retired ownership replays are authored for hosted execution.

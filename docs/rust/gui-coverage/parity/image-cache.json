@@ -1,0 +1,715 @@
+{
+  "schema_version": 1,
+  "task": "Three original image-cache controls reaching owned shared full-image consumers",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "implementation_base": "89945822239acd724b994572c3f8379e82a8ff86",
+  "source_commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce",
+  "implementation_commits": [
+    "c840803264d06f93995b069b831cbc367ca44fe8",
+    "cda236536136a12e02b76df540af0f3f9776d6a7",
+    "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+  ],
+  "eligible_concrete_first_pass_count": 3,
+  "parent_promotions": 0,
+  "parents_remain_partial": [
+    "options-speed-and-memory",
+    "audit-options-speed-and-memory-image-cache"
+  ],
+  "eligibility": {
+    "completed_ledger_path": "docs/rust/gui-coverage/overnight/progress.json",
+    "completed_ledger_at_base_sha256": "168d8057e3b023cf822af82b703b4fe018baba266694d06b5c7ae79bf1d20ca6",
+    "completed_arrays_sizes": [
+      240,
+      51
+    ],
+    "listed_ids_already_completed": [],
+    "existing_parity_packets_with_listed_ids": [],
+    "note": "Checked exact original concrete controls against frozen baseline, both completed arrays, every prior parity claims/entries schema and semantic cache aliases. Thumbnail cache/prefetch/tile/shared backend identities stay separate."
+  },
+  "validation": {
+    "reference": "Actual final Qt recorder completed14:31:42\u201344 UTC with clean shutdown; controls PNG individually inspected.",
+    "source_checks": "rustfmt --check over changed/new source, cached Slint source compilation, Python AST/JSON and git diff --check passed. Ancestor debug/maintenance Rc owner fixes applied separately; root already integrated those fixes.",
+    "rust_tests": "Authored only; hosted exact source Rust/native/runtime and rendered review pending. No local Rust/Cargo/mutation tests.",
+    "independent_review": "appearance_final_review accepted immutable12106a7456c5dd43c1218b8e879ec1c708ac1bce (c840\u2192cda\u219212106) and this packet by bounded read-only review. All four main shared consumers and standalone filter, access-only pending\u2192loaded accounting, strict admission/soft overflow/expiry, current presentation/ICC/generation/lifetime boundaries, live prefetch policy, optional import, normalized-before scoped save and3 Weak suggested-child guards/regression accepted. Individually inspected final actual Qt PNG/32 events/5 controls/5 metadata cases; independently verified68 exact raw-line fingerprints and10 actual recording/artifact hashes, source/base chain and all102 predecessor packets/both240+51 completed arrays for exact IDs/semantic duplicates. Exactly3 original Missing concrete conditional proposals, parents/aliases/prefetch0. Hosted Rust/native runtime and final rendered inspection remain pending."
+  },
+  "source_anchors": [
+    {
+      "relativepath": "crates/hydrus-store/src/image_cache.rs",
+      "line": 15,
+      "symbol": "pub struct Policy",
+      "line_sha256": "f28f726002d513b901b1c5ce6e90e59800d17cdf2672dc2f026d310f7338575c",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-store/src/image_cache.rs",
+      "line": 50,
+      "symbol": "pub fn save_changed",
+      "line_sha256": "08e2bff97a10b960d0be360e429c2c1bbfd487d034ab23583ca073a2ccd1e427",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-store/src/image_cache.rs",
+      "line": 88,
+      "symbol": "pub fn load",
+      "line_sha256": "6452689d7035eaa76e8be2accecc46a445ce13c9933db55e3ae2471822cfd041",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-store/src/import/decode.rs",
+      "line": 981,
+      "symbol": ".map(crate::image_cache::Policy::from_legacy)",
+      "line_sha256": "1fb0b21831087150ae2396b418c480225c84e5aaab529388fd76bc6bf44d362c",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui-model/src/image_cache.rs",
+      "line": 9,
+      "symbol": "pub fn displayed",
+      "line_sha256": "f2cd8658cd575a6e45f31f0c4916eeec1a5f7f152ffa96c1c2f2e004af68919c",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui-model/src/image_cache.rs",
+      "line": 36,
+      "symbol": "pub fn admits",
+      "line_sha256": "e62cfc5b122f26c251cf6fe6df8ed3277f8fa5635cf6e0a0577871682919edb0",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui-model/src/image_cache.rs",
+      "line": 41,
+      "symbol": "pub fn insert",
+      "line_sha256": "9d1d188e98b804fca1e84bbbea57f959bb86bca49386481e240b1ad5c8f9955e",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui-model/src/image_cache.rs",
+      "line": 49,
+      "symbol": "pub fn get(",
+      "line_sha256": "75bb2a0f35434ef6b1d0cc135b238f1126fa8ed3f0628b47dc869a1a7cba009a",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui-model/src/image_cache.rs",
+      "line": 61,
+      "symbol": "pub fn set_policy",
+      "line_sha256": "2d0442781f41c39ebd6d83308fb774f8a69fc91d1beea5eb94257bc0af5a74b6",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui-model/src/thumbnail_cache.rs",
+      "line": 89,
+      "symbol": "pub fn get_accounted",
+      "line_sha256": "3483a90be06d0ec5fb9501cc4ef79d7714d32429f68d4520494e2757d1807ee3",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui-model/src/thumbnail_cache.rs",
+      "line": 123,
+      "symbol": "pub fn maintain",
+      "line_sha256": "bf0eeb626a837f123b0c517b2264c7a30ae913dc2055ddfecbc69c9cb9b1b6ee",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/image_cache.rs",
+      "line": 21,
+      "symbol": "fn estimate_resolution",
+      "line_sha256": "78cd57fda7ba81b8812e54a4981622cc7c2c8cad86db8bb2bbf21a5a19d882a0",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/image_cache.rs",
+      "line": 31,
+      "symbol": "struct Loading",
+      "line_sha256": "45189fbdf52a17f7c7b3333a11de8757779a3443a51c98f479245fe9fff29dcc",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/image_cache.rs",
+      "line": 187,
+      "symbol": "fn render(",
+      "line_sha256": "a8642ee159d8e01e3bc6c932d36af9e1eed200fa8a6afa5b6d4dcea0adfbefa6",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/image_cache.rs",
+      "line": 206,
+      "symbol": "loading.identity != identity",
+      "line_sha256": "099893a31685b0803208b06d33a12c2747fbe239c8e1b737cfb35abb0e59ad7c",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/image_cache.rs",
+      "line": 253,
+      "symbol": "pub(crate) fn prefetch_allowed",
+      "line_sha256": "c7941becc2c10fb051650adf867b7a9af8efd3dcf5469a0d150c415e093a27a9",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/image_cache.rs",
+      "line": 247,
+      "symbol": "pub(crate) fn refresh_saved",
+      "line_sha256": "8be4293f2faf228a6938d831a6cf12f16ffcea2334aa0cb9edfa16080b16b6ef",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/image_cache.rs",
+      "line": 367,
+      "symbol": "pub(crate) struct Owner",
+      "line_sha256": "26d7ee2714938d9a9af4d2eb742f308abbd68149bdebe0d928d461e60aa49da1",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/image_cache.rs",
+      "line": 410,
+      "symbol": "pub fn retire",
+      "line_sha256": "43e9c0c65da4777f23d45d4e693d82ef07e9993d423551b9ffd583ca15974d2b",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/options_window.rs",
+      "line": 86,
+      "symbol": "fn refresh_image_cache_rows",
+      "line_sha256": "5da117b6257f9eae703c0f9ad2d0a3f8b027060060441fa9eb6461515771c482",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/options_window.rs",
+      "line": 530,
+      "symbol": "let image_controls_blocked",
+      "line_sha256": "f84c3a55f41c6aa04fe1997dad0db3c5ab1fc468e36f366b3f7ab62d86177ad9",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/options_window.rs",
+      "line": 551,
+      "symbol": "let suggested_weights = Rc::downgrade",
+      "line_sha256": "9169301840cb6c08f128bff6b7ad8c152d0027a274856425fbc2bbea591c92d3",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/windows.rs",
+      "line": 370,
+      "symbol": "fn display_size",
+      "line_sha256": "97a5e8bd7e44e2d55307377551b1b53bb157df11f4275432e03e1cffc6d698cd",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/ui/options.slint",
+      "line": 363,
+      "symbol": "width: row.unit == \"\" ? 260px : 400px;",
+      "line_sha256": "554caa53b5a8e8ebbcd9042123ded0fb75e7f2141db76c4f4cb37b763a57bcd0",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/preview_window.rs",
+      "line": 50,
+      "symbol": "enum Backend",
+      "line_sha256": "ae34e4c80da58e5bf86c3f119b86e3c1da320f70ba7fe4f2456a7b160f717588",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/preview_window.rs",
+      "line": 89,
+      "symbol": "Backend::Shared(cache, normalise_icc)",
+      "line_sha256": "021543a9c3b5748b9bd4c147a9bd5c247677115dff2d55be52bf4708be4b6a7e",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/viewer.rs",
+      "line": 52,
+      "symbol": "fn shared_media",
+      "line_sha256": "d660ed8f601a05f5cdc60646206cca969d8fa511e79c2a4e649441d34d48905a",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/viewer.rs",
+      "line": 444,
+      "symbol": "fn full_still_with_icc",
+      "line_sha256": "b352baf4f8e8b6dbac9670b2b6c33556232cf3f320617c7a3d19c6f896e8a452",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/archive_delete_window.rs",
+      "line": 286,
+      "symbol": "let media = image_cache.load_saved",
+      "line_sha256": "9bcfc98f8ab2c71eab9c75e52193dfdd7986ade147acd39689950800161fa63a",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/filter_window.rs",
+      "line": 462,
+      "symbol": "fn open_filter_with_cache",
+      "line_sha256": "14fffa557821fd0812e4d9b234776fe63efeddc7d762ef3401fb20481fa8c655",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/filter_window.rs",
+      "line": 198,
+      "symbol": "fn prefetch(",
+      "line_sha256": "71d34cfa78e6a1b12cf9d6f8142ce92270d86e8a776882bdea44f46266a7fe16",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/filter_window.rs",
+      "line": 176,
+      "symbol": "failed_prefetch: HashSet<HashId>",
+      "line_sha256": "e272ea58abfaacad9be4b61e56732a39630fe899adf36f9b68e7c463926cc6b3",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/lib.rs",
+      "line": 585,
+      "symbol": "image_cache::Control::bind(window",
+      "line_sha256": "baf8a5ac29a332e2a26c59489f5af70a781b77b823e56968c9e1db8b8e9d5065",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/lib.rs",
+      "line": 2507,
+      "symbol": "image_cache.refresh();",
+      "line_sha256": "b332d6ef8514b4b32f8df47f054cff757b71f25243449afe843f8531bcb92b97",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/lib.rs",
+      "line": 4715,
+      "symbol": "_image_cache_owner: image_cache.owner()",
+      "line_sha256": "c67bc374f74fdc57c262084d744886389b108a45427af849d60dc4b1708d8b0f",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    }
+  ],
+  "test_anchors": [
+    {
+      "relativepath": "crates/hydrus-gui-model/tests/model/image_cache.rs",
+      "line": 11,
+      "symbol": "fn actual_pending_rgb_rgba_touch_admission_soft_overflow_policy_and_expiry",
+      "line_sha256": "88f4a2ca9a148db736bd680b004ef747fc3e3bda2a63767c61b4f659c331a329",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui-model/tests/model/image_cache.rs",
+      "line": 76,
+      "symbol": "fn actual_legacy_native_wins_changed_fields_and_raw_control_values_survive_reopen",
+      "line_sha256": "52d30c01c7dcde6cbf4b4d11e5d34ef1df62f0953cdc75a189b3b0775ee851d6",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui-model/tests/model/image_cache.rs",
+      "line": 142,
+      "symbol": "fn actual_byte_timeout_and_percentage_controls_match_the_recording",
+      "line_sha256": "b1ac0be7196e936e67e597d0f7aa7b866433f48aa10baa46bfa6b17d942330b5",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui-model/tests/model/image_cache.rs",
+      "line": 194,
+      "symbol": "fn untouched_normalized_controls_preserve_concurrent_fields_but_explicit_edits_win",
+      "line_sha256": "919ef17d6cfded857be07c7376f0087b3054e3de6481a8ed67eb42655f3cc38f",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-store/src/import/decode.rs",
+      "line": 5027,
+      "symbol": "fn image_cache_size_raw_timeout_and_future_admission_import_independently",
+      "line_sha256": "439006656ff8ffaa7a7e133500aaeb7b5231ab2fdeece7519d854d6e731948b1",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/image_cache.rs",
+      "line": 475,
+      "symbol": "fn actual_qt_pending_estimate_uses_full_unknown_resolution_fallback",
+      "line_sha256": "adfee9934cc57cbfd8c2dc9b53c94c319f532f2c408240eb5860bb1f2442e03c",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/image_cache.rs",
+      "line": 492,
+      "symbol": "fn shared_pending_decode_has_one_estimate_and_access_updates_loaded_bytes",
+      "line_sha256": "6832ce94fd9c67f36d1debceed457249e2df99b77e25890b445133179e8e949b",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/image_cache.rs",
+      "line": 557,
+      "symbol": "fn late_old_icc_decode_cannot_replace_new_renderer_or_revive_retired_admission",
+      "line_sha256": "2d540c9189772b4039fabe11379136c4474985d284d90e110d2e76827fa575bd",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/image_cache.rs",
+      "line": 602,
+      "symbol": "fn held_failed_old_renderer_cleanup_does_not_remove_successor_and_excluded_images_redraw",
+      "line_sha256": "4190c1a0b8b951517731fbb8ae9f5b759b958cdd8ab10717e39b8f97c4f79c67",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/image_cache.rs",
+      "line": 646,
+      "symbol": "fn changed_resolution_replaces_cached_source_without_invalidating_external_presentation",
+      "line_sha256": "09f79e277c1e044189abcc071c8bb2bb75e8ef17b66ea97fd9e6f17e8f479640",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/image_cache.rs",
+      "line": 686,
+      "symbol": "fn retired_pending_renderer_completes_external_source_without_repopulating_owner",
+      "line_sha256": "1daefa08a4d06a0b893ad817dd8687604ef09758660c3342fa256135625f7667",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/filter_window.rs",
+      "line": 1090,
+      "symbol": "fn current_pair_pixels_survive_cache_shrink_but_navigation_cannot_reuse_an_evicted_future_copy",
+      "line_sha256": "75ff90f448a96cdcd236fcec6c424eec63bbc1f667bea7d5f9df2a398bdb8eec",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/image_cache.rs",
+      "line": 81,
+      "symbol": "fn real_saved_policy_preserves_current_media_and_intervals_then_retires_final_bound_owner",
+      "line_sha256": "4fec5c03db7c4e905fea9ac7e6bc5427c0f7402911d787398cf0de7b2ae05806",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/image_cache.rs",
+      "line": 188,
+      "symbol": "child_owned.invoke_related_weights_clicked();",
+      "line_sha256": "a5d783f2bdc7c2d5213ae115d148de0529b6601e9d0b8fa60dccf8265618052a",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    }
+  ],
+  "consumer_reference_anchors": [
+    {
+      "relativepath": "hydrus/client/caches/ClientCaches.py",
+      "line": 133,
+      "symbol": "class ImageRendererCache",
+      "line_sha256": "daaef177a3ebf0439879c50f32ab4c879c48c670749c443d872c9383bd0cd96b"
+    },
+    {
+      "relativepath": "hydrus/client/caches/ClientCaches.py",
+      "line": 166,
+      "symbol": "def GetImageRenderer",
+      "line_sha256": "ea41b2f4991bf030576909671cb7a6279da4c9d32ee59a4b9e77e231cf74bee9"
+    },
+    {
+      "relativepath": "hydrus/client/caches/ClientCaches.py",
+      "line": 203,
+      "symbol": "def NotifyNewOptions",
+      "line_sha256": "ad276b554fefbbebf7acb4024dfa01dc6d68f7e4104d4f3cc6ab0851c80868b4"
+    },
+    {
+      "relativepath": "hydrus/client/caches/ClientCachesBase.py",
+      "line": 177,
+      "symbol": "def AddData",
+      "line_sha256": "d26836b01ccf64854e0f851dc743afef3ff67780836a784691026cea38118daa"
+    },
+    {
+      "relativepath": "hydrus/client/caches/ClientCachesBase.py",
+      "line": 227,
+      "symbol": "def GetData",
+      "line_sha256": "60821986a36f4a560b00955f9cc5b3f2b4977cf4b7bad2bd4f319f8c5b270531"
+    },
+    {
+      "relativepath": "hydrus/client/caches/ClientCachesBase.py",
+      "line": 266,
+      "symbol": "def MaintainCache",
+      "line_sha256": "ea310db291248c774c008466535b8402b80245bb480c24df4354525b98e24172"
+    },
+    {
+      "relativepath": "hydrus/client/caches/ClientCachesBase.py",
+      "line": 304,
+      "symbol": "def SetCacheSizeAndTimeout",
+      "line_sha256": "dcb440c8dc157a67fc99317a05610683803d765165a52764417f88108851b3d1"
+    },
+    {
+      "relativepath": "hydrus/client/ClientRendering.py",
+      "line": 86,
+      "symbol": "class ImageRenderer",
+      "line_sha256": "13522578d01776dad50487c87ae6a34c67e5077cef8e4f02f06698d382c6d6e4"
+    },
+    {
+      "relativepath": "hydrus/client/ClientRendering.py",
+      "line": 368,
+      "symbol": "def GetEstimatedMemoryFootprint",
+      "line_sha256": "1ee299e30c6b663bcbb88b022dde5c63f671be439a3ab6a6284f14481d4cb501"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/SpeedAndMemoryPanel.py",
+      "line": 365,
+      "symbol": "def EventImageCacheUpdate",
+      "line_sha256": "10f374a40b7f7b45f4a2f512fe92b18403aba1e462232d0f0e96c6b7143927c1"
+    }
+  ],
+  "actual_qt_recording": {
+    "script": "oracle/record_image_cache.py",
+    "fixture": "oracle/fixtures/image_cache.json",
+    "screenshots": [
+      "oracle/fixtures/image_cache_qt.png"
+    ],
+    "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce",
+    "executed": true,
+    "executed_utc": "2026-10-05T14:31:42Z",
+    "command": "/workspace/parallel/with-oracle python oracle/record_image_cache.py",
+    "result": "Actual Qt SpeedAndMemoryPanel controls/UpdateOptions/serialized reopen: five byte/unit/time/percentage cases, raw imported byte normalization/raw299/minimum300 and Cancel. Actual detached ImageRendererCache/DataCache with controlled monotonic clock, held real ImageRenderer initialization and real PIL RGB/RGBA PNG decode:32 get/finish/LRU/recount/strict-threshold/soft-overflow/expiry/shrink/percentage/extended-timeout events plus five partial/known resolution estimates. Actual controls PNG inspected. All temporary controller method/module-local clock patches restored; client shutdown clean.",
+    "environment_notes": "Serialized Qt recording on a copied basic fixture with authored seven tiny RGB/RGBA images; only actual renderer CallToThread is held to observe pending accounting. Reference source remains unchanged; no external network or process action is exercised."
+  },
+  "actual_qt_artifacts": [
+    {
+      "relativepath": "oracle/record_image_cache.py",
+      "sha256": "b29ba75398029db9c0a27dc9724c2a178a4b5d5808a35fe1efdbe69a63f7b6a5",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "oracle/fixtures/image_cache.json",
+      "sha256": "b9142838359855b27266a082f73547ccb36ec76a3db08fb20534a76a34037451",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "oracle/fixtures/image_cache_qt.png",
+      "sha256": "4f11a120a546f02dd5290e6ef7739a937f2b058fc7c348b3e701cc3326da2c91",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "oracle/fixtures/image_cache/a.png",
+      "sha256": "8221f8a99b8346c9db5554607a82caf07854033856743f686550febe40d41463",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "oracle/fixtures/image_cache/b.png",
+      "sha256": "ef02d04c7f8007f4d4d605f3d2d6103982ab4d434da282eb57a1fd76ae59aa07",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "oracle/fixtures/image_cache/c.png",
+      "sha256": "473fff435b24ee3ce4fb144817bff5a84603bc97528a3485456c39dc15e8c57b",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "oracle/fixtures/image_cache/d.png",
+      "sha256": "16d15d83224648ab5abc17e38c740a9a2a5cb34f8403b05e0c23cb5a7e2018c0",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "oracle/fixtures/image_cache/equal.png",
+      "sha256": "37281d5111079a5bea2059523a5dba0b006656d9079da1f3bd1666e90f67e6f4",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "oracle/fixtures/image_cache/large.png",
+      "sha256": "bf6c811e5612375c5945e862359e12d392c2acfeaec00cb379c1828c160865dd",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    },
+    {
+      "relativepath": "oracle/fixtures/image_cache/small.png",
+      "sha256": "b31b5651f198240727207bee6f841dd18e3b3067166fb2b71af7e656aa0e9585",
+      "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+    }
+  ],
+  "native_hierarchy_support": {
+    "OptionsWindow": [
+      "speed and memory page",
+      "image cache group (Partial parent)",
+      "Memory reserved for image cache: BytesControl and owning-monitor estimate",
+      "Image cache timeout: owned inline days/hours/minutes",
+      "Maximum image size (in % of cache) that can be cached: percent and16:9 caption"
+    ],
+    "saved_consumer_owners": [
+      "owned preview two-worker requests",
+      "owned still viewer shared source",
+      "owned archive/delete shared source",
+      "owned duplicate filter current presentation and policy-gated future decodes"
+    ],
+    "lifetime": [
+      "private shared Rc Owner across existing Bound clones",
+      "weak Store/Main periodic maintenance",
+      "captured metadata+ICC pending renderer",
+      "permanent retired worker/GUI handle"
+    ]
+  },
+  "expected_native_renders": [
+    "image-cache-options.png"
+  ],
+  "limits": [
+    "Exactly three frozen original Missing concrete image-cache controls are conditional first-pass proposals. Image-cache/Speed-and-Memory parents, the separate prefetch-per-viewer percentage, image-prefetch, image-tile, video buffers and global backend parity remain Partial with zero extra credit; no aliases or structural completions.",
+    "Qt uses a controller-global ImageRendererCache. Native owns one cache per Main binding incarnation, shared by its real preview, still viewer, archive/delete and duplicate filter; standalone duplicate filters own separate policy-bound caches. Final Bound-clone drop, rebind and accepted close permanently retire admission while retained worker/callback handles cannot revive it.",
+    "Full still-image cache bytes are pending metadata RGB estimates and loaded RGB/RGBA raster bytes recounted at access. The cache admits one incoming item above its soft bound until maintenance, matching Qt. Pending decoders, accepted per-page 64MiB preview snapshots, current canvas/source/resize buffers, Slint image copies, playback and total process/GPU memory are separate presentation/resource ownership and are not evicted or counted as cache bytes.",
+    "Percentage uses strict estimated-size admission and applies only to future misses; existing admitted renderers remain subject to ordinary byte/idle maintenance. Saved policy and ICC changes refresh without resetting current accepted media, zoom, generation/page identity or viewing intervals. Future duplicate copies can only reuse cache-owned full rasters, while the current presentation remains independently retained.",
+    "Failed full-image and non-image thumbnail/poster fallback remain uncached; decoder injection keeps the public preview Decoder contract and bypasses the production cache. Existing worker bounds and late-publication generation guards are retained. Imported partial resolution falls back to100x100 exactly; real media metadata/ICC identity displaces stale cached sources.",
+    "Inline native duration fields preserve untouched raw299 seconds and enforce the actual300-second edit minimum; the Qt duration-popup geometry is a separate presentation difference. Monitor screen estimates use the owning physical monitor converted to logical size; headless windows without a monitor omit that caption rather than invent screen dimensions.",
+    "Native/model/store regressions are authored only. Hosted exact-source compilation, Rust/native tests and inspection of image-cache-options.png remain pending; no local Rust/Cargo/mutation execution, pushes, canonical inventory edits or validated completion claims."
+  ],
+  "claims": [
+    {
+      "id": "audit-options-speed-and-memory-image-cache-memory-reserved-for-image-cache",
+      "reference_id": "audit-options-speed-and-memory-image-cache-memory-reserved-for-image-cache",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Actual B..TB BytesControl amount0..1,048,576 stages/imports/persists/reopens independently; screen estimate uses the owning monitor. Unchanged Apply normalizes the displayed imported amount only while its field remains at the captured raw value; explicit edits win while unrelated/concurrent timeout/percentage changes survive. Saved budget immediately maintains the real owned shared full-image cache with Qt one-item soft overflow, LRU/access accounting and external current-presentation retention. Cancel, hidden/modal/closed/rebound owners cannot stage or save.",
+      "exactBehavior": "Actual B..TB BytesControl amount0..1,048,576 stages/imports/persists/reopens independently; screen estimate uses the owning monitor. Unchanged Apply normalizes the displayed imported amount only while its field remains at the captured raw value; explicit edits win while unrelated/concurrent timeout/percentage changes survive. Saved budget immediately maintains the real owned shared full-image cache with Qt one-item soft overflow, LRU/access accounting and external current-presentation retention. Cancel, hidden/modal/closed/rebound owners cannot stage or save.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/SpeedAndMemoryPanel.py",
+        "line": 246,
+        "symbol": "rows.append( ( 'Memory reserved for image cache:",
+        "line_sha256": "17814c84bd54758aa79be93c988e0d808cc91bed7138f56390074df8595fb072"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3517,
+          "symbol": "\"Memory reserved for image cache:\",",
+          "line_sha256": "34adbe7fa3ca79e1eacb329718629f7f24b180a0db97caa225f49891540742a7",
+          "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/image_cache.rs",
+          "line": 142,
+          "symbol": "fn actual_byte_timeout_and_percentage_controls_match_the_recording",
+          "line_sha256": "b1ac0be7196e936e67e597d0f7aa7b866433f48aa10baa46bfa6b17d942330b5",
+          "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_image_cache.py",
+        "fixture": "oracle/fixtures/image_cache.json",
+        "screenshots": [
+          "oracle/fixtures/image_cache_qt.png"
+        ],
+        "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce",
+        "executed": true,
+        "executed_utc": "2026-10-05T14:31:42Z",
+        "command": "/workspace/parallel/with-oracle python oracle/record_image_cache.py",
+        "result": "Actual Qt SpeedAndMemoryPanel controls/UpdateOptions/serialized reopen: five byte/unit/time/percentage cases, raw imported byte normalization/raw299/minimum300 and Cancel. Actual detached ImageRendererCache/DataCache with controlled monotonic clock, held real ImageRenderer initialization and real PIL RGB/RGBA PNG decode:32 get/finish/LRU/recount/strict-threshold/soft-overflow/expiry/shrink/percentage/extended-timeout events plus five partial/known resolution estimates. Actual controls PNG inspected. All temporary controller method/module-local clock patches restored; client shutdown clean.",
+        "environment_notes": "Serialized Qt recording on a copied basic fixture with authored seven tiny RGB/RGBA images; only actual renderer CallToThread is held to observe pending accounting. Reference source remains unchanged; no external network or process action is exercised."
+      },
+      "limits": [
+        "Exactly three frozen original Missing concrete image-cache controls are conditional first-pass proposals. Image-cache/Speed-and-Memory parents, the separate prefetch-per-viewer percentage, image-prefetch, image-tile, video buffers and global backend parity remain Partial with zero extra credit; no aliases or structural completions.",
+        "Qt uses a controller-global ImageRendererCache. Native owns one cache per Main binding incarnation, shared by its real preview, still viewer, archive/delete and duplicate filter; standalone duplicate filters own separate policy-bound caches. Final Bound-clone drop, rebind and accepted close permanently retire admission while retained worker/callback handles cannot revive it.",
+        "Full still-image cache bytes are pending metadata RGB estimates and loaded RGB/RGBA raster bytes recounted at access. The cache admits one incoming item above its soft bound until maintenance, matching Qt. Pending decoders, accepted per-page 64MiB preview snapshots, current canvas/source/resize buffers, Slint image copies, playback and total process/GPU memory are separate presentation/resource ownership and are not evicted or counted as cache bytes.",
+        "Percentage uses strict estimated-size admission and applies only to future misses; existing admitted renderers remain subject to ordinary byte/idle maintenance. Saved policy and ICC changes refresh without resetting current accepted media, zoom, generation/page identity or viewing intervals. Future duplicate copies can only reuse cache-owned full rasters, while the current presentation remains independently retained.",
+        "Failed full-image and non-image thumbnail/poster fallback remain uncached; decoder injection keeps the public preview Decoder contract and bypasses the production cache. Existing worker bounds and late-publication generation guards are retained. Imported partial resolution falls back to100x100 exactly; real media metadata/ICC identity displaces stale cached sources.",
+        "Inline native duration fields preserve untouched raw299 seconds and enforce the actual300-second edit minimum; the Qt duration-popup geometry is a separate presentation difference. Monitor screen estimates use the owning physical monitor converted to logical size; headless windows without a monitor omit that caption rather than invent screen dimensions.",
+        "Native/model/store regressions are authored only. Hosted exact-source compilation, Rust/native tests and inspection of image-cache-options.png remain pending; no local Rust/Cargo/mutation execution, pushes, canonical inventory edits or validated completion claims."
+      ]
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-image-cache-timeout",
+      "reference_id": "audit-options-speed-and-memory-image-cache-image-cache-timeout",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Actual days/hours/minutes duration stages/imports/persists/reopens seconds with300-second edited minimum, retaining untouched raw299. Strict monotonic idle expiry preserves equality and expires only older access, with owned periodic maintenance and immediate saved size/timeout refresh. Pending\u2192loaded recount occurs at access; evicting or shortening timeout releases cache ownership while accepted media/current pixels/viewing intervals remain independent. Cancel and captured modal/lifetime guards apply.",
+      "exactBehavior": "Actual days/hours/minutes duration stages/imports/persists/reopens seconds with300-second edited minimum, retaining untouched raw299. Strict monotonic idle expiry preserves equality and expires only older access, with owned periodic maintenance and immediate saved size/timeout refresh. Pending\u2192loaded recount occurs at access; evicting or shortening timeout releases cache ownership while accepted media/current pixels/viewing intervals remain independent. Cancel and captured modal/lifetime guards apply.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/SpeedAndMemoryPanel.py",
+        "line": 247,
+        "symbol": "rows.append( ( 'Image cache timeout:",
+        "line_sha256": "a6a7e13017af0eb181805c9656313d306a7f002b80f2bf37c6cd7216da5eb4be"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3535,
+          "symbol": "\"Image cache timeout:\",",
+          "line_sha256": "602a57c05b7cacaab5a81d9c0c63d35b8452cd841b2eb1007eabe6a11b66b667",
+          "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/image_cache.rs",
+          "line": 142,
+          "symbol": "fn actual_byte_timeout_and_percentage_controls_match_the_recording",
+          "line_sha256": "b1ac0be7196e936e67e597d0f7aa7b866433f48aa10baa46bfa6b17d942330b5",
+          "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_image_cache.py",
+        "fixture": "oracle/fixtures/image_cache.json",
+        "screenshots": [
+          "oracle/fixtures/image_cache_qt.png"
+        ],
+        "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce",
+        "executed": true,
+        "executed_utc": "2026-10-05T14:31:42Z",
+        "command": "/workspace/parallel/with-oracle python oracle/record_image_cache.py",
+        "result": "Actual Qt SpeedAndMemoryPanel controls/UpdateOptions/serialized reopen: five byte/unit/time/percentage cases, raw imported byte normalization/raw299/minimum300 and Cancel. Actual detached ImageRendererCache/DataCache with controlled monotonic clock, held real ImageRenderer initialization and real PIL RGB/RGBA PNG decode:32 get/finish/LRU/recount/strict-threshold/soft-overflow/expiry/shrink/percentage/extended-timeout events plus five partial/known resolution estimates. Actual controls PNG inspected. All temporary controller method/module-local clock patches restored; client shutdown clean.",
+        "environment_notes": "Serialized Qt recording on a copied basic fixture with authored seven tiny RGB/RGBA images; only actual renderer CallToThread is held to observe pending accounting. Reference source remains unchanged; no external network or process action is exercised."
+      },
+      "limits": [
+        "Exactly three frozen original Missing concrete image-cache controls are conditional first-pass proposals. Image-cache/Speed-and-Memory parents, the separate prefetch-per-viewer percentage, image-prefetch, image-tile, video buffers and global backend parity remain Partial with zero extra credit; no aliases or structural completions.",
+        "Qt uses a controller-global ImageRendererCache. Native owns one cache per Main binding incarnation, shared by its real preview, still viewer, archive/delete and duplicate filter; standalone duplicate filters own separate policy-bound caches. Final Bound-clone drop, rebind and accepted close permanently retire admission while retained worker/callback handles cannot revive it.",
+        "Full still-image cache bytes are pending metadata RGB estimates and loaded RGB/RGBA raster bytes recounted at access. The cache admits one incoming item above its soft bound until maintenance, matching Qt. Pending decoders, accepted per-page 64MiB preview snapshots, current canvas/source/resize buffers, Slint image copies, playback and total process/GPU memory are separate presentation/resource ownership and are not evicted or counted as cache bytes.",
+        "Percentage uses strict estimated-size admission and applies only to future misses; existing admitted renderers remain subject to ordinary byte/idle maintenance. Saved policy and ICC changes refresh without resetting current accepted media, zoom, generation/page identity or viewing intervals. Future duplicate copies can only reuse cache-owned full rasters, while the current presentation remains independently retained.",
+        "Failed full-image and non-image thumbnail/poster fallback remain uncached; decoder injection keeps the public preview Decoder contract and bypasses the production cache. Existing worker bounds and late-publication generation guards are retained. Imported partial resolution falls back to100x100 exactly; real media metadata/ICC identity displaces stale cached sources.",
+        "Inline native duration fields preserve untouched raw299 seconds and enforce the actual300-second edit minimum; the Qt duration-popup geometry is a separate presentation difference. Monitor screen estimates use the owning physical monitor converted to logical size; headless windows without a monitor omit that caption rather than invent screen dimensions.",
+        "Native/model/store regressions are authored only. Hosted exact-source compilation, Rust/native tests and inspection of image-cache-options.png remain pending; no local Rust/Cargo/mutation execution, pushes, canonical inventory edits or validated completion claims."
+      ]
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-maximum-image-size-in-of-cache-that-can-be-cached",
+      "reference_id": "audit-options-speed-and-memory-image-cache-maximum-image-size-in-of-cache-that-can-be-cached",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Actual10..50 percent spinbox and dynamic16:9 pixel/resolution caption stage/import/persist/reopen. A full image is cached only when pending metadata width\u00d7height\u00d73 is strictly below saved bytes\u00d7percentage/100; equality and excluded large images still decode on demand without future cache retention. Percentage edits affect future admission only, preserving already admitted entries until normal byte/idle maintenance. Actual duplicate prefetch rechecks saved policy before IO. Implicit imported normalization preserves concurrent saves; explicit edits win; owner/modal guards apply.",
+      "exactBehavior": "Actual10..50 percent spinbox and dynamic16:9 pixel/resolution caption stage/import/persist/reopen. A full image is cached only when pending metadata width\u00d7height\u00d73 is strictly below saved bytes\u00d7percentage/100; equality and excluded large images still decode on demand without future cache retention. Percentage edits affect future admission only, preserving already admitted entries until normal byte/idle maintenance. Actual duplicate prefetch rechecks saved policy before IO. Implicit imported normalization preserves concurrent saves; explicit edits win; owner/modal guards apply.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/SpeedAndMemoryPanel.py",
+        "line": 248,
+        "symbol": "rows.append( ( 'Maximum image size (in % of cache) that can be cached:",
+        "line_sha256": "5ca7a27c405431771dc54e1e3da4ad0e420db4b51b17b64dd26365b3010deb0f"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3541,
+          "symbol": "\"Maximum image size (in % of cache) that can be cached:\",",
+          "line_sha256": "a3b45b9ab418ad81a92374ee70973982d2f070842c2e62b1b84d215cc9d53d3f",
+          "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/image_cache.rs",
+          "line": 142,
+          "symbol": "fn actual_byte_timeout_and_percentage_controls_match_the_recording",
+          "line_sha256": "b1ac0be7196e936e67e597d0f7aa7b866433f48aa10baa46bfa6b17d942330b5",
+          "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_image_cache.py",
+        "fixture": "oracle/fixtures/image_cache.json",
+        "screenshots": [
+          "oracle/fixtures/image_cache_qt.png"
+        ],
+        "commit": "12106a7456c5dd43c1218b8e879ec1c708ac1bce",
+        "executed": true,
+        "executed_utc": "2026-10-05T14:31:42Z",
+        "command": "/workspace/parallel/with-oracle python oracle/record_image_cache.py",
+        "result": "Actual Qt SpeedAndMemoryPanel controls/UpdateOptions/serialized reopen: five byte/unit/time/percentage cases, raw imported byte normalization/raw299/minimum300 and Cancel. Actual detached ImageRendererCache/DataCache with controlled monotonic clock, held real ImageRenderer initialization and real PIL RGB/RGBA PNG decode:32 get/finish/LRU/recount/strict-threshold/soft-overflow/expiry/shrink/percentage/extended-timeout events plus five partial/known resolution estimates. Actual controls PNG inspected. All temporary controller method/module-local clock patches restored; client shutdown clean.",
+        "environment_notes": "Serialized Qt recording on a copied basic fixture with authored seven tiny RGB/RGBA images; only actual renderer CallToThread is held to observe pending accounting. Reference source remains unchanged; no external network or process action is exercised."
+      },
+      "limits": [
+        "Exactly three frozen original Missing concrete image-cache controls are conditional first-pass proposals. Image-cache/Speed-and-Memory parents, the separate prefetch-per-viewer percentage, image-prefetch, image-tile, video buffers and global backend parity remain Partial with zero extra credit; no aliases or structural completions.",
+        "Qt uses a controller-global ImageRendererCache. Native owns one cache per Main binding incarnation, shared by its real preview, still viewer, archive/delete and duplicate filter; standalone duplicate filters own separate policy-bound caches. Final Bound-clone drop, rebind and accepted close permanently retire admission while retained worker/callback handles cannot revive it.",
+        "Full still-image cache bytes are pending metadata RGB estimates and loaded RGB/RGBA raster bytes recounted at access. The cache admits one incoming item above its soft bound until maintenance, matching Qt. Pending decoders, accepted per-page 64MiB preview snapshots, current canvas/source/resize buffers, Slint image copies, playback and total process/GPU memory are separate presentation/resource ownership and are not evicted or counted as cache bytes.",
+        "Percentage uses strict estimated-size admission and applies only to future misses; existing admitted renderers remain subject to ordinary byte/idle maintenance. Saved policy and ICC changes refresh without resetting current accepted media, zoom, generation/page identity or viewing intervals. Future duplicate copies can only reuse cache-owned full rasters, while the current presentation remains independently retained.",
+        "Failed full-image and non-image thumbnail/poster fallback remain uncached; decoder injection keeps the public preview Decoder contract and bypasses the production cache. Existing worker bounds and late-publication generation guards are retained. Imported partial resolution falls back to100x100 exactly; real media metadata/ICC identity displaces stale cached sources.",
+        "Inline native duration fields preserve untouched raw299 seconds and enforce the actual300-second edit minimum; the Qt duration-popup geometry is a separate presentation difference. Monitor screen estimates use the owning physical monitor converted to logical size; headless windows without a monitor omit that caption rather than invent screen dimensions.",
+        "Native/model/store regressions are authored only. Hosted exact-source compilation, Rust/native tests and inspection of image-cache-options.png remain pending; no local Rust/Cargo/mutation execution, pushes, canonical inventory edits or validated completion claims."
+      ]
+    }
+  ]
+}

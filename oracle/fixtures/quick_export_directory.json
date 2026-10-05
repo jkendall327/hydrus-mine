@@ -1,0 +1,151 @@
+{
+  "label": "quick export directory",
+  "enabled": true,
+  "tooltip": "Open the export directory so you can easily access the files you have exported.",
+  "open_labels": [
+    "installation directory",
+    "database directory",
+    "quick export directory"
+  ],
+  "cases": [
+    {
+      "case": "fallback",
+      "stored": null,
+      "launched": [
+        "<DB>/synthetic-home/hydrus_export"
+      ],
+      "messages": [],
+      "errors": [],
+      "saved_after": null
+    },
+    {
+      "case": "configured_existing",
+      "stored": "<DB>/synthetic exports 日本",
+      "launched": [
+        "<DB>/synthetic exports 日本"
+      ],
+      "messages": [],
+      "errors": [],
+      "saved_after": "<DB>/synthetic exports 日本"
+    },
+    {
+      "case": "configured_missing",
+      "stored": "<DB>/not created exports",
+      "launched": [
+        "<DB>/not created exports"
+      ],
+      "messages": [],
+      "errors": [],
+      "saved_after": "<DB>/not created exports"
+    },
+    {
+      "case": "portable",
+      "stored": "relative exports/../synthetic exports 日本",
+      "launched": [
+        "<DB>/synthetic exports 日本"
+      ],
+      "messages": [],
+      "errors": [],
+      "saved_after": "relative exports/../synthetic exports 日本"
+    },
+    {
+      "case": "empty_raw",
+      "stored": "",
+      "launched": [
+        "<DB>"
+      ],
+      "messages": [],
+      "errors": [],
+      "saved_after": ""
+    },
+    {
+      "case": "literal_spaces",
+      "stored": " \t ",
+      "launched": [
+        "<DB>/ \t "
+      ],
+      "messages": [],
+      "errors": [],
+      "saved_after": " \t "
+    },
+    {
+      "case": "legacy_backslash_missing",
+      "stored": "old\\export folder",
+      "launched": [
+        "<DB>/old/export folder"
+      ],
+      "messages": [],
+      "errors": [],
+      "saved_after": "old\\export folder"
+    },
+    {
+      "case": "legacy_backslash_existing",
+      "stored": "<DB>/literal\\export",
+      "launched": [
+        "<DB>/literal\\export"
+      ],
+      "messages": [],
+      "errors": [],
+      "saved_after": "<DB>/literal\\export"
+    },
+    {
+      "case": "invalid_legacy_value",
+      "stored": 7,
+      "launched": [],
+      "messages": [],
+      "errors": [
+        {
+          "kind": "TypeError",
+          "message": "_path_normpath: path should be string, bytes or os.PathLike, not int"
+        }
+      ],
+      "saved_after": 7
+    },
+    {
+      "case": "unresolved_home",
+      "stored": null,
+      "launched": [],
+      "messages": [
+        "Unfortunately, your export path could not be determined!"
+      ],
+      "errors": [],
+      "saved_after": null
+    },
+    {
+      "case": "fallback_conflicting_file",
+      "stored": null,
+      "launched": [],
+      "messages": [],
+      "errors": [
+        {
+          "kind": "Exception",
+          "message": "Cannot create the directory \"<DB>/synthetic-home/hydrus_export\" because it already exists as a normal file!"
+        }
+      ],
+      "saved_after": null
+    },
+    {
+      "case": "options_cancel",
+      "stored": "<DB>/synthetic exports 日本",
+      "launched": [
+        "<DB>/synthetic exports 日本"
+      ],
+      "messages": [],
+      "errors": [],
+      "saved_after": "<DB>/synthetic exports 日本"
+    },
+    {
+      "case": "options_apply",
+      "stored": "saved exports 日本",
+      "launched": [
+        "<DB>/saved exports 日本"
+      ],
+      "messages": [],
+      "errors": [],
+      "saved_after": "saved exports 日本"
+    }
+  ],
+  "fallback_created": true,
+  "configured_missing_created": false,
+  "reopened_control": "<DB>/saved exports 日本"
+}

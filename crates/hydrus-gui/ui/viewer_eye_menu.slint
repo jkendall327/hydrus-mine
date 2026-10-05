@@ -1,0 +1,80 @@
+// Browser view-options eye menu. Preferences choose real submenu or flat rows.
+import { MenuGroups } from "menus.slint";
+export struct ViewerEyeMenu {
+    collapse-window: bool, collapse-hovers: bool, collapse-rendering: bool,
+    window: MenuGroups, hovers: MenuGroups, rendering: MenuGroups,
+}
+export component ViewerEyeButton inherits ContextMenuArea {
+    in property <ViewerEyeMenu> menu;
+    callback requested();
+    callback chosen(int);
+    width: 24px; height: 24px;
+    Menu {
+        if root.menu.collapse-window: Menu {
+            title: "window";
+            for row in root.menu.window.g1: MenuItem {
+                title: row.label; checkable: row.checkable; checked: row.checked;
+                activated => { root.chosen(row.id); }
+            }
+            MenuSeparator {}
+            for row in root.menu.window.g2: MenuItem {
+                title: row.label; checkable: row.checkable; checked: row.checked;
+                activated => { root.chosen(row.id); }
+            }
+        }
+        for row in root.menu.collapse-window ? [] : root.menu.window.g1: MenuItem {
+            title: row.label; checkable: row.checkable; checked: row.checked;
+            activated => { root.chosen(row.id); }
+        }
+        if !root.menu.collapse-window && root.menu.window.g2.length > 0: MenuSeparator { }
+        for row in root.menu.collapse-window ? [] : root.menu.window.g2: MenuItem {
+            title: row.label; checkable: row.checkable; checked: row.checked;
+            activated => { root.chosen(row.id); }
+        }
+        if !root.menu.collapse-window || !root.menu.collapse-hovers: MenuSeparator { }
+        if root.menu.collapse-hovers: Menu {
+            title: "hovers";
+            for row in root.menu.hovers.g1: MenuItem {
+                title: row.label; checkable: row.checkable; checked: row.checked;
+                activated => { root.chosen(row.id); }
+            }
+            MenuSeparator {}
+            for row in root.menu.hovers.g2: MenuItem {
+                title: row.label; checkable: row.checkable; checked: row.checked;
+                activated => { root.chosen(row.id); }
+            }
+        }
+        for row in root.menu.collapse-hovers ? [] : root.menu.hovers.g1: MenuItem {
+            title: row.label; checkable: row.checkable; checked: row.checked;
+            activated => { root.chosen(row.id); }
+        }
+        if !root.menu.collapse-hovers && root.menu.hovers.g2.length > 0: MenuSeparator { }
+        for row in root.menu.collapse-hovers ? [] : root.menu.hovers.g2: MenuItem {
+            title: row.label; checkable: row.checkable; checked: row.checked;
+            activated => { root.chosen(row.id); }
+        }
+        if !root.menu.collapse-hovers || !root.menu.collapse-rendering: MenuSeparator { }
+        if root.menu.collapse-rendering: Menu {
+            title: "rendering";
+            for row in root.menu.rendering.g1: MenuItem {
+                title: row.label; checkable: row.checkable; checked: row.checked;
+                activated => { root.chosen(row.id); }
+            }
+            for row in root.menu.rendering.g2: MenuItem {
+                title: row.label; checkable: row.checkable; checked: row.checked;
+                activated => { root.chosen(row.id); }
+            }
+        }
+        for row in root.menu.collapse-rendering ? [] : root.menu.rendering.g1: MenuItem {
+            title: row.label; checkable: row.checkable; checked: row.checked;
+            activated => { root.chosen(row.id); }
+        }
+        if !root.menu.collapse-rendering && root.menu.rendering.g2.length > 0: MenuSeparator { }
+        for row in root.menu.collapse-rendering ? [] : root.menu.rendering.g2: MenuItem {
+            title: row.label; checkable: row.checkable; checked: row.checked;
+            activated => { root.chosen(row.id); }
+        }
+    }
+    Image { source: @image-url("../../../static/eye.svg"); width: 16px; height: 16px; x: 4px; y: 4px; }
+    TouchArea { clicked => { root.requested(); root.show({x: 0px, y: root.height}); } }
+}

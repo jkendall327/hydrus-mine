@@ -1,7 +1,72 @@
 import { Button, CheckBox, ComboBox, LineEdit, SpinBox, ScrollView, VerticalBox, HorizontalBox } from "std-widgets.slint";
 import { TableColumn, TableRow, ListTable } from "list_table.slint";
+import { RatingRow, RatingGraphic } from "viewer.slint";
 import { Theme } from "theme.slint";
+export struct ServiceRatingExampleRow { label: string, graphic: RatingRow, icon-size: length, incdec-height: length, outline: length, counter-width: length, fraction: string, fraction-placement: int }
 export struct ServiceColourRow { label: string, border: string, fill: string }
+// One hit area includes the fraction, stars and trailing widget space, as Qt.
+component RatingSampleControl inherits HorizontalBox {
+    in property <ServiceRatingExampleRow> sample;
+    in property <bool> interactive: true;
+    callback pointer(bool,float,float,float,bool);
+    callback counter-edit();
+    out property <length> hit-x: sample-touch.absolute-position.x;
+    out property <length> hit-y: sample-touch.absolute-position.y;
+    out property <length> hit-width: sample-touch.width;
+    out property <length> hit-height: sample-touch.height;
+    out property <length> fraction-x: fraction.absolute-position.x;
+    out property <length> fraction-y: fraction.absolute-position.y;
+    in-out property <bool> left-dragging;
+    Text { text: root.sample.label; color: Theme.text; min-width: 155px; }
+    Rectangle {
+        horizontal-stretch: 1;
+        height: max(16px, (root.sample.graphic.kind == 2 ? root.sample.incdec-height : root.sample.icon-size) + 4px);
+        graphic := RatingGraphic { rating: root.sample.graphic; icon-size: root.sample.icon-size; incdec-height: root.sample.incdec-height; outline: root.sample.outline;
+            x: 2px + (root.sample.fraction-placement == 1 ? fraction.width + 1px : 0px);
+            y: 2px;
+            width: root.sample.graphic.kind == 2 ? root.sample.counter-width : max(1px, root.sample.graphic.shapes.length * (root.sample.icon-size + root.sample.graphic.pad) - root.sample.graphic.pad);
+        }
+        fraction := Text { visible: root.sample.fraction-placement != 0;
+            text: root.sample.fraction; color: Theme.text; font-size: root.sample.icon-size - 1px;
+            width: self.preferred-width; height: parent.height;
+            x: root.sample.fraction-placement == 1 ? 2px : graphic.x + graphic.width + 1px;
+        }
+        sample-touch := TouchArea { enabled: root.interactive;
+            // Slint drops capture on any button release. Exit then clears pressed
+            // without a Cancel event when its private grab is already gone.
+            changed pressed => { if !self.pressed { root.left-dragging = false; } }
+            pointer-event(ev) => {
+                if ev.kind == PointerEventKind.down {
+                    if ev.button == PointerEventButton.left { root.left-dragging = true; }
+                    if ev.button == PointerEventButton.middle && root.sample.graphic.kind == 2 { root.counter-edit(); }
+                    else if ev.button == PointerEventButton.left || ev.button == PointerEventButton.right || (root.left-dragging && root.sample.graphic.kind == 1) { root.pointer(ev.button == PointerEventButton.right && !(root.left-dragging && root.sample.graphic.kind == 1), self.mouse-x / 1px, self.width / 1px, root.sample.icon-size / 1px, false); }
+                } else if ev.kind == PointerEventKind.up && ev.button == PointerEventButton.left { root.left-dragging = false; }
+                else if ev.kind == PointerEventKind.cancel { root.left-dragging = false; }
+                else if ev.kind == PointerEventKind.move && self.pressed && root.left-dragging && root.sample.graphic.kind == 1 { root.pointer(false, self.mouse-x / 1px, self.width / 1px, root.sample.icon-size / 1px, true); }
+            }
+        }
+    }
+}
+component RatingExamplePanel inherits VerticalBox {
+    in property <[ServiceRatingExampleRow]> rows;
+    in property <bool> interactive: true;
+    callback pointer(int,bool,float,float,float,bool);
+    callback counter-edit(int);
+    out property <length> first-x: first.hit-x;
+    out property <length> first-y: first.hit-y;
+    out property <length> first-width: first.hit-width;
+    out property <length> first-height: first.hit-height;
+    out property <length> first-fraction-x: first.fraction-x;
+    out property <length> first-fraction-y: first.fraction-y;
+    first := RatingSampleControl { sample: root.rows[0]; interactive: root.interactive;
+        pointer(r,x,w,s,d) => { root.pointer(0,r,x,w,s,d); }
+        counter-edit => { root.counter-edit(0); }
+    }
+    for i in 3: RatingSampleControl { sample: root.rows[i+1]; interactive: root.interactive;
+        pointer(r,x,w,s,d) => { root.pointer(i+1,r,x,w,s,d); }
+        counter-edit => { root.counter-edit(i+1); }
+    }
+}
 export component ServicesEditorWindow inherits Window {
     in property <string> window-title: "edit services";
     title: root.window-title;
@@ -26,7 +91,6 @@ export component ServicesEditorWindow inherits Window {
     callback answered(bool);
     VerticalBox {
         padding: 12px; spacing: 8px;
-        Text { text: "Remote repository, IPFS and account settings are not available here yet."; color: Theme.muted; wrap: word-wrap; }
         ListTable { columns: root.columns; rows: root.rows; sort-column: root.sort-column; ascending: root.ascending; vertical-stretch: 1;
             row-clicked(i,c,s) => { if root.question == "" { root.row-clicked(i,c,s); } }
             row-activated(i) => { if root.question == "" { root.row-clicked(i,false,false); root.edit-clicked(); } }
@@ -55,7 +119,9 @@ export component ServicesEditorWindow inherits Window {
 export component EditServiceWindow inherits Window {
     in property <string> window-title: "edit service";
     title: root.window-title;
-    width: 640px; height: 640px; background: Theme.window;
+    // Initial dimensions are preferences; live layout must depend on the
+    // window's actual geometry after native Resize events.
+    preferred-width: 640px; preferred-height: 640px; background: Theme.window;
     in-out property <string> service-name;
     in property <string> service-type;
     in property <bool> client-api;
@@ -81,6 +147,26 @@ export component EditServiceWindow inherits Window {
     in-out property <int> fraction;
     in property <[ServiceColourRow]> colours;
     in property <string> error;
+    in property <[ServiceRatingExampleRow]> examples;
+    in-out property <bool> example-expanded: true;
+    in property <bool> counter-editing;
+    in-out property <int> counter-value;
+    callback preview-edited();
+    callback preview-clicked(int,bool,float);
+    callback preview-pointer(int,bool,float,float,float,bool);
+    out property <length> first-preview-x: root.rating && root.example-expanded ? example-panel.first-x : 0px;
+    out property <length> first-preview-y: root.rating && root.example-expanded ? example-panel.first-y : 0px;
+    out property <length> first-preview-width: root.rating && root.example-expanded ? example-panel.first-width : 0px;
+    out property <length> first-preview-height: root.rating && root.example-expanded ? example-panel.first-height : 0px;
+    out property <length> first-preview-fraction-x: root.rating && root.example-expanded ? example-panel.first-fraction-x : 0px;
+    out property <length> first-preview-fraction-y: root.rating && root.example-expanded ? example-panel.first-fraction-y : 0px;
+    callback counter-edit(int);
+    callback counter-answered(bool);
+    changed appearance => { root.preview-edited(); }
+    changed svg => { root.preview-edited(); }
+    changed stars => { root.preview-edited(); }
+    changed icon-padding => { root.preview-edited(); }
+    changed fraction => { root.preview-edited(); }
     callback colour-edited(int,bool,string);
     callback apply-clicked();
     callback cancel-clicked();
@@ -90,7 +176,7 @@ export component EditServiceWindow inherits Window {
             VerticalBox { spacing: 8px;
                 Text { text: root.service-type; color: Theme.text; }
                 Text { text: "name"; color: Theme.text; }
-                LineEdit { text <=> root.service-name; }
+                LineEdit { enabled: !root.counter-editing; text <=> root.service-name; }
                 if !root.rating && !root.client-api: Text { text: "There are no additional options for this local service."; color: Theme.muted; wrap: word-wrap; }
                 if root.client-api: VerticalBox {
                     Text { text: "client api options"; color: Theme.text; font-weight: 700; }
@@ -105,33 +191,54 @@ export component EditServiceWindow inherits Window {
                 }
                 if root.rating: VerticalBox {
                     Text { text: "rating display"; color: Theme.text; font-weight: 700; }
-                    CheckBox { text: "show in thumbnails"; checked <=> root.show-thumbnail; }
-                    CheckBox { text: "└ even when file has no rating value"; checked <=> root.show-null; enabled: root.show-thumbnail; }
+                    CheckBox { enabled: !root.counter-editing; text: "show in thumbnails"; checked <=> root.show-thumbnail; }
+                    CheckBox { text: "└ even when file has no rating value"; checked <=> root.show-null; enabled: root.show-thumbnail && !root.counter-editing; }
                     for c[i] in root.colours: HorizontalBox {
                         Text { text: "border/fill for " + c.label + ": "; color: Theme.text; }
-                        LineEdit { text: c.border; edited(t) => { root.colour-edited(i,true,t); } }
-                        LineEdit { text: c.fill; edited(t) => { root.colour-edited(i,false,t); } }
+                        LineEdit { enabled: !root.counter-editing; text: c.border; edited(t) => { root.colour-edited(i,true,t); } }
+                        LineEdit { enabled: !root.counter-editing; text: c.fill; edited(t) => { root.colour-edited(i,false,t); } }
                     }
                 }
                 if root.star-rating: VerticalBox {
                     Text { text: "star ratings"; color: Theme.text; font-weight: 700; }
-                    ComboBox { model: root.appearances; current-index <=> root.appearance; }
-                    if root.appearance == root.appearances.length - 1: LineEdit { text <=> root.svg; placeholder-text: "SVG name"; }
+                    ComboBox { enabled: !root.counter-editing; model: root.appearances; current-index <=> root.appearance; }
+                    if root.appearance == root.appearances.length - 1: LineEdit { enabled: !root.counter-editing; text <=> root.svg; placeholder-text: "SVG name"; }
                 }
                 if root.numerical: VerticalBox {
                     Text { text: "numerical ratings"; color: Theme.text; font-weight: 700; }
-                    HorizontalBox { Text { text: "number of 'stars': "; color: Theme.text; } SpinBox { minimum: 1; maximum: 20; value <=> root.stars; } }
-                    CheckBox { text: "allow a zero rating: "; checked <=> root.allow-zero; }
-                    HorizontalBox { Text { text: "icon padding: "; color: Theme.text; } SpinBox { minimum: -64; maximum: 64; value <=> root.icon-padding; } }
+                    HorizontalBox { Text { text: "number of 'stars': "; color: Theme.text; } SpinBox { enabled: !root.counter-editing; minimum: 1; maximum: 20; value <=> root.stars; } }
+                    CheckBox { enabled: !root.counter-editing; text: "allow a zero rating: "; checked <=> root.allow-zero; }
+                    HorizontalBox { Text { text: "icon padding: "; color: Theme.text; } SpinBox { enabled: !root.counter-editing; minimum: -64; maximum: 64; value <=> root.icon-padding; } }
                     Text { text: "draw fraction beside the rating"; color: Theme.text; }
-                    ComboBox { model: ["do not", "show on left", "show on right"]; current-index <=> root.fraction; }
+                    ComboBox { enabled: !root.counter-editing; model: ["do not", "show on left", "show on right"]; current-index <=> root.fraction; }
+                }
+                VerticalBox {
+                    visible: root.rating;
+                    height: self.visible ? self.preferred-height : 0px;
+                    Button { text: root.example-expanded ? "▼ example display" : "▶ example display"; clicked => { root.example-expanded = !root.example-expanded; } }
+                    // Keep the source of read-only geometry structurally present.
+                    // A child -> root two-way alias discards the child's binding
+                    // in favour of the root's default zero during construction.
+                    example-panel := RatingExamplePanel {
+                        visible: root.rating && root.example-expanded;
+                        height: self.visible ? self.preferred-height : 0px;
+                        rows: root.examples; interactive: !root.counter-editing && self.visible;
+                        pointer(i,r,x,w,s,d) => { root.preview-pointer(i,r,x,w,s,d); }
+                        counter-edit(i) => { root.counter-edit(i); }
+                    }
+                    if root.counter-editing: HorizontalBox {
+                        Text { text: "edit value"; color: Theme.text; }
+                        SpinBox { minimum: 0; maximum: 1000000; value <=> root.counter-value; }
+                        Button { text: "ok"; clicked => { root.counter-answered(true); } }
+                        Button { text: "cancel"; clicked => { root.counter-answered(false); } }
+                    }
                 }
             }
         }
         Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         HorizontalBox {
             Rectangle { horizontal-stretch: 1; }
-            Button { text: "apply"; clicked => { root.apply-clicked(); } }
+            Button { text: "apply"; enabled: !root.counter-editing; clicked => { root.apply-clicked(); } }
             Button { text: "cancel"; clicked => { root.cancel-clicked(); } }
         }
     }

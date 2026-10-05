@@ -1,0 +1,872 @@
+{
+  "initial": [
+    [
+      "Zulu:",
+      200
+    ],
+    [
+      "alpha:",
+      200
+    ],
+    [
+      "ß:",
+      400
+    ],
+    [
+      "ss:",
+      100
+    ],
+    [
+      "SS:",
+      400
+    ]
+  ],
+  "initial_result": [
+    [
+      "Zulu:",
+      300
+    ],
+    [
+      "alpha:",
+      100
+    ],
+    [
+      "ß:",
+      100
+    ],
+    [
+      "ss:",
+      300
+    ]
+  ],
+  "events": [
+    {
+      "action": "initial",
+      "search": [
+        [
+          "alpha:",
+          200
+        ],
+        [
+          "ss:",
+          100
+        ],
+        [
+          "ß:",
+          400
+        ],
+        [
+          "SS:",
+          400
+        ],
+        [
+          "Zulu:",
+          200
+        ]
+      ],
+      "result": [
+        [
+          "alpha:",
+          100
+        ],
+        [
+          "ß:",
+          100
+        ],
+        [
+          "ss:",
+          300
+        ],
+        [
+          "Zulu:",
+          300
+        ]
+      ],
+      "search_selected": [],
+      "result_selected": [],
+      "search_display": [
+        [
+          "'alpha' tags",
+          "200%"
+        ],
+        [
+          "'ss' tags",
+          "100%"
+        ],
+        [
+          "'ß' tags",
+          "400%"
+        ],
+        [
+          "'SS' tags",
+          "400%"
+        ],
+        [
+          "'Zulu' tags",
+          "200%"
+        ]
+      ],
+      "result_display": [
+        [
+          "'alpha' tags",
+          "100%"
+        ],
+        [
+          "'ß' tags",
+          "100%"
+        ],
+        [
+          "'ss' tags",
+          "300%"
+        ],
+        [
+          "'Zulu' tags",
+          "300%"
+        ]
+      ]
+    },
+    {
+      "action": "select both",
+      "search": [
+        [
+          "alpha:",
+          200
+        ],
+        [
+          "ss:",
+          100
+        ],
+        [
+          "ß:",
+          400
+        ],
+        [
+          "SS:",
+          400
+        ],
+        [
+          "Zulu:",
+          200
+        ]
+      ],
+      "result": [
+        [
+          "alpha:",
+          100
+        ],
+        [
+          "ß:",
+          100
+        ],
+        [
+          "ss:",
+          300
+        ],
+        [
+          "Zulu:",
+          300
+        ]
+      ],
+      "search_selected": [
+        [
+          "alpha:",
+          200
+        ]
+      ],
+      "result_selected": [
+        [
+          "Zulu:",
+          300
+        ]
+      ],
+      "search_display": [
+        [
+          "'alpha' tags",
+          "200%"
+        ],
+        [
+          "'ss' tags",
+          "100%"
+        ],
+        [
+          "'ß' tags",
+          "400%"
+        ],
+        [
+          "'SS' tags",
+          "400%"
+        ],
+        [
+          "'Zulu' tags",
+          "200%"
+        ]
+      ],
+      "result_display": [
+        [
+          "'alpha' tags",
+          "100%"
+        ],
+        [
+          "'ß' tags",
+          "100%"
+        ],
+        [
+          "'ss' tags",
+          "300%"
+        ],
+        [
+          "'Zulu' tags",
+          "300%"
+        ]
+      ]
+    },
+    {
+      "action": "search weight ascending",
+      "search": [
+        [
+          "ss:",
+          100
+        ],
+        [
+          "alpha:",
+          200
+        ],
+        [
+          "Zulu:",
+          200
+        ],
+        [
+          "ß:",
+          400
+        ],
+        [
+          "SS:",
+          400
+        ]
+      ],
+      "result": [
+        [
+          "alpha:",
+          100
+        ],
+        [
+          "ß:",
+          100
+        ],
+        [
+          "ss:",
+          300
+        ],
+        [
+          "Zulu:",
+          300
+        ]
+      ],
+      "search_selected": [
+        [
+          "alpha:",
+          200
+        ]
+      ],
+      "result_selected": [
+        [
+          "Zulu:",
+          300
+        ]
+      ],
+      "search_display": [
+        [
+          "'ss' tags",
+          "100%"
+        ],
+        [
+          "'alpha' tags",
+          "200%"
+        ],
+        [
+          "'Zulu' tags",
+          "200%"
+        ],
+        [
+          "'ß' tags",
+          "400%"
+        ],
+        [
+          "'SS' tags",
+          "400%"
+        ]
+      ],
+      "result_display": [
+        [
+          "'alpha' tags",
+          "100%"
+        ],
+        [
+          "'ß' tags",
+          "100%"
+        ],
+        [
+          "'ss' tags",
+          "300%"
+        ],
+        [
+          "'Zulu' tags",
+          "300%"
+        ]
+      ]
+    },
+    {
+      "action": "search weight descending",
+      "search": [
+        [
+          "ß:",
+          400
+        ],
+        [
+          "SS:",
+          400
+        ],
+        [
+          "Zulu:",
+          200
+        ],
+        [
+          "alpha:",
+          200
+        ],
+        [
+          "ss:",
+          100
+        ]
+      ],
+      "result": [
+        [
+          "alpha:",
+          100
+        ],
+        [
+          "ß:",
+          100
+        ],
+        [
+          "ss:",
+          300
+        ],
+        [
+          "Zulu:",
+          300
+        ]
+      ],
+      "search_selected": [
+        [
+          "alpha:",
+          200
+        ]
+      ],
+      "result_selected": [
+        [
+          "Zulu:",
+          300
+        ]
+      ],
+      "search_display": [
+        [
+          "'ß' tags",
+          "400%"
+        ],
+        [
+          "'SS' tags",
+          "400%"
+        ],
+        [
+          "'Zulu' tags",
+          "200%"
+        ],
+        [
+          "'alpha' tags",
+          "200%"
+        ],
+        [
+          "'ss' tags",
+          "100%"
+        ]
+      ],
+      "result_display": [
+        [
+          "'alpha' tags",
+          "100%"
+        ],
+        [
+          "'ß' tags",
+          "100%"
+        ],
+        [
+          "'ss' tags",
+          "300%"
+        ],
+        [
+          "'Zulu' tags",
+          "300%"
+        ]
+      ]
+    },
+    {
+      "action": "add search replaces selection",
+      "search": [
+        [
+          "ß:",
+          400
+        ],
+        [
+          "SS:",
+          400
+        ],
+        [
+          "Zulu:",
+          200
+        ],
+        [
+          "bravo:",
+          200
+        ],
+        [
+          "alpha:",
+          200
+        ],
+        [
+          "ss:",
+          100
+        ]
+      ],
+      "result": [
+        [
+          "alpha:",
+          100
+        ],
+        [
+          "ß:",
+          100
+        ],
+        [
+          "ss:",
+          300
+        ],
+        [
+          "Zulu:",
+          300
+        ]
+      ],
+      "search_selected": [
+        [
+          "bravo:",
+          200
+        ]
+      ],
+      "result_selected": [
+        [
+          "Zulu:",
+          300
+        ]
+      ],
+      "search_display": [
+        [
+          "'ß' tags",
+          "400%"
+        ],
+        [
+          "'SS' tags",
+          "400%"
+        ],
+        [
+          "'Zulu' tags",
+          "200%"
+        ],
+        [
+          "'bravo' tags",
+          "200%"
+        ],
+        [
+          "'alpha' tags",
+          "200%"
+        ],
+        [
+          "'ss' tags",
+          "100%"
+        ]
+      ],
+      "result_display": [
+        [
+          "'alpha' tags",
+          "100%"
+        ],
+        [
+          "'ß' tags",
+          "100%"
+        ],
+        [
+          "'ss' tags",
+          "300%"
+        ],
+        [
+          "'Zulu' tags",
+          "300%"
+        ]
+      ]
+    },
+    {
+      "action": "result slice descending",
+      "search": [
+        [
+          "ß:",
+          400
+        ],
+        [
+          "SS:",
+          400
+        ],
+        [
+          "Zulu:",
+          200
+        ],
+        [
+          "bravo:",
+          200
+        ],
+        [
+          "alpha:",
+          200
+        ],
+        [
+          "ss:",
+          100
+        ]
+      ],
+      "result": [
+        [
+          "Zulu:",
+          300
+        ],
+        [
+          "ss:",
+          300
+        ],
+        [
+          "ß:",
+          100
+        ],
+        [
+          "alpha:",
+          100
+        ]
+      ],
+      "search_selected": [
+        [
+          "bravo:",
+          200
+        ]
+      ],
+      "result_selected": [
+        [
+          "Zulu:",
+          300
+        ]
+      ],
+      "search_display": [
+        [
+          "'ß' tags",
+          "400%"
+        ],
+        [
+          "'SS' tags",
+          "400%"
+        ],
+        [
+          "'Zulu' tags",
+          "200%"
+        ],
+        [
+          "'bravo' tags",
+          "200%"
+        ],
+        [
+          "'alpha' tags",
+          "200%"
+        ],
+        [
+          "'ss' tags",
+          "100%"
+        ]
+      ],
+      "result_display": [
+        [
+          "'Zulu' tags",
+          "300%"
+        ],
+        [
+          "'ss' tags",
+          "300%"
+        ],
+        [
+          "'ß' tags",
+          "100%"
+        ],
+        [
+          "'alpha' tags",
+          "100%"
+        ]
+      ]
+    },
+    {
+      "action": "search slice ascending",
+      "search": [
+        [
+          "alpha:",
+          200
+        ],
+        [
+          "bravo:",
+          200
+        ],
+        [
+          "ss:",
+          100
+        ],
+        [
+          "ß:",
+          400
+        ],
+        [
+          "SS:",
+          400
+        ],
+        [
+          "Zulu:",
+          200
+        ]
+      ],
+      "result": [
+        [
+          "Zulu:",
+          300
+        ],
+        [
+          "ss:",
+          300
+        ],
+        [
+          "ß:",
+          100
+        ],
+        [
+          "alpha:",
+          100
+        ]
+      ],
+      "search_selected": [
+        [
+          "bravo:",
+          200
+        ]
+      ],
+      "result_selected": [
+        [
+          "Zulu:",
+          300
+        ]
+      ],
+      "search_display": [
+        [
+          "'alpha' tags",
+          "200%"
+        ],
+        [
+          "'bravo' tags",
+          "200%"
+        ],
+        [
+          "'ss' tags",
+          "100%"
+        ],
+        [
+          "'ß' tags",
+          "400%"
+        ],
+        [
+          "'SS' tags",
+          "400%"
+        ],
+        [
+          "'Zulu' tags",
+          "200%"
+        ]
+      ],
+      "result_display": [
+        [
+          "'Zulu' tags",
+          "300%"
+        ],
+        [
+          "'ss' tags",
+          "300%"
+        ],
+        [
+          "'ß' tags",
+          "100%"
+        ],
+        [
+          "'alpha' tags",
+          "100%"
+        ]
+      ]
+    },
+    {
+      "action": "search slice descending",
+      "search": [
+        [
+          "Zulu:",
+          200
+        ],
+        [
+          "ß:",
+          400
+        ],
+        [
+          "SS:",
+          400
+        ],
+        [
+          "ss:",
+          100
+        ],
+        [
+          "bravo:",
+          200
+        ],
+        [
+          "alpha:",
+          200
+        ]
+      ],
+      "result": [
+        [
+          "Zulu:",
+          300
+        ],
+        [
+          "ss:",
+          300
+        ],
+        [
+          "ß:",
+          100
+        ],
+        [
+          "alpha:",
+          100
+        ]
+      ],
+      "search_selected": [
+        [
+          "bravo:",
+          200
+        ]
+      ],
+      "result_selected": [
+        [
+          "Zulu:",
+          300
+        ]
+      ],
+      "search_display": [
+        [
+          "'Zulu' tags",
+          "200%"
+        ],
+        [
+          "'ß' tags",
+          "400%"
+        ],
+        [
+          "'SS' tags",
+          "400%"
+        ],
+        [
+          "'ss' tags",
+          "100%"
+        ],
+        [
+          "'bravo' tags",
+          "200%"
+        ],
+        [
+          "'alpha' tags",
+          "200%"
+        ]
+      ],
+      "result_display": [
+        [
+          "'Zulu' tags",
+          "300%"
+        ],
+        [
+          "'ss' tags",
+          "300%"
+        ],
+        [
+          "'ß' tags",
+          "100%"
+        ],
+        [
+          "'alpha' tags",
+          "100%"
+        ]
+      ]
+    }
+  ],
+  "saved": [
+    [
+      [
+        "Zulu:",
+        200
+      ],
+      [
+        "ß:",
+        400
+      ],
+      [
+        "SS:",
+        400
+      ],
+      [
+        "ss:",
+        100
+      ],
+      [
+        "bravo:",
+        200
+      ],
+      [
+        "alpha:",
+        200
+      ]
+    ],
+    [
+      [
+        "Zulu:",
+        300
+      ],
+      [
+        "ss:",
+        300
+      ],
+      [
+        "ß:",
+        100
+      ],
+      [
+        "alpha:",
+        100
+      ]
+    ]
+  ]
+}

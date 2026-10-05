@@ -109,6 +109,17 @@ pub fn approval_text(approval: Approval) -> &'static str {
 }
 /// Human expiry text, shared by session and cookie rows.
 pub fn expiry_text(expires: Option<i64>, now: i64) -> String {
+    expiry_text_with_format(
+        expires,
+        now,
+        &hydrus_store::settings::GuiFormatting::default(),
+    )
+}
+pub fn expiry_text_with_format(
+    expires: Option<i64>,
+    now: i64,
+    formatting: &hydrus_store::settings::GuiFormatting,
+) -> String {
     match expires {
         None => "session".into(),
         Some(0) => "unknown expiration".into(),
@@ -117,31 +128,59 @@ pub fn expiry_text(expires: Option<i64>, now: i64) -> String {
         }
         Some(time) => format!(
             "{} {}",
-            if time <= now { "expired" } else { "expires" },
-            hydrus_core::time::timestamp_to_pretty_time_delta(time, now, " ago")
+            if time < now { "expired" } else { "expires" },
+            crate::gui_format::timestamp(formatting, Some(time), now)
         ),
     }
 }
 /// Reference session row, summarising the latest persistent expiry.
 pub fn session_cells(context: &NetworkContext, cookies: &[Cookie], now: i64) -> Vec<String> {
+    session_cells_with_format(
+        context,
+        cookies,
+        now,
+        &hydrus_store::settings::GuiFormatting::default(),
+    )
+}
+pub fn session_cells_with_format(
+    context: &NetworkContext,
+    cookies: &[Cookie],
+    now: i64,
+    formatting: &hydrus_store::settings::GuiFormatting,
+) -> Vec<String> {
     vec![
         context.to_human_string(),
         cookies.len().to_string(),
         if cookies.is_empty() {
             String::new()
         } else {
-            expiry_text(cookies.iter().filter_map(|c| c.expires).max(), now)
+            expiry_text_with_format(
+                cookies.iter().filter_map(|c| c.expires).max(),
+                now,
+                formatting,
+            )
         },
     ]
 }
 /// Cookie display fields, including a secure flag beyond the reference's columns.
 pub fn cookie_cells(cookie: &Cookie, now: i64) -> Vec<String> {
+    cookie_cells_with_format(
+        cookie,
+        now,
+        &hydrus_store::settings::GuiFormatting::default(),
+    )
+}
+pub fn cookie_cells_with_format(
+    cookie: &Cookie,
+    now: i64,
+    formatting: &hydrus_store::settings::GuiFormatting,
+) -> Vec<String> {
     vec![
         cookie.name.clone(),
         cookie.value.clone().unwrap_or_default(),
         cookie.domain.clone(),
         cookie.path.clone(),
-        expiry_text(cookie.expires, now),
+        expiry_text_with_format(cookie.expires, now, formatting),
         if cookie.secure { "yes" } else { "no" }.into(),
     ]
 }

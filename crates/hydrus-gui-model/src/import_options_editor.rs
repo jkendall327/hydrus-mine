@@ -146,6 +146,16 @@ pub const DESCRIPTION: &str = "You are editing \"specific importer\".\n\nThese i
 /// [`use_default_label`]).
 pub const CUSTOM_CHOICE: &str = "set custom import options";
 
+/// The captured destination of a detached import tag-filter editor.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum TagFilterTarget {
+    Blacklist,
+    ParsedTags(String),
+    ExistingTags(String),
+}
+
+pub const EXISTING_TAGS_FILTER_MESSAGE: &str = "If you do not want the 'only add tags that already exist' option to apply to all tags coming in, set a filter here for the tags you _want_ to be exposed to this test.\n\nFor instance, if you only want the wash of messy unnamespaced tags to be exposed to the test, then set a simple whitelist for only 'unnamespaced'.\n\nThis is obviously a complicated idea, so make sure you test it on a small scale before you try anything big.\n\nClicking ok on this dialog will automatically turn on the already-exists filter if it is off.";
+
 /// The kinds the editor lists for an importer whose defaults are
 /// `caller`'s: in simple mode, a local import's or import folder's only
 /// those that aren't the downloaders' alone; and any the importer sets.
@@ -250,6 +260,17 @@ pub fn tab_label(kind: Kind, custom_summary: Option<&str>, source: &str) -> Stri
 /// names a service by its key (hex).
 /// The container summary shown in subscription rows and favourites menus.
 pub fn container_summary(slice: &ImportOptionsSlice, name: &dyn Fn(&str) -> String) -> String {
+    container_summary_with_format(
+        slice,
+        name,
+        &hydrus_store::settings::GuiFormatting::default(),
+    )
+}
+pub fn container_summary_with_format(
+    slice: &ImportOptionsSlice,
+    name: &dyn Fn(&str) -> String,
+    formatting: &hydrus_store::settings::GuiFormatting,
+) -> String {
     let kinds = Kind::ALL
         .into_iter()
         .filter(|kind| kind.is_set(slice))
@@ -257,7 +278,7 @@ pub fn container_summary(slice: &ImportOptionsSlice, name: &dyn Fn(&str) -> Stri
     let names = kinds.iter().map(|kind| kind.name()).collect::<Vec<_>>();
     let summaries = kinds
         .iter()
-        .map(|kind| summary(*kind, slice, name))
+        .map(|kind| summary_with_format(*kind, slice, name, formatting))
         .filter(|s| !s.is_empty())
         .collect::<Vec<_>>();
     if names.is_empty() {
@@ -270,6 +291,19 @@ pub fn container_summary(slice: &ImportOptionsSlice, name: &dyn Fn(&str) -> Stri
 }
 
 pub fn summary(kind: Kind, slice: &ImportOptionsSlice, name: &dyn Fn(&str) -> String) -> String {
+    summary_with_format(
+        kind,
+        slice,
+        name,
+        &hydrus_store::settings::GuiFormatting::default(),
+    )
+}
+pub fn summary_with_format(
+    kind: Kind,
+    slice: &ImportOptionsSlice,
+    name: &dyn Fn(&str) -> String,
+    formatting: &hydrus_store::settings::GuiFormatting,
+) -> String {
     use hydrus_core::import_options::PrefetchCheck as C;
     let mut parts: Vec<String> = Vec::new();
     match kind {
@@ -320,7 +354,7 @@ pub fn summary(kind: Kind, slice: &ImportOptionsSlice, name: &dyn Fn(&str) -> St
             if !o.allow_decompression_bombs {
                 parts.push("excludes decompression bombs".into());
             }
-            let bytes = hydrus_core::numbers::human_bytes;
+            let bytes = |size| crate::gui_format::bytes(formatting, size);
             let int = |n: u32| hydrus_core::numbers::human_int(u64::from(n));
             if let Some(n) = o.min_size.filter(|&n| n > 0) {
                 parts.push(format!("excludes < {}", bytes(n)));
@@ -534,6 +568,78 @@ impl Editor {
         self.custom.contains(&kind)
     }
 
+    /// Capture the selected service's filter, never a displayed row index.
+    pub fn tag_filter(
+        &self,
+        target: &TagFilterTarget,
+    ) -> Option<hydrus_core::tag_filter::TagFilter> {
+        match target {
+            TagFilterTarget::Blacklist if self.is_custom(Kind::TagFiltering) => self
+                .values
+                .tag_filtering
+                .as_ref()
+                .map(|value| value.blacklist.clone()),
+            TagFilterTarget::ParsedTags(key) | TagFilterTarget::ExistingTags(key)
+                if self.is_custom(Kind::Tags) =>
+            {
+                self.values.tags.as_ref().map(|value| {
+                    value.service(key).map_or_else(
+                        hydrus_core::tag_filter::TagFilter::default,
+                        |value| match target {
+                            TagFilterTarget::ExistingTags(_) => {
+                                value.only_add_existing_tags_filter.clone()
+                            }
+                            _ => value.get_tags_filter.clone(),
+                        },
+                    )
+                })
+            }
+            _ => None,
+        }
+    }
+
+    /// Accept only into the captured custom draft. Accepting the existing-tag
+    /// filter also enables its test, as the reference dialog does.
+    pub fn set_tag_filter(
+        &mut self,
+        target: &TagFilterTarget,
+        filter: hydrus_core::tag_filter::TagFilter,
+    ) {
+        if self.tag_filter(target).is_none() {
+            return;
+        }
+        match target {
+            TagFilterTarget::Blacklist => {
+                if let Some(value) = &mut self.values.tag_filtering {
+                    value.blacklist = filter;
+                }
+            }
+            TagFilterTarget::ParsedTags(key) | TagFilterTarget::ExistingTags(key) => {
+                if let Some(value) = &mut self.values.tags {
+                    let index = value
+                        .services
+                        .iter()
+                        .position(|(service, _)| service == key)
+                        .unwrap_or_else(|| {
+                            value.services.push((
+                                key.clone(),
+                                hydrus_core::import_options::ServiceTagImportOptions::default(),
+                            ));
+                            value.services.len() - 1
+                        });
+                    let service = &mut value.services[index].1;
+                    match target {
+                        TagFilterTarget::ExistingTags(_) => {
+                            service.only_add_existing_tags_filter = filter;
+                            service.only_add_existing_tags = true;
+                        }
+                        _ => service.get_tags_filter = filter,
+                    }
+                }
+            }
+        }
+    }
+
     /// Use custom options for a kind (starting from what its page shows),
     /// or the default.
     pub fn set_custom(&mut self, kind: Kind, custom: bool) {
@@ -554,12 +660,19 @@ impl Editor {
 
     /// The list's labels.
     pub fn labels(&self, name: &dyn Fn(&str) -> String) -> Vec<String> {
+        self.labels_with_format(name, &hydrus_store::settings::GuiFormatting::default())
+    }
+    pub fn labels_with_format(
+        &self,
+        name: &dyn Fn(&str) -> String,
+        formatting: &hydrus_store::settings::GuiFormatting,
+    ) -> Vec<String> {
         self.kinds
             .iter()
             .map(|&kind| {
                 let custom = self
                     .is_custom(kind)
-                    .then(|| summary(kind, &self.values, name));
+                    .then(|| summary_with_format(kind, &self.values, name, formatting));
                 tab_label(kind, custom.as_deref(), self.source(kind))
             })
             .collect()

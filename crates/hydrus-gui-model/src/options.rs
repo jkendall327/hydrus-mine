@@ -35,13 +35,98 @@ use hydrus_store::settings::{
     OptionsPreferences, PageSettings, SearchDefaults, TagAutocompleteTabs, ThumbnailLayout,
     ViewerBackgroundSettings, ViewerCanvasSettings, ViewerClosingSettings, ViewerCursorSettings,
     ViewerFocusSettings, ViewerHoverSettings, ViewerPlaybackSettings, ViewerPointerSettings,
+    ViewerTagScrollSettings,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::tag_editing::TagEditingSettings;
 use hydrus_store::trash::TrashSettings;
 use rusqlite::Connection;
 
+#[path = "options_popup_width.rs"]
+mod popup_width;
+
+fn normalise_idle_timeout(seconds: Option<u64>) -> Option<u64> {
+    seconds.map(|seconds| (seconds / 60).clamp(1, 1000) * 60)
+}
+
 macro_rules! settings {
+    (@save $conn:ident, $after:ident, $before:ident, maintenance_gates) => {
+        $after.maintenance_gates.save_changed($conn, &$before.maintenance_gates)?;
+    };
+
+    (@save $conn:ident, $after:ident, $before:ident, physical_delete) => {
+        $after.physical_delete.save_changed($conn, &$before.physical_delete)?;
+    };
+    (@save $conn:ident, $after:ident, $before:ident, tag_presentation) => {
+        crate::tag_namespace_order::save_presentation($conn, &$after.tag_presentation, &$before.tag_presentation)?;
+    };
+    (@save $conn:ident, $after:ident, $before:ident, animation_start) => {
+        $after.animation_start.save_changed($conn, &$before.animation_start)?;
+    };
+    (@save $conn:ident, $after:ident, $before:ident, gui) => {
+        if $after.gui != $before.gui {
+            let mut latest: GuiSettings = hydrus_store::settings::get($conn)?;
+            if $after.gui.confirm_exit != $before.gui.confirm_exit { latest.confirm_exit = $after.gui.confirm_exit; }
+            if $after.gui.application_display_name != $before.gui.application_display_name
+                && (!($before.gui.application_display_name.is_empty() && $after.gui.application_display_name == "hydrus client") || latest.application_display_name == $before.gui.application_display_name)
+            { latest.application_display_name.clone_from(&$after.gui.application_display_name); }
+            hydrus_store::settings::set($conn, &latest)?;
+        }
+    };
+    (@save $conn:ident, $after:ident, $before:ident, archive_delete_finish) => {
+        $after.archive_delete_finish.save_changed($conn, &$before.archive_delete_finish)?;
+    };
+    (@save $conn:ident, $after:ident, $before:ident, gui_colours) => {
+        $after.gui_colours.save_changed($conn, &$before.gui_colours)?;
+    };
+    (@save $conn:ident, $after:ident, $before:ident, page_layout) => {
+        hydrus_store::page_layout::save_changed($conn, &$after.page_layout, &$before.page_layout)?;
+    };
+    (@save $conn:ident, $after:ident, $before:ident, manage_tags_sort) => {
+        if $after.manage_tags_sort != $before.manage_tags_sort {
+            let mut latest: hydrus_store::manage_tags_sort::Settings = hydrus_store::settings::get($conn)?;
+            if $after.manage_tags_sort.search_page != $before.manage_tags_sort.search_page { latest.search_page = $after.manage_tags_sort.search_page; }
+            if $after.manage_tags_sort.media_viewer != $before.manage_tags_sort.media_viewer { latest.media_viewer = $after.manage_tags_sort.media_viewer; }
+            hydrus_store::settings::set($conn, &latest)?;
+        }
+    };
+    (@save $conn:ident, $after:ident, $before:ident, downloader_update_times) => {
+        if $after.downloader_update_times != $before.downloader_update_times {
+            $after.downloader_update_times.save_changed($conn, &$before.downloader_update_times, &crate::downloader_update_times::normalised(&$before.downloader_update_times))?;
+        }
+    };
+    (@save $conn:ident, $after:ident, $before:ident, popup_width) => {
+        hydrus_store::popup_width::save_changed($conn, &$after.popup_width, &$before.popup_width)?;
+    };
+    (@save $conn:ident, $after:ident, $before:ident, related_tags) => {
+        if $after.related_tags.weights != $before.related_tags.weights {
+            let mut current: hydrus_store::related_tags::Settings = hydrus_store::settings::get($conn)?;
+            current.weights.clone_from(&$after.related_tags.weights);
+            hydrus_store::settings::set($conn, &current)?;
+        }
+    };
+    (@save $conn:ident, $after:ident, $before:ident, tag_autocomplete_tabs) => {
+        if $after.tag_autocomplete_tabs != $before.tag_autocomplete_tabs {
+            let mut current: TagAutocompleteTabs = hydrus_store::settings::get($conn)?;
+            if $after.tag_autocomplete_tabs.children_limit != $before.tag_autocomplete_tabs.children_limit {
+                current.children_limit = $after.tag_autocomplete_tabs.children_limit;
+            }
+            for (key, tags) in &$after.tag_autocomplete_tabs.most_used {
+                if $before.tag_autocomplete_tabs.most_used.get(key) != Some(tags) {
+                    current.most_used.insert(key.clone(), tags.clone());
+                }
+            }
+            hydrus_store::settings::set($conn, &current)?;
+        }
+    };
+    (@save $conn:ident, $after:ident, $before:ident, thumbnail_preview_selection) => {
+        if $after.thumbnail_preview_selection != $before.thumbnail_preview_selection {
+            $after.thumbnail_preview_selection.save_changed($conn, &$before.thumbnail_preview_selection)?;
+        }
+    };
+    (@save $conn:ident, $after:ident, $before:ident, thumbnail_appearance) => {
+        $after.thumbnail_appearance.save_changed($conn, &$before.thumbnail_appearance)?;
+    };
     (@save $conn:ident, $after:ident, $before:ident, windows) => {
         if $after.windows != $before.windows {
             let mut windows: WindowSettings = hydrus_store::settings::get($conn)?;
@@ -55,6 +140,38 @@ macro_rules! settings {
             hydrus_store::settings::set($conn,&windows)?;
         }
     };
+    (@save $conn:ident, $after:ident, $before:ident, viewer_prefetch) => {
+        $after.viewer_prefetch.save_changed($conn,$before.viewer_prefetch)?;
+    };
+    (@save $conn:ident, $after:ident, $before:ident, image_cache) => {
+        $after.image_cache.save_changed($conn, $before.image_cache, crate::image_cache::displayed($before.image_cache))?;
+    };
+    (@save $conn:ident, $after:ident, $before:ident, thumbnail_cache) => {
+        if $after.thumbnail_cache != $before.thumbnail_cache {
+            let mut latest:hydrus_store::settings::ThumbnailCacheSettings=hydrus_store::settings::get($conn)?;
+            if $after.thumbnail_cache.bytes!=$before.thumbnail_cache.bytes {latest.bytes=$after.thumbnail_cache.bytes;}
+            if $after.thumbnail_cache.timeout!=$before.thumbnail_cache.timeout {latest.timeout=$after.thumbnail_cache.timeout;}
+            hydrus_store::settings::set($conn,&latest)?;
+        }
+    };
+    (@save $conn:ident, $after:ident, $before:ident, file_view_removal) => {
+        if $after.file_view_removal != $before.file_view_removal {
+            let mut latest: hydrus_store::settings::FileViewRemoval = hydrus_store::settings::get($conn)?;
+            if $after.file_view_removal.filtered != $before.file_view_removal.filtered { latest.filtered = $after.file_view_removal.filtered; }
+            if $after.file_view_removal.skipped != $before.file_view_removal.skipped { latest.skipped = $after.file_view_removal.skipped; }
+            if $after.file_view_removal.trashed != $before.file_view_removal.trashed { latest.trashed = $after.file_view_removal.trashed; }
+            if $after.file_view_removal.moved != $before.file_view_removal.moved { latest.moved = $after.file_view_removal.moved; }
+            hydrus_store::settings::set($conn, &latest)?;
+        }
+    };
+    (@save $conn:ident, $after:ident, $before:ident, local_transfer) => {
+        if $after.local_transfer != $before.local_transfer {
+            let mut latest: hydrus_store::settings::LocalTransferPreferences = hydrus_store::settings::get($conn)?;
+            if $after.local_transfer.copy != $before.local_transfer.copy { latest.copy = $after.local_transfer.copy; }
+            if $after.local_transfer.move_files != $before.local_transfer.move_files { latest.move_files = $after.local_transfer.move_files; }
+            hydrus_store::settings::set($conn, &latest)?;
+        }
+    };
     (@save $conn:ident, $after:ident, $before:ident, deletion) => {
         if $after.deletion != $before.deletion {
             let mut deletion = $after.deletion.clone();
@@ -62,6 +179,81 @@ macro_rules! settings {
             if deletion.last_action == $before.deletion.last_action {deletion.last_action = current.last_action;}
             if deletion.last_reason == $before.deletion.last_reason {deletion.last_reason = current.last_reason;}
             hydrus_store::settings::set($conn, &deletion)?;
+        }
+    };
+    (@save $conn:ident, $after:ident, $before:ident, viewer_eye_menu) => {
+        if $after.viewer_eye_menu != $before.viewer_eye_menu {
+            let mut eye = $after.viewer_eye_menu.clone();
+            let current: hydrus_store::settings::ViewerEyeMenuSettings = hydrus_store::settings::get($conn)?;
+            // These defaults belong to live eye-menu actions, not this Options page.
+            eye.start_on_top = current.start_on_top;
+            eye.start_on_top_while_playing = current.start_on_top_while_playing;
+            eye.start_frameless = current.start_frameless;
+            hydrus_store::settings::set($conn, &eye)?;
+        }
+    };
+    (@save $conn:ident, $after:ident, $before:ident, note_preferences) => {
+        if $after.note_preferences != $before.note_preferences {
+            let mut latest: hydrus_store::settings::NotePreferences = hydrus_store::settings::get($conn)?;
+            if $after.note_preferences.copy_all != $before.note_preferences.copy_all {
+                latest.copy_all = $after.note_preferences.copy_all;
+            }
+            if $after.note_preferences.copy_json != $before.note_preferences.copy_json {
+                latest.copy_json = $after.note_preferences.copy_json;
+            }
+            if $after.note_preferences.start_at_end != $before.note_preferences.start_at_end {
+                latest.start_at_end = $after.note_preferences.start_at_end;
+            }
+            if $after.note_preferences.hover_text_only != $before.note_preferences.hover_text_only {
+                latest.hover_text_only = $after.note_preferences.hover_text_only;
+            }
+            hydrus_store::settings::set($conn, &latest)?;
+        }
+    };
+    (@save $conn:ident, $after:ident, $before:ident, duplicate_colours) => {
+        if $after.duplicate_colours != $before.duplicate_colours {
+            let mut latest: hydrus_store::settings::DuplicateColourSettings = hydrus_store::settings::get($conn)?;
+            if $after.duplicate_colours.intensity_a != $before.duplicate_colours.intensity_a {
+                latest.intensity_a = $after.duplicate_colours.intensity_a;
+            }
+            if $after.duplicate_colours.intensity_b != $before.duplicate_colours.intensity_b {
+                latest.intensity_b = $after.duplicate_colours.intensity_b;
+            }
+            if $after.duplicate_colours.checkerboard != $before.duplicate_colours.checkerboard {
+                latest.checkerboard = $after.duplicate_colours.checkerboard;
+            }
+            hydrus_store::settings::set($conn, &latest)?;
+        }
+    };
+    (@save $conn:ident, $after:ident, $before:ident, ffmpeg_policy) => {
+        if $after.ffmpeg_policy != $before.ffmpeg_policy {
+            let latest = hydrus_store::ffmpeg_policy::load($conn)?;
+            let implicit_normalisation = $after.ffmpeg_policy.seconds == $before.ffmpeg_policy.seconds.clamp(1,600);
+            if !implicit_normalisation || latest.seconds == $before.ffmpeg_policy.seconds {
+                hydrus_store::settings::set($conn, &$after.ffmpeg_policy)?;
+            }
+        }
+    };
+    (@save $conn:ident, $after:ident, $before:ident, gui_idle) => {
+        if $after.gui_idle != $before.gui_idle {
+            let mut latest: hydrus_store::settings::GuiIdleSettings = hydrus_store::settings::get($conn)?;
+            if $after.gui_idle.enabled != $before.gui_idle.enabled {
+                latest.enabled = $after.gui_idle.enabled;
+            }
+            for (field, value, before) in [
+                (&mut latest.user_seconds, $after.gui_idle.user_seconds, $before.gui_idle.user_seconds),
+                (&mut latest.mouse_seconds, $after.gui_idle.mouse_seconds, $before.gui_idle.mouse_seconds),
+                (&mut latest.api_seconds, $after.gui_idle.api_seconds, $before.gui_idle.api_seconds),
+            ] {
+                // An unchanged Qt control still normalises imported seconds.
+                // Such an implicit edit must not overwrite a newer live value.
+                if value != before
+                    && (value != normalise_idle_timeout(before) || *field == before)
+                {
+                    *field = value;
+                }
+            }
+            hydrus_store::settings::set($conn, &latest)?;
         }
     };
     (@save $conn:ident, $after:ident, $before:ident, $field:ident) => {
@@ -95,6 +287,12 @@ macro_rules! settings {
 }
 
 settings! {
+    preview_zoom: hydrus_store::preview_zoom::Settings => hydrus_store::preview_zoom::load,
+    archive_delete_finish: hydrus_store::archive_delete_preferences::Preferences => hydrus_store::archive_delete_preferences::load,
+    gui_colours: hydrus_store::gui_colours::Settings => hydrus_store::gui_colours::load,
+    shortcuts: hydrus_core::shortcuts::Settings,
+    external_calls: hydrus_core::external_calls::Manager,
+    open_externally: hydrus_core::open_externally::Routing,
     advanced: AdvancedMode,
     auto_resolution: AutoResolutionSettings,
     bandwidth: BandwidthSettings,
@@ -102,19 +300,31 @@ settings! {
     command_palette: CommandPaletteSettings,
     delete_lock: DeleteLock,
     deletion: hydrus_store::settings::DeletionPreferences,
+    local_transfer: hydrus_store::settings::LocalTransferPreferences,
     downloader_pages: DownloaderPageSettings,
     duplicate_filter: DuplicateFilterSettings,
+    duplicate_colours: hydrus_store::settings::DuplicateColourSettings,
     export: ExportSettings,
     file_handling: FileHandlingSettings,
+    file_view_removal: hydrus_store::settings::FileViewRemoval,
+    thumbnail_cache: hydrus_store::settings::ThumbnailCacheSettings,
+    image_cache: hydrus_store::image_cache::Policy => hydrus_store::image_cache::load,
+    viewer_prefetch: hydrus_store::viewer_prefetch::Preferences => hydrus_store::viewer_prefetch::load,
     file_maintenance: FileMaintenanceSettings,
     file_viewing: FileViewingStatistics,
     folders: FolderSettings,
     gallery: GalleryDefaults,
     gui: GuiSettings,
+    radio_return: hydrus_store::radio_return::RadioReturn => hydrus_store::radio_return::load,
+    menu_choice_wheel: hydrus_store::menu_choice_wheel::MenuChoiceWheel => hydrus_store::menu_choice_wheel::load,
+    tag_search_activation: hydrus_store::settings::TagSearchActivation,
+    gui_formatting: hydrus_store::settings::GuiFormatting,
     gui_sessions: hydrus_store::settings::GuiSessionSettings,
+    gui_idle: hydrus_store::settings::GuiIdleSettings,
     info_line: InfoLineSettings,
     import_options: hydrus_core::import_options::ImportOptionsManager,
     import_options_ui: hydrus_store::settings::ImportOptionsUiSettings,
+    import_work_slots: hydrus_store::settings::ImportWorkSlots,
     media_viewer: MediaViewerSettings,
     network: NetworkSettings,
     notebooks: NotebookSettings,
@@ -122,30 +332,57 @@ settings! {
     page_insertion: hydrus_store::settings::PageInsertion,
     page_chooser: hydrus_store::settings::PageChooserSettings,
     page_navigation: hydrus_store::settings::PageNavigationSettings,
+    tab_presentation: hydrus_store::settings::TabPresentationSettings,
+    tab_drag: hydrus_store::settings::TabDragSettings,
     options_preferences: OptionsPreferences,
     page_names: PageNameSettings,
     page_settings: PageSettings,
+    page_layout: hydrus_store::page_layout::PageLayout => hydrus_store::page_layout::load,
+    popup_width: hydrus_store::popup_width::PopupWidth,
+    popup_freeze: hydrus_store::popup_freeze::Preferences => hydrus_store::popup_freeze::load,
+    api_update_toasts: hydrus_store::api_update_toasts::Preferences => hydrus_store::api_update_toasts::load,
     regex_favourites: RegexFavourites => hydrus_store::regex_favourites::load,
     session_backups: SessionBackupSettings,
     search_defaults: SearchDefaults,
     file_search: FileSearchSettings,
     tag_editing: TagEditingSettings,
     tag_autocomplete_tabs: TagAutocompleteTabs,
+    tag_suggestions: hydrus_store::settings::TagSuggestionSettings,
+    related_tags: hydrus_store::related_tags::Settings,
     favourite_tags: FavouriteTags,
     similar_files: SimilarFilesSettings,
     slideshow: SlideshowSettings,
     sorts: SortSettings,
     tag_presentation: TagPresentation,
+    manage_tags_sort: hydrus_store::manage_tags_sort::Settings,
+    or_connector: hydrus_store::or_connector::Connector => hydrus_store::or_connector::load,
+    image_colour: hydrus_store::image_colour::ImageColour => hydrus_store::image_colour::load,
+    ffmpeg_policy: hydrus_store::ffmpeg_policy::FfmpegPolicy => hydrus_store::ffmpeg_policy::load,
+    duplicates_progress: hydrus_store::duplicates_progress::Presentation => hydrus_store::duplicates_progress::load,
+    namespace_colours: hydrus_core::tag_presentation::NamespaceColours,
+    sibling_connector_colours: hydrus_core::tag_presentation::SiblingConnectorColours,
     tag_summaries: hydrus_core::tag_summary::TagSummaries,
     thumbnails: ThumbnailSettings,
     thumbnail_layout: ThumbnailLayout,
+    thumbnail_navigation: hydrus_store::settings::ThumbnailNavigation,
+    thumbnail_preview_selection: hydrus_store::thumbnail_preview_selection::Preferences,
+    thumbnail_appearance: hydrus_store::thumbnail_appearance::Preferences => hydrus_store::thumbnail_appearance::load,
+    animation_start: hydrus_store::animation_start::Preferences => hydrus_store::animation_start::load,
+    maintenance_gates: hydrus_store::maintenance_gates::Preferences => hydrus_store::maintenance_gates::load,
+    physical_delete: hydrus_store::physical_delete::Preferences => hydrus_store::physical_delete::load,
+    downloader_update_times: hydrus_store::downloader_update_times::Preferences,
     thumbnail_ratings: ThumbnailRatingSettings,
+    rating_context_sizes: hydrus_store::settings::RatingContextSizes,
+    note_preferences: hydrus_store::settings::NotePreferences,
     trash: TrashSettings,
     url_classes: UrlClassSettings,
     windows: WindowSettings,
+    window_rescue: hydrus_store::settings::WindowRescueSettings,
     viewer_canvas: ViewerCanvasSettings,
     viewer_background: ViewerBackgroundSettings,
     viewer_hovers: ViewerHoverSettings,
+    viewer_tag_scroll: ViewerTagScrollSettings,
+    viewer_eye_menu: hydrus_store::settings::ViewerEyeMenuSettings,
     viewer_pointer: ViewerPointerSettings,
     viewer_focus: ViewerFocusSettings,
     viewer_closing: ViewerClosingSettings,
@@ -156,6 +393,12 @@ settings! {
 /// An option's value as its control holds it.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Value {
+    ManageTagsSort(crate::manage_tags_sort::Control),
+    Bytes {
+        amount: i64,
+        unit: usize,
+    },
+    Shortcuts(hydrus_core::shortcuts::Settings),
     Check(bool),
     Int(i64),
     /// A number, or none (the reference's `NoneableSpinCtrl`).
@@ -167,6 +410,8 @@ pub enum Value {
     SavedSession(Option<String>),
     GallerySource(Option<crate::gallery_source::KeyAndName>),
     Text(String),
+    /// A plain LineEdit that distinguishes untouched legacy None from edited empty text.
+    PlainNoneableText(Option<String>),
     /// Text, or none (the reference's `NoneableTextCtrl`); the text is
     /// kept while none, as its text box keeps it.
     NoneableText {
@@ -197,11 +442,19 @@ pub enum Value {
     RegexFavourites(RegexFavourites),
     /// Ordered advanced file-deletion reason suggestions.
     DeletionReasons(Vec<String>),
+    NamespaceColours(crate::namespace_colours::Colours),
+    GuiColours([[hydrus_store::services::Rgb; 13]; 2]),
     FrameLocations(std::collections::BTreeMap<String, hydrus_core::windows::FrameLocation>),
+    /// Registered external program calls, staged in the parent Options draft.
+    ExternalCalls(hydrus_core::external_calls::Manager),
+    OpenExternally(hydrus_core::open_externally::Routing),
     /// Shared favourite tags, staged until the parent options dialog applies.
     FavouriteTags(FavouriteTags),
+    MostUsedTags(std::collections::BTreeMap<String, Vec<String>>),
+    RelatedWeights(hydrus_store::related_tags::Weights),
     ImportOptions(crate::import_options_panel::Value),
     NamespaceSorts(Vec<PageSort>),
+    TagNamespaceOrder(Vec<String>),
     TagBanner(hydrus_core::tag_summary::TagSummaryGenerator),
     ProviderOrder(Vec<Provider>),
     TagService(hydrus_core::ServiceKey),
@@ -211,6 +464,10 @@ pub enum Value {
 /// What kind of control an option has.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Kind {
+    ManageTagsSort,
+    /// Reference byte amount plus B/KB/MB/GB/TB multiplier.
+    Bytes,
+    Shortcuts,
     Check,
     Int {
         min: i64,
@@ -237,6 +494,8 @@ pub enum Kind {
     Text,
     /// An editable folder path with the shared native directory picker.
     Directory,
+    /// One editable image path with an owned native file picker.
+    FilePath,
     NoneableText {
         none_phrase: &'static str,
     },
@@ -273,14 +532,22 @@ pub enum Kind {
     RegexFavourites,
     /// Inline ordered advanced file-deletion reason queue.
     DeletionReasons,
+    NamespaceColours,
+    GuiColours,
     FrameLocations,
     /// Importable current file domains, edited in a child selector.
     LocalLocation,
+    /// The detached registered external-call table.
+    ExternalCalls,
+    OpenExternally,
     /// A detached tag list editor sharing write autocomplete.
     FavouriteTags,
+    MostUsedTags,
+    RelatedWeights,
     /// The transactional manager page, including simple-mode presentation.
     ImportOptions,
     NamespaceSorts,
+    TagNamespaceOrder,
     TagBanner(crate::tag_banner::Target),
     /// Inline staged command-palette provider queue.
     ProviderOrder,
@@ -690,6 +957,35 @@ fn float(
     )
 }
 
+fn rating_size(
+    label: &'static str,
+    (min, max): (f64, f64),
+    get: fn(&Settings) -> f64,
+    set: fn(&mut Settings, f64),
+) -> Item {
+    opt(
+        label,
+        Kind::Float { min, max },
+        Rc::new(move |s| Value::Float(float_text(get(s)))),
+        Rc::new(move |s, v| match v {
+            Value::Float(text) => {
+                let value = text
+                    .trim()
+                    .parse::<f64>()
+                    .ok()
+                    .filter(|value| value.is_finite())
+                    .ok_or_else(|| format!("{} \"{text}\" is not a number", label.trim_end()))?;
+                set(
+                    s,
+                    crate::rating_sizes::round_hundredths(value.clamp(min, max)).clamp(min, max),
+                );
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+    )
+}
+
 fn choice(
     label: &'static str,
     items: &'static [&'static str],
@@ -808,6 +1104,15 @@ fn noneable_text(
     get: fn(&Settings) -> Option<String>,
     set: fn(&mut Settings, Option<String>),
 ) -> Item {
+    noneable_text_default(label, none_phrase, "", get, set)
+}
+fn noneable_text_default(
+    label: &'static str,
+    none_phrase: &'static str,
+    default_text: &'static str,
+    get: fn(&Settings) -> Option<String>,
+    set: fn(&mut Settings, Option<String>),
+) -> Item {
     opt(
         label,
         Kind::NoneableText { none_phrase },
@@ -815,7 +1120,7 @@ fn noneable_text(
             let value = get(s);
             Value::NoneableText {
                 none: value.is_none(),
-                text: value.unwrap_or_default(),
+                text: value.unwrap_or_else(|| default_text.to_owned()),
             }
         }),
         Rc::new(move |s, v| match v {
@@ -1192,7 +1497,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
     let retry_range = if advanced { (1, 30 * 86400) } else { (3, 1800) };
     let error_delay_min = if advanced { 1.0 } else { 600.0 };
     let page = |name, items| Page { name, items };
-    vec![
+    let mut pages = vec![
         page(
             "audio",
             vec![text(
@@ -1204,6 +1509,37 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 },
             )],
         ),
+        Page {
+            name: "colours",
+            items: vec![
+                check(
+                    "override what is set in the stylesheet with the colours on this page: ",
+                    |s| s.gui_colours.override_stylesheet,
+                    |s, v| s.gui_colours.override_stylesheet = v,
+                ),
+                choice(
+                    "current colourset: ",
+                    &["default", "darkmode"],
+                    |s| s.gui_colours.current.min(1),
+                    |s, v| s.gui_colours.current = v,
+                ),
+                boxed(
+                    "coloursets",
+                    vec![opt(
+                        "",
+                        Kind::GuiColours,
+                        Rc::new(|s| Value::GuiColours(s.gui_colours.sets)),
+                        Rc::new(|s, v| match v {
+                            Value::GuiColours(sets) => {
+                                s.gui_colours.sets = *sets;
+                                Ok(())
+                            }
+                            _ => Err(wrong("coloursets")),
+                        }),
+                    )],
+                ),
+            ],
+        },
         command_palette_page(),
         page(
             "connection",
@@ -1475,6 +1811,14 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     )],
                 ),
                 boxed(
+                    "duplicates filter page",
+                    vec![check(
+                        "Hide the \"x% done\" notification on preparation tab when >99% searched:",
+                        |s| s.duplicates_progress.hide_caught_up,
+                        |s, value| s.duplicates_progress.hide_caught_up = value,
+                    )],
+                ),
+                boxed(
                     "duplicate filter batches",
                     vec![
                         int(
@@ -1546,6 +1890,28 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         ),
                     ],
                 ),
+                boxed(
+                    "colours",
+                    vec![
+                        noneable(
+                            "background light/dark switch intensity for A:",
+                            none("do not change", 3, (1, 9), None),
+                            |s| s.duplicate_colours.intensity_a.map(i64::from),
+                            |s, v| s.duplicate_colours.intensity_a = v.map(|n| n as u8),
+                        ),
+                        noneable(
+                            "background light/dark switch intensity for B:",
+                            none("do not change", 3, (1, 9), None),
+                            |s| s.duplicate_colours.intensity_b.map(i64::from),
+                            |s, v| s.duplicate_colours.intensity_b = v.map(|n| n as u8),
+                        ),
+                        check(
+                            "draw image transparency as checkerboard in the duplicate filter:",
+                            |s| s.duplicate_colours.checkerboard,
+                            |s, v| s.duplicate_colours.checkerboard = v,
+                        ),
+                    ],
+                ),
             ],
         ),
         page(
@@ -1598,6 +1964,39 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     )],
                 ),
             ],
+        ),
+        page(
+            "open externally",
+            vec![opt(
+                "open externally",
+                Kind::OpenExternally,
+                Rc::new(|s| Value::OpenExternally(s.open_externally.clone())),
+                Rc::new(|s, value| match value {
+                    Value::OpenExternally(routing) => {
+                        s.open_externally = routing.clone();
+                        Ok(())
+                    }
+                    _ => Err(wrong("open externally")),
+                }),
+            )],
+        ),
+        page(
+            "external programs",
+            vec![boxed(
+                "external calls",
+                vec![opt(
+                    "external calls",
+                    Kind::ExternalCalls,
+                    Rc::new(|s| Value::ExternalCalls(s.external_calls.clone())),
+                    Rc::new(|s, v| match v {
+                        Value::ExternalCalls(calls) => {
+                            s.external_calls = calls.clone();
+                            Ok(())
+                        }
+                        _ => Err(wrong("external calls")),
+                    }),
+                )],
+            )],
         ),
         page(
             "file search",
@@ -1769,6 +2168,29 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     |s| s.file_viewing.media_max_ms,
                     |s, v| s.file_viewing.media_max_ms = v,
                 ),
+                noneable_duration(
+                    "Min time to view on preview viewer to count as a view:",
+                    &[Unit::Minutes, Unit::Seconds, Unit::Milliseconds],
+                    0.05,
+                    5.0,
+                    "count every view",
+                    |s| s.file_viewing.preview_min_ms,
+                    |s, v| s.file_viewing.preview_min_ms = v,
+                ),
+                noneable_duration(
+                    "Cap any view on the preview viewer to this maximum time:",
+                    &[
+                        Unit::Hours,
+                        Unit::Minutes,
+                        Unit::Seconds,
+                        Unit::Milliseconds,
+                    ],
+                    1.0,
+                    60.0,
+                    "no limit",
+                    |s| s.file_viewing.preview_max_ms,
+                    |s, v| s.file_viewing.preview_max_ms = v,
+                ),
                 choice(
                     "Show viewing stats on media right-click menus?:",
                     &[
@@ -1822,9 +2244,58 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     |s, v| s.deletion.confirm_archive = v,
                 ),
                 check(
+                    "Confirm when copying files across local file domains: ",
+                    |s| s.local_transfer.copy,
+                    |s, v| s.local_transfer.copy = v,
+                ),
+                check(
+                    "Confirm when moving files across local file domains: ",
+                    |s| s.local_transfer.move_files,
+                    |s, v| s.local_transfer.move_files = v,
+                ),
+                check(
                     "When physically deleting files or folders, send them to the OS's recycle bin: ",
                     |s| s.folders.delete_to_recycle_bin,
                     |s, v| s.folders.delete_to_recycle_bin = v,
+                ),
+                duration(
+                    "When maintenance physically deletes files, wait this long between each delete: ",
+                    time(&[Unit::Seconds, Unit::Milliseconds], 0.02),
+                    |s| s.physical_delete.displayed_seconds(),
+                    |s, value| s.physical_delete.set_seconds(value),
+                ),
+                check(
+                    "When finishing archive/delete filtering, always delete from all possible domains: ",
+                    |s| s.archive_delete_finish.all_domains,
+                    |s, v| s.archive_delete_finish.all_domains = v,
+                ),
+                check(
+                    "When finishing archive/delete filtering, delay activation of multiple deletion choice buttons: ",
+                    |s| s.archive_delete_finish.delay_multiple,
+                    |s, v| s.archive_delete_finish.delay_multiple = v,
+                ),
+                check(
+                    "Remove files from view when they are archive/delete filtered: ",
+                    |s| s.file_view_removal.filtered,
+                    |s, v| s.file_view_removal.filtered = v,
+                ),
+                enabled(
+                    check(
+                        "--even skipped files: ",
+                        |s| s.file_view_removal.skipped,
+                        |s, v| s.file_view_removal.skipped = v,
+                    ),
+                    |s| s.file_view_removal.filtered,
+                ),
+                check(
+                    "Remove files from view when they are sent to the trash: ",
+                    |s| s.file_view_removal.trashed,
+                    |s, v| s.file_view_removal.trashed = v,
+                ),
+                check(
+                    "Remove files from view when they are moved to another local file domain: ",
+                    |s| s.file_view_removal.moved,
+                    |s, v| s.file_view_removal.moved = v,
                 ),
                 noneable(
                     "Number of hours a file will stay in the trash before being deleted: ",
@@ -1837,6 +2308,16 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     none("no size limit", 2048, (0, 20480), None),
                     |s| signed(s.trash.max_size_mb),
                     |s, v| s.trash.max_size_mb = unsigned(v),
+                ),
+                check(
+                    "Allow trash maintenance during normal time: ",
+                    |s| s.maintenance_gates.trash_normal,
+                    |s, value| s.maintenance_gates.trash_normal = value,
+                ),
+                check(
+                    "Allow deferred file deletes during normal time: ",
+                    |s| s.maintenance_gates.deferred_normal,
+                    |s, value| s.maintenance_gates.deferred_normal = value,
                 ),
                 check(
                     "TEST: Import local files directly from source, do not copy to temp dir beforehand.",
@@ -1939,11 +2420,31 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s| s.gui.confirm_exit,
                             |s, value| s.gui.confirm_exit = value,
                         ),
+                        check(
+                            "Switch to main window when creating new file search page from media viewer: ",
+                            |s| s.tag_search_activation.activate_main,
+                            |s, value| s.tag_search_activation.activate_main = value,
+                        ),
                     ],
                 ),
                 boxed(
                     "misc",
                     vec![
+                        check(
+                            "Prefer ISO time (\"2018-03-01 12:40:23\") to \"5 days ago\": ",
+                            |s| s.gui_formatting.iso,
+                            |s, v| s.gui_formatting.iso = v,
+                        ),
+                        check(
+                            "Force that hitting Enter/Return on radio button lists triggers a dialog ok: ",
+                            |s| s.radio_return.force_dialog_ok,
+                            |s, value| s.radio_return.force_dialog_ok = value,
+                        ),
+                        check(
+                            "Mouse wheel can \"scroll\" through menu buttons: ",
+                            |s| s.menu_choice_wheel.enabled,
+                            |s, value| s.menu_choice_wheel.enabled = value,
+                        ),
                         check(
                             "Remember last open options panel in this window: ",
                             |s| s.options_preferences.remember_panel,
@@ -1955,11 +2456,33 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s| usize::from(!s.options_preferences.search_at_top),
                             |s, v| s.options_preferences.search_at_top = v == 0,
                         ),
+                        int(
+                            "EXPERIMENTAL: Bytes strings >1KB pseudo significant figures: ",
+                            (1, 6),
+                            |s| i64::from(s.gui_formatting.figures),
+                            |s, v| s.gui_formatting.figures = u8::try_from(v).unwrap_or(3),
+                        ),
                     ],
                 ),
                 boxed(
                     "frame locations",
                     vec![
+                        check(
+                            "BUGFIX: Disable off-screen window rescue: ",
+                            |s| s.window_rescue.disabled,
+                            |s, v| s.window_rescue.disabled = v,
+                        ),
+                        check(
+                            "When rescuing, add top-left safety padding:",
+                            |s| s.window_rescue.add_padding,
+                            |s, v| s.window_rescue.add_padding = v,
+                        ),
+                        int(
+                            "DEBUG: top-left padding to use (px): ",
+                            (0, 100),
+                            |s| i64::from(s.window_rescue.padding),
+                            |s, v| s.window_rescue.padding = u8::try_from(v).unwrap_or_default(),
+                        ),
                         check(
                             "Save media viewer window size and position on close: ",
                             |s| s.windows.save_media_viewer_on_close,
@@ -1986,6 +2509,14 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         page(
             "gui pages",
             vec![
+                boxed(
+                    "preview window",
+                    vec![check(
+                        "Hide the bottom-left preview window: ",
+                        |s| s.page_layout.hide_preview,
+                        |s, v| s.page_layout.hide_preview = v,
+                    )],
+                ),
                 boxed(
                     "opening and closing",
                     vec![
@@ -2055,6 +2586,18 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "navigation and drag-and-drop",
                     vec![
+                        choice(
+                            "Notebook tab alignment: ",
+                            &["top", "left", "right", "bottom"],
+                            |s| usize::try_from(s.tab_presentation.alignment.code()).unwrap_or(0),
+                            |s, value| {
+                                s.tab_presentation.alignment =
+                                    hydrus_store::settings::TabAlignment::from_code(
+                                        i64::try_from(value).unwrap_or(0),
+                                    )
+                                    .unwrap_or_default();
+                            },
+                        ),
                         int(
                             "Maximum entries to show in page navigation history: ",
                             (1, 1000),
@@ -2068,6 +2611,53 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s| s.page_navigation.focus_search_on_change,
                             |s, v| s.page_navigation.focus_search_on_change = v,
                         ),
+                        check(
+                            "Selection chases dropped page after drag and drop: ",
+                            |s| s.tab_drag.chase,
+                            |s, v| s.tab_drag.chase = v,
+                        ),
+                        check(
+                            "  With shift held down?: ",
+                            |s| s.tab_drag.chase_shift,
+                            |s, v| s.tab_drag.chase_shift = v,
+                        ),
+                        check(
+                            "Navigate tabs during drag and drop: ",
+                            |s| s.tab_drag.navigate,
+                            |s, v| s.tab_drag.navigate = v,
+                        ),
+                        check(
+                            "  With shift held down?: ",
+                            |s| s.tab_drag.navigate_shift,
+                            |s, v| s.tab_drag.navigate_shift = v,
+                        ),
+                        check(
+                            "EXPERIMENTAL: Mouse wheel scrolls tab bar, not page selection: ",
+                            |s| s.tab_drag.wheel_scroll,
+                            |s, v| s.tab_drag.wheel_scroll = v,
+                        ),
+                        check(
+                            "BUGFIX: Disable all page tab drag and drop: ",
+                            |s| s.tab_drag.disabled,
+                            |s, v| s.tab_drag.disabled = v,
+                        ),
+                        choice(
+                            "EXPERIMENTAL: Show tab tree view: ",
+                            &["disable", "left", "right"],
+                            |s| usize::try_from(s.tab_presentation.tree_side()).unwrap_or(0),
+                            |s, value| {
+                                s.tab_presentation.tree_alignment = match value {
+                                    1 => Some(hydrus_store::settings::TabAlignment::Left),
+                                    2 => Some(hydrus_store::settings::TabAlignment::Right),
+                                    _ => None,
+                                };
+                            },
+                        ),
+                        check(
+                            "EXPERIMENTAL: Hide main page navigation tabs: ",
+                            |s| s.tab_presentation.hide_navigation_tabs,
+                            |s, value| s.tab_presentation.hide_navigation_tabs = value,
+                        ),
                     ],
                 ),
                 boxed(
@@ -2078,6 +2668,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             (1, 256),
                             |s| s.page_names.max_chars as i64,
                             |s, v| s.page_names.max_chars = v as usize,
+                        ),
+                        check(
+                            "When there are too many tabs to fit, '...' elide their names so they fit: ",
+                            |s| s.tab_presentation.elide_names,
+                            |s, value| s.tab_presentation.elide_names = value,
                         ),
                         choice(
                             "Show page file count after its name: ",
@@ -2184,18 +2779,114 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         ),
         page(
             "importing",
-            vec![boxed(
-                "filetypes",
-                vec![check(
-                    "Inspect for .cbz properties when importing/rescanning .zip files:",
-                    |s| s.file_handling.comic_book_detection,
-                    |s, v| s.file_handling.comic_book_detection = v,
-                )],
-            )],
+            vec![
+                boxed(
+                    "filetypes",
+                    vec![check(
+                        "Inspect for .cbz properties when importing/rescanning .zip files:",
+                        |s| s.file_handling.comic_book_detection,
+                        |s, v| s.file_handling.comic_book_detection = v,
+                    )],
+                ),
+                boxed(
+                    "work slots",
+                    vec![
+                        int(
+                            "Number of gallery downloader file queues that can import at the same time:",
+                            (1, 500),
+                            |s| s.import_work_slots.gallery_files,
+                            |s, v| s.import_work_slots.gallery_files = v,
+                        ),
+                        int(
+                            "Number of gallery downloader searches that can run at the same time:",
+                            (1, 500),
+                            |s| s.import_work_slots.gallery_search,
+                            |s, v| s.import_work_slots.gallery_search = v,
+                        ),
+                        int(
+                            "Number of watcher page file queues that can run at the same time:",
+                            (1, 500),
+                            |s| s.import_work_slots.watcher_files,
+                            |s, v| s.import_work_slots.watcher_files = v,
+                        ),
+                        int(
+                            "Number of watcher page checkers that can run at the same time:",
+                            (1, 500),
+                            |s| s.import_work_slots.watcher_check,
+                            |s, v| s.import_work_slots.watcher_check = v,
+                        ),
+                        int(
+                            "Number of other paged importer jobs that can run at the same time:",
+                            (1, 500),
+                            |s| s.import_work_slots.misc,
+                            |s, v| s.import_work_slots.misc = v,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "maintenance and processing",
             vec![
+                boxed(
+                    "when to run high cpu jobs",
+                    vec![boxed(
+                        "idle",
+                        vec![
+                            enabled(
+                                noneable(
+                                    "Permit idle mode if no general browsing activity has occurred in the past: ",
+                                    none("ignore normal browsing", 1, (1, 1000), Some("minutes")),
+                                    |settings| {
+                                        settings
+                                            .gui_idle
+                                            .user_seconds
+                                            .map(|seconds| (seconds / 60).clamp(1, 1000) as i64)
+                                    },
+                                    |settings, value| {
+                                        settings.gui_idle.user_seconds =
+                                            value.map(|minutes| minutes as u64 * 60);
+                                    },
+                                ),
+                                |settings| settings.gui_idle.enabled,
+                            ),
+                            enabled(
+                                noneable(
+                                    "Permit idle mode if your mouse cursor has not been moved in the past: ",
+                                    none("ignore mouse movements", 1, (1, 1000), Some("minutes")),
+                                    |settings| {
+                                        settings
+                                            .gui_idle
+                                            .mouse_seconds
+                                            .map(|seconds| (seconds / 60).clamp(1, 1000) as i64)
+                                    },
+                                    |settings, value| {
+                                        settings.gui_idle.mouse_seconds =
+                                            value.map(|minutes| minutes as u64 * 60);
+                                    },
+                                ),
+                                |settings| settings.gui_idle.enabled,
+                            ),
+                            enabled(
+                                noneable(
+                                    "Permit idle mode if no Client API requests in the past: ",
+                                    none("ignore client api", 1, (1, 1000), Some("minutes")),
+                                    |settings| {
+                                        settings
+                                            .gui_idle
+                                            .api_seconds
+                                            .map(|seconds| (seconds / 60).clamp(1, 1000) as i64)
+                                    },
+                                    |settings, value| {
+                                        settings.gui_idle.api_seconds =
+                                            value.map(|minutes| minutes as u64 * 60);
+                                    },
+                                ),
+                                |settings| settings.gui_idle.enabled,
+                            ),
+                        ],
+                    )],
+                ),
                 boxed(
                     "file maintenance",
                     vec![
@@ -2302,6 +2993,17 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             },
                             |s, i| s.media_viewer.default_zoom_type = ZOOM_TYPE_ORDER[i],
                         ),
+                        choice(
+                            "Preview Viewer default zoom:",
+                            ZOOM_TYPES,
+                            |s| {
+                                ZOOM_TYPE_ORDER
+                                    .iter()
+                                    .position(|t| *t == s.preview_zoom.default_zoom)
+                                    .unwrap_or(0)
+                            },
+                            |s, i| s.preview_zoom.default_zoom = ZOOM_TYPE_ORDER[i],
+                        ),
                         check(
                             "Re-center media on window resize:",
                             |settings| settings.viewer_canvas.recenter_on_resize,
@@ -2340,11 +3042,35 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 ),
                 boxed(
                     "video/animations",
-                    vec![check(
-                        "Always Loop Animations:",
-                        |s| s.viewer_playback.always_loop,
-                        |s, value| s.viewer_playback.always_loop = value,
-                    )],
+                    vec![
+                        int(
+                            "Start animations this % in:",
+                            (0, 100),
+                            |s| i64::from(s.animation_start.percent()),
+                            |s, value| s.animation_start.set_percent(value),
+                        ),
+                        check(
+                            "Always Loop Animations:",
+                            |s| s.viewer_playback.always_loop,
+                            |s, value| s.viewer_playback.always_loop = value,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "system",
+                    vec![
+                        int(
+                            "FFMPEG call timeout:",
+                            (1, 600),
+                            |settings| settings.ffmpeg_policy.seconds.clamp(1, 600),
+                            |settings, value| settings.ffmpeg_policy.seconds = value,
+                        ),
+                        check(
+                            "Apply image ICC Profile colour adjustments:",
+                            |settings| settings.image_colour.normalise_icc,
+                            |settings, value| settings.image_colour.normalise_icc = value,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -2371,9 +3097,23 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             },
                         ),
                         check(
+                            "Anchor mouse cursor during media viewer drags:",
+                            |settings| settings.viewer_pointer.anchor_drag,
+                            |settings, value| {
+                                settings.viewer_pointer.anchor_drag = value;
+                            },
+                        ),
+                        check(
                             "Hide mouse cursor during media viewer drags:",
                             |settings| settings.viewer_pointer.hide_during_drag,
                             |settings, value| settings.viewer_pointer.hide_during_drag = value,
+                        ),
+                        check(
+                            "If set to anchor drags, undo on apparent touchscreen drag:",
+                            |settings| settings.viewer_pointer.touch_unanchors,
+                            |settings, value| {
+                                settings.viewer_pointer.touch_unanchors = value;
+                            },
                         ),
                     ],
                 ),
@@ -2541,21 +3281,56 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |settings| settings.viewer_hovers.notes,
                             |settings, value| settings.viewer_hovers.notes = value,
                         ),
+                        choice(
+                            "Allow a mouse wheel scroll over the taglist to propagate to the main canvas:",
+                            &[
+                                "never propagate",
+                                "only propagate when list has no vertical scrollbar",
+                                "only propagate if vertical scrollbar has not been used recently",
+                                "propagate immediately after vertical scrollbar hits an end (Qt default)",
+                            ],
+                            |settings| usize::from(settings.viewer_tag_scroll.0.code()),
+                            |settings, value| {
+                                settings.viewer_tag_scroll.0 = u16::try_from(value)
+                                    .ok()
+                                    .and_then(
+                                        hydrus_store::settings::TagWheelPropagation::from_code,
+                                    )
+                                    .unwrap_or_default();
+                            },
+                        ),
                     ],
                 ),
                 boxed(
                     "top hover button/menu controls",
-                    vec![choice(
-                        "Zoom switch button switches between:",
-                        &[
-                            "100% and canvas fit",
-                            "100% and canvas fit, and recenter media on switch",
-                            "100% and canvas fit and canvas fill",
-                            "100% and canvas fit and canvas fill, and recenter media on switch",
-                        ],
-                        |s| s.viewer_playback.zoom_switch.min(3),
-                        |s, value| s.viewer_playback.zoom_switch = value,
-                    )],
+                    vec![
+                        choice(
+                            "Zoom switch button switches between:",
+                            &[
+                                "100% and canvas fit",
+                                "100% and canvas fit, and recenter media on switch",
+                                "100% and canvas fit and canvas fill",
+                                "100% and canvas fit and canvas fill, and recenter media on switch",
+                            ],
+                            |s| s.viewer_playback.zoom_switch.min(3),
+                            |s, value| s.viewer_playback.zoom_switch = value,
+                        ),
+                        check(
+                            "Collapse \"window\" submenu in 'view options' (eye menu):",
+                            |s| s.viewer_eye_menu.collapse_window,
+                            |s, v| s.viewer_eye_menu.collapse_window = v,
+                        ),
+                        check(
+                            "Collapse \"hovers\" submenu in 'view options' (eye menu):",
+                            |s| s.viewer_eye_menu.collapse_hovers,
+                            |s, v| s.viewer_eye_menu.collapse_hovers = v,
+                        ),
+                        check(
+                            "Collapse \"rendering\" submenu in 'view options' (eye menu):",
+                            |s| s.viewer_eye_menu.collapse_rendering,
+                            |s, v| s.viewer_eye_menu.collapse_rendering = v,
+                        ),
+                    ],
                 ),
                 boxed(
                     "top hover file summary",
@@ -2605,6 +3380,22 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             ],
         ),
         page(
+            "notes",
+            vec![
+                check(
+                    "Start editing notes with the text cursor at the end of the document: ",
+                    |s| s.note_preferences.start_at_end,
+                    |s, v| s.note_preferences.start_at_end = v,
+                ),
+                check(
+                    "When middle-clicking a note hover, only copy the text: ",
+                    |s| s.note_preferences.hover_text_only,
+                    |s, v| s.note_preferences.hover_text_only = v,
+                ),
+            ],
+        ),
+        popup_width::page(),
+        page(
             "ratings",
             vec![
                 boxed(
@@ -2621,6 +3412,23 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             (2.0, 255.0),
                             |s| s.media_viewer.rating_incdec_height,
                             |s, v| s.media_viewer.rating_incdec_height = v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "preview window",
+                    vec![
+                        rating_size(
+                            "Preview window like/dislike and numerical rating icon size:",
+                            (1.0, 255.0),
+                            |s| s.rating_context_sizes.preview_icon_size,
+                            |s, v| s.rating_context_sizes.preview_icon_size = v,
+                        ),
+                        rating_size(
+                            "Preview window inc/dec rating icon height:",
+                            (2.0, 255.0),
+                            |s| s.rating_context_sizes.preview_incdec_height,
+                            |s, v| s.rating_context_sizes.preview_incdec_height = v,
                         ),
                     ],
                 ),
@@ -2651,6 +3459,23 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         ),
                     ],
                 ),
+                boxed(
+                    "dialogs",
+                    vec![
+                        rating_size(
+                            "Dialogs like/dislike and numerical rating icon size:",
+                            (6.0, 128.0),
+                            |s| s.rating_context_sizes.dialog_icon_size,
+                            |s, v| s.rating_context_sizes.dialog_icon_size = v,
+                        ),
+                        rating_size(
+                            "Dialogs inc/dec rating height:",
+                            (12.0, 128.0),
+                            |s| s.rating_context_sizes.dialog_incdec_height,
+                            |s, v| s.rating_context_sizes.dialog_incdec_height = v,
+                        ),
+                    ],
+                ),
             ],
         ),
         page(
@@ -2667,6 +3492,154 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     _ => Err(wrong("regex favourites")),
                 }),
             )],
+        ),
+        page(
+            "shortcuts",
+            vec![opt(
+                "shortcuts",
+                Kind::Shortcuts,
+                Rc::new(|s| Value::Shortcuts(s.shortcuts.clone())),
+                Rc::new(|s, value| match value {
+                    Value::Shortcuts(shortcuts) => {
+                        s.shortcuts.clone_from(shortcuts);
+                        Ok(())
+                    }
+                    _ => Err(wrong("shortcuts")),
+                }),
+            )],
+        ),
+        page(
+            "speed and memory",
+            vec![
+                Item::Box(
+                    "thumbnail cache",
+                    vec![
+                        opt(
+                            "Memory reserved for thumbnail cache:",
+                            Kind::Bytes,
+                            Rc::new(|s| {
+                                let (amount, unit) =
+                                    crate::thumbnail_cache::raw_separated(s.thumbnail_cache.bytes);
+                                Value::Bytes { amount, unit }
+                            }),
+                            Rc::new(|s, v| {
+                                if let Value::Bytes { amount, unit } = v {
+                                    s.thumbnail_cache.bytes =
+                                        crate::thumbnail_cache::combined(*amount, *unit);
+                                    Ok(())
+                                } else {
+                                    Err(wrong("thumbnail cache bytes"))
+                                }
+                            }),
+                        ),
+                        duration(
+                            "Thumbnail cache timeout:",
+                            time(&[Unit::Days, Unit::Hours, Unit::Minutes], 300.0),
+                            |s| s.thumbnail_cache.timeout as f64,
+                            |s, v| s.thumbnail_cache.timeout = v as u64,
+                        ),
+                    ],
+                ),
+                Item::Box(
+                    "image cache",
+                    vec![
+                        opt(
+                            "Memory reserved for image cache:",
+                            Kind::Bytes,
+                            Rc::new(|s| {
+                                let (amount, unit) =
+                                    crate::thumbnail_cache::raw_separated(s.image_cache.bytes);
+                                Value::Bytes { amount, unit }
+                            }),
+                            Rc::new(|s, value| {
+                                if let Value::Bytes { amount, unit } = value {
+                                    s.image_cache.bytes =
+                                        crate::thumbnail_cache::combined(*amount, *unit);
+                                    Ok(())
+                                } else {
+                                    Err(wrong("image cache bytes"))
+                                }
+                            }),
+                        ),
+                        duration(
+                            "Image cache timeout:",
+                            time(&[Unit::Days, Unit::Hours, Unit::Minutes], 300.0),
+                            |s| s.image_cache.timeout as f64,
+                            |s, v| s.image_cache.timeout = v as u64,
+                        ),
+                        int(
+                            "Maximum image size (in % of cache) that can be cached:",
+                            (10, 50),
+                            |s| s.image_cache.percentage as i64,
+                            |s, v| s.image_cache.percentage = v as u64,
+                        ),
+                        int(
+                            "Maximum % of cache that will be prefetched per media viewer:",
+                            (10, 50),
+                            |s| s.viewer_prefetch.percentage as i64,
+                            |s, v| s.viewer_prefetch.percentage = v as u64,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "image prefetch",
+                    vec![
+                        int(
+                            "Num previous to prefetch in Media Viewer:",
+                            (0, 50),
+                            |s| s.viewer_prefetch.previous as i64,
+                            |s, v| s.viewer_prefetch.previous = v as u64,
+                        ),
+                        int(
+                            "Num next to prefetch in Media Viewer:",
+                            (0, 50),
+                            |s| s.viewer_prefetch.next as i64,
+                            |s, v| s.viewer_prefetch.next = v as u64,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "download pages update",
+                    vec![
+                        duration(
+                            "EXPERIMENTAL: Minimum gallery importer update time:",
+                            time(&[Unit::Seconds, Unit::Milliseconds], 0.25),
+                            |s| {
+                                crate::downloader_update_times::displayed_minimum(
+                                    s.downloader_update_times.gallery_minimum_ms,
+                                )
+                            },
+                            |s, v| {
+                                s.downloader_update_times.gallery_minimum_ms = (v * 1000.0) as i64;
+                            },
+                        ),
+                        int(
+                            "EXPERIMENTAL: Gallery importer magic update time denominator:",
+                            (1, 99),
+                            |s| s.downloader_update_times.gallery_denominator,
+                            |s, v| s.downloader_update_times.gallery_denominator = v,
+                        ),
+                        duration(
+                            "EXPERIMENTAL: Minimum watcher importer update time:",
+                            time(&[Unit::Seconds, Unit::Milliseconds], 0.25),
+                            |s| {
+                                crate::downloader_update_times::displayed_minimum(
+                                    s.downloader_update_times.watcher_minimum_ms,
+                                )
+                            },
+                            |s, v| {
+                                s.downloader_update_times.watcher_minimum_ms = (v * 1000.0) as i64;
+                            },
+                        ),
+                        int(
+                            "EXPERIMENTAL: Watcher importer magic update time denominator:",
+                            (1, 99),
+                            |s| s.downloader_update_times.watcher_denominator,
+                            |s, v| s.downloader_update_times.watcher_denominator = v,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "system",
@@ -2889,6 +3862,43 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             },
                         ),
                         check(
+                            "Fade the colour of the sibling connector string on Qt6: ",
+                            |s| s.sibling_connector_colours.fade,
+                            |s, value| s.sibling_connector_colours.fade = value,
+                        ),
+                        enabled(
+                            noneable_text_default(
+                                "Namespace for the colour of the sibling connecting string: ",
+                                "use ideal tag colour",
+                                "system",
+                                |s| s.sibling_connector_colours.namespace.clone(),
+                                |s, value| s.sibling_connector_colours.namespace = value,
+                            ),
+                            |s| !s.sibling_connector_colours.fade,
+                        ),
+                        text(
+                            "OR connecting string (on one line): ",
+                            |s| s.or_connector.text.clone(),
+                            |s, value| {
+                                value.clone_into(&mut s.or_connector.text);
+                                Ok(())
+                            },
+                        ),
+                        opt(
+                            "Namespace for the OR top row: ",
+                            Kind::Text,
+                            Rc::new(|s| {
+                                Value::PlainNoneableText(s.namespace_colours.or_connector.clone())
+                            }),
+                            Rc::new(|s, value| match value {
+                                Value::PlainNoneableText(text) => {
+                                    s.namespace_colours.or_connector.clone_from(text);
+                                    Ok(())
+                                }
+                                _ => Err(wrong("OR row namespace")),
+                            }),
+                        ),
+                        check(
                             "EXPERIMENTAL: Replace all underscores with spaces: ",
                             |s| s.tag_presentation.replace_underscores,
                             |s, v| s.tag_presentation.replace_underscores = v,
@@ -2899,6 +3909,23 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s, v| s.tag_presentation.replace_emojis = v,
                         ),
                     ],
+                ),
+                boxed(
+                    "namespace colours",
+                    vec![opt(
+                        "",
+                        Kind::NamespaceColours,
+                        Rc::new(|settings| {
+                            Value::NamespaceColours(settings.namespace_colours.colours.clone())
+                        }),
+                        Rc::new(|settings, value| match value {
+                            Value::NamespaceColours(colours) => {
+                                settings.namespace_colours.colours.clone_from(colours);
+                                Ok(())
+                            }
+                            _ => Err(wrong("namespace colours")),
+                        }),
+                    )],
                 ),
                 boxed(
                     "default taglist display type (advanced)",
@@ -2945,10 +3972,125 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         |s| s.tag_presentation.search_page_sort,
                         |s, v| s.tag_presentation.search_page_sort = v,
                     ),
+                    opt(
+                        "Default tag sort in search page manage tags dialogs: ",
+                        Kind::ManageTagsSort,
+                        Rc::new(|s| {
+                            Value::ManageTagsSort(crate::manage_tags_sort::Control::new(
+                                s.manage_tags_sort.search_page,
+                            ))
+                        }),
+                        Rc::new(|s, value| match value {
+                            Value::ManageTagsSort(control) => {
+                                s.manage_tags_sort.search_page = control.value;
+                                Ok(())
+                            }
+                            _ => Err(wrong("search-page Manage Tags sort")),
+                        }),
+                    ),
                     tag_sort(
                         "Default tag sort in the media viewer: ",
                         |s| s.tag_presentation.media_viewer_sort,
                         |s, v| s.tag_presentation.media_viewer_sort = v,
+                    ),
+                    opt(
+                        "Default tag sort in media viewer manage tags dialogs: ",
+                        Kind::ManageTagsSort,
+                        Rc::new(|s| {
+                            Value::ManageTagsSort(crate::manage_tags_sort::Control::new(
+                                s.manage_tags_sort.media_viewer,
+                            ))
+                        }),
+                        Rc::new(|s, value| match value {
+                            Value::ManageTagsSort(control) => {
+                                s.manage_tags_sort.media_viewer = control.value;
+                                Ok(())
+                            }
+                            _ => Err(wrong("media-viewer Manage Tags sort")),
+                        }),
+                    ),
+                    boxed(
+                        "namespace grouping sort",
+                        vec![opt(
+                            crate::tag_namespace_order::DESCRIPTION,
+                            Kind::TagNamespaceOrder,
+                            Rc::new(|settings| {
+                                Value::TagNamespaceOrder(
+                                    settings.tag_presentation.user_namespaces.clone(),
+                                )
+                            }),
+                            Rc::new(|settings, value| match value {
+                                Value::TagNamespaceOrder(namespaces) => {
+                                    settings
+                                        .tag_presentation
+                                        .user_namespaces
+                                        .clone_from(namespaces);
+                                    Ok(())
+                                }
+                                _ => Err(wrong("namespace grouping order")),
+                            }),
+                        )],
+                    ),
+                ],
+            )],
+        ),
+        page(
+            "tag suggestions",
+            vec![boxed(
+                "suggested tags",
+                vec![
+                    int(
+                        "Width of suggested tags columns: ",
+                        (20, 65535),
+                        |s| i64::from(s.tag_suggestions.width),
+                        |s, v| s.tag_suggestions.width = v as u32,
+                    ),
+                    choice(
+                        "Column layout: ",
+                        &["notebook", "side-by-side"],
+                        |s| usize::from(s.tag_suggestions.columns),
+                        |s, v| s.tag_suggestions.columns = v == 1,
+                    ),
+                    choice(
+                        "Default notebook page: ",
+                        &["most used", "related", "file_lookup_scripts", "recent"],
+                        |s| {
+                            ["favourites", "related", "file_lookup_scripts", "recent"]
+                                .iter()
+                                .position(|v| *v == s.tag_suggestions.default_page)
+                                .unwrap_or(0)
+                        },
+                        |s, v| {
+                            s.tag_suggestions.default_page =
+                                ["favourites", "related", "file_lookup_scripts", "recent"][v]
+                                    .into();
+                        },
+                    ),
+                    opt(
+                        "adjust scores by search tags",
+                        Kind::RelatedWeights,
+                        Rc::new(|s| Value::RelatedWeights(s.related_tags.weights.clone())),
+                        Rc::new(|s, v| {
+                            if let Value::RelatedWeights(weights) = v {
+                                s.related_tags.weights.clone_from(weights);
+                                Ok(())
+                            } else {
+                                Err(wrong("related tag weights"))
+                            }
+                        }),
+                    ),
+                    opt(
+                        "Add your most used tags for each particular service here, and then you can just double-click to add, rather than typing every time.",
+                        Kind::MostUsedTags,
+                        Rc::new(|s| Value::MostUsedTags(s.tag_autocomplete_tabs.most_used.clone())),
+                        Rc::new(|s, v| {
+                            if let Value::MostUsedTags(tags) = v {
+                                s.tag_autocomplete_tabs.most_used.clone_from(tags);
+                                Ok(())
+                            } else {
+                                Err(wrong("most used tags"))
+                            }
+                        }),
                     ),
                 ],
             )],
@@ -3006,14 +4148,111 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s| i64::from(s.thumbnails.video_percentage_in),
                             |s, v| s.thumbnails.video_percentage_in = v as u32,
                         ),
+                        check(
+                            "Fade thumbnails: ",
+                            |s| s.thumbnail_appearance.fade,
+                            |s, v| s.thumbnail_appearance.fade = v,
+                        ),
+                        check(
+                            "Use blurhash missing thumbnail fallback: ",
+                            |s| s.thumbnail_appearance.blurhash,
+                            |s, v| s.thumbnail_appearance.blurhash = v,
+                        ),
                     ],
                 ),
                 boxed(
                     "interaction",
+                    vec![
+                        check(
+                            "When a single thumbnail is selected, show the media viewer's normal top hover file text in the status bar: ",
+                            |s| s.info_line.single_file_in_status_bar,
+                            |s, v| s.info_line.single_file_in_status_bar = v,
+                        ),
+                        check(
+                            "On ctrl-selection, focus thumbnails in the preview window: ",
+                            |s| s.thumbnail_preview_selection.ctrl_focus,
+                            |s, v| s.thumbnail_preview_selection.ctrl_focus = v,
+                        ),
+                        enabled(
+                            check(
+                                "  Only on files with no duration: ",
+                                |s| s.thumbnail_preview_selection.ctrl_only_static,
+                                |s, v| s.thumbnail_preview_selection.ctrl_only_static = v,
+                            ),
+                            |s| s.thumbnail_preview_selection.ctrl_focus,
+                        ),
+                        check(
+                            "On shift-selection, focus thumbnails in the preview window: ",
+                            |s| s.thumbnail_preview_selection.shift_focus,
+                            |s, v| s.thumbnail_preview_selection.shift_focus = v,
+                        ),
+                        enabled(
+                            check(
+                                "  Only on files with no duration: ",
+                                |s| s.thumbnail_preview_selection.shift_only_static,
+                                |s, v| s.thumbnail_preview_selection.shift_only_static = v,
+                            ),
+                            |s| s.thumbnail_preview_selection.shift_focus,
+                        ),
+                        enabled(
+                            check(
+                                "When shift-selecting, move the \"navigate from here\" position with it: ",
+                                |s| s.thumbnail_navigation.shift_moves_origin,
+                                |s, v| s.thumbnail_navigation.shift_moves_origin = v,
+                            ),
+                            |s| {
+                                !s.thumbnail_preview_selection.shift_focus
+                                    || s.thumbnail_preview_selection.shift_only_static
+                            },
+                        ),
+                        int(
+                            "Do not scroll down on key navigation if thumbnail at least this % visible: ",
+                            (1, 99),
+                            |s| i64::from(s.thumbnail_navigation.visibility_percent),
+                            |s, v| s.thumbnail_navigation.visibility_percent = v as u8,
+                        ),
+                        text(
+                            "EXPERIMENTAL: Scroll thumbnails at this rate per scroll tick: ",
+                            |s| s.thumbnail_navigation.scroll_rate.clone(),
+                            |s, v| {
+                                if crate::thumbnail_navigation::parse_rate(v).is_some() {
+                                    v.clone_into(&mut s.thumbnail_navigation.scroll_rate);
+                                }
+                                Ok(())
+                            },
+                        ),
+                    ],
+                ),
+                boxed(
+                    "media background",
+                    vec![opt(
+                        "EXPERIMENTAL: Image path for thumbnail panel background image (set blank to clear): ",
+                        Kind::FilePath,
+                        Rc::new(|s| {
+                            Value::Text(
+                                s.thumbnail_appearance
+                                    .background
+                                    .clone()
+                                    .unwrap_or_default(),
+                            )
+                        }),
+                        Rc::new(|s, v| {
+                            if let Value::Text(v) = v {
+                                s.thumbnail_appearance.background =
+                                    (!v.is_empty()).then(|| v.to_owned());
+                                Ok(())
+                            } else {
+                                Err(wrong("image path"))
+                            }
+                        }),
+                    )],
+                ),
+                boxed(
+                    "New Rendering Tech",
                     vec![check(
-                        "When a single thumbnail is selected, show the media viewer's normal top hover file text in the status bar: ",
-                        |s| s.info_line.single_file_in_status_bar,
-                        |s, v| s.info_line.single_file_in_status_bar = v,
+                        "Use the new thumbnail rendering tech (only applies to new pages): ",
+                        |s| s.thumbnail_appearance.new_renderer,
+                        |s, v| s.thumbnail_appearance.new_renderer = v,
                     )],
                 ),
             ],
@@ -3026,7 +4265,10 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 |s, v| s.advanced.0 = v,
             )],
         ),
-    ]
+    ];
+    // Qt sorts all regular pages, then appends advanced after SortList.
+    pages.sort_by_key(|page| (page.name == "advanced", page.name));
+    pages
 }
 
 /// The options' values as the controls start with them.
@@ -3037,8 +4279,15 @@ pub fn values(pages: &[Page], settings: &Settings) -> Vec<Vec<Value>> {
             page.options()
                 .iter()
                 .map(|option| match (&option.kind, (option.get)(settings)) {
+                    (Kind::Bytes, Value::Bytes { amount, unit }) => Value::Bytes {
+                        amount: amount.clamp(0, 1_048_576),
+                        unit: unit.min(4),
+                    },
                     (Kind::Int { min, max }, Value::Int(number)) => {
                         Value::Int(number.clamp(*min, *max))
+                    }
+                    (Kind::Noneable { min, max, .. }, Value::Noneable(number)) => {
+                        Value::Noneable(number.map(|number| number.clamp(*min, *max)))
                     }
                     (
                         Kind::NoneableDuration { units, min, .. },
@@ -3070,12 +4319,34 @@ pub fn applied(
     let mut problems = Vec::new();
     for (page, values) in pages.iter().zip(values) {
         for (option, value) in page.options().into_iter().zip(values) {
-            if (option.get)(settings) != *value
+            // These Qt TimeDeltaWidgets write their current fields on unchanged Apply.
+            // Their getters normalize imported bounds; replaying those fields once avoids
+            // truncating an explicitly entered fractional millisecond a second time.
+            let accept_displayed = matches!(
+                option.label,
+                "FFMPEG call timeout:"
+                    | "EXPERIMENTAL: Minimum gallery importer update time:"
+                    | "EXPERIMENTAL: Minimum watcher importer update time:"
+                    | "Application display name: "
+                    | "Start animations this % in:"
+                    | "When maintenance physically deletes files, wait this long between each delete: "
+            );
+            if ((option.get)(settings) != *value || accept_displayed)
                 && let Err(why) = (option.set)(&mut out, value)
             {
                 problems.push(why);
             }
         }
+    }
+    // The three idle controls expose minute values, so Qt UpdateOptions writes
+    // their displayed floor/bounds even when the user did not edit a control.
+    // Keep the imported raw seconds until this explicit acceptance boundary.
+    for seconds in [
+        &mut out.gui_idle.user_seconds,
+        &mut out.gui_idle.mouse_seconds,
+        &mut out.gui_idle.api_seconds,
+    ] {
+        *seconds = normalise_idle_timeout(*seconds);
     }
     (out, problems)
 }
@@ -3100,11 +4371,17 @@ pub struct Suggestion {
 pub fn suggestions(pages: &[Page]) -> Vec<Suggestion> {
     fn walk(items: &[Item], page: usize, name: &str, row: &mut usize, out: &mut Vec<Suggestion>) {
         for item in items {
-            let text = match item {
-                Item::Box(title, _) => title,
-                Item::Opt(option) => option.label,
+            // Compound native editors have an internal row label, while Qt's
+            // completer sees their actual embedded group-box titles.
+            let labels: &[&str] = match item {
+                Item::Box(title, _) => std::slice::from_ref(title),
+                Item::Opt(option) => match option.kind {
+                    Kind::OpenExternally => &["URL calls", "single file calls"],
+                    Kind::Shortcuts => &["built-in hydrus shortcut sets", "custom user sets"],
+                    _ => std::slice::from_ref(&option.label),
+                },
             };
-            if !text.is_empty() {
+            for text in labels.iter().filter(|text| !text.is_empty()) {
                 out.push(Suggestion {
                     text: format!("{text} ({name})"),
                     page,
@@ -3220,6 +4497,8 @@ pub struct Editor {
     pages: Vec<Page>,
     before: Settings,
     values: Vec<Vec<Value>>,
+    // Real TagSortControl keeps independent text/count choices until owner close.
+    tag_orders: std::collections::BTreeMap<(usize, usize), crate::manage_tags_sort::Control>,
     /// Each noneable number's number while it is none (as the reference's
     /// spin box keeps it).
     numbers: Vec<Vec<i64>>,
@@ -3264,6 +4543,7 @@ impl Editor {
             pages,
             before: settings,
             values,
+            tag_orders: std::collections::BTreeMap::new(),
             numbers,
             page,
             suggestions,
@@ -3445,13 +4725,21 @@ impl Editor {
             return;
         };
         match self.kind(i) {
-            Kind::Int { .. } => self.values[self.page][i] = Value::Int(number),
+            Kind::Bytes => {
+                if let Value::Bytes { amount, .. } = &mut self.values[self.page][i] {
+                    *amount = number.clamp(0, 1_048_576);
+                }
+            }
+            Kind::Int { min, max } => {
+                self.values[self.page][i] = Value::Int(number.clamp(*min, *max));
+            }
             Kind::Velocity { .. } => {
                 if let Value::Velocity(_, seconds) = self.values[self.page][i] {
                     self.values[self.page][i] = Value::Velocity(number, seconds);
                 }
             }
-            Kind::Noneable { .. } => {
+            Kind::Noneable { min, max, .. } => {
+                let number = number.clamp(*min, *max);
                 self.numbers[self.page][i] = number;
                 if let Value::Noneable(Some(_)) = self.values[self.page][i] {
                     self.values[self.page][i] = Value::Noneable(Some(number));
@@ -3483,6 +4771,9 @@ impl Editor {
         let value = &mut self.values[self.page][i];
         *value = match (self.pages[self.page].options()[i].kind.clone(), &*value) {
             (Kind::Float { .. }, _) => Value::Float(text.to_owned()),
+            (Kind::Text, Value::PlainNoneableText(_)) => {
+                Value::PlainNoneableText(Some(text.to_owned()))
+            }
             (Kind::NoneableText { .. }, Value::NoneableText { none, .. }) => Value::NoneableText {
                 none: *none,
                 text: text.to_owned(),
@@ -3523,7 +4814,11 @@ impl Editor {
 
     pub fn choose(&mut self, row: usize, index: usize) {
         if let Some(i) = self.option_at(row) {
-            self.values[self.page][i] = Value::Choice(index);
+            if let Value::Bytes { unit, .. } = &mut self.values[self.page][i] {
+                *unit = index.min(4);
+            } else {
+                self.values[self.page][i] = Value::Choice(index);
+            }
         }
     }
 
@@ -3569,10 +4864,23 @@ impl Editor {
     /// A tag sort's type, order or grouping chosen (`part` 0, 1 or 2; each
     /// by its place among its choices).
     pub fn tag_sort(&mut self, row: usize, part: usize, index: usize) {
-        if let Some(i) = self.option_at(row)
-            && let Value::TagSort(sort) = &self.values[self.page][i]
-        {
-            self.values[self.page][i] = Value::TagSort(tag_sort_chosen(sort, part, index));
+        if let Some(i) = self.option_at(row) {
+            match &mut self.values[self.page][i] {
+                Value::TagSort(sort) => {
+                    let control = self.tag_orders.entry((self.page, i)).or_insert_with(|| {
+                        crate::manage_tags_sort::Control::new(
+                            hydrus_store::manage_tags_sort::Sort {
+                                order: *sort,
+                                use_siblings: true,
+                            },
+                        )
+                    });
+                    control.choose(part, index);
+                    *sort = control.value.order;
+                }
+                Value::ManageTagsSort(control) => control.choose(part, index),
+                _ => {}
+            }
         }
     }
 
@@ -3696,6 +5004,26 @@ impl Editor {
         }
     }
 
+    /// Raw order preserves empty entries, case, whitespace and duplicate namespaces.
+    pub fn edited_tag_namespace_order(&self) -> Vec<String> {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| match value {
+                Value::TagNamespaceOrder(namespaces) => Some(namespaces.clone()),
+                _ => None,
+            })
+            .unwrap_or_else(|| self.before.tag_presentation.user_namespaces.clone())
+    }
+    pub fn set_tag_namespace_order(&mut self, namespaces: Vec<String>) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::TagNamespaceOrder(_)) {
+                *value = Value::TagNamespaceOrder(namespaces);
+                return;
+            }
+        }
+    }
+
     pub fn edited_namespace_sorts(&self) -> Vec<PageSort> {
         self.values
             .iter()
@@ -3712,6 +5040,28 @@ impl Editor {
                 *value = Value::NamespaceSorts(sorts);
                 return;
             }
+        }
+    }
+
+    pub fn edited_shortcuts(&self) -> hydrus_core::shortcuts::Settings {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| match value {
+                Value::Shortcuts(settings) => Some(settings.clone()),
+                _ => None,
+            })
+            .unwrap_or_else(|| self.before.shortcuts.clone())
+    }
+
+    pub fn set_shortcuts(&mut self, settings: hydrus_core::shortcuts::Settings) {
+        if let Some(value) = self
+            .values
+            .iter_mut()
+            .flatten()
+            .find(|v| matches!(v, Value::Shortcuts(_)))
+        {
+            *value = Value::Shortcuts(settings);
         }
     }
 
@@ -3738,6 +5088,52 @@ impl Editor {
             .find(|v| matches!(v, Value::FrameLocations(_)))
         {
             *value = Value::FrameLocations(frames);
+        }
+    }
+
+    /// Registered calls staged by the external programs table.
+    pub fn edited_open_externally(&self) -> hydrus_core::open_externally::Routing {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| match value {
+                Value::OpenExternally(routing) => Some(routing.clone()),
+                _ => None,
+            })
+            .unwrap_or_else(|| self.before.open_externally.clone())
+    }
+    pub fn set_open_externally(&mut self, routing: hydrus_core::open_externally::Routing) {
+        if let Some(value) = self
+            .values
+            .iter_mut()
+            .flatten()
+            .find(|value| matches!(value, Value::OpenExternally(_)))
+        {
+            *value = Value::OpenExternally(routing);
+        }
+    }
+    pub fn edited_external_calls(&self) -> hydrus_core::external_calls::Manager {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|v| {
+                if let Value::ExternalCalls(calls) = v {
+                    Some(calls.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| self.before.external_calls.clone())
+    }
+    /// Replace only the external-call draft, regardless of the visible page.
+    pub fn set_external_calls(&mut self, calls: hydrus_core::external_calls::Manager) {
+        if let Some(v) = self
+            .values
+            .iter_mut()
+            .flatten()
+            .find(|v| matches!(v, Value::ExternalCalls(_)))
+        {
+            *v = Value::ExternalCalls(calls);
         }
     }
 
@@ -3801,6 +5197,53 @@ impl Editor {
             .unwrap_or_else(|| self.before.favourite_tags.clone())
     }
 
+    /// Detached namespace tables; child acceptance stages, parent acceptance saves.
+    pub fn edited_related_weights(&self) -> hydrus_store::related_tags::Weights {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|v| {
+                if let Value::RelatedWeights(weights) = v {
+                    Some(weights.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| self.before.related_tags.weights.clone())
+    }
+    pub fn set_related_weights(&mut self, weights: hydrus_store::related_tags::Weights) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::RelatedWeights(_)) {
+                *value = Value::RelatedWeights(weights);
+                return;
+            }
+        }
+    }
+
+    /// Per-service most-used draft; accepting a child never writes preferences.
+    pub fn edited_most_used_tags(&self) -> std::collections::BTreeMap<String, Vec<String>> {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|v| {
+                if let Value::MostUsedTags(tags) = v {
+                    Some(tags.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| self.before.tag_autocomplete_tabs.most_used.clone())
+    }
+    /// Replace only the staged most-used map; its writer merges changed services.
+    pub fn set_most_used_tags(&mut self, tags: std::collections::BTreeMap<String, Vec<String>>) {
+        for v in self.values.iter_mut().flatten() {
+            if matches!(v, Value::MostUsedTags(_)) {
+                *v = Value::MostUsedTags(tags);
+                return;
+            }
+        }
+    }
+
     /// Accept the child draft; only the parent Apply writes these tags.
     pub fn set_favourite_tags(&mut self, tags: &[String]) {
         let mut tags: Vec<String> = tags
@@ -3814,6 +5257,44 @@ impl Editor {
         for value in self.values.iter_mut().flatten() {
             if matches!(value, Value::FavouriteTags(_)) {
                 *value = Value::FavouriteTags(FavouriteTags(tags));
+                return;
+            }
+        }
+    }
+
+    pub fn edited_gui_colours(&self) -> hydrus_store::gui_colours::Settings {
+        self.applied().0.gui_colours
+    }
+    pub fn set_gui_colour(&mut self, set: usize, role: usize, rgb: hydrus_store::services::Rgb) {
+        for value in self.values.iter_mut().flatten() {
+            if let Value::GuiColours(sets) = value
+                && let Some(colour) = sets.get_mut(set).and_then(|set| set.get_mut(role))
+            {
+                *colour = rgb;
+                return;
+            }
+        }
+    }
+
+    /// Current namespace RGB list staged independently of the OR namespace field.
+    pub fn edited_namespace_colours(&self) -> crate::namespace_colours::Colours {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| {
+                if let Value::NamespaceColours(colours) = value {
+                    Some(colours.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| self.before.namespace_colours.colours.clone())
+    }
+    /// Accept an owned namespace operation into the Options draft only.
+    pub fn set_namespace_colours(&mut self, colours: crate::namespace_colours::Colours) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::NamespaceColours(_)) {
+                *value = Value::NamespaceColours(colours);
                 return;
             }
         }
@@ -3845,7 +5326,11 @@ mod tests {
         let before = settings();
         let pages = pages(&before);
         let mut values = values(&pages, &before);
-        assert_eq!(applied(&pages, &before, &values), (before.clone(), vec![]));
+        let mut displayed = before.clone();
+        // Qt's A-intensity spin box displays the minimum one for the saved
+        // default zero. Every Options Apply accepts that normalization.
+        displayed.duplicate_colours.intensity_a = Some(1);
+        assert_eq!(applied(&pages, &before, &values), (displayed, vec![]));
         let trash = pages
             .iter()
             .position(|p| p.name == "files and trash")
@@ -3956,11 +5441,23 @@ mod tests {
         let pages = pages(&before);
         let ratings = pages.iter().position(|p| p.name == "ratings").unwrap();
         let mut values = values(&pages, &before);
-        // (the media viewer's two, then the thumbnails')
-        values[ratings][2] = Value::Float("200".into());
-        values[ratings][3] = Value::Float("201".into());
-        values[ratings][4] = Value::Check(false);
-        values[ratings][5] = Value::Check(true);
+        let indices = [
+            "Thumbnail like/dislike and numerical rating icon size: ",
+            "Thumbnail inc/dec rating height: ",
+            "Give thumbnail ratings a flat background: ",
+            "Always draw thumbnail numerical ratings collapsed: ",
+        ]
+        .map(|label| {
+            pages[ratings]
+                .options()
+                .iter()
+                .position(|option| option.label == label)
+                .unwrap()
+        });
+        values[ratings][indices[0]] = Value::Float("200".into());
+        values[ratings][indices[1]] = Value::Float("201".into());
+        values[ratings][indices[2]] = Value::Check(false);
+        values[ratings][indices[3]] = Value::Check(true);
         let (after, problems) = applied(&pages, &before, &values);
         assert_eq!(
             problems,
@@ -3974,16 +5471,16 @@ mod tests {
         );
         assert!(!ratings_after.background);
         assert!(ratings_after.numerical_collapsed);
-        values[ratings][3] = Value::Float("1.5".into());
+        values[ratings][indices[1]] = Value::Float("1.5".into());
         assert_eq!(applied(&pages, &before, &values).1.len(), 1, "below 2");
-        values[ratings][3] = Value::Float("2".into());
+        values[ratings][indices[1]] = Value::Float("2".into());
         let (after, problems) = applied(&pages, &before, &values);
         assert!(problems.is_empty());
         assert_eq!(after.thumbnail_ratings.incdec_height, 2.0);
         // (and they show as they are)
         let shown = super::values(&pages, &after);
         assert_eq!(
-            shown[ratings][2..],
+            indices.map(|index| shown[ratings][index].clone()),
             [
                 Value::Float("200.0".into()),
                 Value::Float("2.0".into()),

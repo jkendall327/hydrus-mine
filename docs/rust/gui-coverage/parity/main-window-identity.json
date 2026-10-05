@@ -1,0 +1,367 @@
+{
+  "schema_version": 1,
+  "agent": "main-window-identity",
+  "baseline_git_head": "5e38197396314b3e4ca7ddaf587b6f4e63999001",
+  "source_commit": "8324a632e5af043ccced999225dfecf48d0a424c",
+  "implementation_commits": [
+    "3f4e399cef47b801fe8e37dc4752841c9143bd07",
+    "8324a632e5af043ccced999225dfecf48d0a424c"
+  ],
+  "frozen_original_inventory": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "frozen_options_audit": {
+    "path": "docs/rust/gui-coverage/audit/options-patch.json",
+    "baseline_git_head": "5079206dc1d0c2d2614b428632dc9499cb9ad3f8",
+    "sha256": "05fb770dc87d8b03cd0e1a4dbd509de61d48e0dc1c87c7c7032a9aeb4adce20b",
+    "before": {
+      "audit-options-gui-main-window-application-display-name": "missing",
+      "audit-options-gui-main-window-switch-to-main-window-when-creating-new-file-search-page-from-media-viewer": "missing"
+    }
+  },
+  "eligibility": {
+    "completed_ledger_path": "docs/rust/gui-coverage/overnight/progress.json",
+    "completed_ledger_at_base_sha256": "168d8057e3b023cf822af82b703b4fe018baba266694d06b5c7ae79bf1d20ca6",
+    "listed_ids_already_completed": [],
+    "existing_parity_packets_with_listed_ids": [],
+    "note": "Both frozen original concrete IDs are Missing and absent both validated completed-ID arrays and all prior parity packets. Application display name already has an overnight concrete-leaf Partial implementation proposal; it is a refinement below, never a new claim or completion. Activation has no prior proposal. Exact IDs and semantically related completed/packet entries were inspected before edits."
+  },
+  "eligible_concrete_first_pass_count": 0,
+  "parent_promotions": 0,
+  "claims": [
+    {
+      "id": "audit-options-gui-main-window-switch-to-main-window-when-creating-new-file-search-page-from-media-viewer",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Saved typed default-off activation control with legacy import, staged Cancel/Apply/reopen and a real native single-tag hover middle-press producer. Canonical tags come from Store-backed page rows before namespace/underscore rendering; the current file and fresh tag membership are revalidated before a typed Predicate::Tag is sent through the captured main binding launcher. Searches preserve viewer location and saved default tag service, sort/collect and normal page/session consumers. The owned batch consumer samples policy once and requests activation only for its first nonempty page; native has_focus skips already-active windows and focus_window performs Windows/macOS/X11 focus/raise. Canvas permanent retirement, exact visible viewer slot, main binding incarnation/visibility and pending question/warning/slideshow-period/owned advanced-delete dialogs reject stale actions. Hidden/re-shown live owners and declined close remain usable; accepted close/re-show, retained stale file, former viewer or main rebind cannot route to a successor global launcher.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/GUIPanel.py",
+        "line": 29,
+        "symbol": "self._activate_window_on_tag_search_page_activation = QW.QCheckBox",
+        "line_sha256": "46873469c33f74126af5ef5c7ca6693f03403ed77148ab805a1a67e8dde0f46e"
+      },
+      "reference_anchors": [
+        {
+          "relativepath": "hydrus/client/ClientOptions.py",
+          "line": 152,
+          "symbol": "'activate_window_on_tag_search_page_activation' : False",
+          "line_sha256": "66de67c7101b50b6e322cbc92eb06ded9cbc1b79db6871d38d1f3f014ab8ef2e"
+        },
+        {
+          "relativepath": "hydrus/client/gui/panels/options/GUIPanel.py",
+          "line": 29,
+          "symbol": "self._activate_window_on_tag_search_page_activation = QW.QCheckBox",
+          "line_sha256": "46873469c33f74126af5ef5c7ca6693f03403ed77148ab805a1a67e8dde0f46e"
+        },
+        {
+          "relativepath": "hydrus/client/gui/panels/options/GUIPanel.py",
+          "line": 390,
+          "symbol": "self._new_options.SetBoolean( 'activate_window_on_tag_search_page_activation'",
+          "line_sha256": "5d8d692dd41bea4f60dd26b5f84908fd822191ecea7d5034495e3ab3831ab322"
+        },
+        {
+          "relativepath": "hydrus/client/gui/lists/ClientGUIListBoxes.py",
+          "line": 3320,
+          "symbol": "def _NewSearchPages( self, pages_of_predicates ):",
+          "line_sha256": "a397d9753e49beec86d3ad47db08e7c31308d033a0c03ea911cc0a7c82f58b7e"
+        },
+        {
+          "relativepath": "hydrus/client/gui/lists/ClientGUIListBoxes.py",
+          "line": 3343,
+          "symbol": "activate_window = False",
+          "line_sha256": "4cbb262e497364d5a32b1f85b7142e10345db41b10d57dae2b3744f9a631c48e"
+        },
+        {
+          "relativepath": "hydrus/client/gui/lists/ClientGUIListBoxes.py",
+          "line": 3465,
+          "symbol": "if event.button() == QC.Qt.MouseButton.MiddleButton:",
+          "line_sha256": "9958e8255804f19b96cacead921b12f950803c7131c157f6c0eeb3434525cc63"
+        },
+        {
+          "relativepath": "hydrus/client/gui/lists/ClientGUIListBoxes.py",
+          "line": 5442,
+          "symbol": "class ListBoxTagsMediaHoverFrame",
+          "line_sha256": "65790b559213fde29f1fb7720a2a6f7526aa896555433bb48f9f7a0a7f6e34a7"
+        },
+        {
+          "relativepath": "hydrus/client/gui/ClientGUI.py",
+          "line": 8258,
+          "symbol": "    def NewPageQuery(",
+          "line_sha256": "4418f9673da4c8d6722fe385e695fc358d2980d6686629dcae6c90aa6c809647"
+        }
+      ],
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 327,
+          "symbol": "pub struct TagSearchActivation",
+          "line_sha256": "c77fc916e4f590587ca4f03ce45a1d7c03da3b9db93f7ba04d536724da618c6c",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 332,
+          "symbol": "const KEY: &'static str = \"tag_search_activation\"",
+          "line_sha256": "92f2ef169cc25c381a7d484501c3b6bcd89e02e76ed005ba65bc583a3542debf",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 541,
+          "symbol": "let tag_search = crate::settings::TagSearchActivation",
+          "line_sha256": "106324c68c5067e520f27ac69b9b3225cc520b59c03488188e39a83cb3613e5e",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 4828,
+          "symbol": "fn main_identity_import_preserves_raw_name_and_saved_tag_activation()",
+          "line_sha256": "d725e1595b14872523d9e2012ea780df72062a1f5fee401ec511ccc441f791b7",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 276,
+          "symbol": "tag_search_activation: hydrus_store::settings::TagSearchActivation",
+          "line_sha256": "da1209106ec02edb562c15a4995ecf4aff0b5330a5825817db7a7b0028b9fb08",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2300,
+          "symbol": "\"Switch to main window when creating new file search page from media viewer: \"",
+          "line_sha256": "41a400994c19652ea08d150f73365d0f541971610d65c86a3d82b7a184357752",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/main_identity.rs",
+          "line": 32,
+          "symbol": "pub(crate) fn activate_if_inactive",
+          "line_sha256": "87ed1a9f797aeaea4fbdf923d26ea53015fdc89ce4b745fa007869e89cb08e54",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/main_identity.rs",
+          "line": 36,
+          "symbol": "winit::window::Window::has_focus",
+          "line_sha256": "25735f9e51e42c72519f27c75faef15d80b6eff05b3068148f3e1f20ff364114",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/main_identity.rs",
+          "line": 46,
+          "symbol": "winit::window::Window::focus_window",
+          "line_sha256": "18e232b2d292fc9248edb1f3b8bad5342637c4b76fdf2cbd829607b6bcaf840e",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/viewer.rs",
+          "line": 179,
+          "symbol": "pub(crate) fn tag_entries",
+          "line_sha256": "35d9fcdbb3e46fdce56de681fc586eb00c4809611d7e6518705f8cc26e575fc3",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/viewer_tag_search.rs",
+          "line": 9,
+          "symbol": "pub(crate) fn refresh",
+          "line_sha256": "a6a6ea432b3a44763b2597715c174122f2960e58b05f33e793669a5e03f935b4",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/viewer_tag_search.rs",
+          "line": 35,
+          "symbol": "window.on_tag_search_requested",
+          "line_sha256": "ebf82962b0c9b2bfe3acf1c89e6ffd7eec5ec6be33bd49436a5a3197e6d547c1",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/viewer_tag_search.rs",
+          "line": 36,
+          "symbol": "if !tracker.active() || !owner()",
+          "line_sha256": "a1c4cfc3547bd7160aa20ed9cc3d5e64dff48ca2d0dceccfab030a54d1fcc3c8",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/viewer_tag_search.rs",
+          "line": 49,
+          "symbol": "file.as_str() != model.current().to_hex()",
+          "line_sha256": "695fc5d6a032bc5478d5c3cb20289cc47319cdd9a25f124e17f06386f0f9d53a",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 729,
+          "symbol": "let tag_search_launcher: write_tag_menu::SearchLauncher",
+          "line_sha256": "26f46531d489b708240f8d13734f8dbd1730341fc3c5ab6500389ebb4aca78f2",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 826,
+          "symbol": "let viewer_tag_search: viewer_tag_search::Launch",
+          "line_sha256": "82606fd770e72678301ba64fcbd753cef98a71e4e1d79b0addf7f2bdde55947e",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 852,
+          "symbol": "let mut activate = settings.activate_main",
+          "line_sha256": "7bfdd741b44a19c08632bf13376f61a483c41609162f128e497371ad46443224",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 857,
+          "symbol": "tag_search_launcher(location.clone(), tags.clone(), predicates, false)",
+          "line_sha256": "15ebda42424bf96d522279fafbb2155fb1ae2d6909fda971bdfc68710201bfce",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 859,
+          "symbol": "main_identity::activate_if_inactive(&window)",
+          "line_sha256": "55b20948b348e5a0f0d4f2c9e55c1110711abb512dac38cff85d7d9859f0b919",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/viewer.slint",
+          "line": 192,
+          "symbol": "callback tag-search-requested(string,string)",
+          "line_sha256": "ed245e3f15c94a56371853ff3242540c860c8edac8180f121f81177dba76804e",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/viewer_tags_hover.slint",
+          "line": 32,
+          "symbol": "root.search(root.file,root.identities[index])",
+          "line_sha256": "d472df5cc6dac298a1128a16dd0bedf6d2079ac66737c7d4aca34a65865ee8d5",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/main_identity.rs",
+          "line": 47,
+          "symbol": "fn actual_middle_press_uses_canonical_tag_location_defaults_and_saved_activation()",
+          "line_sha256": "b0d30590c0321781be0dcc504267a954ae7a7db1d5845612f5d62d2624fe6a9b",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/main_identity.rs",
+          "line": 176,
+          "symbol": "fn stale_file_hidden_closed_reshown_and_rebound_viewers_cannot_launch()",
+          "line_sha256": "83c9cf02d6ba918ad0766464e7112ad1a5b5cc389430a4546415448c469f7939",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "oracle/record_main_window_identity.py",
+          "line": 20,
+          "symbol": "def record(session):",
+          "line_sha256": "5d8f3da7e90a56971fc931a2718571d7065d1d7bdacdab73c7cc84b9f660e4bd",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        }
+      ],
+      "limits": [
+        "Partial/0: Winit focus_window is unsupported/no-op on Wayland; no equivalent safe existing-window activation API with the originating input token is available in this backend. OS focus grant is not proven by headless dispatch counters.",
+        "Single-tag viewer hover production is implemented. Native multi-tag selection, shift-OR and multi-page viewer menus and activation from child manage/write tag lists remain unfinished. No credit is claimed for those surfaces or any parent/alias.",
+        "Rust, Clippy and native/render assertions are authored only, pending exact hosted CI and image review."
+      ]
+    }
+  ],
+  "existing_partial_refinements": [
+    {
+      "id": "audit-options-gui-main-window-application-display-name",
+      "original_before": "missing",
+      "existing_progress_status": "partial",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "new_claim": false,
+      "behavior": "Actual raw empty imported names remain raw through constructor/Cancel; unchanged explicit Apply writes hydrus client, and whitespace remains literal. GuiSettings saves only edited fields, retaining unrelated concurrent exit changes and a concurrently replaced name on implicit normalization. Main-title refresh reads the Store captured by the current main binding, with permanent accepted-close retirement and rebind replacement. Existing application-name proposal is refined, not duplicated.",
+      "reference_anchors": [
+        {
+          "relativepath": "hydrus/client/gui/panels/options/GUIPanel.py",
+          "line": 394,
+          "symbol": "if app_display_name == '':",
+          "line_sha256": "2283c8057d174d7012659049e0733be339b38a9920267cb233fd5548a54f7103"
+        },
+        {
+          "relativepath": "hydrus/client/gui/ClientGUIFunctions.py",
+          "line": 430,
+          "symbol": "def UpdateAppDisplayName():",
+          "line_sha256": "e648a0da958fde30434a00085b0a7632e96f7d83eda5a39a9aa83f8515122f70"
+        }
+      ],
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 53,
+          "symbol": "(@save $conn:ident, $after:ident, $before:ident, gui)",
+          "line_sha256": "3cdc703b145e7b32778a44e66a94be6aca814bf0b079f50184c33f3b93314070",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/main_identity.rs",
+          "line": 10,
+          "symbol": "pub(crate) fn bind",
+          "line_sha256": "08ab9a8779ddc37615c13b20e234266360de52ff1cde0561ee5b58162a598f72",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/main_identity.rs",
+          "line": 12,
+          "symbol": "window.on_refresh_application_title",
+          "line_sha256": "5d0977be584bf05834ebec76f312a8a7710efc37948352b90dd46a6fe2686f6c",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 6989,
+          "symbol": "window.invoke_refresh_application_title()",
+          "line_sha256": "74446c142ab0abd19c8603c630700d946ada57e68be7b0c8066ba9ea26445dcc",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/main_identity.rs",
+          "line": 25,
+          "symbol": "fn constructor_cancel_unchanged_apply_and_reopen_match_raw_qt_names()",
+          "line_sha256": "8dcfe4ec5b95dda1dae2004dcc6cae8075039698f29cf0c48e0394037c030e2b",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/main_identity.rs",
+          "line": 70,
+          "symbol": "fn implicit_name_normalisation_and_other_fields_preserve_concurrent_updates()",
+          "line_sha256": "f1170106d21af4dfc309e7acc95018beabfa904c50720f39fc9b4740be02684b",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/main_identity.rs",
+          "line": 330,
+          "symbol": "fn raw_name_apply_cancel_and_title_refresh_are_scoped_to_the_current_main_binding()",
+          "line_sha256": "d5fce7b47548a3b7569e631f16f8cc1746531d3069dcfeae719628910a95ec4e",
+          "commit": "8324a632e5af043ccced999225dfecf48d0a424c"
+        }
+      ],
+      "limits": [
+        "Qt QApplication applicationDisplayName and all existing top-level identity/decoration propagation remain unported; native main title is not the full application display-name contract.",
+        "Existing Partial status and zero credit are retained."
+      ]
+    }
+  ],
+  "actual_qt_recording": {
+    "recorder": "oracle/record_main_window_identity.py",
+    "fixture": "oracle/fixtures/main_window_identity.json",
+    "fixture_sha256": "4d2fc6b6f80612edca6fb41af3da9fd7a8195362f5b09dc41372050de7f3effc",
+    "run_utc": "2026-10-05 08:55:08\u201308:55:11 UTC",
+    "result": "Real Qt run completed with normal shutdown. Five raw constructor/staging/Apply/Cancel/reopen cases; four default/enabled/inactive/active/batch search cases, real hover middle-press event-filter dispatch and cancelled activation edit. New-page publication is synchronously delivered to the real Main.NewPageQuery consumer, documented explicitly. Activate wrappers delegate to Qt; offscreen activation request recording does not prove desktop focus grants. Child raw QWidget/QWindow titles remain unchanged when QApplication display name changes. Basic fixture API listener is blocked by sandbox sockets; no feature exception or recording failure occurred."
+  },
+  "authored_native_artifacts": [
+    "viewer-tag-search.png"
+  ],
+  "authored_native_artifact_count": 1,
+  "validation": {
+    "source_checks": "Direct rustfmt check, Python recorder syntax, git diff --check and cached Slint source compilation passed; no Cargo or local Rust execution. Authored import replacement patterns also matched retained basic-fixture bytes in a private read-only extraction.",
+    "rust_tests": "Store import/reopen, model real Editor acceptance/concurrent field merge and native Options/pointer/canonical identity/owner/title regressions authored, not executed locally. Hosted CI pending.",
+    "independent_review": "repair_namespace_contract independently accepted source 3f4e399cef47b801fe8e37dc4752841c9143bd07, correction 8324a632e5af043ccced999225dfecf48d0a424c and final packet. Verified all 42 anchor occurrences (31 source and 10 distinct reference), source pins/symbols/line hashes, fixture/audit/progress hashes, exactly one frozen Missing-to-Partial countfalse activation claim, appname only existing_partial_refinements, zero FirstPass/parents and no duplicate claims. Period and owned advanced-delete guards, actual prompt/Cancel assertions and show-only launcher fixture corrections accepted. No remaining bounded source blocker; hosted Rust/native execution and image review remain pending.",
+    "render": "One native viewer-tag-search.png is authored for hosted execution; native image inspection and desktop activation validation remain pending."
+  },
+  "untouched_scope": "No family parent, alias or completion metric is promoted; application-wide identity, Wayland activation, child tag-list activation and viewer multi-tag/OR/multi-page menu producers remain Partial. No canonical inventory, ledger, reference-source edit or push."
+}

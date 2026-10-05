@@ -15,7 +15,7 @@ use hydrus_store::Store;
 
 pub use crate::predicate_editors::button_label;
 use crate::predicate_editors::{
-    Context, Editor, Field, Panel, Pressed,
+    Blank, Context, Editor, Field, Kind, Panel, Pressed,
     defaults::{CustomDefaults, CustomDefaultsExt},
 };
 use crate::{EditorField, EditorPanel, EditorTreeRow, PredicateEditorWindow};
@@ -43,7 +43,13 @@ fn field_row(panel: &Panel, i: usize) -> EditorField {
             row.text = text.as_str().into();
         }
         Field::Choice { options, chosen } => {
-            row.kind = 1;
+            row.kind = if panel.kind == Kind::Size && i == 1 {
+                8
+            } else if panel.kind == Kind::Hash {
+                9
+            } else {
+                1
+            };
             row.options = strings(options);
             row.chosen = i32::try_from(*chosen).unwrap_or(0);
             // (room for the longest option, and the arrow)
@@ -89,6 +95,16 @@ fn field_row(panel: &Panel, i: usize) -> EditorField {
         }
     }
     row
+}
+
+fn hash_text(panel: &Panel) -> SharedString {
+    if panel.kind == Kind::Hash
+        && let Field::Lines { text, .. } = &panel.fields[2]
+    {
+        text.as_str().into()
+    } else {
+        SharedString::new()
+    }
 }
 
 /// A panel's fields as the window shows them.
@@ -138,10 +154,18 @@ impl State {
                 EditorPanel {
                     fields: ModelRc::from(rows.clone()),
                     two_lines: !panel.second_line.is_empty(),
+                    hash_layout: panel.kind == Kind::Hash,
+                    hash_text: hash_text(panel),
                 },
             );
             self.fields[p] = rows;
             return;
+        }
+        if panel.kind == Kind::Hash
+            && let Some(mut row) = self.panels.row_data(p)
+        {
+            row.hash_text = hash_text(panel);
+            self.panels.set_row_data(p, row);
         }
         let model = &self.fields[p];
         for i in 0..panel.fields.len() {
@@ -150,10 +174,16 @@ impl State {
             // The active input already shows what was typed. A button also
             // synchronizes cached text before freezing or cleaning that draft.
             let redrawn = matches!(panel.fields[i], Field::Ticks { .. } | Field::Tree { .. });
+            let size_control = panel.kind == Kind::Size && matches!(i, 1..=3);
+            let hash_control = panel.kind == Kind::Hash;
             let changed = (redrawn && Some(i) == set)
                 || old.as_ref().is_none_or(|old| {
                     old.shown != row.shown
                         || old.enabled != row.enabled
+                        || ((size_control || hash_control)
+                            && (old.chosen != row.chosen
+                                || old.value != row.value
+                                || old.text != row.text))
                         || (set.is_none() && old.text != row.text)
                 });
             if changed {
@@ -165,7 +195,9 @@ impl State {
 
 /// The file whose path the clipboard holds: its pixel and perceptual
 /// hashes, as the reference's "Paste image!" takes them.
-fn pasted_hashes() -> Result<(hydrus_core::Sha256, Vec<hydrus_core::PerceptualHash>), String> {
+fn pasted_hashes(
+    store: &Arc<Store>,
+) -> Result<(hydrus_core::Sha256, Vec<hydrus_core::PerceptualHash>), String> {
     let text = arboard::Clipboard::new()
         .and_then(|mut c| c.get_text())
         .map_err(|_| "Did not see an image bitmap or a file path in the clipboard!".to_owned())?;
@@ -173,7 +205,9 @@ fn pasted_hashes() -> Result<(hydrus_core::Sha256, Vec<hydrus_core::PerceptualHa
     if !path.is_file() {
         return Err("Sorry, that clipboard text did not look like a valid file path!".into());
     }
-    hydrus_media::MediaTools::new().similar_search_hashes(&path)
+    hydrus_import::FileImporter::new(store.clone(), hydrus_media::MediaTools::new())
+        .tools()
+        .similar_search_hashes(&path)
 }
 
 /// The recent predicates kept in `store`.
@@ -212,12 +246,34 @@ pub(crate) fn open(
         .map_err(|e| e.to_string())?;
     editor.apply_defaults(&defaults, &context);
     let window = PredicateEditorWindow::new().map_err(|e| e.to_string())?;
+    window.set_editing_existing(editor.supplied.is_some());
+    window.set_batch_mode(editor.batch.is_some());
+    if let Some(batch) = &editor.batch {
+        window.set_simple_texts(ModelRc::new(VecModel::from(
+            batch
+                .simple
+                .iter()
+                .map(|s| SharedString::from(s.as_str()))
+                .collect::<Vec<_>>(),
+        )));
+        window.set_invertible_labels(ModelRc::new(VecModel::from(
+            batch
+                .invertible
+                .iter()
+                .map(|p| SharedString::from(predicate_text(p, &text)))
+                .collect::<Vec<_>>(),
+        )));
+    }
     let closed = Rc::new(Cell::new(false));
     let valid: Rc<dyn Fn() -> bool> = Rc::new({
         let closed = closed.clone();
         let owner = owner.clone();
         move || !closed.get() && owner.as_ref().is_none_or(|owner| owner())
     });
+    let notices = Rc::new(crate::predicate_notice::Notices::new(
+        &window,
+        valid.clone(),
+    ));
     window.set_note(editor.note.clone().unwrap_or_default().into());
     let names: Vec<SharedString> = if editor.pages.len() > 1 {
         editor
@@ -230,6 +286,8 @@ pub(crate) fn open(
     };
     window.set_pages(ModelRc::new(VecModel::from(names)));
     window.set_two_columns(editor.blank == crate::predicate_editors::Blank::FileProperties);
+    let filesize = editor.blank == Blank::Filesize;
+    let hash = editor.blank == Blank::Hash;
     let state = Rc::new(RefCell::new(State {
         editor,
         context,
@@ -238,6 +296,46 @@ pub(crate) fn open(
         fields: Vec::new(),
         recent: Vec::new(),
     }));
+    window.on_force_radio_ok({
+        let state = state.clone();
+        let valid = valid.clone();
+        let weak = window.as_weak();
+        let store = store.clone();
+        move |panel| {
+            if !valid() {
+                return false;
+            }
+            let Some(window) = weak.upgrade() else {
+                return false;
+            };
+            if !window.window().is_visible()
+                || !window.get_question().is_empty()
+                || window.get_notice_open()
+            {
+                return false;
+            }
+            let Ok(index) = usize::try_from(panel) else {
+                return false;
+            };
+            if !state
+                .borrow()
+                .panels()
+                .get(index)
+                .is_some_and(|panel| matches!(panel.kind, Kind::Size | Kind::Hash))
+            {
+                return false;
+            }
+            // Remember the focused radio panel before an unforced key bubbles.
+            window.set_radio_default_panel(panel);
+            match store.read(hydrus_store::radio_return::load) {
+                Ok(policy) => policy.force_dialog_ok,
+                Err(error) => {
+                    eprintln!("Could not read the radio Return preference: {error}");
+                    false
+                }
+            }
+        }
+    });
     let text = Rc::new(text);
     // show page `page`
     let show_page = {
@@ -251,13 +349,14 @@ pub(crate) fn open(
                 return;
             }
             let Some(window) = weak.upgrade() else { return };
-            if !window.get_question().is_empty() {
+            if !window.get_question().is_empty() || window.get_notice_open() {
                 return;
             }
             let mut state = state.borrow_mut();
             if page >= state.editor.pages.len() {
                 return;
             }
+            window.set_radio_default_panel(-1);
             state.page = page;
             let shown = &state.editor.pages[page];
             let labels: Vec<SharedString> = shown
@@ -274,6 +373,8 @@ pub(crate) fn open(
                     .map(|(f, panel)| EditorPanel {
                         fields: ModelRc::from(f.clone()),
                         two_lines: !panel.second_line.is_empty(),
+                        hash_layout: panel.kind == Kind::Hash,
+                        hash_text: hash_text(panel),
                     })
                     .collect::<Vec<_>>(),
             ));
@@ -288,14 +389,30 @@ pub(crate) fn open(
             window.set_recent(ModelRc::new(VecModel::from(recent)));
             window.set_page(i32::try_from(page).unwrap_or(0));
             window.set_buttons(ModelRc::new(VecModel::from(labels)));
+            window.set_edit_order(ModelRc::new(VecModel::from(
+                state.editor.batch.as_ref().map_or_else(
+                    || {
+                        (0..panels.row_count())
+                            .filter_map(|i| i32::try_from(i).ok())
+                            .collect()
+                    },
+                    |b| b.order.clone(),
+                ),
+            )));
             window.set_panels(ModelRc::from(panels));
+            if let Some(panel) = state.panels().iter().find(|panel| panel.kind == Kind::Hash)
+                && let Field::Lines { text, .. } = &panel.fields[2]
+            {
+                window.set_hash_text(text.as_str().into());
+            }
             window.set_error(SharedString::new());
         }
     };
     show_page(0);
     let close = {
         let weak = window.as_weak();
-        let slot = slot.clone();
+        let slot = Rc::downgrade(slot);
+        let notices = notices.clone();
         let closed = closed.clone();
         move || {
             if closed.replace(true) {
@@ -305,7 +422,16 @@ pub(crate) fn open(
             if let Some(window) = &window {
                 let _ = window.hide();
             }
-            slot.borrow_mut().take();
+            if let (Some(slot), Some(window)) = (slot.upgrade(), window.as_ref()) {
+                let owns = slot
+                    .borrow()
+                    .as_ref()
+                    .is_some_and(|current| std::ptr::eq(current.window(), window.window()));
+                if owns {
+                    slot.borrow_mut().take();
+                }
+            }
+            notices.cancel();
             if let Some(window) = window {
                 window.invoke_closed();
             }
@@ -323,7 +449,8 @@ pub(crate) fn open(
                 return;
             }
             if weak.upgrade().is_none_or(|window| {
-                !window.window().is_visible() || !window.get_question().is_empty()
+                !window.window().is_visible()
+                    || (!window.get_question().is_empty() || window.get_notice_open())
             }) {
                 return;
             }
@@ -331,17 +458,10 @@ pub(crate) fn open(
                 return;
             }
             close();
-            let system: Vec<SystemPredicate> = predicates
-                .iter()
-                .filter_map(|p| match p {
-                    Predicate::System(s) => Some(s.clone()),
-                    _ => None,
-                })
-                .collect();
             if owner.as_ref().is_some_and(|owner| !owner()) {
                 return;
             }
-            change_recent(&store, |recent| recent.push(&system));
+            change_recent(&store, |recent| recent.push_all(&predicates));
             chosen(predicates);
         }
     };
@@ -368,7 +488,8 @@ pub(crate) fn open(
                 return;
             }
             if weak.upgrade().is_none_or(|window| {
-                !window.window().is_visible() || !window.get_question().is_empty()
+                !window.window().is_visible()
+                    || (!window.get_question().is_empty() || window.get_notice_open())
             }) {
                 return;
             }
@@ -407,6 +528,7 @@ pub(crate) fn open(
     // a field set (or, with none, a button pressed): change the panel, and
     // show what that changes; what a button says to the user
     let edit = {
+        let notices = notices.clone();
         let valid = valid.clone();
         let state = state.clone();
         let weak = window.as_weak();
@@ -415,7 +537,8 @@ pub(crate) fn open(
                 return;
             }
             if weak.upgrade().is_none_or(|window| {
-                !window.window().is_visible() || !window.get_question().is_empty()
+                !window.window().is_visible()
+                    || (!window.get_question().is_empty() || window.get_notice_open())
             }) {
                 return;
             }
@@ -426,10 +549,26 @@ pub(crate) fn open(
                 return;
             };
             let before = panel.fields.clone();
+            let hash = panel.kind == Kind::Hash;
             let said = change(panel);
+            let hash_text = hash.then(|| match &panel.fields[2] {
+                Field::Lines { text, .. } => text.clone(),
+                _ => String::new(),
+            });
             state.refresh(p, set.map(index), &before);
+            drop(state);
             if let Some(window) = weak.upgrade() {
-                window.set_error(said.unwrap_or_default().into());
+                if let Some(text) = hash_text {
+                    window.set_hash_text(text.into());
+                }
+                match said {
+                    Some(said) if hash => {
+                        if let Err(error) = notices.show(&said) {
+                            window.set_error(format!("{said}\n{error}").into());
+                        }
+                    }
+                    said => window.set_error(said.unwrap_or_default().into()),
+                }
             }
         }
     };
@@ -489,6 +628,7 @@ pub(crate) fn open(
     });
     let pending_question = Rc::new(RefCell::new(None));
     window.on_pressed({
+        let store = store.clone();
         let edit = edit.clone();
         let pending_question = pending_question.clone();
         let weak = window.as_weak();
@@ -503,7 +643,7 @@ pub(crate) fn open(
                     }
                     None
                 }
-                Pressed::Paste => match pasted_hashes() {
+                Pressed::Paste => match pasted_hashes(&store) {
                     Ok((pixel, perceptual)) => {
                         panel.paste_hashes(&pixel, &perceptual);
                         None
@@ -547,10 +687,15 @@ pub(crate) fn open(
                 return;
             }
             let Some(window) = weak.upgrade() else { return };
-            if !window.window().is_visible() || !window.get_question().is_empty() {
+            if !window.window().is_visible()
+                || (!window.get_question().is_empty() || window.get_notice_open())
+            {
                 return;
             }
             let state = state.borrow();
+            if state.editor.batch.is_some() {
+                return;
+            }
             let Some(panel) = state.panels().get(index(p)) else {
                 return;
             };
@@ -578,10 +723,15 @@ pub(crate) fn open(
                 return;
             }
             let Some(window) = weak.upgrade() else { return };
-            if !window.window().is_visible() || !window.get_question().is_empty() {
+            if !window.window().is_visible()
+                || (!window.get_question().is_empty() || window.get_notice_open())
+            {
                 return;
             }
             let state = state.borrow();
+            if state.editor.batch.is_some() {
+                return;
+            }
             let Some(panel) = state.panels().get(index(p)) else {
                 return;
             };
@@ -612,7 +762,71 @@ pub(crate) fn open(
             }
         }
     });
+    window.on_simple_edited({
+        let valid = valid.clone();
+        let weak = window.as_weak();
+        let state = state.clone();
+        move |i, value| {
+            if !valid()
+                || weak.upgrade().is_none_or(|w| {
+                    !w.window().is_visible() || !w.get_question().is_empty() || w.get_notice_open()
+                })
+            {
+                return;
+            }
+            if let Some(text) = state
+                .borrow_mut()
+                .editor
+                .batch
+                .as_mut()
+                .and_then(|b| b.simple.get_mut(index(i)))
+            {
+                *text = value.to_string();
+                if let Some(window) = weak.upgrade() {
+                    window.get_simple_texts().set_row_data(index(i), value);
+                }
+            }
+        }
+    });
+    window.on_invertible_clicked({
+        let valid = valid.clone();
+        let weak = window.as_weak();
+        let state = state.clone();
+        let text = text.clone();
+        move |i| {
+            if !valid() {
+                return;
+            }
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if !window.window().is_visible()
+                || !window.get_question().is_empty()
+                || window.get_notice_open()
+            {
+                return;
+            }
+            let mut state = state.borrow_mut();
+            let Some(batch) = state.editor.batch.as_mut() else {
+                return;
+            };
+            let Some(p) = batch.invertible.get_mut(index(i)) else {
+                return;
+            };
+            if let Some(inverse) = p.inverse(&|s| hydrus_search::entry::is_incdec(s, &text)) {
+                *p = inverse;
+            }
+            window.set_invertible_labels(ModelRc::new(VecModel::from(
+                batch
+                    .invertible
+                    .iter()
+                    .map(|p| SharedString::from(predicate_text(p, &text)))
+                    .collect::<Vec<_>>(),
+            )));
+        }
+    });
     window.on_ok({
+        let notices = notices.clone();
         let valid = valid.clone();
         let weak = window.as_weak();
         let state = state.clone();
@@ -622,22 +836,34 @@ pub(crate) fn open(
                 return;
             }
             if weak.upgrade().is_none_or(|window| {
-                !window.window().is_visible() || !window.get_question().is_empty()
+                !window.window().is_visible()
+                    || (!window.get_question().is_empty() || window.get_notice_open())
             }) {
                 return;
             }
-            let made = {
+            let (hash, made) = {
                 let state = state.borrow();
-                let Some(panel) = state.panels().get(index(p)) else {
-                    return;
-                };
-                panel.predicates(&state.context)
+                if state.editor.batch.is_some() {
+                    (false, state.editor.mixed_predicates(&state.context))
+                } else {
+                    let Some(panel) = state.panels().get(index(p)) else {
+                        return;
+                    };
+                    (panel.kind == Kind::Hash, panel.predicates(&state.context))
+                }
             };
             match made {
                 Ok(predicates) => finish(predicates),
                 Err(why) => {
                     if let Some(window) = weak.upgrade() {
-                        window.set_error(why.into());
+                        if hash {
+                            let why = format!("Sorry, predicate was not valid: {why}");
+                            if let Err(error) = notices.show(&why) {
+                                window.set_error(format!("{why}\n{error}").into());
+                            }
+                        } else {
+                            window.set_error(why.into());
+                        }
                     }
                 }
             }
@@ -652,6 +878,8 @@ pub(crate) fn open(
         slint::CloseRequestResponse::HideWindow
     });
     window.show().map_err(|e| e.to_string())?;
+    window.set_comparison_focus(filesize);
+    window.set_hash_focus(hash);
     *slot.borrow_mut() = Some(window);
     Ok(())
 }

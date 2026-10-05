@@ -1,0 +1,1125 @@
+{
+  "events": [
+    {
+      "case": "loading",
+      "history": {
+        "current": {
+          "length": 0,
+          "first": null,
+          "last": null,
+          "min_count": 0,
+          "max_count": 0
+        },
+        "deleted": {
+          "length": 0,
+          "first": null,
+          "last": null,
+          "min_count": 0,
+          "max_count": 0
+        },
+        "inbox": {
+          "length": 0,
+          "first": null,
+          "last": null,
+          "min_count": 0,
+          "max_count": 0
+        },
+        "archive": {
+          "length": 0,
+          "first": null,
+          "last": null,
+          "min_count": 0,
+          "max_count": 0
+        }
+      },
+      "visible": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "x": [
+        0,
+        0
+      ],
+      "y": [
+        0,
+        1
+      ],
+      "dates": [
+        "2000-01-01",
+        "2000-01-01"
+      ],
+      "custom": [
+        false,
+        false
+      ],
+      "status": "loading\u2026",
+      "status_visible": true,
+      "chart_visible": false,
+      "cancel": true,
+      "refresh": false
+    },
+    {
+      "case": "initial",
+      "history": {
+        "current": {
+          "length": 7715,
+          "first": [
+            1704067200,
+            0
+          ],
+          "last": [
+            1704499128,
+            3
+          ],
+          "min_count": 0,
+          "max_count": 4
+        },
+        "deleted": {
+          "length": 7854,
+          "first": [
+            1704326400,
+            1
+          ],
+          "last": [
+            1704412783,
+            1
+          ],
+          "min_count": 1,
+          "max_count": 1
+        },
+        "inbox": {
+          "length": 7854,
+          "first": [
+            1704240000,
+            2
+          ],
+          "last": [
+            1704412800,
+            2
+          ],
+          "min_count": 2,
+          "max_count": 2
+        },
+        "archive": {
+          "length": 7854,
+          "first": [
+            1704240000,
+            2
+          ],
+          "last": [
+            1704412800,
+            1
+          ],
+          "min_count": 1,
+          "max_count": 2
+        }
+      },
+      "visible": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "x": [
+        1704067200,
+        1704499128
+      ],
+      "y": [
+        0,
+        4
+      ],
+      "dates": [
+        "2024-01-01",
+        "2024-01-05"
+      ],
+      "custom": [
+        false,
+        false
+      ],
+      "status": "loading\u2026",
+      "status_visible": false,
+      "chart_visible": true,
+      "cancel": false,
+      "refresh": true
+    },
+    {
+      "case": "hide_all",
+      "history": {
+        "current": {
+          "length": 7715,
+          "first": [
+            1704067200,
+            0
+          ],
+          "last": [
+            1704499128,
+            3
+          ],
+          "min_count": 0,
+          "max_count": 4
+        },
+        "deleted": {
+          "length": 7854,
+          "first": [
+            1704326400,
+            1
+          ],
+          "last": [
+            1704412783,
+            1
+          ],
+          "min_count": 1,
+          "max_count": 1
+        },
+        "inbox": {
+          "length": 7854,
+          "first": [
+            1704240000,
+            2
+          ],
+          "last": [
+            1704412800,
+            2
+          ],
+          "min_count": 2,
+          "max_count": 2
+        },
+        "archive": {
+          "length": 7854,
+          "first": [
+            1704240000,
+            2
+          ],
+          "last": [
+            1704412800,
+            1
+          ],
+          "min_count": 1,
+          "max_count": 2
+        }
+      },
+      "visible": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "x": [
+        1704067200,
+        1704499128
+      ],
+      "y": [
+        0,
+        2
+      ],
+      "dates": [
+        "2024-01-01",
+        "2024-01-05"
+      ],
+      "custom": [
+        false,
+        false
+      ],
+      "status": "loading\u2026",
+      "status_visible": false,
+      "chart_visible": true,
+      "cancel": false,
+      "refresh": true
+    },
+    {
+      "case": "custom_ranges",
+      "history": {
+        "current": {
+          "length": 7715,
+          "first": [
+            1704067200,
+            0
+          ],
+          "last": [
+            1704499128,
+            3
+          ],
+          "min_count": 0,
+          "max_count": 4
+        },
+        "deleted": {
+          "length": 7854,
+          "first": [
+            1704326400,
+            1
+          ],
+          "last": [
+            1704412783,
+            1
+          ],
+          "min_count": 1,
+          "max_count": 1
+        },
+        "inbox": {
+          "length": 7854,
+          "first": [
+            1704240000,
+            2
+          ],
+          "last": [
+            1704412800,
+            2
+          ],
+          "min_count": 2,
+          "max_count": 2
+        },
+        "archive": {
+          "length": 7854,
+          "first": [
+            1704240000,
+            2
+          ],
+          "last": [
+            1704412800,
+            1
+          ],
+          "min_count": 1,
+          "max_count": 2
+        }
+      },
+      "visible": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "x": [
+        1704153600,
+        1704412800
+      ],
+      "y": [
+        2,
+        12
+      ],
+      "dates": [
+        "2024-01-02",
+        "2024-01-05"
+      ],
+      "custom": [
+        true,
+        true
+      ],
+      "status": "loading\u2026",
+      "status_visible": false,
+      "chart_visible": true,
+      "cancel": false,
+      "refresh": true
+    },
+    {
+      "case": "hide_inbox_keeps_custom_y",
+      "history": {
+        "current": {
+          "length": 7715,
+          "first": [
+            1704067200,
+            0
+          ],
+          "last": [
+            1704499128,
+            3
+          ],
+          "min_count": 0,
+          "max_count": 4
+        },
+        "deleted": {
+          "length": 7854,
+          "first": [
+            1704326400,
+            1
+          ],
+          "last": [
+            1704412783,
+            1
+          ],
+          "min_count": 1,
+          "max_count": 1
+        },
+        "inbox": {
+          "length": 7854,
+          "first": [
+            1704240000,
+            2
+          ],
+          "last": [
+            1704412800,
+            2
+          ],
+          "min_count": 2,
+          "max_count": 2
+        },
+        "archive": {
+          "length": 7854,
+          "first": [
+            1704240000,
+            2
+          ],
+          "last": [
+            1704412800,
+            1
+          ],
+          "min_count": 1,
+          "max_count": 2
+        }
+      },
+      "visible": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "x": [
+        1704153600,
+        1704412800
+      ],
+      "y": [
+        2,
+        12
+      ],
+      "dates": [
+        "2024-01-02",
+        "2024-01-05"
+      ],
+      "custom": [
+        true,
+        true
+      ],
+      "status": "loading\u2026",
+      "status_visible": false,
+      "chart_visible": true,
+      "cancel": false,
+      "refresh": true
+    },
+    {
+      "case": "refresh_keeps_custom_ranges",
+      "history": {
+        "current": {
+          "length": 7715,
+          "first": [
+            1704067200,
+            0
+          ],
+          "last": [
+            1704499128,
+            3
+          ],
+          "min_count": 0,
+          "max_count": 4
+        },
+        "deleted": {
+          "length": 7854,
+          "first": [
+            1704326400,
+            1
+          ],
+          "last": [
+            1704412783,
+            1
+          ],
+          "min_count": 1,
+          "max_count": 1
+        },
+        "inbox": {
+          "length": 7854,
+          "first": [
+            1704240000,
+            2
+          ],
+          "last": [
+            1704412800,
+            2
+          ],
+          "min_count": 2,
+          "max_count": 2
+        },
+        "archive": {
+          "length": 7854,
+          "first": [
+            1704240000,
+            2
+          ],
+          "last": [
+            1704412800,
+            1
+          ],
+          "min_count": 1,
+          "max_count": 2
+        }
+      },
+      "visible": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "x": [
+        1704153600,
+        1704412800
+      ],
+      "y": [
+        2,
+        12
+      ],
+      "dates": [
+        "2024-01-02",
+        "2024-01-05"
+      ],
+      "custom": [
+        true,
+        true
+      ],
+      "status": "loading\u2026",
+      "status_visible": false,
+      "chart_visible": true,
+      "cancel": false,
+      "refresh": true
+    },
+    {
+      "case": "refit",
+      "history": {
+        "current": {
+          "length": 7715,
+          "first": [
+            1704067200,
+            0
+          ],
+          "last": [
+            1704499128,
+            3
+          ],
+          "min_count": 0,
+          "max_count": 4
+        },
+        "deleted": {
+          "length": 7854,
+          "first": [
+            1704326400,
+            1
+          ],
+          "last": [
+            1704412783,
+            1
+          ],
+          "min_count": 1,
+          "max_count": 1
+        },
+        "inbox": {
+          "length": 7854,
+          "first": [
+            1704240000,
+            2
+          ],
+          "last": [
+            1704412800,
+            2
+          ],
+          "min_count": 2,
+          "max_count": 2
+        },
+        "archive": {
+          "length": 7854,
+          "first": [
+            1704240000,
+            2
+          ],
+          "last": [
+            1704412800,
+            1
+          ],
+          "min_count": 1,
+          "max_count": 2
+        }
+      },
+      "visible": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "x": [
+        1704240000,
+        1704412800
+      ],
+      "y": [
+        0,
+        2
+      ],
+      "dates": [
+        "2024-01-03",
+        "2024-01-05"
+      ],
+      "custom": [
+        false,
+        false
+      ],
+      "status": "loading\u2026",
+      "status_visible": false,
+      "chart_visible": true,
+      "cancel": false,
+      "refresh": true
+    },
+    {
+      "case": "cancelled",
+      "history": {
+        "current": {
+          "length": 7715,
+          "first": [
+            1704067200,
+            0
+          ],
+          "last": [
+            1704499128,
+            3
+          ],
+          "min_count": 0,
+          "max_count": 4
+        },
+        "deleted": {
+          "length": 7854,
+          "first": [
+            1704326400,
+            1
+          ],
+          "last": [
+            1704412783,
+            1
+          ],
+          "min_count": 1,
+          "max_count": 1
+        },
+        "inbox": {
+          "length": 7854,
+          "first": [
+            1704240000,
+            2
+          ],
+          "last": [
+            1704412800,
+            2
+          ],
+          "min_count": 2,
+          "max_count": 2
+        },
+        "archive": {
+          "length": 7854,
+          "first": [
+            1704240000,
+            2
+          ],
+          "last": [
+            1704412800,
+            1
+          ],
+          "min_count": 1,
+          "max_count": 2
+        }
+      },
+      "visible": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "x": [
+        1704240000,
+        1704412800
+      ],
+      "y": [
+        0,
+        2
+      ],
+      "dates": [
+        "2024-01-03",
+        "2024-01-05"
+      ],
+      "custom": [
+        false,
+        false
+      ],
+      "status": "Cancelled!",
+      "status_visible": true,
+      "chart_visible": false,
+      "cancel": false,
+      "refresh": true
+    },
+    {
+      "case": "filtered",
+      "history": {
+        "current": {
+          "length": 7680,
+          "first": [
+            1704067200,
+            0
+          ],
+          "last": [
+            1704412710,
+            1
+          ],
+          "min_count": 0,
+          "max_count": 1
+        },
+        "deleted": {
+          "length": 0,
+          "first": null,
+          "last": null,
+          "min_count": 0,
+          "max_count": 0
+        },
+        "inbox": {
+          "length": 0,
+          "first": null,
+          "last": null,
+          "min_count": 0,
+          "max_count": 0
+        },
+        "archive": {
+          "length": 0,
+          "first": null,
+          "last": null,
+          "min_count": 0,
+          "max_count": 0
+        }
+      },
+      "visible": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "x": [
+        1704240000,
+        1704412800
+      ],
+      "y": [
+        0,
+        1
+      ],
+      "dates": [
+        "2024-01-03",
+        "2024-01-05"
+      ],
+      "custom": [
+        false,
+        false
+      ],
+      "status": "Cancelled!",
+      "status_visible": false,
+      "chart_visible": true,
+      "cancel": false,
+      "refresh": true
+    }
+  ],
+  "compact": {
+    "current": [
+      [
+        1704067200,
+        0
+      ],
+      [
+        1704067200,
+        2
+      ],
+      [
+        1704121200,
+        4
+      ],
+      [
+        1704175200,
+        4
+      ],
+      [
+        1704229200,
+        4
+      ],
+      [
+        1704283200,
+        3
+      ],
+      [
+        1704337200,
+        3
+      ],
+      [
+        1704391200,
+        3
+      ]
+    ],
+    "deleted": [
+      [
+        1704326400,
+        1
+      ],
+      [
+        1704337200,
+        1
+      ],
+      [
+        1704348000,
+        1
+      ],
+      [
+        1704358800,
+        1
+      ],
+      [
+        1704369600,
+        1
+      ],
+      [
+        1704380400,
+        1
+      ],
+      [
+        1704391200,
+        1
+      ]
+    ],
+    "inbox": [
+      [
+        1704240000,
+        2
+      ],
+      [
+        1704240000,
+        2
+      ],
+      [
+        1704326400,
+        2
+      ],
+      [
+        1704326400,
+        2
+      ],
+      [
+        1704326400,
+        2
+      ],
+      [
+        1704412800,
+        2
+      ],
+      [
+        1704412800,
+        2
+      ]
+    ],
+    "archive": [
+      [
+        1704240000,
+        2
+      ],
+      [
+        1704240000,
+        2
+      ],
+      [
+        1704326400,
+        1
+      ],
+      [
+        1704326400,
+        1
+      ],
+      [
+        1704326400,
+        1
+      ],
+      [
+        1704412800,
+        1
+      ],
+      [
+        1704412800,
+        1
+      ]
+    ]
+  },
+  "filtered_compact": {
+    "current": [
+      [
+        1704067200,
+        0
+      ],
+      [
+        1704067200,
+        1
+      ],
+      [
+        1704110400,
+        1
+      ],
+      [
+        1704153600,
+        1
+      ],
+      [
+        1704196800,
+        1
+      ],
+      [
+        1704240000,
+        1
+      ],
+      [
+        1704283200,
+        1
+      ],
+      [
+        1704326400,
+        1
+      ]
+    ],
+    "deleted": [],
+    "inbox": [],
+    "archive": []
+  },
+  "buttons": [
+    {
+      "type": "IconButton",
+      "text": ""
+    },
+    {
+      "type": "IconButton",
+      "text": ""
+    },
+    {
+      "type": "IconButton",
+      "text": ""
+    },
+    {
+      "type": "IconButton",
+      "text": ""
+    },
+    {
+      "type": "IconButton",
+      "text": ""
+    },
+    {
+      "type": "QToolButton",
+      "text": ""
+    },
+    {
+      "type": "QToolButton",
+      "text": ""
+    },
+    {
+      "type": "LocationSearchContextButton",
+      "text": "combined local file domains"
+    },
+    {
+      "type": "TagContextButton",
+      "text": "all known tags"
+    },
+    {
+      "type": "BetterButton",
+      "text": "OR"
+    },
+    {
+      "type": "IconButton",
+      "text": ""
+    },
+    {
+      "type": "IconButton",
+      "text": ""
+    },
+    {
+      "type": "OnOffButton",
+      "text": "include current tags"
+    },
+    {
+      "type": "OnOffButton",
+      "text": "include pending tags"
+    },
+    {
+      "type": "OnOffButton",
+      "text": "searching immediately"
+    },
+    {
+      "type": "BetterButton",
+      "text": "advanced"
+    },
+    {
+      "type": "IconButton",
+      "text": ""
+    },
+    {
+      "type": "IconButton",
+      "text": ""
+    },
+    {
+      "type": "QCheckBox",
+      "text": "show all"
+    },
+    {
+      "type": "QCheckBox",
+      "text": "show inbox"
+    },
+    {
+      "type": "QCheckBox",
+      "text": "show archive"
+    },
+    {
+      "type": "QCheckBox",
+      "text": "show deleted"
+    },
+    {
+      "type": "BetterButton",
+      "text": "refit y axis"
+    },
+    {
+      "type": "BetterButton",
+      "text": "refit x axis"
+    }
+  ],
+  "context": [
+    15,
+    5,
+    [
+      [
+        103,
+        1,
+        [
+          [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          []
+        ]
+      ],
+      [
+        80,
+        2,
+        [
+          "616c6c206b6e6f776e2074616773",
+          true,
+          true,
+          "616c6c206b6e6f776e2074616773"
+        ]
+      ],
+      0,
+      [
+        [
+          14,
+          8,
+          [
+            0,
+            "parity:history-selected",
+            true
+          ]
+        ]
+      ],
+      false
+    ]
+  ],
+  "filter_tag": "parity:history-selected",
+  "requested_filter_hash_indices": [
+    0,
+    2,
+    4
+  ],
+  "selected_current": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a"
+  ],
+  "selected_deleted": [],
+  "num_steps": 7680,
+  "implicit_limit_case": {
+    "limit": 1,
+    "ordinary_count": 1,
+    "history": {
+      "current": [
+        [
+          1704067200,
+          0
+        ],
+        [
+          1704067200,
+          1
+        ],
+        [
+          1704110400,
+          1
+        ],
+        [
+          1704153600,
+          1
+        ],
+        [
+          1704196800,
+          1
+        ],
+        [
+          1704240000,
+          1
+        ],
+        [
+          1704283200,
+          1
+        ],
+        [
+          1704326400,
+          1
+        ]
+      ],
+      "deleted": [],
+      "inbox": [],
+      "archive": []
+    }
+  },
+  "corpus": [
+    {
+      "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+      "imported": 1704067200000,
+      "deleted": null,
+      "archived": null,
+      "trash": false,
+      "inbox": true
+    },
+    {
+      "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+      "imported": 1704153600000,
+      "deleted": null,
+      "archived": 1704240000000,
+      "trash": false,
+      "inbox": false
+    },
+    {
+      "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+      "imported": 1704067200000,
+      "deleted": 1704326400000,
+      "archived": 1704240000000,
+      "trash": false,
+      "inbox": false
+    },
+    {
+      "hash": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+      "imported": 1704153600000,
+      "deleted": 1704412800000,
+      "archived": null,
+      "trash": true,
+      "inbox": true
+    },
+    {
+      "hash": "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+      "imported": 1704412800000,
+      "deleted": null,
+      "archived": 1704499200000,
+      "trash": false,
+      "inbox": false
+    },
+    {
+      "hash": "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+      "imported": 1704499200000,
+      "deleted": null,
+      "archived": null,
+      "trash": false,
+      "inbox": true
+    }
+  ]
+}

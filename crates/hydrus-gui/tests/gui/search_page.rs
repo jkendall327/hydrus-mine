@@ -238,6 +238,7 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     let ui = MainWindow::new().unwrap();
     let main_window = windows.get(0).unwrap();
     let bound = bind(&ui, Pages::single(super::common::all_local_page(store)));
+    ui.show().unwrap();
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
     // newest first (a new page sorts by the options' default, file size)
@@ -345,8 +346,10 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
 
     // a click on a thumbnail selects it; a double-click opens the viewer on
     // its file (the first click redraws the row, which mustn't lose it)
-    let grid_left = 300.0;
-    let third = slint::LogicalPosition::new(grid_left + 4.0 + 2.0 * 156.0 + 76.0, 4.0 + 63.0);
+    let third = slint::LogicalPosition::new(
+        ui.get_grid_origin_x() + 4.0 + 2.0 * 156.0 + 76.0,
+        ui.get_grid_origin_y() + 4.0 + 63.0,
+    );
     let click = |at: slint::LogicalPosition| {
         use slint::platform::{PointerEventButton, WindowEvent};
         let window = ui.window();

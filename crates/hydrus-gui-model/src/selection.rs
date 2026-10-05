@@ -59,13 +59,40 @@ impl Selection {
             .collect()
     }
 
+    /// The last hit remains independent from the preview focus.
+    pub fn last_hit(&self) -> Option<HashId> {
+        self.last_hit
+    }
+
     pub fn focused(&self) -> Option<HashId> {
         self.focused
+    }
+
+    /// The stable range anchor, independent of optional preview focus.
+    pub fn range_anchor(&self) -> Option<HashId> {
+        self.shift_start
+    }
+
+    /// The last cleared focus, used to restore keyboard navigation.
+    pub fn ghost_focus(&self) -> Option<HashId> {
+        self.ghost
     }
 
     /// A click on `file` (or on no file), with ctrl or shift held
     /// (`_HitMedia`).
     pub fn hit(&mut self, sorted: &[HashId], file: Option<HashId>, ctrl: bool, shift: bool) {
+        self.hit_with_preview_focus(sorted, file, ctrl, shift, false);
+    }
+
+    /// Qt's optional modifier focus; removals still clear only their own focus.
+    pub fn hit_with_preview_focus(
+        &mut self,
+        sorted: &[HashId],
+        file: Option<HashId>,
+        ctrl: bool,
+        shift: bool,
+        focus_target: bool,
+    ) {
         let Some(file) = file else {
             if !ctrl && !shift {
                 self.select_none(sorted);
@@ -82,8 +109,11 @@ impl Selection {
                 self.end_shift_select();
             } else {
                 self.selected.insert(file);
-                // (the reference's default: ctrl+click doesn't focus)
-                self.last_hit = Some(file);
+                if focus_target {
+                    self.set_focused(sorted, Some(file));
+                } else {
+                    self.last_hit = Some(file);
+                }
                 self.start_shift_select(file);
             }
         } else if let Some(start) = self.shift_start.filter(|_| shift) {
@@ -114,8 +144,11 @@ impl Selection {
                 self.shift_added.insert(f);
                 self.selected.insert(f);
             }
-            // (nor does shift+click)
-            self.last_hit = Some(file);
+            if focus_target {
+                self.set_focused(sorted, Some(file));
+            } else {
+                self.last_hit = Some(file);
+            }
         } else {
             if !self.selected.contains(&file) {
                 self.selected.clear();
@@ -167,17 +200,62 @@ impl Selection {
         columns: usize,
         page_rows: usize,
     ) -> Option<usize> {
+        self.move_focus_with_last_hit(sorted, to, shift, columns, page_rows, false)
+    }
+
+    /// The optional last-hit origin also applies to non-Shift movement keys.
+    pub fn move_focus_with_last_hit(
+        &mut self,
+        sorted: &[HashId],
+        to: Move,
+        shift: bool,
+        columns: usize,
+        page_rows: usize,
+        use_last_hit: bool,
+    ) -> Option<usize> {
+        self.move_focus_with_preview(
+            sorted,
+            to,
+            shift,
+            (columns, page_rows),
+            use_last_hit,
+            &|_| false,
+        )
+    }
+
+    /// The keyboard reaches the same target-duration gate as a Shift click.
+    pub fn move_focus_with_preview(
+        &mut self,
+        sorted: &[HashId],
+        to: Move,
+        shift: bool,
+        geometry: (usize, usize),
+        use_last_hit: bool,
+        focus_target: &dyn Fn(HashId) -> bool,
+    ) -> Option<usize> {
+        let (columns, page_rows) = geometry;
         let last = sorted.len().checked_sub(1)?;
         if let Move::Home | Move::End = to {
             let index = if to == Move::Home { 0 } else { last };
-            self.hit(sorted, Some(sorted[index]), false, shift);
+            self.hit_with_preview_focus(
+                sorted,
+                Some(sorted[index]),
+                false,
+                shift,
+                focus_target(sorted[index]),
+            );
             return Some(index);
         }
         let at = |f: HashId| sorted.iter().position(|&s| s == f);
         // (`_MediaToUseWhenMovingFocus`, the reference's defaults; the arms
         // in its order of preference, so two alike stay apart)
         #[allow(clippy::match_same_arms)]
-        let from = match (shift, self.last_hit, self.focused, self.ghost) {
+        let from = match (
+            shift || use_last_hit,
+            self.last_hit,
+            self.focused,
+            self.ghost,
+        ) {
             (true, Some(hit), _, _) => hit,
             (_, _, Some(focused), _) => focused,
             (_, _, None, Some(ghost)) => {
@@ -185,7 +263,7 @@ impl Selection {
                 // never a file no longer on the page, which the reference
                 // would select)
                 let index = at(ghost)?;
-                self.hit(sorted, Some(ghost), false, shift);
+                self.hit_with_preview_focus(sorted, Some(ghost), false, shift, focus_target(ghost));
                 return Some(index);
             }
             (false, Some(hit), None, None) => hit,
@@ -203,7 +281,13 @@ impl Selection {
             Move::Home | Move::End => unreachable!("moved above"),
         };
         let to = to.clamp(0, last as isize) as usize;
-        self.hit(sorted, Some(sorted[to]), false, shift);
+        self.hit_with_preview_focus(
+            sorted,
+            Some(sorted[to]),
+            false,
+            shift,
+            focus_target(sorted[to]),
+        );
         Some(to)
     }
 
@@ -258,6 +342,11 @@ impl Selection {
     /// A new search: nothing selected or focused.
     pub fn clear(&mut self) {
         *self = Self::default();
+    }
+
+    /// Collapse a preview without changing selected files or the keyboard origin.
+    pub fn clear_focus(&mut self, sorted: &[HashId]) {
+        self.set_focused(sorted, None);
     }
 
     /// `_SetFocusedMedia`: and when the focus goes, where it was.

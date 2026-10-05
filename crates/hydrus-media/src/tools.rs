@@ -69,9 +69,25 @@ pub struct Analysis {
 
 /// Media operations, configured with how to run ffmpeg. Cheap to clone and
 /// safe to share across threads; holds no state between calls.
-#[derive(Debug, Clone, Default)]
+#[derive(Clone)]
 pub struct MediaTools {
     ffmpeg: Ffmpeg,
+    icc_reader: std::sync::Arc<dyn Fn() -> bool + Send + Sync>,
+}
+impl std::fmt::Debug for MediaTools {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("MediaTools")
+            .field("ffmpeg", &self.ffmpeg)
+            .finish_non_exhaustive()
+    }
+}
+impl Default for MediaTools {
+    fn default() -> Self {
+        Self {
+            ffmpeg: Ffmpeg::default(),
+            icc_reader: std::sync::Arc::new(|| true),
+        }
+    }
 }
 
 fn unsupported(mime: Mime) -> MediaError {
@@ -107,7 +123,42 @@ impl MediaTools {
 
     /// Use a specific ffmpeg setup.
     pub fn with_ffmpeg(ffmpeg: Ffmpeg) -> Self {
-        Self { ffmpeg }
+        Self {
+            ffmpeg,
+            ..Self::default()
+        }
+    }
+
+    /// Use a fixed embedded ICC policy; defaults remain enabled.
+    #[must_use]
+    pub fn with_icc_normalisation(self, enabled: bool) -> Self {
+        self.with_icc_reader(std::sync::Arc::new(move || enabled))
+    }
+
+    /// Read an explicitly owned policy before each image conversion. The
+    /// returned Boolean is held unchanged throughout that conversion.
+    #[must_use]
+    pub fn with_icc_reader(
+        mut self,
+        reader: std::sync::Arc<dyn Fn() -> bool + Send + Sync>,
+    ) -> Self {
+        self.icc_reader = reader;
+        self
+    }
+
+    fn raster_from_bytes(&self, bytes: &[u8], strip_alpha: bool) -> Result<Raster> {
+        raster_from_bytes_with_icc(bytes, strip_alpha, (self.icc_reader)())
+    }
+
+    /// Supply the saved deadline before each ffmpeg process, keeping explicitly
+    /// fixed ffmpeg configurations unchanged.
+    #[must_use]
+    pub fn with_ffmpeg_timeout_reader(
+        mut self,
+        reader: std::sync::Arc<dyn Fn() -> std::time::Duration + Send + Sync>,
+    ) -> Self {
+        self.ffmpeg = self.ffmpeg.with_timeout_reader(reader);
+        self
     }
 
     /// The ffmpeg configuration in use.
@@ -321,7 +372,7 @@ impl MediaTools {
         let names = archive::ugoira_frame_paths(&mut zip).ok_or_else(damaged)?;
         names
             .iter()
-            .map(|name| raster_from_bytes(&zip.read(name).ok_or_else(damaged)?, false))
+            .map(|name| self.raster_from_bytes(&zip.read(name).ok_or_else(damaged)?, false))
             .collect()
     }
 
@@ -409,7 +460,7 @@ impl MediaTools {
                         "This PSD has no embedded Preview file that FFMPEG can read!",
                     ));
                 }
-                raster_from_bytes(&png, true)
+                self.raster_from_bytes(&png, true)
             }
             Mime::ApplicationKrita | Mime::ImageOpenraster => {
                 let merged = Zip::open(path)
@@ -417,10 +468,10 @@ impl MediaTools {
                     .ok_or_else(|| {
                         MediaError::damaged("Could not read mergedimage.png from this file")
                     })?;
-                raster_from_bytes(&merged, true)
+                self.raster_from_bytes(&merged, true)
             }
             m if decoded_by_ffmpeg(m) => Ok(self.ffmpeg_still(path)?.strip_useless_alpha()),
-            _ => raster_from_bytes(&std::fs::read(path)?, true),
+            _ => self.raster_from_bytes(&std::fs::read(path)?, true),
         }
     }
 
@@ -564,7 +615,7 @@ impl MediaTools {
         let static_image = |raster: Raster| thumbnail::resize(&raster, target, None);
         // PIL's `image.resize(target, LANCZOS)` then strip useless alpha
         let pil_resize = |bytes: &[u8]| -> Option<Raster> {
-            let raster = raster_from_bytes(bytes, false).ok()?;
+            let raster = self.raster_from_bytes(bytes, false).ok()?;
             Some(resample::resize_lanczos(&raster, target.0, target.1).strip_useless_alpha())
         };
         if mimes::is_image(mime) || mime == Mime::AnimationWebp {
@@ -603,17 +654,17 @@ impl MediaTools {
         }
         if mimes::is_audio(mime) {
             let png = self.ffmpeg.render_attached_image(path).ok()??;
-            return raster_from_bytes(&png, true).ok().map(static_image);
+            return self.raster_from_bytes(&png, true).ok().map(static_image);
         }
         match mime {
             Mime::ApplicationCbz | Mime::ApplicationEpub => {
                 let cover = cover_bytes(path, mime)?;
                 decode::sniff(&cover)?;
-                raster_from_bytes(&cover, true).ok().map(static_image)
+                self.raster_from_bytes(&cover, true).ok().map(static_image)
             }
             Mime::ApplicationClip => {
                 let png = clip::preview_png(&std::fs::read(path).ok()?).ok()?;
-                raster_from_bytes(&png, true).ok().map(static_image)
+                self.raster_from_bytes(&png, true).ok().map(static_image)
             }
             Mime::ApplicationKrita | Mime::ImageOpenraster => {
                 let mut zip = Zip::open(path)?;
@@ -624,7 +675,7 @@ impl MediaTools {
                 };
                 let merged = zip
                     .read("mergedimage.png")
-                    .filter(|b| raster_from_bytes(b, false).is_ok());
+                    .filter(|b| self.raster_from_bytes(b, false).is_ok());
                 let bytes = merged.or_else(|| zip.read(fallback))?;
                 pil_resize(&bytes)
             }
@@ -633,7 +684,7 @@ impl MediaTools {
             }
             Mime::ApplicationProcreate => {
                 let png = Zip::open(path)?.read("QuickLook/Thumbnail.png")?;
-                raster_from_bytes(&png, true).ok().map(static_image)
+                self.raster_from_bytes(&png, true).ok().map(static_image)
             }
             Mime::ApplicationPsd => match decoded {
                 Some(r) => Some(static_image(r.clone())),
@@ -811,6 +862,17 @@ pub(crate) fn raster_from_bytes(data: &[u8], strip_useless_alpha: bool) -> Resul
     decode::open(data)?
         .image
         .normalise()?
+        .into_raster(strip_useless_alpha)
+}
+
+pub(crate) fn raster_from_bytes_with_icc(
+    data: &[u8],
+    strip_useless_alpha: bool,
+    normalise_icc: bool,
+) -> Result<Raster> {
+    decode::open(data)?
+        .image
+        .normalise_with_icc(normalise_icc)?
         .into_raster(strip_useless_alpha)
 }
 

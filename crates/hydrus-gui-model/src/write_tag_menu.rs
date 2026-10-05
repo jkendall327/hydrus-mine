@@ -65,7 +65,8 @@ impl Action {
             None
         }
     }
-    /// Re-read inside the write: other windows' favourites must survive a delayed answer.
+    /// Re-read inside the write and publish it: other windows' favourites must survive
+    /// a delayed answer, and their live panes must notice the committed change.
     pub fn persist(&self, store: &Store) -> hydrus_store::Result<()> {
         if let Self::Regenerate { tags } = self {
             let tags: Vec<_> = tags.iter().filter_map(|tag| Tag::new(tag)).collect();
@@ -83,7 +84,7 @@ impl Action {
         let tag = tag.clone();
         let service = service.clone();
         let remove = *remove;
-        store.write(move |ctx| {
+        store.write_and_refresh(move |ctx| {
             let update = |tags: &mut Vec<String>| {
                 tags.retain(|t| t != &tag);
                 if !remove {
@@ -110,6 +111,55 @@ pub enum Entry {
     Menu(String, Vec<Entry>),
     Separator,
 }
+/// Immediate global and per-service favourite actions shared by read/write tag panes.
+pub fn favourite_entries(store: &Store, tag: &str) -> Vec<Entry> {
+    let favourites: settings::FavouriteTags = store.read(settings::get).unwrap_or_default();
+    let remove = favourites.0.iter().any(|saved| saved == tag);
+    let mut favourite_entries = vec![
+        item(
+            format!(
+                "{} \"{tag}\" {} favourites",
+                if remove { "remove" } else { "add" },
+                if remove { "from" } else { "to" }
+            ),
+            Action::Favourite {
+                tag: tag.to_owned(),
+                service: None,
+                remove,
+                question: remove.then(|| format!("Remove \"{tag}\" from the favourites list?")),
+            },
+        ),
+        Entry::Separator,
+    ];
+    let tabs: settings::TagAutocompleteTabs = store.read(settings::get).unwrap_or_default();
+    for service in store.snapshot().services.tag_services() {
+        let remove = tabs
+            .most_used
+            .get(&service.key.to_hex())
+            .is_some_and(|tags| tags.iter().any(|saved| saved == tag));
+        favourite_entries.push(item(
+            format!(
+                "{} \"{tag}\" {} most used for \"{}\"",
+                if remove { "remove" } else { "add" },
+                if remove { "from" } else { "to" },
+                service.name
+            ),
+            Action::Favourite {
+                tag: tag.to_owned(),
+                service: Some(service.key.clone()),
+                remove,
+                question: remove.then(|| {
+                    format!(
+                        "Remove \"{tag}\" from the most used list for \"{}\"?",
+                        service.name
+                    )
+                }),
+            },
+        ));
+    }
+    favourite_entries
+}
+
 fn item(label: impl Into<String>, action: Action) -> Entry {
     Entry::Item(label.into(), action)
 }
@@ -305,50 +355,7 @@ impl WriteAutocomplete {
                 ),
             ],
         ));
-        let favourites: settings::FavouriteTags = store.read(settings::get).unwrap_or_default();
-        let remove = favourites.0.contains(&selected.tag);
-        let mut favourite_entries = vec![
-            item(
-                format!(
-                    "{} \"{tag}\" {} favourites",
-                    if remove { "remove" } else { "add" },
-                    if remove { "from" } else { "to" }
-                ),
-                Action::Favourite {
-                    tag: tag.clone(),
-                    service: None,
-                    remove,
-                    question: remove.then(|| format!("Remove \"{tag}\" from the favourites list?")),
-                },
-            ),
-            Entry::Separator,
-        ];
-        let tabs: settings::TagAutocompleteTabs = store.read(settings::get).unwrap_or_default();
-        for service in store.snapshot().services.tag_services() {
-            let remove = tabs
-                .most_used
-                .get(&service.key.to_hex())
-                .is_some_and(|tags| tags.contains(tag));
-            favourite_entries.push(item(
-                format!(
-                    "{} \"{tag}\" {} most used for \"{}\"",
-                    if remove { "remove" } else { "add" },
-                    if remove { "from" } else { "to" },
-                    service.name
-                ),
-                Action::Favourite {
-                    tag: tag.clone(),
-                    service: Some(service.key.clone()),
-                    remove,
-                    question: remove.then(|| {
-                        format!(
-                            "Remove \"{tag}\" from the most used list for \"{}\"?",
-                            service.name
-                        )
-                    }),
-                },
-            ));
-        }
+        let favourite_entries = favourite_entries(store, tag);
         entries.push(Entry::Menu("favourites".into(), favourite_entries));
         entries.push(maintenance_entry(vec![tag.clone()]));
         entries

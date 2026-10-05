@@ -1057,7 +1057,14 @@ pub const TEST_OBJECT_LIMIT: usize = 25;
 
 /// Example paths from an import folder, excluding documents and sidecars by MIME.
 pub fn folder_test_objects(folder: &str) -> Vec<TestObject> {
-    let tools = hydrus_media::MediaTools::new();
+    folder_test_objects_with_tools(folder, &hydrus_media::MediaTools::new())
+}
+
+/// Sample through explicitly configured tools when the editor has a live Store.
+pub fn folder_test_objects_with_tools(
+    folder: &str,
+    tools: &hydrus_media::MediaTools,
+) -> Vec<TestObject> {
     std::fs::read_dir(folder)
         .into_iter()
         .flatten()

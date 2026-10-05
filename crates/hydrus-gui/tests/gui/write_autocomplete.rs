@@ -17,6 +17,7 @@ fn paste_confirmation_skip_and_list_height_are_consumed_by_manage_tags() {
         move || clipboard.borrow().clone()
     });
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
@@ -361,6 +362,7 @@ fn favourite_children_tabs_and_applied_cap_feed_manage_tags_and_import_tag_child
         })
         .unwrap();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
@@ -622,6 +624,7 @@ fn tag_menu_launches_native_search_and_duplicate_pages_with_recorded_predicates(
         .key
         .clone();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let slot = hydrus_gui::write_tag_window::Slot::default();
     let window = hydrus_gui::write_tag_window::open(
@@ -874,6 +877,7 @@ fn selected_batches_stage_in_shared_dialogs_and_closed_owners_ignore_callbacks()
     child.invoke_apply();
     assert_eq!(*applied.borrow(), tags);
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
@@ -965,6 +969,7 @@ fn batch_context_menu_copies_and_launches_real_and_or_each_and_duplicate_pages()
         .key
         .clone();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     let slot = hydrus_gui::write_tag_window::Slot::default();
     let child = hydrus_gui::write_tag_window::open(
@@ -1257,6 +1262,7 @@ fn normal_paste_replays_cursor_selection_and_accepted_tags_preserve_the_draft() 
     }
     // The real Manage Tags consumer also retains accepted text while staging mappings.
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();

@@ -1,0 +1,1276 @@
+{
+  "defaults": {
+    "disabled": false,
+    "add_padding": true,
+    "padding": 40
+  },
+  "stages": [
+    {
+      "input": [
+        false,
+        true,
+        40
+      ],
+      "before": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 40
+      },
+      "draft": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 40
+      },
+      "staged": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 40
+      },
+      "saved": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 40
+      },
+      "round_trip": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 40
+      },
+      "reopened": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 40
+      }
+    },
+    {
+      "input": [
+        true,
+        false,
+        -5
+      ],
+      "before": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 40
+      },
+      "draft": {
+        "disabled": true,
+        "add_padding": false,
+        "padding": 0
+      },
+      "staged": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 40
+      },
+      "saved": {
+        "disabled": true,
+        "add_padding": false,
+        "padding": 0
+      },
+      "round_trip": {
+        "disabled": true,
+        "add_padding": false,
+        "padding": 0
+      },
+      "reopened": {
+        "disabled": true,
+        "add_padding": false,
+        "padding": 0
+      }
+    },
+    {
+      "input": [
+        false,
+        false,
+        101
+      ],
+      "before": {
+        "disabled": true,
+        "add_padding": false,
+        "padding": 0
+      },
+      "draft": {
+        "disabled": false,
+        "add_padding": false,
+        "padding": 100
+      },
+      "staged": {
+        "disabled": true,
+        "add_padding": false,
+        "padding": 0
+      },
+      "saved": {
+        "disabled": false,
+        "add_padding": false,
+        "padding": 100
+      },
+      "round_trip": {
+        "disabled": false,
+        "add_padding": false,
+        "padding": 100
+      },
+      "reopened": {
+        "disabled": false,
+        "add_padding": false,
+        "padding": 100
+      }
+    },
+    {
+      "input": [
+        false,
+        true,
+        0
+      ],
+      "before": {
+        "disabled": false,
+        "add_padding": false,
+        "padding": 100
+      },
+      "draft": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 0
+      },
+      "staged": {
+        "disabled": false,
+        "add_padding": false,
+        "padding": 100
+      },
+      "saved": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 0
+      },
+      "round_trip": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 0
+      },
+      "reopened": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 0
+      }
+    },
+    {
+      "input": [
+        false,
+        true,
+        10
+      ],
+      "before": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 0
+      },
+      "draft": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 10
+      },
+      "staged": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 0
+      },
+      "saved": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 10
+      },
+      "round_trip": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 10
+      },
+      "reopened": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 10
+      }
+    }
+  ],
+  "cancel_before": {
+    "disabled": false,
+    "add_padding": true,
+    "padding": 10
+  },
+  "cancel_draft": {
+    "disabled": true,
+    "add_padding": true,
+    "padding": 93
+  },
+  "cancel_after": {
+    "disabled": false,
+    "add_padding": true,
+    "padding": 10
+  },
+  "actual_screens": [
+    {
+      "geometry": [
+        0,
+        0,
+        800,
+        800
+      ],
+      "available": [
+        0,
+        0,
+        800,
+        800
+      ]
+    }
+  ],
+  "topology": [
+    {
+      "geometry": [
+        0,
+        0,
+        800,
+        600
+      ],
+      "available": [
+        0,
+        24,
+        800,
+        576
+      ]
+    },
+    {
+      "geometry": [
+        -1000,
+        100,
+        800,
+        600
+      ],
+      "available": [
+        -1000,
+        124,
+        800,
+        576
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "environment": "actual_offscreen",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 10
+      },
+      "position": [
+        0,
+        0
+      ],
+      "size": [
+        300,
+        200
+      ],
+      "result": [
+        0,
+        0
+      ],
+      "rescued": false,
+      "message": null
+    },
+    {
+      "environment": "actual_offscreen",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 10
+      },
+      "position": [
+        -99999,
+        -99999
+      ],
+      "size": [
+        300,
+        200
+      ],
+      "result": [
+        10,
+        10
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(-99999, -99999)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(10, 10)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 40
+      },
+      "position": [
+        -30,
+        -30
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        -30,
+        -30
+      ],
+      "rescued": false,
+      "message": null
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 40
+      },
+      "position": [
+        -41,
+        -41
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        40,
+        40
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(-41, -41)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(40, 40)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 40
+      },
+      "position": [
+        -41,
+        100
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        40,
+        100
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(-41, 100)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(40, 100)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 40
+      },
+      "position": [
+        100,
+        -41
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        100,
+        40
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(100, -41)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(100, 40)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 40
+      },
+      "position": [
+        900,
+        900
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        40,
+        64
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(900, 900)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(40, 64)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 40
+      },
+      "position": [
+        -1200,
+        200
+      ],
+      "size": [
+        500,
+        200
+      ],
+      "result": [
+        -960,
+        200
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(-1200, 200)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(-960, 200)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 40
+      },
+      "position": [
+        760,
+        560
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        40,
+        64
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(760, 560)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(40, 64)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 40
+      },
+      "position": [
+        -99999,
+        -99999
+      ],
+      "size": null,
+      "result": [
+        40,
+        64
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(-99999, -99999)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(40, 64)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 40
+      },
+      "position": [
+        800,
+        600
+      ],
+      "size": [
+        0,
+        0
+      ],
+      "result": [
+        40,
+        64
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(800, 600)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(40, 64)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": false,
+        "padding": 40
+      },
+      "position": [
+        -30,
+        -30
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        -30,
+        -30
+      ],
+      "rescued": false,
+      "message": null
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": false,
+        "padding": 40
+      },
+      "position": [
+        -41,
+        -41
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        0,
+        0
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(-41, -41)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(0, 0)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": false,
+        "padding": 40
+      },
+      "position": [
+        -41,
+        100
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        0,
+        100
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(-41, 100)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(0, 100)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": false,
+        "padding": 40
+      },
+      "position": [
+        100,
+        -41
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        100,
+        0
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(100, -41)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(100, 0)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": false,
+        "padding": 40
+      },
+      "position": [
+        900,
+        900
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        0,
+        24
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(900, 900)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(0, 24)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": false,
+        "padding": 40
+      },
+      "position": [
+        -1200,
+        200
+      ],
+      "size": [
+        500,
+        200
+      ],
+      "result": [
+        -1000,
+        200
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(-1200, 200)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(-1000, 200)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": false,
+        "padding": 40
+      },
+      "position": [
+        760,
+        560
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        0,
+        24
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(760, 560)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(0, 24)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": false,
+        "padding": 40
+      },
+      "position": [
+        -99999,
+        -99999
+      ],
+      "size": null,
+      "result": [
+        0,
+        24
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(-99999, -99999)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(0, 24)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": false,
+        "padding": 40
+      },
+      "position": [
+        800,
+        600
+      ],
+      "size": [
+        0,
+        0
+      ],
+      "result": [
+        0,
+        24
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(800, 600)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(0, 24)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 0
+      },
+      "position": [
+        -30,
+        -30
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        0,
+        0
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(-30, -30)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(0, 0)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 0
+      },
+      "position": [
+        -41,
+        -41
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        0,
+        0
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(-41, -41)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(0, 0)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 0
+      },
+      "position": [
+        -41,
+        100
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        0,
+        100
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(-41, 100)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(0, 100)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 0
+      },
+      "position": [
+        100,
+        -41
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        100,
+        0
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(100, -41)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(100, 0)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 0
+      },
+      "position": [
+        900,
+        900
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        0,
+        24
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(900, 900)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(0, 24)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 0
+      },
+      "position": [
+        -1200,
+        200
+      ],
+      "size": [
+        500,
+        200
+      ],
+      "result": [
+        -1000,
+        200
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(-1200, 200)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(-1000, 200)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 0
+      },
+      "position": [
+        760,
+        560
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        760,
+        560
+      ],
+      "rescued": false,
+      "message": null
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 0
+      },
+      "position": [
+        -99999,
+        -99999
+      ],
+      "size": null,
+      "result": [
+        0,
+        24
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(-99999, -99999)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(0, 24)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 0
+      },
+      "position": [
+        800,
+        600
+      ],
+      "size": [
+        0,
+        0
+      ],
+      "result": [
+        0,
+        24
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(800, 600)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(0, 24)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 100
+      },
+      "position": [
+        -30,
+        -30
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        -30,
+        -30
+      ],
+      "rescued": false,
+      "message": null
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 100
+      },
+      "position": [
+        -41,
+        -41
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        -41,
+        -41
+      ],
+      "rescued": false,
+      "message": null
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 100
+      },
+      "position": [
+        -41,
+        100
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        -41,
+        100
+      ],
+      "rescued": false,
+      "message": null
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 100
+      },
+      "position": [
+        100,
+        -41
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        100,
+        -41
+      ],
+      "rescued": false,
+      "message": null
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 100
+      },
+      "position": [
+        900,
+        900
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        100,
+        124
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(900, 900)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(100, 124)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 100
+      },
+      "position": [
+        -1200,
+        200
+      ],
+      "size": [
+        500,
+        200
+      ],
+      "result": [
+        -900,
+        200
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(-1200, 200)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(-900, 200)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 100
+      },
+      "position": [
+        760,
+        560
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        100,
+        124
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(760, 560)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(100, 124)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 100
+      },
+      "position": [
+        -99999,
+        -99999
+      ],
+      "size": null,
+      "result": [
+        100,
+        124
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(-99999, -99999)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(100, 124)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": false,
+        "add_padding": true,
+        "padding": 100
+      },
+      "position": [
+        800,
+        600
+      ],
+      "size": [
+        0,
+        0
+      ],
+      "result": [
+        100,
+        124
+      ],
+      "rescued": true,
+      "message": "A window with frame key \"manage_options_dialog\" that wanted to display at \"PySide6.QtCore.QPoint(800, 600)\" was rescued from apparent off-screen to the new location at \"PySide6.QtCore.QPoint(100, 124)\"."
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": true,
+        "add_padding": true,
+        "padding": 40
+      },
+      "position": [
+        -30,
+        -30
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        -30,
+        -30
+      ],
+      "rescued": false,
+      "message": null
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": true,
+        "add_padding": true,
+        "padding": 40
+      },
+      "position": [
+        -41,
+        -41
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        -41,
+        -41
+      ],
+      "rescued": false,
+      "message": null
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": true,
+        "add_padding": true,
+        "padding": 40
+      },
+      "position": [
+        -41,
+        100
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        -41,
+        100
+      ],
+      "rescued": false,
+      "message": null
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": true,
+        "add_padding": true,
+        "padding": 40
+      },
+      "position": [
+        100,
+        -41
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        100,
+        -41
+      ],
+      "rescued": false,
+      "message": null
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": true,
+        "add_padding": true,
+        "padding": 40
+      },
+      "position": [
+        900,
+        900
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        900,
+        900
+      ],
+      "rescued": false,
+      "message": null
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": true,
+        "add_padding": true,
+        "padding": 40
+      },
+      "position": [
+        -1200,
+        200
+      ],
+      "size": [
+        500,
+        200
+      ],
+      "result": [
+        -1200,
+        200
+      ],
+      "rescued": false,
+      "message": null
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": true,
+        "add_padding": true,
+        "padding": 40
+      },
+      "position": [
+        760,
+        560
+      ],
+      "size": [
+        100,
+        100
+      ],
+      "result": [
+        760,
+        560
+      ],
+      "rescued": false,
+      "message": null
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": true,
+        "add_padding": true,
+        "padding": 40
+      },
+      "position": [
+        -99999,
+        -99999
+      ],
+      "size": null,
+      "result": [
+        -99999,
+        -99999
+      ],
+      "rescued": false,
+      "message": null
+    },
+    {
+      "environment": "synthetic_topology",
+      "settings": {
+        "disabled": true,
+        "add_padding": true,
+        "padding": 40
+      },
+      "position": [
+        800,
+        600
+      ],
+      "size": [
+        0,
+        0
+      ],
+      "result": [
+        800,
+        600
+      ],
+      "rescued": false,
+      "message": null
+    }
+  ]
+}

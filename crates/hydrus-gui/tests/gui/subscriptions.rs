@@ -524,6 +524,344 @@ fn select(dialog: &SubscriptionsWindow, names: &[&str]) {
     }
 }
 
+/// All persistent identities, states and histories, including seed metadata.
+fn merge_store_state(store: &Store) -> serde_json::Value {
+    store
+        .read(|conn| {
+            let mut result = Vec::new();
+            for subscription in subscriptions::subscriptions(conn)? {
+                let mut queries = Vec::new();
+                for query in subscriptions::queries(conn, subscription.id)? {
+                    queries.push(serde_json::json!({
+                        "queue": query.queue_id,
+                        "state": query.state,
+                        "files": queues::file_seeds(conn, query.queue_id)?,
+                        "gallery": queues::gallery_seeds(conn, query.queue_id)?,
+                    }));
+                }
+                result.push(serde_json::json!({
+                    "id": subscription.id, "name": subscription.name,
+                    "settings": subscription.settings, "queries": queries,
+                }));
+            }
+            Ok(serde_json::Value::Array(result))
+        })
+        .unwrap()
+}
+
+/// Load the recorded input with independent native queues for overlapping texts.
+fn seed_merge_case(store: &Store, case: &serde_json::Value, now: i64) {
+    let before = case["before"].as_array().unwrap().clone();
+    store
+        .write(move |tx| {
+            let conn = tx.conn();
+            for sub in &before {
+                let settings = SubscriptionSettings {
+                    gug_name: sub["source"].as_str().unwrap().into(),
+                    gug_key: sub["source_key"].as_str().unwrap().into(),
+                    paused: sub["paused"].as_bool().unwrap(),
+                    initial_file_limit: sub["limits"][0].as_u64(),
+                    periodic_file_limit: sub["limits"][1].as_u64(),
+                    ..Default::default()
+                };
+                let id = subscriptions::create_subscription(
+                    conn,
+                    sub["name"].as_str().unwrap(),
+                    &settings,
+                )?
+                .unwrap();
+                for query in sub["queries"].as_array().unwrap() {
+                    let header = &query["state"][2];
+                    let mut state = QueryState::new(query["text"].as_str().unwrap());
+                    state.display_name = header[2].as_str().map(Into::into);
+                    state.check_now = header[3].as_bool().unwrap();
+                    state.last_check_time = header[4].as_i64().unwrap();
+                    state.next_check_time = header[5].as_i64().unwrap();
+                    state.paused = header[6].as_bool().unwrap();
+                    let queue = subscriptions::add_query(conn, id, &state, now)?;
+                    let file = &query["files"][0];
+                    let url = file[0].as_str().unwrap();
+                    queues::add_file_seeds(
+                        conn,
+                        queue,
+                        &[NewFileSeed {
+                            seed_type: SeedType::Url,
+                            data: url.into(),
+                            data_for_comparison: url.into(),
+                            source_time: Some(now - 100),
+                            referral_url: Some("https://subscription.example/referral".into()),
+                            meta: FileSeedMeta::default(),
+                        }],
+                        false,
+                        now,
+                    )?;
+                    let mut seed = queues::file_seeds(conn, queue)?.remove(0);
+                    seed.status = if file[1] == 4 {
+                        SeedStatus::Error
+                    } else {
+                        SeedStatus::SuccessfulAndNew
+                    };
+                    seed.note = file[2].as_str().unwrap().into();
+                    queues::update_file_seed(conn, &seed)?;
+                    let gallery = &query["gallery"][0];
+                    queues::add_gallery_seeds(
+                        conn,
+                        queue,
+                        &[queues::NewGallerySeed {
+                            url: gallery[0].as_str().unwrap().into(),
+                            can_generate_more_pages: true,
+                            referral_url: Some("https://subscription.example/referral".into()),
+                            meta: queues::GallerySeedMeta::default(),
+                        }],
+                        None,
+                        now,
+                    )?;
+                    let mut seed = queues::gallery_seeds(conn, queue)?.remove(0);
+                    seed.status = if gallery[1] == 4 {
+                        SeedStatus::Error
+                    } else {
+                        SeedStatus::SuccessfulAndNew
+                    };
+                    seed.note = gallery[2].as_str().unwrap().into();
+                    queues::update_gallery_seed(conn, &seed)?;
+                }
+            }
+            Ok(())
+        })
+        .unwrap();
+}
+
+#[test]
+fn subscription_merge_stages_all_groups_and_preserves_query_histories() {
+    let recording = hydrus_testkit::fixture_json("subscription_merge.json");
+    let reference_now = recording["now"].as_i64().unwrap();
+    let windows = headless::init();
+    for case in recording["cases"].as_array().unwrap() {
+        let (_dirs, store) = store();
+        seed_merge_case(&store, case, reference_now);
+        let saved = merge_store_state(&store);
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        let dialog = open_dialog(&ui, &bound);
+        let names: Vec<_> = case["selected"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|n| n.as_str().unwrap())
+            .collect();
+        select(&dialog, &names);
+        let unchanged_rows = rows(&dialog);
+        dialog.invoke_merge();
+        for question in case["questions"].as_array().unwrap() {
+            let at = format!("{}: {}", case["case"], question["kind"]);
+            assert_eq!(
+                rows(&dialog),
+                unchanged_rows,
+                "draft changed before final decision: {at}"
+            );
+            // Apply is inert while a question owns the workflow.
+            dialog.invoke_apply();
+            assert_eq!(merge_store_state(&store), saved, "{at}");
+            match question["kind"].as_str().unwrap() {
+                "confirm" => {
+                    assert_eq!(asked(&dialog).1, question["message"].as_str().unwrap());
+                    answer(
+                        &dialog,
+                        if question["answer"] == true {
+                            "yes"
+                        } else {
+                            "no"
+                        },
+                    );
+                }
+                "primary" => {
+                    let (title, _, choices) = asked(&dialog);
+                    assert_eq!(title, question["title"].as_str().unwrap());
+                    assert_eq!(serde_json::json!(choices), question["choices"]);
+                    if case["case"] == "later primary cancel" && question["answer"].is_null() {
+                        let window = windows.get(windows.count() - 1).unwrap();
+                        headless::render(&window, 1180, 520);
+                        let pixels = headless::render(&window, 1180, 520);
+                        headless::save_png(
+                            &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                                .join("subscription_merge_later_primary.png"),
+                            &pixels,
+                            1180,
+                            520,
+                        )
+                        .unwrap();
+                    }
+                    if let Some(name) = question["answer"].as_str() {
+                        answer(&dialog, name);
+                    } else {
+                        dialog.invoke_cancelled();
+                    }
+                }
+                "name" => {
+                    assert_eq!(asked(&dialog).1, question["message"].as_str().unwrap());
+                    assert_eq!(
+                        dialog.get_asked_text(),
+                        question["default"].as_str().unwrap()
+                    );
+                    if let Some(name) = question["answer"].as_str() {
+                        dialog.set_asked_text(name.into());
+                        dialog.invoke_chosen(0);
+                    } else {
+                        dialog.invoke_cancelled();
+                    }
+                }
+                "information" => {
+                    assert_eq!(asked(&dialog).1, question["message"].as_str().unwrap());
+                    dialog.invoke_chosen(0);
+                }
+                other => panic!("unexpected reference question {other}"),
+            }
+        }
+        assert!(!dialog.get_asking());
+        let mut names: Vec<_> = rows(&dialog)
+            .into_iter()
+            .map(|row| row.0[0].clone())
+            .collect();
+        names.sort();
+        let expected_names: Vec<_> = case["after"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|s| s["name"].as_str().unwrap())
+            .collect();
+        assert_eq!(names, expected_names, "{}", case["case"]);
+        if case["case"] == "both names cancel" {
+            let window = windows.get(windows.count() - 1).unwrap();
+            headless::render(&window, 1180, 520);
+            let pixels = headless::render(&window, 1180, 520);
+            headless::save_png(
+                &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                    .join("subscription_merge_completed.png"),
+                &pixels,
+                1180,
+                520,
+            )
+            .unwrap();
+        }
+        assert_eq!(merge_store_state(&store), saved);
+        dialog.invoke_apply();
+        let after = merge_store_state(&store);
+        assert_eq!(after.as_array().unwrap().len(), expected_names.len());
+        for expected in case["after"].as_array().unwrap() {
+            let original = saved
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|s| s["name"] == expected["source_key"])
+                .unwrap();
+            let actual = after
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|s| s["name"] == expected["name"])
+                .unwrap();
+            assert_eq!(actual["id"], original["id"]);
+            assert_eq!(actual["settings"], original["settings"]);
+            let expected_queries: Vec<_> = expected["queries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|q| {
+                    let origin = case["before"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .find(|s| {
+                            s["queries"]
+                                .as_array()
+                                .unwrap()
+                                .iter()
+                                .any(|other| other["log"] == q["log"])
+                        })
+                        .unwrap();
+                    let original = saved
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .find(|s| s["name"] == origin["name"])
+                        .unwrap();
+                    original["queries"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .find(|other| other["state"]["query_text"] == q["text"])
+                        .unwrap()
+                        .clone()
+                })
+                .collect();
+            assert_eq!(
+                actual["queries"],
+                serde_json::json!(expected_queries),
+                "{}",
+                case["case"]
+            );
+        }
+        // Closed callbacks cannot commit a second time or alter a successor.
+        let successor = open_dialog(&ui, &bound);
+        dialog.invoke_cancelled();
+        dialog.invoke_chosen(0);
+        dialog.invoke_apply();
+        assert!(bound.subscriptions.borrow().is_some());
+        assert_eq!(merge_store_state(&store), after);
+        successor.invoke_cancel();
+    }
+}
+
+#[test]
+fn closing_subscription_merge_owner_discards_pending_and_completed_drafts() {
+    let recording = hydrus_testkit::fixture_json("subscription_merge.json");
+    let case = recording["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["case"] == "both names cancel")
+        .unwrap();
+    let (_dirs, store) = store();
+    seed_merge_case(&store, case, recording["now"].as_i64().unwrap());
+    let saved = merge_store_state(&store);
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    for complete in [false, true] {
+        let dialog = open_dialog(&ui, &bound);
+        select(&dialog, &["a1", "a2", "b1", "b2"]);
+        dialog.invoke_merge();
+        answer(&dialog, "yes");
+        answer(&dialog, "b1");
+        dialog.invoke_cancelled();
+        if complete {
+            answer(&dialog, "a2");
+            dialog.invoke_cancelled();
+            assert_eq!(rows(&dialog).len(), 3);
+        } else {
+            assert_eq!(rows(&dialog).len(), 5);
+        }
+        dialog.invoke_cancel();
+        assert_eq!(merge_store_state(&store), saved);
+        let successor = open_dialog(&ui, &bound);
+        select(&successor, &["outside"]);
+        successor.invoke_pause_resume();
+        dialog.invoke_chosen(0);
+        dialog.invoke_cancelled();
+        dialog.invoke_apply();
+        assert_eq!(
+            rows(&successor)
+                .iter()
+                .find(|r| r.0[0] == "outside")
+                .unwrap()
+                .0[7],
+            "yes"
+        );
+        successor.invoke_cancel();
+        assert_eq!(merge_store_state(&store), saved);
+    }
+}
+
 #[test]
 fn merging_separating_and_resetting_are_written_on_apply() {
     let (_dirs, store) = store();
@@ -1322,9 +1660,9 @@ fn actual_subscription_list_transport_choices_dispatch_frozen_packages_and_guard
     let text = reference["single"].to_string();
     hydrus_gui::set_paster(move || text.clone());
     dialog.invoke_exchange_mode(3);
-    assert!(child(&bound).get_ready());
-    assert!(rows(&dialog).is_empty());
-    child(&bound).invoke_action("accept".into());
+    assert!(!bound.subscription_exchange.has_open());
+    assert_eq!(asked(&dialog).1, "1 objects added!");
+    dialog.invoke_chosen(0);
     assert_eq!(rows(&dialog)[0].0[0], "Artist");
     let copies = Rc::new(RefCell::new(Vec::new()));
     hydrus_gui::set_clipper({
@@ -1361,8 +1699,9 @@ fn actual_subscription_list_transport_choices_dispatch_frozen_packages_and_guard
         vec![picked.clone()]
     });
     dialog.invoke_exchange_mode(4);
-    assert!(child(&bound).get_ready());
-    child(&bound).invoke_action("accept".into());
+    assert!(!bound.subscription_exchange.has_open());
+    assert_eq!(asked(&dialog).1, "1 objects added!");
+    dialog.invoke_chosen(0);
     assert_eq!(rows(&dialog).len(), 2);
     dialog.invoke_exchange_mode(2);
     let png = hydrus_gui::png_export_window::last().unwrap();
@@ -1409,7 +1748,9 @@ fn subscription_reset_and_retries_refresh_persisted_export_caches_and_forget_fil
         let input = case["input"].to_string();
         hydrus_gui::set_paster(move || input.clone());
         dialog.invoke_exchange_mode(3);
-        child(&bound).invoke_action("accept".into());
+        assert!(!bound.subscription_exchange.has_open());
+        assert_eq!(asked(&dialog).1, "1 objects added!");
+        dialog.invoke_chosen(0);
         dialog.invoke_apply();
         let saved = store.read(subscriptions::subscriptions).unwrap();
         let id = saved[0].id;
@@ -1481,4 +1822,312 @@ fn subscription_reset_and_retries_refresh_persisted_export_caches_and_forget_fil
         );
         dialog.invoke_cancel();
     }
+}
+
+#[test]
+fn direct_import_menus_replay_qt_type_warnings_file_prefixes_and_missing_rejection() {
+    use hydrus_downloader_exchange::subscriptions as exchange;
+    let fixture = hydrus_testkit::fixture_json("subscription_import_flow.json");
+    let recorded_now = fixture["now"].as_i64().unwrap();
+    // Slint's platform is initialized once per thread. Each independent case
+    // owns its windows/context until the joined thread releases them.
+    for case in fixture["cases"].as_array().unwrap().iter().cloned() {
+        std::thread::spawn(move || {
+            let (_dirs, store) = store();
+            let _windows = headless::init();
+            let ui = MainWindow::new().unwrap();
+            let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+            let dialog = open_dialog(&ui, &bound);
+            let files = tempfile::tempdir().unwrap();
+            let mode = case["mode"].as_str().unwrap();
+            if mode == "clipboard" {
+                let text = case["sources"][case["inputs"][0].as_str().unwrap()]
+                    .as_str()
+                    .unwrap()
+                    .to_owned();
+                hydrus_gui::set_paster(move || text.clone());
+            } else {
+                let mut paths = Vec::new();
+                for (index, key) in case["inputs"].as_array().unwrap().iter().enumerate() {
+                    let path = files.path().join(format!("{index}.{mode}"));
+                    let Some(source) = case["sources"][key.as_str().unwrap()].as_str() else {
+                        paths.push(path);
+                        continue;
+                    };
+                    let bytes = if mode == "png" && source != "not json" {
+                        hydrus_downloader_exchange::text_png::encode(source, 512, &vec![255; 512])
+                            .unwrap()
+                    } else {
+                        source.as_bytes().to_vec()
+                    };
+                    std::fs::write(&path, bytes).unwrap();
+                    paths.push(path);
+                }
+                let expected_title = if mode == "png" {
+                    "select the png or pngs with the encoded data"
+                } else {
+                    "select the json or jsons with the serialised data"
+                };
+                hydrus_gui::set_picker(move |_, title| {
+                    assert_eq!(title, expected_title);
+                    paths.clone()
+                });
+            }
+            dialog.invoke_exchange_mode(match mode {
+                "clipboard" => 3,
+                "json" => 4,
+                "png" => 5,
+                _ => unreachable!(),
+            });
+            assert!(
+                !bound.subscription_exchange.has_open(),
+                "actual menu imports add to the list directly"
+            );
+            for notice in case["messages"].as_array().unwrap() {
+                let (title, text, _) = asked(&dialog);
+                let shown = rows(&dialog);
+                assert_eq!(
+                    serde_json::json!(shown.iter().map(|r| &r.0[0]).collect::<Vec<_>>()),
+                    notice["during"],
+                    "{}",
+                    case["case"]
+                );
+                assert_eq!(
+                    serde_json::json!(
+                        shown
+                            .iter()
+                            .filter(|r| r.1)
+                            .map(|r| &r.0[0])
+                            .collect::<Vec<_>>()
+                    ),
+                    notice["selected"]
+                );
+                match notice["kind"].as_str().unwrap() {
+                    "warning" => {
+                        assert_eq!(title, "Warning");
+                        let expected = notice["text"].as_str().unwrap();
+                        let mut actual_types = text
+                            .split("\n\n")
+                            .nth(1)
+                            .unwrap()
+                            .lines()
+                            .collect::<Vec<_>>();
+                        let mut expected_types = expected
+                            .split("\n\n")
+                            .nth(1)
+                            .unwrap()
+                            .lines()
+                            .collect::<Vec<_>>();
+                        actual_types.sort_unstable();
+                        expected_types.sort_unstable();
+                        assert_eq!(actual_types, expected_types);
+                        assert_eq!(
+                            text.split("\n\n").skip(2).collect::<Vec<_>>(),
+                            expected.split("\n\n").skip(2).collect::<Vec<_>>()
+                        );
+                    }
+                    "information" => {
+                        assert_eq!(title, "Information");
+                        assert_eq!(text, notice["text"]);
+                    }
+                    "question" => {
+                        assert_eq!(title, notice["title"]);
+                        assert_eq!(text, notice["text"]);
+                    }
+                    "critical" => {
+                        assert_eq!(title, notice["title"]);
+                        assert!(!text.is_empty());
+                    }
+                    _ => unreachable!(),
+                }
+                dialog.invoke_apply();
+                assert!(
+                    store.read(subscriptions::subscriptions).unwrap().is_empty(),
+                    "notices and missing-history decisions retain the draft owner"
+                );
+                if notice["kind"] == "question" {
+                    dialog.invoke_chosen(1);
+                } else {
+                    dialog.invoke_chosen(0);
+                }
+            }
+            assert!(!dialog.get_asking());
+            let shown = rows(&dialog);
+            assert_eq!(
+                serde_json::json!(shown.iter().map(|r| &r.0[0]).collect::<Vec<_>>()),
+                case["names"]
+            );
+            assert_eq!(
+                serde_json::json!(
+                    shown
+                        .iter()
+                        .filter(|r| r.1)
+                        .map(|r| &r.0[0])
+                        .collect::<Vec<_>>()
+                ),
+                case["selected"]
+            );
+            dialog.invoke_apply();
+            let saved = store.read(subscriptions::subscriptions).unwrap();
+            assert_eq!(
+                serde_json::json!(saved.iter().map(|s| &s.name).collect::<Vec<_>>()),
+                case["names"]
+            );
+            let mut queue_ids = std::collections::BTreeSet::new();
+            let mut history_names = std::collections::BTreeSet::new();
+            let headers = store
+                .read(
+                    hydrus_store::settings::get::<hydrus_gui_model::subscription_exchange::Headers>,
+                )
+                .unwrap();
+            for saved in saved {
+                let object = case["exported"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .find(|object| object[2][0][1] == saved.name)
+                    .unwrap();
+                let expected = exchange::decode_text_at(&object.to_string(), recorded_now)
+                    .unwrap()
+                    .remove(0);
+                assert_eq!(saved.settings, expected.settings);
+                let queries = store
+                    .read(|conn| subscriptions::queries(conn, saved.id))
+                    .unwrap();
+                assert_eq!(queries.len(), expected.queries.len());
+                for (query, expected) in queries.iter().zip(&expected.queries) {
+                    assert!(
+                        queue_ids.insert(query.queue_id),
+                        "each import owns a different queue even for identical query text"
+                    );
+                    let name = headers.0[&query.queue_id][2][0].as_str().unwrap();
+                    assert_eq!(name.len(), 64);
+                    assert!(history_names.insert(name.to_owned()));
+                    assert_ne!(name, expected.log_name);
+                    assert_eq!(query.state, expected.state);
+                    let mut actual = store
+                        .read(|conn| {
+                            hydrus_gui_model::subscription_exchange::history(
+                                conn,
+                                query.queue_id,
+                                "native history",
+                            )
+                            .map_err(hydrus_store::StoreError::Invalid)
+                        })
+                        .unwrap();
+                    let expected = expected.log.as_ref().unwrap();
+                    actual.name.clone_from(&expected.name);
+                    assert_eq!(
+                        &actual, expected,
+                        "saved ordered file and gallery histories"
+                    );
+                }
+            }
+            let reopened = open_dialog(&ui, &bound);
+            assert_eq!(
+                serde_json::json!(rows(&reopened).iter().map(|r| &r.0[0]).collect::<Vec<_>>()),
+                case["names"]
+            );
+            reopened.invoke_cancel();
+            hydrus_gui::set_picker(|_, _| Vec::new());
+        })
+        .join()
+        .unwrap();
+    }
+}
+
+#[test]
+fn direct_import_picker_and_pending_notices_are_invalid_after_owner_cancel() {
+    let fixture = hydrus_testkit::fixture_json("subscription_import_flow.json");
+    let text = fixture["cases"][4]["sources"]["a"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let files = tempfile::tempdir().unwrap();
+    let path = files.path().join("subscription.json");
+    std::fs::write(&path, &text).unwrap();
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let dialog = open_dialog(&ui, &bound);
+    hydrus_gui::set_picker({
+        let owner = dialog.as_weak();
+        let path = path.clone();
+        move |_, _| {
+            owner.upgrade().unwrap().invoke_cancel();
+            vec![path.clone()]
+        }
+    });
+    // The modal picker can close its owner before returning. No mutable owner
+    // borrow survives the picker and its returned paths cannot stage anything.
+    dialog.invoke_exchange_mode(4);
+    assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    let successor = open_dialog(&ui, &bound);
+    dialog.invoke_chosen(0);
+    dialog.invoke_apply();
+    dialog.invoke_exchange_mode(3);
+    assert!(rows(&successor).is_empty());
+    hydrus_gui::set_picker(move |_, _| vec![path.clone(), path.clone()]);
+    successor.invoke_exchange_mode(4);
+    assert_eq!(rows(&successor).len(), 1);
+    assert_eq!(asked(&successor).1, "1 objects added!");
+    successor.invoke_cancel();
+    let fresh = open_dialog(&ui, &bound);
+    successor.invoke_chosen(0);
+    successor.invoke_cancelled();
+    successor.invoke_apply();
+    assert!(rows(&fresh).is_empty());
+    assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    fresh.invoke_cancel();
+    hydrus_gui::set_picker(|_, _| Vec::new());
+}
+
+#[test]
+fn direct_missing_history_acceptance_uses_empty_owned_queues_and_dismissal_continues() {
+    let fixture = hydrus_testkit::fixture_json("subscription_import_flow.json");
+    let reference = &fixture["cases"][2];
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let dialog = open_dialog(&ui, &bound);
+    let source = reference["sources"]["missing"].as_str().unwrap().to_owned();
+    hydrus_gui::set_paster(move || source.clone());
+    dialog.invoke_exchange_mode(3);
+    assert_eq!(asked(&dialog).0, reference["messages"][0]["title"]);
+    assert_eq!(rows(&dialog).len(), 1);
+    dialog.invoke_apply();
+    assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    dialog.invoke_chosen(0);
+    assert_eq!(rows(&dialog).len(), 3);
+    assert_eq!(asked(&dialog).1, "3 objects added!");
+    // Closing an informational notice resumes its owned continuation.
+    dialog.invoke_cancelled();
+    assert!(!dialog.get_asking());
+    dialog.invoke_apply();
+    let saved = store.read(subscriptions::subscriptions).unwrap();
+    let incomplete = saved.iter().find(|s| s.name == "Incomplete").unwrap();
+    let queries = store
+        .read(|conn| subscriptions::queries(conn, incomplete.id))
+        .unwrap();
+    assert!(!queries.is_empty());
+    for query in queries {
+        assert!(
+            store
+                .read(|conn| queues::file_seeds(conn, query.queue_id))
+                .unwrap()
+                .is_empty()
+        );
+        assert!(
+            store
+                .read(|conn| queues::gallery_seeds(conn, query.queue_id))
+                .unwrap()
+                .is_empty()
+        );
+    }
+    assert_eq!(saved.len(), 3);
+    let reopened = open_dialog(&ui, &bound);
+    assert_eq!(rows(&reopened).len(), 3);
+    reopened.invoke_cancel();
 }

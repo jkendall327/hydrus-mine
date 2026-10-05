@@ -1,11 +1,23 @@
+import { WheelMenuChoice, MenuChoiceFrame } from "menu_choice_wheel.slint";
+export { MenuChoicePolicy } from "menu_choice_wheel.slint";
+export { OpenFileCallsWindow, ExternalRoutingChoiceWindow } from "open_externally.slint";
+export { ExternalCallWindow, ExternalCommandWindow, ExternalRule, ExternalDefaultsWindow } from "external_calls.slint";
+export { LocalTransferWindow } from "local_transfer.slint";
 export { FrameLocationWindow } from "frame_locations.slint";
+export { RelatedWeightsWindow } from "related_weights.slint";
+export { MostUsedTagsWindow } from "tag_suggestions.slint";
 export { SearchOrWindow } from "search_or.slint";
 export { NamespaceSortsWindow } from "namespace_sorts.slint";
 // The main window: for now one search page, laid out as the reference's
 // (a sidebar with the search, and the thumbnail grid), and a status bar.
 
+import { PageSplitter } from "page_splitter.slint";
+import { ActivePredicates, ActivePredicateAction } from "active_predicates.slint";
+export { ActivePredicateAction } from "active_predicates.slint";
 import { Button, CheckBox, ComboBox, LineEdit, ListView, ProgressIndicator, ScrollView, VerticalBox } from "std-widgets.slint";
 import { ListText, Theme } from "theme.slint";
+import { WriteTagLineEdit } from "write_tag_line_edit.slint";
+import { TagMenuOverlay } from "write_autocomplete.slint";
 import { ReadAutocomplete } from "read_autocomplete.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 import { DownloadLine, DownloadControl, JobCogMenu, ImporterBoxes, LocalImportBox } from "importing.slint";
@@ -13,8 +25,10 @@ import { SimpleParsingBox } from "simple_downloader.slint";
 import { GalleryData, GallerySidebar } from "gallery.slint";
 import { WatcherData, WatcherSidebar } from "watcher.slint";
 import { TableColumn, TableRow } from "list_table.slint";
+import { NotebookNavigation, NotebookTree, TabRow, PageTreeRow } from "notebook_tabs.slint";
+export { TabRow, PageTreeRow, TabNames, TabFit } from "notebook_tabs.slint";
 import { MenuBarRow, MenuLine, MenuPane, MenuPanes, MenuTitle } from "main_menu.slint";
-import { PopupData, PopupStack } from "popups.slint";
+import { PopupBounds, PopupData, PopupStack } from "popups.slint";
 import { DuplicatesData, DuplicatesSidebar } from "duplicates_page.slint";
 export { DuplicatesData }
 import { RatingShape } from "viewer.slint";
@@ -22,7 +36,7 @@ export { DownloadLine, GalleryData, WatcherData, JobCogMenu }
 export { NetworkErrorWindow } from "importing.slint";
 export { MenuLine, MenuPane, MenuTitle, PopupData }
 export { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
-export { ListText }
+export { ListText, Theme }
 
 // (the palette, to choose light or dark: by default the system's)
 export { Palette } from "std-widgets.slint";
@@ -30,6 +44,8 @@ export { MediaViewerWindow, NoteRow, RatingRow, RatingShape, ViewerUrlRow } from
 export { ArchiveDeleteWindow } from "archive_delete.slint";
 export { BandwidthWindow, EditBandwidthRulesWindow, NetworkJobsWindow, MonthlyBandwidthBar } from "network_data.slint";
 export { TagDisplayWindow } from "tag_display.slint";
+import { SortCollectCog, ContextCogServices, ContextCogItem } from "sort_collect_cog.slint";
+export { ContextCogServices, ContextCogItem } from "sort_collect_cog.slint";
 export { TagRelationshipsWindow } from "tag_relationships.slint";
 export { TagMigrationWindow, TagMigrationProgressWindow } from "tag_migration.slint";
 export { WriteTagsWindow } from "write_autocomplete.slint";
@@ -47,7 +63,7 @@ export { ForceFiletypeWindow } from "force_filetype.slint";
 export { TagFilterWindow } from "tag_filter.slint";
 export { MergeOptionsWindow } from "merge_options.slint";
 export { SidecarNodeWindow, SidecarRouterWindow, SidecarRoutersWindow } from "sidecars.slint";
-export { ServicesEditorWindow, EditServiceWindow, ServiceColourRow } from "services_editor.slint";
+export { ServicesEditorWindow, EditServiceWindow, ServiceColourRow, ServiceRatingExampleRow } from "services_editor.slint";
 export { ServicesReviewWindow } from "services_review.slint";
 export { AboutWindow } from "about.slint";
 export { SimpleFormulaeWindow } from "simple_formulae.slint";
@@ -56,6 +72,7 @@ export { DownloaderExchangeWindow } from "downloader_interchange.slint";
 export { FormulaWindow, FormulaRuleWindow } from "formula_editors.slint";
 export { ConversionWindow, StringConverterWindow, StringProcessorWindow, StringStepWindow } from "string_processor.slint";
 export { AutoResolutionReviewWindow, PairRow } from "auto_resolution_review.slint";
+export { GuiColourPickerWindow, GuiColourRow } from "gui_coloursets.slint";
 export { DurationField, OptionRow, OptionsWindow, SortCogItem } from "options.slint";
 export { CommandPaletteWindow, PaletteRow } from "command_palette.slint";
 export { CheckerOptionsWindow, CheckerTexts } from "checker_options.slint";
@@ -76,85 +93,8 @@ export { FilenameTaggingWindow, MiscRow } from "filename_tagging.slint";
 export { ImportOptionsWindow, SizeLimit, ResolutionLimit, TagServiceRow } from "import_options.slint";
 export { ExportFolderWindow, FolderActionRow, FoldersWindow, ImportFolderWindow } from "folders.slint";
 
-// an icon over a thumbnail (`src/thumbnail_icons.rs`'s `Icon`), and where
-// its top left corner goes in the thumbnail
-export struct ThumbIcon {
-    kind: int,
-    x: length,
-    y: length,
-}
-
-// a rating drawn over a thumbnail (`src/thumbnail_ratings.rs`'s `Drawn`),
-// at (x, y): shapes (kind 0), or a counter (kind 1)
-export struct ThumbRating {
-    kind: int,
-    x: length,
-    y: length,
-    // the shapes: their outline (SVG path commands in a 12x12 box), where
-    // the first goes from x, how big each is and how far apart, how thick
-    // its outline, and each one's colours
-    path: string,
-    first: length,
-    size: length,
-    step: length,
-    outline: length,
-    shapes: [RatingShape],
-    // a counter's box, and its colours
-    width: length,
-    height: length,
-    pen: color,
-    brush: color,
-    // a numerical rating's "stars/of" (from its top left), or a counter's
-    // number (right aligned in its box, which is text-height tall)
-    text: string,
-    text-x: length,
-    text-y: length,
-    text-width: length,
-    text-height: length,
-    text-size: length,
-}
-
-// a box behind a row of ratings
-export struct ThumbBox {
-    x: length,
-    y: length,
-    width: length,
-    height: length,
-}
-
-export struct Thumbnail {
-    image: image,
-    selected: bool,
-    // a collection's number of files, as text; empty for a file
-    files: string,
-    icons: [ThumbIcon],
-    ratings: [ThumbRating],
-    rating-boxes: [ThumbBox],
-    // the tag banners' texts (`src/thumbnail_icons.rs`'s `banners`): across
-    // the top, and at the bottom right; empty for none
-    top: string,
-    bottom: string,
-}
-
-component Predicate inherits Rectangle {
-    in property <string> text;
-    in property <color> colour: Theme.text;
-    callback remove();
-    height: 22px;
-    background: touch.has-hover ? Theme.hover : transparent;
-    Text {
-        x: 4px;
-        text: root.text;
-        color: root.colour;
-        vertical-alignment: center;
-        overflow: elide;
-        width: parent.width - 8px;
-    }
-    touch := TouchArea {
-        // as in the reference, double-clicking a predicate removes it
-        double-clicked => { root.remove(); }
-    }
-}
+import { ThumbnailCellPaint, ThumbnailPaint, Thumbnail } from "thumbnail_paint.slint";
+export { ThumbIcon, ThumbRating, ThumbBox, Thumbnail, ThumbnailPaint } from "thumbnail_paint.slint";
 
 // the tags of the selected files (or of the page's), with their counts, as
 // the reference's "selection tags" box; double-clicking one searches for it
@@ -163,7 +103,7 @@ component TagList inherits Rectangle {
     callback activated(int);
     border-width: 1px;
     border-color: Theme.border;
-    background: Theme.panel;
+    background: Theme.tags-background;
     ListView {
         for tag[i] in root.tags: Rectangle {
             height: 20px;
@@ -205,44 +145,6 @@ component ChooserButton inherits Rectangle {
     }
 }
 
-// one notebook's tabs
-export struct TabRow {
-    names: [string],
-    selected: int,
-}
-
-component Tab inherits Rectangle {
-    in property <string> text;
-    in property <bool> selected;
-    callback chosen();
-    callback context-menu(length, length);
-    // as in the reference, a middle click closes a page
-    callback close();
-    height: 26px;
-    width: label.preferred-width + 20px;
-    background: root.selected ? Theme.panel : touch.has-hover ? Theme.hover : Theme.window;
-    border-width: 1px;
-    border-color: Theme.border;
-    label := Text {
-        text: root.text;
-        vertical-alignment: center;
-        horizontal-alignment: center;
-        font-weight: root.selected ? 600 : 400;
-    }
-    touch := TouchArea {
-        clicked => { root.chosen(); }
-        pointer-event(event) => {
-            if (event.button == PointerEventButton.right && event.kind == PointerEventKind.up) {
-                root.context-menu(self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y);
-            }
-            if (event.button == PointerEventButton.middle && event.kind == PointerEventKind.up) {
-                root.close();
-            }
-        }
-    }
-}
-
-
 // a choice in the collect control
 export struct CollectRow {
     name: string,
@@ -271,12 +173,14 @@ component ThumbnailGrid inherits ListView {
     in property <color> banner-bottom-background;
     in property <color> banner-bottom-text;
     property <length> span-width: self.thumbnail-width + 2 * self.margin;
-    property <length> span-height: self.thumbnail-height + 2 * self.margin;
+    out property <length> span-height: self.thumbnail-height + 2 * self.margin;
     out property <int> columns: max(1, floor(self.visible-width / self.span-width));
     // how many rows a page up or down moves
     out property <int> page-rows: max(1, floor(self.visible-height / self.span-height));
     // a click on a file (-1 for none), with ctrl or shift held
     callback clicked(int, bool, bool);
+    callback navigation-scroll(float,float,float,float,float) -> float;
+    callback wheel-scroll(float,float,float) -> float;
     callback activated(int);
     // a right-click on a file (-1 for none), where in the window
     callback menu-requested(int, length, length);
@@ -286,12 +190,9 @@ component ThumbnailGrid inherits ListView {
     // scroll so the file at `index` shows
     public function scroll-to(index: int) {
         let span = root.span-height;
-        let top = floor(index / root.columns) * span;
-        if (top < -root.content-y) {
-            root.content-y = -top;
-        } else if (top + span > -root.content-y + root.visible-height) {
-            root.content-y = -(top + span - root.visible-height);
-        }
+        let top = floor(index / root.columns) * span + root.margin;
+        root.content-y = -root.navigation-scroll(top / 1px, span / 1px,
+            -root.content-y / 1px, root.visible-height / 1px, root.content-height / 1px) * 1px;
     }
 
     // which of a row's `count` thumbnails is at (x, y), or -1 for a
@@ -319,144 +220,13 @@ component ThumbnailGrid inherits ListView {
             for thumbnail in row.thumbnails: Rectangle {
                 width: root.thumbnail-width;
                 height: root.thumbnail-height;
-                background: Theme.panel;
+                background: transparent;
                 // (what is drawn over it stays in it, as the reference
                 // paints each thumbnail on an image of its own)
                 clip: true;
-                // pixel for pixel (it is decoded at the screen's scale): the
-                // renderer would scale it by picking the nearest pixels
-                Image {
-                    width: self.source.width * 1phx;
-                    height: self.source.height * 1phx;
-                    x: round((parent.width - self.width) / 2 / 1phx) * 1phx;
-                    y: round((parent.height - self.height) / 2 / 1phx) * 1phx;
-                    source: thumbnail.image;
-                }
-                // the reference's tag banners: across the top, the text
-                // centred on the thumbnail; and at the bottom right, its
-                // box running two pixels into the border. The reference
-                // paints its border over them, so they are kept inside it.
-                Rectangle {
-                    x: root.border;
-                    y: root.border;
-                    width: parent.width - 2 * root.border;
-                    height: parent.height - 2 * root.border;
-                    clip: true;
-                    if thumbnail.top != "": Rectangle {
-                        y: 0;
-                        height: top-text.preferred-height + 2px;
-                        background: root.banner-top-background;
-                        top-text := Text {
-                            x: (parent.width - self.preferred-width) / 2;
-                            y: 1px;
-                            text: thumbnail.top;
-                            color: root.banner-top-text;
-                        }
-                    }
-                    if thumbnail.bottom != "": Rectangle {
-                        width: bottom-text.preferred-width + 2px;
-                        height: bottom-text.preferred-height + 2px;
-                        x: parent.width - self.width;
-                        y: parent.height - bottom-text.preferred-height;
-                        background: root.banner-bottom-background;
-                        bottom-text := Text {
-                            x: 1px;
-                            y: 1px;
-                            text: thumbnail.bottom;
-                            color: root.banner-bottom-text;
-                        }
-                    }
-                }
-                // (over the thumbnail, which may fill the cell; a
-                // selection shows however thin the border)
-                Rectangle {
-                    border-width: thumbnail.selected ? max(root.border, 2px) : root.border;
-                    border-color: thumbnail.selected ? Theme.accent : Theme.border;
-                }
-                // the ratings at the top right, over their boxes
-                for box in thumbnail.rating-boxes: Rectangle {
-                    x: box.x;
-                    y: box.y;
-                    width: box.width;
-                    height: box.height;
-                    background: Theme.window;
-                }
-                for rating in thumbnail.ratings: Rectangle {
-                    x: 0;
-                    y: 0;
-                    if rating.kind == 0: Rectangle {
-                        for shape[k] in rating.shapes: Path {
-                            x: rating.x + rating.first + k * rating.step;
-                            y: rating.y;
-                            width: rating.size;
-                            height: rating.size;
-                            viewbox-width: 12;
-                            viewbox-height: 12;
-                            commands: rating.path;
-                            fill: shape.brush;
-                            stroke: shape.pen;
-                            stroke-width: rating.outline;
-                        }
-                    }
-                    if rating.kind == 1: Rectangle {
-                        x: rating.x;
-                        y: rating.y;
-                        width: rating.width;
-                        height: rating.height;
-                        border-width: 1px;
-                        border-color: rating.pen;
-                        background: rating.brush;
-                    }
-                    if rating.text != "": Text {
-                        x: rating.text-x;
-                        y: rating.text-y;
-                        width: rating.text-width;
-                        height: rating.kind == 1 ? rating.text-height : self.preferred-height;
-                        horizontal-alignment: rating.kind == 1 ? right : left;
-                        vertical-alignment: rating.kind == 1 ? center : top;
-                        text: rating.text;
-                        color: rating.kind == 1 ? rating.pen : Theme.text;
-                        font-size: rating.text-size;
-                    }
-                }
-                // a collection: its icon and number of files, in a box at
-                // the bottom left (the icon drawn with the others)
-                if thumbnail.files != "": Rectangle {
-                    x: root.border;
-                    y: parent.height - root.border - self.height;
-                    width: 16px + count.preferred-width + 3px;
-                    height: 18px;
-                    background: Theme.window;
-                    count := Text {
-                        x: 18px;
-                        y: 1px;
-                        text: thumbnail.files;
-                        color: Theme.text;
-                        font-size: 11px;
-                    }
-                }
-                // the reference's icons: inbox, trash, notes... at the top
-                // right, sound or play and the file repositories at the top
-                // left
-                for icon in thumbnail.icons: Image {
-                    x: icon.x;
-                    y: icon.y;
-                    width: 16px;
-                    height: 16px;
-                    source: icon.kind == 0 ? @image-url("../../../static/inbox.png")
-                        : icon.kind == 1 ? @image-url("../../../static/trash.png")
-                        : icon.kind == 2 ? @image-url("../../../static/notes.png")
-                        : icon.kind == 3 ? @image-url("../../../static/downloading.png")
-                        : icon.kind == 4 ? @image-url("../../../static/sound.png")
-                        : icon.kind == 5 ? @image-url("../../../static/play.png")
-                        : icon.kind == 6 ? @image-url("../../../static/file_repository_small.png")
-                        : icon.kind == 7 ? @image-url("../../../static/file_repository_pending_small.png")
-                        : icon.kind == 8 ? @image-url("../../../static/file_repository_petitioned_small.png")
-                        : icon.kind == 9 ? @image-url("../../../static/ipfs_small.png")
-                        : icon.kind == 10 ? @image-url("../../../static/ipfs_pending_small.png")
-                        : icon.kind == 11 ? @image-url("../../../static/ipfs_petitioned_small.png")
-                        : @image-url("../../../static/collection.png");
-                }
+                if thumbnail.fade-opacity < 1: ThumbnailCellPaint { paint: thumbnail.previous; }
+                ThumbnailCellPaint { paint: thumbnail.paint; opacity: thumbnail.fade-opacity; }
+
             }
         }
         // one for the row, not one per thumbnail: a click redraws the row
@@ -464,6 +234,10 @@ component ThumbnailGrid inherits ListView {
         // double-click's second click would land on one that never saw the
         // first
         TouchArea {
+            scroll-event(event) => {
+                root.content-y = -max(0, min(max(0,(root.content-height - root.visible-height) / 1px), root.wheel-scroll(event.delta-y / 1px,root.visible-height / 1px,-root.content-y / 1px))) * 1px;
+                return accept;
+            }
             pointer-event(event) => {
                 if (event.kind == PointerEventKind.down) {
                     root.ctrl = event.modifiers.control;
@@ -492,6 +266,36 @@ component ThumbnailGrid inherits ListView {
 }
 
 export component MainWindow inherits Window {
+    in property <string> layout-page-key;
+    in property <int> layout-epoch;
+    in property <bool> sidebar-hidden;
+    in property <length> sidebar-requested-width:400px;
+    in property <length> preview-requested-height:240px;
+    out property <length> sidebar-actual-width: sidebar-pane.width;
+    out property <length> preview-actual-height: preview-pane.height;
+    out property <length> sidebar-handle-x: sidebar-handle.absolute-position.x;
+    out property <length> sidebar-handle-y: sidebar-handle.absolute-position.y;
+    out property <length> preview-handle-x: preview-handle.absolute-position.x;
+    out property <length> preview-handle-y: preview-handle.absolute-position.y;
+    out property <length> layout-available-width: page-content.width;
+    out property <length> layout-available-height: page-content.height;
+    callback sidebar-resized(string,int,bool,float);
+    callback sidebar-collapsed(string,int,bool);
+    callback sidebar-layout-retired();
+    callback sidebar-measured();
+    changed layout-available-width => {root.sidebar-measured();}
+    changed layout-available-height => {root.sidebar-measured();}
+    in property <image> preview-media;
+    in property <length> preview-media-x;
+    in property <length> preview-media-y;
+    in property <length> preview-media-width;
+    in property <length> preview-media-height;
+    in property <bool> preview-has-media;
+    in property <bool> preview-loading;
+    in-out property <bool> preview-splitter-hidden;
+    callback preview-retired();
+    callback preview-presentation-changed();
+    changed preview-splitter-hidden => { root.preview-presentation-changed(); }
     // how far the thumbnails are scrolled (each page keeps its own)
     in-out property <length> grid-scroll <=> grid.content-y;
     in property <string> window-title: "hydrus-rs";
@@ -532,16 +336,66 @@ export component MainWindow inherits Window {
     // popup messages (`src/popups.rs`): those shown, and the line under
     // them
     in property <[PopupData]> popups;
+    in property <[float]> popup-card-widths;
+    in property <[float]> popup-card-caps;
+    callback popup-card-measured(int,string,string,length,length);
+    callback popup-control-measured(int,string,string,string,PopupBounds,PopupBounds);
     in property <string> popup-summary;
     callback popup-dismiss(int);
     callback popup-pause-play(int);
     callback popup-cancel(int);
     callback popup-show-files(int);
     callback popup-copy-traceback(int);
+    callback popup-copy-payload(string,string,string);
+    callback popup-retire-owner();
+    callback popup-call(string,string,string);
+    callback popup-answer(string,string,string,string,bool);
     callback popups-dismiss-all();
 
     // the tabs of each notebook on the way to the page shown
     in property <[TabRow]> tab-rows;
+    in property <int> tab-alignment;
+    in property <int> page-tree-side;
+    in property <bool> navigation-tabs-hidden;
+    in property <bool> elide-tab-names: true;
+    in property <bool> tab-wheel-scroll;
+    callback tab-wheel(int,int);
+    callback tab-scrolled(int,float);
+    callback tab-geometry(string,string,int,int,length,length,length,length);
+    callback tab-geometry-measured(string,string,int,int,length,length,length,length);
+    callback tab-pointer(int,int,length,length,bool);
+    callback tab-drag-hovered(string,length,length,bool);
+    tab-drag-hovered(name,x,y,on) => { root.tab-tooltip=on ? name : ""; root.tab-tooltip-x=x; root.tab-tooltip-y=y; }
+    property <bool> tab-drag-shift;
+    in property <bool> tab-drag-active;
+    in property <string> tab-drag-hover-key;
+    out property <length> tab-navigation-x: tab-navigation.absolute-position.x;
+    out property <length> tab-navigation-y: tab-navigation.absolute-position.y;
+    out property <length> tab-navigation-width: tab-navigation.width;
+    out property <length> tab-navigation-height: tab-navigation.height;
+    out property <length> page-content-x: page-content.absolute-position.x;
+    out property <length> page-content-y: page-content.absolute-position.y;
+    out property <length> page-content-width: page-content.width;
+    out property <length> page-content-height: page-content.height;
+    in property <[PageTreeRow]> page-tree;
+    callback page-tree-chosen(string);
+    in property <int> page-tree-current-index: -1;
+    callback page-tree-selected(string);
+    callback page-tree-toggled(string);
+    callback page-tree-navigate(int);
+    public function focus-page-tree() { page-tree-widget.focus-tree(); }
+    out property <bool> page-tree-focused: page-tree-widget.tree-focused;
+    out property <length> page-tree-x: page-tree-widget.absolute-position.x;
+    out property <length> page-tree-y: page-tree-widget.absolute-position.y;
+    out property <length> page-tree-width: page-tree-widget.width;
+    callback tab-measured(int,float,float,float);
+    out property <string> tab-tooltip;
+    property <length> tab-tooltip-x;
+    property <length> tab-tooltip-y;
+    property <bool> tab-tooltip-visible;
+    changed tab-tooltip => { root.tab-tooltip-visible=false; }
+    Timer { interval: 500ms; running: root.tab-tooltip != "" && !root.tab-tooltip-visible; triggered => { root.tab-tooltip-visible=true; } }
+
     // a press on a tab row's empty space (middle or left), twice for the
     // page chooser
     callback tab-space-pressed(int, bool);
@@ -553,11 +407,23 @@ export component MainWindow inherits Window {
     in property <DuplicatesData> duplicates;
     in property <[TableRow]> duplicates-rules;
     callback duplicates-action(string, int, bool, bool);
+    in property <bool> sort-cog-visible;
+    in property <ContextCogServices> sort-cog-services;
+    in property <ContextCogServices> collect-cog-services;
+    in property <[ContextCogItem]> sort-cog-extra;
+    in property <[ContextCogItem]> collect-cog-extra;
+    callback context-cog-opened(bool);
+    callback context-cog-chosen(bool, int);
     in property <[string]> sort-names;
     in property <int> sort-index;
     in property <[string]> order-names;
     in property <int> order-index;
     in property <[ListText]> predicates;
+    in property <[bool]> active-predicate-selected;
+    in property <[ActivePredicateAction]> active-predicate-menu;
+    in property <[ActivePredicateAction]> active-predicate-copy-menu;
+    in property <[ActivePredicateAction]> active-predicate-open-menu;
+    in property <[ActivePredicateAction]> active-predicate-search-menu;
     in property <[ListText]> tags;
     in property <string> selection-tags-title: "selection tags";
     in property <[ListText]> suggestions;
@@ -577,14 +443,22 @@ export component MainWindow inherits Window {
     // must not depend on a deferred changed handler copying initial geometry.
     out property <length> search-tags-y: search-tags.absolute-position.y;
     out property <length> active-predicate-list-height: active-predicate-list.height;
+    out property <length> active-predicate-list-x: active-predicate-list.absolute-position.x + 3px;
+    out property <length> active-predicate-list-y: active-predicate-list.absolute-position.y + 3px;
     out property <length> autocomplete-anchor-x: search-anchor.absolute-position.x;
     out property <length> autocomplete-anchor-y: search-anchor.absolute-position.y + search-anchor.height;
     out property <length> autocomplete-anchor-width: search-sidebar.visible ? search-anchor.width : 0px;
     out property <length> active-predicate-preferred-height: max(1, min(128, root.active-predicate-rows)) * 22px + 6px;
     out property <length> autocomplete-preferred-height: max(1, min(128, root.autocomplete-rows)) * 22px + 4px;
     out property <bool> autocomplete-overlay-visible: root.float-autocomplete && (root.search-focused || suggestions-overlay.has-focus) && root.autocomplete-anchor-width > 0px && !root.search-locked && root.note == "" && root.question == "" && root.menu-panes.length == 0 && root.chooser-labels.length == 0;
+    out property <length> read-results-x: suggestions-overlay.results-x;
+    out property <length> read-results-y: suggestions-overlay.results-y;
+    out property <length> read-scroll-y;
+    out property <length> read-view-height;
+    out property <length> read-content-height;
     in property <int> highlighted: -1;
     in property <[ThumbnailRow]> thumbnail-rows;
+    in property <image> thumbnail-background;
     // a thumbnail's cell: the thumbnail bounding box and its border; and
     // the margin round each
     in property <length> thumbnail-width: 152px;
@@ -740,12 +614,16 @@ export component MainWindow inherits Window {
     callback session-user-activity();
     callback session-mouse-activity();
     callback tab-new-page-requested(string, string);
+    callback retire-external-launches();
+    callback refresh-application-title();
+    in-out property <int> tag-search-activation-requests;
     callback close-page();
     callback unclose-page();
     callback archive-delete-filter();
     callback flip-global-mute();
     // f5: search the page again; ctrl+page up and down: the page beside
     callback refresh-page();
+    callback shortcut-key(string,int)->bool;
     callback move-pages(int);
     // whether the page searches as its search changes, and ctrl+i (or the
     // button under the search box) switching it
@@ -780,6 +658,10 @@ export component MainWindow inherits Window {
     in property <string> question;
     callback sort-chosen(int);
     callback order-chosen(int);
+    out property <MenuChoiceFrame> sort-type-frame: type-choice.frame;
+    in property <int> sort-wheel-count;
+    out property <MenuChoiceFrame> sort-order-frame: order-choice.frame;
+    out property <bool> sort-order-popup-open: order-choice.popup-open;
     callback search-edited(string);
     callback search-fetch();
     callback search-accepted();
@@ -787,7 +669,28 @@ export component MainWindow inherits Window {
     callback favourites-menu-requested(length, length);
     callback move-highlight(int);
     callback suggestion-chosen(int);
+    in property <[bool]> suggestion-selected;
+    callback suggestion-selection-clicked(int,bool,bool);
+    callback suggestions-activated(bool);
+    callback suggestions-select-all();
+    callback suggestions-deselected() -> bool;
+    callback suggestion-context-menu(int,length,length);
+    in property <[MenuPane]> tag-menu-panes;
+    in property <string> tag-menu-question;
+    in property <string> tag-menu-question-title;
+    in property <string> tag-menu-yes-label: "yes";
+    in property <string> tag-menu-no-label: "no";
+    callback tag-menu-hovered(int,int,length,length,length);
+    callback tag-menu-clicked(int,int,length,length,length);
+    callback tag-menu-placed(int,length,length,length);
+    callback tag-menu-dismissed();
+    callback tag-menu-answered(bool);
     callback remove-predicate(int);
+    callback active-predicates-refreshed();
+    callback active-predicate-clicked(int,bool,bool);
+    callback active-predicate-activated(bool,bool);
+    callback active-predicate-menu-opened(int);
+    callback active-predicate-menu-chosen(int);
     callback tag-activated(int);
     callback launch-filter();
     // the page chooser: its buttons' labels by number - 1 (as on a number
@@ -816,6 +719,9 @@ export component MainWindow inherits Window {
     // start (0), back one (1), forward one (3) or to the end (4)
     callback rearrange(int);
     callback move-focus(int, bool, int, int) -> int;
+    in property <int> thumbnail-wheel-step;
+    callback thumbnail-scroll-target(float,float,float,float,float) -> float;
+    callback thumbnail-wheel-target(float,float,float) -> float;
     // the right-click menu: asked for on a file (-1 for none), then shown;
     // an entry chosen
     in property <ThumbnailMenu> thumbnail-menu;
@@ -823,7 +729,14 @@ export component MainWindow inherits Window {
     callback menu-chosen(int);
     callback columns-changed(int);
     // how many thumbnails fit across the grid
+    out property <length> grid-visible-width: grid.visible-width;
+    out property <length> grid-visible-height: grid.visible-height;
     out property <int> grid-columns: grid.columns;
+    out property <int> grid-first-row: max(0, floor(-grid.content-y / grid.span-height));
+    out property <int> grid-visible-rows: ceil(grid.visible-height / grid.span-height) + 1;
+    out property <length> grid-origin-x: grid.absolute-position.x;
+    out property <length> grid-origin-y: grid.absolute-position.y;
+    out property <length> grid-content-height: grid.content-height;
     changed grid-columns => { root.columns-changed(self.grid-columns); }
 
     // Capture motion before forwarding input to the interactive children.
@@ -836,11 +749,18 @@ export component MainWindow inherits Window {
             if event.kind == PointerEventKind.down { root.session-user-activity(); }
         }
     // the main window's shortcuts, whatever has the keyboard
-    FocusScope {
+    shortcut-keys := FocusScope {
         width: 100%;
         height: 100%;
+        capture-key-released(event) => { root.tab-drag-shift=event.modifiers.shift; return reject; }
         capture-key-pressed(event) => {
+            root.tab-drag-shift=event.modifiers.shift;
+            if root.tab-drag-active && event.text == Key.Escape { root.tab-pointer(3,-1,0px,0px,false); return accept; }
             root.session-user-activity();
+            if root.tag-menu-question != "" || root.tag-menu-panes.length > 0 {
+                if event.text == Key.Escape { root.tag-menu-dismissed(); }
+                return accept;
+            }
             if root.search-or-open { return accept; }
             // an open menu takes every key, and alt and a letter opens one
             if (root.menu-panes.length > 0) {
@@ -880,6 +800,7 @@ export component MainWindow inherits Window {
                 }
                 return accept;
             }
+            if root.shortcut-key(event.text,(event.modifiers.control?1:0)+(event.modifiers.alt?2:0)+(event.modifiers.shift?4:0)+(event.modifiers.meta?32:0)) { return accept; }
             if (event.modifiers.control && (event.text == "p" || event.text == "P")) { root.command-palette-requested(); return accept; }
             if (event.text == Key.F9 || (event.modifiers.control && (event.text == "t" || event.text == "T"))) {
                 root.new-page();
@@ -939,37 +860,71 @@ export component MainWindow inherits Window {
                 hovered(i, x) => { root.menu-title-hovered(i, x, self.absolute-position.y + self.height); }
                 placed(i, x) => { root.menu-title-placed(i, x); }
             }
-            for row[level] in root.tab-rows: HorizontalLayout {
-                padding-left: 4px;
-                padding-top: 2px;
-                spacing: 2px;
-                for name[index] in row.names: Tab {
-                    text: name;
-                    selected: index == row.selected;
-                    chosen => { root.tab-chosen(level, index); }
-                    context-menu(x, y) => { root.tab-menu-requested(level, index, x, y); }
-                    close => { root.close-tab(level, index); }
+            page-frame := Rectangle {
+                vertical-stretch: 1;
+                property <bool> vertical-tabs: root.tab-alignment == 1 || root.tab-alignment == 2;
+                property <length> tab-space: root.navigation-tabs-hidden ? 0px : root.tab-rows.length * 28px;
+                property <length> tree-space: root.page-tree-side == 0 ? 0px : 190px;
+                property <length> tree-left: root.page-tree-side == 1 ? self.tree-space : 0px;
+                page-tree-widget := NotebookTree {
+                    visible: root.page-tree-side != 0;
+                    x: root.page-tree-side == 2 ? parent.width - parent.tree-space : 0px;
+                    width: parent.tree-space; height: parent.height;
+                    rows: root.page-tree;
+                    current-index: root.page-tree-current-index;
+                    chosen(key) => { root.page-tree-chosen(key); }
+                    selected(key) => { root.page-tree-selected(key); }
+                    toggled(key) => { root.page-tree-toggled(key); }
+                    navigate(action) => { root.page-tree-navigate(action); }
                 }
-                // the row's empty space: as the reference's tab bar, a
-                // double click (left or middle) there chooses a new page for
-                // this notebook
-                TouchArea {
-                    horizontal-stretch: 1;
-                    min-width: 24px;
-                    pointer-event(event) => {
-                        if (event.kind == PointerEventKind.down && event.button == PointerEventButton.right) {
-                            root.tab-menu-requested(level, -1, self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y);
-                        }
-                        if (event.kind == PointerEventKind.down
-                            && (event.button == PointerEventButton.left || event.button == PointerEventButton.middle)) {
-                            root.tab-space-pressed(level, event.button == PointerEventButton.middle);
-                        }
+                tab-navigation := NotebookNavigation {
+                    visible: !root.navigation-tabs-hidden;
+                    x: root.tab-alignment == 2 ? parent.width - (root.page-tree-side == 2 ? parent.tree-space : 0px) - parent.tab-space : parent.tree-left;
+                    y: root.tab-alignment == 3 ? parent.height - parent.tab-space : 0px;
+                    width: parent.vertical-tabs ? parent.tab-space : parent.width - parent.tree-space;
+                    height: parent.vertical-tabs ? parent.height : parent.tab-space;
+                    rows: root.tab-rows;
+                    shift: root.tab-drag-shift;
+                    hover-key: root.tab-drag-hover-key;
+                    geometry(key,parent,level,index,x,y,w,h) => { root.tab-geometry(key,parent,level,index,x,y,w,h); root.tab-geometry-measured(key,parent,level,index,x,y,w,h); }
+                    pointer(action,button,x,y,shift) => {
+                        // TouchArea does not acquire keyboard focus. Keep a stable
+                        // owner for Escape/Shift even if hover changes the sidebar.
+                        if action == 0 { root.tab-drag-shift = shift; }
+                        root.tab-pointer(action,button,x,y,shift);
+                        if action == 0 || root.tab-drag-active { shortcut-keys.focus(); }
                     }
+                    vertical: parent.vertical-tabs;
+                    clockwise: root.tab-alignment == 2;
+                    reverse-levels: root.tab-alignment == 2 || root.tab-alignment == 3;
+                    elide: root.elide-tab-names;
+                    wheel-scroll: root.tab-wheel-scroll;
+                    wheel(level,step) => { root.tab-wheel(level,step); }
+                    scrolled(level,offset) => { root.tab-scrolled(level,offset); }
+                    chosen(level,index) => { root.tab-chosen(level,index); }
+                    measured(level,needed,available,cap) => { root.tab-measured(level,needed,available,cap); }
+                    context-menu(level,index,x,y) => { root.tab-menu-requested(level,index,x,y); }
+                    close(level,index) => { root.close-tab(level,index); }
+                    space-pressed(level,middle) => { root.tab-space-pressed(level,middle); }
+                    hovered(name,x,y,on) => { root.tab-tooltip=on ? name : ""; root.tab-tooltip-x=x; root.tab-tooltip-y=y; }
                 }
-            }
-            HorizontalLayout {
+            page-content := HorizontalLayout {
+                x: page-frame.tree-left + (root.tab-alignment == 1 ? page-frame.tab-space : 0px);
+                y: root.tab-alignment == 0 ? page-frame.tab-space : 0px;
+                width: page-frame.width - page-frame.tree-space - (page-frame.vertical-tabs ? page-frame.tab-space : 0px);
+                height: page-frame.height - (!page-frame.vertical-tabs ? page-frame.tab-space : 0px);
+                sidebar-pane := Rectangle {
+                    width: root.sidebar-hidden ? 0px : clamp(root.sidebar-requested-width,0px,max(0px,page-content.width - 86px));
+                    visible: !root.sidebar-hidden;
+                    VerticalLayout {
+                    padding:0px;spacing:0px;
+                    ScrollView {
+                        vertical-stretch: 1;
+                        content-width:root.sidebar-requested-width;
+                        VerticalLayout {
+                            width:root.sidebar-requested-width;
                 if root.gallery-page: VerticalBox {
-                    width: 400px;
+                    width:root.sidebar-requested-width;
                     alignment: start;
                     GallerySidebar {
                         focus-requests: root.page-focus-requests;
@@ -1017,7 +972,7 @@ export component MainWindow inherits Window {
                     }
                 }
                 if root.watcher-page: VerticalBox {
-                    width: 400px;
+                    width:root.sidebar-requested-width;
                     alignment: start;
                     WatcherSidebar {
                         focus-requests: root.page-focus-requests;
@@ -1063,7 +1018,7 @@ export component MainWindow inherits Window {
                     }
                 }
                 if root.importing && root.local-import: VerticalBox {
-                    width: 300px;
+                    width:root.sidebar-requested-width;
                     alignment: start;
                     LocalImportBox {
                         current-action: root.import-action;
@@ -1084,7 +1039,7 @@ export component MainWindow inherits Window {
                     }
                 }
                 if root.importing && root.simple-downloader: VerticalBox {
-                    width: 300px;
+                    width:root.sidebar-requested-width;
                     alignment: start;
                     Text {
                         text: "simple downloader";
@@ -1143,7 +1098,7 @@ export component MainWindow inherits Window {
                     }
                 }
                 if root.importing && !root.local-import && !root.simple-downloader && !root.gallery-page && !root.watcher-page: url-sidebar := VerticalBox {
-                    width: 300px;
+                    width:root.sidebar-requested-width;
                     alignment: start;
                     property <bool> focus-pending: root.page-focus-on-show;
                     property <int> focus-requests: root.page-focus-requests;
@@ -1206,7 +1161,7 @@ export component MainWindow inherits Window {
                     }
                 }
                 if root.note != "" && !root.importing && !root.gallery-page && !root.watcher-page: VerticalBox {
-                    width: 300px;
+                    width:root.sidebar-requested-width;
                     alignment: start;
                     if !root.can-filter: Text {
                         text: root.note;
@@ -1233,7 +1188,7 @@ export component MainWindow inherits Window {
                 // A hidden search sidebar occupies no importer/note layout.
                 search-sidebar := VerticalBox {
                     visible: root.note == "" && !root.importing && !root.gallery-page && !root.watcher-page;
-                    width: self.visible ? 300px : 0px;
+                    width: self.visible ? root.sidebar-requested-width : 0px;
                     min-height: 0px;
                     // A layout maximum must not depend on the containing
                     // window's height: that height consumes this layout info.
@@ -1241,16 +1196,22 @@ export component MainWindow inherits Window {
                     // the sort control, as at the top of the reference's sidebar
                     HorizontalLayout {
                         spacing: 4px;
-                        ComboBox {
+                        type-choice := WheelMenuChoice {
                             model: root.sort-names;
                             current-index: root.sort-index;
-                            selected => { root.sort-chosen(self.current-index); }
+                            wheel-count: root.sort-wheel-count;
+                            selected(index) => { root.sort-chosen(index); }
                         }
-                        ComboBox {
+                        order-choice := WheelMenuChoice {
                             width: 130px;
                             model: root.order-names;
                             current-index: root.order-index;
-                            selected => { root.order-chosen(self.current-index); }
+                            selected(index) => { root.order-chosen(index); }
+                        }
+                        if root.sort-cog-visible: SortCollectCog {
+                            services: root.sort-cog-services; extra: root.sort-cog-extra;
+                            opened => { root.context-cog-opened(false); }
+                            chosen(id) => { root.context-cog-chosen(false, id); }
                         }
                     }
                     // and the collect control under it: the choices open
@@ -1264,30 +1225,11 @@ export component MainWindow inherits Window {
                             checkable: true;
                             checked <=> root.collect-open;
                         }
-                        collect-cog := ContextMenuArea {
-                            width: 30px;
-                            Menu {
-                                Menu {
-                                    title: "unmatched files";
-                                    MenuItem {
-                                        title: "collect into one group";
-                                        checkable: true;
-                                        checked <=> root.collect-unmatched;
-                                        activated => { root.collect-unmatched-chosen(true); }
-                                    }
-                                    MenuItem {
-                                        title: "leave separate";
-                                        checkable: true;
-                                        checked <=> root.collect-separate;
-                                        activated => { root.collect-unmatched-chosen(false); }
-                                    }
-                                }
-                            }
-                            Button {
-                                width: 30px;
-                                text: "⚙";
-                                clicked => { collect-cog.show({ x: 0px, y: self.height }); }
-                            }
+                        SortCollectCog {
+                            collect: true;
+                            services: root.collect-cog-services; extra: root.collect-cog-extra;
+                            opened => { root.context-cog-opened(true); }
+                            chosen(id) => { root.context-cog-chosen(true, id); }
                         }
                     }
                     if root.collect-open: Rectangle {
@@ -1346,24 +1288,21 @@ export component MainWindow inherits Window {
                         visible: !root.search-locked;
                         border-width: 1px;
                         border-color: Theme.border;
-                        background: Theme.panel;
+                        background: Theme.tags-background;
                         preferred-height: root.search-locked ? 0px : root.active-predicate-preferred-height;
                         max-height: root.search-locked ? 0px : root.active-predicate-preferred-height;
                         min-height: root.search-locked ? 0px : 28px;
                         // Configured ideal height; additional predicates scroll.
-                        ScrollView {
+                        ActivePredicates {
                             x: 3px;
                             y: 3px;
                             width: parent.width - 6px;
                             height: parent.height - 6px;
-                            VerticalLayout {
-                                alignment: start;
-                                for predicate[i] in root.predicates: Predicate {
-                                    text: predicate.text;
-                                    colour: predicate.colour;
-                                    remove => { root.remove-predicate(i); }
-                                }
-                            }
+                            rows:root.predicates;selected:root.active-predicate-selected;actions:root.active-predicate-search-menu;copy-actions:root.active-predicate-copy-menu;open-actions:root.active-predicate-open-menu;
+                            clicked(i,ctrl,shift)=>{root.active-predicate-clicked(i,ctrl,shift);}
+                            activated(ctrl,shift)=>{root.active-predicate-activated(ctrl,shift);}
+                            menu-opened(i)=>{root.active-predicate-menu-opened(i);}
+                            menu-chosen(id)=>{root.active-predicate-menu-chosen(id);}
                         }
                     }
                     search-anchor := FocusScope {
@@ -1395,7 +1334,7 @@ export component MainWindow inherits Window {
                         }
                         search-row := HorizontalLayout {
                             spacing: 4px;
-                            search := LineEdit {
+                            search := WriteTagLineEdit {
                                 init => { if root.page-focus-on-show && !root.search-locked { self.focus(); } }
                                 horizontal-stretch: 1;
                                 placeholder-text: "search";
@@ -1462,7 +1401,8 @@ export component MainWindow inherits Window {
                             clicked => { root.domain-menu-requested(1, self.absolute-position.x, self.absolute-position.y + self.height); }
                         }
                     }
-                    if !root.search-locked && !root.float-autocomplete && root.note == "": ReadAutocomplete {
+                    if !root.search-locked && !root.float-autocomplete && root.note == "": embedded-suggestions := ReadAutocomplete {
+                        scroll-geometry(y,h,c) => { if !root.float-autocomplete { root.read-scroll-y=y; root.read-view-height=h; root.read-content-height=c; } }
                         preferred-height: root.autocomplete-preferred-height + (root.or-active ? 108px : 72px);
                         max-height: root.autocomplete-preferred-height + (root.or-active ? 108px : 72px);
                         tab-index: root.autocomplete-tab;
@@ -1472,6 +1412,13 @@ export component MainWindow inherits Window {
             or-action(i) => { root.search-or-action(i); root.search-focus-requests += 1; }
                         tab-chosen(i) => { root.autocomplete-tab-chosen(i); root.search-focus-requests += 1; }
                         suggestions: root.suggestions;
+                        selected: root.suggestion-selected;
+                        move-highlight(by) => { root.move-highlight(by); }
+                        selection-clicked(i,c,s) => { root.suggestion-selection-clicked(i,c,s); }
+                        activated(s) => { root.suggestions-activated(s); }
+                        deselect => { root.suggestions-deselected() }
+                        select-all => { root.suggestions-select-all(); }
+                        context-menu(i,x,y) => { root.suggestion-context-menu(i,x,y); }
                         highlighted: root.highlighted;
                         chosen(index) => { root.suggestion-chosen(index); }
                     }
@@ -1485,6 +1432,34 @@ export component MainWindow inherits Window {
                         tags: root.tags;
                         activated(i) => { root.tag-activated(i); }
                     }
+                }
+                    }
+                    }
+                    preview-handle := PageSplitter {
+                        height:6px;
+                        preview:true;page-key:root.layout-page-key;epoch:root.layout-epoch;
+                        size:preview-pane.height;
+                        dragged(key,epoch,preview,pixels)=>{root.sidebar-resized(key,epoch,preview,pixels);}
+                        collapsed(key,epoch,preview)=>{root.sidebar-collapsed(key,epoch,preview);}
+                    }
+                    preview-pane := Rectangle {
+                        height:root.preview-splitter-hidden ? 0px : clamp(root.preview-requested-height,0px,max(0px,page-content.height - 86px));
+                        visible:!root.preview-splitter-hidden;
+                        background: Theme.colour(10,Theme.window);
+                        border-width: 1px; border-color: Theme.border;
+                        clip: true;
+                        Image { x:root.preview-media-x;y:root.preview-media-y;width:root.preview-media-width;height:root.preview-media-height;source:root.preview-media;image-fit:fill; }
+                        if !root.preview-has-media: Text { text: root.preview-loading ? "loading preview" : "no preview available"; color: Theme.text; horizontal-alignment: center; vertical-alignment: center; }
+                    }
+                }
+                    }
+                sidebar-handle := PageSplitter {
+                    width:root.sidebar-hidden ? 0px : 6px;
+                    visible:!root.sidebar-hidden;
+                    page-key:root.layout-page-key;epoch:root.layout-epoch;
+                    size:sidebar-pane.width;
+                    dragged(key,epoch,preview,pixels)=>{root.sidebar-resized(key,epoch,preview,pixels);}
+                    collapsed(key,epoch,preview)=>{root.sidebar-collapsed(key,epoch,preview);}
                 }
                 // the thumbnails' shortcuts, once a click gives them the
                 // keyboard: F3 manages the files selected's tags, F7
@@ -1643,6 +1618,41 @@ export component MainWindow inherits Window {
                             for row in root.thumbnail-menu.manage: MenuItem {
                                 title: row.label;
                                 activated => { root.menu-chosen(row.id); }
+                            }
+                        }
+                        if root.thumbnail-menu.locations-current.length + root.thumbnail-menu.locations-copy.length + root.thumbnail-menu.locations-move.length + root.thumbnail-menu.locations-merge.length > 0: Menu {
+                            title: "locations";
+                            if root.thumbnail-menu.locations-current.length == 1: MenuItem {
+                                title: "currently in " + root.thumbnail-menu.locations-current[0].label;
+                                activated => { root.menu-chosen(root.thumbnail-menu.locations-current[0].id); }
+                            }
+                            if root.thumbnail-menu.locations-current.length > 1: Menu {
+                                title: "currently in";
+                                for row in root.thumbnail-menu.locations-current: MenuItem {title:row.label;activated=>{root.menu-chosen(row.id);}}
+                            }
+                            if root.thumbnail-menu.locations-copy.length == 1: MenuItem {
+                                title: "add to " + root.thumbnail-menu.locations-copy[0].label;
+                                activated => { root.menu-chosen(root.thumbnail-menu.locations-copy[0].id); }
+                            }
+                            if root.thumbnail-menu.locations-copy.length > 1: Menu {
+                                title: "add to";
+                                for row in root.thumbnail-menu.locations-copy: MenuItem {title:row.label;activated=>{root.menu-chosen(row.id);}}
+                            }
+                            if root.thumbnail-menu.locations-merge.length == 1: MenuItem {
+                                title: "move (merge) " + root.thumbnail-menu.locations-merge[0].label;
+                                activated => { root.menu-chosen(root.thumbnail-menu.locations-merge[0].id); }
+                            }
+                            if root.thumbnail-menu.locations-merge.length > 1: Menu {
+                                title: "move (merge)";
+                                for row in root.thumbnail-menu.locations-merge: MenuItem {title:row.label;activated=>{root.menu-chosen(row.id);}}
+                            }
+                            if root.thumbnail-menu.locations-move.length == 1: MenuItem {
+                                title: "move (strict) " + root.thumbnail-menu.locations-move[0].label;
+                                activated => { root.menu-chosen(root.thumbnail-menu.locations-move[0].id); }
+                            }
+                            if root.thumbnail-menu.locations-move.length > 1: Menu {
+                                title: "move (strict)";
+                                for row in root.thumbnail-menu.locations-move: MenuItem {title:row.label;activated=>{root.menu-chosen(row.id);}}
                             }
                         }
                         if root.thumbnail-menu.has-urls: Menu {
@@ -1882,10 +1892,25 @@ export component MainWindow inherits Window {
                         }
                         property <int> viewer-reveal-request: root.viewer-reveal-request;
                         changed viewer-reveal-request => { grid.scroll-to(root.viewer-reveal-index); }
+                        Rectangle {
+                            x: grid.x; y: grid.y;
+                            width: grid.visible-width; height: grid.visible-height;
+                            clip: true;
+                            background: Theme.grid-background;
+                            Image {
+                                source: root.thumbnail-background;
+                                width: self.source.width * 1px;
+                                height: self.source.height * 1px;
+                                x: parent.width - self.width;
+                                y: parent.height - self.height;
+                            }
+                        }
                         grid := ThumbnailGrid {
                             width: 100%;
                             height: 100%;
                             rows: root.thumbnail-rows;
+                            navigation-scroll(top,span,offset,viewport,content) => { return root.thumbnail-scroll-target(top,span,offset,viewport,content); }
+                            wheel-scroll(delta,viewport,offset) => { return root.thumbnail-wheel-target(delta,viewport,offset); }
                             thumbnail-width: root.thumbnail-width;
                             thumbnail-height: root.thumbnail-height;
                             border: root.thumbnail-border;
@@ -1907,6 +1932,7 @@ export component MainWindow inherits Window {
                     }
                 }
             }
+            } // page-frame
             if root.daemon-note != "": Rectangle {
                 background: Theme.panel;
                 // (its own height, whatever room is left over)
@@ -1958,12 +1984,17 @@ export component MainWindow inherits Window {
             x: parent.width - self.width - 20px;
             y: parent.height - self.height - 25px;
             popups: root.popups;
+            card-measured(i,key,owner,w,c) => { root.popup-card-measured(i,key,owner,w,c); }
+            control-measured(i,key,owner,control,b,c) => { root.popup-control-measured(i,key,owner,control,b,c); }
             summary: root.popup-summary;
             dismiss(i) => { root.popup-dismiss(i); }
             pause-play(i) => { root.popup-pause-play(i); }
             cancel(i) => { root.popup-cancel(i); }
             show-files(i) => { root.popup-show-files(i); }
             copy-traceback(i) => { root.popup-copy-traceback(i); }
+            copy-payload(key,owner,gui) => { root.popup-copy-payload(key,owner,gui); }
+            call(key,owner,gui) => { root.popup-call(key,owner,gui); }
+            answer(key,owner,question,gui,yes) => { root.popup-answer(key,owner,question,gui,yes); }
             dismiss-all => { root.popups-dismiss-all(); }
         }
         if root.question != "": Rectangle {
@@ -1992,6 +2023,7 @@ export component MainWindow inherits Window {
             }
         }
         suggestions-overlay := ReadAutocomplete {
+            scroll-geometry(y,h,c) => { if root.float-autocomplete { root.read-scroll-y=y; root.read-view-height=h; root.read-content-height=c; } }
             visible: root.autocomplete-overlay-visible;
             x: root.autocomplete-anchor-x;
             y: root.autocomplete-anchor-y;
@@ -2004,6 +2036,13 @@ export component MainWindow inherits Window {
             or-action(i) => { root.search-or-action(i); root.search-focus-requests += 1; }
             tab-chosen(i) => { root.autocomplete-tab-chosen(i); root.search-focus-requests += 1; }
             suggestions: root.suggestions;
+                        selected: root.suggestion-selected;
+                        move-highlight(by) => { root.move-highlight(by); }
+                        selection-clicked(i,c,s) => { root.suggestion-selection-clicked(i,c,s); }
+                        activated(s) => { root.suggestions-activated(s); }
+                        deselect => { root.suggestions-deselected() }
+                        select-all => { root.suggestions-select-all(); }
+                        context-menu(i,x,y) => { root.suggestion-context-menu(i,x,y); }
             highlighted: root.highlighted;
             chosen(index) => { root.suggestion-chosen(index); }
         }
@@ -2037,6 +2076,15 @@ export component MainWindow inherits Window {
             placed(p, x, y, width) => { root.menu-placed(p, x, y, width); }
             dismiss => { root.menu-dismissed(); }
         }
+        if root.tab-tooltip-visible && root.tab-tooltip != "": Rectangle {
+            width: min(420px,label.preferred-width + 16px);
+            height: label.preferred-height + 12px;
+            x: min(root.tab-tooltip-x,max(0px,parent.width - self.width - 8px));
+            y: min(root.tab-tooltip-y,max(0px,parent.height - self.height - 8px));
+            background: Theme.panel;
+            border-width: 1px; border-color: Theme.border;
+            label := Text { x:8px;y:6px;width:parent.width - 16px;text:root.tab-tooltip;wrap:word-wrap;color:Theme.text; }
+        }
         if root.search-or-open: Rectangle {
             width: parent.width;
             height: parent.height;
@@ -2044,6 +2092,17 @@ export component MainWindow inherits Window {
             TouchArea { }
         }
     }
+        if root.tag-menu-panes.length > 0 || root.tag-menu-question != "": TagMenuOverlay {
+            width:root.width;height:root.height;
+            panes:root.tag-menu-panes;question:root.tag-menu-question;
+            question-title:root.tag-menu-question-title;yes-label:root.tag-menu-yes-label;no-label:root.tag-menu-no-label;
+            hovered(p,l,r,t,x)=>{root.tag-menu-hovered(p,l,r,t,x);}
+            clicked(p,l,r,t,x)=>{root.tag-menu-clicked(p,l,r,t,x);}
+            placed(p,x,y,w)=>{root.tag-menu-placed(p,x,y,w);}
+            dismissed=>{root.tag-menu-dismissed();}
+            answered(yes)=>{root.tag-menu-answered(yes);}
+        }
+
     }
 }
 
@@ -2080,3 +2139,13 @@ export { ImportOptionsPanelWindow } from "import_options_panel.slint";
 export { DeleteFilesWindow } from "delete_files.slint";
 
 export { TagBannerWindow } from "tag_banner.slint";
+
+export { ViewerEyeMenu } from "viewer_eye_menu.slint";
+
+export { ArchiveRepairWindow } from "archive_repair.slint";
+
+export { FileHistoryWindow } from "file_history.slint";
+export { FileMaintenanceWindow } from "file_maintenance_current.slint";
+export { ShortcutSetWindow, ShortcutCommandWindow } from "shortcuts.slint";
+
+export { DebugFetchWindow } from "debug_fetch.slint";

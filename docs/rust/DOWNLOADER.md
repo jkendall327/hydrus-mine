@@ -146,3 +146,15 @@ that its cookies may need refreshing.
 - **Logins:** cookies only (see above).
 - **Test pages:** generated pages only.
 - **Companion pages:** a named queue per page name.
+
+Paged importer work has five runner-owned permit pools, configured by the
+Importing Options work-slot controls: gallery files/search, watcher files/check,
+and miscellaneous URL/simple-downloader/local-import work. The runner reads
+saved limits at admission; its active counters survive every settings refresh,
+so lowering a limit never replaces the pool or grants extra capacity while old
+jobs run. The permit includes bandwidth and network waits and releases on
+completion/error/cancellation. Pending jobs own no permit and re-read queue and
+pause state after each wake. Watcher checks and files have separate owned loops.
+A closed/removed queue cancels registered network work and awaits its cleanup;
+blocking local import work remains counted until it actually finishes. These
+pools are independent from the network engine's connection semaphores.

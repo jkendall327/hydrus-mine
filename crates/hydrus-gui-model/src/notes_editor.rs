@@ -33,7 +33,7 @@ impl NotesEditor {
         } else {
             names_to_notes
                 .iter()
-                .map(|(n, t)| (n.clone(), t.clone()))
+                .map(|(n, t)| (n.clone(), t.replace("\r\n", "\n").replace('\r', "\n")))
                 .collect()
         };
         let current = start_on
@@ -120,18 +120,40 @@ impl NotesEditor {
     /// default; the paste button reads it back), and what the button
     /// says. Nothing when there are no notes.
     pub fn copy(&self) -> Option<(String, String)> {
-        let notes = self.ordered_value();
+        self.copy_with(true, true)
+    }
+
+    /// Live cog preferences choose every cleaned note or the current tab, and
+    /// technical JSON or naturally sorted human text. Current empty notes copy
+    /// their name with empty text, matching the reference's current-note path.
+    pub fn copy_with(&self, all: bool, as_json: bool) -> Option<(String, String)> {
+        let mut notes = if all {
+            self.ordered_value()
+        } else {
+            let (name, text) = self.tabs.get(self.current)?;
+            vec![(name.clone(), clean_note_text(text))]
+        };
         if notes.is_empty() {
             return None;
         }
-        let body: Vec<String> = notes
-            .iter()
-            .map(|(n, t)| format!("{}: {}", python_json_string(n), python_json_string(t)))
-            .collect();
-        let text = format!("{{{}}}", body.join(", "));
+        let text = if as_json {
+            let body: Vec<String> = notes
+                .iter()
+                .map(|(n, t)| format!("{}: {}", python_json_string(n), python_json_string(t)))
+                .collect();
+            format!("{{{}}}", body.join(", "))
+        } else {
+            notes.sort_by_cached_key(|(name, _)| hydrus_core::sort::human_sort_key(name));
+            notes
+                .iter()
+                .map(|(name, text)| format!("{name}\n\n{text}"))
+                .collect::<Vec<_>>()
+                .join("\n\n\n\n")
+        };
+        let encoded = if as_json { "encoded " } else { "" };
         Some((
             text,
-            format!("Copied {} encoded notes!", human_int(notes.len())),
+            format!("Copied {} {encoded}notes!", human_int(notes.len())),
         ))
     }
 
@@ -295,4 +317,13 @@ pub fn clipboard_parse_error(expected: &str, content: &str, error: &str) -> Stri
     format!(
         "Sorry, I could not understand what was in the clipboard. I was expecting \"{expected}\" but received this text:\n\n{shown}\n\nMore details have been written to the log, but the general error was:\n\n{error}"
     )
+}
+
+/// Middle-click on a viewer note copies the body or its name and body.
+pub fn hover_copy(name: &str, text: &str, text_only: bool) -> String {
+    if text_only {
+        text.to_owned()
+    } else {
+        format!("{name}\n\n{text}")
+    }
 }

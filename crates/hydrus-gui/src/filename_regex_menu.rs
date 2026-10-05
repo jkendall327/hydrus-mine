@@ -90,9 +90,20 @@ pub(crate) fn bind(
                                 .map_err(|error| error.to_string())
                         }
                     });
-                    if let Ok(child) =
-                        crate::regex_favourites_window::open(&value, &controls.slot, applied)
-                        && let Some(window) = weak.upgrade()
+                    if let Ok(child) = crate::regex_favourites_window::open_owned(
+                        &value,
+                        &controls.slot,
+                        applied,
+                        Rc::new({
+                            let store = store.clone();
+                            move || {
+                                store
+                                    .read(hydrus_store::regex_favourites::load)
+                                    .map_err(|e| e.to_string())
+                            }
+                        }),
+                        alive.clone(),
+                    ) && let Some(window) = weak.upgrade()
                     {
                         window.set_regex_child_open(true);
                         let weak = window.as_weak();

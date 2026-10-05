@@ -9,6 +9,7 @@ pub use hydrus_downloader_exchange::{
     Definition, Native, decode_png, decode_text, encode_png, encode_text,
 };
 use hydrus_parse::Downloaders;
+use hydrus_parse::login::LoginScript;
 use hydrus_store::{
     Store, StoreError,
     settings::{self, Setting},
@@ -46,6 +47,7 @@ fn key(native: &Native) -> Option<String> {
         Native::Class(c) => Some(format!("class:{}", hex::encode(&c.key))),
         Native::Gug(g) => Some(format!("gug:{}", g.key())),
         Native::Page(p) => Some(format!("page:{}", p.key)),
+        Native::Login(script) => Some(format!("login:{}", script.key)),
         _ => None,
     }
 }
@@ -56,9 +58,11 @@ pub struct Draft {
     pub classes: UrlClassSettings,
     pub downloaders: Downloaders,
     pub auxiliary: Auxiliary,
+    pub login_scripts: Vec<LoginScript>,
     original_classes: UrlClassSettings,
     original_downloaders: Downloaders,
     original_auxiliary: Auxiliary,
+    original_login_scripts: Vec<LoginScript>,
 }
 /// The review displayed before staging an import.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -81,11 +85,16 @@ impl Draft {
     /// Read a consistent native settings snapshot without mutations.
     pub fn load(store: &Store) -> hydrus_store::Result<Self> {
         store.read(|conn| {
-            Ok(Self::new(
+            let mut draft = Self::new(
                 settings::get(conn)?,
                 settings::get(conn)?,
                 settings::get(conn)?,
-            ))
+            );
+            draft.login_scripts = hydrus_store::logins::load(conn)?.scripts;
+            draft
+                .original_login_scripts
+                .clone_from(&draft.login_scripts);
+            Ok(draft)
         })
     }
     /// Construct an isolated draft from known settings.
@@ -94,6 +103,8 @@ impl Draft {
             original_classes: classes.clone(),
             original_downloaders: downloaders.clone(),
             original_auxiliary: auxiliary.clone(),
+            login_scripts: Vec::new(),
+            original_login_scripts: Vec::new(),
             classes,
             downloaders,
             auxiliary,
@@ -104,10 +115,10 @@ impl Draft {
         if definitions.iter().any(|d| {
             !matches!(
                 d.native,
-                Native::Class(_) | Native::Gug(_) | Native::Page(_)
+                Native::Class(_) | Native::Gug(_) | Native::Page(_) | Native::Login(_)
             )
         }) {
-            return Err("Downloader bundles accept URL classes, generators and page parsers. Import formulas or content nodes from their own editor.".into());
+            return Err("Downloader bundles accept URL classes, generators, page parsers and login scripts. Import formulas or content nodes from their own editor.".into());
         }
         let mut next = self.clone();
         let mut review = Review::default();
@@ -124,6 +135,7 @@ impl Draft {
             let category = match definition.native {
                 Native::Class(_) => "URL Class",
                 Native::Page(_) => "Parser",
+                Native::Login(_) => "Login Script",
                 _ => "GUG",
             };
             let name_seen = (category.to_owned(), definition.name().to_owned());
@@ -230,6 +242,21 @@ impl Draft {
                     new_parsers.push(p.clone());
                     next.downloaders.parsers.push(p.clone());
                 }
+                Native::Login(script) => {
+                    if next.login_scripts.iter().any(|old| {
+                        let mut old = old.clone();
+                        old.key.clone_from(&script.key);
+                        old.name.clone_from(&script.name);
+                        semantic_eq(&old, script)
+                    }) {
+                        review.duplicates += 1;
+                        continue;
+                    }
+                    // Mixed reference imports preserve names, regenerate keys and
+                    // update existing domain links with the same script name.
+                    script.key = PageKey::random().to_hex();
+                    next.login_scripts.push(script.clone());
+                }
                 _ => unreachable!("definition kinds were checked before staging"),
             }
             seen.insert(name_seen);
@@ -263,7 +290,40 @@ impl Draft {
     /// a stale snapshot so concurrent editors cannot lose each other's changes.
     pub fn save(&self, store: &Store) -> hydrus_store::Result<()> {
         let draft = self.clone();
-        store.write_and_refresh(move|ctx|{let conn=ctx.conn();let classes:UrlClassSettings=settings::get(conn)?;let downloaders:Downloaders=settings::get(conn)?;let auxiliary:Auxiliary=settings::get(conn)?;if classes!=draft.original_classes||downloaders!=draft.original_downloaders||auxiliary!=draft.original_auxiliary{return Err(StoreError::Invalid("Downloader definitions changed in another editor. Reopen the import before applying.".into()));}settings::set(conn,&draft.classes)?;settings::set(conn,&draft.downloaders)?;settings::set(conn,&draft.auxiliary)})
+        store.write_and_refresh(move |ctx| {
+            let conn = ctx.conn();
+            let classes: UrlClassSettings = settings::get(conn)?;
+            let downloaders: Downloaders = settings::get(conn)?;
+            let auxiliary: Auxiliary = settings::get(conn)?;
+            let mut logins = hydrus_store::logins::load(conn)?;
+            if classes != draft.original_classes
+                || downloaders != draft.original_downloaders
+                || auxiliary != draft.original_auxiliary
+                || logins.scripts != draft.original_login_scripts
+            {
+                return Err(StoreError::Invalid("Downloader definitions changed in another editor. Reopen the import before applying.".into()));
+            }
+            if draft.login_scripts != draft.original_login_scripts {
+                logins.scripts.clone_from(&draft.login_scripts);
+                logins.scripts.sort_by_key(|script| script.credentials.len());
+                for script in &logins.scripts {
+                    for example in &script.examples {
+                        if example.domain.contains('.')
+                            && let Some(domain) = logins.domains.get_mut(&example.domain)
+                            && domain.script_name == script.name
+                        {
+                            domain.script_key.clone_from(&script.key);
+                            domain.access = example.access;
+                            domain.description.clone_from(&example.description);
+                        }
+                    }
+                }
+                hydrus_store::logins::save(conn, &logins)?;
+            }
+            settings::set(conn, &draft.classes)?;
+            settings::set(conn, &draft.downloaders)?;
+            settings::set(conn, &draft.auxiliary)
+        })
     }
     /// Export every definition as a reference bundle for the package window.
     pub fn definitions(&self) -> Vec<Definition> {
@@ -274,8 +334,114 @@ impl Draft {
             .map(|c| Native::Class(Box::new(c)))
             .chain(self.downloaders.gugs.gugs.iter().cloned().map(Native::Gug))
             .chain(self.downloaders.parsers.iter().cloned().map(Native::Page))
+            .chain(self.login_scripts.iter().cloned().map(Native::Login))
             .map(|n| self.auxiliary.definition(n))
             .collect()
+    }
+    /// Export chosen registered objects and their downloader dependencies.
+    /// Login scripts carry their own rules and never export saved domain credentials.
+    pub fn export(&self, selected: &BTreeSet<usize>) -> Vec<Definition> {
+        let definitions = self.definitions();
+        let mut included = selected.clone();
+        let registry = UrlClasses::new(self.classes.clone());
+        loop {
+            let before = included.len();
+            let mut needed = Vec::new();
+            for &index in &included {
+                let Some(definition) = definitions.get(index) else {
+                    continue;
+                };
+                match &definition.native {
+                    Native::Gug(AnyGug::Nested(nested)) => {
+                        for (key, name) in &nested.gugs {
+                            if let Some(gug) = self.downloaders.gugs.get(key, name) {
+                                needed.push(Native::Gug(gug.clone()));
+                            }
+                        }
+                    }
+                    Native::Gug(AnyGug::Single(gug)) => {
+                        if let Ok(url) = gug.example_url(hydrus_core::url::GugOptions::default())
+                            && let Some(class) = registry.class_for(&url)
+                        {
+                            needed.push(Native::Class(Box::new(class.clone())));
+                            let domain = second_level(&url);
+                            needed.extend(
+                                self.classes
+                                    .url_classes
+                                    .iter()
+                                    .filter(|class| {
+                                        domain.is_some()
+                                            && second_level(&class.example_url) == domain
+                                            && matches!(
+                                                class.url_type,
+                                                UrlType::Post | UrlType::File
+                                            )
+                                    })
+                                    .cloned()
+                                    .map(|class| Native::Class(Box::new(class))),
+                            );
+                        }
+                    }
+                    Native::Class(class) => {
+                        let keys = registry.api_class_keys(&class.example_url);
+                        needed.extend(
+                            self.classes
+                                .url_classes
+                                .iter()
+                                .filter(|class| {
+                                    keys.iter().any(|(key, _)| key == &hex::encode(&class.key))
+                                })
+                                .cloned()
+                                .map(|class| Native::Class(Box::new(class))),
+                        );
+                        if let Ok((_, key)) = registry.url_to_fetch_and_parser(&class.example_url)
+                            && let Some(parser) = self
+                                .downloaders
+                                .parsers
+                                .iter()
+                                .find(|parser| parser.key == key)
+                        {
+                            needed.push(Native::Page(parser.clone()));
+                        }
+                    }
+                    _ => (),
+                }
+            }
+            for native in needed {
+                if let Some(index) = definitions
+                    .iter()
+                    .position(|definition| definition.native == native)
+                {
+                    included.insert(index);
+                }
+            }
+            if included.len() == before {
+                break;
+            }
+        }
+        definitions
+            .into_iter()
+            .enumerate()
+            .filter_map(|(index, definition)| included.contains(&index).then_some(definition))
+            .collect()
+    }
+}
+fn second_level(url: &str) -> Option<String> {
+    hydrus_core::url::url_domain(url)
+        .ok()
+        .map(|domain| hydrus_core::url::psl::second_level_domain(&domain))
+}
+
+/// The concrete package category shown beside a registered object's name.
+pub fn category(definition: &Definition) -> &'static str {
+    match definition.native {
+        Native::Class(_) => "URL Class",
+        Native::Gug(_) => "GUG",
+        Native::Page(_) => "Parser",
+        Native::Login(_) => "Login Script",
+        Native::Content(_) => "Content Parser",
+        Native::Formula(_) => "Formula",
+        Native::Simple(_) => "Simple Formula",
     }
 }
 fn set_gug_identity(g: &mut AnyGug, key: &str, name: &str) {

@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "agent": "regex-options-editor",
+  "baseline_git_head": "576d8cb8cf516699c1d2886cf7c74153c8ed542f",
+  "frozen_original_inventory": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "frozen_options_audit": {
+    "path": "docs/rust/gui-coverage/audit/options-patch.json",
+    "baseline_git_head": "5079206dc1d0c2d2614b428632dc9499cb9ad3f8",
+    "sha256": "05fb770dc87d8b03cd0e1a4dbd509de61d48e0dc1c87c7c7032a9aeb4adce20b",
+    "before": {
+      "audit-options-regex-favourites-regular-expression-favourites-editor": "missing"
+    }
+  },
+  "currentInventoryStatusBefore": "first_pass",
+  "priorImplementation": "Sorted CRUD, duplicate guard, advisory fragments, Options child staging, typed native/YAML preference load and matcher favourites existed before this slice; current inventory already reflected that earlier reassessment.",
+  "newImplementation": "Add the missing read-only saved-favourites chooser to row regex input with explicit saved-reader/owner APIs. Add empty-description EnterText validation, hidden-owner opening rejection and hidden/retired sender guards, reciprocal regex/shortcut/routing child navigation and launch guards, Options-child Apply gating and UI disabled Apply. Keep existing public open signature, defaults and low-level Editor APIs.",
+  "claims": [
+    {
+      "id": "audit-options-regex-favourites-regular-expression-favourites-editor",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Complete bounded existing favourite editor with actual Qt sorted Add/Edit/Delete/duplicate/advisory/cancel replay, nonempty/whitespace descriptions, saved-input read-only instruction/copy chooser separated from draft and current/default APIs. Child acceptance stages Options only, page/search navigation and sibling child launch are blocked reciprocally, parent Apply saves atomically, Cancel/owner retirement clears menus and prevents copy/commit/reopen. Saved choices reach real StringMatchWindow favourites menu/copy and durable Store reopen.",
+      "source": [
+        "crates/hydrus-gui-model/src/regex_favourites.rs::input_menu",
+        "crates/hydrus-gui-model/src/regex_favourites.rs::description_validity",
+        "crates/hydrus-gui/src/regex_favourites_window.rs::open_owned",
+        "crates/hydrus-gui/src/options_window.rs::open",
+        "crates/hydrus-gui/src/string_processor_window.rs",
+        "crates/hydrus-store/src/regex_favourites.rs::load"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/regex_favourites.rs",
+        "crates/hydrus-gui/tests/gui/regex_options_editor.rs",
+        "crates/hydrus-gui/tests/gui/regex_favourites.rs",
+        "crates/hydrus-gui/tests/gui/options_window.rs::regex_favourites_open_from_options_and_keep_parent_transaction"
+      ],
+      "limits": [
+        "Conditional proposal awaits hosted Rust/native validation. No local Cargo/Rust builds/tests/mutation runs.",
+        "Native phrase/description editing remains one inline panel instead of sequential Qt dialogs; Cancel discards the row draft. Duplicate and blank-description errors use inline native error text.",
+        "The reference editor has no import action; this slice does not invent one. Existing broader regex help, components and regex-input parent workflows remain Partial.",
+        "This original editor ID is already included in the validated completion ledger. New production gaps are repaired, with zero additional original completion credit and no canonical status edits or duplicate parent/alias credit."
+      ],
+      "countAsCompletedLeaf": false,
+      "change_kind": "implementation_refinement"
+    }
+  ],
+  "parentsRemainPartial": [
+    "options-regex-favourites"
+  ],
+  "canonical_files_changed": false,
+  "claimsPromotion": "Zero additional original completion credit: this editor ID is already included in overnight/progress.json completed_feature_ids from overnight/string-dates.json. This adds real saved-input chooser, description validation and owner/child guard behavior within its existing first-pass scope.",
+  "referenceRecording": {
+    "recorder": "oracle/record_regex_options_editor.py",
+    "fixture": "oracle/fixtures/regex_options_editor.json",
+    "image": "oracle/fixtures/regex_options_editor_reference.png",
+    "executed": true,
+    "executedAtUtc": "2026-10-05T06:28:26Z",
+    "finishedAtUtc": "2026-10-05T06:28:27Z",
+    "reference": "Actual RegexPanel/EditRegexFavourites Add/Edit/extended Delete and RegexInput saved-favourites menu, real EditTextPanel empty/whitespace description validation, outer draft cancel/reopen/UpdateOptions and actual accepted RegexInput copy consumer. Modal answers substituted; no network authored. Client API listen attempt was refused by sandbox, independently of these successful Qt handlers."
+  },
+  "validation": "Actual Qt recording and PNG inspection, Python syntax/JSON invariants, direct rustfmt/diff, warning-aware cached Slint source compilation passed. Rust/native execution remains pending hosted CI. Independent source review accepted the finite editor slice and reciprocal child/hidden-opening repairs; no source blocker remains.",
+  "currentAlreadyValidatedOriginalLeaf": true,
+  "validatedPriorManifest": "docs/rust/gui-coverage/overnight/string-dates.json",
+  "additionalOriginalLeafCompletions": 0
+}

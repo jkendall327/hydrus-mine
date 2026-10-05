@@ -19,6 +19,40 @@
       "hashes": [
         "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
       ]
+    },
+    {
+      "tag": "parity:literal system child",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ]
+    },
+    {
+      "tag": "parity:literal system leaf",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ]
+    },
+    {
+      "tag": "parity:literal wildcard child",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ]
+    },
+    {
+      "tag": "parity:literal wildcard leaf",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ]
+    },
+    {
+      "tag": "parity:cleaned spelling trap",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+      ]
     }
   ],
   "parents": [
@@ -37,6 +71,26 @@
     [
       "parity:tabs deep",
       "parity:tabs alpha"
+    ],
+    [
+      "parity:literal system child",
+      "system:inbox"
+    ],
+    [
+      "parity:literal system leaf",
+      "parity:literal system child"
+    ],
+    [
+      "parity:literal wildcard child",
+      "parity:literal*root"
+    ],
+    [
+      "parity:literal wildcard leaf",
+      "parity:literal wildcard child"
+    ],
+    [
+      "parity:cleaned spelling trap",
+      "inbox"
     ]
   ],
   "siblings": [
@@ -380,6 +434,324 @@
       ],
       "predicates": [
         "parity:tabs root"
+      ]
+    }
+  ],
+  "literal_cases": [
+    {
+      "parent": "system:inbox",
+      "child": "parity:literal system child",
+      "leaf": "parity:literal system leaf",
+      "events": [
+        {
+          "action": "favourite",
+          "tab": 1,
+          "text": "",
+          "rows": [
+            {
+              "tag": "system:inbox",
+              "rows": [
+                "system:inbox"
+              ]
+            }
+          ],
+          "active": [],
+          "context_tags": []
+        },
+        {
+          "action": "activate_parent",
+          "tab": 2,
+          "text": "",
+          "rows": [
+            {
+              "tag": "parity:cleaned spelling trap",
+              "rows": [
+                "parity:cleaned spelling trap"
+              ]
+            },
+            {
+              "tag": "parity:literal system child",
+              "rows": [
+                "parity:literal system child"
+              ]
+            },
+            {
+              "tag": "parity:literal system leaf",
+              "rows": [
+                "parity:literal system leaf"
+              ]
+            }
+          ],
+          "active": [
+            {
+              "kind": "tag",
+              "value": "system:inbox",
+              "inclusive": true
+            }
+          ],
+          "context_tags": [
+            "system:inbox"
+          ]
+        },
+        {
+          "action": "activate_child",
+          "tab": 2,
+          "text": "",
+          "rows": [
+            {
+              "tag": "parity:cleaned spelling trap",
+              "rows": [
+                "parity:cleaned spelling trap"
+              ]
+            },
+            {
+              "tag": "parity:literal system leaf",
+              "rows": [
+                "parity:literal system leaf"
+              ]
+            }
+          ],
+          "active": [
+            {
+              "kind": "tag",
+              "value": "parity:literal system child",
+              "inclusive": true
+            },
+            {
+              "kind": "tag",
+              "value": "system:inbox",
+              "inclusive": true
+            }
+          ],
+          "context_tags": [
+            "parity:literal system child",
+            "system:inbox"
+          ]
+        },
+        {
+          "action": "remove_child",
+          "tab": 2,
+          "text": "",
+          "rows": [
+            {
+              "tag": "parity:cleaned spelling trap",
+              "rows": [
+                "parity:cleaned spelling trap"
+              ]
+            },
+            {
+              "tag": "parity:literal system child",
+              "rows": [
+                "parity:literal system child"
+              ]
+            },
+            {
+              "tag": "parity:literal system leaf",
+              "rows": [
+                "parity:literal system leaf"
+              ]
+            }
+          ],
+          "active": [
+            {
+              "kind": "tag",
+              "value": "system:inbox",
+              "inclusive": true
+            }
+          ],
+          "context_tags": [
+            "system:inbox"
+          ]
+        },
+        {
+          "action": "remove_parent",
+          "tab": 2,
+          "text": "",
+          "rows": [],
+          "active": [],
+          "context_tags": []
+        },
+        {
+          "action": "restore_negative_parent",
+          "tab": 2,
+          "text": "",
+          "rows": [
+            {
+              "tag": "parity:cleaned spelling trap",
+              "rows": [
+                "parity:cleaned spelling trap"
+              ]
+            },
+            {
+              "tag": "parity:literal system child",
+              "rows": [
+                "parity:literal system child"
+              ]
+            },
+            {
+              "tag": "parity:literal system leaf",
+              "rows": [
+                "parity:literal system leaf"
+              ]
+            }
+          ],
+          "active": [
+            {
+              "kind": "tag",
+              "value": "system:inbox",
+              "inclusive": false
+            }
+          ],
+          "context_tags": [
+            "system:inbox"
+          ]
+        }
+      ]
+    },
+    {
+      "parent": "parity:literal*root",
+      "child": "parity:literal wildcard child",
+      "leaf": "parity:literal wildcard leaf",
+      "events": [
+        {
+          "action": "favourite",
+          "tab": 1,
+          "text": "",
+          "rows": [
+            {
+              "tag": "parity:literal*root",
+              "rows": [
+                "parity:literal*root"
+              ]
+            }
+          ],
+          "active": [],
+          "context_tags": []
+        },
+        {
+          "action": "activate_parent",
+          "tab": 2,
+          "text": "",
+          "rows": [
+            {
+              "tag": "parity:literal wildcard child",
+              "rows": [
+                "parity:literal wildcard child"
+              ]
+            },
+            {
+              "tag": "parity:literal wildcard leaf",
+              "rows": [
+                "parity:literal wildcard leaf"
+              ]
+            }
+          ],
+          "active": [
+            {
+              "kind": "tag",
+              "value": "parity:literal*root",
+              "inclusive": true
+            }
+          ],
+          "context_tags": [
+            "parity:literal*root"
+          ]
+        },
+        {
+          "action": "activate_child",
+          "tab": 2,
+          "text": "",
+          "rows": [
+            {
+              "tag": "parity:literal wildcard leaf",
+              "rows": [
+                "parity:literal wildcard leaf"
+              ]
+            }
+          ],
+          "active": [
+            {
+              "kind": "tag",
+              "value": "parity:literal wildcard child",
+              "inclusive": true
+            },
+            {
+              "kind": "tag",
+              "value": "parity:literal*root",
+              "inclusive": true
+            }
+          ],
+          "context_tags": [
+            "parity:literal wildcard child",
+            "parity:literal*root"
+          ]
+        },
+        {
+          "action": "remove_child",
+          "tab": 2,
+          "text": "",
+          "rows": [
+            {
+              "tag": "parity:literal wildcard child",
+              "rows": [
+                "parity:literal wildcard child"
+              ]
+            },
+            {
+              "tag": "parity:literal wildcard leaf",
+              "rows": [
+                "parity:literal wildcard leaf"
+              ]
+            }
+          ],
+          "active": [
+            {
+              "kind": "tag",
+              "value": "parity:literal*root",
+              "inclusive": true
+            }
+          ],
+          "context_tags": [
+            "parity:literal*root"
+          ]
+        },
+        {
+          "action": "remove_parent",
+          "tab": 2,
+          "text": "",
+          "rows": [],
+          "active": [],
+          "context_tags": []
+        },
+        {
+          "action": "restore_negative_parent",
+          "tab": 2,
+          "text": "",
+          "rows": [
+            {
+              "tag": "parity:literal wildcard child",
+              "rows": [
+                "parity:literal wildcard child"
+              ]
+            },
+            {
+              "tag": "parity:literal wildcard leaf",
+              "rows": [
+                "parity:literal wildcard leaf"
+              ]
+            }
+          ],
+          "active": [
+            {
+              "kind": "tag",
+              "value": "parity:literal*root",
+              "inclusive": false
+            }
+          ],
+          "context_tags": [
+            "parity:literal*root"
+          ]
+        }
       ]
     }
   ]

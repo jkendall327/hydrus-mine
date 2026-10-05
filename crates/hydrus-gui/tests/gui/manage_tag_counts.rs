@@ -50,6 +50,7 @@ fn thumbnail_dialog_replays_deleted_counts_and_retained_callbacks_cannot_mutate_
     );
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(
         &ui,
         Pages::single(SearchPage::fixed(
@@ -66,6 +67,7 @@ fn thumbnail_dialog_replays_deleted_counts_and_retained_callbacks_cannot_mutate_
     let states = recorded["deleted"].as_array().unwrap();
     assert_eq!(snapshot(&window), states[0]["state"]);
     let other_ui = MainWindow::new().unwrap();
+    other_ui.show().unwrap();
     let other_bound = bind(
         &other_ui,
         Pages::single(SearchPage::fixed(store.clone(), "same corpus", None, files)),

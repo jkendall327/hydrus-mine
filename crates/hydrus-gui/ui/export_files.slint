@@ -4,6 +4,7 @@ import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
 import { Asking } from "subscriptions.slint";
 import { ExportPatternButton } from "export_pattern.slint";
+import { MenuChoiceFrame } from "menu_choice_wheel.slint";
 import { ExportTags } from "export_tags.slint";
 import { ListText } from "theme.slint";
 import { MenuPane } from "main_menu.slint";
@@ -29,6 +30,7 @@ export component ExportFilesWindow inherits Window {
     callback tag-middle-clicked(int,bool,bool);
     callback tag-context-menu(int,length,length);
     callback tag-sort-chosen(int,int);
+    callback tag-sort-geometry(int,MenuChoiceFrame);
     callback tag-copy();
     callback tag-select-all();
     in property <[MenuPane]> tag-menu-panes;
@@ -75,6 +77,7 @@ export component ExportFilesWindow inherits Window {
                 middle-clicked(row,ctrl,shift) => {root.tag-middle-clicked(row,ctrl,shift);}
                 context-menu(row,x,y) => {root.tag-context-menu(row,x,y);}
                 sort-chosen(part,index) => {root.tag-sort-chosen(part,index);}
+                sort-geometry(part,frame) => {root.tag-sort-geometry(part,frame);}
                 copy => {root.tag-copy();}
                 select-all => {root.tag-select-all();}
             }

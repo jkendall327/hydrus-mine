@@ -4,6 +4,9 @@
 //! seconds; the windows' own tests are hydrus-gui's.
 
 mod about;
+mod active_predicates;
+mod animation_start;
+mod api_update_toasts;
 mod auto_resolution_review;
 mod auto_resolution_rules;
 mod checker_options;
@@ -11,37 +14,54 @@ mod clipboard_urls;
 mod datetime_editor;
 mod delete_files;
 mod downloader_definitions;
+mod downloader_update_times;
+mod duplicate_colours;
 mod duplicates_page;
 mod edit_subscription;
 mod embedded_metadata;
+mod existing_tags_filter;
 mod file_log;
+mod file_view_removal;
 mod filename_rules;
 mod filename_simple;
 mod filename_tagging;
+mod filesize_predicate;
 mod filetype_tree;
 mod folders;
 mod force_filetype;
+mod force_idle;
 mod formula_editors;
+mod hash_predicate;
+mod image_cache;
 mod import_options_editor;
 mod import_options_overwrite;
 mod import_options_panel;
 mod importer_menu;
 mod local_import_dialog;
+mod login_script_controls;
 mod login_workflows;
+mod main_identity;
 mod main_menu;
 mod manage_notes;
 mod merge_options_editor;
 mod merge_summaries;
+mod namespace_colours;
+mod normal_time_maintenance;
+mod notes_preferences;
 mod options_dialog;
 mod page_chooser_options;
 mod page_navigation_options;
+mod physical_delete_delay;
 mod predicate_history;
+mod rating_sizes;
 mod ratings_editor;
 mod recent_predicates;
 mod search_log;
+mod selected_deletion_records;
 mod selection;
 mod session_lifecycle;
 mod session_saving;
+mod shortcut_capture;
 mod sidecar_descriptions;
 mod sidecar_editors;
 mod sidecar_previews;
@@ -56,6 +76,10 @@ mod subscriptions_dedupe;
 mod subscriptions_list;
 mod tag_filter_editor;
 mod tag_filter_favourites;
+mod thumbnail_appearance;
+mod thumbnail_cache;
+mod thumbnail_navigation;
+mod thumbnail_preview_selection;
 mod thumbnail_ratings;
 mod times_editor;
 mod urls_editor;
@@ -84,9 +108,11 @@ mod favourite_search_editor;
 mod regex_favourites;
 mod tab_context;
 
+mod sibling_colours;
 mod sibling_connector;
 mod tag_dialog_defaults;
 mod tag_dialog_preferences;
+mod tag_suggestions;
 mod unselected_tag_cap;
 
 mod write_autocomplete;
@@ -112,7 +138,59 @@ mod search_or;
 mod system_or_activation;
 
 mod manage_tag_counts;
+mod manage_tags_sort;
 
 mod frame_locations;
 mod incremental_tagging;
 mod tag_banner;
+
+mod page_tree;
+mod tab_drag;
+mod tab_presentation;
+
+mod archive_repair;
+
+mod file_history;
+mod file_maintenance_current;
+mod related_weights;
+
+mod autocomplete_tabs;
+mod external_calls;
+mod open_externally;
+
+mod viewer_drag;
+mod window_rescue;
+
+mod gui_colours;
+mod gui_format;
+mod popup_width;
+mod preview_default_zoom;
+mod viewer_tag_wheel;
+
+mod idle_timeout_options;
+mod legacy_seed_caches;
+
+mod import_work_slots;
+mod viewing_maintenance;
+
+mod local_transfer;
+
+mod page_layout;
+
+mod or_connector;
+
+mod image_colour;
+
+mod duplicates_progress;
+mod quick_export_directory;
+
+mod archive_delete_policies;
+
+mod ffmpeg_timeout;
+mod radio_return;
+mod tag_namespace_order;
+
+mod menu_choice_wheel;
+mod popup_freeze;
+
+mod viewer_prefetch;

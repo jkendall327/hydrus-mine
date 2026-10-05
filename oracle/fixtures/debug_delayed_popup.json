@@ -1,0 +1,96 @@
+{
+  "menu_path": [
+    "help",
+    "debug",
+    "gui actions",
+    "make a popup in five seconds"
+  ],
+  "schedule": [
+    {
+      "at_ms": 0.087,
+      "delay_seconds": 5,
+      "callback": "ShowTextClient",
+      "arguments": [
+        "This is a delayed popup message."
+      ],
+      "remaining_seconds": 4.999913215637207
+    },
+    {
+      "at_ms": 1001.516,
+      "delay_seconds": 5,
+      "callback": "ShowTextClient",
+      "arguments": [
+        "This is a delayed popup message."
+      ],
+      "remaining_seconds": 4.999770164489746
+    }
+  ],
+  "published": [
+    {
+      "at_ms": 5054.124,
+      "text": "This is a delayed popup message.",
+      "title": null,
+      "done": true,
+      "pausable": false,
+      "cancellable": false
+    },
+    {
+      "at_ms": 6002.523,
+      "text": "This is a delayed popup message.",
+      "title": null,
+      "done": true,
+      "pausable": false,
+      "cancellable": false
+    }
+  ],
+  "trace": [
+    {
+      "at_ms": 1001.189,
+      "requested_ms": 1000,
+      "main_visible": true,
+      "published": 0
+    },
+    {
+      "at_ms": 4901.079,
+      "requested_ms": 4900,
+      "main_visible": false,
+      "published": 0
+    },
+    {
+      "at_ms": 5300.86,
+      "requested_ms": 5300,
+      "main_visible": false,
+      "published": 1
+    },
+    {
+      "at_ms": 5900.956,
+      "requested_ms": 5900,
+      "main_visible": false,
+      "published": 1
+    },
+    {
+      "at_ms": 6400.404,
+      "requested_ms": 6400,
+      "main_visible": false,
+      "published": 2
+    }
+  ],
+  "cards": [
+    {
+      "text": "This is a delayed popup message.",
+      "title_hidden": true,
+      "cancel_hidden": true,
+      "width": 190,
+      "height": 25
+    },
+    {
+      "text": "This is a delayed popup message.",
+      "title_hidden": true,
+      "cancel_hidden": true,
+      "width": 190,
+      "height": 25
+    }
+  ],
+  "scheduler": "actual controller CallLater/background SingleJob",
+  "clock": "unmodified real monotonic observer"
+}

@@ -1,0 +1,266 @@
+{
+  "now": 1700000000,
+  "limit": 243200,
+  "read": 243201,
+  "events": [
+    {
+      "input": [
+        false,
+        3
+      ],
+      "before": {
+        "iso": false,
+        "figures": 3
+      },
+      "staged": {
+        "bandwidth": "bandwidth free in 1 minute 30 seconds\u2026 (global)",
+        "override": "overriding bandwidth in 45 seconds\u2026 (global)",
+        "gallery": "waiting to start: 1 minute 30 seconds",
+        "imminently": "bandwidth free imminently\u2026 (global)",
+        "checking": "waiting to start: checking",
+        "bandwidth_three": "bandwidth free in 3 seconds\u2026 (global)",
+        "gallery_three": "waiting to start: 3 seconds",
+        "validation": {
+          "minimum": "File was 1.5 KB but the lower limit in the File Filtering Import Options is 238 KB.",
+          "maximum": "File was 179 MB but the upper limit in the File Filtering Import Options is 238 KB.",
+          "gif": "File was 179 MB but the upper limit for gifs in the File Filtering Import Options is 238 KB."
+        },
+        "network": {
+          "whole": "Too much data: Was expecting 238 KB, but the server continued responding!",
+          "range": "Too much data: Was expecting 238 KB in this range chunk, but the server continued responding!"
+        },
+        "critical_drive": "The disk for path \"/synthetic/media/file.png\" is almost full and cannot take the file \"1111111111111111111111111111111111111111111111111111111111111111\", which is 179 MB! Shut the client down now and fix this!"
+      },
+      "saved": {
+        "iso": false,
+        "figures": 3
+      },
+      "reopened": {
+        "iso": false,
+        "figures": 3
+      },
+      "round_trip": {
+        "iso": false,
+        "figures": 3
+      },
+      "consumers": {
+        "bandwidth": "bandwidth free in 1 minute 30 seconds\u2026 (global)",
+        "override": "overriding bandwidth in 45 seconds\u2026 (global)",
+        "gallery": "waiting to start: 1 minute 30 seconds",
+        "imminently": "bandwidth free imminently\u2026 (global)",
+        "checking": "waiting to start: checking",
+        "bandwidth_three": "bandwidth free in 3 seconds\u2026 (global)",
+        "gallery_three": "waiting to start: 3 seconds",
+        "validation": {
+          "minimum": "File was 1.5 KB but the lower limit in the File Filtering Import Options is 238 KB.",
+          "maximum": "File was 179 MB but the upper limit in the File Filtering Import Options is 238 KB.",
+          "gif": "File was 179 MB but the upper limit for gifs in the File Filtering Import Options is 238 KB."
+        },
+        "network": {
+          "whole": "Too much data: Was expecting 238 KB, but the server continued responding!",
+          "range": "Too much data: Was expecting 238 KB in this range chunk, but the server continued responding!"
+        },
+        "critical_drive": "The disk for path \"/synthetic/media/file.png\" is almost full and cannot take the file \"1111111111111111111111111111111111111111111111111111111111111111\", which is 179 MB! Shut the client down now and fix this!"
+      }
+    },
+    {
+      "input": [
+        true,
+        1
+      ],
+      "before": {
+        "iso": false,
+        "figures": 3
+      },
+      "staged": {
+        "bandwidth": "bandwidth free in 1 minute 30 seconds\u2026 (global)",
+        "override": "overriding bandwidth in 45 seconds\u2026 (global)",
+        "gallery": "waiting to start: 1 minute 30 seconds",
+        "imminently": "bandwidth free imminently\u2026 (global)",
+        "checking": "waiting to start: checking",
+        "bandwidth_three": "bandwidth free in 3 seconds\u2026 (global)",
+        "gallery_three": "waiting to start: 3 seconds",
+        "validation": {
+          "minimum": "File was 1.5 KB but the lower limit in the File Filtering Import Options is 238 KB.",
+          "maximum": "File was 179 MB but the upper limit in the File Filtering Import Options is 238 KB.",
+          "gif": "File was 179 MB but the upper limit for gifs in the File Filtering Import Options is 238 KB."
+        },
+        "network": {
+          "whole": "Too much data: Was expecting 238 KB, but the server continued responding!",
+          "range": "Too much data: Was expecting 238 KB in this range chunk, but the server continued responding!"
+        },
+        "critical_drive": "The disk for path \"/synthetic/media/file.png\" is almost full and cannot take the file \"1111111111111111111111111111111111111111111111111111111111111111\", which is 179 MB! Shut the client down now and fix this!"
+      },
+      "saved": {
+        "iso": true,
+        "figures": 1
+      },
+      "reopened": {
+        "iso": true,
+        "figures": 1
+      },
+      "round_trip": {
+        "iso": true,
+        "figures": 1
+      },
+      "consumers": {
+        "bandwidth": "bandwidth free 2023-11-14 22:14:50\u2026 (global)",
+        "override": "overriding bandwidth 2023-11-14 22:14:05\u2026 (global)",
+        "gallery": "waiting to start: 2023-11-14 22:14:50",
+        "imminently": "bandwidth free 2023-11-14 22:13:22\u2026 (global)",
+        "checking": "waiting to start: 2023-11-14 22:13:22",
+        "bandwidth_three": "bandwidth free 2023-11-14 22:13:23\u2026 (global)",
+        "gallery_three": "waiting to start: 2023-11-14 22:13:23",
+        "validation": {
+          "minimum": "File was 2 KB but the lower limit in the File Filtering Import Options is 238 KB.",
+          "maximum": "File was 179 MB but the upper limit in the File Filtering Import Options is 238 KB.",
+          "gif": "File was 179 MB but the upper limit for gifs in the File Filtering Import Options is 238 KB."
+        },
+        "network": {
+          "whole": "Too much data: Was expecting 238 KB, but the server continued responding!",
+          "range": "Too much data: Was expecting 238 KB in this range chunk, but the server continued responding!"
+        },
+        "critical_drive": "The disk for path \"/synthetic/media/file.png\" is almost full and cannot take the file \"1111111111111111111111111111111111111111111111111111111111111111\", which is 179 MB! Shut the client down now and fix this!"
+      }
+    },
+    {
+      "input": [
+        false,
+        6
+      ],
+      "before": {
+        "iso": true,
+        "figures": 1
+      },
+      "staged": {
+        "bandwidth": "bandwidth free 2023-11-14 22:14:50\u2026 (global)",
+        "override": "overriding bandwidth 2023-11-14 22:14:05\u2026 (global)",
+        "gallery": "waiting to start: 2023-11-14 22:14:50",
+        "imminently": "bandwidth free 2023-11-14 22:13:22\u2026 (global)",
+        "checking": "waiting to start: 2023-11-14 22:13:22",
+        "bandwidth_three": "bandwidth free 2023-11-14 22:13:23\u2026 (global)",
+        "gallery_three": "waiting to start: 2023-11-14 22:13:23",
+        "validation": {
+          "minimum": "File was 2 KB but the lower limit in the File Filtering Import Options is 238 KB.",
+          "maximum": "File was 179 MB but the upper limit in the File Filtering Import Options is 238 KB.",
+          "gif": "File was 179 MB but the upper limit for gifs in the File Filtering Import Options is 238 KB."
+        },
+        "network": {
+          "whole": "Too much data: Was expecting 238 KB, but the server continued responding!",
+          "range": "Too much data: Was expecting 238 KB in this range chunk, but the server continued responding!"
+        },
+        "critical_drive": "The disk for path \"/synthetic/media/file.png\" is almost full and cannot take the file \"1111111111111111111111111111111111111111111111111111111111111111\", which is 179 MB! Shut the client down now and fix this!"
+      },
+      "saved": {
+        "iso": false,
+        "figures": 6
+      },
+      "reopened": {
+        "iso": false,
+        "figures": 6
+      },
+      "round_trip": {
+        "iso": false,
+        "figures": 6
+      },
+      "consumers": {
+        "bandwidth": "bandwidth free in 1 minute 30 seconds\u2026 (global)",
+        "override": "overriding bandwidth in 45 seconds\u2026 (global)",
+        "gallery": "waiting to start: 1 minute 30 seconds",
+        "imminently": "bandwidth free imminently\u2026 (global)",
+        "checking": "waiting to start: checking",
+        "bandwidth_three": "bandwidth free in 3 seconds\u2026 (global)",
+        "gallery_three": "waiting to start: 3 seconds",
+        "validation": {
+          "minimum": "File was 1.5 KB but the lower limit in the File Filtering Import Options is 237.5 KB.",
+          "maximum": "File was 179.495 MB but the upper limit in the File Filtering Import Options is 237.5 KB.",
+          "gif": "File was 179.495 MB but the upper limit for gifs in the File Filtering Import Options is 237.5 KB."
+        },
+        "network": {
+          "whole": "Too much data: Was expecting 237.5 KB, but the server continued responding!",
+          "range": "Too much data: Was expecting 237.5 KB in this range chunk, but the server continued responding!"
+        },
+        "critical_drive": "The disk for path \"/synthetic/media/file.png\" is almost full and cannot take the file \"1111111111111111111111111111111111111111111111111111111111111111\", which is 179.495 MB! Shut the client down now and fix this!"
+      }
+    },
+    {
+      "input": [
+        true,
+        2
+      ],
+      "before": {
+        "iso": false,
+        "figures": 6
+      },
+      "staged": {
+        "bandwidth": "bandwidth free in 1 minute 30 seconds\u2026 (global)",
+        "override": "overriding bandwidth in 45 seconds\u2026 (global)",
+        "gallery": "waiting to start: 1 minute 30 seconds",
+        "imminently": "bandwidth free imminently\u2026 (global)",
+        "checking": "waiting to start: checking",
+        "bandwidth_three": "bandwidth free in 3 seconds\u2026 (global)",
+        "gallery_three": "waiting to start: 3 seconds",
+        "validation": {
+          "minimum": "File was 1.5 KB but the lower limit in the File Filtering Import Options is 237.5 KB.",
+          "maximum": "File was 179.495 MB but the upper limit in the File Filtering Import Options is 237.5 KB.",
+          "gif": "File was 179.495 MB but the upper limit for gifs in the File Filtering Import Options is 237.5 KB."
+        },
+        "network": {
+          "whole": "Too much data: Was expecting 237.5 KB, but the server continued responding!",
+          "range": "Too much data: Was expecting 237.5 KB in this range chunk, but the server continued responding!"
+        },
+        "critical_drive": "The disk for path \"/synthetic/media/file.png\" is almost full and cannot take the file \"1111111111111111111111111111111111111111111111111111111111111111\", which is 179.495 MB! Shut the client down now and fix this!"
+      },
+      "saved": {
+        "iso": true,
+        "figures": 2
+      },
+      "reopened": {
+        "iso": true,
+        "figures": 2
+      },
+      "round_trip": {
+        "iso": true,
+        "figures": 2
+      },
+      "consumers": {
+        "bandwidth": "bandwidth free 2023-11-14 22:14:50\u2026 (global)",
+        "override": "overriding bandwidth 2023-11-14 22:14:05\u2026 (global)",
+        "gallery": "waiting to start: 2023-11-14 22:14:50",
+        "imminently": "bandwidth free 2023-11-14 22:13:22\u2026 (global)",
+        "checking": "waiting to start: 2023-11-14 22:13:22",
+        "bandwidth_three": "bandwidth free 2023-11-14 22:13:23\u2026 (global)",
+        "gallery_three": "waiting to start: 2023-11-14 22:13:23",
+        "validation": {
+          "minimum": "File was 1.5 KB but the lower limit in the File Filtering Import Options is 238 KB.",
+          "maximum": "File was 179 MB but the upper limit in the File Filtering Import Options is 238 KB.",
+          "gif": "File was 179 MB but the upper limit for gifs in the File Filtering Import Options is 238 KB."
+        },
+        "network": {
+          "whole": "Too much data: Was expecting 238 KB, but the server continued responding!",
+          "range": "Too much data: Was expecting 238 KB in this range chunk, but the server continued responding!"
+        },
+        "critical_drive": "The disk for path \"/synthetic/media/file.png\" is almost full and cannot take the file \"1111111111111111111111111111111111111111111111111111111111111111\", which is 179 MB! Shut the client down now and fix this!"
+      }
+    }
+  ],
+  "cancelled": {
+    "bandwidth": "bandwidth free 2023-11-14 22:14:50\u2026 (global)",
+    "override": "overriding bandwidth 2023-11-14 22:14:05\u2026 (global)",
+    "gallery": "waiting to start: 2023-11-14 22:14:50",
+    "imminently": "bandwidth free 2023-11-14 22:13:22\u2026 (global)",
+    "checking": "waiting to start: 2023-11-14 22:13:22",
+    "bandwidth_three": "bandwidth free 2023-11-14 22:13:23\u2026 (global)",
+    "gallery_three": "waiting to start: 2023-11-14 22:13:23",
+    "validation": {
+      "minimum": "File was 1.5 KB but the lower limit in the File Filtering Import Options is 238 KB.",
+      "maximum": "File was 179 MB but the upper limit in the File Filtering Import Options is 238 KB.",
+      "gif": "File was 179 MB but the upper limit for gifs in the File Filtering Import Options is 238 KB."
+    },
+    "network": {
+      "whole": "Too much data: Was expecting 238 KB, but the server continued responding!",
+      "range": "Too much data: Was expecting 238 KB in this range chunk, but the server continued responding!"
+    },
+    "critical_drive": "The disk for path \"/synthetic/media/file.png\" is almost full and cannot take the file \"1111111111111111111111111111111111111111111111111111111111111111\", which is 179 MB! Shut the client down now and fix this!"
+  }
+}

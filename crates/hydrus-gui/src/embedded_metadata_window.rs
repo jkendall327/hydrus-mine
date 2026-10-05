@@ -182,12 +182,13 @@ pub(crate) fn open(
         .ok_or("File not found")?;
     let info = media.info.as_ref().ok_or("File information not found")?;
     let settings = store.read(hydrus_store::settings::get).unwrap_or_default();
-    let lines = crate::info_lines::info_lines(
+    let lines = crate::info_lines::info_lines_with_format(
         &media,
         &snapshot.services,
         &settings,
         hydrus_core::TimestampMs::now().0,
         false,
+        &hydrus_gui_model::gui_format::preferences(store),
     );
     let local = snapshot
         .services

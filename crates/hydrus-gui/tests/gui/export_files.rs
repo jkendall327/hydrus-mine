@@ -19,6 +19,7 @@ fn export_files_menu_window_previews_confirmation_and_worker() {
     let work = tempfile::tempdir().unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
@@ -334,6 +335,7 @@ fn selected_export_tag_sidebar_copies_launches_native_pages_persists_favourites_
     let (_dirs, store) = crate::subscriptions::store();
     let windows = headless::init();
     let main = MainWindow::new().unwrap();
+    main.show().unwrap();
     let bound = bind(&main, Pages::open(store.clone()).unwrap());
     let slots = Slots::default();
     let window = export_files_window::open(

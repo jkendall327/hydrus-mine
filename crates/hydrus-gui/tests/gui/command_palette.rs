@@ -267,6 +267,7 @@ fn media_provider_uses_the_actual_thumbnail_dispatcher_and_rejects_a_changed_pag
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.show().unwrap();
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
     ui.invoke_tab_chosen(0, 0);

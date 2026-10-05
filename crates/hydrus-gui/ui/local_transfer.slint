@@ -1,0 +1,32 @@
+import { Button } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+export component LocalTransferWindow inherits Window {
+    title: "Are you sure?";
+    preferred-width: 620px;
+    preferred-height: 200px;
+    background: Theme.window;
+    in property <string> question;
+    in property <string> error;
+    callback answer(bool);
+    callback cancel();
+    forward-focus: keyboard;
+    keyboard := FocusScope {
+        forward-focus: yes-button;
+        capture-key-pressed(event) => {
+            if event.text == Key.Escape { root.cancel(); return accept; }
+            return reject;
+        }
+        VerticalLayout {
+            padding: 16px;
+            spacing: 12px;
+            Text { text: root.question; color: Theme.text; wrap: word-wrap; }
+            if root.error != "": Text {text:root.error; color:Theme.error; wrap:word-wrap;}
+            HorizontalLayout {
+                alignment: end;
+                spacing: 8px;
+                yes-button := Button {text:"yes";clicked=>{root.answer(true);}}
+                Button {text:"no";clicked=>{root.answer(false);}}
+            }
+        }
+    }
+}

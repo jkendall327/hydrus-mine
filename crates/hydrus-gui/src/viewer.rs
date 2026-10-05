@@ -7,6 +7,8 @@ use hydrus_store::Store;
 
 pub struct MediaViewer {
     store: Arc<Store>,
+    image_cache: Option<crate::image_cache::Handle>,
+    owns_cache: bool,
     files: Vec<HashId>,
     index: usize,
     /// The file domains of the page it was opened from.
@@ -33,6 +35,8 @@ impl MediaViewer {
             store.read(hydrus_store::settings::get).unwrap_or_default();
         (index < files.len()).then_some(Self {
             store,
+            image_cache: None,
+            owns_cache: false,
             files,
             index,
             location: hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
@@ -43,6 +47,45 @@ impl MediaViewer {
         })
     }
 
+    pub(crate) fn with_image_cache(mut self, cache: crate::image_cache::Handle) -> Self {
+        self.image_cache = Some(cache);
+        self
+    }
+    pub(crate) fn shared_media(&self) -> Option<Arc<hydrus_media::Raster>> {
+        self.image_cache.as_ref().map_or_else(
+            || self.media().map(Arc::new),
+            |cache| cache.load_current_saved(&self.store, self.current()),
+        )
+    }
+
+    pub(crate) fn prefetch_cache(&mut self) -> crate::image_cache::Handle {
+        if self.image_cache.is_none() {
+            self.image_cache = Some(crate::image_cache::Handle::standalone(&self.store));
+            self.owns_cache = true;
+        }
+        self.image_cache.as_ref().unwrap().clone()
+    }
+    pub(crate) fn retire_prefetch_cache(&self) {
+        if self.owns_cache
+            && let Some(cache) = &self.image_cache
+        {
+            cache.retire();
+        }
+    }
+
+    pub(crate) fn prefetch_files(
+        &self,
+        preferences: hydrus_store::viewer_prefetch::Preferences,
+    ) -> Vec<HashId> {
+        let mut files = vec![self.current()];
+        files.extend(hydrus_gui_model::viewer_prefetch::neighbours(
+            &self.files,
+            self.index,
+            preferences.previous,
+            preferences.next,
+        ));
+        files
+    }
     /// Viewing a page searching `location` (where deletions take its files
     /// from).
     #[must_use]
@@ -175,6 +218,27 @@ impl MediaViewer {
         hover_tags(&self.store, self.current(), self.tag_display_type)
     }
 
+    /// Canonical identity alongside each rendered hover row; never parse its label.
+    pub(crate) fn tag_entries(&self) -> Vec<(String, String, [u8; 3])> {
+        let colours: hydrus_core::tag_presentation::NamespaceColours = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        crate::page::tag_rows(
+            &self.store,
+            &[self.current()],
+            None,
+            crate::page::TagList::MediaViewer,
+            self.tag_display_type,
+        )
+        .into_iter()
+        .map(|(tag, text)| {
+            let colour = colours.tag(&tag);
+            (tag, text, colour)
+        })
+        .collect()
+    }
+
     /// The current file's type and resolution, for zooming it.
     pub fn shape(&self) -> Option<(hydrus_core::Mime, Option<(u32, u32)>)> {
         shape(&self.store, self.current())
@@ -183,7 +247,7 @@ impl MediaViewer {
     /// The current file's frames, if the reference plays its kind with its
     /// own player (ugoiras and animated WebP).
     pub fn animation(&self) -> Option<hydrus_media::animation::Frames> {
-        animation(&self.store, self.current())
+        animation_owned(&self.store, self.current())
     }
 }
 
@@ -233,11 +297,12 @@ pub(crate) fn shown(store: &Store, id: HashId) -> Shown {
         .ok()
         .and_then(|batch| batch.results.into_iter().next())
         .map(|media| {
-            let line = crate::info_lines::top_line(
+            let line = crate::info_lines::top_line_with_format(
                 &media,
                 &snapshot.services,
                 &settings,
                 hydrus_core::TimestampMs::now().0,
+                &hydrus_gui_model::gui_format::preferences(store),
             );
             let trashed =
                 of_type(ServiceType::LocalFileTrashDomain).any(|t| media.is_current_in(t));
@@ -349,29 +414,82 @@ pub fn animation(store: &Store, id: HashId) -> Option<hydrus_media::animation::F
         return None;
     }
     let path = snapshot.storage.file_path(&result.hash, info.mime)?;
-    Frames::open(&path, info.mime, &result.notes, info.num_frames)
-        .map_err(|e| eprintln!("could not play {}: {e}", path.display()))
-        .ok()
+    let policy = store.read(hydrus_store::image_colour::load).ok()?;
+    Frames::open_with_icc(
+        &path,
+        info.mime,
+        &result.notes,
+        info.num_frames,
+        policy.normalise_icc,
+    )
+    .map_err(|e| eprintln!("could not play {}: {e}", path.display()))
+    .ok()
+}
+
+/// Existing native players read their owned Store policy before each future
+/// frame, preserving the animation timeline and media viewing interval.
+pub(crate) fn animation_owned(
+    store: &std::sync::Arc<Store>,
+    id: HashId,
+) -> Option<hydrus_media::animation::Frames> {
+    let frames = animation(store, id)?;
+    let weak = std::sync::Arc::downgrade(store);
+    Some(frames.with_icc_reader(std::sync::Arc::new(move || {
+        match weak
+            .upgrade()
+            .map(|store| store.read(hydrus_store::image_colour::load))
+        {
+            Some(Ok(policy)) => policy.normalise_icc,
+            Some(Err(error)) => {
+                eprintln!("could not read frame ICC policy: {error}");
+                true
+            }
+            None => true,
+        }
+    })))
 }
 
 /// A file as a still: an image decoded whole; anything else by its
 /// thumbnail.
 pub fn still(store: &Store, id: HashId) -> Option<hydrus_media::Raster> {
+    let policy = store.read(hydrus_store::image_colour::load).ok()?;
+    still_with_icc(store, id, policy.normalise_icc)
+}
+
+/// A worker captures policy at request admission so a later settings change
+/// cannot change the meaning of its request generation.
+pub(crate) fn still_with_icc(
+    store: &Store,
+    id: HashId,
+    normalise_icc: bool,
+) -> Option<hydrus_media::Raster> {
     let result = store
         .read(|conn| hydrus_store::media::load_basic(conn, &[id]))
         .ok()?
         .into_iter()
         .next()?;
-    let snapshot = store.snapshot();
-    let full = result.info.as_ref().and_then(|info| {
-        let path = snapshot.storage.file_path(&result.hash, info.mime)?;
-        let bytes = std::fs::read(path).ok()?;
-        hydrus_media::decode_image(&bytes).ok()
-    });
-    full.or_else(|| {
-        let path = snapshot.storage.thumbnail_path(&result.hash)?;
-        hydrus_media::decode_image(&std::fs::read(path).ok()?).ok()
-    })
+    full_still_with_icc(store, &result, normalise_icc)
+        .or_else(|| thumbnail_still_with_icc(store, &result, normalise_icc))
+}
+pub(crate) fn full_still_with_icc(
+    store: &Store,
+    result: &hydrus_store::media::MediaResult,
+    normalise_icc: bool,
+) -> Option<hydrus_media::Raster> {
+    let info = result.info.as_ref()?;
+    let path = store
+        .snapshot()
+        .storage
+        .file_path(&result.hash, info.mime)?;
+    hydrus_media::decode_image_with_icc(&std::fs::read(path).ok()?, normalise_icc).ok()
+}
+pub(crate) fn thumbnail_still_with_icc(
+    store: &Store,
+    result: &hydrus_store::media::MediaResult,
+    normalise_icc: bool,
+) -> Option<hydrus_media::Raster> {
+    let path = store.snapshot().storage.thumbnail_path(&result.hash)?;
+    hydrus_media::decode_image_with_icc(&std::fs::read(path).ok()?, normalise_icc).ok()
 }
 
 /// Where a file is, if the reference plays its kind in mpv by default:
@@ -396,4 +514,10 @@ pub fn playable(store: &Store, id: HashId) -> Option<std::path::PathBuf> {
         return None;
     }
     store.snapshot().storage.file_path(&result.hash, mime)
+}
+
+impl Drop for MediaViewer {
+    fn drop(&mut self) {
+        self.retire_prefetch_cache();
+    }
 }

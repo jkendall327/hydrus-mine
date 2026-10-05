@@ -11,7 +11,7 @@ use hydrus_gui_model::{
 use hydrus_store::Store;
 use slint::Model as _;
 use std::{cell::RefCell, rc::Rc, sync::Arc};
-type SearchLauncher = Rc<dyn Fn(LocationContext, TagContext, Vec<Predicate>, bool)>;
+pub(crate) type SearchLauncher = Rc<dyn Fn(LocationContext, TagContext, Vec<Predicate>, bool)>;
 thread_local! { static SEARCH_LAUNCHER: RefCell<Option<SearchLauncher>>=const {RefCell::new(None)}; }
 /// Install the main window's weak search-page launcher on this GUI thread.
 pub fn install_search_launcher(launcher: SearchLauncher) {

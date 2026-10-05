@@ -7,6 +7,7 @@ use std::sync::Arc;
 use axum::extract::State;
 use serde_json::{Map, Value as Json, json};
 
+use hydrus_store::api_update_toasts::{self, Changes};
 use hydrus_store::network::{self, Approval, Cookie, DEFAULT_USER_AGENT, NetworkContext};
 
 use crate::AppState;
@@ -100,6 +101,7 @@ pub async fn set_cookies(
         .collect::<ApiResult<Vec<_>>>()?;
     app.blocking(move |app| {
         app.store.write(move |ctx| {
+            let mut changes = Changes::default();
             for cookie in &cookies {
                 let session =
                     network::session_for(ctx.conn(), &NetworkContext::domain(&cookie.domain))?;
@@ -111,10 +113,17 @@ pub async fn set_cookies(
                         &cookie.path,
                         &cookie.name,
                     )?;
+                    changes.cleared.insert(cookie.domain.clone());
                 } else {
                     network::set_cookie(ctx.conn(), &session, cookie)?;
+                    changes.set.insert(cookie.domain.clone());
                 }
             }
+            api_update_toasts::publish(
+                ctx.conn(),
+                api_update_toasts::cookies_message(&changes),
+                hydrus_core::TimestampMs::now().0 / 1000,
+            )?;
             Ok(())
         })?;
         Ok(())
@@ -231,6 +240,7 @@ pub async fn set_headers(
     app.blocking(move |app| {
         app.store.write(move |ctx| {
             let conn = ctx.conn();
+            let mut updated = Changes::default();
             for change in &changes {
                 let existing = network::headers(conn, &context)?
                     .into_iter()
@@ -238,34 +248,43 @@ pub async fn set_headers(
                 match &change.value {
                     ValueChange::Remove => {
                         network::delete_header(conn, &context, &change.name)?;
+                        if existing.is_some() {
+                            updated.cleared.insert(change.name.clone());
+                        }
                     }
                     // setting the value it already has changes nothing, not
                     // even the approval or reason (as in the reference)
                     ValueChange::Set(value) if existing.as_ref().is_some_and(|h| &h.value == value) => {}
-                    ValueChange::Set(value) => network::set_header(
-                        conn,
-                        &context,
-                        &change.name,
-                        Some(value),
-                        change.approval,
-                        change.reason.as_deref(),
-                    )?,
+                    ValueChange::Set(value) => {
+                        network::set_header(
+                            conn, &context, &change.name, Some(value),
+                            change.approval, change.reason.as_deref(),
+                        )?;
+                        if existing.is_some() {
+                            updated.altered.insert(change.name.clone());
+                        } else {
+                            updated.set.insert(change.name.clone());
+                        }
+                    },
                     ValueChange::Keep if existing.is_none() => {
                         return Ok(Err(ApiError::bad_request(format!(
                             "Sorry, you tried to set approved/reason on \"{}\", but that entry does not exist, so there is no value to set them to! Please give a value!",
                             change.name
                         ))));
                     }
-                    ValueChange::Keep => network::set_header(
-                        conn,
-                        &context,
-                        &change.name,
-                        None,
-                        change.approval,
-                        change.reason.as_deref(),
-                    )?,
+                    ValueChange::Keep => {
+                        network::set_header(
+                            conn, &context, &change.name, None,
+                            change.approval, change.reason.as_deref(),
+                        )?;
+                        updated.altered.insert(change.name.clone());
+                    },
                 }
             }
+            api_update_toasts::publish(
+                conn, api_update_toasts::headers_message(&updated),
+                hydrus_core::TimestampMs::now().0 / 1000,
+            )?;
             Ok(Ok(()))
         })?
     })

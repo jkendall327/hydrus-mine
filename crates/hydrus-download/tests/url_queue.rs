@@ -38,6 +38,9 @@ fn media(name: &str) -> Vec<u8> {
 
 async fn post(State(site): State<Arc<Site>>, Path(id): Path<String>) -> Response {
     *site.hits.lock().entry(format!("post/{id}")).or_default() += 1;
+    if id.starts_with("slow-") {
+        site.release.notified().await;
+    }
     if id == "404" {
         return (StatusCode::NOT_FOUND, "no such post").into_response();
     }
@@ -66,6 +69,9 @@ async fn gallery(State(site): State<Arc<Site>>, Path(page): Path<u32>) -> Respon
     // (a slow page)
     if page == 9 {
         site.release.notified().await;
+    }
+    if page == 404 {
+        return StatusCode::NOT_FOUND.into_response();
     }
     let posts: &[u32] = match page {
         1 => &[1, 2],
@@ -781,4 +787,343 @@ async fn existing_downloader_uses_edited_parser_and_new_link_after_reload() {
         .map(str::to_owned)
         .into()
     );
+}
+
+async fn held_posts_started(site: &Site, expected: usize) {
+    for _ in 0..200 {
+        let count: usize = site
+            .hits
+            .lock()
+            .iter()
+            .filter(|(url, _)| url.starts_with("post/slow-"))
+            .map(|(_, count)| count)
+            .sum();
+        if count == expected {
+            return;
+        }
+        assert!(count < expected, "a slot limit admitted too much work");
+        tokio::time::sleep(Duration::from_millis(25)).await;
+    }
+    panic!("held post work did not start");
+}
+async fn pending_files(runner: &QueueRunner, queue: i64) {
+    for _ in 0..200 {
+        if runner.status(queue).files_status == "pending" {
+            return;
+        }
+        tokio::time::sleep(Duration::from_millis(25)).await;
+    }
+    panic!("queue did not wait for an importer permit");
+}
+fn file_work_queue(s: &Setup, kind: queues::QueueKind, name: &str) -> i64 {
+    let name = name.to_owned();
+    s.store
+        .write(move |ctx| {
+            let id = queues::create_queue(
+                ctx.conn(),
+                kind,
+                &name,
+                None,
+                &hydrus_core::import_options::ImportOptionsSlice::default(),
+                0,
+            )?;
+            if kind == queues::QueueKind::Watcher {
+                let mut state = hydrus_core::watchers::WatcherState::new(
+                    "https://watcher.example/thread/1",
+                    hydrus_core::subscriptions::CheckerOptions::default(),
+                    0,
+                );
+                state.checking_paused = true;
+                queues::set_queue_extra(ctx.conn(), id, &serde_json::to_value(state).unwrap())?;
+            }
+            Ok(id)
+        })
+        .unwrap()
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn running_file_queues_keep_limits_when_lowered_and_release_on_cancel_or_owner_close() {
+    use hydrus_store::settings::{self, ImportWorkSlots};
+    for kind in [
+        queues::QueueKind::Gallery,
+        queues::QueueKind::Watcher,
+        queues::QueueKind::Urls,
+    ] {
+        let s = setup().await;
+        let set_limit = |limit| {
+            s.store
+                .write(move |ctx| {
+                    settings::set(
+                        ctx.conn(),
+                        &ImportWorkSlots {
+                            gallery_files: limit,
+                            gallery_search: 15,
+                            watcher_files: limit,
+                            watcher_check: 15,
+                            misc: limit,
+                        },
+                    )
+                })
+                .unwrap();
+        };
+        set_limit(2);
+        let queues: Vec<_> = (0..4)
+            .map(|index| file_work_queue(&s, kind, &format!("slot queue {index}")))
+            .collect();
+        for (index, &queue) in queues.iter().enumerate() {
+            s.runner
+                .pend_urls(
+                    queue,
+                    &[format!("{}/post/slow-{index}", s.base)],
+                    &BTreeSet::new(),
+                    &[],
+                )
+                .unwrap();
+            if index == 2 {
+                break;
+            }
+        }
+        s.runner.start_all().unwrap();
+        held_posts_started(&s.site, 2).await;
+        let pending = queues
+            .iter()
+            .copied()
+            .take(3)
+            .find(|&queue| {
+                s.runner
+                    .live()
+                    .iter()
+                    .find(|(id, _)| *id == queue)
+                    .is_some_and(|(_, live)| live.file_job.is_none())
+            })
+            .unwrap();
+        pending_files(&s.runner, pending).await;
+        set_limit(1);
+        s.runner.reload_settings().unwrap();
+        let running: Vec<_> = queues
+            .iter()
+            .copied()
+            .take(3)
+            .filter(|queue| *queue != pending)
+            .collect();
+        s.runner
+            .cancel(running[0], hydrus_store::live::JobKind::File);
+        for _ in 0..200 {
+            if s.runner
+                .live()
+                .iter()
+                .find(|(id, _)| *id == running[0])
+                .is_some_and(|(_, live)| live.file_job.is_none())
+            {
+                break;
+            }
+            tokio::time::sleep(Duration::from_millis(25)).await;
+        }
+        pending_files(&s.runner, pending).await;
+        held_posts_started(&s.site, 2).await;
+        s.store
+            .write(move |ctx| queues::set_paused(ctx.conn(), pending, Some(true), None))
+            .unwrap();
+        s.runner
+            .cancel(running[1], hydrus_store::live::JobKind::File);
+        for _ in 0..200 {
+            if s.runner
+                .live()
+                .iter()
+                .find(|(id, _)| *id == pending)
+                .is_some_and(|(_, live)| live.files_status.is_empty())
+            {
+                break;
+            }
+            tokio::time::sleep(Duration::from_millis(25)).await;
+        }
+        assert!(
+            s.runner
+                .live()
+                .iter()
+                .find(|(id, _)| *id == pending)
+                .is_some_and(|(_, live)| live.file_job.is_none() && live.files_status.is_empty())
+        );
+        held_posts_started(&s.site, 2).await;
+        s.store
+            .write(move |ctx| queues::set_paused(ctx.conn(), pending, Some(false), None))
+            .unwrap();
+        s.runner.wake(pending);
+        held_posts_started(&s.site, 3).await;
+        s.runner
+            .pend_urls(
+                queues[3],
+                &[format!("{}/post/slow-3", s.base)],
+                &BTreeSet::new(),
+                &[],
+            )
+            .unwrap();
+        pending_files(&s.runner, queues[3]).await;
+        s.store
+            .write(move |ctx| queues::set_page_closed(ctx.conn(), pending, true))
+            .unwrap();
+        held_posts_started(&s.site, 4).await;
+        let retired = queues[3];
+        s.store
+            .write(move |ctx| queues::delete_queue(ctx.conn(), retired))
+            .unwrap();
+        let successor = file_work_queue(&s, kind, "slot queue 3");
+        assert!(successor > retired);
+        let url = format!("{}/post/slow-successor", s.base);
+        s.runner
+            .pend_urls(successor, std::slice::from_ref(&url), &BTreeSet::new(), &[])
+            .unwrap();
+        held_posts_started(&s.site, 5).await;
+        let successor_seeds = s
+            .store
+            .read(|conn| queues::file_seeds(conn, successor))
+            .unwrap();
+        assert_eq!(successor_seeds.len(), 1);
+        assert_eq!(successor_seeds[0].data, url);
+        assert_eq!(successor_seeds[0].status, SeedStatus::Unknown);
+        s.runner
+            .cancel(successor, hydrus_store::live::JobKind::File);
+    }
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn running_gallery_searches_pick_up_capacity_growth_and_release_on_error() {
+    use hydrus_store::settings::{self, ImportWorkSlots};
+    let s = setup().await;
+    s.store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &ImportWorkSlots {
+                    gallery_search: 1,
+                    ..ImportWorkSlots::default()
+                },
+            )
+        })
+        .unwrap();
+    let first = file_work_queue(&s, queues::QueueKind::Gallery, "first search");
+    let second = file_work_queue(&s, queues::QueueKind::Gallery, "second search");
+    for queue in [first, second] {
+        s.runner
+            .pend_urls(
+                queue,
+                &[format!("{}/gallery/9", s.base)],
+                &BTreeSet::new(),
+                &[],
+            )
+            .unwrap();
+    }
+    s.runner.start_all().unwrap();
+    for _ in 0..200 {
+        if s.site.hits.lock().get("gallery/9") == Some(&1) {
+            break;
+        }
+        tokio::time::sleep(Duration::from_millis(25)).await;
+    }
+    assert_eq!(s.site.hits.lock().get("gallery/9"), Some(&1));
+    for _ in 0..200 {
+        if [first, second]
+            .iter()
+            .any(|&id| s.runner.status(id).gallery_status == "pending")
+        {
+            break;
+        }
+        tokio::time::sleep(Duration::from_millis(25)).await;
+    }
+    assert!(
+        [first, second]
+            .iter()
+            .any(|&id| s.runner.status(id).gallery_status == "pending")
+    );
+    s.store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &ImportWorkSlots {
+                    gallery_search: 2,
+                    ..ImportWorkSlots::default()
+                },
+            )
+        })
+        .unwrap();
+    s.runner.reload_settings().unwrap();
+    for _ in 0..200 {
+        if s.site.hits.lock().get("gallery/9") == Some(&2) {
+            break;
+        }
+        tokio::time::sleep(Duration::from_millis(25)).await;
+    }
+    assert_eq!(s.site.hits.lock().get("gallery/9"), Some(&2));
+    s.runner.cancel(first, hydrus_store::live::JobKind::Gallery);
+    s.runner
+        .cancel(second, hydrus_store::live::JobKind::Gallery);
+    let failed = file_work_queue(&s, queues::QueueKind::Gallery, "failed search");
+    let successor = file_work_queue(&s, queues::QueueKind::Gallery, "successor search");
+    s.store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &ImportWorkSlots {
+                    gallery_search: 1,
+                    ..ImportWorkSlots::default()
+                },
+            )
+        })
+        .unwrap();
+    s.runner
+        .pend_urls(
+            failed,
+            &[format!("{}/gallery/404", s.base)],
+            &BTreeSet::new(),
+            &[],
+        )
+        .unwrap();
+    for _ in 0..200 {
+        if s.store
+            .read(|conn| queues::gallery_seeds(conn, failed))
+            .unwrap()
+            .iter()
+            .any(|seed| seed.status != SeedStatus::Unknown)
+        {
+            break;
+        }
+        tokio::time::sleep(Duration::from_millis(25)).await;
+    }
+    assert!(
+        s.store
+            .read(|conn| queues::gallery_seeds(conn, failed))
+            .unwrap()
+            .iter()
+            .any(|seed| seed.status != SeedStatus::Unknown)
+    );
+    s.runner
+        .pend_urls(
+            successor,
+            &[format!("{}/gallery/9", s.base)],
+            &BTreeSet::new(),
+            &[],
+        )
+        .unwrap();
+    for _ in 0..200 {
+        let failed_done = s
+            .store
+            .read(|conn| queues::gallery_seeds(conn, failed))
+            .unwrap()
+            .iter()
+            .any(|seed| seed.status != SeedStatus::Unknown);
+        if failed_done && s.site.hits.lock().get("gallery/9") == Some(&3) {
+            break;
+        }
+        tokio::time::sleep(Duration::from_millis(25)).await;
+    }
+    assert!(
+        s.store
+            .read(|conn| queues::gallery_seeds(conn, failed))
+            .unwrap()
+            .iter()
+            .any(|seed| seed.status != SeedStatus::Unknown)
+    );
+    assert_eq!(s.site.hits.lock().get("gallery/9"), Some(&3));
+    s.runner
+        .cancel(successor, hydrus_store::live::JobKind::Gallery);
 }

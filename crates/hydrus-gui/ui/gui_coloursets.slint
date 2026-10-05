@@ -1,0 +1,79 @@
+// The two legacy coloursets share thirteen RGB roles; edits belong to Options.
+import { Button, LineEdit, SpinBox } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+export struct GuiColourRow { label: string, first: int, colours: [color], hex: [string] }
+export component GuiColoursets {
+    in property <[GuiColourRow]> rows;
+    in-out property <int> colourset;
+    in property <bool> enabled;
+    callback chosen(int,int);
+    callback clipboard-action(int,int,bool);
+    property <int> menu-role: -1;
+    property <string> menu-hex;
+    property <length> menu-x;
+    property <length> menu-y;
+    VerticalLayout {
+        spacing: 8px;
+        HorizontalLayout {
+            alignment: start;
+            Button { enabled: root.enabled; text: "default"; primary: root.colourset == 0; clicked => { root.colourset = 0; root.menu-role = -1; } }
+            Button { enabled: root.enabled; text: "darkmode"; primary: root.colourset == 1; clicked => { root.colourset = 1; root.menu-role = -1; } }
+        }
+        for row in root.rows: HorizontalLayout {
+            spacing: 8px;
+            Text { text: row.label; wrap: word-wrap; vertical-alignment: center; horizontal-stretch: 1; color: root.enabled ? Theme.text : Theme.muted; }
+            for colour[c] in row.colours: Rectangle {
+                width: 20px; height: 20px; background: colour; border-width: 1px; border-color: Theme.border;
+                TouchArea {
+                    enabled: root.enabled;
+                    clicked => { root.menu-role = -1; root.chosen(root.colourset,row.first+c); }
+                    pointer-event(event) => {
+                        if event.kind == PointerEventKind.down && event.button == PointerEventButton.right {
+                            root.menu-role = row.first+c;root.menu-hex=row.hex[c];root.menu-x=min(self.absolute-position.x - root.absolute-position.x,root.width - 280px);root.menu-y=self.absolute-position.y - root.absolute-position.y;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if root.menu-role >= 0 && root.enabled: Rectangle {
+        x: max(0px,root.menu-x);y:root.menu-y;width:280px;height:72px;
+        background:Theme.panel;border-width:1px;border-color:Theme.border;
+        VerticalLayout {
+            Button { text:"copy "+root.menu-hex+" to the clipboard";clicked=>{root.clipboard-action(root.colourset,root.menu-role,false);root.menu-role=-1;} }
+            Button { text:"import a hex colour from the clipboard";clicked=>{root.clipboard-action(root.colourset,root.menu-role,true);root.menu-role=-1;} }
+        }
+    }
+}
+export component GuiColourPickerWindow inherits Window {
+    title: "Select Color";
+    preferred-width: 440px;
+    background: Theme.window;
+    in-out property <int> red;
+    in-out property <int> green;
+    in-out property <int> blue;
+    callback accepted(int,int,int);
+    callback cancelled();
+    forward-focus: keys;
+    keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape { root.cancelled(); return accept; }
+            if event.text == Key.Return { root.accepted(root.red,root.green,root.blue); return accept; }
+            reject
+        }
+        VerticalLayout {
+            padding:12px;spacing:10px;
+            HorizontalLayout {
+                spacing:8px;
+                Rectangle { width:42px;height:42px;background:rgb(root.red,root.green,root.blue);border-width:1px;border-color:Theme.border; }
+                Text { text:"Red:";vertical-alignment:center; }
+                SpinBox { minimum:0;maximum:255;value<=>root.red; }
+                Text { text:"Green:";vertical-alignment:center; }
+                SpinBox { minimum:0;maximum:255;value<=>root.green; }
+                Text { text:"Blue:";vertical-alignment:center; }
+                SpinBox { minimum:0;maximum:255;value<=>root.blue; }
+            }
+            HorizontalLayout { alignment:end; Button { text:"OK";clicked=>{root.accepted(root.red,root.green,root.blue);} } Button { text:"Cancel";clicked=>{root.cancelled();} } }
+        }
+    }
+}

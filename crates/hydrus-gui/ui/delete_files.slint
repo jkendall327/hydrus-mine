@@ -3,13 +3,24 @@ import { Theme } from "theme.slint";
 component DeleteRadioButton inherits FocusScope {
     in property <string> text;
     in property <bool> checked;
+    in property <bool> focus-request;
+    callback force-dialog-ok() -> bool;
+    callback accepted();
+    callback focused();
     callback toggled();
+    init => { if root.focus-request { root.focus(); } }
+    changed focus-request => { if root.focus-request { root.focus(); } }
+    changed has-focus => { if root.has-focus { root.focused(); } }
     callback navigate(bool);
     min-height: 30px;
     key-pressed(event) => {
         if root.enabled && event.text == " " {root.toggled();return accept;}
         if root.enabled && (event.text == Key.UpArrow || event.text == Key.LeftArrow) {root.navigate(false);return accept;}
         if root.enabled && (event.text == Key.DownArrow || event.text == Key.RightArrow) {root.navigate(true);return accept;}
+        if root.enabled && event.text == Key.Return {
+            if root.force-dialog-ok() { root.accepted(); return accept; }
+            return reject;
+        }
         return reject;
     }
     HorizontalLayout {
@@ -38,12 +49,17 @@ export component DeleteFilesWindow inherits Window {
     in property <string> error;
     callback action-selected(int);
     callback reason-selected(int);
+    in-out property <int> radio-focus: -1;
+    callback force-radio-ok() -> bool;
     callback accept-deletion();
     callback cancel();
     forward-focus: keyboard;
     keyboard := FocusScope {
         capture-key-pressed(event)=>{
             if event.text == Key.Escape {root.cancel();return accept;}
+            return reject;
+        }
+        key-pressed(event)=>{
             if event.text == Key.Return {root.accept-deletion();return accept;}
             return reject;
         }
@@ -56,6 +72,10 @@ export component DeleteFilesWindow inherits Window {
                 for label[i] in root.actions: DeleteRadioButton {
                     text: label;
                     checked: i == root.selected-action;
+                    focus-request: root.radio-focus == 0 && i == root.selected-action;
+                    force-dialog-ok => { root.force-radio-ok() }
+                    accepted => { root.accept-deletion(); }
+                    focused => { root.radio-focus = 0; }
                     toggled=>{root.action-selected(i);}
                     navigate(down)=>{root.action-selected(down ? mod(root.selected-action + 1,root.actions.length) : mod(root.selected-action + root.actions.length - 1,root.actions.length));}
                 }
@@ -63,11 +83,15 @@ export component DeleteFilesWindow inherits Window {
                 for label[i] in root.reasons: DeleteRadioButton {
                     text: label;
                     checked: i == root.selected-reason;
+                    focus-request: root.reason-enabled && root.radio-focus == 1 && i == root.selected-reason;
+                    force-dialog-ok => { root.force-radio-ok() }
+                    accepted => { root.accept-deletion(); }
+                    focused => { root.radio-focus = 1; }
                     enabled: root.reason-enabled;
                     toggled=>{root.reason-selected(i);}
                     navigate(down)=>{root.reason-selected(down ? mod(root.selected-reason + 1,root.reasons.length) : mod(root.selected-reason + root.reasons.length - 1,root.reasons.length));}
                 }
-                LineEdit {text <=> root.custom; enabled: root.custom-enabled;}
+                LineEdit {text <=> root.custom; enabled: root.custom-enabled; accepted => {root.accept-deletion();}}
             }
         }
         if root.error != "": Text {text:root.error;color:Theme.error;wrap:word-wrap;}

@@ -4,11 +4,14 @@
 //! a package is decoded completely before its caller can stage any changes.
 
 mod encode;
+pub mod external_calls;
 pub mod import_options;
 pub mod logins;
 pub mod processing;
 pub mod routers;
+pub mod subscription_import;
 mod subscription_legacy;
+mod subscription_seed_cache;
 pub mod subscriptions;
 pub mod subsidiaries;
 mod transport;
@@ -58,6 +61,7 @@ pub enum Native {
     Content(ContentParser),
     Formula(Formula),
     Simple(hydrus_parse::simple::SimpleFormula),
+    Login(hydrus_parse::login::LoginScript),
 }
 /// A decoded native object together with auxiliary reference editor data.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -82,6 +86,7 @@ impl Definition {
             Native::Content(p) => &p.name,
             Native::Formula(f) => &f.name,
             Native::Simple(f) => &f.name,
+            Native::Login(script) => &script.name,
         }
     }
     /// Encode the native fields while retaining auxiliary reference data.
@@ -156,6 +161,7 @@ fn decode_value(
         30 => Native::Content(parsers::content_parser(&object).map_err(err)?),
         27 | 31 | 59 | 60 | 133 | 136 => Native::Formula(parsers::formula(&object).map_err(err)?),
         63 => Native::Simple(parsers::simple_formula(&object).map_err(err)?),
+        73 => Native::Login(hydrus_legacy::objects::logins::login_script(&object).map_err(err)?),
         code => return Err(Error::Unsupported(format!("object type {code}"))),
     };
     // Encoding is also a losslessness check: unknown processors must never

@@ -18,12 +18,14 @@ pub mod mime;
 pub mod network;
 pub mod notes;
 pub mod numbers;
+pub mod open_externally;
 pub mod pages;
 pub mod pybytes;
 pub mod pyhtml;
 pub mod pyjson;
 pub mod search;
 pub mod service;
+pub mod shortcuts;
 pub mod sort;
 pub mod subscriptions;
 pub mod tag;
@@ -90,3 +92,6 @@ pub(crate) mod test_fixtures {
         );
     }
 }
+
+/// Registered external calls and typed command arguments.
+pub mod external_calls;

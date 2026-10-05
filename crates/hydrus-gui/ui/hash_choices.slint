@@ -1,0 +1,55 @@
+import { Theme } from "theme.slint";
+
+// Qt BetterRadioBox's vertical hash groups, with bounded arrow navigation.
+export component HashChoices inherits FocusScope {
+    in property <[string]> options;
+    in property <int> chosen;
+    in property <bool> focus-request;
+    callback chose(int);
+    callback accepted();
+    callback force-dialog-ok() -> bool;
+    init => { if root.focus-request { root.focus(); } }
+    changed focus-request => { if root.focus-request { root.focus(); } }
+    key-pressed(event) => {
+        if !root.enabled { return reject; }
+        if event.text == Key.LeftArrow || event.text == Key.UpArrow {
+            root.chose(max(0, root.chosen - 1)); return accept;
+        }
+        if event.text == Key.RightArrow || event.text == Key.DownArrow {
+            root.chose(min(root.options.length - 1, root.chosen + 1)); return accept;
+        }
+        if event.text == " " { root.chose(root.chosen); return accept; }
+        if event.text == Key.Return {
+            if root.force-dialog-ok() { root.accepted(); return accept; }
+            // Unforced native radio handling delegates to the parent default button.
+            return reject;
+        }
+        return reject;
+    }
+    Rectangle {
+        border-width: 1px;
+        border-color: root.has-focus ? Theme.highlight : Theme.border;
+        background: Theme.window;
+        VerticalLayout {
+            padding: 6px; spacing: 6px;
+            for label[i] in root.options: Rectangle {
+                min-height: 22px;
+                HorizontalLayout {
+                    spacing: 4px;
+                    Rectangle {
+                        width: 16px; height: 16px; border-radius: 8px;
+                        border-width: 1px;
+                        border-color: root.enabled ? Theme.text : Theme.muted;
+                        Rectangle {
+                            x: 4px; y: 4px; width: 8px; height: 8px;
+                            border-radius: 4px;
+                            background: i == root.chosen ? (root.enabled ? Theme.text : Theme.muted) : transparent;
+                        }
+                    }
+                    Text { text: label; vertical-alignment: center; color: root.enabled ? Theme.text : Theme.muted; }
+                }
+                TouchArea { enabled: root.enabled; clicked => { root.focus(); root.chose(i); } }
+            }
+        }
+    }
+}

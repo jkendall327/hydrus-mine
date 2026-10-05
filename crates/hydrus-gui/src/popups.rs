@@ -20,6 +20,11 @@ pub enum Gauge {
 #[derive(Debug, Clone, PartialEq)]
 pub struct PopupView {
     pub key: [u8; 32],
+    pub action_owner: Option<[u8; 32]>,
+    pub question_token: Option<[u8; 32]>,
+    pub question: Option<String>,
+    pub clipboard: Option<String>,
+    pub callable: Option<String>,
     /// In bold, centred.
     pub title: Option<String>,
     /// "paused" while it is.
@@ -68,7 +73,11 @@ fn gauge(g: Option<(i64, i64)>) -> Option<Gauge> {
 
 /// A popup as `PopupMessage.UpdateMessage` shows it: paused, its text is
 /// "paused" and its gauges and second text hide.
+#[cfg(test)]
 pub fn view(job: &Job) -> PopupView {
+    view_with_figures(job, 3)
+}
+pub fn view_with_figures(job: &Job, figures: u8) -> PopupView {
     let paused = job.paused;
     let text_1 = if paused {
         Some("paused".to_owned())
@@ -77,6 +86,17 @@ pub fn view(job: &Job) -> PopupView {
     };
     PopupView {
         key: job.key,
+        action_owner: job.action_owner,
+        question_token: job.popup_yes_no_question.as_ref().map(|(token, _)| *token),
+        question: if paused {
+            None
+        } else {
+            job.popup_yes_no_question
+                .as_ref()
+                .map(|(_, text)| cut(text))
+        },
+        clipboard: job.popup_clipboard.as_ref().map(|(label, _)| label.clone()),
+        callable: job.user_callable_label.clone(),
         title: job.status_title.clone(),
         text_1,
         gauge_1: if paused {
@@ -97,7 +117,7 @@ pub fn view(job: &Job) -> PopupView {
         // (whose stop button is the popup's own, below)
         download: job.network_job.as_ref().map(|network| JobLine {
             can_cancel: false,
-            ..network.line()
+            ..network.line_with_figures(figures)
         }),
         files: job.files.as_ref().map(|(hashes, label)| {
             format!(
@@ -116,11 +136,15 @@ pub fn view(job: &Job) -> PopupView {
 
 /// The popups shown (the oldest, as many as fit), and the summary line
 /// under them (`PopupMessageSummaryBar.SetNumMessages`), for all `jobs`.
+#[cfg(test)]
 pub fn shown(jobs: &[Job]) -> (Vec<PopupView>, String) {
+    shown_with_figures(jobs, 3)
+}
+pub fn shown_with_figures(jobs: &[Job], figures: u8) -> (Vec<PopupView>, String) {
     let views = jobs
         .iter()
         .take(hydrus_store::popups::IN_VIEW)
-        .map(view)
+        .map(|job| view_with_figures(job, figures))
         .collect();
     let summary = match jobs.len() {
         1 => "1 message".to_owned(),
@@ -139,7 +163,11 @@ fn now() -> i64 {
     hydrus_core::time::TimestampMs::now().millis() / 1000
 }
 
-fn data(view: &PopupView) -> crate::PopupData {
+fn data(
+    view: &PopupView,
+    width: &hydrus_store::popup_width::PopupWidth,
+    gui_owner: &[u8; 32],
+) -> crate::PopupData {
     let gauge = |g: Option<Gauge>| match g {
         None => (false, 0.0, false),
         Some(Gauge::Going) => (true, 0.0, true),
@@ -149,6 +177,26 @@ fn data(view: &PopupView) -> crate::PopupData {
     let (has_gauge_2, gauge_2, gauge_2_going) = gauge(view.gauge_2);
     let text = |t: &Option<String>| t.clone().unwrap_or_default().into();
     crate::PopupData {
+        width_characters: width.effective_characters(),
+        fixed_width: width.fixed,
+        key: hex::encode(view.key).into(),
+        gui_owner: hex::encode(gui_owner).into(),
+        action_owner: view
+            .action_owner
+            .map(hex::encode)
+            .unwrap_or_default()
+            .into(),
+        question_token: view
+            .question_token
+            .map(hex::encode)
+            .unwrap_or_default()
+            .into(),
+        has_question: view.question.is_some(),
+        question: text(&view.question),
+        has_clipboard: view.clipboard.is_some(),
+        clipboard: text(&view.clipboard),
+        has_callable: view.callable.is_some(),
+        callable: text(&view.callable),
         title: text(&view.title),
         text_1: text(&view.text_1),
         has_gauge_1,
@@ -172,27 +220,115 @@ fn data(view: &PopupView) -> crate::PopupData {
     }
 }
 
+pub(crate) struct Binding {
+    refresh: std::rc::Rc<dyn Fn()>,
+    timer: std::rc::Rc<slint::Timer>,
+    active: std::rc::Rc<std::cell::Cell<bool>>,
+    store: std::sync::Arc<hydrus_store::Store>,
+    gui_owner: [u8; 32],
+}
+impl Binding {
+    pub(crate) fn refresh(&self) {
+        (self.refresh)();
+    }
+    pub(crate) fn retire_callback(&self) -> std::rc::Rc<dyn Fn()> {
+        let active = self.active.clone();
+        let timer = self.timer.clone();
+        let store = self.store.clone();
+        let gui_owner = self.gui_owner;
+        std::rc::Rc::new(move || {
+            if !active.replace(false) {
+                return;
+            }
+            timer.stop();
+            if let Err(error) = store
+                .write(move |ctx| hydrus_store::popup_actions::retire_gui(ctx.conn(), &gui_owner))
+            {
+                eprintln!("Could not retire popup GUI owner: {error}");
+            }
+        })
+    }
+}
+impl Drop for Binding {
+    fn drop(&mut self) {
+        self.retire_callback()();
+    }
+}
+
 /// Show the store's popups in `window`, four times a second as the
 /// reference's manager looks, and do what their buttons say. Returns the
-/// timer that shows them (to hold).
-pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> std::rc::Rc<slint::Timer> {
+/// binding that owns their timer and can be permanently retired on accepted close.
+pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> Binding {
     use std::cell::RefCell;
     use std::rc::Rc;
 
-    use slint::{ComponentHandle as _, Model as _, ModelRc, VecModel};
+    use slint::{ComponentHandle as _, Model as _, ModelRc, SharedString, VecModel};
 
+    // Rebinding retires the prior incarnation even while its Bound is retained.
+    window.invoke_popup_retire_owner();
     let hooks = Rc::new(hooks);
+    let gui_owner = rand::random::<[u8; 32]>();
+    let owned_store = hooks.pages.borrow().store().clone();
+    let active = Rc::new(std::cell::Cell::new(true));
+    if let Err(error) =
+        owned_store.write(move |ctx| hydrus_store::popup_actions::begin_gui(ctx.conn(), &gui_owner))
+    {
+        active.set(false);
+        eprintln!("Could not own popup GUI actions: {error}");
+    }
+    let input_valid: Rc<dyn Fn() -> bool> = Rc::new({
+        let active = active.clone();
+        let weak = window.as_weak();
+        move || {
+            active.get()
+                && weak
+                    .upgrade()
+                    .is_some_and(|window| crate::popup_freeze::accepts_input(window.window()))
+        }
+    });
     let model: Rc<VecModel<crate::PopupData>> = Rc::new(VecModel::default());
     window.set_popups(ModelRc::from(model.clone()));
+    window.set_popup_summary(SharedString::default());
+    let card_widths = Rc::new(VecModel::<f32>::default());
+    let card_caps = Rc::new(VecModel::<f32>::default());
+    window.set_popup_card_widths(ModelRc::from(card_widths.clone()));
+    window.set_popup_card_caps(ModelRc::from(card_caps.clone()));
+    window.on_popup_card_measured({
+        let active = active.clone();
+        let model = model.clone();
+        let widths = card_widths.clone();
+        let caps = card_caps.clone();
+        move |i, key, owner, w, c| {
+            if active.get()
+                && let Ok(i) = usize::try_from(i)
+                && i < widths.row_count()
+                && let Some(row) = model.row_data(i)
+                && row.key == key
+                && row.gui_owner == owner
+            {
+                widths.set_row_data(i, w);
+                caps.set_row_data(i, c);
+            }
+        }
+    });
+    let policies = Rc::new(RefCell::new(std::collections::HashMap::new()));
     // (those shown, to act on by their place)
     let shown: Rc<RefCell<Vec<PopupView>>> = Rc::default();
     let store = move |hooks: &Hooks| hooks.pages.borrow().store().clone();
     let refresh: Rc<dyn Fn()> = {
+        let active = active.clone();
         let hooks = hooks.clone();
         let shown = shown.clone();
+        let policies = policies.clone();
         let weak = window.as_weak();
         Rc::new(move || {
+            if !active.get() {
+                return;
+            }
             let Some(window) = weak.upgrade() else { return };
+            if !crate::popup_freeze::can_alter(window.window(), &store(&hooks)) {
+                return;
+            }
             let jobs = match store(&hooks).read(|conn| hydrus_store::popups::all(conn, now())) {
                 Ok(jobs) => jobs,
                 Err(e) => {
@@ -200,21 +336,40 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> std::rc::Rc<slin
                     return;
                 }
             };
-            let (views, summary) = self::shown(&jobs);
+            let formatting = hydrus_gui_model::gui_format::preferences(&store(&hooks));
+            let (views, summary) = self::shown_with_figures(&jobs, formatting.figures);
+            let preferences = store(&hooks)
+                .read(hydrus_store::settings::get::<hydrus_store::popup_width::PopupWidth>)
+                .unwrap_or_default();
+            let mut policies = policies.borrow_mut();
+            // Qt creates a card when it first enters the oldest-ten window.
+            // Later text/progress updates and Options Apply preserve that card.
+            policies.retain(|key, _| views.iter().any(|view| &view.key == key));
             // (changed in place: rows made anew under the pointer would
             // lose its press)
             for (i, view) in views.iter().enumerate() {
-                let row = data(view);
+                let policy = policies
+                    .entry(view.key)
+                    .or_insert_with(|| preferences.clone());
+                let row = data(view, policy, &gui_owner);
                 if i < model.row_count() {
+                    if model.row_data(i).is_some_and(|old| old.key != row.key) {
+                        card_widths.set_row_data(i, 0.0);
+                        card_caps.set_row_data(i, 0.0);
+                    }
                     if model.row_data(i).as_ref() != Some(&row) {
                         model.set_row_data(i, row);
                     }
                 } else {
+                    card_widths.push(0.0);
+                    card_caps.push(0.0);
                     model.push(row);
                 }
             }
             while model.row_count() > views.len() {
                 model.remove(model.row_count() - 1);
+                card_widths.remove(card_widths.row_count() - 1);
+                card_caps.remove(card_caps.row_count() - 1);
             }
             let summary = if jobs.is_empty() {
                 String::new()
@@ -226,12 +381,23 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> std::rc::Rc<slin
         })
     };
     refresh();
+    crate::popup_job_actions::bind(
+        window,
+        store(&hooks),
+        active.clone(),
+        gui_owner,
+        refresh.clone(),
+    );
     // change the popup shown at `i`, then show them again
     let change = {
+        let valid = input_valid.clone();
         let hooks = hooks.clone();
         let shown = shown.clone();
         let refresh = refresh.clone();
         move |i: i32, f: fn(&mut Job)| {
+            if !valid() {
+                return;
+            }
             let key = usize::try_from(i)
                 .ok()
                 .and_then(|i| shown.borrow().get(i).map(|v| v.key));
@@ -272,9 +438,13 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> std::rc::Rc<slin
         }
     });
     window.on_popups_dismiss_all({
+        let valid = input_valid.clone();
         let hooks = hooks.clone();
         let refresh = refresh.clone();
         move || {
+            if !valid() {
+                return;
+            }
             let done = store(&hooks)
                 .write(|ctx| hydrus_store::popups::dismiss_all_done(ctx.conn(), now()));
             if let Err(e) = done {
@@ -284,9 +454,13 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> std::rc::Rc<slin
         }
     });
     window.on_popup_copy_traceback({
+        let valid = input_valid.clone();
         let hooks = hooks.clone();
         let shown = shown.clone();
         move |i| {
+            if !valid() {
+                return;
+            }
             let Some(key) = usize::try_from(i)
                 .ok()
                 .and_then(|i| shown.borrow().get(i).map(|v| v.key))
@@ -311,10 +485,14 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> std::rc::Rc<slin
     // "show files": a page of those still in the client, named for them
     // (`ShowFiles`); with none left, the popup goes
     window.on_popup_show_files({
+        let valid = input_valid.clone();
         let hooks = hooks.clone();
         let shown = shown.clone();
         let refresh = refresh.clone();
         move |i| {
+            if !valid() {
+                return;
+            }
             let Some(key) = usize::try_from(i)
                 .ok()
                 .and_then(|i| shown.borrow().get(i).map(|v| v.key))
@@ -372,9 +550,23 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> std::rc::Rc<slin
     timer.start(
         slint::TimerMode::Repeated,
         std::time::Duration::from_millis(250),
-        move || refresh(),
+        {
+            let refresh = refresh.clone();
+            move || {
+                refresh();
+            }
+        },
     );
-    timer
+    let binding = Binding {
+        refresh,
+        timer,
+        active,
+        store: owned_store,
+        gui_owner,
+    };
+    let retire = binding.retire_callback();
+    window.on_popup_retire_owner(move || retire());
+    binding
 }
 
 #[cfg(test)]
@@ -382,6 +574,63 @@ mod tests {
     use hydrus_core::Sha256;
 
     use super::*;
+
+    #[test]
+    fn actual_qt_action_visibility_labels_and_question_cutoff_replay() {
+        let fixture = hydrus_testkit::fixture_json("popup_actions.json");
+        let mut job = Job::new(true, true, 0.0);
+        for event in fixture["states"].as_array().unwrap().iter().take(8) {
+            match event["label"].as_str().unwrap() {
+                "all actions" => {
+                    job.popup_clipboard = Some((
+                        "copy full payload".into(),
+                        fixture["payload"].as_str().unwrap().into(),
+                    ));
+                    job.popup_yes_no_question =
+                        Some(([1; 32], format!("Question\n{}", "é".repeat(1030))));
+                    job.user_callable_label = Some("repeat command".into());
+                }
+                "current values before refresh" => {
+                    job.popup_clipboard =
+                        Some(("replacement clipboard".into(), "replacement text".into()));
+                    job.user_callable_label = Some("replacement command".into());
+                    continue; // Qt intentionally still displays old labels.
+                }
+                "paused only question hides" => job.pause_play(),
+                "resume refresh labels" => {
+                    job.pause_play();
+                    job.popup_clipboard =
+                        Some(("replacement clipboard".into(), "replacement text".into()));
+                    job.user_callable_label = Some("replacement command".into());
+                }
+                "cancel retains callable" => job.cancel(),
+                "variables removed" => {
+                    job.popup_clipboard = None;
+                    job.popup_yes_no_question = None;
+                    job.user_callable_label = None;
+                }
+                _ => (),
+            }
+            let view = view(&job);
+            assert_eq!(
+                view.question.is_none(),
+                event["question_hidden"],
+                "{}",
+                event["label"]
+            );
+            assert_eq!(view.clipboard.is_none(), event["clipboard_hidden"]);
+            assert_eq!(view.callable.is_none(), event["callable_hidden"]);
+            if let Some(question) = view.question {
+                assert_eq!(question, event["question"]);
+            }
+            if let Some(label) = view.clipboard {
+                assert_eq!(label, event["clipboard_label"]);
+            }
+            if let Some(label) = view.callable {
+                assert_eq!(label, event["callable_label"]);
+            }
+        }
+    }
 
     #[test]
     fn a_popup_shows_as_the_reference_s() {
@@ -410,6 +659,36 @@ mod tests {
             (shown.gauge_1, shown.gauge_2, shown.text_2),
             (None, None, None)
         );
+    }
+
+    #[test]
+    fn popup_download_precision_replays_actual_network_control_output() {
+        let fixture = hydrus_testkit::fixture_json("gui_format.json");
+        for event in fixture["events"].as_array().unwrap() {
+            let figures = u8::try_from(event["saved"]["figures"].as_u64().unwrap()).unwrap();
+            for case in event["consumers"]["network_jobs"].as_array().unwrap() {
+                let input = &case["input"];
+                let mut job = Job::new(false, true, 0.0);
+                job.network_job = Some(hydrus_store::live::JobLive {
+                    url: "https://format.invalid/transfer".into(),
+                    status: "receiving\nsecond line".into(),
+                    speed: input["speed"].as_u64().unwrap(),
+                    bytes_read: input["read"].as_u64().unwrap(),
+                    bytes_to_read: input["total"].as_u64(),
+                    done: input["done"].as_bool().unwrap(),
+                    error: input["error"].as_bool().unwrap(),
+                });
+                let original = job.clone();
+                let shown = view_with_figures(&job, figures).download.unwrap();
+                assert_eq!(shown.left, case["left"].as_str().unwrap());
+                assert_eq!(shown.right, case["right"].as_str().unwrap());
+                assert!(
+                    !shown.can_cancel,
+                    "popup cancellation belongs to the outer job"
+                );
+                assert_eq!(job, original);
+            }
+        }
     }
 
     #[test]

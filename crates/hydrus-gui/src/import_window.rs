@@ -63,10 +63,13 @@ pub(crate) fn open(
     import_now: &ImportNow,
 ) -> Result<ReviewImportsWindow, String> {
     let window = ReviewImportsWindow::new().map_err(|e| e.to_string())?;
-    let review = Rc::new(RefCell::new(Review::new()));
+    let tools = hydrus_media::MediaTools::new()
+        .with_ffmpeg_timeout_reader(hydrus_store::ffmpeg_policy::reader(&sidecars.store));
+    let review = Rc::new(RefCell::new(Review::with_tools(tools)));
     review.borrow_mut().add_paths(paths);
     let selection = Rc::new(RefCell::new(Selection::default()));
     let show = {
+        let store = sidecars.store.clone();
         let review = review.clone();
         let selection = selection.clone();
         let weak = window.as_weak();
@@ -74,13 +77,17 @@ pub(crate) fn open(
             let Some(window) = weak.upgrade() else { return };
             let review = review.borrow();
             let selected = &selection.borrow().rows;
+            let formatting = hydrus_gui_model::gui_format::preferences(&store);
             let rows: Vec<ImportRow> = review
                 .parsed()
                 .iter()
                 .enumerate()
                 .map(|(i, parsed)| {
-                    let cells: Vec<SharedString> =
-                        parsed.row().iter().map(|c| c.as_str().into()).collect();
+                    let cells: Vec<SharedString> = parsed
+                        .row_with_format(&formatting)
+                        .iter()
+                        .map(|c| c.as_str().into())
+                        .collect();
                     ImportRow {
                         cells: ModelRc::new(VecModel::from(cells)),
                         selected: selected.contains(&i),

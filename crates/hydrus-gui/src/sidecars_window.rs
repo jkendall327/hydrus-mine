@@ -1235,6 +1235,12 @@ pub fn open_routers(
     if let Some(window) = slots.routers.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
+    // Callbacks own their children, never the slot that owns this very window.
+    let queue_slot = Rc::downgrade(&slots.routers);
+    let slots = Slots {
+        routers: Rc::default(),
+        ..slots.clone()
+    };
     let window = SidecarRoutersWindow::new()?;
     window.set_window_title(editors::ROUTERS_TITLE.into());
     let active = Rc::new(std::cell::Cell::new(true));
@@ -1264,11 +1270,15 @@ pub fn open_routers(
         }
     });
     let blocked: Rc<dyn Fn() -> bool> = Rc::new({
+        let weak = window.as_weak();
         let active = active.clone();
         let state = state.clone();
         let slots = slots.clone();
         move || {
             !active.get()
+                || weak
+                    .upgrade()
+                    .is_none_or(|window| !window.window().is_visible())
                 || state.borrow().asking.is_some()
                 || slots.router.borrow().is_some()
                 || slots.node.borrow().is_some()
@@ -1446,8 +1456,28 @@ pub fn open_routers(
         let active = active.clone();
         let refresh = refresh.clone();
         let blocked = blocked.clone();
+        let owner: Rc<dyn Fn() -> bool> = Rc::new({
+            let weak = weak.clone();
+            let queue_slot = queue_slot.clone();
+            let active = active.clone();
+            let state = state.clone();
+            let router = Rc::downgrade(&slots.router);
+            let node = Rc::downgrade(&slots.node);
+            move || {
+                active.get()
+                    && state.borrow().asking.is_none()
+                    && router.upgrade().is_some_and(|slot| slot.borrow().is_none())
+                    && node.upgrade().is_some_and(|slot| slot.borrow().is_none())
+                    && weak.upgrade().is_some_and(|window| {
+                        window.window().is_visible()
+                            && queue_slot.upgrade().is_some_and(|slot| {
+                                slot.borrow().as_ref().is_some_and(|current| std::ptr::eq(current.window(), window.window()))
+                            })
+                    })
+            }
+        });
         move |importing| {
-            if blocked() {
+            if blocked() || !owner() {
                 return;
             }
             let routers = {
@@ -1460,8 +1490,9 @@ pub fn open_routers(
                 return;
             }
             let preview = Rc::new({
-                let store = store.clone();
+                let store = Arc::downgrade(&store);
                 move |routers: Vec<Router>| {
+                    let store = store.upgrade().ok_or_else(|| "The router owner was closed.".to_owned())?;
                     editors::validate_router_import(context, &routers).map_err(|error| {
                         format!("The imported objects were wrong for this control:\n\n{error}")
                     })?;
@@ -1473,10 +1504,10 @@ pub fn open_routers(
             });
             let applied = Rc::new({
                 let state = state.clone();
-                let active = active.clone();
-                let refresh = refresh.clone();
+                let owner = owner.clone();
+                let refresh = Rc::downgrade(&refresh);
                 move |routers: Vec<Router>| {
-                    if !active.get() {
+                    if !owner() {
                         return Ok(());
                     }
                     editors::validate_router_import(context, &routers).map_err(|error| {
@@ -1490,16 +1521,23 @@ pub fn open_routers(
                     selected.extend(first..s.routers.len());
                     s.selection.select_many(&selected);
                     drop(s);
-                    refresh();
+                    if let Some(refresh) = refresh.upgrade() { refresh(); }
                     Ok(())
                 }
             });
-            match crate::downloader_interchange_window::open_routers_with_store(
-                &store, &slots.exchange, importing, routers, preview, applied,
-            ) {
+            let opened = if importing {
+                crate::downloader_interchange_window::open_router_import(
+                    &slots.exchange, context, preview, applied, owner.clone(),
+                )
+            } else {
+                crate::downloader_interchange_window::open_routers_with_store(
+                    &store, &slots.exchange, importing, &routers, preview, applied,
+                )
+            };
+            match opened {
                 Ok(child) => {
-                    let refresh = refresh.clone();
-                    child.on_closed(move || refresh());
+                    let refresh = Rc::downgrade(&refresh);
+                    child.on_closed(move || { if let Some(refresh) = refresh.upgrade() { refresh(); } });
                 }
                 Err(error) => {
                     if let Some(window) = weak.upgrade() {
@@ -1541,6 +1579,7 @@ pub fn open_routers(
         let weak = window.as_weak();
         let slots = slots.clone();
         let active = active.clone();
+        let queue_slot = queue_slot.clone();
         move || {
             if !active.replace(false) {
                 return;
@@ -1556,7 +1595,15 @@ pub fn open_routers(
             slots.exchange.cancel();
             slots.strings.cancel_all();
             slots.formula.cancel();
-            slots.routers.borrow_mut().take();
+            if let (Some(slot), Some(window)) = (queue_slot.upgrade(), weak.upgrade()) {
+                let owns = slot
+                    .borrow()
+                    .as_ref()
+                    .is_some_and(|current| std::ptr::eq(current.window(), window.window()));
+                if owns {
+                    slot.borrow_mut().take();
+                }
+            }
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }

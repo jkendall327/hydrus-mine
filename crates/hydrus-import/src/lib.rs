@@ -72,6 +72,20 @@ impl FileImporter {
     /// options at boot).
     pub fn new(store: Arc<Store>, tools: MediaTools) -> Self {
         apply_file_handling(&store);
+        let weak = Arc::downgrade(&store);
+        let tools = tools.with_icc_reader(Arc::new(move || {
+            let Some(store) = weak.upgrade() else {
+                return true;
+            };
+            match store.read(hydrus_store::image_colour::load) {
+                Ok(policy) => policy.normalise_icc,
+                Err(error) => {
+                    eprintln!("could not read image ICC policy: {error}");
+                    true
+                }
+            }
+        }));
+        let tools = tools.with_ffmpeg_timeout_reader(hydrus_store::ffmpeg_policy::reader(&store));
         Self { store, tools }
     }
 
@@ -207,7 +221,9 @@ impl FileImporter {
             Err(e) => return Ok(error_result(hash, &e)),
         };
         let mime = analysis.info.mime;
-        if let Err(note) = options.check(&analysis.info) {
+        let formatting: hydrus_store::settings::GuiFormatting =
+            self.store.read(hydrus_store::settings::get)?;
+        if let Err(note) = options.check_with_figures(&analysis.info, formatting.figures) {
             return Ok(ImportResult {
                 status: ImportStatus::Vetoed,
                 hash: Some(hash),
@@ -240,13 +256,7 @@ impl FileImporter {
             .file_path(&hash, mime)
             .ok_or_else(|| StoreError::Corrupt(format!("no storage location for {hash}")))?;
         let size = std::fs::metadata(temp)?.len();
-        if free_space(&file_path).is_some_and(|free| free < MIN_FREE_SPACE || free < size) {
-            return Err(self.critical_drive_error(format!(
-                "The disk for path \"{}\" is almost full and cannot take the file \"{hash}\", which is {}! Shut the client down now and fix this!",
-                file_path.display(),
-                hydrus_core::numbers::human_bytes(size),
-            )));
-        }
+        self.check_storage_space(&file_path, &hash, size, free_space(&file_path))?;
         if let Err(e) = write_into_storage(temp, &file_path) {
             return Err(self.critical_drive_error(format!(
                 "Copying the file from \"{}\" to \"{}\" failed ({e})! Other import queues have been paused. You should shut the client down now and fix this!",
@@ -386,6 +396,25 @@ fn free_space(path: &Path) -> Option<u64> {
 }
 
 impl FileImporter {
+    fn check_storage_space(
+        &self,
+        path: &Path,
+        hash: &Sha256,
+        size: u64,
+        free: Option<u64>,
+    ) -> Result<()> {
+        if free.is_some_and(|free| free < MIN_FREE_SPACE || free < size) {
+            let formatting: hydrus_store::settings::GuiFormatting =
+                self.store.read(hydrus_store::settings::get)?;
+            return Err(self.critical_drive_error(format!(
+                "The disk for path \"{}\" is almost full and cannot take the file \"{hash}\", which is {}! Shut the client down now and fix this!",
+                path.display(),
+                hydrus_core::numbers::human_bytes_with_figures(size, formatting.figures),
+            )));
+        }
+        Ok(())
+    }
+
     /// `_HandleCriticalDriveError`: a media disk is full or failing, so stop
     /// the importers (import folders, subscriptions, file queues) before
     /// they lose more files, and say why.
@@ -637,5 +666,72 @@ mod failure_identity_tests {
         );
         assert_eq!(other.raised_kind, Some(ImportFailureKind::Other));
         assert_eq!(other.status, ImportStatus::Error);
+    }
+}
+
+#[cfg(test)]
+mod formatting_tests {
+    use super::*;
+    use hydrus_store::settings::{self, GuiFormatting};
+
+    #[test]
+    fn saved_figures_replay_all_reference_rejections_and_critical_drive_pause() {
+        let fixture = hydrus_testkit::fixture_json("gui_format_backend.json");
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::open(dir.path()).unwrap();
+        let importer = FileImporter::new(store.clone(), MediaTools::new());
+        for event in fixture["events"].as_array().unwrap() {
+            let formatting: GuiFormatting = serde_json::from_value(event["saved"].clone()).unwrap();
+            store
+                .write(move |ctx| settings::set(ctx.conn(), &formatting))
+                .unwrap();
+            let reopened = Store::open(dir.path()).unwrap();
+            let saved: GuiFormatting = reopened.read(settings::get).unwrap();
+            for (kind, size, mime) in [
+                ("minimum", 1536, Mime::ImagePng),
+                ("maximum", 188_213_746, Mime::ImagePng),
+                ("gif", 188_213_746, Mime::AnimationGif),
+            ] {
+                let rules = FileImportOptions {
+                    min_size: (kind == "minimum").then_some(243_200),
+                    max_size: (kind == "maximum").then_some(243_200),
+                    max_gif_size: (kind == "gif").then_some(243_200),
+                    ..Default::default()
+                };
+                assert_eq!(
+                    rules
+                        .check_values_with_figures(size, mime, Some(10), Some(10), saved.figures)
+                        .unwrap_err(),
+                    event["consumers"]["validation"][kind]
+                );
+                if saved.figures == 3 {
+                    assert_eq!(
+                        rules
+                            .check_values(size, mime, Some(10), Some(10))
+                            .unwrap_err(),
+                        event["consumers"]["validation"][kind]
+                    );
+                }
+            }
+            let error = importer
+                .check_storage_space(
+                    Path::new("/synthetic/media/file.png"),
+                    &Sha256([17; 32]),
+                    188_213_746,
+                    Some(0),
+                )
+                .unwrap_err();
+            assert_eq!(
+                error.to_string(),
+                format!(
+                    "i/o error: {}",
+                    event["consumers"]["critical_drive"].as_str().unwrap()
+                )
+            );
+            let pauses: settings::Pauses = reopened.read(settings::get).unwrap();
+            let folders: settings::FolderSettings = reopened.read(settings::get).unwrap();
+            assert!(pauses.subscriptions && pauses.file_queues && folders.pause_import_folders);
+            assert!(!pauses.network_traffic);
+        }
     }
 }

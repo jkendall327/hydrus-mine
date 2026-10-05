@@ -1,0 +1,2685 @@
+{
+  "names": [
+    "only_show_delete_from_all_local_domains_when_filtering",
+    "archive_delete_commit_panel_delays_multiple_delete_choices"
+  ],
+  "initial": [
+    false,
+    true
+  ],
+  "settings": [
+    {
+      "draft": [
+        false,
+        false
+      ],
+      "before": [
+        false,
+        true
+      ],
+      "saved": [
+        false,
+        false
+      ],
+      "reopened": [
+        false,
+        false
+      ],
+      "roundtrip": [
+        false,
+        false
+      ]
+    },
+    {
+      "draft": [
+        false,
+        true
+      ],
+      "before": [
+        false,
+        false
+      ],
+      "saved": [
+        false,
+        true
+      ],
+      "reopened": [
+        false,
+        true
+      ],
+      "roundtrip": [
+        false,
+        true
+      ]
+    },
+    {
+      "draft": [
+        true,
+        false
+      ],
+      "before": [
+        false,
+        true
+      ],
+      "saved": [
+        true,
+        false
+      ],
+      "reopened": [
+        true,
+        false
+      ],
+      "roundtrip": [
+        true,
+        false
+      ]
+    },
+    {
+      "draft": [
+        true,
+        true
+      ],
+      "before": [
+        true,
+        false
+      ],
+      "saved": [
+        true,
+        true
+      ],
+      "reopened": [
+        true,
+        true
+      ],
+      "roundtrip": [
+        true,
+        true
+      ]
+    }
+  ],
+  "cancel_before": [
+    true,
+    true
+  ],
+  "cancel_after": [
+    true,
+    true
+  ],
+  "domains": [
+    {
+      "name": "art",
+      "key": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+    },
+    {
+      "name": "my files",
+      "key": "6c6f63616c2066696c6573"
+    }
+  ],
+  "combined_key": "616c6c206c6f63616c206d65646961",
+  "events": [
+    {
+      "all": false,
+      "delay": false,
+      "page": "source",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from art?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": false,
+      "page": "source",
+      "members": 2,
+      "pick": 1,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        },
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "label": "delete 1 from my files"
+        }
+      ],
+      "initial_enabled": [
+        true,
+        true,
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true,
+        true
+      ],
+      "selected": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from combined local file domains, sending directly to trash?",
+        "delete 1 from art?",
+        "delete 1 from my files?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": false,
+      "page": "both",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "6c6f63616c2066696c6573",
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art, my files"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        }
+      ],
+      "initial_enabled": [
+        true,
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true
+      ],
+      "selected": [
+        "6c6f63616c2066696c6573",
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from art, my files?",
+        "delete 1 from art?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": false,
+      "page": "both",
+      "members": 2,
+      "pick": 1,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        },
+        {
+          "keys": [
+            "6c6f63616c2066696c6573",
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art, my files"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        },
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "label": "delete 1 from my files"
+        }
+      ],
+      "initial_enabled": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "selected": [
+        "6c6f63616c2066696c6573",
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from combined local file domains, sending directly to trash?",
+        "delete 1 from art, my files?",
+        "delete 1 from art?",
+        "delete 1 from my files?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": false,
+      "page": "combined",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        }
+      ],
+      "initial_enabled": [
+        true,
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from combined local file domains, sending directly to trash?",
+        "delete 1 from art?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": false,
+      "page": "combined",
+      "members": 2,
+      "pick": 1,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        },
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "label": "delete 1 from my files"
+        }
+      ],
+      "initial_enabled": [
+        true,
+        true,
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true,
+        true
+      ],
+      "selected": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from combined local file domains, sending directly to trash?",
+        "delete 1 from art?",
+        "delete 1 from my files?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": false,
+      "page": "all",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from art?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": false,
+      "page": "all",
+      "members": 2,
+      "pick": 1,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        },
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "label": "delete 1 from my files"
+        }
+      ],
+      "initial_enabled": [
+        true,
+        true,
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true,
+        true
+      ],
+      "selected": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from combined local file domains, sending directly to trash?",
+        "delete 1 from art?",
+        "delete 1 from my files?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": false,
+      "page": "mixed",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from a mix of current and deleted files of art, my files"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        }
+      ],
+      "initial_enabled": [
+        true,
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true
+      ],
+      "selected": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from a mix of current and deleted files of art, my files?",
+        "delete 1 from art?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": false,
+      "page": "mixed",
+      "members": 2,
+      "pick": 1,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from a mix of current and deleted files of art, my files"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        },
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "label": "delete 1 from my files"
+        }
+      ],
+      "initial_enabled": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "selected": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from combined local file domains, sending directly to trash?",
+        "delete 1 from a mix of current and deleted files of art, my files?",
+        "delete 1 from art?",
+        "delete 1 from my files?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": false,
+      "page": "same_deleted",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from current and deleted files of art"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        }
+      ],
+      "initial_enabled": [
+        true,
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true
+      ],
+      "selected": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from current and deleted files of art?",
+        "delete 1 from art?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": false,
+      "page": "same_deleted",
+      "members": 2,
+      "pick": 1,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from current and deleted files of art"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        },
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "label": "delete 1 from my files"
+        }
+      ],
+      "initial_enabled": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "selected": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from combined local file domains, sending directly to trash?",
+        "delete 1 from current and deleted files of art?",
+        "delete 1 from art?",
+        "delete 1 from my files?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": true,
+      "page": "source",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from art?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": true,
+      "page": "source",
+      "members": 2,
+      "pick": 1,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        },
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "label": "delete 1 from my files"
+        }
+      ],
+      "initial_enabled": [
+        false,
+        false,
+        false
+      ],
+      "delays": [
+        1.2
+      ],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true,
+        true
+      ],
+      "selected": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from combined local file domains, sending directly to trash?",
+        "delete 1 from art?",
+        "delete 1 from my files?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": true,
+      "page": "both",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "6c6f63616c2066696c6573",
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art, my files"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        }
+      ],
+      "initial_enabled": [
+        false,
+        false
+      ],
+      "delays": [
+        1.2
+      ],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true
+      ],
+      "selected": [
+        "6c6f63616c2066696c6573",
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from art, my files?",
+        "delete 1 from art?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": true,
+      "page": "both",
+      "members": 2,
+      "pick": 1,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        },
+        {
+          "keys": [
+            "6c6f63616c2066696c6573",
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art, my files"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        },
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "label": "delete 1 from my files"
+        }
+      ],
+      "initial_enabled": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "delays": [
+        1.2
+      ],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "selected": [
+        "6c6f63616c2066696c6573",
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from combined local file domains, sending directly to trash?",
+        "delete 1 from art, my files?",
+        "delete 1 from art?",
+        "delete 1 from my files?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": true,
+      "page": "combined",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        }
+      ],
+      "initial_enabled": [
+        false,
+        false
+      ],
+      "delays": [
+        1.2
+      ],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from combined local file domains, sending directly to trash?",
+        "delete 1 from art?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": true,
+      "page": "combined",
+      "members": 2,
+      "pick": 1,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        },
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "label": "delete 1 from my files"
+        }
+      ],
+      "initial_enabled": [
+        false,
+        false,
+        false
+      ],
+      "delays": [
+        1.2
+      ],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true,
+        true
+      ],
+      "selected": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from combined local file domains, sending directly to trash?",
+        "delete 1 from art?",
+        "delete 1 from my files?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": true,
+      "page": "all",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from art?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": true,
+      "page": "all",
+      "members": 2,
+      "pick": 1,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        },
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "label": "delete 1 from my files"
+        }
+      ],
+      "initial_enabled": [
+        false,
+        false,
+        false
+      ],
+      "delays": [
+        1.2
+      ],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true,
+        true
+      ],
+      "selected": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from combined local file domains, sending directly to trash?",
+        "delete 1 from art?",
+        "delete 1 from my files?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": true,
+      "page": "mixed",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from a mix of current and deleted files of art, my files"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        }
+      ],
+      "initial_enabled": [
+        false,
+        false
+      ],
+      "delays": [
+        1.2
+      ],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true
+      ],
+      "selected": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from a mix of current and deleted files of art, my files?",
+        "delete 1 from art?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": true,
+      "page": "mixed",
+      "members": 2,
+      "pick": 1,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from a mix of current and deleted files of art, my files"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        },
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "label": "delete 1 from my files"
+        }
+      ],
+      "initial_enabled": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "delays": [
+        1.2
+      ],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "selected": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from combined local file domains, sending directly to trash?",
+        "delete 1 from a mix of current and deleted files of art, my files?",
+        "delete 1 from art?",
+        "delete 1 from my files?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": true,
+      "page": "same_deleted",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from current and deleted files of art"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        }
+      ],
+      "initial_enabled": [
+        false,
+        false
+      ],
+      "delays": [
+        1.2
+      ],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true
+      ],
+      "selected": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from current and deleted files of art?",
+        "delete 1 from art?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": false,
+      "delay": true,
+      "page": "same_deleted",
+      "members": 2,
+      "pick": 1,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from current and deleted files of art"
+        },
+        {
+          "keys": [
+            "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+          ],
+          "label": "delete 1 from art"
+        },
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "label": "delete 1 from my files"
+        }
+      ],
+      "initial_enabled": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "delays": [
+        1.2
+      ],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "selected": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "labels": [
+        "keep 1\n-and-",
+        "delete 1 from combined local file domains, sending directly to trash?",
+        "delete 1 from current and deleted files of art?",
+        "delete 1 from art?",
+        "delete 1 from my files?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "commit",
+        "commit",
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": false,
+      "page": "source",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": false,
+      "page": "source",
+      "members": 2,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": false,
+      "page": "both",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": false,
+      "page": "both",
+      "members": 2,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": false,
+      "page": "combined",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": false,
+      "page": "combined",
+      "members": 2,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": false,
+      "page": "all",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": false,
+      "page": "all",
+      "members": 2,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": false,
+      "page": "mixed",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": false,
+      "page": "mixed",
+      "members": 2,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": false,
+      "page": "same_deleted",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": false,
+      "page": "same_deleted",
+      "members": 2,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": true,
+      "page": "source",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": true,
+      "page": "source",
+      "members": 2,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": true,
+      "page": "both",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": true,
+      "page": "both",
+      "members": 2,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": true,
+      "page": "combined",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": true,
+      "page": "combined",
+      "members": 2,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": true,
+      "page": "all",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": true,
+      "page": "all",
+      "members": 2,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": true,
+      "page": "mixed",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": true,
+      "page": "mixed",
+      "members": 2,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": true,
+      "page": "same_deleted",
+      "members": 1,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    },
+    {
+      "all": true,
+      "delay": true,
+      "page": "same_deleted",
+      "members": 2,
+      "pick": 0,
+      "kept": "keep 1",
+      "options": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "label": "delete 1 from combined local file domains, sending directly to trash"
+        }
+      ],
+      "initial_enabled": [
+        true
+      ],
+      "delays": [],
+      "before_context": [],
+      "refused_context": [],
+      "after_enabled": [
+        true
+      ],
+      "selected": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "labels": [
+        "keep 1 and delete 1 from combined local file domains, sending directly to trash?",
+        "-or-"
+      ],
+      "buttons": [
+        "commit",
+        "forget",
+        "back to filtering"
+      ]
+    }
+  ],
+  "jobs": [
+    {
+      "keys": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "6c6f63616c2066696c6573",
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "6c6f63616c2066696c6573",
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "6c6f63616c2066696c6573",
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "6c6f63616c2066696c6573",
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    },
+    {
+      "keys": [
+        "616c6c206c6f63616c206d65646961"
+      ],
+      "kept": 1,
+      "deleted": 1
+    }
+  ],
+  "forget": [
+    {
+      "yes": false,
+      "questions": [
+        "Quit filtering now and forget your work?"
+      ],
+      "visible": true,
+      "cancelled": false
+    },
+    {
+      "yes": true,
+      "questions": [
+        "Quit filtering now and forget your work?"
+      ],
+      "visible": false,
+      "cancelled": false
+    }
+  ]
+}

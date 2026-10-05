@@ -78,6 +78,214 @@ fn path_text(path: &Path) -> String {
 }
 
 #[tokio::test(flavor = "multi_thread")]
+async fn saved_existing_tag_filter_reaches_real_file_importer_for_parsed_and_additional_tags() {
+    use hydrus_core::import_options::{ServiceTagImportOptions, TagImportOptions};
+    use hydrus_core::tag_filter::{FilterRule, TagFilter};
+    use hydrus_store::content::MappingAction;
+    let fixture = hydrus_testkit::fixture_json("existing_tags_filter.json");
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let work = tempfile::tempdir().unwrap();
+    let known_path = place(work.path(), "bmp_24.bmp");
+    let target_path = place(work.path(), "apng_rgba.png");
+    let source = store
+        .write(move |ctx| {
+            queues::create_local_import(
+                ctx.conn(),
+                None,
+                &ImportOptionsSlice::default(),
+                &[(path_text(&known_path), None)],
+                &queues::PathTags::new(),
+                LocalImport::default(),
+                0,
+            )
+        })
+        .unwrap();
+    let worker = runner(&store);
+    worker.start_all().unwrap();
+    wait_until_done(&store, source).await;
+    let source_hash: hydrus_core::Sha256 =
+        store.read(|conn| queues::file_seeds(conn, source)).unwrap()[0]
+            .meta
+            .hash("sha256")
+            .unwrap()
+            .parse()
+            .unwrap();
+    let key = hex::encode(hydrus_core::service::builtin_keys::MY_TAGS);
+    let my_tags = store
+        .snapshot()
+        .services
+        .builtin(hydrus_core::service::builtin_keys::MY_TAGS)
+        .unwrap()
+        .id;
+    let known: Vec<String> = serde_json::from_value(fixture["known"].clone()).unwrap();
+    store
+        .write_content(move |writer| {
+            let hash = hydrus_store::master::hash_id(writer.conn(), &source_hash)?.unwrap();
+            for text in known {
+                let tag = hydrus_store::master::intern_tag(
+                    writer.conn(),
+                    &hydrus_core::Tag::new(&text).unwrap(),
+                )?;
+                writer.update_mappings(my_tags, &MappingAction::Add, tag, &[hash])?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    let mut filter = TagFilter::new();
+    for pair in fixture["saved"]["rules"].as_array().unwrap() {
+        filter.set_rule(
+            pair[0].as_str().unwrap(),
+            if pair[1] == 0 {
+                FilterRule::Whitelist
+            } else {
+                FilterRule::Blacklist
+            },
+        );
+    }
+    let additional: Vec<String> = serde_json::from_value(fixture["additional"].clone()).unwrap();
+    let own = ImportOptionsSlice {
+        tags: Some(TagImportOptions {
+            services: [
+                key.clone(),
+                hex::encode(hydrus_core::service::builtin_keys::DOWNLOADER_TAGS),
+            ]
+            .into_iter()
+            .map(|service| {
+                (
+                    service,
+                    ServiceTagImportOptions {
+                        get_tags: true,
+                        additional_tags: additional.clone(),
+                        only_add_existing_tags: true,
+                        only_add_existing_tags_filter: filter.clone(),
+                        ..Default::default()
+                    },
+                )
+            })
+            .collect(),
+        }),
+        ..Default::default()
+    };
+    // Save/reopen the same typed importer options the native editor accepts.
+    let queue = store
+        .write(move |ctx| {
+            queues::create_local_import(
+                ctx.conn(),
+                None,
+                &own,
+                &[(path_text(&target_path), None)],
+                &queues::PathTags::new(),
+                LocalImport::default(),
+                0,
+            )
+        })
+        .unwrap();
+    let parsed: BTreeSet<String> = serde_json::from_value(fixture["parsed"].clone()).unwrap();
+    store
+        .write(move |ctx| {
+            let mut seed = queues::file_seeds(ctx.conn(), queue)?.remove(0);
+            seed.meta.tags = parsed;
+            queues::update_file_seed(ctx.conn(), &seed)
+        })
+        .unwrap();
+    let reopened = Store::open(dir.path()).unwrap();
+    let saved = reopened
+        .read(|conn| queues::queue(conn, queue))
+        .unwrap()
+        .unwrap();
+    assert!(
+        saved
+            .options
+            .tags
+            .as_ref()
+            .unwrap()
+            .service(&key)
+            .unwrap()
+            .only_add_existing_tags
+    );
+    worker.wake(queue);
+    wait_until_done(&store, queue).await;
+    let seed = store
+        .read(|conn| queues::file_seeds(conn, queue))
+        .unwrap()
+        .remove(0);
+    assert_eq!(seed.status, SeedStatus::SuccessfulAndNew);
+    let hash: hydrus_core::Sha256 = seed.meta.hash("sha256").unwrap().parse().unwrap();
+    let results: Vec<BTreeSet<String>> = reopened
+        .read(|conn| {
+            let id = hydrus_store::master::hash_id(conn, &hash)?.unwrap();
+            let snapshot = reopened.snapshot();
+            let batch = hydrus_store::media::load(conn, &snapshot.services, None, &[id])?;
+            let second = snapshot
+                .services
+                .builtin(hydrus_core::service::builtin_keys::DOWNLOADER_TAGS)?
+                .id;
+            Ok([my_tags, second]
+                .into_iter()
+                .map(|service| {
+                    let tags = &batch.results[0].tags[&service].by_status
+                        [&hydrus_core::ContentStatus::Current];
+                    tags.iter()
+                        .map(|tag| batch.tags[tag].as_str().to_owned())
+                        .collect()
+                })
+                .collect())
+        })
+        .unwrap();
+    assert_eq!(serde_json::json!(results[0]), fixture["consumer"]);
+    assert_eq!(
+        serde_json::json!(results[1]),
+        fixture["second_service_consumer"]
+    );
+    // Disable the gate while retaining its saved filter, then re-import an
+    // already-known file: previously blocked new tags must now be added.
+    let mut disabled = saved.options;
+    for (_, service) in &mut disabled.tags.as_mut().unwrap().services {
+        service.only_add_existing_tags = false;
+    }
+    let path = seed.data;
+    let parsed: BTreeSet<String> = serde_json::from_value(fixture["parsed"].clone()).unwrap();
+    let again = store
+        .write(move |ctx| {
+            let queue = queues::create_local_import(
+                ctx.conn(),
+                None,
+                &disabled,
+                &[(path, None)],
+                &queues::PathTags::new(),
+                LocalImport::default(),
+                0,
+            )?;
+            let mut seed = queues::file_seeds(ctx.conn(), queue)?.remove(0);
+            seed.meta.tags = parsed;
+            queues::update_file_seed(ctx.conn(), &seed)?;
+            Ok(queue)
+        })
+        .unwrap();
+    worker.wake(again);
+    wait_until_done(&store, again).await;
+    assert_eq!(
+        store.read(|conn| queues::file_seeds(conn, again)).unwrap()[0].status,
+        SeedStatus::SuccessfulButRedundant
+    );
+    let result: BTreeSet<String> = reopened
+        .read(|conn| {
+            let id = hydrus_store::master::hash_id(conn, &hash)?.unwrap();
+            let snapshot = reopened.snapshot();
+            let batch = hydrus_store::media::load(conn, &snapshot.services, None, &[id])?;
+            let tags =
+                &batch.results[0].tags[&my_tags].by_status[&hydrus_core::ContentStatus::Current];
+            Ok(tags
+                .iter()
+                .map(|tag| batch.tags[tag].as_str().to_owned())
+                .collect())
+        })
+        .unwrap();
+    assert_eq!(serde_json::json!(result), fixture["disabled_consumer"]);
+}
+
+#[tokio::test(flavor = "multi_thread")]
 async fn a_local_import_imports_its_files() {
     let dir = tempfile::tempdir().unwrap();
     let store = Arc::new(Store::open(dir.path()).unwrap());

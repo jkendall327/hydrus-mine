@@ -5,8 +5,9 @@
 // below, and buttons to add, rename and delete notes and to copy and paste
 // them.
 
-import { Button, TextEdit } from "std-widgets.slint";
+import { Button } from "std-widgets.slint";
 import { Theme } from "theme.slint";
+import { NoteTextEdit } from "note_text_edit.slint";
 import { Asking } from "subscriptions.slint";
 
 component Tab inherits Rectangle {
@@ -51,6 +52,15 @@ export component ManageNotesWindow inherits Window {
     in property <[string]> asking-choices;
     in property <bool> asking-wants-text;
     in-out property <string> asking-text;
+    in property <[bool]> cog-checks;
+    callback cog-opened();
+    callback cog-chosen(int);
+    out property <length> cog-x: cog.absolute-position.x;
+    out property <length> cog-y: cog.absolute-position.y;
+    out property <int> cursor: note-editor.cursor;
+    out property <int> anchor: note-editor.anchor;
+    public function select-text(anchor: int, cursor: int) { note-editor.select-text(anchor, cursor); }
+    public function focus-note() { note-editor.focus-text(); }
     callback tab-chosen(int);
     // double-clicking a tab renames it
     callback tab-renamed(int);
@@ -79,7 +89,7 @@ export component ManageNotesWindow inherits Window {
                 double-clicked => { root.tab-renamed(i); }
             }
         }
-        TextEdit {
+        note-editor := NoteTextEdit {
             vertical-stretch: 1;
             enabled: root.current >= 0 && !root.asking;
             text <=> root.text;
@@ -122,6 +132,24 @@ export component ManageNotesWindow inherits Window {
                 text: "copy URLs";
                 enabled: !root.asking;
                 clicked => { root.copy-urls(); }
+            }
+            cog := ContextMenuArea {
+                width: 32px; height: 28px;
+                // Qt's CogIconButton opens through its normal button activation.
+                // Disable automatic right-click/Menu-key opening, which bypasses
+                // the live preference refresh below. Explicit show remains enabled.
+                enabled: false;
+                Menu {
+                    MenuItem { title: "copy all notes"; checkable: true; checked: root.cog-checks[0]; activated => { root.cog-chosen(0); } }
+                    MenuItem { title: "copy as JSON"; checkable: true; checked: root.cog-checks[1]; activated => { root.cog-chosen(1); } }
+                    MenuSeparator {}
+                    MenuItem { title: "start editing with text cursor at the end"; checkable: true; checked: root.cog-checks[2]; activated => { root.cog-chosen(2); } }
+                    MenuItem { title: "on middle-click note hover copy, only copy text"; checkable: true; checked: root.cog-checks[3]; activated => { root.cog-chosen(3); } }
+                }
+                Button {
+                    text: "⚙"; enabled: !root.asking;
+                    clicked => { root.cog-opened(); cog.show({x: 0px, y: self.height}); }
+                }
             }
         }
         if root.asking: Asking {

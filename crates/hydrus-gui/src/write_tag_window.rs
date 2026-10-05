@@ -124,6 +124,7 @@ fn open_internal(
     let model = Rc::new(RefCell::new(entry));
     let pending: Rc<RefCell<Option<Vec<String>>>> = Rc::default();
     let active = Rc::new(Cell::new(true));
+    crate::gui_colours::bind(window.global::<crate::Theme<'_>>(), store, active.clone());
     let refresh = Rc::new({
         let model = model.clone();
         let store = store.clone();
@@ -150,7 +151,9 @@ fn open_internal(
                 m.input
                     .rows()
                     .iter()
-                    .map(|r| crate::list_text(&r.label, colours.tag(&r.colour_tag)))
+                    .map(|r| {
+                        crate::styled_list_text(&r.label, colours.tag(&r.colour_tag), &r.parts)
+                    })
                     .collect::<Vec<_>>(),
             )));
             w.set_selected(ModelRc::new(VecModel::from(m.input.selection_mask())));
@@ -247,7 +250,53 @@ fn open_internal(
         let tag_menu = tag_menu.clone();
         move || editable() && !tag_menu.busy()
     });
+    let tab_updates = crate::autocomplete_tabs::watch(
+        store,
+        Rc::new({
+            let weak = window.as_weak();
+            let editable = editable.clone();
+            let tag_menu = tag_menu.clone();
+            move || {
+                editable()
+                    && !tag_menu.busy()
+                    && weak
+                        .upgrade()
+                        .is_some_and(|window| window.window().is_visible())
+            }
+        }),
+        Rc::new({
+            let model = model.clone();
+            let refresh = refresh.clone();
+            move || {
+                model.borrow_mut().input.fetch();
+                refresh();
+            }
+        }),
+    );
+    let colour_updates = crate::tag_text::watch(
+        store,
+        Rc::new({
+            let weak = window.as_weak();
+            let editable = editable.clone();
+            move || {
+                editable()
+                    && weak
+                        .upgrade()
+                        .is_some_and(|window| window.window().is_visible())
+            }
+        }),
+        Rc::new({
+            let model = model.clone();
+            let refresh = refresh.clone();
+            move || {
+                model.borrow_mut().input.fetch();
+                refresh();
+            }
+        }),
+    );
     let close = Rc::new({
+        let tab_updates = tab_updates.clone();
+        let colour_updates = colour_updates.clone();
         let active = active.clone();
         let pending = pending.clone();
         let weak = window.as_weak();
@@ -257,6 +306,8 @@ fn open_internal(
             if !active.replace(false) {
                 return;
             }
+            tab_updates.stop();
+            colour_updates.stop();
             tag_menu.close();
             pending.borrow_mut().take();
             if let Some(w) = weak.upgrade() {

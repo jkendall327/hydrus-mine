@@ -498,3 +498,208 @@ fn writer_rechecks_last_domain_and_rating_limits() {
         );
     }
 }
+
+#[test]
+fn rating_examples_replay_qt_samples_live_configuration_and_no_saved_values() {
+    use hydrus_gui_model::rating_example::{self, Example, Sample};
+    use hydrus_store::services::{PenBrush, Rgb, StarAppearance, StarShape};
+
+    let recorded = hydrus_testkit::fixture_json("service_rating_preview.json");
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let dir = tempfile::tempdir().unwrap();
+    hydrus_store::import::import_legacy(
+        legacy.path(),
+        &dir.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let before = registry(&store);
+    for result in recorded["results"].as_array().unwrap() {
+        let service = store
+            .snapshot()
+            .services
+            .by_name(result["name"].as_str().unwrap())
+            .unwrap()
+            .clone();
+        let mut kind = service.kind.clone();
+        let mut example = Example::new(&kind).unwrap();
+        assert_eq!(json!(rating_example::LABELS), result["labels"]);
+        assert_eq!(result["example_value"], json!({}));
+        assert_eq!(result["original_unchanged"], true);
+        for event in result["events"].as_array().unwrap() {
+            let index = event["index"].as_u64().map(|i| usize::try_from(i).unwrap());
+            match event["action"].as_str().unwrap() {
+                "left" | "right" => example.click(index.unwrap(), event["action"] == "right", 0.5),
+                "middle_accept" => example.set_counter(
+                    index.unwrap(),
+                    u32::try_from(event["value"].as_u64().unwrap()).unwrap(),
+                ),
+                "middle_cancel" | "initial" | "configured" => {}
+                _ => panic!("unrecorded example action"),
+            }
+            for (sample, expected) in example
+                .samples()
+                .iter()
+                .zip(event["samples"].as_array().unwrap())
+            {
+                let (state, value) = match sample {
+                    Sample::Like(None) => (2, serde_json::Value::Null),
+                    Sample::Like(Some(true)) => (0, serde_json::Value::Null),
+                    Sample::Like(Some(false)) => (1, serde_json::Value::Null),
+                    Sample::Numerical(value) => (
+                        if value.is_some() { 3 } else { 2 },
+                        json!(value.unwrap_or(0.0)),
+                    ),
+                    Sample::IncDec(value) => (3, json!(value)),
+                };
+                assert_eq!(json!(state), expected["state"]);
+                assert_eq!(value, expected["rating"]);
+                if let Sample::IncDec(value) = sample {
+                    assert_eq!(
+                        rating_example::counter_width(12.0, *value).to_bits(),
+                        expected["icon"][0].as_f64().unwrap().to_bits()
+                    );
+                }
+            }
+        }
+        let colour = PenBrush {
+            pen: Rgb([17, 34, 51]),
+            brush: Rgb([68, 85, 102]),
+        };
+        assert_eq!(
+            json!([colour.pen.0, colour.brush.0]),
+            result["configured"]["colours"][0][1]
+        );
+        match &mut kind {
+            ServiceKind::RatingLike(c) => {
+                assert_eq!(result["configured"]["shape"], 40);
+                c.appearance = StarAppearance::Shape(StarShape(40));
+                c.display.colours.like = colour;
+            }
+            ServiceKind::RatingNumerical(c) => {
+                c.appearance = StarAppearance::Shape(StarShape(40));
+                c.display.colours.like = colour;
+                c.num_stars = 7;
+                c.custom_pad = 3;
+                c.show_fraction_beside_stars = 2;
+            }
+            ServiceKind::RatingIncDec(c) => c.colours.like = colour,
+            _ => panic!("not a rating fixture"),
+        }
+        for i in 0..4 {
+            let control = example.control(i, &kind).unwrap();
+            assert_eq!(control.colours.like, colour);
+            if matches!(kind, ServiceKind::RatingNumerical(_)) {
+                let configured = result["events"].as_array().unwrap().last().unwrap();
+                assert_eq!(
+                    json!(example.fraction(i, &kind)),
+                    configured["rendered"][i]["fraction"]
+                );
+                assert_eq!(control.shapes().len(), 7);
+            }
+        }
+        // Samples are deliberately absent from the ServiceKind serialization.
+        let saved = kind.config_json().unwrap();
+        assert!(!saved.contains("12345"));
+        let reopened = Example::new(&kind).unwrap();
+        assert_ne!(reopened.samples(), example.samples());
+    }
+    assert_eq!(registry(&store), before);
+    assert!(Example::new(&ServiceKind::LocalTags).is_none());
+}
+
+#[test]
+fn numerical_example_one_star_retains_live_conversion_but_saves_normalized_scale() {
+    use hydrus_gui_model::rating_example::Example;
+    let recorded = hydrus_testkit::fixture_json("rating_preview_one_star.json");
+    let mut kind = services_editor::default_kind(ServiceType::LocalRatingNumerical).unwrap();
+    let ServiceKind::RatingNumerical(config) = &mut kind else {
+        panic!("expected numerical configuration")
+    };
+    config.num_stars = u32::try_from(recorded["opening_num_stars"].as_u64().unwrap()).unwrap();
+    config.allow_zero = recorded["opening_allow_zero"].as_bool().unwrap();
+    let mut example = Example::new(&kind).unwrap();
+    for index in 0..4 {
+        example.click(index, false, 0.5);
+    }
+    for event in recorded["events"].as_array().unwrap() {
+        let ServiceKind::RatingNumerical(config) = &mut kind else {
+            panic!("expected numerical configuration")
+        };
+        config.num_stars = u32::try_from(event["num_stars"].as_u64().unwrap()).unwrap();
+        config.allow_zero = event["live_allow_zero"].as_bool().unwrap();
+        let mut saved = config.clone();
+        saved.allow_zero = event["checkbox_allow_zero"].as_bool().unwrap();
+        services_editor::normalize_numerical(&mut saved);
+        assert_eq!(json!(saved.allow_zero), event["saved_allow_zero"]);
+        for index in 0..4 {
+            assert_eq!(
+                json!(example.fraction(index, &kind)),
+                event["samples"][index]["fraction"]
+            );
+            assert_eq!(
+                example.control(index, &kind).unwrap().shapes().len(),
+                usize::try_from(event["num_stars"].as_u64().unwrap()).unwrap()
+            );
+        }
+    }
+    assert_eq!(recorded["original_unchanged"], true);
+}
+
+#[test]
+fn rating_example_whole_widget_pointer_routes_replay_qt() {
+    use hydrus_gui_model::rating_example::{Example, Sample};
+    let recorded = hydrus_testkit::fixture_json("rating_preview_pointer.json");
+    assert_eq!(recorded["original_unchanged"], true);
+    for case in recorded["cases"].as_array().unwrap() {
+        let mut kind = services_editor::default_kind(ServiceType::LocalRatingNumerical).unwrap();
+        let ServiceKind::RatingNumerical(config) = &mut kind else {
+            unreachable!()
+        };
+        config.num_stars = 5;
+        config.allow_zero = true;
+        config.custom_pad = 3;
+        config.show_fraction_beside_stars = u8::try_from(case["side"].as_u64().unwrap()).unwrap();
+        let mut example = Example::new(&kind).unwrap();
+        for event in case["events"].as_array().unwrap() {
+            let action = event["action"].as_str().unwrap();
+            if action == "press" || (action == "move" && event["held"] == true) {
+                example.pointer(
+                    0,
+                    event["right"].as_bool().unwrap(),
+                    event["x"].as_f64().unwrap(),
+                    event["width"].as_f64().unwrap(),
+                    event["icon"].as_f64().unwrap(),
+                    action == "move",
+                );
+            }
+            let Sample::Numerical(value) = example.samples()[0] else {
+                unreachable!()
+            };
+            assert_eq!(json!(value.unwrap_or(0.0)), event["rating"], "{event}");
+            assert_eq!(json!(if value.is_some() { 3 } else { 2 }), event["state"]);
+            assert_eq!(json!(example.fraction(0, &kind)), event["fraction"]);
+            assert_eq!(example.samples()[1], Sample::Numerical(None));
+        }
+        for event in case["chord_events"].as_array().unwrap() {
+            let action = event["action"].as_str().unwrap();
+            if action == "press" || (action == "move" && event["left_held"] == true) {
+                let right = event["button"] == 2 && event["left_held"] == false;
+                example.pointer(
+                    0,
+                    right,
+                    event["x"].as_f64().unwrap(),
+                    event["width"].as_f64().unwrap(),
+                    event["icon"].as_f64().unwrap(),
+                    action == "move",
+                );
+            }
+            let Sample::Numerical(value) = example.samples()[0] else {
+                unreachable!()
+            };
+            assert_eq!(json!(value.unwrap_or(0.0)), event["rating"], "{event}");
+            assert_eq!(json!(example.fraction(0, &kind)), event["fraction"]);
+        }
+        assert_eq!(case["example_value"], json!({}));
+    }
+}

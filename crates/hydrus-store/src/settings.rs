@@ -17,8 +17,100 @@ pub trait Setting: Serialize + DeserializeOwned + Default {
     const KEY: &'static str;
 }
 
+impl Setting for hydrus_core::shortcuts::Settings {
+    const KEY: &'static str = "shortcuts";
+}
+
+/// The duplicate canvas's independent A/B background adjustments and native
+/// transparency policy. Zero is retained from reference defaults until an
+/// Options Apply normalizes its displayed spin box to one.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct DuplicateColourSettings {
+    pub intensity_a: Option<u8>,
+    pub intensity_b: Option<u8>,
+    pub checkerboard: bool,
+    /// Imported active override colour; otherwise the default canvas white.
+    pub background: crate::services::Rgb,
+}
+impl Default for DuplicateColourSettings {
+    fn default() -> Self {
+        Self {
+            intensity_a: Some(0),
+            intensity_b: Some(3),
+            checkerboard: true,
+            background: crate::services::Rgb([255; 3]),
+        }
+    }
+}
+impl Setting for DuplicateColourSettings {
+    const KEY: &'static str = "duplicate_colours";
+}
+
 impl Setting for ThumbnailSettings {
     const KEY: &'static str = "thumbnails";
+}
+
+/// Live thumbnail keyboard origin, visibility threshold and raw wheel-rate text.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ThumbnailNavigation {
+    pub shift_moves_origin: bool,
+    pub visibility_percent: u8,
+    pub scroll_rate: String,
+}
+impl Default for ThumbnailNavigation {
+    fn default() -> Self {
+        Self {
+            shift_moves_origin: false,
+            visibility_percent: 75,
+            scroll_rate: "1.0".into(),
+        }
+    }
+}
+impl Setting for ThumbnailNavigation {
+    const KEY: &'static str = "thumbnail_navigation";
+}
+
+/// Independent capacities for paged importer work, separate from network limits.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ImportWorkSlots {
+    pub gallery_files: i64,
+    pub gallery_search: i64,
+    pub watcher_files: i64,
+    pub watcher_check: i64,
+    pub misc: i64,
+}
+impl Default for ImportWorkSlots {
+    fn default() -> Self {
+        Self {
+            gallery_files: 15,
+            gallery_search: 5,
+            watcher_files: 15,
+            watcher_check: 5,
+            misc: 10,
+        }
+    }
+}
+impl Setting for ImportWorkSlots {
+    const KEY: &'static str = "import_work_slots";
+}
+impl ImportWorkSlots {
+    /// Preserve the five reference integer options; Options Apply clamps controls.
+    pub fn apply_legacy(&mut self, integers: &std::collections::BTreeMap<String, i64>) {
+        for (key, value) in [
+            ("thread_slots_gallery_files", &mut self.gallery_files),
+            ("thread_slots_gallery_search", &mut self.gallery_search),
+            ("thread_slots_watcher_files", &mut self.watcher_files),
+            ("thread_slots_watcher_check", &mut self.watcher_check),
+            ("thread_slots_misc", &mut self.misc),
+        ] {
+            if let Some(&saved) = integers.get(key) {
+                *value = saved;
+            }
+        }
+    }
 }
 
 /// Favourite tags offered by autocomplete.
@@ -59,6 +151,30 @@ impl Setting for TagAutocompleteTabs {
     const KEY: &'static str = "tag_autocomplete_tabs";
 }
 
+/// Presentation and recent-history limit for manage-tags suggestion panels.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct TagSuggestionSettings {
+    pub width: u32,
+    pub columns: bool,
+    /// Reference page keys, including its legacy `favourites` spelling.
+    pub default_page: String,
+    pub recent_limit: Option<usize>,
+}
+impl Default for TagSuggestionSettings {
+    fn default() -> Self {
+        Self {
+            width: 300,
+            columns: false,
+            default_page: "related".into(),
+            recent_limit: Some(20),
+        }
+    }
+}
+impl Setting for TagSuggestionSettings {
+    const KEY: &'static str = "tag_suggestions";
+}
+
 /// How selected viewing canvases are presented in media context menus.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -82,6 +198,8 @@ pub struct FileViewingStatistics {
     pub duplicates: bool,
     pub media_min_ms: Option<u64>,
     pub media_max_ms: Option<u64>,
+    pub preview_min_ms: Option<u64>,
+    pub preview_max_ms: Option<u64>,
     pub menu_display: ViewingStatsMenuDisplay,
     pub interesting_canvases: Vec<CanvasType>,
 }
@@ -95,6 +213,8 @@ impl Default for FileViewingStatistics {
             duplicates: false,
             media_min_ms: Some(2000),
             media_max_ms: Some(600_000),
+            preview_min_ms: Some(5_000),
+            preview_max_ms: Some(60_000),
             menu_display: ViewingStatsMenuDisplay::Combined,
             interesting_canvases: vec![CanvasType::MediaViewer, CanvasType::ClientApi],
         }
@@ -201,6 +321,17 @@ impl Setting for GuiSettings {
     const KEY: &'static str = "gui_settings";
 }
 
+/// Activation requested by the first page created from a viewer tag search.
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct TagSearchActivation {
+    pub activate_main: bool,
+}
+
+impl Setting for TagSearchActivation {
+    const KEY: &'static str = "tag_search_activation";
+}
+
 /// The options window’s opening page and search placement.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]
@@ -296,6 +427,108 @@ impl Default for PageChooserSettings {
 
 impl Setting for PageChooserSettings {
     const KEY: &'static str = "gui_page_chooser";
+}
+
+/// Notebook bar/tree placement and width-based name elision from GUI Pages.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize, Default)]
+#[serde(rename_all = "snake_case")]
+pub enum TabAlignment {
+    #[default]
+    Top,
+    Left,
+    Right,
+    Bottom,
+}
+impl TabAlignment {
+    pub fn from_code(code: i64) -> Option<Self> {
+        Some(match code {
+            0 => Self::Top,
+            1 => Self::Left,
+            2 => Self::Right,
+            3 => Self::Bottom,
+            _ => return None,
+        })
+    }
+    pub fn code(self) -> i32 {
+        match self {
+            Self::Top => 0,
+            Self::Left => 1,
+            Self::Right => 2,
+            Self::Bottom => 3,
+        }
+    }
+}
+/// Live notebook drag decisions, independent from page/session contents.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct TabDragSettings {
+    pub chase: bool,
+    pub chase_shift: bool,
+    pub navigate: bool,
+    pub navigate_shift: bool,
+    pub wheel_scroll: bool,
+    pub disabled: bool,
+}
+impl Default for TabDragSettings {
+    fn default() -> Self {
+        Self {
+            chase: true,
+            chase_shift: false,
+            navigate: true,
+            navigate_shift: true,
+            wheel_scroll: false,
+            disabled: false,
+        }
+    }
+}
+impl Setting for TabDragSettings {
+    const KEY: &'static str = "gui_tab_drag";
+}
+impl TabDragSettings {
+    pub fn chase(self, shift: bool) -> bool {
+        if shift { self.chase_shift } else { self.chase }
+    }
+    pub fn navigate(self, shift: bool) -> bool {
+        if shift {
+            self.navigate_shift
+        } else {
+            self.navigate
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct TabPresentationSettings {
+    pub alignment: TabAlignment,
+    pub tree_alignment: Option<TabAlignment>,
+    pub hide_navigation_tabs: bool,
+    pub elide_names: bool,
+}
+impl Default for TabPresentationSettings {
+    fn default() -> Self {
+        Self {
+            alignment: TabAlignment::Top,
+            tree_alignment: None,
+            hide_navigation_tabs: false,
+            elide_names: true,
+        }
+    }
+}
+impl TabPresentationSettings {
+    pub fn tree_side(self) -> i32 {
+        match self.tree_alignment {
+            Some(TabAlignment::Left) => 1,
+            Some(TabAlignment::Right) => 2,
+            _ => 0,
+        }
+    }
+    pub fn tabs_hidden(self) -> bool {
+        self.hide_navigation_tabs && self.tree_side() != 0
+    }
+}
+impl Setting for TabPresentationSettings {
+    const KEY: &'static str = "gui_tab_presentation";
 }
 
 /// Confirmation and navigation preferences from GUI Pages.
@@ -456,6 +689,25 @@ pub enum DeletionAction {
     ClearRecord,
 }
 
+/// The two independently staged confirmation gates for local-domain migration.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct LocalTransferPreferences {
+    pub copy: bool,
+    pub move_files: bool,
+}
+impl Default for LocalTransferPreferences {
+    fn default() -> Self {
+        Self {
+            copy: true,
+            move_files: true,
+        }
+    }
+}
+impl Setting for LocalTransferPreferences {
+    const KEY: &'static str = "local_transfer_preferences";
+}
+
 /// Confirmation preferences for local file operations.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]
@@ -502,6 +754,38 @@ impl Default for DeletionPreferences {
 
 impl Setting for DeletionPreferences {
     const KEY: &'static str = "deletion_preferences";
+}
+
+/// Decoded thumbnail-cache soft byte limit and last-access timeout, in seconds.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ThumbnailCacheSettings {
+    pub bytes: u64,
+    pub timeout: u64,
+}
+impl Default for ThumbnailCacheSettings {
+    fn default() -> Self {
+        Self {
+            bytes: 32 * 1024 * 1024,
+            timeout: 86400,
+        }
+    }
+}
+impl Setting for ThumbnailCacheSettings {
+    const KEY: &'static str = "thumbnail_cache";
+}
+
+/// FilesAndTrash view policy; content writes and physical file lifetimes are independent.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct FileViewRemoval {
+    pub filtered: bool,
+    pub skipped: bool,
+    pub trashed: bool,
+    pub moved: bool,
+}
+impl Setting for FileViewRemoval {
+    const KEY: &'static str = "file_view_removal";
 }
 
 /// How files are read and written. As in the reference, these hold for the
@@ -812,12 +1096,16 @@ impl Setting for ViewerFocusSettings {
 pub struct ViewerPointerSettings {
     pub disallow_duration_drag: bool,
     pub hide_during_drag: bool,
+    pub anchor_drag: bool,
+    pub touch_unanchors: bool,
 }
 impl Default for ViewerPointerSettings {
     fn default() -> Self {
         Self {
             disallow_duration_drag: false,
             hide_during_drag: !cfg!(target_os = "macos"),
+            anchor_drag: !cfg!(target_os = "macos"),
+            touch_unanchors: false,
         }
     }
 }
@@ -846,6 +1134,68 @@ impl Default for ViewerHoverSettings {
 }
 impl Setting for ViewerHoverSettings {
     const KEY: &'static str = "viewer_hovers";
+}
+
+/// Parent propagation after the tag hover list has consumed a wheel event.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub enum TagWheelPropagation {
+    Never,
+    NoScrollbar,
+    #[default]
+    AfterDelay,
+    Immediately,
+}
+impl TagWheelPropagation {
+    pub fn from_code(code: u16) -> Option<Self> {
+        match code {
+            0 => Some(Self::Never),
+            1 => Some(Self::NoScrollbar),
+            2 => Some(Self::AfterDelay),
+            3 => Some(Self::Immediately),
+            _ => None,
+        }
+    }
+    pub fn code(self) -> u16 {
+        match self {
+            Self::Never => 0,
+            Self::NoScrollbar => 1,
+            Self::AfterDelay => 2,
+            Self::Immediately => 3,
+        }
+    }
+}
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub struct ViewerTagScrollSettings(pub TagWheelPropagation);
+impl Setting for ViewerTagScrollSettings {
+    const KEY: &'static str = "viewer_tag_scroll";
+}
+
+/// Browser viewer eye-menu grouping and initial native window presentation.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+#[allow(clippy::struct_excessive_bools)] // Independent reference checkbox preferences.
+pub struct ViewerEyeMenuSettings {
+    pub collapse_window: bool,
+    pub collapse_hovers: bool,
+    pub collapse_rendering: bool,
+    pub start_on_top: bool,
+    pub start_on_top_while_playing: bool,
+    pub start_frameless: bool,
+}
+impl Default for ViewerEyeMenuSettings {
+    fn default() -> Self {
+        Self {
+            collapse_window: true,
+            collapse_hovers: true,
+            collapse_rendering: true,
+            start_on_top: false,
+            start_on_top_while_playing: false,
+            start_frameless: false,
+        }
+    }
+}
+impl Setting for ViewerEyeMenuSettings {
+    const KEY: &'static str = "viewer_eye_menu";
 }
 
 /// Export folders.
@@ -936,6 +1286,69 @@ impl Setting for hydrus_core::search::recent::RecentPredicates {
 /// How ratings are drawn over thumbnails.
 impl Setting for hydrus_core::thumbnail::ThumbnailRatingSettings {
     const KEY: &'static str = "thumbnail_ratings";
+}
+
+/// Saved icon sizes for preview-window and dialog rating controls.
+#[derive(Debug, Clone, PartialEq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct RatingContextSizes {
+    pub preview_icon_size: f64,
+    pub preview_incdec_height: f64,
+    pub dialog_icon_size: f64,
+    pub dialog_incdec_height: f64,
+}
+impl Default for RatingContextSizes {
+    fn default() -> Self {
+        Self {
+            preview_icon_size: 12.0,
+            preview_incdec_height: 12.0,
+            dialog_icon_size: 12.0,
+            dialog_incdec_height: 12.0,
+        }
+    }
+}
+impl Setting for RatingContextSizes {
+    const KEY: &'static str = "rating_context_sizes";
+}
+
+/// The ordinary window-position rescue preferences from Options > GUI.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct WindowRescueSettings {
+    pub disabled: bool,
+    pub add_padding: bool,
+    pub padding: u8,
+}
+impl Default for WindowRescueSettings {
+    fn default() -> Self {
+        Self {
+            disabled: false,
+            add_padding: true,
+            padding: 40,
+        }
+    }
+}
+impl Setting for WindowRescueSettings {
+    const KEY: &'static str = "window_rescue";
+}
+
+/// Shared GUI timestamp/byte presentation; callers own formatting, not globals.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct GuiFormatting {
+    pub iso: bool,
+    pub figures: u8,
+}
+impl Default for GuiFormatting {
+    fn default() -> Self {
+        Self {
+            iso: false,
+            figures: 3,
+        }
+    }
+}
+impl Setting for GuiFormatting {
+    const KEY: &'static str = "gui_formatting";
 }
 
 /// How a file's info lines read.
@@ -1046,4 +1459,39 @@ pub fn set<S: Setting>(conn: &Connection, value: &S) -> Result<()> {
     conn.prepare_cached("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)")?
         .execute(params![S::KEY, serde_json::to_string(value)?])?;
     Ok(())
+}
+
+/// Editing and clipboard choices shared by note dialogs, Options and viewers.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct NotePreferences {
+    pub copy_all: bool,
+    pub copy_json: bool,
+    pub start_at_end: bool,
+    pub hover_text_only: bool,
+}
+impl Default for NotePreferences {
+    fn default() -> Self {
+        Self {
+            copy_all: true,
+            copy_json: true,
+            start_at_end: true,
+            hover_text_only: false,
+        }
+    }
+}
+impl Setting for NotePreferences {
+    const KEY: &'static str = "note_preferences";
+}
+
+impl Setting for hydrus_core::external_calls::Manager {
+    const KEY: &'static str = "external_calls";
+}
+
+impl Setting for hydrus_core::tag_presentation::SiblingConnectorColours {
+    const KEY: &'static str = "sibling_connector_colours";
+}
+
+impl Setting for hydrus_core::open_externally::Routing {
+    const KEY: &'static str = "open_externally";
 }

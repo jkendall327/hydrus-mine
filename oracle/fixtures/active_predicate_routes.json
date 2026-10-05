@@ -1,0 +1,3065 @@
+{
+  "cases": [
+    {
+      "name": "tag",
+      "current": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active alpha",
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active beta",
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            5,
+            null,
+            true
+          ]
+        ]
+      ],
+      "selected": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active alpha",
+            true
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "group": "copy",
+          "label": "series:active alpha",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "series:active alpha"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "active alpha",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "active alpha"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "active_alpha",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "active_alpha"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all tags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "series:active alpha\nseries:active beta\nsystem:inbox"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all subtags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "active alpha\nactive beta\ninbox"
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new search page for series:active alpha",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active alpha",
+                    true
+                  ]
+                ]
+              ],
+              "name": "series:active alpha",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new duplicate filter page for series:active alpha",
+          "publications": [
+            {
+              "topic": "new_page_duplicates",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active alpha",
+                    true
+                  ]
+                ]
+              ],
+              "name": "duplicates: series:active alpha",
+              "activate": false
+            }
+          ]
+        }
+      ],
+      "select_files_publications": []
+    },
+    {
+      "name": "two_tags",
+      "current": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active alpha",
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active beta",
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            5,
+            null,
+            true
+          ]
+        ]
+      ],
+      "selected": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active alpha",
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active beta",
+            true
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "group": "copy",
+          "label": "2 selected",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "series:active alpha\nseries:active beta"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "2 selected subtags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "active alpha\nactive beta"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "2 selected subtags with underscores",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "active_alpha\nactive_beta"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all tags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "series:active alpha\nseries:active beta\nsystem:inbox"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all subtags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "active alpha\nactive beta\ninbox"
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new search page for 2 selected",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active alpha",
+                    true
+                  ]
+                ],
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active beta",
+                    true
+                  ]
+                ]
+              ],
+              "name": "series:active alpha, series:active beta",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new OR search page for 2 selected",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    30,
+                    [
+                      26,
+                      3,
+                      [
+                        [
+                          2,
+                          [
+                            14,
+                            8,
+                            [
+                              0,
+                              "series:active alpha",
+                              true
+                            ]
+                          ]
+                        ],
+                        [
+                          2,
+                          [
+                            14,
+                            8,
+                            [
+                              0,
+                              "series:active beta",
+                              true
+                            ]
+                          ]
+                        ]
+                      ]
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "series:active alpha OR series:active beta",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open new search pages for each in selection",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active alpha",
+                    true
+                  ]
+                ]
+              ],
+              "name": "series:active alpha",
+              "activate": false
+            },
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active beta",
+                    true
+                  ]
+                ]
+              ],
+              "name": "series:active beta",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new duplicate filter page for 2 selected",
+          "publications": [
+            {
+              "topic": "new_page_duplicates",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active alpha",
+                    true
+                  ]
+                ],
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active beta",
+                    true
+                  ]
+                ]
+              ],
+              "name": "duplicates: series:active alpha, series:active beta",
+              "activate": false
+            }
+          ]
+        }
+      ],
+      "select_files_publications": []
+    },
+    {
+      "name": "all_tags",
+      "current": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active alpha",
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active beta",
+            true
+          ]
+        ]
+      ],
+      "selected": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active alpha",
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active beta",
+            true
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "group": "copy",
+          "label": "2 selected",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "series:active alpha\nseries:active beta"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "2 selected subtags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "active alpha\nactive beta"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "2 selected subtags with underscores",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "active_alpha\nactive_beta"
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new search page for 2 selected",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active alpha",
+                    true
+                  ]
+                ],
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active beta",
+                    true
+                  ]
+                ]
+              ],
+              "name": "series:active alpha, series:active beta",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new OR search page for 2 selected",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    30,
+                    [
+                      26,
+                      3,
+                      [
+                        [
+                          2,
+                          [
+                            14,
+                            8,
+                            [
+                              0,
+                              "series:active alpha",
+                              true
+                            ]
+                          ]
+                        ],
+                        [
+                          2,
+                          [
+                            14,
+                            8,
+                            [
+                              0,
+                              "series:active beta",
+                              true
+                            ]
+                          ]
+                        ]
+                      ]
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "series:active alpha OR series:active beta",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open new search pages for each in selection",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active alpha",
+                    true
+                  ]
+                ]
+              ],
+              "name": "series:active alpha",
+              "activate": false
+            },
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active beta",
+                    true
+                  ]
+                ]
+              ],
+              "name": "series:active beta",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new duplicate filter page for 2 selected",
+          "publications": [
+            {
+              "topic": "new_page_duplicates",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active alpha",
+                    true
+                  ]
+                ],
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active beta",
+                    true
+                  ]
+                ]
+              ],
+              "name": "duplicates: series:active alpha, series:active beta",
+              "activate": false
+            }
+          ]
+        }
+      ],
+      "select_files_publications": []
+    },
+    {
+      "name": "inbox",
+      "current": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active alpha",
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            5,
+            null,
+            true
+          ]
+        ]
+      ],
+      "selected": [
+        [
+          14,
+          8,
+          [
+            5,
+            null,
+            true
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "group": "copy",
+          "label": "system:inbox",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "system:inbox"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "inbox",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "inbox"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all tags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "series:active alpha\nsystem:inbox"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all subtags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "active alpha\ninbox"
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new search page for system:inbox",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    5,
+                    null,
+                    true
+                  ]
+                ]
+              ],
+              "name": "system:inbox",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new duplicate filter page for system:inbox",
+          "publications": [
+            {
+              "topic": "new_page_duplicates",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    5,
+                    null,
+                    true
+                  ]
+                ]
+              ],
+              "name": "duplicates: system:inbox",
+              "activate": false
+            }
+          ]
+        }
+      ],
+      "select_files_publications": []
+    },
+    {
+      "name": "or",
+      "current": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            5,
+            null,
+            true
+          ]
+        ]
+      ],
+      "selected": [
+        [
+          14,
+          8,
+          [
+            30,
+            [
+              26,
+              3,
+              [
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active alpha",
+                      true
+                    ]
+                  ]
+                ],
+                [
+                  2,
+                  [
+                    14,
+                    8,
+                    [
+                      0,
+                      "series:active beta",
+                      true
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            true
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "group": "copy",
+          "label": "2 selected",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "series:active alpha\nseries:active beta"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "2 selected subtags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "active alpha\nactive beta"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "2 selected subtags with underscores",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "active_alpha\nactive_beta"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "1 selected, with OR predicates collapsed",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "series:active alpha OR series:active beta"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all tags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "series:active alpha\nseries:active beta\nsystem:inbox"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all subtags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "active alpha\nactive beta\ninbox"
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new search page for 1 selected, with OR predicates collapsed",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    30,
+                    [
+                      26,
+                      3,
+                      [
+                        [
+                          2,
+                          [
+                            14,
+                            8,
+                            [
+                              0,
+                              "series:active alpha",
+                              true
+                            ]
+                          ]
+                        ],
+                        [
+                          2,
+                          [
+                            14,
+                            8,
+                            [
+                              0,
+                              "series:active beta",
+                              true
+                            ]
+                          ]
+                        ]
+                      ]
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "series:active alpha OR series:active beta",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new duplicate filter page for 1 selected, with OR predicates collapsed",
+          "publications": [
+            {
+              "topic": "new_page_duplicates",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    30,
+                    [
+                      26,
+                      3,
+                      [
+                        [
+                          2,
+                          [
+                            14,
+                            8,
+                            [
+                              0,
+                              "series:active alpha",
+                              true
+                            ]
+                          ]
+                        ],
+                        [
+                          2,
+                          [
+                            14,
+                            8,
+                            [
+                              0,
+                              "series:active beta",
+                              true
+                            ]
+                          ]
+                        ]
+                      ]
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "duplicates: series:active alpha OR series:active beta",
+              "activate": false
+            }
+          ]
+        }
+      ],
+      "select_files_publications": []
+    },
+    {
+      "name": "negative_namespace",
+      "current": [
+        [
+          14,
+          8,
+          [
+            1,
+            "series",
+            false
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            5,
+            null,
+            true
+          ]
+        ]
+      ],
+      "selected": [
+        [
+          14,
+          8,
+          [
+            1,
+            "series",
+            false
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "group": "copy",
+          "label": "series:*",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "series:*"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "*",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "*"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all tags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "series:*\nsystem:inbox"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all subtags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "*\ninbox"
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new search page for series:*",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    1,
+                    "series",
+                    false
+                  ]
+                ]
+              ],
+              "name": "-series:*anything*",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new duplicate filter page for series:*",
+          "publications": [
+            {
+              "topic": "new_page_duplicates",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    1,
+                    "series",
+                    false
+                  ]
+                ]
+              ],
+              "name": "duplicates: -series:*anything*",
+              "activate": false
+            }
+          ]
+        }
+      ],
+      "select_files_publications": []
+    },
+    {
+      "name": "negative_wildcard",
+      "current": [
+        [
+          14,
+          8,
+          [
+            3,
+            "series:active*",
+            false
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            5,
+            null,
+            true
+          ]
+        ]
+      ],
+      "selected": [
+        [
+          14,
+          8,
+          [
+            3,
+            "series:active*",
+            false
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "group": "copy",
+          "label": "series:active*",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "series:active*"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "active*",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "active*"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all tags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "series:active*\nsystem:inbox"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all subtags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "active*\ninbox"
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new search page for series:active*",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    3,
+                    "series:active*",
+                    false
+                  ]
+                ]
+              ],
+              "name": "-series:active* (wildcard search)",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new duplicate filter page for series:active*",
+          "publications": [
+            {
+              "topic": "new_page_duplicates",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    3,
+                    "series:active*",
+                    false
+                  ]
+                ]
+              ],
+              "name": "duplicates: -series:active* (wildcard search)",
+              "activate": false
+            }
+          ]
+        }
+      ],
+      "select_files_publications": []
+    },
+    {
+      "name": "deduplicated_subtags",
+      "current": [
+        [
+          14,
+          8,
+          [
+            0,
+            "creator:same tag",
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            0,
+            "series:same tag",
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            5,
+            null,
+            true
+          ]
+        ]
+      ],
+      "selected": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:same tag",
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            0,
+            "creator:same tag",
+            true
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "group": "copy",
+          "label": "2 selected",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "creator:same tag\nseries:same tag"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "same tag",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "same tag"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "same_tag",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "same_tag"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all tags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "creator:same tag\nseries:same tag\nsystem:inbox"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all subtags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "same tag\ninbox"
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new search page for 2 selected",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "creator:same tag",
+                    true
+                  ]
+                ],
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:same tag",
+                    true
+                  ]
+                ]
+              ],
+              "name": "creator:same tag, series:same tag",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new OR search page for 2 selected",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    30,
+                    [
+                      26,
+                      3,
+                      [
+                        [
+                          2,
+                          [
+                            14,
+                            8,
+                            [
+                              0,
+                              "creator:same tag",
+                              true
+                            ]
+                          ]
+                        ],
+                        [
+                          2,
+                          [
+                            14,
+                            8,
+                            [
+                              0,
+                              "series:same tag",
+                              true
+                            ]
+                          ]
+                        ]
+                      ]
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "creator:same tag OR series:same tag",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open new search pages for each in selection",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "creator:same tag",
+                    true
+                  ]
+                ]
+              ],
+              "name": "creator:same tag",
+              "activate": false
+            },
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:same tag",
+                    true
+                  ]
+                ]
+              ],
+              "name": "series:same tag",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new duplicate filter page for 2 selected",
+          "publications": [
+            {
+              "topic": "new_page_duplicates",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "creator:same tag",
+                    true
+                  ]
+                ],
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:same tag",
+                    true
+                  ]
+                ]
+              ],
+              "name": "duplicates: creator:same tag, series:same tag",
+              "activate": false
+            }
+          ]
+        }
+      ],
+      "select_files_publications": []
+    },
+    {
+      "name": "hashes",
+      "current": [
+        [
+          14,
+          8,
+          [
+            12,
+            [
+              [
+                "0101010101010101010101010101010101010101010101010101010101010101",
+                "0202020202020202020202020202020202020202020202020202020202020202"
+              ],
+              "sha256"
+            ],
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            5,
+            null,
+            true
+          ]
+        ]
+      ],
+      "selected": [
+        [
+          14,
+          8,
+          [
+            12,
+            [
+              [
+                "0101010101010101010101010101010101010101010101010101010101010101",
+                "0202020202020202020202020202020202020202020202020202020202020202"
+              ],
+              "sha256"
+            ],
+            true
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "group": "copy",
+          "label": "system:hash is in 0101010101010101010101010101010101010101010101010101010101010101, 020202020202020202020202020…0202020202020202",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "system:hash is in 0101010101010101010101010101010101010101010101010101010101010101, 0202020202020202020202020202020202020202020202020202020202020202"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "hash is in 0101010101010101010101010101010101010101010101010101010101010101, 0202020202020202020202020202020202…0202020202020202",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "hash is in 0101010101010101010101010101010101010101010101010101010101010101, 0202020202020202020202020202020202020202020202020202020202020202"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "hash_is_in_0101010101010101010101010101010101010101010101010101010101010101,_0202020202020202020202020202020202…0202020202020202",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "hash_is_in_0101010101010101010101010101010101010101010101010101010101010101,_0202020202020202020202020202020202020202020202020202020202020202"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all tags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "system:hash is in 0101010101010101010101010101010101010101010101010101010101010101, 0202020202020202020202020202020202020202020202020202020202020202\nsystem:inbox"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all subtags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "hash is in 0101010101010101010101010101010101010101010101010101010101010101, 0202020202020202020202020202020202020202020202020202020202020202\ninbox"
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new search page for system:hash is in 0101010101010101010101010101010101010101010101010101010101010101, …0202020202020202",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    12,
+                    [
+                      [
+                        "0101010101010101010101010101010101010101010101010101010101010101",
+                        "0202020202020202020202020202020202020202020202020202020202020202"
+                      ],
+                      "sha256"
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "system:hash is in 2 hashes",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new duplicate filter page for system:hash is in 01010101010101010101010101010101010101010101010101010101…0202020202020202",
+          "publications": [
+            {
+              "topic": "new_page_duplicates",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    12,
+                    [
+                      [
+                        "0101010101010101010101010101010101010101010101010101010101010101",
+                        "0202020202020202020202020202020202020202020202020202020202020202"
+                      ],
+                      "sha256"
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "duplicates: system:hash is in 2 hashes",
+              "activate": false
+            }
+          ]
+        }
+      ],
+      "select_files_publications": []
+    },
+    {
+      "name": "similar_files",
+      "current": [
+        [
+          14,
+          8,
+          [
+            5,
+            null,
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            19,
+            [
+              [
+                "0303030303030303030303030303030303030303030303030303030303030303"
+              ],
+              4
+            ],
+            true
+          ]
+        ]
+      ],
+      "selected": [
+        [
+          14,
+          8,
+          [
+            19,
+            [
+              [
+                "0303030303030303030303030303030303030303030303030303030303030303"
+              ],
+              4
+            ],
+            true
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "group": "copy",
+          "label": "system:similar to 0303030303030303030303030303030303030303030303030303030303030303 with distance of 4",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "system:similar to 0303030303030303030303030303030303030303030303030303030303030303 with distance of 4"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "similar to 0303030303030303030303030303030303030303030303030303030303030303 with distance of 4",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "similar to 0303030303030303030303030303030303030303030303030303030303030303 with distance of 4"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "similar_to_0303030303030303030303030303030303030303030303030303030303030303_with_distance_of_4",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "similar_to_0303030303030303030303030303030303030303030303030303030303030303_with_distance_of_4"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all tags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "system:inbox\nsystem:similar to 0303030303030303030303030303030303030303030303030303030303030303 with distance of 4"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all subtags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "inbox\nsimilar to 0303030303030303030303030303030303030303030303030303030303030303 with distance of 4"
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new search page for system:similar to 0303030303030303030303030303030303030303030303030303030303030303 with distance of 4",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    19,
+                    [
+                      [
+                        "0303030303030303030303030303030303030303030303030303030303030303"
+                      ],
+                      4
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "system:similar to 1 files with distance of 4",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new duplicate filter page for system:similar to 03030303030303030303030303030303030303030303030303030303…th distance of 4",
+          "publications": [
+            {
+              "topic": "new_page_duplicates",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    19,
+                    [
+                      [
+                        "0303030303030303030303030303030303030303030303030303030303030303"
+                      ],
+                      4
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "duplicates: system:similar to 1 files with distance of 4",
+              "activate": false
+            }
+          ]
+        }
+      ],
+      "select_files_publications": []
+    },
+    {
+      "name": "similar_data",
+      "current": [
+        [
+          14,
+          8,
+          [
+            5,
+            null,
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            48,
+            [
+              [
+                "0404040404040404040404040404040404040404040404040404040404040404"
+              ],
+              [
+                "0505050505050505"
+              ],
+              3
+            ],
+            true
+          ]
+        ]
+      ],
+      "selected": [
+        [
+          14,
+          8,
+          [
+            48,
+            [
+              [
+                "0404040404040404040404040404040404040404040404040404040404040404"
+              ],
+              [
+                "0505050505050505"
+              ],
+              3
+            ],
+            true
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "group": "copy",
+          "label": "system:similar to data 0404040404040404040404040404040404040404040404040404040404040404, 0505050505050505 with distance of 3",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "system:similar to data 0404040404040404040404040404040404040404040404040404040404040404, 0505050505050505 with distance of 3"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "similar to data 0404040404040404040404040404040404040404040404040404040404040404, 0505050505050505 with distance of 3",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "similar to data 0404040404040404040404040404040404040404040404040404040404040404, 0505050505050505 with distance of 3"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "similar_to_data_0404040404040404040404040404040404040404040404040404040404040404,_0505050505050505_with_distance_of_3",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "similar_to_data_0404040404040404040404040404040404040404040404040404040404040404,_0505050505050505_with_distance_of_3"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all tags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "system:inbox\nsystem:similar to data 0404040404040404040404040404040404040404040404040404040404040404, 0505050505050505 with distance of 3"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all subtags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "inbox\nsimilar to data 0404040404040404040404040404040404040404040404040404040404040404, 0505050505050505 with distance of 3"
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new search page for system:similar to data 0404040404040404040404040404040404040404040404040404040404040…th distance of 3",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    48,
+                    [
+                      [
+                        "0404040404040404040404040404040404040404040404040404040404040404"
+                      ],
+                      [
+                        "0505050505050505"
+                      ],
+                      3
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "system:similar to data (1 pixel, 1 perceptual hashes) with distance of 3",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new duplicate filter page for system:similar to data 040404040404040404040404040404040404040404040404040…th distance of 3",
+          "publications": [
+            {
+              "topic": "new_page_duplicates",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    48,
+                    [
+                      [
+                        "0404040404040404040404040404040404040404040404040404040404040404"
+                      ],
+                      [
+                        "0505050505050505"
+                      ],
+                      3
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "duplicates: system:similar to data (1 pixel, 1 perceptual hashes) with distance of 3",
+              "activate": false
+            }
+          ]
+        }
+      ],
+      "select_files_publications": []
+    },
+    {
+      "name": "pixel_only",
+      "current": [
+        [
+          14,
+          8,
+          [
+            5,
+            null,
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            48,
+            [
+              [
+                "0606060606060606060606060606060606060606060606060606060606060606"
+              ],
+              [],
+              7
+            ],
+            true
+          ]
+        ]
+      ],
+      "selected": [
+        [
+          14,
+          8,
+          [
+            48,
+            [
+              [
+                "0606060606060606060606060606060606060606060606060606060606060606"
+              ],
+              [],
+              7
+            ],
+            true
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "group": "copy",
+          "label": "system:similar to data 0606060606060606060606060606060606060606060606060606060606060606",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "system:similar to data 0606060606060606060606060606060606060606060606060606060606060606"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "similar to data 0606060606060606060606060606060606060606060606060606060606060606",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "similar to data 0606060606060606060606060606060606060606060606060606060606060606"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "similar_to_data_0606060606060606060606060606060606060606060606060606060606060606",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "similar_to_data_0606060606060606060606060606060606060606060606060606060606060606"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all tags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "system:inbox\nsystem:similar to data 0606060606060606060606060606060606060606060606060606060606060606"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all subtags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "inbox\nsimilar to data 0606060606060606060606060606060606060606060606060606060606060606"
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new search page for system:similar to data 0606060606060606060606060606060606060606060606060606060606060606",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    48,
+                    [
+                      [
+                        "0606060606060606060606060606060606060606060606060606060606060606"
+                      ],
+                      [],
+                      7
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "system:similar to data (1 pixel hashes)",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new duplicate filter page for system:similar to data 0606060606060606060606060606060606060606060606060606060606060606",
+          "publications": [
+            {
+              "topic": "new_page_duplicates",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    48,
+                    [
+                      [
+                        "0606060606060606060606060606060606060606060606060606060606060606"
+                      ],
+                      [],
+                      7
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "duplicates: system:similar to data (1 pixel hashes)",
+              "activate": false
+            }
+          ]
+        }
+      ],
+      "select_files_publications": []
+    },
+    {
+      "name": "perceptual_only",
+      "current": [
+        [
+          14,
+          8,
+          [
+            5,
+            null,
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            48,
+            [
+              [],
+              [
+                "0707070707070707"
+              ],
+              7
+            ],
+            true
+          ]
+        ]
+      ],
+      "selected": [
+        [
+          14,
+          8,
+          [
+            48,
+            [
+              [],
+              [
+                "0707070707070707"
+              ],
+              7
+            ],
+            true
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "group": "copy",
+          "label": "system:similar to data 0707070707070707 with distance of 7",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "system:similar to data 0707070707070707 with distance of 7"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "similar to data 0707070707070707 with distance of 7",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "similar to data 0707070707070707 with distance of 7"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "similar_to_data_0707070707070707_with_distance_of_7",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "similar_to_data_0707070707070707_with_distance_of_7"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all tags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "system:inbox\nsystem:similar to data 0707070707070707 with distance of 7"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all subtags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "inbox\nsimilar to data 0707070707070707 with distance of 7"
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new search page for system:similar to data 0707070707070707 with distance of 7",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    48,
+                    [
+                      [],
+                      [
+                        "0707070707070707"
+                      ],
+                      7
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "system:similar to data (1 perceptual hashes) with distance of 7",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new duplicate filter page for system:similar to data 0707070707070707 with distance of 7",
+          "publications": [
+            {
+              "topic": "new_page_duplicates",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    48,
+                    [
+                      [],
+                      [
+                        "0707070707070707"
+                      ],
+                      7
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "duplicates: system:similar to data (1 perceptual hashes) with distance of 7",
+              "activate": false
+            }
+          ]
+        }
+      ],
+      "select_files_publications": []
+    },
+    {
+      "name": "two_tags_raise",
+      "current": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active alpha",
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active beta",
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            5,
+            null,
+            true
+          ]
+        ]
+      ],
+      "selected": [
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active alpha",
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            0,
+            "series:active beta",
+            true
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "group": "copy",
+          "label": "2 selected",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "series:active alpha\nseries:active beta"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "2 selected subtags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "active alpha\nactive beta"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "2 selected subtags with underscores",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "active_alpha\nactive_beta"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all tags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "series:active alpha\nseries:active beta\nsystem:inbox"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all subtags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "active alpha\nactive beta\ninbox"
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new search page for 2 selected",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active alpha",
+                    true
+                  ]
+                ],
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active beta",
+                    true
+                  ]
+                ]
+              ],
+              "name": "series:active alpha, series:active beta",
+              "activate": true
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new OR search page for 2 selected",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    30,
+                    [
+                      26,
+                      3,
+                      [
+                        [
+                          2,
+                          [
+                            14,
+                            8,
+                            [
+                              0,
+                              "series:active alpha",
+                              true
+                            ]
+                          ]
+                        ],
+                        [
+                          2,
+                          [
+                            14,
+                            8,
+                            [
+                              0,
+                              "series:active beta",
+                              true
+                            ]
+                          ]
+                        ]
+                      ]
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "series:active alpha OR series:active beta",
+              "activate": true
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open new search pages for each in selection",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active alpha",
+                    true
+                  ]
+                ]
+              ],
+              "name": "series:active alpha",
+              "activate": true
+            },
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active beta",
+                    true
+                  ]
+                ]
+              ],
+              "name": "series:active beta",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new duplicate filter page for 2 selected",
+          "publications": [
+            {
+              "topic": "new_page_duplicates",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active alpha",
+                    true
+                  ]
+                ],
+                [
+                  14,
+                  8,
+                  [
+                    0,
+                    "series:active beta",
+                    true
+                  ]
+                ]
+              ],
+              "name": "duplicates: series:active alpha, series:active beta",
+              "activate": true
+            }
+          ]
+        }
+      ],
+      "select_files_publications": []
+    }
+  ],
+  "search_consumer": {
+    "published": {
+      "topic": "new_page_query",
+      "location": [
+        103,
+        1,
+        [
+          [
+            "6c6f63616c2066696c6573"
+          ],
+          []
+        ]
+      ],
+      "predicates": [
+        [
+          14,
+          8,
+          [
+            5,
+            null,
+            true
+          ]
+        ]
+      ],
+      "name": "system:inbox",
+      "activate": false
+    },
+    "location": [
+      103,
+      1,
+      [
+        [
+          "6c6f63616c2066696c6573"
+        ],
+        []
+      ]
+    ],
+    "tag_context": [
+      80,
+      2,
+      [
+        "616c6c206b6e6f776e2074616773",
+        true,
+        true,
+        "616c6c206b6e6f776e2074616773"
+      ]
+    ],
+    "default_tag_key": "616c6c206b6e6f776e2074616773",
+    "predicates": [
+      [
+        14,
+        8,
+        [
+          5,
+          null,
+          true
+        ]
+      ]
+    ],
+    "query_count": 14
+  }
+}

@@ -6,11 +6,16 @@ use hydrus_store::Store;
 use slint::ComponentHandle as _;
 use std::{
     cell::{Cell, RefCell},
+    collections::BTreeSet,
     io::Read,
     path::Path,
     rc::Rc,
     sync::Arc,
 };
+
+#[path = "router_import_window.rs"]
+mod router_import;
+pub use router_import::open as open_router_import;
 
 /// An owned exchange child, cancelled with its parent editor.
 #[derive(Clone, Default)]
@@ -59,7 +64,7 @@ pub type Apply<T = Definition> = Rc<dyn Fn(Vec<T>) -> Result<(), String>>;
 pub fn open(
     slots: &Slots,
     importing: bool,
-    definitions: Vec<Definition>,
+    definitions: &[Definition],
     preview: Preview,
     applied: Apply,
 ) -> Result<DownloaderExchangeWindow, String> {
@@ -84,7 +89,7 @@ pub fn open_subscriptions(
     store: &Arc<Store>,
     slots: &Slots,
     importing: bool,
-    subscriptions: Vec<hydrus_downloader_exchange::subscriptions::Subscription>,
+    subscriptions: &[hydrus_downloader_exchange::subscriptions::Subscription],
     preview: Preview<hydrus_downloader_exchange::subscriptions::Subscription>,
     applied: Apply<hydrus_downloader_exchange::subscriptions::Subscription>,
 ) -> Result<DownloaderExchangeWindow, String> {
@@ -93,7 +98,7 @@ pub fn open_subscriptions(
         None
     } else {
         Some((
-            subscriptions::encode_text(&subscriptions).map_err(|e| e.to_string())?,
+            subscriptions::encode_text(subscriptions).map_err(|e| e.to_string())?,
             subscriptions.len(),
         ))
     };
@@ -122,14 +127,66 @@ pub fn open_subscriptions(
     );
     window.set_instructions("Complete subscriptions include query settings and file/gallery histories. Import stays staged until manage subscriptions is applied.".into());
     if let Some((payload, count)) = payload {
-        let summary = hydrus_gui_model::png_export::object_payload_description(
+        let summary = hydrus_gui_model::png_export::object_payload_description_with_format(
             &payload,
             "Subscription Container",
             count,
+            &hydrus_gui_model::gui_format::preferences(store),
         );
         attach_png(store, slots, &window, payload, summary);
     }
     Ok(window)
+}
+
+/// Exchange registered external calls from their detached Options list.
+pub fn open_external_calls(
+    store: &Arc<Store>,
+    slots: &Slots,
+    importing: bool,
+    calls: &[hydrus_core::external_calls::Callable],
+    preview: Preview<hydrus_core::external_calls::Callable>,
+    applied: Apply<hydrus_core::external_calls::Callable>,
+) -> Result<DownloaderExchangeWindow, String> {
+    use hydrus_downloader_exchange::external_calls as codec;
+    let export = if importing {
+        None
+    } else {
+        Some(codec::encode_text(calls).map_err(|e| e.to_string())?)
+    };
+    let count = calls.len();
+    let w = open_objects(
+        slots,
+        importing,
+        calls,
+        preview,
+        applied,
+        Codec {
+            encode_text: codec::encode_text,
+            decode_text: codec::decode_text,
+            encode_png: codec::encode_png,
+            decode_png: codec::decode_png,
+            processing: false,
+        },
+    )?;
+    w.set_json_enabled(true);
+    w.set_window_title(
+        if importing {
+            "import external calls"
+        } else {
+            "export external calls"
+        }
+        .into(),
+    );
+    w.set_instructions("Registered external calls stay staged until Options is applied. Inspect imported commands and parameters before running them.".into());
+    if let Some(payload) = export {
+        let summary = hydrus_gui_model::png_export::object_payload_description(
+            &payload,
+            "Executable Manager Callable",
+            count,
+        );
+        attach_png(store, slots, &w, payload, summary);
+    }
+    Ok(w)
 }
 
 struct Codec<T> {
@@ -145,7 +202,7 @@ struct Codec<T> {
 pub fn open_steps(
     slots: &Slots,
     importing: bool,
-    steps: Vec<hydrus_core::url::strings::ProcessingStep>,
+    steps: &[hydrus_core::url::strings::ProcessingStep],
     applied: Apply<hydrus_core::url::strings::ProcessingStep>,
 ) -> Result<DownloaderExchangeWindow, String> {
     use hydrus_downloader_exchange::processing;
@@ -180,7 +237,7 @@ pub fn open_steps(
 pub fn open_login_scripts(
     slots: &Slots,
     importing: bool,
-    scripts: Vec<hydrus_parse::login::LoginScript>,
+    scripts: &[hydrus_parse::login::LoginScript],
     preview: Preview<hydrus_parse::login::LoginScript>,
     applied: Apply<hydrus_parse::login::LoginScript>,
 ) -> Result<DownloaderExchangeWindow, String> {
@@ -215,7 +272,7 @@ pub fn open_login_scripts(
 pub fn open_subsidiaries(
     slots: &Slots,
     importing: bool,
-    parsers: Vec<hydrus_parse::content::SubsidiaryPageParser>,
+    parsers: &[hydrus_parse::content::SubsidiaryPageParser],
     preview: Preview<hydrus_parse::content::SubsidiaryPageParser>,
     applied: Apply<hydrus_parse::content::SubsidiaryPageParser>,
 ) -> Result<DownloaderExchangeWindow, String> {
@@ -250,7 +307,7 @@ pub fn open_subsidiaries(
 pub fn open_routers(
     slots: &Slots,
     importing: bool,
-    routers: Vec<hydrus_parse::sidecar::Router>,
+    routers: &[hydrus_parse::sidecar::Router],
     preview: Preview<hydrus_parse::sidecar::Router>,
     applied: Apply<hydrus_parse::sidecar::Router>,
 ) -> Result<DownloaderExchangeWindow, String> {
@@ -286,7 +343,7 @@ pub fn open_routers_with_store(
     store: &Arc<Store>,
     slots: &Slots,
     importing: bool,
-    routers: Vec<hydrus_parse::sidecar::Router>,
+    routers: &[hydrus_parse::sidecar::Router],
     preview: Preview<hydrus_parse::sidecar::Router>,
     applied: Apply<hydrus_parse::sidecar::Router>,
 ) -> Result<DownloaderExchangeWindow, String> {
@@ -294,17 +351,17 @@ pub fn open_routers_with_store(
         None
     } else {
         Some((
-            hydrus_downloader_exchange::routers::encode_text(&routers)
-                .map_err(|e| e.to_string())?,
+            hydrus_downloader_exchange::routers::encode_text(routers).map_err(|e| e.to_string())?,
             routers.len(),
         ))
     };
     let window = open_routers(slots, importing, routers, preview, applied)?;
     if let Some((payload, count)) = payload {
-        let summary = hydrus_gui_model::png_export::object_payload_description(
+        let summary = hydrus_gui_model::png_export::object_payload_description_with_format(
             &payload,
             "Metadata Single File Router",
             count,
+            &hydrus_gui_model::gui_format::preferences(store),
         );
         attach_png(store, slots, &window, payload, summary);
     }
@@ -316,7 +373,7 @@ pub fn open_subsidiaries_with_store(
     store: &Arc<Store>,
     slots: &Slots,
     importing: bool,
-    parsers: Vec<hydrus_parse::content::SubsidiaryPageParser>,
+    parsers: &[hydrus_parse::content::SubsidiaryPageParser],
     preview: Preview<hydrus_parse::content::SubsidiaryPageParser>,
     applied: Apply<hydrus_parse::content::SubsidiaryPageParser>,
 ) -> Result<DownloaderExchangeWindow, String> {
@@ -324,17 +381,18 @@ pub fn open_subsidiaries_with_store(
         None
     } else {
         Some((
-            hydrus_downloader_exchange::subsidiaries::encode_text(&parsers)
+            hydrus_downloader_exchange::subsidiaries::encode_text(parsers)
                 .map_err(|e| e.to_string())?,
             parsers.len(),
         ))
     };
     let window = open_subsidiaries(slots, importing, parsers, preview, applied)?;
     if let Some((payload, count)) = payload {
-        let summary = hydrus_gui_model::png_export::object_payload_description(
+        let summary = hydrus_gui_model::png_export::object_payload_description_with_format(
             &payload,
             "Subsidiary Page Parser",
             count,
+            &hydrus_gui_model::gui_format::preferences(store),
         );
         attach_png(store, slots, &window, payload, summary);
     }
@@ -388,7 +446,7 @@ fn attach_png(
 fn open_objects<T: Clone + 'static>(
     slots: &Slots,
     importing: bool,
-    definitions: Vec<T>,
+    definitions: &[T],
     preview: Preview<T>,
     applied: Apply<T>,
     codec: Codec<T>,
@@ -412,7 +470,7 @@ fn open_objects<T: Clone + 'static>(
     }
     if !importing {
         w.set_text(
-            (codec.encode_text)(&definitions)
+            (codec.encode_text)(definitions)
                 .map_err(|e| e.to_string())?
                 .into(),
         );
@@ -471,7 +529,9 @@ fn open_objects<T: Clone + 'static>(
                         w.set_review("".into());
                     }
                     "paste" => w.set_text(crate::from_clipboard()?.into()),
-                    "copy" => crate::copy_to_clipboard(w.get_text().as_str()),
+                    "copy" if !w.get_text().is_empty() => {
+                        crate::copy_to_clipboard(w.get_text().as_str());
+                    }
                     "import-jsons" | "import-pngs" if importing && w.get_json_enabled() => {
                         let png = action == "import-pngs";
                         let title = if png {
@@ -529,19 +589,13 @@ fn open_objects<T: Clone + 'static>(
                             );
                             *overwrite.borrow_mut() = Some(path);
                         } else {
-                            save_json(
-                                &path,
-                                &(codec.encode_text)(&definitions).map_err(|e| e.to_string())?,
-                            )?;
+                            save_json(&path, &export_text(&w, &codec)?)?;
                             w.set_review("JSON saved.".into());
                         }
                     }
                     "yes-json" => {
                         if let Some(path) = overwrite.borrow_mut().take() {
-                            save_json(
-                                &path,
-                                &(codec.encode_text)(&definitions).map_err(|e| e.to_string())?,
-                            )?;
+                            save_json(&path, &export_text(&w, &codec)?)?;
                             w.set_review("JSON saved.".into());
                         }
                         w.set_overwrite_question("".into());
@@ -567,7 +621,9 @@ fn open_objects<T: Clone + 'static>(
                         if path.is_empty() {
                             return Err("Choose an export path first.".into());
                         }
-                        let data = (codec.encode_png)(&definitions).map_err(|e| e.to_string())?;
+                        let selected = (codec.decode_text)(w.get_text().as_str())
+                            .map_err(|e| e.to_string())?;
+                        let data = (codec.encode_png)(&selected).map_err(|e| e.to_string())?;
                         let parent = Path::new(path.as_str())
                             .parent()
                             .filter(|parent| !parent.as_os_str().is_empty())
@@ -612,6 +668,11 @@ fn open_objects<T: Clone + 'static>(
     *slots.0.borrow_mut() = Some(w.clone_strong());
     Ok(w)
 }
+fn export_text<T>(window: &DownloaderExchangeWindow, codec: &Codec<T>) -> Result<String, String> {
+    let selected =
+        (codec.decode_text)(window.get_text().as_str()).map_err(|error| error.to_string())?;
+    (codec.encode_text)(&selected).map_err(|error| error.to_string())
+}
 fn save_json(path: &Path, text: &str) -> Result<(), String> {
     let parent = path
         .parent()
@@ -648,6 +709,9 @@ pub fn package(
     slots: &Slots,
     importing: bool,
 ) -> Result<DownloaderExchangeWindow, String> {
+    if let Some(window) = slots.0.borrow().as_ref() {
+        return Ok(window.clone_strong());
+    }
     let draft = Draft::load(store).map_err(|e| e.to_string())?;
     let definitions = draft.definitions();
     let preview: Preview = Rc::new({
@@ -662,6 +726,7 @@ pub fn package(
             })
         }
     });
+    let export_draft = draft.clone();
     let applied: Apply = Rc::new({
         let store = store.clone();
         move |definitions| {
@@ -670,5 +735,82 @@ pub fn package(
             next.save(&store).map_err(|e| e.to_string())
         }
     });
-    open(slots, importing, definitions, preview, applied)
+    let window = open(slots, importing, &definitions, preview, applied)?;
+    window.set_json_enabled(true);
+    if !importing {
+        let choice_count = definitions.len();
+        let selected = Rc::new(RefCell::new(
+            (0..definitions.len()).collect::<BTreeSet<_>>(),
+        ));
+        let refresh = Rc::new({
+            let weak = window.as_weak();
+            let selected = selected.clone();
+            move || {
+                let Some(window) = weak.upgrade() else {
+                    return;
+                };
+                let selected = selected.borrow();
+                window.set_package_choices(slint::ModelRc::new(slint::VecModel::from(
+                    definitions
+                        .iter()
+                        .enumerate()
+                        .map(|(index, definition)| crate::PackageChoice {
+                            label: format!(
+                                "{}: {}",
+                                model::category(definition),
+                                definition.name()
+                            )
+                            .into(),
+                            included: selected.contains(&index),
+                        })
+                        .collect::<Vec<_>>(),
+                )));
+                let payload = export_draft.export(&selected);
+                window.set_review(
+                    format!("{} component(s) included with dependencies.", payload.len()).into(),
+                );
+                if payload.is_empty() {
+                    window.set_text("".into());
+                } else {
+                    match model::encode_text(&payload) {
+                        Ok(text) => window.set_text(text.into()),
+                        Err(error) => window.set_error(error.to_string().into()),
+                    }
+                }
+            }
+        });
+        refresh();
+        window.set_instructions("Choose the registered components to share. Linked generators, URL classes and parsers are included automatically. Login scripts include their rules, but not saved domain credentials, sessions or activation.".into());
+        window.on_package_chosen({
+            let weak = window.as_weak();
+            move |index, included| {
+                if !weak.upgrade().is_some_and(|window| {
+                    window.get_active()
+                        && !window.get_png_child()
+                        && window.get_overwrite_question().is_empty()
+                }) {
+                    return;
+                }
+                let mut selected = selected.borrow_mut();
+                if index < 0 {
+                    if included {
+                        *selected = (0..choice_count).collect();
+                    } else {
+                        selected.clear();
+                    }
+                } else if let Ok(index) = usize::try_from(index)
+                    && index < choice_count
+                {
+                    if included {
+                        selected.insert(index);
+                    } else {
+                        selected.remove(&index);
+                    }
+                }
+                drop(selected);
+                refresh();
+            }
+        });
+    }
+    Ok(window)
 }

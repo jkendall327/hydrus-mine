@@ -13,10 +13,17 @@ use slint::winit_030::{EventResult, WinitWindowAccessor as _};
 /// Call `handle` with the paths of the files dropped on `window`, those
 /// dropped together at once.
 pub(crate) fn on_files_dropped(window: &slint::Window, handle: impl Fn(Vec<String>) + 'static) {
+    window.on_winit_window_event(file_handler(handle));
+}
+
+/// Window-owned drop routing, composable with other observers of the same filter.
+pub(crate) fn file_handler(
+    handle: impl Fn(Vec<String>) + 'static,
+) -> impl FnMut(&slint::Window, &WindowEvent) -> EventResult {
     let pending: Rc<RefCell<Vec<String>>> = Rc::default();
     let timer = Rc::new(slint::Timer::default());
     let handle = Rc::new(handle);
-    window.on_winit_window_event(move |_, event| {
+    move |_, event| {
         let WindowEvent::DroppedFile(path) = event else {
             return EventResult::Propagate;
         };
@@ -35,5 +42,5 @@ pub(crate) fn on_files_dropped(window: &slint::Window, handle: impl Fn(Vec<Strin
             },
         );
         EventResult::PreventDefault
-    });
+    }
 }

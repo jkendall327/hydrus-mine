@@ -1,0 +1,210 @@
+{
+  "schema_version": 1,
+  "agent": "sidebar-layout",
+  "baseline_git_head": "e60b460fc4589975e80abf4013f4125d781eba33",
+  "frozen_options_audit": {
+    "path": "docs/rust/gui-coverage/audit/options-patch.json",
+    "baseline_git_head": "5079206dc1d0c2d2614b428632dc9499cb9ad3f8",
+    "sha256": "05fb770dc87d8b03cd0e1a4dbd509de61d48e0dc1c87c7c7032a9aeb4adce20b",
+    "before": {
+      "audit-options-gui-pages-preview-window-hide-the-bottom-left-preview-window": "missing",
+      "audit-options-menu-menu-pages-show-hide-sidebar-and-preview-panel": "missing",
+      "audit-options-menu-menu-pages-save-current-page-s-sidebar-preview-size-on-client-exit": "missing",
+      "audit-options-menu-menu-pages-save-current-page-s-sidebar-preview-size-now": "missing",
+      "audit-options-menu-menu-pages-restore-all-pages-sidebar-preview-sizes-to-saved-value": "missing",
+      "audit-options-sidebar-splitters": "missing"
+    }
+  },
+  "eligibility": {
+    "completed_ledger_path": "docs/rust/gui-coverage/overnight/progress.json",
+    "completed_ledger_at_base_sha256": "168d8057e3b023cf822af82b703b4fe018baba266694d06b5c7ae79bf1d20ca6",
+    "listed_ids_already_completed": [],
+    "existing_parity_packets_with_listed_ids": [],
+    "note": "Exact appended original IDs are anchored in the frozen Options audit; inventory435 predates them. Both the completed ledger and every parity packet were checked before authoring this packet."
+  },
+  "proposed_completed_count": 5,
+  "claims": [
+    {
+      "id": "audit-options-sidebar-splitters",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Real horizontal/vertical pointer drag and double-click collapse, bounded viewport sizing, stable PageKey plus SearchPage incarnation geometry, live close/reopen retention and new/session-reloaded defaults. Retired/hidden owners and held old press cannot resize a successor.",
+      "source": [
+        "crates/hydrus-gui/src/sidebar_layout.rs",
+        "crates/hydrus-gui/ui/page_splitter.slint",
+        "crates/hydrus-gui/ui/main.slint",
+        "crates/hydrus-gui-model/src/page_layout.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-store/src/page_layout.rs",
+        "crates/hydrus-gui/src/lib.rs::client_exit::bind"
+      ],
+      "tests": [
+        "crates/hydrus-gui/tests/gui/sidebar_layout.rs",
+        "crates/hydrus-gui-model/tests/model/page_layout.rs",
+        "crates/hydrus-store/src/page_layout.rs::tests"
+      ],
+      "limits": [
+        "Conditional on hosted Rust/native validation; no local Cargo, builds, Rust tests or mutation runs.",
+        "Native uses six-pixel handles, a scrollable sidebar and an80px reserve for the other pane; Qt intrinsic minimum sizes/handle metrics differ. Session serialisation and cache APIs are unchanged."
+      ]
+    },
+    {
+      "id": "audit-options-menu-menu-pages-show-hide-sidebar-and-preview-panel",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Pages > sidebar toggles only current media page; hiding clears preview focus while preserving selection and revealing uses global saved sizes/hide policy.",
+      "source": [
+        "crates/hydrus-gui/src/sidebar_layout.rs",
+        "crates/hydrus-gui/ui/page_splitter.slint",
+        "crates/hydrus-gui/ui/main.slint",
+        "crates/hydrus-gui-model/src/page_layout.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-store/src/page_layout.rs",
+        "crates/hydrus-gui/src/lib.rs::client_exit::bind"
+      ],
+      "tests": [
+        "crates/hydrus-gui/tests/gui/sidebar_layout.rs",
+        "crates/hydrus-gui-model/tests/model/page_layout.rs",
+        "crates/hydrus-store/src/page_layout.rs::tests"
+      ],
+      "limits": [
+        "Conditional on hosted Rust/native validation; no local Cargo, builds, Rust tests or mutation runs.",
+        "Native uses six-pixel handles, a scrollable sidebar and an80px reserve for the other pane; Qt intrinsic minimum sizes/handle metrics differ. Session serialisation and cache APIs are unchanged."
+      ]
+    },
+    {
+      "id": "audit-options-menu-menu-pages-save-current-page-s-sidebar-preview-size-on-client-exit",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Tick reflects typed live save-on-exit preference, toggles durably, and accepted client exit saves current dimensions only if enabled; rejected exit and retired callbacks save nothing.",
+      "source": [
+        "crates/hydrus-gui/src/sidebar_layout.rs",
+        "crates/hydrus-gui/ui/page_splitter.slint",
+        "crates/hydrus-gui/ui/main.slint",
+        "crates/hydrus-gui-model/src/page_layout.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-store/src/page_layout.rs",
+        "crates/hydrus-gui/src/lib.rs::client_exit::bind"
+      ],
+      "tests": [
+        "crates/hydrus-gui/tests/gui/sidebar_layout.rs",
+        "crates/hydrus-gui-model/tests/model/page_layout.rs",
+        "crates/hydrus-store/src/page_layout.rs::tests"
+      ],
+      "limits": [
+        "Conditional on hosted Rust/native validation; no local Cargo, builds, Rust tests or mutation runs.",
+        "Native uses six-pixel handles, a scrollable sidebar and an80px reserve for the other pane; Qt intrinsic minimum sizes/handle metrics differ. Session serialisation and cache APIs are unchanged."
+      ]
+    },
+    {
+      "id": "audit-options-menu-menu-pages-save-current-page-s-sidebar-preview-size-now",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Real menu writes actual current sidebar width and preview height; hidden sidebar saves0 plus last inner preview height, including unsaved/positive/oversized layout snapshots; collapsed preview retains previous global height.",
+      "source": [
+        "crates/hydrus-gui/src/sidebar_layout.rs",
+        "crates/hydrus-gui/ui/page_splitter.slint",
+        "crates/hydrus-gui/ui/main.slint",
+        "crates/hydrus-gui-model/src/page_layout.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-store/src/page_layout.rs",
+        "crates/hydrus-gui/src/lib.rs::client_exit::bind"
+      ],
+      "tests": [
+        "crates/hydrus-gui/tests/gui/sidebar_layout.rs",
+        "crates/hydrus-gui-model/tests/model/page_layout.rs",
+        "crates/hydrus-store/src/page_layout.rs::tests"
+      ],
+      "limits": [
+        "Conditional on hosted Rust/native validation; no local Cargo, builds, Rust tests or mutation runs.",
+        "Native uses six-pixel handles, a scrollable sidebar and an80px reserve for the other pane; Qt intrinsic minimum sizes/handle metrics differ. Session serialisation and cache APIs are unchanged."
+      ]
+    },
+    {
+      "id": "audit-options-menu-menu-pages-restore-all-pages-sidebar-preview-sizes-to-saved-value",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Real menu reapplies current global saved pair/hide policy to all tracked live page geometries; inactive/newly shown pages observe restored sizes, and stale pre-restore gestures are rejected.",
+      "source": [
+        "crates/hydrus-gui/src/sidebar_layout.rs",
+        "crates/hydrus-gui/ui/page_splitter.slint",
+        "crates/hydrus-gui/ui/main.slint",
+        "crates/hydrus-gui-model/src/page_layout.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs",
+        "crates/hydrus-store/src/page_layout.rs",
+        "crates/hydrus-gui/src/lib.rs::client_exit::bind"
+      ],
+      "tests": [
+        "crates/hydrus-gui/tests/gui/sidebar_layout.rs",
+        "crates/hydrus-gui-model/tests/model/page_layout.rs",
+        "crates/hydrus-store/src/page_layout.rs::tests"
+      ],
+      "limits": [
+        "Conditional on hosted Rust/native validation; no local Cargo, builds, Rust tests or mutation runs.",
+        "Native uses six-pixel handles, a scrollable sidebar and an80px reserve for the other pane; Qt intrinsic minimum sizes/handle metrics differ. Session serialisation and cache APIs are unchanged."
+      ]
+    }
+  ],
+  "scopedPartialControls": [
+    {
+      "id": "audit-options-gui-pages-preview-window-hide-the-bottom-left-preview-window",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "implemented": "Typed imported/staged hide preference, Cancel/Apply/reopen and field-only merge; real new/reset layout consumer; successful rendered previews now retain per-live-page accepted identity, pixels and independent viewing intervals across global-hide A\u2192B\u2192A, whole-window hide/show and live close/unclose. Weak SearchPage incarnation plus Pages membership retire forgotten/fresh same-key owners and stale completions. Shared two-worker/one-queued decoder pool and 64MiB soft LRU snapshots bound residency; evicted identity restoration never starts a new view. Displaced/normal-suspended pending requests retry with their respective original/return timestamps. Independently collapsed splitters retain accepted media/intervals when the global flag is disabled and pages switch; an earlier refused clear is not replayed.",
+      "remaining": "Actual Qt accepts identity/start before first raster readiness; native deliberately preserves successful-raster-only acceptance and failed/cancelled-first-decode no-view assertions. Evicted raster reconstruction can expose a loading/blank frame; failed restoration remains blank. Native forgotten/accepted-close owner retirement finalizes trackers, whereas Qt global hide can reject CleanBeforeDestroy clear. The original hide control remains Partial/count=false; no additional completion credit.",
+      "source": [
+        "crates/hydrus-gui/src/preview_window.rs",
+        "crates/hydrus-gui/src/pages.rs::owns_preview",
+        "crates/hydrus-gui/src/lib.rs::preview_window::Monitor::bind"
+      ],
+      "tests": [
+        "crates/hydrus-gui/tests/gui/hidden_page_preview.rs",
+        "crates/hydrus-gui/tests/gui/sidebar_layout.rs::live_hide_setting_keeps_accepted_preview_refuses_replacements_and_collapse_retains_selection",
+        "crates/hydrus-gui/tests/gui/preview_viewing.rs"
+      ],
+      "evidence": [
+        "oracle/record_hidden_page_preview.py",
+        "oracle/fixtures/hidden_page_preview.json",
+        "oracle/fixtures/hidden_page_preview_reference.png",
+        "oracle/fixtures/hidden_page_preview_fresh_reference.png"
+      ]
+    }
+  ],
+  "parentsRemainPartial": [
+    "audit-options-menu-menu-pages-sidebar",
+    "audit-options-gui-pages-preview-window",
+    "broader sidebar/search/preview playback and structural Options parents"
+  ],
+  "integrationDependencies": [
+    "Retain newer accepted-close incarnation/visibility guards and weak AfterChange callback ownership already present on root branches.",
+    "Compose disjoint four modifier-preview-focus preferences without changing preview Source page ownership."
+  ],
+  "canonical_files_changed": false,
+  "claimsPromotion": "Five original frozen Missing uncompleted leaves, conditional hosted validation; hide control, parents and aliases receive no completion credit.",
+  "referenceRecording": {
+    "recorder": "oracle/record_sidebar_layout.py",
+    "fixture": "oracle/fixtures/sidebar_layout.json",
+    "image": "oracle/fixtures/sidebar_layout_reference.png",
+    "executed": true,
+    "executedAtUtc": "2026-10-05T07:13:00Z",
+    "finishedAtUtc": "2026-10-05T07:13:04Z",
+    "reference": "Actual Page QSplitter handles driven with QTest, real FrameGUI save/show/restore callbacks and GUIPagesPanel abandoned/accepted draft, actual CanvasPanelWithHovers SetMedia/ClearMedia, signed position probes and close/unclose geometry. Client API listen was denied independently by sandbox; no authored network requests. Accepted-exit callback order inspected at FrameGUI._Exit rather than shutting down driver-owned frame."
+  },
+  "validation": "Actual Qt fixture + PNG inspection, Python syntax/invariants, direct rustfmt/diff and cached warning-aware Slint compile passed; independent bounded source review accepted five proposals and explicit hide Partial. Hosted Rust/native checks pending.",
+  "hidePreviewContinuation": {
+    "baseline_git_head": "641d6b670c6422c58e3ea2256ee92760c0ccd9e8",
+    "additionalCompletedCount": 0,
+    "canonical_files_changed": false,
+    "referenceExecutedAtUtc": "2026-10-05T08:06:18Z",
+    "referenceFinishedAtUtc": "2026-10-05T08:06:21Z",
+    "reference": "Actual CanvasPanel accepted identity versus pre-event raster readiness, A/B page transitions, global hide refusal, whole-window hide/show, close/unclose, normal intervals, fresh Page manager and still-accepted CleanBeforeDestroy probe. FinishViewing boundary captured from real canvas; manager caps/minimum are covered by existing preview_viewing recordings.",
+    "validation": "Actual Qt20-step recording and accepted/fresh image inspection, Python syntax/invariants, direct rustfmt/diff passed. Independent bounded source review accepted this Partial continuation; hosted Rust/native checks pending. No local Cargo/build/Rust tests/mutation execution.",
+    "fixture_sha256": "7eab352e91e0f2ee11b4db4af679120842df3e5f22ac6e764245b4a9d65db5e6"
+  }
+}

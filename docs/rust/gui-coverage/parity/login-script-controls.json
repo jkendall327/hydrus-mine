@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "task": "Supporting evidence for existing login-script partial claim: isolated test controls, owned completion and local help",
+  "baseline": "167f58ab4",
+  "source_commit": "0db6ef2ebb47141b7be0904f1ce6fb66c919739f",
+  "canonical_claim_packet": "docs/rust/gui-coverage/parity/login-workflows.json",
+  "supported_original_ids": [
+    "login-script",
+    "login-scripts"
+  ],
+  "claims": [],
+  "eligible_concrete_first_pass_count": 0,
+  "parent_promotions": 0,
+  "parents_remain_partial": [
+    "login-script",
+    "login-scripts"
+  ],
+  "scope": "Real isolated-engine NetworkJobControl: reviewed cog/URL copy/global bandwidth rule editors/Cancel/strict-five-second retained auto policy, explicit owner error show/copy/clear, and per-run generations rejecting fresh-store epoch/request-ID aliases. Login requests bypass startup request admission immediately while retaining usage accounting and response-body throttling. Owned exact Information/OK completion precedes final label update and Run re-enable, preserving the previous final label throughout the next run. Owner Cancel retires notices and request callbacks. Help launches existing local docs/downloader_login.md through the native launcher.",
+  "limits": [
+    "Qt platform notice icon/decoration is absent. Existing local Markdown help is reachable, but the reference missing-HTML online/build-guide chooser and packaged HTML route remain Partial. Broader child-editor boundaries remain Partial; original login-script/login-scripts parents stay Partial, with zero new completed originals. Native regression sources await hosted CI; no local Cargo builds, Rust tests or mutation tests."
+  ],
+  "validation": {
+    "reference": "oracle/record_login_script_controls.py executed actual Qt through shared with-oracle at 2026-10-05T04:37:02Z; fixture oracle/fixtures/login_script_controls.json. Synthetic reserved example.com URLs; no HTTP in this presentation recorder. Actual HTTP/two-second streaming remains in previous login_execution.json. Completion runs actual QMessageBox.Information/OK and real _DoTest cleanup, with Start return/exception scripted only at presentation boundary. Missing HTML help chooser captured and Cancelled, no browser/network launch.",
+    "source_checks": "Cached Slint compiler passed; rustfmt --check, git diff --check and Python py_compile passed.",
+    "rust_tests": "Meaningful model/native regressions authored for hosted CI; no local Cargo build, Rust test or mutation execution.",
+    "independent_review": "repair_detached_read accepted after per-run generation validation/stripping repair, request-admission-only documentation precision, and counted real Return/Escape acknowledgement. Reviewer made no edits/tests."
+  },
+  "source_anchors": [
+    {
+      "relativepath": "crates/hydrus-gui-model/src/login_workflows.rs",
+      "line": 987,
+      "symbol": "pub struct TestControl",
+      "commit": "0db6ef2ebb47141b7be0904f1ce6fb66c919739f",
+      "line_sha256": "675bc46a12a6349957f0ef85f3395bc6479eaffaa92ad967ce951e01a104ebfd"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/login_script_controls.rs",
+      "line": 23,
+      "symbol": "fn notice(",
+      "commit": "0db6ef2ebb47141b7be0904f1ce6fb66c919739f",
+      "line_sha256": "6326a4501f2bfbea849c288726eb0bd67d09a43651f79f33c7c1d37536e727f1"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/login_script_controls.rs",
+      "line": 289,
+      "symbol": "pub fn information(&self",
+      "commit": "0db6ef2ebb47141b7be0904f1ce6fb66c919739f",
+      "line_sha256": "9c66c22559aea1a2eb6e00798502f41fde1b80ef74d276e51e1ff22322e7c7fd"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/login_script_controls.rs",
+      "line": 365,
+      "symbol": "pub(crate) fn help()",
+      "commit": "0db6ef2ebb47141b7be0904f1ce6fb66c919739f",
+      "line_sha256": "e91b3a05d5b3ddf7375757e28e5e3437ef52b2edc164203a6536578eb08c70a4"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/login_test_window.rs",
+      "line": 188,
+      "symbol": "pub fn review(&self)",
+      "commit": "0db6ef2ebb47141b7be0904f1ce6fb66c919739f",
+      "line_sha256": "e4ed5938bf2d5bb471c223a76c50a65ae1db95f8dd266d5df300352e87dafc89"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/login_test_window.rs",
+      "line": 202,
+      "symbol": "pub fn command(&self",
+      "commit": "0db6ef2ebb47141b7be0904f1ce6fb66c919739f",
+      "line_sha256": "c2b488073751b5bacacfc9157990a2f4fa5767035c31e5ea2f759dc4ade813a8"
+    },
+    {
+      "relativepath": "crates/hydrus-net/src/engine.rs",
+      "line": 1226,
+      "symbol": "&& !request.for_login;",
+      "commit": "0db6ef2ebb47141b7be0904f1ce6fb66c919739f",
+      "line_sha256": "039dc321314a79324d61d733c5a01aaa19558e8688f0b5a3073832261d27d2d4"
+    },
+    {
+      "relativepath": "crates/hydrus-net/src/engine.rs",
+      "line": 1608,
+      "symbol": "request.method == Method::Get && !request.for_login,",
+      "commit": "0db6ef2ebb47141b7be0904f1ce6fb66c919739f",
+      "line_sha256": "4e0902519c5124a9cb4b57a20566b78f8df94a356a7bd0fca2b8b5550369dd9e"
+    }
+  ],
+  "test_anchors": [
+    {
+      "relativepath": "crates/hydrus-gui-model/tests/model/login_script_controls.rs",
+      "line": 41,
+      "symbol": "fn script_cog_matches_qt",
+      "commit": "0db6ef2ebb47141b7be0904f1ce6fb66c919739f",
+      "line_sha256": "57c65e5795f6bc4a56e0496ee2fef5816271d7b7e05d8760331906860d9033ec"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/login_script_controls.rs",
+      "line": 16,
+      "symbol": "fn script_information_error_help",
+      "commit": "0db6ef2ebb47141b7be0904f1ce6fb66c919739f",
+      "line_sha256": "a3550cab3e4f3818b2657c2ac20e3a19db6849248b85e2c9010821f1a012f1e2"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/login_script_controls.rs",
+      "line": 158,
+      "symbol": "fn actual_login_cog_targets",
+      "commit": "0db6ef2ebb47141b7be0904f1ce6fb66c919739f",
+      "line_sha256": "779b5d52e9fb4d0eec9f130178f9345a7481634c1baa6ef70fdb89baff1c4da6"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/login_workflows.rs",
+      "line": 627,
+      "symbol": "fn script_editor_runs_real_http",
+      "commit": "0db6ef2ebb47141b7be0904f1ce6fb66c919739f",
+      "line_sha256": "a120f301c2b675c7ac8f0f8798f4781861427ff29733662e4810e18989544aa6"
+    }
+  ],
+  "frozen_baseline_check": {
+    "path": "docs/rust/gui-coverage/overnight/baseline.json",
+    "reference": {
+      "login-script": "missing",
+      "login-scripts": "missing"
+    },
+    "decision": "Eligible originals already Partial in current packet; bounded follow-through does not complete parents, so zero count and no new alias."
+  }
+}

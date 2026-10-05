@@ -1,0 +1,5240 @@
+{
+  "initial": [
+    {
+      "namespace": "character",
+      "label": "'character' tags",
+      "rgb": [
+        0,
+        170,
+        0
+      ]
+    },
+    {
+      "namespace": "creator",
+      "label": "'creator' tags",
+      "rgb": [
+        170,
+        0,
+        0
+      ]
+    },
+    {
+      "namespace": "meta",
+      "label": "'meta' tags",
+      "rgb": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "namespace": "person",
+      "label": "'person' tags",
+      "rgb": [
+        0,
+        128,
+        0
+      ]
+    },
+    {
+      "namespace": "series",
+      "label": "'series' tags",
+      "rgb": [
+        170,
+        0,
+        170
+      ]
+    },
+    {
+      "namespace": "studio",
+      "label": "'studio' tags",
+      "rgb": [
+        128,
+        0,
+        0
+      ]
+    },
+    {
+      "namespace": "system",
+      "label": "'system' tags",
+      "rgb": [
+        153,
+        101,
+        21
+      ]
+    },
+    {
+      "namespace": null,
+      "label": "namespaced tags",
+      "rgb": [
+        114,
+        160,
+        193
+      ]
+    },
+    {
+      "namespace": "",
+      "label": "unnamespaced tags",
+      "rgb": [
+        0,
+        111,
+        250
+      ]
+    }
+  ],
+  "events": [
+    {
+      "action": "add",
+      "input": "unused",
+      "cancel": true,
+      "questions": [
+        "Enter the namespace."
+      ],
+      "warnings": [],
+      "warning_dialogs": [],
+      "rows": [
+        {
+          "namespace": "character",
+          "label": "'character' tags",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "label": "'creator' tags",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "label": "'meta' tags",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "label": "'person' tags",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "label": "'series' tags",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "label": "'studio' tags",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "label": "'system' tags",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        },
+        {
+          "namespace": null,
+          "label": "namespaced tags",
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "label": "unnamespaced tags",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        }
+      ],
+      "durable": [
+        {
+          "namespace": null,
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        },
+        {
+          "namespace": "character",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        }
+      ],
+      "delete_enabled": true
+    },
+    {
+      "action": "add",
+      "input": "",
+      "cancel": false,
+      "questions": [
+        "Enter the namespace."
+      ],
+      "warnings": [
+        "Sorry, that namespace means unnamespaced/default namespaced, which are already listed."
+      ],
+      "warning_dialogs": [
+        {
+          "title": "Warning",
+          "message": "Sorry, that namespace means unnamespaced/default namespaced, which are already listed.",
+          "parent_is_panel": true,
+          "button_labels": [
+            "OK"
+          ],
+          "ok_only": true
+        }
+      ],
+      "rows": [
+        {
+          "namespace": "character",
+          "label": "'character' tags",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "label": "'creator' tags",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "label": "'meta' tags",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "label": "'person' tags",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "label": "'series' tags",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "label": "'studio' tags",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "label": "'system' tags",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        },
+        {
+          "namespace": null,
+          "label": "namespaced tags",
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "label": "unnamespaced tags",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        }
+      ],
+      "durable": [
+        {
+          "namespace": null,
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        },
+        {
+          "namespace": "character",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        }
+      ],
+      "delete_enabled": true
+    },
+    {
+      "action": "add",
+      "input": ":",
+      "cancel": false,
+      "questions": [
+        "Enter the namespace."
+      ],
+      "warnings": [
+        "Sorry, that namespace means unnamespaced/default namespaced, which are already listed."
+      ],
+      "warning_dialogs": [
+        {
+          "title": "Warning",
+          "message": "Sorry, that namespace means unnamespaced/default namespaced, which are already listed.",
+          "parent_is_panel": true,
+          "button_labels": [
+            "OK"
+          ],
+          "ok_only": true
+        }
+      ],
+      "rows": [
+        {
+          "namespace": "character",
+          "label": "'character' tags",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "label": "'creator' tags",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "label": "'meta' tags",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "label": "'person' tags",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "label": "'series' tags",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "label": "'studio' tags",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "label": "'system' tags",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        },
+        {
+          "namespace": null,
+          "label": "namespaced tags",
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "label": "unnamespaced tags",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        }
+      ],
+      "durable": [
+        {
+          "namespace": null,
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        },
+        {
+          "namespace": "character",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        }
+      ],
+      "delete_enabled": true
+    },
+    {
+      "action": "add",
+      "input": " SYSTEM: ",
+      "cancel": false,
+      "questions": [
+        "Enter the namespace."
+      ],
+      "warnings": [
+        "Sorry, that namespace is already listed!"
+      ],
+      "warning_dialogs": [
+        {
+          "title": "Warning",
+          "message": "Sorry, that namespace is already listed!",
+          "parent_is_panel": true,
+          "button_labels": [
+            "OK"
+          ],
+          "ok_only": true
+        }
+      ],
+      "rows": [
+        {
+          "namespace": "character",
+          "label": "'character' tags",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "label": "'creator' tags",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "label": "'meta' tags",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "label": "'person' tags",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "label": "'series' tags",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "label": "'studio' tags",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "label": "'system' tags",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        },
+        {
+          "namespace": null,
+          "label": "namespaced tags",
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "label": "unnamespaced tags",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        }
+      ],
+      "durable": [
+        {
+          "namespace": null,
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        },
+        {
+          "namespace": "character",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        }
+      ],
+      "delete_enabled": true
+    },
+    {
+      "action": "add",
+      "input": " -Parity Artists::: ",
+      "cancel": false,
+      "questions": [
+        "Enter the namespace."
+      ],
+      "warnings": [],
+      "warning_dialogs": [],
+      "rows": [
+        {
+          "namespace": "character",
+          "label": "'character' tags",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "label": "'creator' tags",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "label": "'meta' tags",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "parity artists",
+          "label": "'parity artists' tags",
+          "rgb": [
+            12,
+            34,
+            56
+          ]
+        },
+        {
+          "namespace": "person",
+          "label": "'person' tags",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "label": "'series' tags",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "label": "'studio' tags",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "label": "'system' tags",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        },
+        {
+          "namespace": null,
+          "label": "namespaced tags",
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "label": "unnamespaced tags",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        }
+      ],
+      "durable": [
+        {
+          "namespace": null,
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        },
+        {
+          "namespace": "character",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        }
+      ],
+      "delete_enabled": true
+    },
+    {
+      "action": "add",
+      "input": "parity artists",
+      "cancel": false,
+      "questions": [
+        "Enter the namespace."
+      ],
+      "warnings": [
+        "Sorry, that namespace is already listed!"
+      ],
+      "warning_dialogs": [
+        {
+          "title": "Warning",
+          "message": "Sorry, that namespace is already listed!",
+          "parent_is_panel": true,
+          "button_labels": [
+            "OK"
+          ],
+          "ok_only": true
+        }
+      ],
+      "rows": [
+        {
+          "namespace": "character",
+          "label": "'character' tags",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "label": "'creator' tags",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "label": "'meta' tags",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "parity artists",
+          "label": "'parity artists' tags",
+          "rgb": [
+            12,
+            34,
+            56
+          ]
+        },
+        {
+          "namespace": "person",
+          "label": "'person' tags",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "label": "'series' tags",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "label": "'studio' tags",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "label": "'system' tags",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        },
+        {
+          "namespace": null,
+          "label": "namespaced tags",
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "label": "unnamespaced tags",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        }
+      ],
+      "durable": [
+        {
+          "namespace": null,
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        },
+        {
+          "namespace": "character",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        }
+      ],
+      "delete_enabled": true
+    },
+    {
+      "action": "add",
+      "input": "::::",
+      "cancel": false,
+      "questions": [
+        "Enter the namespace."
+      ],
+      "warnings": [
+        "Sorry, that namespace is already listed!"
+      ],
+      "warning_dialogs": [
+        {
+          "title": "Warning",
+          "message": "Sorry, that namespace is already listed!",
+          "parent_is_panel": true,
+          "button_labels": [
+            "OK"
+          ],
+          "ok_only": true
+        }
+      ],
+      "rows": [
+        {
+          "namespace": "character",
+          "label": "'character' tags",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "label": "'creator' tags",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "label": "'meta' tags",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "parity artists",
+          "label": "'parity artists' tags",
+          "rgb": [
+            12,
+            34,
+            56
+          ]
+        },
+        {
+          "namespace": "person",
+          "label": "'person' tags",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "label": "'series' tags",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "label": "'studio' tags",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "label": "'system' tags",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        },
+        {
+          "namespace": null,
+          "label": "namespaced tags",
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "label": "unnamespaced tags",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        }
+      ],
+      "durable": [
+        {
+          "namespace": null,
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        },
+        {
+          "namespace": "character",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        }
+      ],
+      "delete_enabled": true
+    },
+    {
+      "action": "add",
+      "input": " Artist:Inner: ",
+      "cancel": false,
+      "questions": [
+        "Enter the namespace."
+      ],
+      "warnings": [],
+      "warning_dialogs": [],
+      "rows": [
+        {
+          "namespace": "character",
+          "label": "'character' tags",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "label": "'creator' tags",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "label": "'meta' tags",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "parity artists",
+          "label": "'parity artists' tags",
+          "rgb": [
+            12,
+            34,
+            56
+          ]
+        },
+        {
+          "namespace": "person",
+          "label": "'person' tags",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "label": "'series' tags",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "label": "'studio' tags",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "label": "'system' tags",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        },
+        {
+          "namespace": "artist:inner",
+          "label": "artist:inner:",
+          "rgb": [
+            12,
+            34,
+            56
+          ]
+        },
+        {
+          "namespace": null,
+          "label": "namespaced tags",
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "label": "unnamespaced tags",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        }
+      ],
+      "durable": [
+        {
+          "namespace": null,
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        },
+        {
+          "namespace": "character",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        }
+      ],
+      "delete_enabled": true
+    },
+    {
+      "action": "add",
+      "input": "\u001c:\u001c",
+      "cancel": false,
+      "questions": [
+        "Enter the namespace."
+      ],
+      "warnings": [
+        "Sorry, that namespace means unnamespaced/default namespaced, which are already listed."
+      ],
+      "warning_dialogs": [
+        {
+          "title": "Warning",
+          "message": "Sorry, that namespace means unnamespaced/default namespaced, which are already listed.",
+          "parent_is_panel": true,
+          "button_labels": [
+            "OK"
+          ],
+          "ok_only": true
+        }
+      ],
+      "rows": [
+        {
+          "namespace": "character",
+          "label": "'character' tags",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "label": "'creator' tags",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "label": "'meta' tags",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "parity artists",
+          "label": "'parity artists' tags",
+          "rgb": [
+            12,
+            34,
+            56
+          ]
+        },
+        {
+          "namespace": "person",
+          "label": "'person' tags",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "label": "'series' tags",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "label": "'studio' tags",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "label": "'system' tags",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        },
+        {
+          "namespace": "artist:inner",
+          "label": "artist:inner:",
+          "rgb": [
+            12,
+            34,
+            56
+          ]
+        },
+        {
+          "namespace": null,
+          "label": "namespaced tags",
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "label": "unnamespaced tags",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        }
+      ],
+      "durable": [
+        {
+          "namespace": null,
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        },
+        {
+          "namespace": "character",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        }
+      ],
+      "delete_enabled": true
+    },
+    {
+      "action": "add",
+      "input": "\u001c \u001f",
+      "cancel": false,
+      "questions": [
+        "Enter the namespace."
+      ],
+      "warnings": [
+        "Sorry, that namespace means unnamespaced/default namespaced, which are already listed."
+      ],
+      "warning_dialogs": [
+        {
+          "title": "Warning",
+          "message": "Sorry, that namespace means unnamespaced/default namespaced, which are already listed.",
+          "parent_is_panel": true,
+          "button_labels": [
+            "OK"
+          ],
+          "ok_only": true
+        }
+      ],
+      "rows": [
+        {
+          "namespace": "character",
+          "label": "'character' tags",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "label": "'creator' tags",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "label": "'meta' tags",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "parity artists",
+          "label": "'parity artists' tags",
+          "rgb": [
+            12,
+            34,
+            56
+          ]
+        },
+        {
+          "namespace": "person",
+          "label": "'person' tags",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "label": "'series' tags",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "label": "'studio' tags",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "label": "'system' tags",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        },
+        {
+          "namespace": "artist:inner",
+          "label": "artist:inner:",
+          "rgb": [
+            12,
+            34,
+            56
+          ]
+        },
+        {
+          "namespace": null,
+          "label": "namespaced tags",
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "label": "unnamespaced tags",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        }
+      ],
+      "durable": [
+        {
+          "namespace": null,
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        },
+        {
+          "namespace": "character",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        }
+      ],
+      "delete_enabled": true
+    },
+    {
+      "action": "add",
+      "input": "series:\u001c",
+      "cancel": false,
+      "questions": [
+        "Enter the namespace."
+      ],
+      "warnings": [
+        "Sorry, that namespace is already listed!"
+      ],
+      "warning_dialogs": [
+        {
+          "title": "Warning",
+          "message": "Sorry, that namespace is already listed!",
+          "parent_is_panel": true,
+          "button_labels": [
+            "OK"
+          ],
+          "ok_only": true
+        }
+      ],
+      "rows": [
+        {
+          "namespace": "character",
+          "label": "'character' tags",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "label": "'creator' tags",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "label": "'meta' tags",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "parity artists",
+          "label": "'parity artists' tags",
+          "rgb": [
+            12,
+            34,
+            56
+          ]
+        },
+        {
+          "namespace": "person",
+          "label": "'person' tags",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "label": "'series' tags",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "label": "'studio' tags",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "label": "'system' tags",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        },
+        {
+          "namespace": "artist:inner",
+          "label": "artist:inner:",
+          "rgb": [
+            12,
+            34,
+            56
+          ]
+        },
+        {
+          "namespace": null,
+          "label": "namespaced tags",
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "label": "unnamespaced tags",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        }
+      ],
+      "durable": [
+        {
+          "namespace": null,
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        },
+        {
+          "namespace": "character",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        }
+      ],
+      "delete_enabled": true
+    },
+    {
+      "action": "delete",
+      "selected": [
+        null,
+        "",
+        "creator",
+        "parity artists"
+      ],
+      "yes": false,
+      "questions": [
+        "Delete all selected colours?"
+      ],
+      "rows": [
+        {
+          "namespace": "character",
+          "label": "'character' tags",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "label": "'creator' tags",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "label": "'meta' tags",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "parity artists",
+          "label": "'parity artists' tags",
+          "rgb": [
+            12,
+            34,
+            56
+          ]
+        },
+        {
+          "namespace": "person",
+          "label": "'person' tags",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "label": "'series' tags",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "label": "'studio' tags",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "label": "'system' tags",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        },
+        {
+          "namespace": "artist:inner",
+          "label": "artist:inner:",
+          "rgb": [
+            12,
+            34,
+            56
+          ]
+        },
+        {
+          "namespace": null,
+          "label": "namespaced tags",
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "label": "unnamespaced tags",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        }
+      ],
+      "durable": [
+        {
+          "namespace": null,
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        },
+        {
+          "namespace": "character",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        }
+      ],
+      "delete_enabled": true
+    },
+    {
+      "action": "delete",
+      "selected": [
+        null,
+        "",
+        "creator",
+        "parity artists"
+      ],
+      "yes": true,
+      "questions": [
+        "Delete all selected colours?"
+      ],
+      "rows": [
+        {
+          "namespace": "character",
+          "label": "'character' tags",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "label": "'meta' tags",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "label": "'person' tags",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "label": "'series' tags",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "label": "'studio' tags",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "label": "'system' tags",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        },
+        {
+          "namespace": "artist:inner",
+          "label": "artist:inner:",
+          "rgb": [
+            12,
+            34,
+            56
+          ]
+        },
+        {
+          "namespace": null,
+          "label": "namespaced tags",
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "label": "unnamespaced tags",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        }
+      ],
+      "durable": [
+        {
+          "namespace": null,
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        },
+        {
+          "namespace": "character",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        }
+      ],
+      "delete_enabled": true
+    },
+    {
+      "action": "delete",
+      "selected": [
+        null,
+        ""
+      ],
+      "clear_selection": true,
+      "yes": false,
+      "questions": [],
+      "rows": [
+        {
+          "namespace": "character",
+          "label": "'character' tags",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "label": "'meta' tags",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "label": "'person' tags",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "label": "'series' tags",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "label": "'studio' tags",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "label": "'system' tags",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        },
+        {
+          "namespace": "artist:inner",
+          "label": "artist:inner:",
+          "rgb": [
+            12,
+            34,
+            56
+          ]
+        },
+        {
+          "namespace": null,
+          "label": "namespaced tags",
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "label": "unnamespaced tags",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        }
+      ],
+      "durable": [
+        {
+          "namespace": null,
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        },
+        {
+          "namespace": "character",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        }
+      ],
+      "delete_enabled": true
+    },
+    {
+      "action": "delete",
+      "selected": [],
+      "clear_selection": true,
+      "yes": false,
+      "questions": [],
+      "rows": [
+        {
+          "namespace": "character",
+          "label": "'character' tags",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "label": "'meta' tags",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "label": "'person' tags",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "label": "'series' tags",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "label": "'studio' tags",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "label": "'system' tags",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        },
+        {
+          "namespace": "artist:inner",
+          "label": "artist:inner:",
+          "rgb": [
+            12,
+            34,
+            56
+          ]
+        },
+        {
+          "namespace": null,
+          "label": "namespaced tags",
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "label": "unnamespaced tags",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        }
+      ],
+      "durable": [
+        {
+          "namespace": null,
+          "rgb": [
+            114,
+            160,
+            193
+          ]
+        },
+        {
+          "namespace": "",
+          "rgb": [
+            0,
+            111,
+            250
+          ]
+        },
+        {
+          "namespace": "character",
+          "rgb": [
+            0,
+            170,
+            0
+          ]
+        },
+        {
+          "namespace": "creator",
+          "rgb": [
+            170,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "meta",
+          "rgb": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "person",
+          "rgb": [
+            0,
+            128,
+            0
+          ]
+        },
+        {
+          "namespace": "series",
+          "rgb": [
+            170,
+            0,
+            170
+          ]
+        },
+        {
+          "namespace": "studio",
+          "rgb": [
+            128,
+            0,
+            0
+          ]
+        },
+        {
+          "namespace": "system",
+          "rgb": [
+            153,
+            101,
+            21
+          ]
+        }
+      ],
+      "delete_enabled": true
+    }
+  ],
+  "cancelled_rows": [
+    {
+      "namespace": "character",
+      "label": "'character' tags",
+      "rgb": [
+        0,
+        170,
+        0
+      ]
+    },
+    {
+      "namespace": "creator",
+      "label": "'creator' tags",
+      "rgb": [
+        170,
+        0,
+        0
+      ]
+    },
+    {
+      "namespace": "meta",
+      "label": "'meta' tags",
+      "rgb": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "namespace": "person",
+      "label": "'person' tags",
+      "rgb": [
+        0,
+        128,
+        0
+      ]
+    },
+    {
+      "namespace": "series",
+      "label": "'series' tags",
+      "rgb": [
+        170,
+        0,
+        170
+      ]
+    },
+    {
+      "namespace": "studio",
+      "label": "'studio' tags",
+      "rgb": [
+        128,
+        0,
+        0
+      ]
+    },
+    {
+      "namespace": "system",
+      "label": "'system' tags",
+      "rgb": [
+        153,
+        101,
+        21
+      ]
+    },
+    {
+      "namespace": null,
+      "label": "namespaced tags",
+      "rgb": [
+        114,
+        160,
+        193
+      ]
+    },
+    {
+      "namespace": "",
+      "label": "unnamespaced tags",
+      "rgb": [
+        0,
+        111,
+        250
+      ]
+    }
+  ],
+  "saved": [
+    {
+      "namespace": null,
+      "rgb": [
+        114,
+        160,
+        193
+      ]
+    },
+    {
+      "namespace": "",
+      "rgb": [
+        0,
+        111,
+        250
+      ]
+    },
+    {
+      "namespace": "character",
+      "rgb": [
+        0,
+        170,
+        0
+      ]
+    },
+    {
+      "namespace": "creator",
+      "rgb": [
+        170,
+        0,
+        0
+      ]
+    },
+    {
+      "namespace": "meta",
+      "rgb": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "namespace": "parity artists",
+      "rgb": [
+        12,
+        34,
+        56
+      ]
+    },
+    {
+      "namespace": "person",
+      "rgb": [
+        0,
+        128,
+        0
+      ]
+    },
+    {
+      "namespace": "series",
+      "rgb": [
+        170,
+        0,
+        170
+      ]
+    },
+    {
+      "namespace": "studio",
+      "rgb": [
+        128,
+        0,
+        0
+      ]
+    },
+    {
+      "namespace": "system",
+      "rgb": [
+        153,
+        101,
+        21
+      ]
+    }
+  ],
+  "reopened_rows": [
+    {
+      "namespace": "character",
+      "label": "'character' tags",
+      "rgb": [
+        0,
+        170,
+        0
+      ]
+    },
+    {
+      "namespace": "creator",
+      "label": "'creator' tags",
+      "rgb": [
+        170,
+        0,
+        0
+      ]
+    },
+    {
+      "namespace": "meta",
+      "label": "'meta' tags",
+      "rgb": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "namespace": "parity artists",
+      "label": "'parity artists' tags",
+      "rgb": [
+        12,
+        34,
+        56
+      ]
+    },
+    {
+      "namespace": "person",
+      "label": "'person' tags",
+      "rgb": [
+        0,
+        128,
+        0
+      ]
+    },
+    {
+      "namespace": "series",
+      "label": "'series' tags",
+      "rgb": [
+        170,
+        0,
+        170
+      ]
+    },
+    {
+      "namespace": "studio",
+      "label": "'studio' tags",
+      "rgb": [
+        128,
+        0,
+        0
+      ]
+    },
+    {
+      "namespace": "system",
+      "label": "'system' tags",
+      "rgb": [
+        153,
+        101,
+        21
+      ]
+    },
+    {
+      "namespace": null,
+      "label": "namespaced tags",
+      "rgb": [
+        114,
+        160,
+        193
+      ]
+    },
+    {
+      "namespace": "",
+      "label": "unnamespaced tags",
+      "rgb": [
+        0,
+        111,
+        250
+      ]
+    }
+  ],
+  "colour_cases": [
+    {
+      "input": "",
+      "saved": "",
+      "rows": [
+        [
+          [
+            "OR:",
+            [
+              0,
+              111,
+              250
+            ]
+          ]
+        ],
+        [
+          [
+            "    parity artists:alpha",
+            [
+              12,
+              34,
+              56
+            ]
+          ]
+        ],
+        [
+          [
+            "    series:beta",
+            [
+              170,
+              0,
+              170
+            ]
+          ]
+        ]
+      ]
+    },
+    {
+      "input": "character",
+      "saved": "character",
+      "rows": [
+        [
+          [
+            "OR:",
+            [
+              0,
+              170,
+              0
+            ]
+          ]
+        ],
+        [
+          [
+            "    parity artists:alpha",
+            [
+              12,
+              34,
+              56
+            ]
+          ]
+        ],
+        [
+          [
+            "    series:beta",
+            [
+              170,
+              0,
+              170
+            ]
+          ]
+        ]
+      ]
+    },
+    {
+      "input": "missing namespace",
+      "saved": "missing namespace",
+      "rows": [
+        [
+          [
+            "OR:",
+            [
+              114,
+              160,
+              193
+            ]
+          ]
+        ],
+        [
+          [
+            "    parity artists:alpha",
+            [
+              12,
+              34,
+              56
+            ]
+          ]
+        ],
+        [
+          [
+            "    series:beta",
+            [
+              170,
+              0,
+              170
+            ]
+          ]
+        ]
+      ]
+    },
+    {
+      "input": "",
+      "saved": "",
+      "rows": [
+        [
+          [
+            "OR:",
+            [
+              0,
+              111,
+              250
+            ]
+          ]
+        ],
+        [
+          [
+            "    parity artists:alpha",
+            [
+              12,
+              34,
+              56
+            ]
+          ]
+        ],
+        [
+          [
+            "    series:beta",
+            [
+              170,
+              0,
+              170
+            ]
+          ]
+        ]
+      ]
+    },
+    {
+      "input": "parity artists",
+      "saved": "parity artists",
+      "rows": [
+        [
+          [
+            "OR:",
+            [
+              12,
+              34,
+              56
+            ]
+          ]
+        ],
+        [
+          [
+            "    parity artists:alpha",
+            [
+              12,
+              34,
+              56
+            ]
+          ]
+        ],
+        [
+          [
+            "    series:beta",
+            [
+              170,
+              0,
+              170
+            ]
+          ]
+        ]
+      ]
+    }
+  ],
+  "selection_cases": [
+    {
+      "mode": "plain_then_add",
+      "events": [
+        {
+          "action": "initial",
+          "rows": [
+            {
+              "namespace": "character",
+              "label": "'character' tags",
+              "rgb": [
+                0,
+                170,
+                0
+              ]
+            },
+            {
+              "namespace": "creator",
+              "label": "'creator' tags",
+              "rgb": [
+                170,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "meta",
+              "label": "'meta' tags",
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "parity artists",
+              "label": "'parity artists' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "person",
+              "label": "'person' tags",
+              "rgb": [
+                0,
+                128,
+                0
+              ]
+            },
+            {
+              "namespace": "series",
+              "label": "'series' tags",
+              "rgb": [
+                170,
+                0,
+                170
+              ]
+            },
+            {
+              "namespace": "studio",
+              "label": "'studio' tags",
+              "rgb": [
+                128,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "system",
+              "label": "'system' tags",
+              "rgb": [
+                153,
+                101,
+                21
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [],
+          "delete_enabled": true
+        },
+        {
+          "action": "hit",
+          "rows": [
+            {
+              "namespace": "character",
+              "label": "'character' tags",
+              "rgb": [
+                0,
+                170,
+                0
+              ]
+            },
+            {
+              "namespace": "creator",
+              "label": "'creator' tags",
+              "rgb": [
+                170,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "meta",
+              "label": "'meta' tags",
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "parity artists",
+              "label": "'parity artists' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "person",
+              "label": "'person' tags",
+              "rgb": [
+                0,
+                128,
+                0
+              ]
+            },
+            {
+              "namespace": "series",
+              "label": "'series' tags",
+              "rgb": [
+                170,
+                0,
+                170
+              ]
+            },
+            {
+              "namespace": "studio",
+              "label": "'studio' tags",
+              "rgb": [
+                128,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "system",
+              "label": "'system' tags",
+              "rgb": [
+                153,
+                101,
+                21
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [
+            "creator"
+          ],
+          "delete_enabled": true,
+          "namespace": "creator",
+          "shift": false,
+          "ctrl": false
+        },
+        {
+          "action": "add",
+          "rows": [
+            {
+              "namespace": "aaa parity",
+              "label": "'aaa parity' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "character",
+              "label": "'character' tags",
+              "rgb": [
+                0,
+                170,
+                0
+              ]
+            },
+            {
+              "namespace": "creator",
+              "label": "'creator' tags",
+              "rgb": [
+                170,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "meta",
+              "label": "'meta' tags",
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "parity artists",
+              "label": "'parity artists' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "person",
+              "label": "'person' tags",
+              "rgb": [
+                0,
+                128,
+                0
+              ]
+            },
+            {
+              "namespace": "series",
+              "label": "'series' tags",
+              "rgb": [
+                170,
+                0,
+                170
+              ]
+            },
+            {
+              "namespace": "studio",
+              "label": "'studio' tags",
+              "rgb": [
+                128,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "system",
+              "label": "'system' tags",
+              "rgb": [
+                153,
+                101,
+                21
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [
+            "creator"
+          ],
+          "delete_enabled": true,
+          "input": "aaa parity"
+        },
+        {
+          "action": "hit",
+          "rows": [
+            {
+              "namespace": "aaa parity",
+              "label": "'aaa parity' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "character",
+              "label": "'character' tags",
+              "rgb": [
+                0,
+                170,
+                0
+              ]
+            },
+            {
+              "namespace": "creator",
+              "label": "'creator' tags",
+              "rgb": [
+                170,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "meta",
+              "label": "'meta' tags",
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "parity artists",
+              "label": "'parity artists' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "person",
+              "label": "'person' tags",
+              "rgb": [
+                0,
+                128,
+                0
+              ]
+            },
+            {
+              "namespace": "series",
+              "label": "'series' tags",
+              "rgb": [
+                170,
+                0,
+                170
+              ]
+            },
+            {
+              "namespace": "studio",
+              "label": "'studio' tags",
+              "rgb": [
+                128,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "system",
+              "label": "'system' tags",
+              "rgb": [
+                153,
+                101,
+                21
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [
+            "character",
+            "creator",
+            "meta",
+            "parity artists",
+            "person",
+            "series",
+            "studio",
+            "system"
+          ],
+          "delete_enabled": true,
+          "namespace": "system",
+          "shift": true,
+          "ctrl": false
+        },
+        {
+          "action": "delete",
+          "rows": [
+            {
+              "namespace": "aaa parity",
+              "label": "'aaa parity' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [],
+          "delete_enabled": true
+        },
+        {
+          "action": "hit",
+          "rows": [
+            {
+              "namespace": "aaa parity",
+              "label": "'aaa parity' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [
+            null
+          ],
+          "delete_enabled": true,
+          "namespace": null,
+          "shift": true,
+          "ctrl": false
+        }
+      ]
+    },
+    {
+      "mode": "shift_then_add",
+      "events": [
+        {
+          "action": "initial",
+          "rows": [
+            {
+              "namespace": "character",
+              "label": "'character' tags",
+              "rgb": [
+                0,
+                170,
+                0
+              ]
+            },
+            {
+              "namespace": "creator",
+              "label": "'creator' tags",
+              "rgb": [
+                170,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "meta",
+              "label": "'meta' tags",
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "parity artists",
+              "label": "'parity artists' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "person",
+              "label": "'person' tags",
+              "rgb": [
+                0,
+                128,
+                0
+              ]
+            },
+            {
+              "namespace": "series",
+              "label": "'series' tags",
+              "rgb": [
+                170,
+                0,
+                170
+              ]
+            },
+            {
+              "namespace": "studio",
+              "label": "'studio' tags",
+              "rgb": [
+                128,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "system",
+              "label": "'system' tags",
+              "rgb": [
+                153,
+                101,
+                21
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [],
+          "delete_enabled": true
+        },
+        {
+          "action": "hit",
+          "rows": [
+            {
+              "namespace": "character",
+              "label": "'character' tags",
+              "rgb": [
+                0,
+                170,
+                0
+              ]
+            },
+            {
+              "namespace": "creator",
+              "label": "'creator' tags",
+              "rgb": [
+                170,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "meta",
+              "label": "'meta' tags",
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "parity artists",
+              "label": "'parity artists' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "person",
+              "label": "'person' tags",
+              "rgb": [
+                0,
+                128,
+                0
+              ]
+            },
+            {
+              "namespace": "series",
+              "label": "'series' tags",
+              "rgb": [
+                170,
+                0,
+                170
+              ]
+            },
+            {
+              "namespace": "studio",
+              "label": "'studio' tags",
+              "rgb": [
+                128,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "system",
+              "label": "'system' tags",
+              "rgb": [
+                153,
+                101,
+                21
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [
+            "creator"
+          ],
+          "delete_enabled": true,
+          "namespace": "creator",
+          "shift": false,
+          "ctrl": false
+        },
+        {
+          "action": "hit",
+          "rows": [
+            {
+              "namespace": "character",
+              "label": "'character' tags",
+              "rgb": [
+                0,
+                170,
+                0
+              ]
+            },
+            {
+              "namespace": "creator",
+              "label": "'creator' tags",
+              "rgb": [
+                170,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "meta",
+              "label": "'meta' tags",
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "parity artists",
+              "label": "'parity artists' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "person",
+              "label": "'person' tags",
+              "rgb": [
+                0,
+                128,
+                0
+              ]
+            },
+            {
+              "namespace": "series",
+              "label": "'series' tags",
+              "rgb": [
+                170,
+                0,
+                170
+              ]
+            },
+            {
+              "namespace": "studio",
+              "label": "'studio' tags",
+              "rgb": [
+                128,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "system",
+              "label": "'system' tags",
+              "rgb": [
+                153,
+                101,
+                21
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [
+            "creator",
+            "meta",
+            "parity artists",
+            "person",
+            "series",
+            "studio",
+            "system"
+          ],
+          "delete_enabled": true,
+          "namespace": "system",
+          "shift": true,
+          "ctrl": false
+        },
+        {
+          "action": "add",
+          "rows": [
+            {
+              "namespace": "aaa parity",
+              "label": "'aaa parity' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "character",
+              "label": "'character' tags",
+              "rgb": [
+                0,
+                170,
+                0
+              ]
+            },
+            {
+              "namespace": "creator",
+              "label": "'creator' tags",
+              "rgb": [
+                170,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "meta",
+              "label": "'meta' tags",
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "parity artists",
+              "label": "'parity artists' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "person",
+              "label": "'person' tags",
+              "rgb": [
+                0,
+                128,
+                0
+              ]
+            },
+            {
+              "namespace": "series",
+              "label": "'series' tags",
+              "rgb": [
+                170,
+                0,
+                170
+              ]
+            },
+            {
+              "namespace": "studio",
+              "label": "'studio' tags",
+              "rgb": [
+                128,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "system",
+              "label": "'system' tags",
+              "rgb": [
+                153,
+                101,
+                21
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [
+            "creator",
+            "meta",
+            "parity artists",
+            "person",
+            "series",
+            "studio",
+            "system"
+          ],
+          "delete_enabled": true,
+          "input": "aaa parity"
+        },
+        {
+          "action": "hit",
+          "rows": [
+            {
+              "namespace": "aaa parity",
+              "label": "'aaa parity' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "character",
+              "label": "'character' tags",
+              "rgb": [
+                0,
+                170,
+                0
+              ]
+            },
+            {
+              "namespace": "creator",
+              "label": "'creator' tags",
+              "rgb": [
+                170,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "meta",
+              "label": "'meta' tags",
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "parity artists",
+              "label": "'parity artists' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "person",
+              "label": "'person' tags",
+              "rgb": [
+                0,
+                128,
+                0
+              ]
+            },
+            {
+              "namespace": "series",
+              "label": "'series' tags",
+              "rgb": [
+                170,
+                0,
+                170
+              ]
+            },
+            {
+              "namespace": "studio",
+              "label": "'studio' tags",
+              "rgb": [
+                128,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "system",
+              "label": "'system' tags",
+              "rgb": [
+                153,
+                101,
+                21
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [
+            "character",
+            "creator",
+            "meta",
+            "parity artists",
+            "system"
+          ],
+          "delete_enabled": true,
+          "namespace": "parity artists",
+          "shift": true,
+          "ctrl": false
+        },
+        {
+          "action": "delete",
+          "rows": [
+            {
+              "namespace": "aaa parity",
+              "label": "'aaa parity' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "person",
+              "label": "'person' tags",
+              "rgb": [
+                0,
+                128,
+                0
+              ]
+            },
+            {
+              "namespace": "series",
+              "label": "'series' tags",
+              "rgb": [
+                170,
+                0,
+                170
+              ]
+            },
+            {
+              "namespace": "studio",
+              "label": "'studio' tags",
+              "rgb": [
+                128,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [],
+          "delete_enabled": true
+        },
+        {
+          "action": "hit",
+          "rows": [
+            {
+              "namespace": "aaa parity",
+              "label": "'aaa parity' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "person",
+              "label": "'person' tags",
+              "rgb": [
+                0,
+                128,
+                0
+              ]
+            },
+            {
+              "namespace": "series",
+              "label": "'series' tags",
+              "rgb": [
+                170,
+                0,
+                170
+              ]
+            },
+            {
+              "namespace": "studio",
+              "label": "'studio' tags",
+              "rgb": [
+                128,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [
+            null
+          ],
+          "delete_enabled": true,
+          "namespace": null,
+          "shift": true,
+          "ctrl": false
+        }
+      ]
+    },
+    {
+      "mode": "inverse_then_add",
+      "events": [
+        {
+          "action": "initial",
+          "rows": [
+            {
+              "namespace": "character",
+              "label": "'character' tags",
+              "rgb": [
+                0,
+                170,
+                0
+              ]
+            },
+            {
+              "namespace": "creator",
+              "label": "'creator' tags",
+              "rgb": [
+                170,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "meta",
+              "label": "'meta' tags",
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "parity artists",
+              "label": "'parity artists' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "person",
+              "label": "'person' tags",
+              "rgb": [
+                0,
+                128,
+                0
+              ]
+            },
+            {
+              "namespace": "series",
+              "label": "'series' tags",
+              "rgb": [
+                170,
+                0,
+                170
+              ]
+            },
+            {
+              "namespace": "studio",
+              "label": "'studio' tags",
+              "rgb": [
+                128,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "system",
+              "label": "'system' tags",
+              "rgb": [
+                153,
+                101,
+                21
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [],
+          "delete_enabled": true
+        },
+        {
+          "action": "hit",
+          "rows": [
+            {
+              "namespace": "character",
+              "label": "'character' tags",
+              "rgb": [
+                0,
+                170,
+                0
+              ]
+            },
+            {
+              "namespace": "creator",
+              "label": "'creator' tags",
+              "rgb": [
+                170,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "meta",
+              "label": "'meta' tags",
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "parity artists",
+              "label": "'parity artists' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "person",
+              "label": "'person' tags",
+              "rgb": [
+                0,
+                128,
+                0
+              ]
+            },
+            {
+              "namespace": "series",
+              "label": "'series' tags",
+              "rgb": [
+                170,
+                0,
+                170
+              ]
+            },
+            {
+              "namespace": "studio",
+              "label": "'studio' tags",
+              "rgb": [
+                128,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "system",
+              "label": "'system' tags",
+              "rgb": [
+                153,
+                101,
+                21
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [
+            "creator"
+          ],
+          "delete_enabled": true,
+          "namespace": "creator",
+          "shift": false,
+          "ctrl": false
+        },
+        {
+          "action": "hit",
+          "rows": [
+            {
+              "namespace": "character",
+              "label": "'character' tags",
+              "rgb": [
+                0,
+                170,
+                0
+              ]
+            },
+            {
+              "namespace": "creator",
+              "label": "'creator' tags",
+              "rgb": [
+                170,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "meta",
+              "label": "'meta' tags",
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "parity artists",
+              "label": "'parity artists' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "person",
+              "label": "'person' tags",
+              "rgb": [
+                0,
+                128,
+                0
+              ]
+            },
+            {
+              "namespace": "series",
+              "label": "'series' tags",
+              "rgb": [
+                170,
+                0,
+                170
+              ]
+            },
+            {
+              "namespace": "studio",
+              "label": "'studio' tags",
+              "rgb": [
+                128,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "system",
+              "label": "'system' tags",
+              "rgb": [
+                153,
+                101,
+                21
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [
+            "creator",
+            "meta",
+            "parity artists",
+            "person",
+            "series",
+            "studio",
+            "system"
+          ],
+          "delete_enabled": true,
+          "namespace": "system",
+          "shift": true,
+          "ctrl": false
+        },
+        {
+          "action": "hit",
+          "rows": [
+            {
+              "namespace": "character",
+              "label": "'character' tags",
+              "rgb": [
+                0,
+                170,
+                0
+              ]
+            },
+            {
+              "namespace": "creator",
+              "label": "'creator' tags",
+              "rgb": [
+                170,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "meta",
+              "label": "'meta' tags",
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "parity artists",
+              "label": "'parity artists' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "person",
+              "label": "'person' tags",
+              "rgb": [
+                0,
+                128,
+                0
+              ]
+            },
+            {
+              "namespace": "series",
+              "label": "'series' tags",
+              "rgb": [
+                170,
+                0,
+                170
+              ]
+            },
+            {
+              "namespace": "studio",
+              "label": "'studio' tags",
+              "rgb": [
+                128,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "system",
+              "label": "'system' tags",
+              "rgb": [
+                153,
+                101,
+                21
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [],
+          "delete_enabled": true,
+          "namespace": "creator",
+          "shift": true,
+          "ctrl": true
+        },
+        {
+          "action": "add",
+          "rows": [
+            {
+              "namespace": "aaa parity",
+              "label": "'aaa parity' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "character",
+              "label": "'character' tags",
+              "rgb": [
+                0,
+                170,
+                0
+              ]
+            },
+            {
+              "namespace": "creator",
+              "label": "'creator' tags",
+              "rgb": [
+                170,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "meta",
+              "label": "'meta' tags",
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "parity artists",
+              "label": "'parity artists' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "person",
+              "label": "'person' tags",
+              "rgb": [
+                0,
+                128,
+                0
+              ]
+            },
+            {
+              "namespace": "series",
+              "label": "'series' tags",
+              "rgb": [
+                170,
+                0,
+                170
+              ]
+            },
+            {
+              "namespace": "studio",
+              "label": "'studio' tags",
+              "rgb": [
+                128,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "system",
+              "label": "'system' tags",
+              "rgb": [
+                153,
+                101,
+                21
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [],
+          "delete_enabled": true,
+          "input": "aaa parity"
+        },
+        {
+          "action": "hit",
+          "rows": [
+            {
+              "namespace": "aaa parity",
+              "label": "'aaa parity' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "character",
+              "label": "'character' tags",
+              "rgb": [
+                0,
+                170,
+                0
+              ]
+            },
+            {
+              "namespace": "creator",
+              "label": "'creator' tags",
+              "rgb": [
+                170,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "meta",
+              "label": "'meta' tags",
+              "rgb": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "parity artists",
+              "label": "'parity artists' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "person",
+              "label": "'person' tags",
+              "rgb": [
+                0,
+                128,
+                0
+              ]
+            },
+            {
+              "namespace": "series",
+              "label": "'series' tags",
+              "rgb": [
+                170,
+                0,
+                170
+              ]
+            },
+            {
+              "namespace": "studio",
+              "label": "'studio' tags",
+              "rgb": [
+                128,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "system",
+              "label": "'system' tags",
+              "rgb": [
+                153,
+                101,
+                21
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [
+            "character",
+            "creator",
+            "meta"
+          ],
+          "delete_enabled": true,
+          "namespace": "parity artists",
+          "shift": true,
+          "ctrl": true
+        },
+        {
+          "action": "delete",
+          "rows": [
+            {
+              "namespace": "aaa parity",
+              "label": "'aaa parity' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "parity artists",
+              "label": "'parity artists' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "person",
+              "label": "'person' tags",
+              "rgb": [
+                0,
+                128,
+                0
+              ]
+            },
+            {
+              "namespace": "series",
+              "label": "'series' tags",
+              "rgb": [
+                170,
+                0,
+                170
+              ]
+            },
+            {
+              "namespace": "studio",
+              "label": "'studio' tags",
+              "rgb": [
+                128,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "system",
+              "label": "'system' tags",
+              "rgb": [
+                153,
+                101,
+                21
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [],
+          "delete_enabled": true
+        },
+        {
+          "action": "hit",
+          "rows": [
+            {
+              "namespace": "aaa parity",
+              "label": "'aaa parity' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "parity artists",
+              "label": "'parity artists' tags",
+              "rgb": [
+                12,
+                34,
+                56
+              ]
+            },
+            {
+              "namespace": "person",
+              "label": "'person' tags",
+              "rgb": [
+                0,
+                128,
+                0
+              ]
+            },
+            {
+              "namespace": "series",
+              "label": "'series' tags",
+              "rgb": [
+                170,
+                0,
+                170
+              ]
+            },
+            {
+              "namespace": "studio",
+              "label": "'studio' tags",
+              "rgb": [
+                128,
+                0,
+                0
+              ]
+            },
+            {
+              "namespace": "system",
+              "label": "'system' tags",
+              "rgb": [
+                153,
+                101,
+                21
+              ]
+            },
+            {
+              "namespace": null,
+              "label": "namespaced tags",
+              "rgb": [
+                114,
+                160,
+                193
+              ]
+            },
+            {
+              "namespace": "",
+              "label": "unnamespaced tags",
+              "rgb": [
+                0,
+                111,
+                250
+              ]
+            }
+          ],
+          "selected": [
+            null
+          ],
+          "delete_enabled": true,
+          "namespace": null,
+          "shift": true,
+          "ctrl": false
+        }
+      ]
+    }
+  ],
+  "labels": [
+    "Namespace for the OR top row: "
+  ],
+  "random_rgb": [
+    12,
+    34,
+    56
+  ]
+}

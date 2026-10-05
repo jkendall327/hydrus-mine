@@ -179,6 +179,26 @@ pub fn pretty_time_delta_f64(seconds: f64) -> String {
     format!("{sign}{text}")
 }
 
+/// Reference ISO timestamp presentation with the current local offset.
+pub fn timestamp_to_iso(value: Option<i64>) -> String {
+    timestamp_to_iso_with_offset(value, jiff::Zoned::now().offset())
+}
+
+/// Python applies the current offset even to dates in another DST season.
+pub fn timestamp_to_iso_with_offset(value: Option<i64>, offset: jiff::tz::Offset) -> String {
+    let Some(value) = value else {
+        return "unknown time".into();
+    };
+    match jiff::Timestamp::from_second(value)
+        .map(|time| time.to_zoned(jiff::tz::TimeZone::fixed(offset)))
+    {
+        Ok(time) if time.year() > 0 => {
+            format!("{}-{}", time.year(), time.strftime("%m-%d %H:%M:%S"))
+        }
+        _ => format!("unparseable time {value}"),
+    }
+}
+
 /// How long ago (or until) `timestamp` is from `now`, both in seconds
 /// (`HydrusTime.TimestampToPrettyTimeDelta`): `now` within three seconds,
 /// else the span with `history_suffix` (`" ago"`, `" old"`) if it is past,

@@ -1,0 +1,520 @@
+{
+  "schema_version": 1,
+  "agent": "follow-tab-presentation",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "base_checkout": "8b65c2d0",
+  "implementationCommits": [
+    "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+    "9568cfd0d174614ffc3ea4771b6850d9bb862beb"
+  ],
+  "claims": [
+    {
+      "reference_id": "audit-options-gui-pages-navigation-and-drag-and-drop-notebook-tab-alignment",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "change_kind": "implementation",
+      "implementationCommit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+      "exactBehavior": "Options > gui pages stages the reference top/left/right/bottom choices, imports/persists/reopens them and refreshes the actual MainWindow notebook rows on Apply. Cancel and retained closed-owner Apply callbacks cannot change layout or settings. Every selected-path notebook bar follows its side; West labels rotate -90 and East +90, with outer notebooks at the outer edge and nested rows toward the content. Existing selection, stable keys, menu/middle-close/tab-space callbacks and session contents are preserved.",
+      "limits": [
+        "Broader GUI Pages, navigation and tab families remain partial; this packet claims exactly the three assigned original leaves and no separate tree-view, drag/drop or alias node.",
+        "Native font metrics,28px tab thickness and equal overflow budgets differ from Qt geometry. Retained substrings at identical pixel widths can differ; original full page names and decorated/count labels remain intact.",
+        "Native full-name hover text is always populated, joined across lines and capped at256 characters. Qt can retain an empty or older tooltip if its stored tab label has not changed.",
+        "Rust model/store/GUI behavior and PNG replays are authored for root hosted CI. Locally executed validation is actual Qt recording, cargo fmt, git diff --check and warning-aware cached Slint source compilation only."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 332,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "pub struct TabPresentationSettings"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 356,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "let mut tabs ="
+        },
+        {
+          "path": "crates/hydrus-gui/src/tab_presentation.rs",
+          "line": 63,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "pub(crate) fn show"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/main.slint",
+          "line": 927,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "page-frame := Rectangle"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2060,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "\"Notebook tab alignment: \""
+        },
+        {
+          "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+          "line": 168,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "export component NotebookNavigation"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_presentation.rs",
+          "line": 43,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "reference_replay_and_store_regression",
+          "symbol": "fn legacy_defaults_and_staged_controls"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_presentation.rs",
+          "line": 142,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn apply_cancel_reopen_and_four_sides"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_presentation.rs",
+          "line": 273,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn recorded_hide_gate_retains"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_presentation.py",
+          "line": 16,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "reference_recorder",
+          "symbol": "def record"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_presentation.json",
+          "line": 1,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "reference_fixture",
+          "symbol": "{"
+        },
+        "command": "/workspace/parallel/with-oracle python oracle/record_tab_presentation.py",
+        "executedAt": "2026-10-04T22:34:12Z",
+        "finishedAt": "2026-10-04T22:34:15Z",
+        "environment": "Hydrus v688, actual Qt offscreen private basic legacy DB, shared with-oracle lock, activated pyenv Python. No reference source edits or remote requests; private loopback API listener only.",
+        "observed": "Real GUIPagesPanel defaults, draft cancellation without UpdateOptions, actual UpdateOptions and serialized-options reopening; all4 nested PagesNotebook positions and selected indices; six tree-enable/hide combinations and recursive visibility; Qt style-option paint/stored text/full tooltips across230/420/1000px with elision off/on; four actual Qt bar PNGs retain East/West orientation.",
+        "screenshots": [
+          "oracle/fixtures/tab_presentation_qt_top.png",
+          "oracle/fixtures/tab_presentation_qt_left.png",
+          "oracle/fixtures/tab_presentation_qt_right.png",
+          "oracle/fixtures/tab_presentation_qt_bottom.png"
+        ]
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-hide-main-page-navigation-tabs",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "change_kind": "implementation",
+      "implementationCommit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+      "exactBehavior": "The existing experimental hide checkbox stages/persists/imports/reopens independently from tree alignment. The actual MainWindow bars are hidden only when the flag is true AND the left/right tree is enabled, matching PagesNotebook recursive visibility. The narrow supporting expanded hierarchy selector remains visible on its chosen side and navigates all stable page keys, including nested children and remembered notebook selections; stale/invalid keys are harmless. All existing nested tab rows hide together without changing stored pages or selection.",
+      "limits": [
+        "Broader GUI Pages, navigation and tab families remain partial; this packet claims exactly the three assigned original leaves and no separate tree-view, drag/drop or alias node.",
+        "Native font metrics,28px tab thickness and equal overflow budgets differ from Qt geometry. Retained substrings at identical pixel widths can differ; original full page names and decorated/count labels remain intact.",
+        "Native full-name hover text is always populated, joined across lines and capped at256 characters. Qt can retain an empty or older tooltip if its stored tab label has not changed.",
+        "Rust model/store/GUI behavior and PNG replays are authored for root hosted CI. Locally executed validation is actual Qt recording, cargo fmt, git diff --check and warning-aware cached Slint source compilation only.",
+        "The tree dependency is a fixed190px expanded, indented existing-page list, without Qt tree collapse, drag/drop, context menus or full tree keyboard navigation. These remain parent/tree gaps and are not counted as separate completed features."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 332,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "pub struct TabPresentationSettings"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 356,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "let mut tabs ="
+        },
+        {
+          "path": "crates/hydrus-gui/src/tab_presentation.rs",
+          "line": 63,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "pub(crate) fn show"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/main.slint",
+          "line": 927,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "page-frame := Rectangle"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2097,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "\"EXPERIMENTAL: Hide main page navigation tabs: \""
+        },
+        {
+          "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+          "line": 193,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "export component NotebookTree"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 675,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "window.on_page_tree_chosen"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_presentation.rs",
+          "line": 43,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "reference_replay_and_store_regression",
+          "symbol": "fn legacy_defaults_and_staged_controls"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_presentation.rs",
+          "line": 142,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn apply_cancel_reopen_and_four_sides"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_presentation.rs",
+          "line": 273,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn recorded_hide_gate_retains"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_presentation.py",
+          "line": 16,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "reference_recorder",
+          "symbol": "def record"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_presentation.json",
+          "line": 1,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "reference_fixture",
+          "symbol": "{"
+        },
+        "command": "/workspace/parallel/with-oracle python oracle/record_tab_presentation.py",
+        "executedAt": "2026-10-04T22:34:12Z",
+        "finishedAt": "2026-10-04T22:34:15Z",
+        "environment": "Hydrus v688, actual Qt offscreen private basic legacy DB, shared with-oracle lock, activated pyenv Python. No reference source edits or remote requests; private loopback API listener only.",
+        "observed": "Real GUIPagesPanel defaults, draft cancellation without UpdateOptions, actual UpdateOptions and serialized-options reopening; all4 nested PagesNotebook positions and selected indices; six tree-enable/hide combinations and recursive visibility; Qt style-option paint/stored text/full tooltips across230/420/1000px with elision off/on; four actual Qt bar PNGs retain East/West orientation.",
+        "screenshots": [
+          "oracle/fixtures/tab_presentation_qt_top.png",
+          "oracle/fixtures/tab_presentation_qt_left.png",
+          "oracle/fixtures/tab_presentation_qt_right.png",
+          "oracle/fixtures/tab_presentation_qt_bottom.png"
+        ]
+      }
+    },
+    {
+      "reference_id": "audit-options-gui-pages-page-tab-names-when-there-are-too-many-tabs-to-fit-elide-their-names-so-they-fit",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "change_kind": "implementation",
+      "implementationCommit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+      "exactBehavior": "The page tab names checkbox stages/persists/imports/reopens with default true. The actual native tab label uses measured glyph widths and per-input fitting state to paint a middle ellipsis only when overflow requires it; the stored/decorated label and full tooltip remain unchanged. Disabled elision keeps complete label text in the scrolling strip; small overflow arrows preserve label height and reserve a trailing area so the final tab can be exposed at maximum scroll. Both horizontal and vertical bars consume the flag, including nested notebooks. The overflow probe uses the same selected600/unselected400 glyph weights as the painted tab, so a near-fit selected name triggers fitting rather than mistakenly scrolling.",
+      "limits": [
+        "Broader GUI Pages, navigation and tab families remain partial; this packet claims exactly the three assigned original leaves and no separate tree-view, drag/drop or alias node.",
+        "Native font metrics,28px tab thickness and equal overflow budgets differ from Qt geometry. Retained substrings at identical pixel widths can differ; original full page names and decorated/count labels remain intact.",
+        "Native full-name hover text is always populated, joined across lines and capped at256 characters. Qt can retain an empty or older tooltip if its stored tab label has not changed.",
+        "Rust model/store/GUI behavior and PNG replays are authored for root hosted CI. Locally executed validation is actual Qt recording, cargo fmt, git diff --check and warning-aware cached Slint source compilation only.",
+        "Middle fitting preserves Unicode scalar boundaries but does not yet preserve combining-grapheme clusters. Small native overflow arrows substitute for Qt styled arrows."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 332,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "pub struct TabPresentationSettings"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 356,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "let mut tabs ="
+        },
+        {
+          "path": "crates/hydrus-gui/src/tab_presentation.rs",
+          "line": 63,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "pub(crate) fn show"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/main.slint",
+          "line": 927,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "page-frame := Rectangle"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2113,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "\"When there are too many tabs to fit,"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/tab_presentation.rs",
+          "line": 4,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "pub fn middle_name"
+        },
+        {
+          "path": "crates/hydrus-gui/src/tab_presentation.rs",
+          "line": 17,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "fn step("
+        },
+        {
+          "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+          "line": 14,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "source",
+          "symbol": "component NotebookTab"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+          "line": 94,
+          "commit": "9568cfd0d174614ffc3ea4771b6850d9bb862beb",
+          "kind": "source",
+          "symbol": "for name[index] in root.data.names: Text"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_presentation.rs",
+          "line": 43,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "reference_replay_and_store_regression",
+          "symbol": "fn legacy_defaults_and_staged_controls"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_presentation.rs",
+          "line": 142,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn apply_cancel_reopen_and_four_sides"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_presentation.rs",
+          "line": 273,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn recorded_hide_gate_retains"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_presentation.rs",
+          "line": 170,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "reference_replay",
+          "symbol": "fn middle_names_replay_actual_qt_paint"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_presentation.rs",
+          "line": 435,
+          "commit": "9568cfd0d174614ffc3ea4771b6850d9bb862beb",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn selected_glyph_measurement_triggers"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_tab_presentation.py",
+          "line": 16,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "reference_recorder",
+          "symbol": "def record"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/tab_presentation.json",
+          "line": 1,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "reference_fixture",
+          "symbol": "{"
+        },
+        "command": "/workspace/parallel/with-oracle python oracle/record_tab_presentation.py",
+        "executedAt": "2026-10-04T22:34:12Z",
+        "finishedAt": "2026-10-04T22:34:15Z",
+        "environment": "Hydrus v688, actual Qt offscreen private basic legacy DB, shared with-oracle lock, activated pyenv Python. No reference source edits or remote requests; private loopback API listener only.",
+        "observed": "Real GUIPagesPanel defaults, draft cancellation without UpdateOptions, actual UpdateOptions and serialized-options reopening; all4 nested PagesNotebook positions and selected indices; six tree-enable/hide combinations and recursive visibility; Qt style-option paint/stored text/full tooltips across230/420/1000px with elision off/on; four actual Qt bar PNGs retain East/West orientation.",
+        "screenshots": [
+          "oracle/fixtures/tab_presentation_qt_top.png",
+          "oracle/fixtures/tab_presentation_qt_left.png",
+          "oracle/fixtures/tab_presentation_qt_right.png",
+          "oracle/fixtures/tab_presentation_qt_bottom.png"
+        ]
+      }
+    }
+  ],
+  "nativeComponents": [
+    {
+      "name": "MainWindow",
+      "existingNativeId": "catalog.mainwindow",
+      "file": "crates/hydrus-gui/ui/main.slint",
+      "newExportedWindows": 0,
+      "controls": [
+        "four-sided NotebookNavigation with actual glyph fitting and overflow arrows",
+        "gated hide of all selected-path notebook rows",
+        "left/right expanded NotebookTree dependency with stable-key selection",
+        "full page-name hover text"
+      ],
+      "referenceRoots": [
+        "audit-options-gui-pages-navigation-and-drag-and-drop-notebook-tab-alignment",
+        "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-hide-main-page-navigation-tabs",
+        "audit-options-gui-pages-page-tab-names-when-there-are-too-many-tabs-to-fit-elide-their-names-so-they-fit"
+      ],
+      "source": {
+        "path": "crates/hydrus-gui/ui/main.slint",
+        "line": 940,
+        "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+        "kind": "source",
+        "symbol": "tab-navigation := NotebookNavigation"
+      },
+      "tests": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_presentation.rs",
+          "line": 142,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn apply_cancel_reopen_and_four_sides"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_presentation.rs",
+          "line": 273,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn recorded_hide_gate_retains"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_presentation.rs",
+          "line": 435,
+          "commit": "9568cfd0d174614ffc3ea4771b6850d9bb862beb",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn selected_glyph_measurement_triggers"
+        }
+      ]
+    },
+    {
+      "name": "OptionsWindow",
+      "existingNativeId": "catalog.optionswindow",
+      "file": "crates/hydrus-gui/ui/options.slint",
+      "newExportedWindows": 0,
+      "controls": [
+        "Notebook tab alignment choice",
+        "EXPERIMENTAL Hide main page navigation tabs checkbox",
+        "When too many tabs fit, elide names checkbox",
+        "EXPERIMENTAL Show tab tree view supporting enable/side choice"
+      ],
+      "referenceRoots": [
+        "audit-options-gui-pages-navigation-and-drag-and-drop-notebook-tab-alignment",
+        "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-hide-main-page-navigation-tabs",
+        "audit-options-gui-pages-page-tab-names-when-there-are-too-many-tabs-to-fit-elide-their-names-so-they-fit"
+      ],
+      "source": {
+        "path": "crates/hydrus-gui-model/src/options.rs",
+        "line": 2060,
+        "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+        "kind": "source",
+        "symbol": "\"Notebook tab alignment: \""
+      },
+      "tests": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_presentation.rs",
+          "line": 43,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "reference_replay_and_store_regression",
+          "symbol": "fn legacy_defaults_and_staged_controls"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_presentation.rs",
+          "line": 142,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn apply_cancel_reopen_and_four_sides"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_presentation.rs",
+          "line": 273,
+          "commit": "d406915451b1b8ccdd4bfdb3de565289a10b8e29",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn recorded_hide_gate_retains"
+        }
+      ]
+    }
+  ],
+  "hierarchySupplement": {
+    "parentReferenceId": "audit-options-gui-pages",
+    "originalFeatureIds": [
+      "audit-options-gui-pages-navigation-and-drag-and-drop-notebook-tab-alignment",
+      "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-hide-main-page-navigation-tabs",
+      "audit-options-gui-pages-page-tab-names-when-there-are-too-many-tabs-to-fit-elide-their-names-so-they-fit"
+    ],
+    "existingNativeOwners": [
+      "OptionsWindow",
+      "MainWindow"
+    ],
+    "counting": "Only three frozen original missing feature IDs are proposed. Supporting tree choice/list and native subcomponents add no new reference leaves; broader GUI Pages/navigation/tab families remain independently partial."
+  },
+  "validation": {
+    "executed": [
+      "actual Qt reference recorder2026-10-04T22:34:12Z–22:34:15Z",
+      "cargo fmt --all",
+      "git diff --check",
+      "/workspace/parallel/parity-slint-syntax.sh /workspace/parallel/follow-tab-presentation"
+    ],
+    "hostedPending": [
+      "hydrus-gui-model::tab_presentation replays",
+      "hydrus-gui::tab_presentation consumer/layout/paint/PNG replays",
+      "strict Clippy and all-platform compilation"
+    ],
+    "localCargoBuildsOrTests": false
+  },
+  "independentSourceReview": {
+    "reviewer": "overnight_options",
+    "originalImplementation": "d4069154",
+    "identified": "Near-fit selected text was measured at normal400 while actual selected labels use600; matching indexed probe weights and explicit zero layout spacing are required.",
+    "repairCommit": "9568cfd0d174614ffc3ea4771b6850d9bb862beb",
+    "regression": {
+      "path": "crates/hydrus-gui/tests/gui/tab_presentation.rs",
+      "line": 435,
+      "commit": "9568cfd0d174614ffc3ea4771b6850d9bb862beb",
+      "kind": "gui_consumer_regression",
+      "symbol": "fn selected_glyph_measurement_triggers"
+    },
+    "remainingExecutionBoundary": "Source review/cachedSlint only; native glyph advances, layout/paint and capturedPNG assertions await hostedCI."
+  }
+}

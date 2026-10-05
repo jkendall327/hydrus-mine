@@ -83,6 +83,7 @@ fn popups_show_at_the_bottom_right_and_their_buttons_work() {
 
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     assert_eq!(
         texts(&ui),

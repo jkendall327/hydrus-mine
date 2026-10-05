@@ -1,0 +1,574 @@
+{
+  "schema_version": 1,
+  "agent": "debug-session-reload",
+  "baseline_git_head": "04903b323afd6d5bc56e32f6275cbfbc477f8cf7",
+  "source_commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8",
+  "implementation_commits": [
+    "523ea130327dee9edba9f32f2e2644ae55ebf92b",
+    "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+  ],
+  "frozen_original_inventory": {
+    "path": "docs/rust/gui-coverage/reference-inventory.json",
+    "git_head": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+    "sha256": "bf09a4fea025c553416ca52efdd0b2e410dbf0b8248c0c41b6a26330967bbd0e",
+    "before": {
+      "audit-options-help-debug-action-close-and-reload-current-gui-session": "missing"
+    }
+  },
+  "eligibility": {
+    "completed_ledger_path": "docs/rust/gui-coverage/overnight/progress.json",
+    "completed_ledger_at_base_sha256": "168d8057e3b023cf822af82b703b4fe018baba266694d06b5c7ae79bf1d20ca6",
+    "completed_array_lengths": [
+      240,
+      51
+    ],
+    "listed_ids_already_completed": [],
+    "existing_parity_packets_with_listed_ids": [],
+    "parity_json_packets_checked": 113,
+    "semantic_alias_audit": "At immutable base04903 all113 JSON schemas/raw strings and both original completed arrays inspected: target and close-and-reload/ReloadCurrentGUISession aliases absent. Existing named-session clear-and-load, startup, periodic autosave and notebook copy/save are distinct consumers and are not recounted. The last-session manual-save neighbor remains unclaimed. Frozen target is a concrete original terminal action with no descendants."
+  },
+  "proposed_completed_count": 1,
+  "eligible_concrete_first_pass_count": 1,
+  "parent_promotions": 0,
+  "claims": [
+    {
+      "id": "audit-options-help-debug-action-close-and-reload-current-gui-session",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "change_kind": "implementation",
+      "countAsCompletedLeaf": true,
+      "source_commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8",
+      "implementation_commits": [
+        "523ea130327dee9edba9f32f2e2644ae55ebf92b",
+        "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+      ],
+      "behavior": "Exact Help/debug/gui action freezes the current ordered tree, files and importer options/logs, asynchronously commits/loads a private immutable Store snapshot, removes its slot, then forcibly closes the current pages without a question and reconstructs fresh page and importer identities. Actual Qt first-root/first-child selection and empty-thumbnail-selection reset are retained. Closed original pages remain undoable with original queues paused; restored queues start fresh and retain captured settings/logs. Later edits/new pages cannot alter the admitted snapshot. Hidden new requests are refused but admitted work delivers while Main is hidden. Weak Main/Pages and weak timer callbacks, permanent binding retirement and shared final-Bound-clone lease reject late completions after accepted exit/rebind/final-clone/Main destruction; Exit Cancel preserves admitted work.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 5733,
+        "symbol": "def _ReloadCurrentGUISession",
+        "line_sha256": "243e48ca03a0de70ec9b974dc44e54102ac0dc041735de262bd04bd3fee318f8",
+        "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_session_reload.rs",
+          "line": 14,
+          "symbol": "struct State",
+          "line_sha256": "bf5fff9412063e36f05c41891d0ad12dd64bbf2ed49c6528bf326c87ec5c734b",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_session_reload.rs",
+          "line": 25,
+          "symbol": "fn live(&self)",
+          "line_sha256": "836ab6be2cd8a4867dc62854d5de4884be6b9388bc5ade9a58745b3e52f066ee",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_session_reload.rs",
+          "line": 28,
+          "symbol": "fn retire(&self)",
+          "line_sha256": "711991b1c2d1ec8f1f831a6816e57c2d81aceb89098105bfe5d7a57494f2f909",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_session_reload.rs",
+          "line": 34,
+          "symbol": "fn poll(&self)",
+          "line_sha256": "367709b39a5a75437a7f46eab91a8a0b02c9d16f3c72e0722b87ecc51e11c5b7",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_session_reload.rs",
+          "line": 59,
+          "symbol": "self.change.borrow().clone()",
+          "line_sha256": "d269e9e135a5720d8b4c1869947c7985241fd26de5d759d391076db25edb180c",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_session_reload.rs",
+          "line": 61,
+          "symbol": "change(&|pages| pages.reload_snapshot",
+          "line_sha256": "343413bc21da8424252de15c3e018ae0b4cd50a687b5df7da0c18f75ed8e0e20",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_session_reload.rs",
+          "line": 76,
+          "symbol": "impl Drop for State",
+          "line_sha256": "6dd323766e413d24ba3bc1d92c0347f8c5eae7921079839f319bb2dceac4c6ef",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_session_reload.rs",
+          "line": 84,
+          "symbol": "pub struct Control",
+          "line_sha256": "379cab42a0c8a651721985faf3022b3530f0bb6ab6d2537511078277b31ebb36",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_session_reload.rs",
+          "line": 87,
+          "symbol": "impl Drop for Owner",
+          "line_sha256": "3806ad3163a6069fe80abc5fcf2967c2e112e3b78368233667e861a4c012f1dc",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_session_reload.rs",
+          "line": 102,
+          "symbol": "pages: Rc::downgrade(pages)",
+          "line_sha256": "7e09bd053dad151b80cce91786b68ec0273175e45c1f2482c77ce271e2192c73",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_session_reload.rs",
+          "line": 129,
+          "symbol": "pub fn start(&self)",
+          "line_sha256": "9e82dfda0376630b4ac69800e79e6f13f902a969fa7006666a3d9b96f8063543",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_session_reload.rs",
+          "line": 135,
+          "symbol": "main.window().is_visible()",
+          "line_sha256": "b353b95c4d8ef0b705bbf0944839c2a4d56a13048e67ba75f9a17685313d733b",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_session_reload.rs",
+          "line": 142,
+          "symbol": "snapshot_for_reload()",
+          "line_sha256": "3e32ce3684947e387d8669b224554f25b4267cbe4c9011e8a97cd0134fc89de0",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_session_reload.rs",
+          "line": 153,
+          "symbol": "temp_session_slot_for_reload_",
+          "line_sha256": "e63569a9317bd33d68e19bd592f4672d972a7155aa1b8e9530462feccb251b45",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_session_reload.rs",
+          "line": 157,
+          "symbol": "std::thread::Builder::new()",
+          "line_sha256": "0c92b4aeb1d3c479e6578d671490620bfa8b88d7aba78298247610c893f9c924",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_session_reload.rs",
+          "line": 163,
+          "symbol": "session_reload::save",
+          "line_sha256": "87c39495ae8d5743a17639983604dafe2cc3cb923bf88e16bf07acdb8a29ee4d",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_session_reload.rs",
+          "line": 168,
+          "symbol": "session_reload::take",
+          "line_sha256": "bb89e1cf64a1a09ac95e8c5bb360d804aa82c60d3c728de5401f9631ff08314c",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_session_reload.rs",
+          "line": 173,
+          "symbol": "session_reload::remove",
+          "line_sha256": "c3cdf98df6ce38da6801a096548f477b2735660525f8cef1692ccf91d260e782",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_session_reload.rs",
+          "line": 184,
+          "symbol": "Rc::downgrade(&self.0)",
+          "line_sha256": "324e26acfa4c3a45e05357adb08e79b4a8ea1d31413e2258eab04a4f2bfce77c",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/pages.rs",
+          "line": 1585,
+          "symbol": "pub fn snapshot_for_reload",
+          "line_sha256": "6b84705f6ad6938f29309831aadfb423098b72f676ff2300b86e2e0b1905302c",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/pages.rs",
+          "line": 1593,
+          "symbol": "session_backups::capture(conn, &session)",
+          "line_sha256": "0490fd463d30cf40f8d292c673dcab73501b105df79e73efa563cd82cec9aed1",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/pages.rs",
+          "line": 1596,
+          "symbol": "media.selected.clear();",
+          "line_sha256": "db07ccc3aba0e6686e7a7eb7583b8e513a7e76234491fdb0b5cce865b9ecbc30",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/pages.rs",
+          "line": 1604,
+          "symbol": "pub fn reload_snapshot",
+          "line_sha256": "58b15a85836187fab7c4ac55bd8d11747120fc562a30b1128173a51e0befff46",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/pages.rs",
+          "line": 1548,
+          "symbol": "session_backups::restore_pages(ctx.conn(), snapshot)",
+          "line_sha256": "9d1ff579d676d0d4c2d43ddcda299571741e3f50a7f782c89012e63149aaade1",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/pages.rs",
+          "line": 1619,
+          "symbol": "while old_keys.contains",
+          "line_sha256": "cf282bbfbe3801de389d77600715fa238d75274150d32b0b1154ad0705f6dd94",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/pages.rs",
+          "line": 1620,
+          "symbol": "self.close_shown()?;",
+          "line_sha256": "a7f9ebe4d5d2d7b95a788435b1d237f361440d93e1012265c3f1aa4c293e9855",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/session_reload.rs",
+          "line": 8,
+          "symbol": "pub fn save",
+          "line_sha256": "83e0edd13e115612a5aa337698f7bcb931e9d43d353bfde1b59abb0ca38f7b96",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/session_reload.rs",
+          "line": 11,
+          "symbol": "INSERT INTO session_snapshots",
+          "line_sha256": "7f7e8f4a878d45454acb56bbf6ec57224bd1e438c0dcf957acacc7860eae50ee",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/session_reload.rs",
+          "line": 19,
+          "symbol": "pub fn take",
+          "line_sha256": "74512954cd1d31923f4e8335e0c57373a5b25476cd59719fc21e65b2aca72f26",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/session_reload.rs",
+          "line": 20,
+          "symbol": "session_backups::load",
+          "line_sha256": "b2e5a416e7ec8b9bba9a3b40417741ad002a86a9952444c849757696b5aa6b74",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/session_reload.rs",
+          "line": 27,
+          "symbol": "pub fn remove",
+          "line_sha256": "1965564f16903308bfa96bc751078f79e723c703ce89b9203ca608f6ea080419",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/session_reload.rs",
+          "line": 28,
+          "symbol": "DELETE FROM session_snapshots",
+          "line_sha256": "1152c38c84ee2eb88de33650dc776b8fbbe84aa9329fa8bf585e13fe31cba4e7",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 342,
+          "symbol": "_debug_session_reload_owner: Rc<debug_session_reload::Owner>",
+          "line_sha256": "52d3c8b33cbc49969f4809b85ccc848975080e36de8b892ac63f2f45dac4c65f",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 617,
+          "symbol": "debug_session_reload::Control::new",
+          "line_sha256": "abb59ef3f31b7adab6891e059016583054a4fd09644ee7b8ad70449e2d7f2a36",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 1111,
+          "symbol": "debug_session_reload.set_change",
+          "line_sha256": "180024b927302b1c5deb3b407fd975ad2e7043e2e66f269ae9bc9dac03047b35",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 4873,
+          "symbol": "Rc::new(debug_session_reload.owner())",
+          "line_sha256": "b2920b4e49b120025b7d6f2e7d9bfc8c8aa5805eead1199a2e70870adcd7f58e",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 694,
+          "symbol": "debug_session_reload.retire();",
+          "line_sha256": "de17aaecab00458384c84f575a70c8e9d37161ef476b1a07f15a49fe9eb3481f",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 3144,
+          "symbol": "debug_session_reload.retire();",
+          "line_sha256": "b1e600c1e4c24275b897db6747a0266f93f12de4a791b926cefe466e98491f3e",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 265,
+          "symbol": "DebugReloadSession,",
+          "line_sha256": "df69c7277753bd30f2c491ea52164aceca17d71ae3850ec13f9de1c9f2636bd4",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 1282,
+          "symbol": "\"close and reload current gui session\",",
+          "line_sha256": "31cbcf62d14f81b4514fa2fd6b6efc708790e33e84b7a017c3359c8b67201a8d",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/menu_bar.rs",
+          "line": 691,
+          "symbol": "Command::DebugReloadSession =>",
+          "line_sha256": "f73dc73052b441fec149965adbdd6bf1a300ce14148e006abea8aef12a31bae4",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_session_reload.rs",
+          "line": 159,
+          "symbol": "fn actual_menu_snapshot",
+          "line_sha256": "942bbd3a9074f035a8f4c55aba95df568cd96a41bb6be525d1f2406f86ec7e1d",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_session_reload.rs",
+          "line": 234,
+          "symbol": "fn importer_logs_restore",
+          "line_sha256": "a50ad947fa3125ebd53136ebf03b35a6c9351e37b743341d68a4f6477ed7aa94",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_session_reload.rs",
+          "line": 304,
+          "symbol": "fn hidden_new_launch",
+          "line_sha256": "f745bfcf005b6cd13107fc71835c57761f178432a01d4b8c0e5a7b614225e01f",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_session_reload.rs",
+          "line": 118,
+          "symbol": "fn assert_tree",
+          "line_sha256": "0a7a95deed177e498191b4204e0e26ada52ca6a8ef401d17174126bf5b054a5e",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_session_reload.rs",
+          "line": 288,
+          "symbol": "original.page_closed",
+          "line_sha256": "56f6b3e1afdd39bbe7999a4487b6d1d51a9cdf4fe817837a402eb21417c7fafd",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_session_reload.rs",
+          "line": 289,
+          "symbol": "current.page_closed",
+          "line_sha256": "8854d8831f983e68bb7c607b2a15fbad458f33210966bdad6199107f944812bf",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_session_reload.rs",
+          "line": 223,
+          "symbol": "bound.rows.cached() > 0",
+          "line_sha256": "ae831c40474870187f312c145b9396294009b1c28a365a45dccdf535be49a7ed",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_session_reload.rs",
+          "line": 154,
+          "symbol": "fn no_slots",
+          "line_sha256": "9f713b5bb66c251e191cf1b953f2bfce2d163e289ee4c480109107b554fe89c1",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_session_reload.rs",
+          "line": 370,
+          "symbol": "weak_main.upgrade().is_none()",
+          "line_sha256": "c3d54b328dc3abc4f5ae75e1339057cc1c0aab2c2e1a5e5c6ff6ae9d854dd95c",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/session_reload.rs",
+          "line": 42,
+          "symbol": "fn committed_reload_slot",
+          "line_sha256": "b09d381b47993af9ecd277c388c4517dec11efd0fea22e16cf57cfffafb23572",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/session_reload.rs",
+          "line": 70,
+          "symbol": "assert_eq!(restored.media[0].files",
+          "line_sha256": "19f5cc37e9edb2c0676902b84537fba65a6a12bde283c8b117e7bb29eeb5b98b",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/session_reload.rs",
+          "line": 72,
+          "symbol": "sessions::page_files(&conn, &key)",
+          "line_sha256": "f918ee7fe36e2134379f55b7a8b59241032c1fcca3107c1086b685b0bf17d43b",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/session_reload.rs",
+          "line": 73,
+          "symbol": "sessions::page_selected(&conn, &key)",
+          "line_sha256": "96d264a1e878e12924261e40578eb5f10c240a1a398ea19935443a2f30ac9698",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+          "line": 125,
+          "symbol": "serde_json::json!([reload, long_text, new_page, delayed])",
+          "line_sha256": "05f6e6867a52e758c9eb5682dadef327d82f1f0ad3704309f17a6b805a244382",
+          "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+        }
+      ],
+      "limits": [
+        "Native unique private snapshot rows are not exposed as saved session names; Qt uses a fixed temporary named session. Overlapping native captures therefore cannot overwrite one another.",
+        "The existing synchronous snapshot-capture and final restore/close Store boundaries remain on the UI thread; broader large-session responsiveness is outside this debug action.",
+        "Already-running Store work finishes and removes its slot after retirement; its reply cannot replace pages. Native IO diagnostics use the existing main-window note instead of the Qt exception popup.",
+        "Manual save-last-session, wider session/debug GUI/style families and parent/alias nodes receive no credit.",
+        "Rust/native execution and exact native screenshot review remain deferred/pending; recorded real Qt and static source checks are the evidence currently available."
+      ]
+    }
+  ],
+  "reference": {
+    "recorder": "oracle/record_debug_session_reload.py",
+    "fixture": "oracle/fixtures/debug_session_reload.json",
+    "fixture_sha256": "d04200ba8c0238629c3ae5f21aae91f53ba52a82418b8a827fd86ce6b280b6b3",
+    "render": "oracle/fixtures/debug_session_reload.png",
+    "render_sha256": "61c970d53952a194e0b5fb95f6dc510ea99480f2886c8c67bd6267acf2af6778",
+    "executed_utc": "2026-10-05 16:25:29\u201316:25:33 UTC",
+    "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8",
+    "result": "Actual Qt QAction/unmodified worker, SaveGUISession, forced CloseCurrentPage and LoadGUISession. Existing corpus hashes and actual Select-all seed two selected thumbnails. Ordered tree/hash lists preserved with fresh keys; selected inner becomes first root/first nested child and selected hashes empty. No question, admitted hidden completion, removed temp slot, and four individual old Undo pages recorded. Actual PNG viewed. No scheduler/save/load/clock mocking; wall observer only.",
+    "source_anchors": [
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 3636,
+        "symbol": "'close and reload current gui session'",
+        "line_sha256": "3ef57183667b98b9e608654a5955aa4a79a6328c13605eb81ffecb3a47b09098",
+        "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+      },
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 5733,
+        "symbol": "def _ReloadCurrentGUISession",
+        "line_sha256": "243e48ca03a0de70ec9b974dc44e54102ac0dc041735de262bd04bd3fee318f8",
+        "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+      },
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 943,
+        "symbol": "only_changed_page_data = True",
+        "line_sha256": "ea65894623f796711607e50b7afdb0664845bc1ed17d1cd884fd456cdb352126",
+        "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+      },
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 5747,
+        "symbol": "self._notebook.CloseCurrentPage( polite = False )",
+        "line_sha256": "d8266fef9f6b39bade1d30b157399a0eb409757011062972ef2d4a6b05f0a22e",
+        "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+      },
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 5750,
+        "symbol": "self._notebook.LoadGUISession( name )",
+        "line_sha256": "086b11dfb1471df70bafa87d565214096ecd6c677c78ee38d545589ac8d2c6b6",
+        "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+      },
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 1690,
+        "symbol": "'delete_serialisable_named', HydrusSerialisable.SERIALISABLE_TYPE_GUI_SESSION_CONTAINER, name",
+        "line_sha256": "78848f1edef99db1f43e9b10ea8d9698b4787d3adb2af923bebc8b121adcebb7",
+        "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+      },
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 5758,
+        "symbol": "def do_save():",
+        "line_sha256": "94b143459ca707e02d311c1337fc62712e90c94636272273b0f4f9fc71345345",
+        "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+      },
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 5760,
+        "symbol": "CG.client_controller.SaveGUISession( session )",
+        "line_sha256": "2e8128ab496860d588352656cbdae6ca9750a5cace079db2b099873007ddb586",
+        "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+      },
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 5762,
+        "symbol": "CallBlockingToQtFireAndForgetNoResponse( self, qt_load )",
+        "line_sha256": "c79a89cb8b3b86cad870c50f5e64de02ab55b05d6ed9d18617d18ddd6dd68c10",
+        "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+      },
+      {
+        "relativepath": "hydrus/client/gui/pages/ClientGUIPages.py",
+        "line": 722,
+        "symbol": "def GetSerialisablePage( self, only_changed_page_data, about_to_save ):",
+        "line_sha256": "474d00114a3c3ae00c1576d35223d347caf0ea8fe2614e89ab927517be36eacf",
+        "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+      },
+      {
+        "relativepath": "hydrus/client/gui/pages/ClientGUIPages.py",
+        "line": 3153,
+        "symbol": "page_container = ClientGUISession.GUISessionContainerPageNotebook( self._name",
+        "line_sha256": "ee6513601f33179c129b31a00aeafe6a356fd558ad1189c9f520cdfa969a0f97",
+        "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+      },
+      {
+        "relativepath": "hydrus/client/gui/pages/ClientGUIPages.py",
+        "line": 2573,
+        "symbol": "def CloseCurrentPage( self, polite = True ):",
+        "line_sha256": "b74d74a1798c9014704f1e8d79d3a2af51ecef8c769733513a9ef2bb5e1f688a",
+        "commit": "5ffaf797d3c21357fd08d0074335b5d560181ba8"
+      }
+    ]
+  },
+  "validation": {
+    "executed": [
+      "Actual serialized Qt reload QAction, real save/worker/close/load/cleanup and actual media selection",
+      "Actual Qt PNG individually inspected",
+      "Original eligibility and completed240+51/all113 predecessor semantic audit",
+      "Direct rustfmt --check/Python py_compile/git diff --check",
+      "Cached Slint source compilation without Cargo"
+    ],
+    "authored_not_executed": [
+      "Three native actual Store/worker/menu replays: captured ordered hashes/reset/fresh identity, later edits/hidden completion/Undo/Store reopen/decoded PNG; importer new queue/logs and closed originals; hidden new refusal/ExitCancel/acceptedExit/rebind/shared first/final clone/Main destruction",
+      "Store committed-slot isolation/read/remove and untouched active-media regression",
+      "Existing exact main-menu golden preserves all comparisons and adds recorded reload before long/new-page/delayed actions"
+    ],
+    "pending": [
+      "Cheap hosted compiler/Clippy and scoped tests when scheduled by root",
+      "Expensive native GUI/platform/render suite deferred to project end",
+      "Exact debug-session-reload.png review pending"
+    ]
+  },
+  "independent_review": {
+    "reviewer": "appearance_final_review",
+    "mode": "Read-only immutable source/reference/ownership/pinned packet review; no Rust",
+    "status": "Completed bounded blocking correctness/API/ownership and exact source/implementation/one-original packet review at immutable 5ffaf797d by appearance_final_review. No blocking finding; exhaustive provenance/platform/render checks deferred to project end under user cheap-check policy. No Rust execution."
+  },
+  "canonical_changes": false,
+  "completed_ledger_changes": false,
+  "parents_counted": false
+}

@@ -7,17 +7,17 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use std::sync::Arc;
 
-use hydrus_core::HashId;
 use hydrus_core::pages::{
     DuplicatesPage, HashLock, PageCollect, PageContent, PageMedia, PageSort, PageSortBy,
 };
 use hydrus_core::search::predicate::{FileHashes, SystemPredicate};
+use hydrus_core::{HashId, Tag};
 use hydrus_search::{
     Clock, FileSearchContext, FileSort, Predicate, SortBy, SortOrder, TextContext,
     collect_page_files, parse_api_search, predicate_text, search_files, sort_page_files,
 };
 use hydrus_store::Store;
-use hydrus_store::live::{self, JobKind, JobLine, JobLive, QueueLive};
+use hydrus_store::live::{self, JobKind, JobLine, QueueLive};
 use hydrus_store::queues::{self, StatusCounts};
 
 use crate::autocomplete::Autocomplete;
@@ -28,6 +28,9 @@ use crate::watcher::WatcherView;
 
 pub struct SearchPage {
     store: Arc<Store>,
+    /// Qt chooses its thumbnail renderer when creating a page, never on Apply.
+    new_thumbnail_renderer: bool,
+    faded_thumbnails: RefCell<(std::rc::Weak<()>, HashMap<HashId, u64>)>,
     autocomplete: Autocomplete,
     or_draft: hydrus_gui_model::search_or::Construction,
     /// The page's file and tag domains (its predicates are `predicates`).
@@ -95,6 +98,10 @@ pub struct SearchPage {
     gallery: Option<GalleryView>,
     /// A watcher page's watchers (the importer is the one it shows).
     watchers: Option<WatcherView>,
+    importer_list_deadline: hydrus_gui_model::downloader_update_times::Deadline,
+    importer_status_clock: crate::downloader_update_times::Clock,
+    gallery_detail: Option<crate::gallery::GalleryQuery>,
+    watcher_detail: Option<crate::watcher::WatcherRow>,
 }
 
 /// What reading a downloader page's importer again changed.
@@ -156,21 +163,21 @@ impl Importer {
     }
 
     /// The line for the file it is downloading, under its file log.
-    pub fn file_job_line(&self) -> JobLine {
+    pub fn file_job_line(&self, figures: u8) -> JobLine {
         self.live
             .file_job
             .as_ref()
-            .map(JobLive::line)
+            .map(|job| job.line_with_figures(figures))
             .unwrap_or_default()
     }
 
     /// The line for the gallery page it is downloading, under its search
     /// log.
-    pub fn gallery_job_line(&self) -> JobLine {
+    pub fn gallery_job_line(&self, figures: u8) -> JobLine {
         self.live
             .gallery_job
             .as_ref()
-            .map(JobLive::line)
+            .map(|job| job.line_with_figures(figures))
             .unwrap_or_default()
     }
 
@@ -229,7 +236,12 @@ impl SearchPage {
         autocomplete.set_context(&context.location, &context.tags);
         let presentation: hydrus_core::tag_presentation::TagPresentation =
             store.read(hydrus_store::settings::get).unwrap_or_default();
+        let appearance = store
+            .read(hydrus_store::thumbnail_appearance::load)
+            .unwrap_or_default();
         Self {
+            new_thumbnail_renderer: appearance.new_renderer,
+            faded_thumbnails: RefCell::default(),
             autocomplete,
             or_draft: hydrus_gui_model::search_or::Construction::default(),
             store,
@@ -264,6 +276,10 @@ impl SearchPage {
             presented: std::collections::HashSet::new(),
             gallery: None,
             watchers: None,
+            importer_list_deadline: hydrus_gui_model::downloader_update_times::Deadline::default(),
+            importer_status_clock: Rc::new(crate::downloader_update_times::now),
+            gallery_detail: None,
+            watcher_detail: None,
         }
     }
 
@@ -296,6 +312,26 @@ impl SearchPage {
         page.duplicates = Some(duplicates);
         page.empty_status.set(Some("no dupes found"));
         page
+    }
+
+    /// The renderer admitted when this page was created.
+    pub fn new_thumbnail_renderer(&self) -> bool {
+        self.new_thumbnail_renderer
+    }
+
+    /// A completed cache admission survives scrolling without keeping a bitmap.
+    /// Weak owner identity prevents collisions when a retained page is rebound.
+    pub fn admit_thumbnail_fade(&self, id: HashId, owner: &Rc<()>, admission: u64) -> bool {
+        let mut faded = self.faded_thumbnails.borrow_mut();
+        if !faded
+            .0
+            .upgrade()
+            .is_some_and(|previous| Rc::ptr_eq(&previous, owner))
+        {
+            faded.0 = Rc::downgrade(owner);
+            faded.1.clear();
+        }
+        faded.1.insert(id, admission) != Some(admission)
     }
 
     /// A duplicates page's filtering.
@@ -1218,6 +1254,63 @@ impl SearchPage {
     /// and the files it brought since, added at the page's end (as the
     /// reference presents them to its page). What changed.
     pub fn refresh_import(&mut self) -> ImportRefresh {
+        let now = (self.importer_status_clock)();
+        let changed = self.refresh_import_status_at(now, true).unwrap_or(false);
+        match self.read_import(false) {
+            ImportRefresh::Nothing if changed => ImportRefresh::Status,
+            refreshed => refreshed,
+        }
+    }
+
+    /// Independent highlighted file/job controls and newly presented files.
+    pub fn refresh_import_details(&mut self) -> ImportRefresh {
+        self.read_import(false)
+    }
+
+    /// Some means a list refresh occurred; the Boolean reports changed row data.
+    pub fn refresh_import_status_at(&mut self, now: f64, force: bool) -> Option<bool> {
+        use hydrus_store::downloader_update_times::{Kind, Preferences};
+        let (kind, items) = match (&self.gallery, &self.watchers) {
+            (Some(gallery), _) => (Kind::Gallery, gallery.queries.len()),
+            (_, Some(watchers)) => (Kind::Watcher, watchers.watchers.len()),
+            _ => return None,
+        };
+        if force {
+            self.importer_list_deadline.force();
+        }
+        if !self.importer_list_deadline.due(now) {
+            return None;
+        }
+        let preferences: Preferences = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        let (minimum, denominator) = preferences.policy(kind);
+        self.importer_list_deadline
+            .advance(now, minimum, denominator, items);
+        let changed = self.read_import_lists();
+        self.gallery_detail = self
+            .gallery
+            .as_ref()
+            .and_then(|view| view.state.highlighted.and_then(|queue| view.query(queue)))
+            .cloned();
+        self.watcher_detail = self
+            .watchers
+            .as_ref()
+            .and_then(|view| view.state.highlighted.and_then(|queue| view.watcher(queue)))
+            .cloned();
+        Some(changed)
+    }
+
+    pub(crate) fn set_import_status_clock(&mut self, clock: crate::downloader_update_times::Clock) {
+        self.importer_status_clock = clock;
+    }
+
+    pub fn next_import_status_time(&self) -> f64 {
+        self.importer_list_deadline.next()
+    }
+
+    fn read_import_lists(&mut self) -> bool {
         let gallery_changed = match &mut self.gallery {
             Some(gallery) => self.store.read(|c| gallery.refresh(c)).unwrap_or_else(|e| {
                 eprintln!("could not read the gallery page's searches: {e}");
@@ -1225,7 +1318,7 @@ impl SearchPage {
             }),
             None => false,
         };
-        let gallery_changed = gallery_changed
+        gallery_changed
             || match &mut self.watchers {
                 Some(watchers) => {
                     let now = now();
@@ -1240,11 +1333,24 @@ impl SearchPage {
                         })
                 }
                 None => false,
-            };
-        match self.read_import(false) {
-            ImportRefresh::Nothing if gallery_changed => ImportRefresh::Status,
-            refreshed => refreshed,
-        }
+            }
+    }
+
+    pub fn highlighted_gallery(&self) -> Option<&crate::gallery::GalleryQuery> {
+        let gallery = self.gallery.as_ref()?;
+        let queue = gallery.state.highlighted?;
+        self.gallery_detail
+            .as_ref()
+            .filter(|row| row.queue == queue)
+            .or_else(|| gallery.query(queue))
+    }
+    pub fn highlighted_watcher(&self) -> Option<&crate::watcher::WatcherRow> {
+        let watchers = self.watchers.as_ref()?;
+        let queue = watchers.state.highlighted?;
+        self.watcher_detail
+            .as_ref()
+            .filter(|row| row.queue == queue)
+            .or_else(|| watchers.watcher(queue))
     }
 
     fn read_import(&mut self, first: bool) -> ImportRefresh {
@@ -1276,7 +1382,23 @@ impl SearchPage {
             gallery_paused: row.as_ref().is_some_and(|q| q.gallery_paused),
             options: row.map(|q| q.options).unwrap_or_default(),
         };
-        let status_changed = self.importer.as_ref() != Some(&now);
+        let gallery_detail = self.gallery.as_ref().and_then(|_| {
+            self.store
+                .read(|conn| crate::gallery::GalleryQuery::read(conn, queue))
+                .ok()
+                .flatten()
+        });
+        let watcher_detail = self.watchers.as_ref().and_then(|_| {
+            self.store
+                .read(|conn| crate::watcher::WatcherRow::read(conn, queue))
+                .ok()
+                .flatten()
+        });
+        let status_changed = self.importer.as_ref() != Some(&now)
+            || self.gallery_detail != gallery_detail
+            || self.watcher_detail != watcher_detail;
+        self.gallery_detail = gallery_detail;
+        self.watcher_detail = watcher_detail;
         self.importer = Some(now);
         let arrived: Vec<HashId> = presented
             .into_iter()
@@ -1854,11 +1976,38 @@ impl SearchPage {
     /// How far the page's importing has got: its done and total imports
     /// (none for a page that doesn't import).
     pub fn import_progress(&self) -> (usize, usize) {
-        if let Some(gallery) = &self.gallery {
-            return crate::gallery::value_range(&gallery.queries);
-        }
-        if let Some(watchers) = &self.watchers {
-            return crate::watcher::value_range(&watchers.watchers);
+        let queues = self
+            .gallery
+            .as_ref()
+            .map(|view| &view.queues)
+            .or_else(|| self.watchers.as_ref().map(|view| &view.queues));
+        if let Some(queues) = queues {
+            // Tabs consume live aggregate counters, independently of expensive row/status refresh.
+            return self
+                .store
+                .read(|conn| {
+                    queues.iter().try_fold((0, 0), |(done, total), &queue| {
+                        let (value, range) = hydrus_store::queues::file_log_value_range(
+                            &hydrus_store::queues::file_seed_counts(conn, queue)?,
+                        );
+                        Ok(if value == range {
+                            (done, total)
+                        } else {
+                            (done + value, total + range)
+                        })
+                    })
+                })
+                .unwrap_or_else(|_| {
+                    self.gallery
+                        .as_ref()
+                        .map(|view| crate::gallery::value_range(&view.queries))
+                        .or_else(|| {
+                            self.watchers
+                                .as_ref()
+                                .map(|view| crate::watcher::value_range(&view.watchers))
+                        })
+                        .unwrap_or_default()
+                });
         }
         self.importer.as_ref().map_or((0, 0), Importer::progress)
     }
@@ -1866,10 +2015,42 @@ impl SearchPage {
     /// Why closing the page needs asking about, for a downloader page.
     pub fn close_veto(&self, confirm_non_empty: bool) -> Option<String> {
         if let Some(gallery) = &self.gallery {
-            return crate::gallery::close_veto(&gallery.queries, confirm_non_empty);
+            let queries = self
+                .store
+                .read(|conn| {
+                    gallery
+                        .queues
+                        .iter()
+                        .map(|&queue| crate::gallery::GalleryQuery::read(conn, queue))
+                        .collect::<hydrus_store::Result<Vec<_>>>()
+                })
+                .ok();
+            return match queries {
+                Some(queries) => crate::gallery::close_veto(
+                    &queries.into_iter().flatten().collect::<Vec<_>>(),
+                    confirm_non_empty,
+                ),
+                None => crate::gallery::close_veto(&gallery.queries, confirm_non_empty),
+            };
         }
         if let Some(watchers) = &self.watchers {
-            return crate::watcher::close_veto(&watchers.watchers, confirm_non_empty);
+            let rows = self
+                .store
+                .read(|conn| {
+                    watchers
+                        .queues
+                        .iter()
+                        .map(|&queue| crate::watcher::WatcherRow::read(conn, queue))
+                        .collect::<hydrus_store::Result<Vec<_>>>()
+                })
+                .ok();
+            return match rows {
+                Some(rows) => crate::watcher::close_veto(
+                    &rows.into_iter().flatten().collect::<Vec<_>>(),
+                    confirm_non_empty,
+                ),
+                None => crate::watcher::close_veto(&watchers.watchers, confirm_non_empty),
+            };
         }
         self.importer.as_ref()?.close_veto(confirm_non_empty)
     }
@@ -1950,13 +2131,14 @@ impl SearchPage {
         self.set_sort_type(PageSortBy::System(i64::from(by.code())));
     }
 
-    /// Sort by `by` (a system, namespace or rating sort), in its default
-    /// order.
+    /// Sort by `by`, preserving the order for matching choice labels and
+    /// selecting its default order otherwise.
     pub fn set_sort_type(&mut self, by: PageSortBy) {
+        let previous = crate::sort::page_choices(&self.store, &self.sort.by);
         let ascending = crate::sort::page_choices(&self.store, &by)
             .into_iter()
             .find(|c| c.by == by)
-            .is_none_or(|c| c.default_ascending);
+            .is_none_or(|choice| crate::sort::type_ascending(&self.sort, &previous, &choice));
         self.sort = PageSort {
             tag_context: self.sort.tag_context.clone(),
             by,
@@ -1964,6 +2146,16 @@ impl SearchPage {
         };
         self.sort_changed = true;
         self.sort_changed_search_or_resort();
+    }
+
+    /// Apply the page sort's independent cog choice and run its real consumer.
+    pub fn apply_sort_cog(&mut self, action: &hydrus_gui_model::sort_cog::Action) -> bool {
+        if !hydrus_gui_model::sort_cog::choose(&mut self.sort, action) {
+            return false;
+        }
+        self.sort_changed = true;
+        self.sort_changed_search_or_resort();
+        true
     }
 
     pub fn set_sort_order(&mut self, order: SortOrder) {
@@ -2104,6 +2296,11 @@ impl SearchPage {
             .is_some_and(|&f| self.selection.is_selected(f))
     }
 
+    /// Sidebar/preview collapse clears only preview focus, retaining selection.
+    pub fn clear_preview_focus(&mut self) {
+        self.selection.clear_focus(&self.results);
+    }
+
     /// The focused file's index, if a file is focused.
     pub fn focused(&self) -> Option<usize> {
         let focused = self.selection.focused()?;
@@ -2124,6 +2321,60 @@ impl SearchPage {
             self.autocomplete.set_tab(tab);
         }
     }
+    /// Select results without changing the active query or a pending OR draft.
+    pub fn select_suggestion(&mut self, index: usize, ctrl: bool, shift: bool) {
+        if !self.locked && self.note.is_none() {
+            self.autocomplete.click(index, ctrl, shift);
+        }
+    }
+
+    /// Ctrl+A belongs to the result list, not the text input.
+    pub fn select_all_suggestions(&mut self) {
+        if !self.locked && self.note.is_none() {
+            self.autocomplete.select_all();
+        }
+    }
+
+    /// Clear an owned result selection without changing query predicates.
+    pub fn deselect_suggestions(&mut self) -> bool {
+        !self.locked && self.note.is_none() && self.autocomplete.deselect()
+    }
+
+    /// Immediate favourites edits refresh only autocomplete, retaining caller drafts.
+    pub fn refresh_autocomplete_tab(&mut self) {
+        if !self.locked && self.note.is_none() {
+            self.autocomplete.refresh_tab();
+        }
+    }
+
+    /// Broadcast a selected favourites/children batch through the real OR/query path.
+    pub fn activate_suggestions(&mut self, shift: bool) {
+        if self.locked || self.note.is_some() {
+            return;
+        }
+        let selected = self.autocomplete.selected_suggestions();
+        if self.autocomplete.tab() == hydrus_gui_model::write_autocomplete::Tab::Tags {
+            if let Some(index) = self.autocomplete.highlighted() {
+                self.choose_or(index, shift);
+            }
+            return;
+        }
+        // These panes contain literal tags, not parsed search input. In particular,
+        // '*' and 'system:' remain part of the stored tag rather than search syntax.
+        let predicates: Vec<_> = selected
+            .into_iter()
+            .map(|row| Predicate::Tag {
+                // The pane already holds a stored literal tag. Cleaning it again
+                // would strip a leading system: namespace from legacy values.
+                tag: Tag::from_clean(row.predicate),
+                inclusive: true,
+            })
+            .collect();
+        if !predicates.is_empty() {
+            self.broadcast_or(predicates, shift);
+        }
+    }
+
     fn sync_autocomplete_tags(&mut self) {
         self.autocomplete
             .set_context_tags(self.predicates.iter().filter_map(|predicate| {
@@ -2153,6 +2404,10 @@ impl SearchPage {
     }
     /// Shift+Enter accumulates without changing the active search.
     pub fn enter_or(&mut self, shift: bool) {
+        if self.autocomplete.tab() != hydrus_gui_model::write_autocomplete::Tab::Tags {
+            self.activate_suggestions(shift);
+            return;
+        }
         if self.or_draft.terms().is_some()
             && !self.autocomplete.text().trim().is_empty()
             && self.autocomplete.tab() == hydrus_gui_model::write_autocomplete::Tab::Tags
@@ -2342,6 +2597,50 @@ impl SearchPage {
         }
     }
 
+    /// Active values retain their typed identity when an editor is reopened.
+    pub fn active_predicates(&self) -> &[Predicate] {
+        &self.predicates
+    }
+
+    /// Commit one captured active-list delta and refresh only if it changed.
+    pub fn edit_active_predicates(&mut self, original: &[Predicate], edited: &[Predicate]) -> bool {
+        self.change_active_predicates(|predicates, text| {
+            hydrus_gui_model::active_predicates::replace(predicates, original, edited, text)
+        })
+    }
+
+    /// Execute a captured search-submenu command on this page's own query.
+    pub fn active_predicate_command(
+        &mut self,
+        selected: &[Predicate],
+        command: hydrus_gui_model::active_predicates::Command,
+    ) -> bool {
+        self.change_active_predicates(|predicates, text| {
+            hydrus_gui_model::active_predicates::apply(predicates, selected, command, text)
+        })
+    }
+    fn change_active_predicates(
+        &mut self,
+        change: impl FnOnce(&mut Vec<Predicate>, &TextContext) -> bool,
+    ) -> bool {
+        if self.locked || self.note.is_some() {
+            return false;
+        }
+        let before = self.predicates.clone();
+        let text = self.text_context();
+        if !change(&mut self.predicates, &text) {
+            return false;
+        }
+        self.predicate_history
+            .borrow_mut()
+            .record(&before, &self.predicates);
+        self.sync_autocomplete_tags();
+        if self.synchronised {
+            self.search();
+        }
+        true
+    }
+
     /// A plain click on the file at `index`.
     pub fn select(&mut self, index: usize) {
         self.hit(Some(index), false, false);
@@ -2354,8 +2653,36 @@ impl SearchPage {
         if index.is_some() && file.is_none() {
             return;
         }
-        self.selection.hit(&self.results, file, ctrl, shift);
+        let preferences: hydrus_store::thumbnail_preview_selection::Preferences = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        let focus_target = file.is_some_and(|file| {
+            preferences.focus_target(
+                ctrl,
+                shift,
+                Self::preview_selection_has_duration(file, &self.collections, &self.facts),
+            )
+        });
+        self.selection
+            .hit_with_preview_focus(&self.results, file, ctrl, shift, focus_target);
         self.count_tags();
+    }
+
+    /// Collections use their aggregate duration, even when their preview member is static.
+    fn preview_selection_has_duration(
+        item: HashId,
+        collections: &HashMap<HashId, Vec<HashId>>,
+        facts: &HashMap<HashId, Facts>,
+    ) -> bool {
+        let collection = collections.get(&item);
+        let files = collection.map_or(std::slice::from_ref(&item), Vec::as_slice);
+        hydrus_gui_model::thumbnail_preview_selection::has_duration(
+            files
+                .iter()
+                .map(|file| facts.get(file).and_then(|facts| facts.duration_ms)),
+            collection.is_some(),
+        )
     }
 
     /// Select just `files` (the menu's select), as the reference's
@@ -2447,9 +2774,31 @@ impl SearchPage {
         columns: usize,
         page_rows: usize,
     ) -> Option<usize> {
-        let moved = self
-            .selection
-            .move_focus(&self.results, to, shift, columns, page_rows);
+        let navigation: hydrus_store::settings::ThumbnailNavigation = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        let preferences: hydrus_store::thumbnail_preview_selection::Preferences = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        let collections = &self.collections;
+        let facts = &self.facts;
+        let eligible = |file| {
+            preferences.focus_target(
+                false,
+                shift,
+                Self::preview_selection_has_duration(file, collections, facts),
+            )
+        };
+        let moved = self.selection.move_focus_with_preview(
+            &self.results,
+            to,
+            shift,
+            (columns, page_rows),
+            navigation.shift_moves_origin,
+            &eligible,
+        );
         self.count_tags();
         moved
     }
@@ -2648,11 +2997,12 @@ impl SearchPage {
             [file] => self.single_file_line(file),
             _ => None,
         };
-        crate::status::status(
+        crate::status::status_with_format(
             (&all, shown),
             (&selected, self.selected_counts()),
             self.empty_status.get(),
             single_line.as_deref(),
+            &hydrus_gui_model::gui_format::preferences(&self.store),
         )
     }
 
@@ -2671,11 +3021,12 @@ impl SearchPage {
             .ok()?
             .results
             .pop()?;
-        Some(crate::info_lines::status_line(
+        Some(crate::info_lines::status_line_with_format(
             &media,
             &snapshot.services,
             &settings,
             hydrus_core::TimestampMs::now().0,
+            &hydrus_gui_model::gui_format::preferences(&self.store),
         ))
     }
 

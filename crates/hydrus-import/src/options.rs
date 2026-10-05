@@ -3,7 +3,7 @@
 
 use std::collections::BTreeSet;
 
-use hydrus_core::numbers::{human_bytes, resolution_text};
+use hydrus_core::numbers::{human_bytes_with_figures, resolution_text};
 use hydrus_core::{Mime, ServiceId};
 use hydrus_store::services::ServiceRegistry;
 
@@ -116,7 +116,16 @@ impl FileImportOptions {
     /// Whether a file passes the filtering rules; the error is the note the
     /// reference gives a vetoed file.
     pub fn check(&self, info: &hydrus_media::FileInfo) -> Result<(), String> {
-        self.check_values(info.size, info.mime, info.width, info.height)
+        self.check_with_figures(info, 3)
+    }
+
+    /// Validate with the importing owner's saved byte presentation preference.
+    pub fn check_with_figures(
+        &self,
+        info: &hydrus_media::FileInfo,
+        figures: u8,
+    ) -> Result<(), String> {
+        self.check_values_with_figures(info.size, info.mime, info.width, info.height, figures)
     }
 
     /// Whether the filtering rules let every file through whatever its
@@ -138,6 +147,18 @@ impl FileImportOptions {
         width: Option<u32>,
         height: Option<u32>,
     ) -> Result<(), String> {
+        self.check_values_with_figures(size, mime, width, height, 3)
+    }
+
+    /// Explicit presentation for callers that own the persisted settings.
+    pub fn check_values_with_figures(
+        &self,
+        size: u64,
+        mime: Mime,
+        width: Option<u32>,
+        height: Option<u32>,
+        figures: u8,
+    ) -> Result<(), String> {
         let allowed = match &self.allowed_mimes {
             Some(set) => set.contains(&mime),
             None => hydrus_media::mimes::is_allowed(mime),
@@ -153,8 +174,8 @@ impl FileImportOptions {
         {
             return Err(format!(
                 "File was {} but the lower limit in the File Filtering Import Options is {}.",
-                human_bytes(size),
-                human_bytes(min)
+                human_bytes_with_figures(size, figures),
+                human_bytes_with_figures(min, figures)
             ));
         }
         if let Some(max) = self.max_size
@@ -162,8 +183,8 @@ impl FileImportOptions {
         {
             return Err(format!(
                 "File was {} but the upper limit in the File Filtering Import Options is {}.",
-                human_bytes(size),
-                human_bytes(max)
+                human_bytes_with_figures(size, figures),
+                human_bytes_with_figures(max, figures)
             ));
         }
         if mime == Mime::AnimationGif
@@ -172,8 +193,8 @@ impl FileImportOptions {
         {
             return Err(format!(
                 "File was {} but the upper limit for gifs in the File Filtering Import Options is {}.",
-                human_bytes(size),
-                human_bytes(max)
+                human_bytes_with_figures(size, figures),
+                human_bytes_with_figures(max, figures)
             ));
         }
         if let Some((min_w, min_h)) = self.min_resolution

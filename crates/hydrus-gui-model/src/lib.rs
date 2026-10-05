@@ -6,6 +6,7 @@
 //! re-exports each module under its own name.
 
 pub mod about;
+pub mod active_predicates;
 pub mod archive_delete;
 pub mod audio;
 pub mod auto_resolution_preview;
@@ -20,19 +21,26 @@ pub mod delete_files;
 pub mod domains;
 pub mod downloader_definitions;
 pub mod downloader_interchange;
+pub mod downloader_update_times;
+pub mod duplicate_colours;
 pub mod duplicate_filter;
 pub mod duplicates_page;
 pub mod edit_subscription;
 pub mod embedded_metadata;
 pub mod export_files;
+pub mod external_calls;
+pub mod external_command;
 pub mod favourites;
 pub mod file_log;
+pub mod file_maintenance_current;
+pub mod file_view_removal;
 pub mod filename_rules;
 pub mod filename_tagging;
 pub mod filetype_tree;
 pub mod folders;
 pub mod force_filetype;
 pub mod formula_editors;
+pub mod image_cache;
 pub mod import_options_editor;
 pub mod import_options_overwrite;
 pub mod import_options_panel;
@@ -42,24 +50,36 @@ pub mod list_selection;
 pub mod local_import;
 pub mod main_menu;
 pub mod manage_tags;
+pub mod manage_tags_sort;
 pub mod media_actions;
+pub mod menu_choice_wheel;
 pub mod merge_options_editor;
 pub mod merge_summary;
+pub mod namespace_colours;
 pub mod notes_editor;
+pub mod open_externally;
 pub mod options;
 pub mod page_chooser;
+pub mod page_layout;
+pub mod page_tree;
 pub mod png_export;
+pub mod popup_freeze;
 pub mod predicate_editors;
 pub mod predicate_history;
+pub mod preview_zoom;
+pub mod rating_sizes;
 pub mod ratings;
 pub mod ratings_editor;
+pub mod related_weights;
 pub mod scanbar;
 pub mod search_log;
+pub mod selected_deletion_records;
 pub mod selection;
 pub mod services_editor;
 pub mod services_review;
 pub mod session_lifecycle;
 pub mod session_saving;
+pub mod shortcut_capture;
 pub mod sidecar_editors;
 pub mod sidecars;
 pub mod simple_downloader;
@@ -72,11 +92,17 @@ pub mod subscriptions_dedupe;
 pub mod subscriptions_dialog;
 pub mod subscriptions_list;
 pub mod tab_context;
+pub mod tab_drag;
 pub mod tag_filter_editor;
+pub mod tag_suggestions;
+pub mod thumbnail_cache;
 pub mod thumbnail_icons;
+pub mod thumbnail_navigation;
+pub mod thumbnail_preview_selection;
 pub mod thumbnail_ratings;
 pub mod times_editor;
 pub mod urls_editor;
+pub mod viewer_prefetch;
 
 pub mod tag_relationships;
 
@@ -92,6 +118,7 @@ pub mod network_data;
 pub mod tag_migration;
 
 pub mod downloader_display;
+pub mod local_transfer;
 pub mod login_workflows;
 pub mod regex_favourites;
 
@@ -112,6 +139,7 @@ pub mod command_palette;
 
 mod palette_calculator;
 
+pub mod viewing_maintenance;
 pub mod viewing_statistics;
 
 pub mod search_or;
@@ -119,3 +147,20 @@ pub mod search_or;
 pub mod frame_locations;
 pub mod incremental_tagging;
 pub mod tag_banner;
+
+pub mod rating_example;
+pub mod tab_presentation;
+
+pub mod archive_repair;
+
+pub mod file_history;
+
+pub mod file_history_worker;
+
+pub mod viewer_drag;
+pub mod window_rescue;
+
+pub mod gui_format;
+pub mod viewer_tag_wheel;
+
+pub mod tag_namespace_order;

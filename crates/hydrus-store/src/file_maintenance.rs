@@ -346,8 +346,17 @@ pub fn due_jobs_of(
     Ok(Vec::new())
 }
 
-/// How many jobs of each type are due, and how many are waiting
-/// (`GetJobCounts`).
+/// Cancel every due or future job of the captured types (`CancelJobs`).
+pub fn cancel_jobs(conn: &Connection, jobs: &[JobType]) -> Result<()> {
+    let mut delete =
+        conn.prepare_cached("DELETE FROM file_maintenance_jobs WHERE job_type = ?1")?;
+    for job in jobs {
+        delete.execute([job.code()])?;
+    }
+    Ok(())
+}
+
+/// How many jobs of each type are due or waiting (`GetJobCounts`).
 pub fn job_counts(conn: &Connection, now_s: i64) -> Result<BTreeMap<JobType, (u64, u64)>> {
     let mut out: BTreeMap<JobType, (u64, u64)> = BTreeMap::new();
     let mut stmt = conn.prepare(
@@ -608,6 +617,49 @@ pub fn jobs_for(conn: &Connection, hash_id: HashId) -> Result<HashSet<JobType>> 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn captured_cancel_clears_due_and_future_types_and_keeps_unselected_work() {
+        let mut conn = Connection::open_in_memory().unwrap();
+        crate::schema::migrate(&mut conn).unwrap();
+        add_jobs(&conn, &[HashId(1), HashId(2)], JobType::HasExif, 99).unwrap();
+        add_jobs(&conn, &[HashId(3)], JobType::HasExif, 100).unwrap();
+        add_jobs(&conn, &[HashId(4)], JobType::HasIccProfile, 101).unwrap();
+        assert_eq!(job_counts(&conn, 100).unwrap()[&JobType::HasExif], (2, 1));
+        assert_eq!(
+            job_counts(&conn, 100).unwrap()[&JobType::HasIccProfile],
+            (0, 1)
+        );
+        cancel_jobs(&conn, &[JobType::HasExif]).unwrap();
+        assert!(
+            !job_counts(&conn, 100)
+                .unwrap()
+                .contains_key(&JobType::HasExif)
+        );
+        assert_eq!(
+            job_counts(&conn, 102).unwrap()[&JobType::HasIccProfile],
+            (1, 0)
+        );
+    }
+
+    #[test]
+    fn file_work_lease_is_shared_by_independent_owners_and_released_on_drop() {
+        let dir = tempfile::tempdir().unwrap();
+        let lease = crate::store::lock_file_maintenance(dir.path())
+            .unwrap()
+            .unwrap();
+        assert!(
+            crate::store::lock_file_maintenance(dir.path())
+                .unwrap()
+                .is_none()
+        );
+        drop(lease);
+        assert!(
+            crate::store::lock_file_maintenance(dir.path())
+                .unwrap()
+                .is_some()
+        );
+    }
 
     #[test]
     fn job_types_keep_the_reference_s_codes() {

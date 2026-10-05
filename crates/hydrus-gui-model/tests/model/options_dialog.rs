@@ -53,10 +53,12 @@ fn same_time(a: f64, b: Option<f64>) -> bool {
 
 /// The reference's widgets that are a control of ours.
 const WIDGETS: &[&str] = &[
+    "BytesControl",
     "MediaSortControl",
     "MediaCollectControl",
     "TagSortControl",
     "DirPickerCtrl",
+    "FilePickerCtrl",
     "BetterCheckBoxList",
     "NoneableTimeDeltaWidget",
 ];
@@ -136,6 +138,10 @@ fn our_rows<'a>(items: &'a [Item], boxes: &[String], out: &mut Vec<(Vec<String>,
 fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<String> {
     let num = |key: &str| theirs.get(key).and_then(Json::as_f64);
     let problem = match (kind, value) {
+        (Kind::Bytes, Value::Bytes { amount, unit }) => (theirs["widget"] != "BytesControl"
+            || theirs["value"].as_u64()
+                != Some(hydrus_gui_model::thumbnail_cache::combined(*amount, *unit)))
+        .then(|| format!("byte amount/unit {amount}/{unit} vs {theirs}")),
         (Kind::NoneableDuration { .. }, Value::NoneableDuration { none, seconds }) => {
             (theirs["widget"] != "NoneableTimeDeltaWidget"
                 || if *none {
@@ -168,12 +174,25 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
                 ..
             },
             Value::Noneable(n),
-        ) => (theirs.get("noneable").map(Json::as_i64) != Some(*n)
-            || theirs["none_phrase"] != *none_phrase
-            || num("min") != Some(*min as f64)
-            || num("max") != Some(*max as f64)
-            || theirs.get("unit").and_then(Json::as_str) != *unit)
-            .then(|| format!("noneable {n:?} {none_phrase:?} ({min}-{max}) {unit:?}")),
+        ) => {
+            // Qt records GetValue in seconds for these multiplier-60 controls;
+            // native values are displayed minutes. The new Qt replay checks
+            // both the displayed spinner and persisted seconds independently.
+            let multiplier = if matches!(
+                *none_phrase,
+                "ignore normal browsing" | "ignore mouse movements" | "ignore client api"
+            ) {
+                60
+            } else {
+                1
+            };
+            (theirs.get("noneable").map(Json::as_i64) != Some(n.map(|number| number * multiplier))
+                || theirs["none_phrase"] != *none_phrase
+                || num("min") != Some(*min as f64)
+                || num("max") != Some(*max as f64)
+                || theirs.get("unit").and_then(Json::as_str) != *unit)
+                .then(|| format!("noneable {n:?} {none_phrase:?} ({min}-{max}) {unit:?}"))
+        }
         (Kind::Float { min, max }, Value::Float(text)) => (num("float") != text.parse().ok()
             || num("min") != Some(*min)
             || num("max") != Some(*max))
@@ -223,6 +242,14 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
             || theirs["items"][0]["text"] != *path
             || theirs["items"][1]["button"] != "browse")
             .then(|| format!("directory {path:?}")),
+        (Kind::FilePath, Value::Text(path)) => (theirs["widget"] != "FilePickerCtrl"
+            || theirs["items"][0]["text"] != *path
+            || theirs["items"][1]["button"] != "browse")
+            .then(|| format!("file path {path:?}")),
+        (Kind::Text, Value::PlainNoneableText(text)) => {
+            let shown = text.as_deref().unwrap_or_default();
+            (theirs["text"] != shown).then(|| format!("text {shown:?}"))
+        }
         (Kind::Text, Value::Text(t)) => (theirs["text"] != *t).then(|| format!("text {t:?}")),
         (Kind::NoneableText { none_phrase }, Value::NoneableText { none, text }) => {
             let ours = (!none).then_some(text.as_str());
@@ -289,6 +316,37 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
             let ours = shown.as_ref().map(|(by, order)| vec![by.as_str(), *order]);
             (theirs["widget"] != "MediaSortControl" || ours.is_none() || buttons != ours)
                 .then(|| format!("sort {shown:?}"))
+        }
+        (Kind::ManageTagsSort, Value::ManageTagsSort(control)) => {
+            use hydrus_gui_model::options::{TAG_SORT_GROUPS, TAG_SORT_TYPES, tag_sort_orders};
+            let sort = &control.value.order;
+            let mut ours: Vec<&str> = TAG_SORT_TYPES
+                .iter()
+                .filter(|(_, kind)| *kind == sort.sort_type)
+                .map(|(label, _)| *label)
+                .collect();
+            let (orders, index) = tag_sort_orders(sort);
+            ours.push(orders[index]);
+            if sort.sort_type != hydrus_core::tag_sort::TagSortType::Count {
+                ours.push(if control.value.use_siblings {
+                    "siblings"
+                } else {
+                    "tags"
+                });
+            }
+            if sort.sort_type != hydrus_core::tag_sort::TagSortType::Subtag {
+                ours.extend(
+                    TAG_SORT_GROUPS
+                        .iter()
+                        .filter(|(_, group)| *group == sort.group_by)
+                        .map(|(label, _)| *label),
+                );
+            }
+            let shown: Option<Vec<&str>> = theirs["tag_sort"]
+                .as_array()
+                .map(|values| values.iter().filter_map(Json::as_str).collect());
+            (theirs["widget"] != "TagSortControl" || shown.as_ref() != Some(&ours))
+                .then(|| format!("manage tag sort {ours:?}"))
         }
         (Kind::TagSort, Value::TagSort(sort)) => {
             // (the choices it shows: its type, its order, and its grouping
@@ -379,20 +437,39 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
     recorded_rows(items.as_array().unwrap(), &[], &mut rows);
     let mut mine = Vec::new();
     our_rows(&page.items, &[], &mut mine);
+    // Compare Qt controls with the values the native controls display,
+    // including spin-box clamping of imported/default out-of-range values.
+    let mut displayed = hydrus_gui_model::options::values(std::slice::from_ref(page), settings)
+        .remove(0)
+        .into_iter();
     let mut after = 0;
     for (boxes, item) in mine {
         let Item::Opt(option) = item else { continue };
+        let value = displayed.next().expect("one displayed value per option");
         // This reference page embeds the list; native opens the same transaction
         // in a child window, covered by dedicated regex/write-tag/gallery-source/import-options/namespace-queue recordings.
+        // RGB roles replay all 26 values in gui_coloursets; namespace rows have their own recorder.
+        // Shortcut capture/policies replay the actual nested command controls separately.
+        // Open-externally queues/MIME rows/washing replay actual Qt lists separately;
+        // this generic recorder captures scalar controls rather than these inline lists.
         if matches!(
             option.kind,
-            Kind::RegexFavourites
+            Kind::ExternalCalls
+                | Kind::OpenExternally
+                | Kind::Shortcuts
+                | Kind::RegexFavourites
+                | Kind::GuiColours
+                | Kind::NamespaceColours
                 | Kind::DeletionReasons
                 | Kind::FrameLocations
                 | Kind::FavouriteTags
+                | Kind::MostUsedTags
+                | Kind::RelatedWeights
                 | Kind::GallerySource
                 | Kind::ImportOptions
                 | Kind::NamespaceSorts
+                // Private queue covered by the actual tag_namespace_order recording.
+                | Kind::TagNamespaceOrder
                 | Kind::TagBanner(_)
                 | Kind::ProviderOrder
         ) {
@@ -419,7 +496,6 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
         {
             continue;
         }
-        let value = (option.get)(settings);
         if let Some(why) = compare(&option.kind, &value, &row.control, store) {
             problems.push(format!("{}: {:?}: {why}", page.name, option.label));
         }
@@ -515,6 +591,39 @@ fn the_options_search_offers_what_the_references_does() {
         .filter(|text| !theirs.contains(text))
         .collect();
     assert!(missing.is_empty(), "not the reference's: {missing:?}");
+    for (label, expected_page, routing) in [
+        ("URL calls (open externally)", "open externally", true),
+        (
+            "single file calls (open externally)",
+            "open externally",
+            true,
+        ),
+        (
+            "built-in hydrus shortcut sets (shortcuts)",
+            "shortcuts",
+            false,
+        ),
+        ("custom user sets (shortcuts)", "shortcuts", false),
+    ] {
+        assert!(
+            theirs.contains(&label),
+            "alias must be actual recorded Qt text"
+        );
+        let suggestion = ours.iter().find(|value| value.text == label).unwrap();
+        let actual_pages = pages(&settings);
+        let page = &actual_pages[suggestion.page];
+        assert_eq!(page.name, expected_page);
+        let mut rows = Vec::new();
+        our_rows(&page.items, &[], &mut rows);
+        let Item::Opt(option) = rows[suggestion.row].1 else {
+            panic!("search must target the real compound control")
+        };
+        assert!(if routing {
+            matches!(option.kind, Kind::OpenExternally)
+        } else {
+            matches!(option.kind, Kind::Shortcuts)
+        });
+    }
     assert!(ours.len() > 100, "{} suggestions", ours.len());
 }
 
@@ -1956,5 +2065,73 @@ fn export_default_directory_matches_recorded_blank_literal_and_portable_paths() 
             .path()
             .join("synthetic exports 日本")
             .to_string_lossy()
+    );
+}
+
+#[test]
+fn eye_menu_preferences_follow_all_reference_combinations_without_saving_detached_edits() {
+    use hydrus_gui_model::options::{Editor, Row as EditorRow};
+    use serde_json::json;
+
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let fixture = hydrus_testkit::fixture_json("viewer_eye_menu.json");
+    let (_dirs, store) = fixture_store(&recorded);
+    let settings = store.read(Settings::load).unwrap();
+    let eye = &settings.viewer_eye_menu;
+    assert_eq!(
+        json!([
+            eye.collapse_window,
+            eye.collapse_hovers,
+            eye.collapse_rendering
+        ]),
+        fixture["initial"]
+    );
+    let mut editor = Editor::new(settings.clone());
+    let page = editor
+        .page_names()
+        .iter()
+        .position(|name| *name == "media viewer hovers")
+        .unwrap();
+    editor.show_page(page);
+    let rows: Vec<_> = fixture["labels"].as_array().unwrap().iter().map(|label| {
+        editor.rows().iter().position(|row| matches!(row, EditorRow::Opt {option,..} if option.label == label.as_str().unwrap())).unwrap()
+    }).collect();
+    for event in fixture["events"].as_array().unwrap() {
+        for (row, value) in rows.iter().zip(event["values"].as_array().unwrap()) {
+            editor.check(*row, value.as_bool().unwrap());
+        }
+        let (applied, _, problems) = editor.applied();
+        assert!(problems.is_empty(), "{problems:?}");
+        let eye = applied.viewer_eye_menu;
+        assert_eq!(
+            json!([
+                eye.collapse_window,
+                eye.collapse_hovers,
+                eye.collapse_rendering
+            ]),
+            event["stored"]
+        );
+        assert_eq!(store.read(Settings::load).unwrap(), settings);
+    }
+    // The existing Options storage merge preserves live eye-menu defaults,
+    // even when the detached Options snapshot changes a collapse flag.
+    let mut applied = settings.clone();
+    applied.viewer_eye_menu.collapse_window = false;
+    let baseline = settings.clone();
+    store
+        .write(move |ctx| {
+            let mut live: hydrus_store::settings::ViewerEyeMenuSettings =
+                hydrus_store::settings::get(ctx.conn())?;
+            live.start_frameless = true;
+            hydrus_store::settings::set(ctx.conn(), &live)?;
+            applied.save(ctx.conn(), &baseline)
+        })
+        .unwrap();
+    let saved = store.read(Settings::load).unwrap().viewer_eye_menu;
+    assert!(!saved.collapse_window);
+    assert!(saved.start_frameless);
+    assert_eq!(
+        saved.collapse_hovers,
+        settings.viewer_eye_menu.collapse_hovers
     );
 }

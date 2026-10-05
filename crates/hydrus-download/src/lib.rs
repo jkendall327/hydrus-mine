@@ -36,6 +36,7 @@ mod predict;
 pub mod queue;
 mod seeds;
 pub mod subscriptions;
+mod work_slots;
 
 pub use gallery::GalleryOutcome;
 pub use queue::{QueueRunner, UrlQueueStatus};

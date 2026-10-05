@@ -474,6 +474,31 @@ pub fn copy_seeds(conn: &Connection, from: i64, to: i64) -> Result<()> {
     Ok(())
 }
 
+// Persist a high-water mark so a retired worker's queue identity is never
+// recycled when SQLite removes the highest row. Existing stores bootstrap from
+// their current maximum before Store::open exposes any worker owners.
+// Allocation happens within the caller's writer transaction.
+#[derive(Debug, Default, Serialize, Deserialize)]
+struct QueueSequence(i64);
+impl crate::settings::Setting for QueueSequence {
+    const KEY: &'static str = "import_queue_sequence";
+}
+
+/// Persist pre-existing queue identities before a runner can own them.
+/// Reopening an already-initialized store does not rewrite its settings.
+pub(crate) fn initialize_sequence(conn: &Connection) -> Result<()> {
+    let saved: QueueSequence = crate::settings::get(conn)?;
+    let maximum: i64 = conn.query_row(
+        "SELECT coalesce(max(queue_id), 0) FROM import_queues",
+        [],
+        |row| row.get(0),
+    )?;
+    if maximum > saved.0 {
+        crate::settings::set(conn, &QueueSequence(maximum))?;
+    }
+    Ok(())
+}
+
 /// Make a queue.
 pub fn create_queue(
     conn: &Connection,
@@ -483,11 +508,23 @@ pub fn create_queue(
     options: &ImportOptionsSlice,
     now: i64,
 ) -> Result<i64> {
+    let saved: QueueSequence = crate::settings::get(conn)?;
+    let maximum: i64 = conn.query_row(
+        "SELECT coalesce(max(queue_id), 0) FROM import_queues",
+        [],
+        |row| row.get(0),
+    )?;
+    let id = saved
+        .0
+        .max(maximum)
+        .checked_add(1)
+        .ok_or_else(|| StoreError::Invalid("import queue identities are exhausted".into()))?;
+    crate::settings::set(conn, &QueueSequence(id))?;
     conn.prepare_cached(
-        "INSERT INTO import_queues (kind, name, page_key, created, options, extra) VALUES (?, ?, ?, ?, ?, '{}')",
+        "INSERT INTO import_queues (queue_id, kind, name, page_key, created, options, extra) VALUES (?, ?, ?, ?, ?, ?, '{}')",
     )?
-    .execute(params![kind.as_str(), name, page_key, now, json(options)])?;
-    Ok(conn.last_insert_rowid())
+    .execute(params![id, kind.as_str(), name, page_key, now, json(options)])?;
+    Ok(id)
 }
 
 /// A local import's settings (`HDDImport`'s), kept as its queue's extra.
@@ -1153,7 +1190,7 @@ pub fn file_seeds(conn: &Connection, queue: i64) -> Result<Vec<FileSeed>> {
 pub fn update_file_seed(conn: &Connection, seed: &FileSeed) -> Result<()> {
     conn.prepare_cached(
         "UPDATE file_seeds SET data = ?, modified = ?, source_time = ?, status = ?, note = ?, referral_url = ?, metadata = ?
-         WHERE seed_id = ?",
+         WHERE seed_id = ? AND queue_id = ?",
     )?
     .execute(params![
         seed.data,
@@ -1163,7 +1200,8 @@ pub fn update_file_seed(conn: &Connection, seed: &FileSeed) -> Result<()> {
         seed.note,
         seed.referral_url,
         json(&seed.meta),
-        seed.id
+        seed.id,
+        seed.queue_id
     ])?;
     Ok(())
 }
@@ -1426,7 +1464,7 @@ pub fn next_gallery_seed(conn: &Connection, queue: i64) -> Result<Option<Gallery
 pub fn update_gallery_seed(conn: &Connection, seed: &GallerySeed) -> Result<()> {
     conn.prepare_cached(
         "UPDATE gallery_seeds SET modified = ?, status = ?, note = ?, referral_url = ?, can_generate_more_pages = ?, metadata = ?
-         WHERE seed_id = ?",
+         WHERE seed_id = ? AND queue_id = ?",
     )?
     .execute(params![
         seed.modified,
@@ -1435,7 +1473,8 @@ pub fn update_gallery_seed(conn: &Connection, seed: &GallerySeed) -> Result<()> 
         seed.referral_url,
         seed.can_generate_more_pages,
         json(&seed.meta),
-        seed.id
+        seed.id,
+        seed.queue_id
     ])?;
     Ok(())
 }
@@ -1460,6 +1499,53 @@ mod tests {
             referral_url: None,
             meta: FileSeedMeta::default(),
         }
+    }
+
+    #[test]
+    fn deleted_queue_identity_is_not_recycled_and_late_seed_updates_ignore_successors() {
+        let conn = conn();
+        let old = create_queue(
+            &conn,
+            QueueKind::Urls,
+            "same",
+            None,
+            &ImportOptionsSlice::default(),
+            0,
+        )
+        .unwrap();
+        add_file_seeds(&conn, old, &[seed("https://slots.example/old")], false, 0).unwrap();
+        let mut retired = file_seeds(&conn, old).unwrap().remove(0);
+        delete_queue(&conn, old).unwrap();
+        let new = create_queue(
+            &conn,
+            QueueKind::Urls,
+            "same",
+            None,
+            &ImportOptionsSlice::default(),
+            0,
+        )
+        .unwrap();
+        assert!(new > old);
+        add_file_seeds(&conn, new, &[seed("https://slots.example/new")], false, 0).unwrap();
+        let current = file_seeds(&conn, new).unwrap();
+        assert_eq!(
+            current[0].id, retired.id,
+            "SQLite reused the seed row identity"
+        );
+        retired.status = SeedStatus::Error;
+        update_file_seed(&conn, &retired).unwrap();
+        assert_eq!(file_seeds(&conn, new).unwrap(), current);
+        delete_queue(&conn, new).unwrap();
+        let next = create_queue(
+            &conn,
+            QueueKind::Urls,
+            "same",
+            None,
+            &ImportOptionsSlice::default(),
+            0,
+        )
+        .unwrap();
+        assert!(next > new, "high-water mark survives an empty queue table");
     }
 
     #[test]

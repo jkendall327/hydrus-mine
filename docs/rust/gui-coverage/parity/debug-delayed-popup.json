@@ -1,0 +1,454 @@
+{
+  "schema_version": 1,
+  "agent": "debug-delayed-popup",
+  "baseline_git_head": "a2c23aba63d1d7d043f16ae615b310dfced72ac7",
+  "source_commit": "e7843d2c94564e076c73366723eedf3558735491",
+  "implementation_commits": [
+    "43c1fb79a86ecfd321efb3d61c082b4de82e3291",
+    "e7843d2c94564e076c73366723eedf3558735491"
+  ],
+  "frozen_original_inventory": {
+    "path": "docs/rust/gui-coverage/reference-inventory.json",
+    "git_head": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+    "sha256": "bf09a4fea025c553416ca52efdd0b2e410dbf0b8248c0c41b6a26330967bbd0e",
+    "before": {
+      "audit-options-help-debug-action-make-a-popup-in-five-seconds": "missing"
+    }
+  },
+  "eligibility": {
+    "completed_ledger_path": "docs/rust/gui-coverage/overnight/progress.json",
+    "completed_ledger_at_base_sha256": "168d8057e3b023cf822af82b703b4fe018baba266694d06b5c7ae79bf1d20ca6",
+    "completed_array_lengths": [
+      240,
+      51
+    ],
+    "listed_ids_already_completed": [],
+    "existing_parity_packets_with_listed_ids": [],
+    "parity_json_packets_checked": 99,
+    "note": "Exact original435 concrete action frozenMissing; absent both completed arrays and every predecessor packet JSON string/schema before authoring. No import-delete promotion."
+  },
+  "proposed_completed_count": 1,
+  "eligible_concrete_first_pass_count": 1,
+  "parent_promotions": 0,
+  "claims": [
+    {
+      "id": "audit-options-help-debug-action-make-a-popup-in-five-seconds",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "change_kind": "implementation",
+      "countAsCompletedLeaf": true,
+      "source_commit": "e7843d2c94564e076c73366723eedf3558735491",
+      "implementation_commits": [
+        "43c1fb79a86ecfd321efb3d61c082b4de82e3291",
+        "e7843d2c94564e076c73366723eedf3558735491"
+      ],
+      "behavior": "Enable the genuinely absent Help > debug > gui actions > make a popup in five seconds after the existing long-text action. Each invocation owns an independent monotonic five-second deadline and publishes no JobStatus early. At deadline publish the exact This is a delayed popup message. into the real Store/native toaster as done, nonpausable/noncancellable/no-title ordinary independently dismissible jobs. Overlapping launches retain prior deadlines and produce separate keys exactly once. Reuse the existing per-binding debug Control, weak earliest-deadline single-shot timer and 200 ms liveness/dismissal polling; long text/title schedules and dismissal pruning remain. Hidden Main refuses new launches but existing scheduled publications progress. Exit Cancel preserves pending work; accepted exit/rebind/Bound destruction/lost MainWindow release pending deadlines/timer permanently, and retained/re-shown old controls cannot resurrect work. Actual Store reopening retains published jobs.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 3644,
+        "symbol": "'make a popup in five seconds'",
+        "line_sha256": "97c380d407cad899eabf01a88cdd6605150560f80ac41c8fa7b69296df1457b9",
+        "commit": "e7843d2c94564e076c73366723eedf3558735491"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_long_popup.rs",
+          "line": 15,
+          "symbol": "const DELAYED_MESSAGE:",
+          "line_sha256": "c06dfe68197b262da4fb73afdaef9380560c6f3dddd4f85fa3870080f0bb6cc2",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_long_popup.rs",
+          "line": 16,
+          "symbol": "const DELAY:",
+          "line_sha256": "6f576475cacf9ec371296735c942ae62664b57d8d3bda1ee03b724790af77dfa",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_long_popup.rs",
+          "line": 42,
+          "symbol": "fn live(&self)",
+          "line_sha256": "836ab6be2cd8a4867dc62854d5de4884be6b9388bc5ade9a58745b3e52f066ee",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_long_popup.rs",
+          "line": 45,
+          "symbol": "fn retire(&self)",
+          "line_sha256": "711991b1c2d1ec8f1f831a6816e57c2d81aceb89098105bfe5d7a57494f2f909",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_long_popup.rs",
+          "line": 55,
+          "symbol": "fn arm(self:",
+          "line_sha256": "80f33d651df125585d2524bb73687f35962dad86f593fc81b712aae8ac126c6c",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_long_popup.rs",
+          "line": 75,
+          "symbol": "Duration::from_millis(200)",
+          "line_sha256": "acc4b950a2c0bc46f954d1c34566ef8cdf0553c1e97e4fd037fe7122432f8f1f",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_long_popup.rs",
+          "line": 83,
+          "symbol": "fn tick(self:",
+          "line_sha256": "9c46cc0c7c75ab3436abaf916a1d994c04db496dcc039eca1755b13516a320a4",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_long_popup.rs",
+          "line": 114,
+          "symbol": "partition(|due| *due <= now)",
+          "line_sha256": "1e41dd25bc56dd80a3af8a436be92717d361542d1a6fc68b59cc508d7874ea3f",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_long_popup.rs",
+          "line": 140,
+          "symbol": "for _ in delayed_due",
+          "line_sha256": "70d2e4b85aac0993e393a50c447b71315df1680931cc807fcb5796aa4bf05953",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_long_popup.rs",
+          "line": 168,
+          "symbol": "impl Drop for State",
+          "line_sha256": "6dd323766e413d24ba3bc1d92c0347f8c5eae7921079839f319bb2dceac4c6ef",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_long_popup.rs",
+          "line": 178,
+          "symbol": "impl Drop for Owner",
+          "line_sha256": "3806ad3163a6069fe80abc5fcf2967c2e112e3b78368233667e861a4c012f1dc",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_long_popup.rs",
+          "line": 219,
+          "symbol": "pub fn set_clock",
+          "line_sha256": "16f9a8bd72a93170d88360b7c64ae7ccd4dce7b4807ea2546690243dfb4f0608",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_long_popup.rs",
+          "line": 238,
+          "symbol": "pub fn start_delayed_popup",
+          "line_sha256": "c61504c2cd2263a533f94fdc1127f581f56d45129a102be9d4988abad065c08b",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_long_popup.rs",
+          "line": 249,
+          "symbol": "self.0.delayed.borrow_mut().push",
+          "line_sha256": "f1d66543824571c8be8f5269207be2058c9c4361ad37d122b2ce573ff315db35",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_long_popup.rs",
+          "line": 234,
+          "symbol": "pub fn pending_delayed_popups",
+          "line_sha256": "d06b67878bc5aac5ed9b35184106a2bc5d4318451c79a31bd7712bcacd7a8b39",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_long_popup.rs",
+          "line": 263,
+          "symbol": "pub fn start(&self)",
+          "line_sha256": "9e82dfda0376630b4ac69800e79e6f13f902a969fa7006666a3d9b96f8063543",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 265,
+          "symbol": "DebugDelayedTextPopup,",
+          "line_sha256": "52cedd827142b945bf9fcb84ba7ef382e4bf2833c18ab1bbece0a12792a6dc86",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 1261,
+          "symbol": "\"make a popup in five seconds\"",
+          "line_sha256": "29f925c6e3a725821807e651eb65d1441b3f4f25b379e5b4e7ae4fbb59bb0a90",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/menu_bar.rs",
+          "line": 757,
+          "symbol": "Command::DebugDelayedTextPopup =>",
+          "line_sha256": "bee49ba24d91dcece514d5a06f6d8d1253a6d0e717db4cdf0c0f90dddf2a6e46",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 561,
+          "symbol": "let debug_long_popup = debug_long_popup::Control::new",
+          "line_sha256": "eca5310a80708e1c3b571e2713cccafed142c576b90e76d7c9aeed682301ce73",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 2949,
+          "symbol": "debug_long_popup.set_published",
+          "line_sha256": "8a437a318ac7007e9bd22b26f81133394605e75a89555af68177fc0e4db61e86",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 623,
+          "symbol": "debug_long_popup.retire();",
+          "line_sha256": "fbc37dd05ae3505591d3eb7351a88f39ae16ce121d0522ebdf4602a680b05ca3",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 4628,
+          "symbol": "let debug_long_popup_owner = debug_long_popup.owner();",
+          "line_sha256": "53d4964d6312a116844afec57f90e55c1451278c9360d224d05b11edf0984aa3",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_delayed_popup.rs",
+          "line": 49,
+          "symbol": "fn actual_menu_overlapping_deadlines_hidden_progress_store_reopen_and_rendered_cards",
+          "line_sha256": "b9066beec7509e07ecb84ae68d741efac67d3968a6ae63a3001e199fb7a08ee1",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_delayed_popup.rs",
+          "line": 138,
+          "symbol": "fn long_text_updates_and_dismissal_do_not_starve_a_pending_delayed_popup",
+          "line_sha256": "3c5452a20fe68c454fb4fe3cbbbc223ba0e1ec8709148dcb22f6e87d90231710",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_delayed_popup.rs",
+          "line": 177,
+          "symbol": "fn pending_delayed_jobs_retire_permanently_on_accepted_exit_rebind_and_owner_destruction",
+          "line_sha256": "81235393c62c88e62c11ece07bb6d5808742924bf0d3ec1049606052478a7cdf",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_delayed_popup.rs",
+          "line": 87,
+          "symbol": "[(4999, 0), (5000, 1), (5999, 1), (6000, 2)]",
+          "line_sha256": "35cdd1f15822029f8259438c59ebbca14479b0b79cf1ee37b32fd41af28cdc89",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_delayed_popup.rs",
+          "line": 109,
+          "symbol": "let reopened = Store::open",
+          "line_sha256": "ab1fb8879037517fb7d8157075d4873749372c89ca326426dce56994487103ee",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_delayed_popup.rs",
+          "line": 120,
+          "symbol": "debug_delayed_popup_native.png",
+          "line_sha256": "84c7a4db508284837a02177e214c4545b327506ffd282842742a4ebfd44576f5",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_delayed_popup.rs",
+          "line": 252,
+          "symbol": "weak.upgrade().is_none()",
+          "line_sha256": "f6128bbf7f7b5ac0bbecd3d2dde0c1efd222a93e2e3d343f99d1702314fefd28",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "oracle/record_debug_delayed_popup.py",
+          "line": 34,
+          "symbol": "job = original_later",
+          "line_sha256": "414121b04a4d8cfed72f35c030ed11d1e5dff524ca94ceb36ac6d20322f678d6",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "oracle/record_debug_delayed_popup.py",
+          "line": 48,
+          "symbol": "return original_pub",
+          "line_sha256": "02c279e942496ab380fa5effab658d27830156b73fab2ccbfbdf26c5b6b6c267",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "oracle/record_debug_delayed_popup.py",
+          "line": 67,
+          "symbol": "action.trigger()",
+          "line_sha256": "33a93bceb12a0939385d898be66ade56a12b6b7660106745642af03c05985e8b",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "oracle/record_debug_delayed_popup.py",
+          "line": 70,
+          "symbol": "gui.hide()",
+          "line_sha256": "984753568c8f91f8fdca2dced35a9e2d51e78be4c20ceb28e03195ab8148f039",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "oracle/record_debug_delayed_popup.py",
+          "line": 71,
+          "symbol": "[4900, 5300, 5900, 6400]",
+          "line_sha256": "1e0fe0169f87b99c124735b34bc07be3be914af594ef1572a52992f8477d2ce2",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "oracle/record_debug_delayed_popup.py",
+          "line": 78,
+          "symbol": "manager._CheckPending()",
+          "line_sha256": "a201281aac0ac8fd298228b8818313bce87bb9b50c695f59251e92a061cfa0e1",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "oracle/record_debug_delayed_popup.py",
+          "line": 89,
+          "symbol": "manager.grab().save",
+          "line_sha256": "2ac41cb71d2ecb41afcbfd0da872120b395af0d25f11e4f48621ba71c9eadcc3",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "oracle/record_debug_delayed_popup.py",
+          "line": 122,
+          "symbol": "conn.close()",
+          "line_sha256": "4a43ee484cf46111235b28b4e1c5cae4d8e7ed44b586d411c6d3c7b664f991ea",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/main.rs",
+          "line": 205,
+          "symbol": "mod debug_delayed_popup;",
+          "line_sha256": "7a2b0b8334821c990d82d348b30aa2adb596e2eefa698526c30c7f66b5fd7ad3",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+          "line": 49,
+          "symbol": "fn kept(",
+          "line_sha256": "fcc398e9e63b965062181c2c98d04aa9273d7b5f55c89b8988f9d172f4017b48",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+          "line": 91,
+          "symbol": "gui[\"entries\"] = serde_json::json!([long_text, delayed])",
+          "line_sha256": "197707264661e55e651c83f7b571c7b3b1ca2dd82e0b55b432a634b4a0c46958",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+          "line": 122,
+          "symbol": "fn compare(",
+          "line_sha256": "1ce9a97c476e423e5eb3c335db9cd981e16cf86118711cb5400536fdde0fba04",
+          "commit": "e7843d2c94564e076c73366723eedf3558735491"
+        }
+      ],
+      "tests": [
+        "Existing model/main_menu::recorded main menu golden exact length/order/enabled assertions extended to include the actual recorded delayed item alongside preserved long-text/memory entries",
+        "gui/debug_delayed_popup::actual_menu_overlapping_deadlines_hidden_progress_store_reopen_and_rendered_cards",
+        "gui/debug_delayed_popup::long_text_updates_and_dismissal_do_not_starve_a_pending_delayed_popup",
+        "gui/debug_delayed_popup::pending_delayed_jobs_retire_permanently_on_accepted_exit_rebind_and_owner_destruction",
+        "Existing gui/debug_long_popup three exact124-update/overlap/dismissal/lifecycle tests preserved unchanged"
+      ],
+      "limits": [
+        "Conditional source-only implementation proposal; hosted strict Clippy/Rust/native replay and exact native PNG inspection remain pending. No local Cargo/Rust builds/tests/mutations executed.",
+        "Actual Qt QAction/genuine SingleJob/JobStatus/pub/toaster and real elapsed observations are recorded without replacing scheduler/clock. Native authored tests use a distinct owner-provided deterministic monotonic clock, normalizing intended launch offsets to0/1000 ms; they do not claim physically running a five-second native timer locally.",
+        "Native timer uses earliest owned deadline with a200 ms liveness check; event-loop scheduling can deliver after the deadline, as actual Qt observed5054/6002 ms. Exact nominal delay/content and no early publication are claimed, not wall-clock pixel equality.",
+        "Native permanent GUI-retirement disposal is stronger than independent reference background callbacks. Already-published completed jobs retain existing toaster dismissal ownership; broader debug/job/cookie/freeze/monitor/API families stay outside this finite leaf.",
+        "Import-favourites delete is already implemented with an explicit prior Partial/count=false packet and single-row reference ValueError; it receives no evidence-only completion or source changes. Parents, aliases and new native IDs receive zero credit."
+      ]
+    }
+  ],
+  "reference": {
+    "recorder": "oracle/record_debug_delayed_popup.py",
+    "fixture": "oracle/fixtures/debug_delayed_popup.json",
+    "fixture_sha256": "18e728133c806d015c1e2d5180fc4cb37cb871676b378105030d67d1a1c19924",
+    "render": "oracle/fixtures/debug_delayed_popup.png",
+    "render_sha256": "1dd253d151e5750ec0bed2a4679cffaa01b9a238df00265930a638fb10f625dd",
+    "executed_utc": "2026-10-05 13:14:50\u201313:14:59 UTC",
+    "commit": "e7843d2c94564e076c73366723eedf3558735491",
+    "result": "Genuine actual Qt Help QAction forwards real CallLater unchanged: two real background SingleJobs delay5 seconds, actual ShowTextClient creates ordinary JobStatus and forwarded pub enters actual toaster. Main hidden for existing work. Unmodified monotonic observer records5054.124/6002.523 ms publication, secondlaunch1001.516 ms, no publication4900ms; two actual cards afterreShow. Real Qt PNG inspected; private API listener disabled; actual jobs finished before clean shutdown.",
+    "source_anchors": [
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 3644,
+        "symbol": "'make a popup in five seconds'",
+        "line_sha256": "97c380d407cad899eabf01a88cdd6605150560f80ac41c8fa7b69296df1457b9",
+        "commit": "e7843d2c94564e076c73366723eedf3558735491"
+      },
+      {
+        "relativepath": "hydrus/core/HydrusController.py",
+        "line": 237,
+        "symbol": "def CallLater(",
+        "line_sha256": "3850cee0d852d22e3a4351e28d4c59da7bc20a1f26d1f46035511f9cbd66179c",
+        "commit": "e7843d2c94564e076c73366723eedf3558735491"
+      },
+      {
+        "relativepath": "hydrus/core/HydrusController.py",
+        "line": 78,
+        "symbol": "def _GetAppropriateJobScheduler(",
+        "line_sha256": "1620549fd00c14ccd44af0baeca8bef649bb113a5d95bb0c096fab38d672d4e6",
+        "commit": "e7843d2c94564e076c73366723eedf3558735491"
+      },
+      {
+        "relativepath": "hydrus/core/processes/HydrusThreading.py",
+        "line": 1142,
+        "symbol": "class SingleJob(",
+        "line_sha256": "7f4f654df7c1c75ec9f86abaa499527e5c30cdec89fd40dc76486010eb1c3c4c",
+        "commit": "e7843d2c94564e076c73366723eedf3558735491"
+      },
+      {
+        "relativepath": "hydrus/client/ClientData.py",
+        "line": 158,
+        "symbol": "def ShowTextClient(",
+        "line_sha256": "e48d0c49c01e2541faa254397e09a752470c59df84eb79159fcb282157890325",
+        "commit": "e7843d2c94564e076c73366723eedf3558735491"
+      },
+      {
+        "relativepath": "hydrus/client/gui/ClientGUIPopupMessages.py",
+        "line": 1096,
+        "symbol": "def AddMessage(",
+        "line_sha256": "f595fdc0b080b71a832909d93f08c50fc28576cb77c441ca018d95b8ba91d2a5",
+        "commit": "e7843d2c94564e076c73366723eedf3558735491"
+      },
+      {
+        "relativepath": "hydrus/client/ClientThreading.py",
+        "line": 43,
+        "symbol": "self._done_event.set()",
+        "line_sha256": "a266da61bd7e12981b30243573c3969a28e4db9c997499292a0fa4654afa3d79",
+        "commit": "e7843d2c94564e076c73366723eedf3558735491"
+      }
+    ]
+  },
+  "validation": {
+    "executed": [
+      "Actual serialized Qt QAction/background five-second scheduler/JobStatus/pub/toaster with overlapping hidden-Main launches and clean shutdown",
+      "Actual Qt PNG individually inspected",
+      "Both completed arrays240/51 + all99 predecessor packet schemas/string occurrences + frozen concrete Missing eligibility",
+      "Direct rustfmt --check/Python py_compile/git diff --check",
+      "Cached Slint source compilation without Cargo build"
+    ],
+    "authored_not_executed": [
+      "Existing model/main_menu::recorded main menu golden exact length/order/enabled assertions extended to include the actual recorded delayed item alongside preserved long-text/memory entries",
+      "gui/debug_delayed_popup::actual_menu_overlapping_deadlines_hidden_progress_store_reopen_and_rendered_cards",
+      "gui/debug_delayed_popup::long_text_updates_and_dismissal_do_not_starve_a_pending_delayed_popup",
+      "gui/debug_delayed_popup::pending_delayed_jobs_retire_permanently_on_accepted_exit_rebind_and_owner_destruction",
+      "Existing gui/debug_long_popup three exact124-update/overlap/dismissal/lifecycle tests preserved unchanged"
+    ],
+    "pending": [
+      "Hosted strict Clippy/Rust/native replay",
+      "Exact native debug_delayed_popup_native.png inspection"
+    ]
+  },
+  "independent_review": {
+    "reviewer": "appearance_final_review",
+    "mode": "read-only source/reference/owned scheduler/lifecycle/pinned packet audit; no local Rust",
+    "status": "Accepted immutable43c1fb79a86ecfd321efb3d61c082b4de82e3291 and final e7843d2c94564e076c73366723eedf3558735491 source; genuine Qt fixture/PNG and all50 recursive source/symbol/hash/pin/frozen/ledger/no-duplicate fingerprints independently verified. Hosted Rust/native replay and exact native PNG inspection remain pending."
+  },
+  "canonical_changes": false,
+  "completed_ledger_changes": false,
+  "parents_counted": false
+}

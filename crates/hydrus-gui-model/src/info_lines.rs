@@ -7,11 +7,12 @@
 
 use hydrus_core::Mime;
 use hydrus_core::media_viewer::InfoLineSettings;
-use hydrus_core::numbers::{human_bytes, human_bytes_ratio, human_int, resolution_text};
+use hydrus_core::numbers::{human_bytes_ratio_with_figures, human_int, resolution_text};
 use hydrus_core::time::TimestampMs;
-use hydrus_core::time::{duration_ms_to_pretty, timestamp_to_pretty_time_delta};
+use hydrus_core::time::duration_ms_to_pretty;
 use hydrus_store::media::{FileFlags, MediaResult};
 use hydrus_store::services::{ServiceKind, ServiceRegistry};
+use hydrus_store::settings::GuiFormatting;
 
 /// One line: its text, whether it is interesting, and, for a submenu, its
 /// lines.
@@ -40,7 +41,17 @@ pub fn top_line(
     settings: &InfoLineSettings,
     now_ms: i64,
 ) -> String {
-    interesting(media, services, settings, now_ms).join(" | ")
+    top_line_with_format(media, services, settings, now_ms, &GuiFormatting::default())
+}
+
+pub fn top_line_with_format(
+    media: &MediaResult,
+    services: &ServiceRegistry,
+    settings: &InfoLineSettings,
+    now_ms: i64,
+    formatting: &GuiFormatting,
+) -> String {
+    interesting(media, services, settings, now_ms, formatting).join(" | ")
 }
 
 /// A page's status bar's description of the one file selected: the
@@ -51,7 +62,17 @@ pub fn status_line(
     settings: &InfoLineSettings,
     now_ms: i64,
 ) -> String {
-    interesting(media, services, settings, now_ms).join(", ")
+    status_line_with_format(media, services, settings, now_ms, &GuiFormatting::default())
+}
+
+pub fn status_line_with_format(
+    media: &MediaResult,
+    services: &ServiceRegistry,
+    settings: &InfoLineSettings,
+    now_ms: i64,
+    formatting: &GuiFormatting,
+) -> String {
+    interesting(media, services, settings, now_ms, formatting).join(", ")
 }
 
 fn interesting(
@@ -59,8 +80,9 @@ fn interesting(
     services: &ServiceRegistry,
     settings: &InfoLineSettings,
     now_ms: i64,
+    formatting: &GuiFormatting,
 ) -> Vec<String> {
-    info_lines(media, services, settings, now_ms, true)
+    info_lines_with_format(media, services, settings, now_ms, true, formatting)
         .into_iter()
         .filter(|l| l.submenu.is_none())
         .map(|l| l.text)
@@ -77,11 +99,29 @@ pub fn info_lines(
     now_ms: i64,
     only_interesting: bool,
 ) -> Vec<InfoLine> {
+    info_lines_with_format(
+        media,
+        services,
+        settings,
+        now_ms,
+        only_interesting,
+        &GuiFormatting::default(),
+    )
+}
+
+#[allow(clippy::too_many_lines)]
+pub fn info_lines_with_format(
+    media: &MediaResult,
+    services: &ServiceRegistry,
+    settings: &InfoLineSettings,
+    now_ms: i64,
+    only_interesting: bool,
+    formatting: &GuiFormatting,
+) -> Vec<InfoLine> {
     let now = now_ms.div_euclid(1000);
     // (`TimestampToPrettyTimeDelta` of whole seconds)
-    let ago = |ms: Option<TimestampMs>| match ms.map(|t| t.0) {
-        Some(ms) => timestamp_to_pretty_time_delta(ms.div_euclid(1000), now, " ago"),
-        None => "at an unknown time".to_owned(),
+    let ago = |ms: Option<TimestampMs>| {
+        crate::gui_format::timestamp(formatting, ms.map(|t| t.0.div_euclid(1000)), now)
     };
     let is_interesting = |a: TimestampMs, b: TimestampMs| {
         let (d1, d2) = ((a.0 - now_ms).abs(), (b.0 - now_ms).abs());
@@ -93,7 +133,11 @@ pub fn info_lines(
     };
 
     // size, type, resolution, duration, frames, audio, words
-    let mut text = format!("{} {}", human_bytes(info.size), info.mime.human_name());
+    let mut text = format!(
+        "{} {}",
+        crate::gui_format::bytes(formatting, info.size),
+        info.mime.human_name()
+    );
     if let (Some(width), Some(height)) = (info.width, info.height) {
         let resolution = if settings.nice_resolutions {
             resolution_text(u64::from(width), u64::from(height))
@@ -138,7 +182,11 @@ pub fn info_lines(
     if let Some(duration) = bitrate_duration_ms
         && duration > 0
     {
-        let rate = human_bytes_ratio(u128::from(info.size) * 1000, u128::from(duration));
+        let rate = human_bytes_ratio_with_figures(
+            u128::from(info.size) * 1000,
+            u128::from(duration),
+            formatting.figures,
+        );
         lines.push(InfoLine::new(format!("approx bitrate: {rate}/s"), false));
     }
     if let Some(original) = info.original_mime {

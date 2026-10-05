@@ -41,7 +41,7 @@ mod thumbnail;
 mod tools;
 pub mod visual;
 
-pub use blurhash::blurhash;
+pub use blurhash::{blurhash, decode_blurhash};
 pub use detect::set_comic_book_detection;
 pub use error::MediaError;
 pub use ffmpeg::Ffmpeg;
@@ -63,6 +63,12 @@ pub use tools::{Analysis, FileFlags, FileInfo, MediaTools, UGOIRA_DEFAULT_FRAME_
 /// TIFF, QOI); use [`MediaTools::load_image`] for everything else.
 pub fn decode_image(data: &[u8]) -> error::Result<Raster> {
     tools::raster_from_bytes(data, true)
+}
+
+/// Decode with a captured embedded ICC profile policy. Ignoring an embedded
+/// profile still permits the reference's PNG gamma/chromaticity conversion.
+pub fn decode_image_with_icc(data: &[u8], normalise_icc: bool) -> error::Result<Raster> {
+    tools::raster_from_bytes_with_icc(data, true, normalise_icc)
 }
 
 /// OpenCV-exact resizes, exposed for tests and callers that need the

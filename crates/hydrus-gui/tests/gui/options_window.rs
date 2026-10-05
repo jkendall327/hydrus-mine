@@ -62,6 +62,168 @@ fn tabs(ui: &MainWindow) -> Vec<String> {
 }
 
 #[test]
+fn most_used_child_stages_each_service_cancels_descendants_and_persists_options() {
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let f = hydrus_testkit::fixture_json("tag_suggestions.json");
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "tag suggestions");
+    options.invoke_number_edited(row(&options, "Width of suggested tags columns: ").0, 240);
+    options.invoke_choice_chosen(row(&options, "Column layout: ").0, 1);
+    options.invoke_choice_chosen(row(&options, "Default notebook page: ").0, 3);
+    options.invoke_most_used_tags_clicked();
+    let slots = &bound.options_suggested_tags_slot;
+    let edit = slots.editor.borrow().as_ref().unwrap().clone_strong();
+    let image_index = (0..100)
+        .take_while(|&n| windows.get(n).is_some())
+        .last()
+        .unwrap();
+    let mine = edit
+        .get_services()
+        .iter()
+        .position(|s| s == "my tags")
+        .unwrap();
+    edit.invoke_service_chosen(i32::try_from(mine).unwrap());
+    edit.invoke_edit_tags();
+    let child = slots.tags.borrow().as_ref().unwrap().clone_strong();
+    for tag in f["edited"]["tags"].as_array().unwrap() {
+        child.invoke_edited(tag.as_str().unwrap().into());
+        child.invoke_entered();
+    }
+    options.invoke_apply();
+    assert!(bound.options.borrow().is_some());
+    child.invoke_apply();
+    assert_eq!(
+        serde_json::json!(
+            edit.get_tags()
+                .iter()
+                .map(|tag| tag.to_string())
+                .collect::<Vec<_>>()
+        ),
+        f["edited"]["tags"]
+    );
+    let pixels = headless::render(&windows.get(image_index).unwrap(), 520, 440);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("most-used-tags-options.png"),
+        &pixels,
+        520,
+        440,
+    )
+    .unwrap();
+    edit.invoke_edit_tags();
+    let retired = slots.tags.borrow().as_ref().unwrap().clone_strong();
+    retired.invoke_edited("parity:cancelled".into());
+    retired.invoke_entered();
+    edit.invoke_cancel();
+    retired.invoke_apply();
+    assert!(slots.editor.borrow().is_none() && slots.tags.borrow().is_none());
+    assert!(
+        !store
+            .read(hydrus_store::settings::get::<hydrus_store::settings::TagAutocompleteTabs>)
+            .unwrap()
+            .most_used
+            .values()
+            .flatten()
+            .any(|tag| tag == "parity:cancelled")
+    );
+    options.invoke_most_used_tags_clicked();
+    let edit = slots.editor.borrow().as_ref().unwrap().clone_strong();
+    edit.invoke_service_chosen(i32::try_from(mine).unwrap());
+    edit.invoke_edit_tags();
+    let child = slots.tags.borrow().as_ref().unwrap().clone_strong();
+    for tag in f["edited"]["tags"].as_array().unwrap() {
+        child.invoke_edited(tag.as_str().unwrap().into());
+        child.invoke_entered();
+    }
+    child.invoke_apply();
+    let second = edit
+        .get_services()
+        .iter()
+        .position(|s| s == "second tags")
+        .unwrap();
+    edit.invoke_service_chosen(i32::try_from(second).unwrap());
+    edit.invoke_edit_tags();
+    let child = slots.tags.borrow().as_ref().unwrap().clone_strong();
+    child.invoke_edited("parity:second".into());
+    child.invoke_entered();
+    child.invoke_apply();
+    edit.invoke_service_chosen(i32::try_from(mine).unwrap());
+    assert_eq!(
+        serde_json::json!(
+            edit.get_tags()
+                .iter()
+                .map(|tag| tag.to_string())
+                .collect::<Vec<_>>()
+        ),
+        f["retained"]
+    );
+    edit.invoke_apply();
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .to_hex();
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<hydrus_store::settings::TagAutocompleteTabs>)
+            .unwrap()
+            .most_used
+            .get(&key),
+        None
+    );
+    options.invoke_apply();
+    let saved = Store::open(store.dir()).unwrap();
+    assert_eq!(
+        serde_json::json!(
+            saved
+                .read(hydrus_store::settings::get::<hydrus_store::settings::TagAutocompleteTabs>)
+                .unwrap()
+                .most_used[&key]
+        ),
+        f["edited"]["tags"]
+    );
+    let prefs = saved
+        .read(hydrus_store::settings::get::<hydrus_store::settings::TagSuggestionSettings>)
+        .unwrap();
+    assert_eq!(prefs.width, 240);
+    assert!(prefs.columns);
+    assert_eq!(prefs.default_page, "recent");
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "tag suggestions");
+    assert_eq!(
+        row(&options, "Width of suggested tags columns: ").1.number,
+        240
+    );
+    options.invoke_most_used_tags_clicked();
+    let edit = slots.editor.borrow().as_ref().unwrap().clone_strong();
+    edit.invoke_service_chosen(i32::try_from(mine).unwrap());
+    edit.invoke_edit_tags();
+    let stale = slots.tags.borrow().as_ref().unwrap().clone_strong();
+    options.invoke_cancel();
+    stale.invoke_edited("parity:stale".into());
+    stale.invoke_entered();
+    stale.invoke_apply();
+    edit.invoke_apply();
+    options.invoke_apply();
+    assert!(slots.editor.borrow().is_none() && slots.tags.borrow().is_none());
+    assert!(
+        !saved
+            .read(hydrus_store::settings::get::<hydrus_store::settings::TagAutocompleteTabs>)
+            .unwrap()
+            .most_used[&key]
+            .contains(&"parity:stale".to_owned())
+    );
+    ui.hide().unwrap();
+}
+
+#[test]
 fn the_options_window_applies_its_changes() {
     let (_dirs, store) = store();
     let _windows = headless::init();
@@ -83,6 +245,7 @@ fn the_options_window_applies_its_changes() {
             "downloading",
             "duplicates",
             "exporting",
+            "external programs",
             "file search",
             "file sort/collect",
             "file viewing statistics",
@@ -96,13 +259,19 @@ fn the_options_window_applies_its_changes() {
             "media playback",
             "media viewer",
             "media viewer hovers",
+            "notes",
+            "open externally",
+            "popup notifications",
             "ratings",
             "regex favourites",
+            "shortcuts",
+            "speed and memory",
             "system",
             "tag autocomplete tabs",
             "tag editing",
             "tag presentation",
             "tag sort",
+            "tag suggestions",
             "thumbnails",
             "advanced"
         ]
@@ -366,8 +535,19 @@ fn thumbnails_take_the_size_the_options_give_them() {
 #[allow(clippy::float_cmp)] // (sizes set, not computed)
 fn the_thumbnails_border_and_margin_lay_out_the_grid() {
     let (_dirs, store) = store();
+    // This replay's five/four/three-column geometry used the former fixed
+    // 280px sidebar. Select that layout explicitly now that pages load their
+    // independent saved splitter position (whose default is 400px).
+    store
+        .write(|ctx| {
+            let mut layout = hydrus_store::page_layout::load(ctx.conn())?;
+            layout.hpos = 280;
+            hydrus_store::settings::set(ctx.conn(), &layout)
+        })
+        .unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(
         &ui,
         Pages::single(hydrus_gui::SearchPage::new(store.clone())),
@@ -376,6 +556,7 @@ fn the_thumbnails_border_and_margin_lay_out_the_grid() {
     ui.invoke_search_accepted();
     let main_window = windows.get(0).unwrap();
     headless::render(&main_window, 1100, 700);
+    assert_eq!(ui.get_sidebar_actual_width(), 280.0);
     // (150 by 125 and a pixel's border, two pixels' margin: five across)
     assert_eq!(ui.get_thumbnail_width(), 152.0);
     assert_eq!(ui.get_grid_columns(), 5);
@@ -934,7 +1115,8 @@ fn gui_identity_and_exit_confirmation_reach_the_main_window() {
     let (_dirs, store) = store();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
-    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.show().unwrap();
+    let mut bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let recorded = hydrus_testkit::fixture_json("gui_settings.json");
     let close = || {
         ui.window()
@@ -971,6 +1153,10 @@ fn gui_identity_and_exit_confirmation_reach_the_main_window() {
             .confirm_exit
     );
     for case in recorded["exits"].as_array().unwrap() {
+        // Accepted client exit retires its binding permanently. Each replay
+        // case starts a fresh client incarnation rather than reviving it.
+        ui.show().unwrap();
+        bound = bind(&ui, Pages::open(store.clone()).unwrap());
         open(&ui);
         let window = bound.options.borrow().as_ref().unwrap().clone_strong();
         show_page(&window, "gui");
@@ -2568,6 +2754,7 @@ fn favourite_tags_child_replays_reference_and_waits_for_parent_apply() {
     let original = store.read(settings::get::<FavouriteTags>).unwrap();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     for apply in [false, true] {
         open(&ui);
@@ -4498,6 +4685,7 @@ fn viewing_timing_options_reach_real_viewer_and_archive_filter_lifetimes() {
     };
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(
         &ui,
         Pages::single(super::common::all_local_page(store.clone())),
@@ -4645,6 +4833,7 @@ fn viewing_timing_options_reach_real_viewer_and_archive_filter_lifetimes() {
     filter.invoke_keep();
     assert!(!filter.get_question().is_empty());
     filter.invoke_forget();
+    filter.invoke_forget_answered(true);
     assert!(bound.archive_delete.borrow().is_none());
     assert_eq!(
         stats(file).views,
@@ -4682,6 +4871,7 @@ fn files_trash_confirmations_are_staged_reopened_and_consumed() {
     use hydrus_gui::media_actions;
     use hydrus_store::settings::DeletionPreferences;
     let (_dirs, store) = store();
+    super::common::remove_trashed_from_view(&store);
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(
@@ -4789,8 +4979,11 @@ fn files_trash_confirmations_are_staged_reopened_and_consumed() {
 fn advanced_deletion_queue_stages_custom_reason_cancel_and_real_consumer() {
     use hydrus_store::settings::DeletionPreferences;
     let (_dirs, store) = store();
+    super::common::remove_trashed_from_view(&store);
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    // Advanced deletion accepts only while its emitting main owner is visible.
+    ui.show().unwrap();
     let bound = bind(
         &ui,
         Pages::single(super::common::all_local_page(store.clone())),
@@ -5278,6 +5471,39 @@ fn banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer(
         640,
     )
     .unwrap();
+    // Passive information belongs behind opaque media; the top hover raises it above.
+    let focus = hydrus_gui::viewer_focus::NativeFocus::new(&viewer);
+    let identity = slint::winit_030::winit::window::WindowId::from(98_001);
+    focus.watch_id(identity);
+    hydrus_gui::session_autosave::observe_native_focus(identity, true);
+    viewer
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::PointerMoved {
+            position: slint::LogicalPosition::new(450.0, 10.0),
+        });
+    assert!(
+        viewer.get_info_showing(),
+        "saved banner's top hover is raised"
+    );
+    assert_eq!(
+        viewer.get_tag_banner(),
+        fixture["consumers"]["viewer_title"].as_str().unwrap()
+    );
+    // Keep asynchronous media/timers still so only the raised overlay changes paint.
+    let raised_pixels = headless::render_snapshot(&viewer_adapter, 900, 640);
+    assert_ne!(
+        &raised_pixels[..900 * 90 * 4],
+        &viewer_pixels[..900 * 90 * 4],
+        "the raised title and information paint over the real opaque media"
+    );
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("tag_banner_viewer_raised_hover.png"),
+        &raised_pixels,
+        900,
+        640,
+    )
+    .unwrap();
     let main_pixels = headless::render(&windows.get(0).unwrap(), 900, 640);
     headless::save_png(
         &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("tag_banner_thumbnails.png"),
@@ -5361,4 +5587,640 @@ fn banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer(
     options.invoke_apply();
     assert!(thumbnail().top.is_empty());
     assert!(viewer.get_tag_banner().is_empty());
+}
+
+#[test]
+fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewer() {
+    use hydrus_store::settings::{
+        self, ViewerBackgroundSettings, ViewerCanvasSettings, ViewerEyeMenuSettings,
+        ViewerHoverSettings,
+    };
+    use serde_json::json;
+
+    fn flags(menu: &hydrus_gui::ViewerEyeMenu) -> serde_json::Value {
+        json!([
+            menu.collapse_window,
+            menu.collapse_hovers,
+            menu.collapse_rendering
+        ])
+    }
+    fn labels(rows: &slint::ModelRc<hydrus_gui::MenuRow>) -> Vec<String> {
+        rows.iter().map(|row| row.label.to_string()).collect()
+    }
+
+    let fixture = hydrus_testkit::fixture_json("viewer_eye_menu.json");
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    let index = files
+        .iter()
+        .position(|id| {
+            store
+                .read(|conn| {
+                    let (flags, duration): (u32, Option<i64>) = conn.query_row(
+                        "SELECT flags, duration_ms FROM files WHERE hash_id = ?",
+                        [id],
+                        |row| Ok((row.get(0)?, row.get(1)?)),
+                    )?;
+                    Ok(duration.is_none()
+                        && hydrus_store::media::FileFlags(flags)
+                            .has(hydrus_store::media::FileFlags::TRANSPARENCY))
+                })
+                .unwrap()
+        })
+        .expect("basic fixture has actual transparent still media");
+    ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    viewer.invoke_eye_menu_requested();
+    assert_eq!(flags(&viewer.get_eye_menu()), fixture["initial"]);
+    for event in fixture["events"].as_array().unwrap() {
+        let before: ViewerEyeMenuSettings = store.read(settings::get).unwrap();
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media viewer hovers");
+        for (label, value) in fixture["labels"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .zip(event["values"].as_array().unwrap())
+        {
+            options.invoke_check_toggled(
+                row(&options, label.as_str().unwrap()).0,
+                value.as_bool().unwrap(),
+            );
+        }
+        // A detached edit cannot affect the already-open viewer or the store.
+        viewer.invoke_eye_menu_requested();
+        assert_eq!(
+            flags(&viewer.get_eye_menu()),
+            json!([
+                before.collapse_window,
+                before.collapse_hovers,
+                before.collapse_rendering
+            ])
+        );
+        assert_eq!(
+            store.read(settings::get::<ViewerEyeMenuSettings>).unwrap(),
+            before
+        );
+        options.invoke_cancel();
+        options.invoke_apply(); // Retired owner must not save its staged values.
+        assert_eq!(
+            store.read(settings::get::<ViewerEyeMenuSettings>).unwrap(),
+            before
+        );
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "media viewer hovers");
+        for (label, value) in fixture["labels"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .zip(event["values"].as_array().unwrap())
+        {
+            options.invoke_check_toggled(
+                row(&options, label.as_str().unwrap()).0,
+                value.as_bool().unwrap(),
+            );
+        }
+        options.invoke_apply();
+        viewer.invoke_eye_menu_requested();
+        let menu = viewer.get_eye_menu();
+        assert_eq!(flags(&menu), event["stored"]);
+        // All supported rows keep their original group and ordering in every
+        // topology. The real Slint menu switches these same rows between root
+        // and submenus; it does not substitute a separate menu for the viewer.
+        for (name, groups) in [
+            ("window", menu.window),
+            ("hovers", menu.hovers),
+            ("rendering", menu.rendering),
+        ] {
+            let native = labels(&groups.g1)
+                .into_iter()
+                .chain(labels(&groups.g2))
+                .collect::<Vec<_>>();
+            let reference = event["menu"].as_array().unwrap();
+            let entries = reference
+                .iter()
+                .find(|entry| entry["menu"] == name)
+                .map_or(reference, |entry| entry["entries"].as_array().unwrap());
+            let expected: Vec<_> = entries
+                .iter()
+                .filter_map(|entry| entry["check"].as_str())
+                .filter(|label| native.iter().any(|native| native == label))
+                .collect();
+            assert_eq!(native, expected, "{name} {event}");
+        }
+        open(&ui);
+        let reopened = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&reopened, "media viewer hovers");
+        for (label, value) in fixture["labels"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .zip(event["reopened"].as_array().unwrap())
+        {
+            assert_eq!(
+                row(&reopened, label.as_str().unwrap()).1.checked,
+                value.as_bool().unwrap()
+            );
+        }
+        reopened.invoke_cancel();
+    }
+    // Both nested and flat routes retain real native/setting consumers.
+    for action in fixture["window_actions"].as_array().unwrap() {
+        let id = match action["label"].as_str().unwrap() {
+            "always on top" => 0,
+            "always on top (while playing)" => 1,
+            "remove titlebar/frame" => 2,
+            label => panic!("Unknown recorded window action {label}"),
+        };
+        viewer.invoke_eye_menu_chosen(id);
+        assert_eq!(
+            json!([
+                viewer.get_viewer_window_top(),
+                viewer.get_viewer_top_while_playing(),
+                viewer.get_viewer_window_frameless()
+            ]),
+            action["state"]
+        );
+    }
+    viewer.invoke_eye_menu_chosen(6);
+    assert!(!viewer.get_draw_tags_background());
+    assert!(
+        !store
+            .read(settings::get::<ViewerBackgroundSettings>)
+            .unwrap()
+            .tags
+    );
+    viewer.invoke_eye_menu_chosen(12);
+    assert!(!viewer.get_hover_tags_enabled());
+    assert!(
+        !store
+            .read(settings::get::<ViewerHoverSettings>)
+            .unwrap()
+            .tags
+    );
+    viewer.invoke_eye_menu_chosen(15);
+    assert_eq!(viewer.get_transparency_mode(), 1);
+    viewer.invoke_eye_menu_chosen(16);
+    assert_eq!(viewer.get_transparency_mode(), 2);
+    let canvas: ViewerCanvasSettings = store.read(settings::get).unwrap();
+    assert!(canvas.transparency_checkerboard && canvas.transparency_greenscreen);
+    // Changing a new-viewer default while Options is open must survive applying
+    // a separate collapse preference from that detached snapshot.
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "media viewer hovers");
+    options.invoke_check_toggled(
+        row(&options, fixture["labels"][0].as_str().unwrap()).0,
+        false,
+    );
+    viewer.invoke_eye_menu_chosen(5);
+    options.invoke_apply();
+    assert!(
+        store
+            .read(settings::get::<ViewerEyeMenuSettings>)
+            .unwrap()
+            .start_frameless
+    );
+    assert!(viewer.get_viewer_window_frameless());
+    viewer
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::PointerMoved {
+            position: slint::LogicalPosition::new(500.0, 8.0),
+        });
+    let pixels = headless::render(&drawn, 1000, 750);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("viewer-eye-menu.png"),
+        &pixels,
+        1000,
+        750,
+    )
+    .unwrap();
+    let before: ViewerEyeMenuSettings = store.read(settings::get).unwrap();
+    viewer.invoke_close_requested();
+    viewer.invoke_eye_menu_chosen(5);
+    viewer.invoke_eye_menu_requested();
+    assert_eq!(
+        store.read(settings::get::<ViewerEyeMenuSettings>).unwrap(),
+        before
+    );
+    ui.invoke_thumbnail_activated(0);
+    let reopened = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    assert!(reopened.get_viewer_window_frameless());
+    reopened.invoke_eye_menu_requested();
+    assert!(!reopened.get_eye_menu().collapse_window);
+    reopened.invoke_close_requested();
+}
+
+#[test]
+fn eye_menu_mixed_root_boundaries_match_the_recorded_menu_and_real_declaration_order() {
+    let fixture = hydrus_testkit::fixture_json("viewer_eye_menu.json");
+    let source = include_str!("../../ui/viewer_eye_menu.slint");
+    for (previous, group, first_label, previous_flag, group_flag) in [
+        (
+            "window",
+            "hovers",
+            "draw tags (left) in the background",
+            0,
+            1,
+        ),
+        (
+            "hovers",
+            "rendering",
+            "apply image ICC Profile colour adjustments",
+            1,
+            2,
+        ),
+    ] {
+        // Inspect the actual consumer declarations: the earlier implementation
+        // put this separator after the submenu, despite correct row models.
+        // This guards that concrete source defect without presenting a separate
+        // test-only layout as the materialized native menu.
+        let boundary = format!(
+            "if !root.menu.collapse-{previous} || !root.menu.collapse-{group}: MenuSeparator"
+        );
+        let before = source.find(&boundary).unwrap();
+        let submenu = source
+            .find(&format!("if root.menu.collapse-{group}: Menu"))
+            .unwrap();
+        let previous_flat = source
+            .find(&format!(
+                "for row in root.menu.collapse-{previous} ? [] : root.menu.{previous}.g2"
+            ))
+            .unwrap();
+        assert!(previous_flat < before && before < submenu);
+        for event in fixture["events"].as_array().unwrap() {
+            let entries = event["menu"].as_array().unwrap();
+            let at = entries
+                .iter()
+                .position(|entry| entry["menu"] == group || entry["check"] == first_label)
+                .unwrap();
+            let separated = entries[at - 1] == "---";
+            assert_eq!(
+                separated,
+                !event["values"][previous_flag].as_bool().unwrap()
+                    || !event["values"][group_flag].as_bool().unwrap(),
+                "{event}"
+            );
+        }
+    }
+}
+
+#[test]
+fn related_weight_drafts_cancel_reopen_and_re_rank_an_already_open_service_panel() {
+    use hydrus_store::related_tags::{Settings as Related, Weights};
+    let (_dirs, store) = store();
+    let f = hydrus_testkit::fixture_json("related_tag_weights.json");
+    let files: Vec<hydrus_core::HashId> = store
+        .read(|conn| {
+            Ok(conn
+                .prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT 6")?
+                .query_map([], |r| r.get(0))?
+                .collect::<rusqlite::Result<_>>()?)
+        })
+        .unwrap();
+    assert_eq!(files.len(), 6);
+    for (tag, indices) in [
+        ("source:seed", vec![0, 1, 2, 3]),
+        ("context:seed", vec![2, 3, 4, 5]),
+        ("alpha:first", vec![0, 1, 2]),
+        ("beta:second", vec![3, 4, 5]),
+        ("alpha:third", vec![4, 5]),
+        ("zero:hidden", vec![0, 1]),
+    ] {
+        let mut model = hydrus_gui::manage_tags::ManageTags::new(
+            store.clone(),
+            indices.into_iter().map(|i| files[i]).collect(),
+        )
+        .unwrap();
+        let i = model
+            .service_names()
+            .iter()
+            .position(|n| n == "second tags")
+            .unwrap();
+        model.choose_service(i).unwrap();
+        model.add_side_suggestions(&[tag.into()]);
+        model.apply().unwrap();
+    }
+    let weights = Weights {
+        search: serde_json::from_value(f["ranking"][0]["search_weights"].clone()).unwrap(),
+        result: serde_json::from_value(f["ranking"][0]["result_weights"].clone()).unwrap(),
+    };
+    let initial = weights.clone();
+    store
+        .write(move |ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &Related {
+                    weights,
+                    ..Related::default()
+                },
+            )?;
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::settings::TagSuggestionSettings {
+                    default_page: "related".into(),
+                    recent_limit: None,
+                    ..hydrus_store::settings::TagSuggestionSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let windows = headless::init();
+    let mut page = hydrus_gui::SearchPage::new(store.clone());
+    // The Qt recorder passes all six media explicitly. The basic fixture's
+    // second file belongs only to "art", so the default "my files" search
+    // cannot supply the same six-target selection.
+    page.choose_location(hydrus_core::search::context::LocationContext::default());
+    page.enter();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(page));
+    ui.show().unwrap();
+    bound.current.borrow().borrow_mut().select_files(&files);
+    assert_eq!(
+        bound
+            .current
+            .borrow()
+            .borrow()
+            .selected_files()
+            .into_iter()
+            .collect::<std::collections::BTreeSet<_>>(),
+        files
+            .iter()
+            .copied()
+            .collect::<std::collections::BTreeSet<_>>(),
+        "the real manage-tags owner must capture all six recorded media"
+    );
+    ui.invoke_manage_tags_selected();
+    let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    let second = i32::try_from(
+        manage
+            .get_service_names()
+            .iter()
+            .position(|n| n == "second tags")
+            .unwrap(),
+    )
+    .unwrap();
+    assert_eq!(manage.get_window_title(), "manage tags for 6 files");
+    manage.invoke_service_chosen(second);
+    manage.set_related_display(false);
+    manage.invoke_related_search();
+    let mine = i32::try_from(
+        manage
+            .get_service_names()
+            .iter()
+            .position(|n| n == "my tags")
+            .unwrap(),
+    )
+    .unwrap();
+    for _ in 0..3 {
+        manage.invoke_service_chosen(mine);
+        manage.invoke_service_chosen(second);
+    }
+    let related_rows = || {
+        manage
+            .get_related_tag_rows()
+            .iter()
+            .map(|row| row.cells.row_data(0).unwrap().to_string())
+            .collect::<Vec<_>>()
+    };
+    let wait_for = |first: &str| {
+        for _ in 0..600 {
+            slint::platform::update_timers_and_animations();
+            if related_rows().first().is_some_and(|row| row == first) {
+                return;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(5));
+        }
+        panic!(
+            "related query did not settle: {:?} / {}",
+            related_rows(),
+            manage.get_related_status()
+        );
+    };
+    wait_for("alpha:first (1,154)");
+    assert_eq!(
+        related_rows(),
+        [
+            "alpha:first (1,154)",
+            "beta:second (1,154)",
+            "alpha:third (707)"
+        ]
+    );
+    assert_eq!(manage.get_suggested_page(), 2);
+    assert_eq!(
+        serde_json::json!(
+            related_rows()
+                .into_iter()
+                .map(|row| row.split(" (").next().unwrap().to_owned())
+                .collect::<Vec<_>>()
+        ),
+        f["consumer"]["initial"]
+    );
+    let related_window = windows.get(windows.count() - 1).unwrap();
+    let pixels = headless::render(&related_window, 1100, 700);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("related_tag_suggestions.png"),
+        &pixels,
+        1100,
+        700,
+    )
+    .unwrap();
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "tag suggestions");
+    options.invoke_related_weights_clicked();
+    let child = bound
+        .options_suggested_tags_slot
+        .weights
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let count = child.get_rows().row_count();
+    let selection_fixture = &f["selection_buttons"];
+    for (index, case) in selection_fixture.as_array().unwrap().iter().enumerate() {
+        if index > 0 {
+            let label = if index == 1 {
+                "'source' tags"
+            } else {
+                "'context' tags"
+            };
+            let row = child
+                .get_rows()
+                .iter()
+                .position(|row| row.cells.row_data(0).unwrap() == label)
+                .unwrap();
+            child.invoke_clicked(i32::try_from(row).unwrap(), index == 2, false);
+        }
+        assert_eq!(
+            child.get_can_edit(),
+            case["buttons"]["edit"].as_bool().unwrap()
+        );
+        assert_eq!(
+            child.get_can_delete(),
+            case["buttons"]["delete"].as_bool().unwrap()
+        );
+    }
+
+    child.invoke_action("add".into());
+    child.set_namespace(":".into());
+    child.invoke_action("accept-question".into());
+    assert_eq!(
+        child.get_error(),
+        hydrus_gui_model::related_weights::RESERVED
+    );
+    assert_eq!(child.get_rows().row_count(), count);
+    child.invoke_action("add".into());
+    child.set_namespace("probe".into());
+    child.invoke_action("accept-question".into());
+    child.set_weight(0);
+    child.invoke_action("cancel-question".into());
+    assert_eq!(child.get_rows().row_count(), count);
+    let protected = child
+        .get_rows()
+        .iter()
+        .position(|row| row.cells.row_data(0).unwrap() == "unnamespaced tags")
+        .unwrap();
+    child.invoke_clicked(i32::try_from(protected).unwrap(), false, false);
+    assert!(!child.get_can_delete());
+    child.invoke_action("delete".into());
+    assert_eq!(child.get_rows().row_count(), count);
+    child.invoke_action("add".into());
+    child.set_namespace("probe".into());
+    child.invoke_action("accept-question".into());
+    assert_eq!(child.get_question(), "set weight");
+    assert_eq!(child.get_weight(), 100);
+    child.set_weight(10_000);
+    child.invoke_action("accept-question".into());
+    options.invoke_apply();
+    assert!(
+        bound.options.borrow().is_some(),
+        "owner Apply is blocked by its child"
+    );
+    let child_window = windows.get(windows.count() - 1).unwrap();
+    let pixels = headless::render(&child_window, 650, 520);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("related_tag_weights.png"),
+        &pixels,
+        650,
+        520,
+    )
+    .unwrap();
+    child.invoke_action("apply".into());
+    options.invoke_cancel();
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<Related>)
+            .unwrap()
+            .weights,
+        initial
+    );
+    // A retained component handle cannot publish after its owner/slot retired.
+    child.invoke_action("add".into());
+    child.invoke_action("apply".into());
+    assert!(bound.options_suggested_tags_slot.weights.borrow().is_none());
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "tag suggestions");
+    options.invoke_related_weights_clicked();
+    let child = bound
+        .options_suggested_tags_slot
+        .weights
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    child.invoke_choose(true);
+    let edit = |slice: &str, weight| {
+        let index = child
+            .get_rows()
+            .iter()
+            .position(|row| row.cells.row_data(0).unwrap() == slice)
+            .unwrap();
+        child.invoke_clicked(i32::try_from(index).unwrap(), false, false);
+        child.invoke_action("edit".into());
+        assert_eq!(child.get_question(), "edit weight");
+        child.set_weight(weight);
+        child.invoke_action("accept-question".into());
+    };
+    edit("'alpha' tags", 50);
+    edit("'beta' tags", 400);
+    child.invoke_action("apply".into());
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<Related>)
+            .unwrap()
+            .weights,
+        initial,
+        "child acceptance only stages"
+    );
+    options.invoke_apply();
+    wait_for("beta:second (4,616)");
+    assert_eq!(
+        related_rows(),
+        [
+            "beta:second (4,616)",
+            "alpha:first (577)",
+            "alpha:third (353)"
+        ]
+    );
+    let persisted: Related = hydrus_store::Store::open(store.dir())
+        .unwrap()
+        .read(hydrus_store::settings::get)
+        .unwrap();
+    let expected: Vec<(String, u16)> =
+        serde_json::from_value(f["ranking"][2]["result_weights"].clone()).unwrap();
+    assert_eq!(
+        persisted
+            .weights
+            .result
+            .into_iter()
+            .collect::<std::collections::BTreeMap<_, _>>(),
+        expected
+            .into_iter()
+            .collect::<std::collections::BTreeMap<_, _>>()
+    );
+    manage.invoke_side_clicked(2, 0, false, false);
+    manage.invoke_side_activated(2, 0);
+    let committed = || {
+        store.read(|conn| {let id=store.snapshot().services.by_name("second tags").unwrap().id;let table=hydrus_store::schema::MappingTables::new(id).current;Ok(conn.query_row(&format!("SELECT COUNT(*) FROM {table} WHERE tag_id=(SELECT tag_id FROM tags WHERE namespace_id=(SELECT namespace_id FROM namespaces WHERE namespace='beta') AND subtag_id=(SELECT subtag_id FROM subtags WHERE subtag='second'))"),[],|r|r.get::<_,i64>(0))?)}).unwrap()
+    };
+    assert_eq!(committed(), 3, "activation stays staged");
+    manage.invoke_apply();
+    assert_eq!(committed(), i64::try_from(files.len()).unwrap());
+    manage.invoke_related_search();
+    assert_eq!(committed(), 6, "retired request cannot add again");
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "tag suggestions");
+    options.invoke_related_weights_clicked();
+    let child = bound
+        .options_suggested_tags_slot
+        .weights
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(child.get_rows().row_count(), initial.search.len());
+    child.invoke_choose(true);
+    assert!(
+        child
+            .get_rows()
+            .iter()
+            .any(|row| row.cells.row_data(0).unwrap() == "'beta' tags"
+                && row.cells.row_data(1).unwrap() == "400%")
+    );
+    options.invoke_cancel();
+    assert!(bound.options_suggested_tags_slot.weights.borrow().is_none());
 }

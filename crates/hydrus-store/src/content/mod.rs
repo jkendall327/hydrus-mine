@@ -11,6 +11,7 @@
 //! each function says which reference behaviour it implements.
 
 mod files;
+mod local_transfer;
 mod mappings;
 mod metadata;
 pub mod tag_relations;
@@ -27,6 +28,7 @@ use crate::services::{ServiceKind, ServiceRegistry};
 use crate::store::Snapshot;
 
 pub use files::AddRows;
+pub use local_transfer::TransferKind;
 pub use mappings::MappingAction;
 pub use metadata::{FileTime, RatingClearScope};
 

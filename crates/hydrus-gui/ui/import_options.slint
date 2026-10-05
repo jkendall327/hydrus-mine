@@ -122,6 +122,7 @@ export component ImportOptionsWindow inherits Window {
     callback edit-blacklist();
     // a tag service's "get tags" filter button clicked
     callback edit-get-tags-filter(int);
+    callback edit-existing-tags-filter(int);
     in-out property <string> tag-whitelist;
     in property <bool> tag-child-open;
     callback edit-whitelist();
@@ -485,7 +486,7 @@ export component ImportOptionsWindow inherits Window {
                                     }
                                     Button {
                                         text: service.filter;
-                                        enabled: service.get-tags;
+                                        enabled: service.get-tags && !root.tag-child-open;
                                         horizontal-stretch: 1;
                                         clicked => { root.edit-get-tags-filter(i); }
                                     }
@@ -526,6 +527,11 @@ export component ImportOptionsWindow inherits Window {
                                     text: "only add tags that already exist";
                                     checked: service.only-existing;
                                     toggled => { root.tag-service-toggled(i, "only-existing", self.checked); }
+                                }
+                                Button {
+                                    text: "set a filter for already-exist test";
+                                    enabled: !root.tag-child-open;
+                                    clicked => { root.edit-existing-tags-filter(i); }
                                 }
                             }
                         }

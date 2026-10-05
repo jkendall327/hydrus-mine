@@ -243,9 +243,27 @@ fn open(
                                 .map_err(|e| e.to_string())
                         }
                     });
-                    if let Ok(child) =
-                        crate::regex_favourites_window::open(&value, &slots.favourites, applied)
-                        && let Some(window) = weak.upgrade()
+                    if let Ok(child) = crate::regex_favourites_window::open_owned(
+                        &value,
+                        &slots.favourites,
+                        applied,
+                        Rc::new({
+                            let store = store.clone();
+                            move || {
+                                store
+                                    .read(hydrus_store::regex_favourites::load)
+                                    .map_err(|e| e.to_string())
+                            }
+                        }),
+                        Rc::new({
+                            let active = active.clone();
+                            let weak = weak.clone();
+                            move || {
+                                active.get()
+                                    && weak.upgrade().is_some_and(|w| w.window().is_visible())
+                            }
+                        }),
+                    ) && let Some(window) = weak.upgrade()
                     {
                         window.set_child_open(true);
                         let weak = window.as_weak();

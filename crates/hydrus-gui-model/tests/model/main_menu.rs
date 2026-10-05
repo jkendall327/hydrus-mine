@@ -3,7 +3,7 @@
 //! menus and entries, in the same order, enabled and ticked alike, from
 //! the store migrated from each fixture. Entries hydrus-rs can't do yet
 //! are there all the same (greyed out); a tick hydrus-rs doesn't keep is
-//! not compared. Left out of the reference's: help > debug and "about Qt",
+//! not compared. Left out of the reference's: other help > debug tools and "about Qt",
 //! historical imported session backups (not migrated to the native archive).
 
 use std::sync::Arc;
@@ -49,10 +49,8 @@ fn unescaped(text: &str) -> String {
 fn kept(entries: &[Value]) -> Vec<Value> {
     let mut out: Vec<Value> = Vec::new();
     for entry in entries {
-        let left_out = entry
-            .get("menu")
-            .is_some_and(|m| m == "debug" || m == "append backup")
-            || entry == "about Qt";
+        let left_out =
+            entry.get("menu").is_some_and(|m| m == "append backup") || entry == "about Qt";
         if left_out {
             continue;
         }
@@ -60,6 +58,122 @@ fn kept(entries: &[Value]) -> Vec<Value> {
             continue;
         }
         let mut entry = entry.clone();
+        if entry.get("menu").is_some_and(|menu| menu == "debug") {
+            let mut gui = entry["entries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| e.get("menu").is_some_and(|name| name == "gui actions"))
+                .unwrap()
+                .clone();
+            let long_text = gui["entries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| *e == "make a long text popup")
+                .unwrap()
+                .clone();
+            let delayed = gui["entries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| *e == "make a popup in five seconds")
+                .unwrap()
+                .clone();
+            let recorded = gui["entries"].as_array().unwrap();
+            assert!(
+                recorded
+                    .iter()
+                    .position(|entry| entry == &long_text)
+                    .unwrap()
+                    < recorded.iter().position(|entry| entry == &delayed).unwrap()
+            );
+            let new_page = recorded
+                .iter()
+                .find(|entry| *entry == "make a new page in five seconds")
+                .unwrap()
+                .clone();
+            assert!(
+                recorded
+                    .iter()
+                    .position(|entry| entry == &long_text)
+                    .unwrap()
+                    < recorded
+                        .iter()
+                        .position(|entry| entry == &new_page)
+                        .unwrap()
+            );
+            assert!(
+                recorded
+                    .iter()
+                    .position(|entry| entry == &new_page)
+                    .unwrap()
+                    < recorded.iter().position(|entry| entry == &delayed).unwrap()
+            );
+            let reload = recorded
+                .iter()
+                .find(|entry| *entry == "close and reload current gui session")
+                .unwrap()
+                .clone();
+            assert!(
+                recorded.iter().position(|entry| entry == &reload).unwrap()
+                    < recorded
+                        .iter()
+                        .position(|entry| entry == &long_text)
+                        .unwrap()
+            );
+            gui["entries"] = serde_json::json!([reload, long_text, new_page, delayed]);
+            let mut memory = entry["entries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| e.get("menu").is_some_and(|name| name == "memory actions"))
+                .unwrap()
+                .clone();
+            let clear = memory["entries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| *e == "clear thumbnail cache")
+                .unwrap()
+                .clone();
+            memory["entries"] = serde_json::json!([clear]);
+            let mut modes = entry["entries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| e.get("menu").is_some_and(|name| name == "debug modes"))
+                .unwrap()
+                .clone();
+            let force = modes["entries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| e.get("check").is_some_and(|name| name == "force idle mode"))
+                .unwrap()
+                .clone();
+            modes["entries"] = serde_json::json!([force]);
+            let network = entry["entries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| e.get("menu").is_some_and(|name| name == "network actions"))
+                .unwrap()
+                .clone();
+            let fetch = network["entries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| *e == "fetch a url")
+                .unwrap()
+                .clone();
+            assert_eq!(
+                network["entries"],
+                serde_json::json!(["review current network jobs", fetch])
+            );
+            entry["entries"] = serde_json::json!([modes, gui, memory, network]);
+        }
+
         if let Some(inner) = entry.get("entries").and_then(Value::as_array) {
             entry["entries"] = Value::Array(kept(inner));
         }

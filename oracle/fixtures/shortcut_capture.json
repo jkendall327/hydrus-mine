@@ -1,0 +1,3286 @@
+{
+  "cases": [
+    {
+      "kind": "keyboard",
+      "merge_numpad": true,
+      "steps": [
+        {
+          "label": "letter all modifiers",
+          "qt_key": 65,
+          "modifiers": 1577058304,
+          "effective_modifiers": 1577058304,
+          "consumed": true,
+          "signals": 1,
+          "value": [
+            41,
+            3,
+            [
+              0,
+              97,
+              0,
+              [
+                0,
+                1,
+                2,
+                4,
+                5
+              ]
+            ]
+          ],
+          "text": "control+ctrl+alt+shift+Mode_switch+a",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "uppercase unicode",
+          "qt_key": 196,
+          "modifiers": 0,
+          "effective_modifiers": 0,
+          "consumed": true,
+          "signals": 2,
+          "value": [
+            41,
+            3,
+            [
+              0,
+              228,
+              0,
+              []
+            ]
+          ],
+          "text": "\u00e4",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "casefold expansion first character",
+          "qt_key": 223,
+          "modifiers": 0,
+          "effective_modifiers": 0,
+          "consumed": true,
+          "signals": 3,
+          "value": [
+            41,
+            3,
+            [
+              0,
+              115,
+              0,
+              []
+            ]
+          ],
+          "text": "s",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "numpad number",
+          "qt_key": 55,
+          "modifiers": 603979776,
+          "effective_modifiers": 603979776,
+          "consumed": true,
+          "signals": 4,
+          "value": [
+            41,
+            3,
+            [
+              0,
+              55,
+              0,
+              [
+                0,
+                3
+              ]
+            ]
+          ],
+          "text": "ctrl+7 (on numpad)",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "numpad return",
+          "qt_key": 16777220,
+          "modifiers": 536870912,
+          "effective_modifiers": 536870912,
+          "consumed": true,
+          "signals": 5,
+          "value": [
+            41,
+            3,
+            [
+              2,
+              3,
+              0,
+              []
+            ]
+          ],
+          "text": "return",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "numpad enter",
+          "qt_key": 16777221,
+          "modifiers": 536870912,
+          "effective_modifiers": 536870912,
+          "consumed": true,
+          "signals": 6,
+          "value": [
+            41,
+            3,
+            [
+              2,
+              4,
+              0,
+              []
+            ]
+          ],
+          "text": "enter",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "numpad arrow",
+          "qt_key": 16777234,
+          "modifiers": 570425344,
+          "effective_modifiers": 570425344,
+          "consumed": true,
+          "signals": 7,
+          "value": [
+            41,
+            3,
+            [
+              2,
+              11,
+              0,
+              [
+                2
+              ]
+            ]
+          ],
+          "text": "shift+left",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "modifier alone",
+          "qt_key": 16777249,
+          "modifiers": 67108864,
+          "effective_modifiers": 0,
+          "consumed": true,
+          "signals": 8,
+          "value": [
+            41,
+            3,
+            [
+              2,
+              35,
+              0,
+              []
+            ]
+          ],
+          "text": "nothing",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "backtab",
+          "qt_key": 16777218,
+          "modifiers": 33554432,
+          "effective_modifiers": 33554432,
+          "consumed": true,
+          "signals": 9,
+          "value": [
+            41,
+            3,
+            [
+              2,
+              36,
+              0,
+              [
+                2
+              ]
+            ]
+          ],
+          "text": "shift+backtab",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "function 24",
+          "qt_key": 16777287,
+          "modifiers": 0,
+          "effective_modifiers": 0,
+          "consumed": true,
+          "signals": 10,
+          "value": [
+            41,
+            3,
+            [
+              2,
+              48,
+              0,
+              []
+            ]
+          ],
+          "text": "f24",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "null ignored",
+          "qt_key": 0,
+          "modifiers": 0,
+          "effective_modifiers": 0,
+          "consumed": true,
+          "signals": 10,
+          "value": [
+            41,
+            3,
+            [
+              2,
+              48,
+              0,
+              []
+            ]
+          ],
+          "text": "f24",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "keyboard",
+      "merge_numpad": false,
+      "steps": [
+        {
+          "label": "letter all modifiers",
+          "qt_key": 65,
+          "modifiers": 1577058304,
+          "effective_modifiers": 1577058304,
+          "consumed": true,
+          "signals": 1,
+          "value": [
+            41,
+            3,
+            [
+              0,
+              97,
+              0,
+              [
+                0,
+                1,
+                2,
+                4,
+                5
+              ]
+            ]
+          ],
+          "text": "control+ctrl+alt+shift+Mode_switch+a",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "uppercase unicode",
+          "qt_key": 196,
+          "modifiers": 0,
+          "effective_modifiers": 0,
+          "consumed": true,
+          "signals": 2,
+          "value": [
+            41,
+            3,
+            [
+              0,
+              228,
+              0,
+              []
+            ]
+          ],
+          "text": "\u00e4",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "casefold expansion first character",
+          "qt_key": 223,
+          "modifiers": 0,
+          "effective_modifiers": 0,
+          "consumed": true,
+          "signals": 3,
+          "value": [
+            41,
+            3,
+            [
+              0,
+              115,
+              0,
+              []
+            ]
+          ],
+          "text": "s",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "numpad number",
+          "qt_key": 55,
+          "modifiers": 603979776,
+          "effective_modifiers": 603979776,
+          "consumed": true,
+          "signals": 4,
+          "value": [
+            41,
+            3,
+            [
+              0,
+              55,
+              0,
+              [
+                0,
+                3
+              ]
+            ]
+          ],
+          "text": "ctrl+7 (on numpad)",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "numpad return",
+          "qt_key": 16777220,
+          "modifiers": 536870912,
+          "effective_modifiers": 536870912,
+          "consumed": true,
+          "signals": 5,
+          "value": [
+            41,
+            3,
+            [
+              2,
+              3,
+              0,
+              [
+                3
+              ]
+            ]
+          ],
+          "text": "return (on numpad)",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "numpad enter",
+          "qt_key": 16777221,
+          "modifiers": 536870912,
+          "effective_modifiers": 536870912,
+          "consumed": true,
+          "signals": 6,
+          "value": [
+            41,
+            3,
+            [
+              2,
+              4,
+              0,
+              [
+                3
+              ]
+            ]
+          ],
+          "text": "enter (on numpad)",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "numpad arrow",
+          "qt_key": 16777234,
+          "modifiers": 570425344,
+          "effective_modifiers": 570425344,
+          "consumed": true,
+          "signals": 7,
+          "value": [
+            41,
+            3,
+            [
+              2,
+              11,
+              0,
+              [
+                2,
+                3
+              ]
+            ]
+          ],
+          "text": "shift+left (on numpad)",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "modifier alone",
+          "qt_key": 16777249,
+          "modifiers": 67108864,
+          "effective_modifiers": 0,
+          "consumed": true,
+          "signals": 8,
+          "value": [
+            41,
+            3,
+            [
+              2,
+              35,
+              0,
+              []
+            ]
+          ],
+          "text": "nothing",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "backtab",
+          "qt_key": 16777218,
+          "modifiers": 33554432,
+          "effective_modifiers": 33554432,
+          "consumed": true,
+          "signals": 9,
+          "value": [
+            41,
+            3,
+            [
+              2,
+              36,
+              0,
+              [
+                2
+              ]
+            ]
+          ],
+          "text": "shift+backtab",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "function 24",
+          "qt_key": 16777287,
+          "modifiers": 0,
+          "effective_modifiers": 0,
+          "consumed": true,
+          "signals": 10,
+          "value": [
+            41,
+            3,
+            [
+              2,
+              48,
+              0,
+              []
+            ]
+          ],
+          "text": "f24",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "null ignored",
+          "qt_key": 0,
+          "modifiers": 0,
+          "effective_modifiers": 0,
+          "consumed": true,
+          "signals": 10,
+          "value": [
+            41,
+            3,
+            [
+              2,
+              48,
+              0,
+              []
+            ]
+          ],
+          "text": "f24",
+          "keyboard_selected": true,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "mouse",
+      "primary_labels": false,
+      "steps": [
+        {
+          "label": "left all modifiers",
+          "kind": "press",
+          "button": 1,
+          "modifiers": 1577058304,
+          "delta": 0,
+          "signals": 1,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              0,
+              0,
+              [
+                0,
+                1,
+                2,
+                4,
+                5
+              ]
+            ]
+          ],
+          "text": "control+ctrl+alt+shift+Mode_switch+left-click",
+          "mouse_selected": true,
+          "press_release_enabled": true,
+          "choice": 0,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "right",
+          "kind": "press",
+          "button": 2,
+          "modifiers": 0,
+          "delta": 0,
+          "signals": 2,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              1,
+              0,
+              []
+            ]
+          ],
+          "text": "right-click",
+          "mouse_selected": true,
+          "press_release_enabled": true,
+          "choice": 0,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "middle",
+          "kind": "press",
+          "button": 4,
+          "modifiers": 0,
+          "delta": 0,
+          "signals": 3,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              2,
+              0,
+              []
+            ]
+          ],
+          "text": "middle-click",
+          "mouse_selected": true,
+          "press_release_enabled": true,
+          "choice": 0,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "back",
+          "kind": "press",
+          "button": 8,
+          "modifiers": 67108864,
+          "delta": 0,
+          "signals": 4,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              7,
+              0,
+              [
+                0
+              ]
+            ]
+          ],
+          "text": "ctrl+back",
+          "mouse_selected": true,
+          "press_release_enabled": true,
+          "choice": 0,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "forward",
+          "kind": "press",
+          "button": 16,
+          "modifiers": 0,
+          "delta": 0,
+          "signals": 5,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              8,
+              0,
+              []
+            ]
+          ],
+          "text": "forward",
+          "mouse_selected": true,
+          "press_release_enabled": true,
+          "choice": 0,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "task",
+          "kind": "press",
+          "button": 32,
+          "modifiers": 0,
+          "delta": 0,
+          "signals": 6,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              9,
+              0,
+              []
+            ]
+          ],
+          "text": "task button",
+          "mouse_selected": true,
+          "press_release_enabled": true,
+          "choice": 0,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "release choice",
+          "kind": "choice",
+          "button": 0,
+          "modifiers": 0,
+          "delta": 1,
+          "signals": 8,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              9,
+              1,
+              []
+            ]
+          ],
+          "text": "release task button",
+          "mouse_selected": true,
+          "press_release_enabled": true,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "press ignored while release chosen",
+          "kind": "press",
+          "button": 1,
+          "modifiers": 0,
+          "delta": 0,
+          "signals": 8,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              9,
+              1,
+              []
+            ]
+          ],
+          "text": "release task button",
+          "mouse_selected": true,
+          "press_release_enabled": true,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "left release",
+          "kind": "release",
+          "button": 1,
+          "modifiers": 33554432,
+          "delta": 0,
+          "signals": 9,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              0,
+              1,
+              [
+                2
+              ]
+            ]
+          ],
+          "text": "shift+release left-click",
+          "mouse_selected": true,
+          "press_release_enabled": true,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "right double",
+          "kind": "double",
+          "button": 2,
+          "modifiers": 134217728,
+          "delta": 0,
+          "signals": 10,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              1,
+              2,
+              [
+                1
+              ]
+            ]
+          ],
+          "text": "alt+double right-click",
+          "mouse_selected": true,
+          "press_release_enabled": false,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "small wheel 1",
+          "kind": "wheel",
+          "button": 0,
+          "modifiers": 0,
+          "delta": 30,
+          "signals": 10,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              1,
+              2,
+              [
+                1
+              ]
+            ]
+          ],
+          "text": "alt+double right-click",
+          "mouse_selected": true,
+          "press_release_enabled": false,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "small wheel 2",
+          "kind": "wheel",
+          "button": 0,
+          "modifiers": 0,
+          "delta": 30,
+          "signals": 10,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              1,
+              2,
+              [
+                1
+              ]
+            ]
+          ],
+          "text": "alt+double right-click",
+          "mouse_selected": true,
+          "press_release_enabled": false,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "small wheel 3",
+          "kind": "wheel",
+          "button": 0,
+          "modifiers": 0,
+          "delta": 30,
+          "signals": 10,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              1,
+              2,
+              [
+                1
+              ]
+            ]
+          ],
+          "text": "alt+double right-click",
+          "mouse_selected": true,
+          "press_release_enabled": false,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "small wheel exact threshold",
+          "kind": "wheel",
+          "button": 0,
+          "modifiers": 0,
+          "delta": 30,
+          "signals": 10,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              1,
+              2,
+              [
+                1
+              ]
+            ]
+          ],
+          "text": "alt+double right-click",
+          "mouse_selected": true,
+          "press_release_enabled": false,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "small wheel exceeds threshold",
+          "kind": "wheel",
+          "button": 0,
+          "modifiers": 67108864,
+          "delta": 30,
+          "signals": 11,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              3,
+              0,
+              [
+                0
+              ]
+            ]
+          ],
+          "text": "ctrl+scroll up",
+          "mouse_selected": true,
+          "press_release_enabled": false,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "normal wheel down",
+          "kind": "wheel",
+          "button": 0,
+          "modifiers": 33554432,
+          "delta": -120,
+          "signals": 12,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              4,
+              0,
+              [
+                2
+              ]
+            ]
+          ],
+          "text": "shift+scroll down",
+          "mouse_selected": true,
+          "press_release_enabled": false,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "horizontal wheel ignored",
+          "kind": "horizontal",
+          "button": 0,
+          "modifiers": 0,
+          "delta": 120,
+          "signals": 12,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              4,
+              0,
+              [
+                2
+              ]
+            ]
+          ],
+          "text": "shift+scroll down",
+          "mouse_selected": true,
+          "press_release_enabled": false,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "mouse",
+      "primary_labels": true,
+      "steps": [
+        {
+          "label": "left all modifiers",
+          "kind": "press",
+          "button": 1,
+          "modifiers": 1577058304,
+          "delta": 0,
+          "signals": 1,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              0,
+              0,
+              [
+                0,
+                1,
+                2,
+                4,
+                5
+              ]
+            ]
+          ],
+          "text": "control+ctrl+alt+shift+Mode_switch+primary-click",
+          "mouse_selected": true,
+          "press_release_enabled": true,
+          "choice": 0,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "right",
+          "kind": "press",
+          "button": 2,
+          "modifiers": 0,
+          "delta": 0,
+          "signals": 2,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              1,
+              0,
+              []
+            ]
+          ],
+          "text": "secondary-click",
+          "mouse_selected": true,
+          "press_release_enabled": true,
+          "choice": 0,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "middle",
+          "kind": "press",
+          "button": 4,
+          "modifiers": 0,
+          "delta": 0,
+          "signals": 3,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              2,
+              0,
+              []
+            ]
+          ],
+          "text": "middle-click",
+          "mouse_selected": true,
+          "press_release_enabled": true,
+          "choice": 0,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "back",
+          "kind": "press",
+          "button": 8,
+          "modifiers": 67108864,
+          "delta": 0,
+          "signals": 4,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              7,
+              0,
+              [
+                0
+              ]
+            ]
+          ],
+          "text": "ctrl+back",
+          "mouse_selected": true,
+          "press_release_enabled": true,
+          "choice": 0,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "forward",
+          "kind": "press",
+          "button": 16,
+          "modifiers": 0,
+          "delta": 0,
+          "signals": 5,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              8,
+              0,
+              []
+            ]
+          ],
+          "text": "forward",
+          "mouse_selected": true,
+          "press_release_enabled": true,
+          "choice": 0,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "task",
+          "kind": "press",
+          "button": 32,
+          "modifiers": 0,
+          "delta": 0,
+          "signals": 6,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              9,
+              0,
+              []
+            ]
+          ],
+          "text": "task button",
+          "mouse_selected": true,
+          "press_release_enabled": true,
+          "choice": 0,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "release choice",
+          "kind": "choice",
+          "button": 0,
+          "modifiers": 0,
+          "delta": 1,
+          "signals": 8,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              9,
+              1,
+              []
+            ]
+          ],
+          "text": "release task button",
+          "mouse_selected": true,
+          "press_release_enabled": true,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "press ignored while release chosen",
+          "kind": "press",
+          "button": 1,
+          "modifiers": 0,
+          "delta": 0,
+          "signals": 8,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              9,
+              1,
+              []
+            ]
+          ],
+          "text": "release task button",
+          "mouse_selected": true,
+          "press_release_enabled": true,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "left release",
+          "kind": "release",
+          "button": 1,
+          "modifiers": 33554432,
+          "delta": 0,
+          "signals": 9,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              0,
+              1,
+              [
+                2
+              ]
+            ]
+          ],
+          "text": "shift+release primary-click",
+          "mouse_selected": true,
+          "press_release_enabled": true,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "right double",
+          "kind": "double",
+          "button": 2,
+          "modifiers": 134217728,
+          "delta": 0,
+          "signals": 10,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              1,
+              2,
+              [
+                1
+              ]
+            ]
+          ],
+          "text": "alt+double secondary-click",
+          "mouse_selected": true,
+          "press_release_enabled": false,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "small wheel 1",
+          "kind": "wheel",
+          "button": 0,
+          "modifiers": 0,
+          "delta": 30,
+          "signals": 10,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              1,
+              2,
+              [
+                1
+              ]
+            ]
+          ],
+          "text": "alt+double secondary-click",
+          "mouse_selected": true,
+          "press_release_enabled": false,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "small wheel 2",
+          "kind": "wheel",
+          "button": 0,
+          "modifiers": 0,
+          "delta": 30,
+          "signals": 10,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              1,
+              2,
+              [
+                1
+              ]
+            ]
+          ],
+          "text": "alt+double secondary-click",
+          "mouse_selected": true,
+          "press_release_enabled": false,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "small wheel 3",
+          "kind": "wheel",
+          "button": 0,
+          "modifiers": 0,
+          "delta": 30,
+          "signals": 10,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              1,
+              2,
+              [
+                1
+              ]
+            ]
+          ],
+          "text": "alt+double secondary-click",
+          "mouse_selected": true,
+          "press_release_enabled": false,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "small wheel exact threshold",
+          "kind": "wheel",
+          "button": 0,
+          "modifiers": 0,
+          "delta": 30,
+          "signals": 10,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              1,
+              2,
+              [
+                1
+              ]
+            ]
+          ],
+          "text": "alt+double secondary-click",
+          "mouse_selected": true,
+          "press_release_enabled": false,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "small wheel exceeds threshold",
+          "kind": "wheel",
+          "button": 0,
+          "modifiers": 67108864,
+          "delta": 30,
+          "signals": 11,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              3,
+              0,
+              [
+                0
+              ]
+            ]
+          ],
+          "text": "ctrl+scroll up",
+          "mouse_selected": true,
+          "press_release_enabled": false,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "normal wheel down",
+          "kind": "wheel",
+          "button": 0,
+          "modifiers": 33554432,
+          "delta": -120,
+          "signals": 12,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              4,
+              0,
+              [
+                2
+              ]
+            ]
+          ],
+          "text": "shift+scroll down",
+          "mouse_selected": true,
+          "press_release_enabled": false,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "label": "horizontal wheel ignored",
+          "kind": "horizontal",
+          "button": 0,
+          "modifiers": 0,
+          "delta": 120,
+          "signals": 12,
+          "value": [
+            41,
+            3,
+            [
+              1,
+              4,
+              0,
+              [
+                2
+              ]
+            ]
+          ],
+          "text": "shift+scroll down",
+          "mouse_selected": true,
+          "press_release_enabled": false,
+          "choice": 1,
+          "command": [
+            42,
+            7,
+            [
+              0,
+              [
+                21,
+                2,
+                [
+                  [
+                    [
+                      0,
+                      "simple_action"
+                    ],
+                    [
+                      0,
+                      6
+                    ]
+                  ],
+                  [
+                    [
+                      0,
+                      "simple_data"
+                    ],
+                    [
+                      0,
+                      null
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "special_names": {
+    "0": "space",
+    "1": "backspace",
+    "2": "tab",
+    "36": "backtab",
+    "3": "return",
+    "4": "enter",
+    "5": "pause",
+    "6": "escape",
+    "7": "insert",
+    "8": "delete",
+    "9": "up",
+    "10": "down",
+    "11": "left",
+    "12": "right",
+    "13": "home",
+    "14": "end",
+    "16": "page down",
+    "15": "page up",
+    "17": "f1",
+    "18": "f2",
+    "19": "f3",
+    "20": "f4",
+    "21": "f5",
+    "22": "f6",
+    "23": "f7",
+    "24": "f8",
+    "25": "f9",
+    "26": "f10",
+    "27": "f11",
+    "28": "f12",
+    "29": "media: play/pause",
+    "30": "media: previous",
+    "31": "media: next",
+    "32": "volume down",
+    "33": "volume up",
+    "34": "volume mute/unmute",
+    "35": "nothing",
+    "37": "f13",
+    "38": "f14",
+    "39": "f15",
+    "40": "f16",
+    "41": "f17",
+    "42": "f18",
+    "43": "f19",
+    "44": "f20",
+    "45": "f21",
+    "46": "f22",
+    "47": "f23",
+    "48": "f24"
+  },
+  "mouse_names": {
+    "0": "left-click",
+    "1": "right-click",
+    "2": "middle-click",
+    "7": "back",
+    "8": "forward",
+    "9": "task button",
+    "3": "scroll up",
+    "4": "scroll down",
+    "5": "scroll left",
+    "6": "scroll right"
+  },
+  "default": [
+    41,
+    3,
+    [
+      2,
+      23,
+      0,
+      []
+    ]
+  ],
+  "qt_special_keys": {
+    "32": 0,
+    "16777219": 1,
+    "16777217": 2,
+    "16777218": 36,
+    "16777220": 3,
+    "16777221": 4,
+    "16777224": 5,
+    "16777216": 6,
+    "16777222": 7,
+    "16777223": 8,
+    "16777235": 9,
+    "16777237": 10,
+    "16777234": 11,
+    "16777236": 12,
+    "16777232": 13,
+    "16777233": 14,
+    "16777238": 15,
+    "16777239": 16,
+    "16777264": 17,
+    "16777265": 18,
+    "16777266": 19,
+    "16777267": 20,
+    "16777268": 21,
+    "16777269": 22,
+    "16777270": 23,
+    "16777271": 24,
+    "16777272": 25,
+    "16777273": 26,
+    "16777274": 27,
+    "16777275": 28,
+    "16777350": 29,
+    "16777344": 29,
+    "16777349": 29,
+    "16777346": 30,
+    "16777347": 31,
+    "16777328": 32,
+    "16777330": 33,
+    "16777329": 34,
+    "16777249": 35,
+    "16777248": 35,
+    "16777251": 35,
+    "16777250": 35,
+    "16777276": 37,
+    "16777277": 38,
+    "16777278": 39,
+    "16777279": 40,
+    "16777280": 41,
+    "16777281": 42,
+    "16777282": 43,
+    "16777283": 44,
+    "16777284": 45,
+    "16777285": 46,
+    "16777286": 47,
+    "16777287": 48
+  },
+  "modifier_masks": {
+    "Control": 67108864,
+    "Alt": 134217728,
+    "Shift": 33554432,
+    "Keypad": 536870912,
+    "GroupSwitch": 1073741824,
+    "Meta": 268435456
+  },
+  "double_click_interval": 400,
+  "double_click_distance": 5
+}

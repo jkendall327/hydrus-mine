@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "agent": "preview-viewing-intervals",
+  "baseline_git_head": "145bec10dc629515155db86e80d2bae0fbb4dcfc",
+  "frozen_original_inventory": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "implementation_git_head": "c5f58ea33d71ecff75c068dba596510782f43c9d",
+  "claims": [
+    {
+      "id": "audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "change_kind": "implementation",
+      "behavior": "The exact preview minimum Options row stages until Apply, retains the 5-second default, None/count-every-view and recorded 50ms widget minimum, imports/persists and reopens. Its concrete native consumer is the separately displayed focused-file still/poster preview, not thumbnail selection. Accepted current rendered frames retain their request timestamp; failed/loading/retired frames create no interval. Same-file redraw does not restart, page/file generation changes and clear/hide finish, restoring a page begins another interval, splitter reveal waits for changed focus, and accepted client close is terminal while declined close preserves the display. Finish reads the live active/minimum/cap policy and counts only intervals meeting the minimum after capping, preserving Preview canvas1 separately from media views.",
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-store/src/settings.rs::FileViewingStatistics",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/viewing_statistics.rs::completed/Tracker",
+        "crates/hydrus-gui/src/preview_window.rs::State/Monitor",
+        "crates/hydrus-gui/src/lib.rs::bind/shown",
+        "crates/hydrus-gui/src/client_exit.rs::bind",
+        "crates/hydrus-gui/ui/main.slint::MainWindow"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/viewing_statistics.rs::preview_options_replay_actual_none_bounds_conversion_and_cancelled_parent",
+        "crates/hydrus-gui-model/tests/model/viewing_statistics.rs::preview_timed_policy_matches_actual_manager_and_keeps_its_own_canvas_category",
+        "crates/hydrus-gui/tests/gui/preview_viewing.rs::preview_display_replays_qt_page_splitter_active_clear_close_and_successor_ownership",
+        "crates/hydrus-gui/tests/gui/preview_viewing.rs::saved_preview_options_reach_open_display_duration_cap_cancel_and_confirmed_client_exit",
+        "crates/hydrus-gui/tests/gui/preview_viewing.rs::native_preview_minimum_cap_before_minimum_none_limits_and_inactive_finish",
+        "crates/hydrus-gui/tests/gui/preview_viewing.rs::native_page_generation_same_file_restore_and_late_decode_cannot_publish_to_successor",
+        "crates/hydrus-gui/tests/gui/preview_viewing.rs::rejected_preview_decode_never_counts_a_thumbnail_selection_or_loading_placeholder",
+        "crates/hydrus-gui/tests/gui/preview_viewing.rs::preview_rejects_actual_reference_nonlocal_invalid_resolution_and_do_not_show_statuses"
+      ],
+      "implementationCommit": "c5f58ea33d71ecff75c068dba596510782f43c9d",
+      "limits": [
+        "Authored Rust model/native/store regressions await hosted CI; no local Cargo build, Rust test or mutation run.",
+        "The native preview displays full still images and media posters, with failed decodes rejected. Qt accepts media before player decoding. Preview audio/video playback, embed/external buttons, zoom, hovers and ratings remain Partial and are not claimed.",
+        "Native interval writes commit at boundaries rather than buffering Qt's 60-second manager flush. Existing explicit Client API and media/filter consumers keep their paths.",
+        "Only this exact original Missing control is proposed; no parent or additional preview/focus/rating leaf is promoted."
+      ]
+    },
+    {
+      "id": "audit-options-file-viewing-statistics-cap-any-view-on-the-preview-viewer-to-this-maximum-time",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "change_kind": "implementation",
+      "behavior": "The exact preview maximum Options row stages until Apply, retains the 60-second default, None/no-limit and recorded 1-second widget minimum, imports/persists and reopens. The real owned preview display reads its saved cap at interval finish, extends a finite cap to at least five times the file's actual stored duration, caps elapsed time before checking the preview minimum, and leaves None unlimited. Options Apply reaches an already-open interval, Cancel/retired Apply preserves saved limits, closed/rebound owners finish once, and late decode/page callbacks cannot charge another display. Persisted Preview canvas1 counts/durations/timestamps survive Store reopening separately from media/filter statistics.",
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-store/src/settings.rs::FileViewingStatistics",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui-model/src/viewing_statistics.rs::completed/Tracker",
+        "crates/hydrus-gui/src/preview_window.rs::State/Monitor",
+        "crates/hydrus-gui/src/lib.rs::bind/shown",
+        "crates/hydrus-gui/src/client_exit.rs::bind",
+        "crates/hydrus-gui/ui/main.slint::MainWindow"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/viewing_statistics.rs::preview_options_replay_actual_none_bounds_conversion_and_cancelled_parent",
+        "crates/hydrus-gui-model/tests/model/viewing_statistics.rs::preview_timed_policy_matches_actual_manager_and_keeps_its_own_canvas_category",
+        "crates/hydrus-gui/tests/gui/preview_viewing.rs::preview_display_replays_qt_page_splitter_active_clear_close_and_successor_ownership",
+        "crates/hydrus-gui/tests/gui/preview_viewing.rs::saved_preview_options_reach_open_display_duration_cap_cancel_and_confirmed_client_exit",
+        "crates/hydrus-gui/tests/gui/preview_viewing.rs::native_preview_minimum_cap_before_minimum_none_limits_and_inactive_finish",
+        "crates/hydrus-gui/tests/gui/preview_viewing.rs::native_page_generation_same_file_restore_and_late_decode_cannot_publish_to_successor",
+        "crates/hydrus-gui/tests/gui/preview_viewing.rs::rejected_preview_decode_never_counts_a_thumbnail_selection_or_loading_placeholder"
+      ],
+      "implementationCommit": "c5f58ea33d71ecff75c068dba596510782f43c9d",
+      "limits": [
+        "Authored Rust model/native/store regressions await hosted CI; no local Cargo build, Rust test or mutation run.",
+        "The preview is a bounded still/poster presentation. Playback, audio, embed/external buttons, zoom, hover and rating controls remain Partial; no broader preview claim is proposed.",
+        "Native writes at interval boundaries rather than Qt's buffered flush; rejected rendering is explicitly uncounted.",
+        "Only the exact original Missing maximum control is proposed. Broader Options/preview/statistics parents remain Partial."
+      ]
+    }
+  ],
+  "parentsRemainPartial": [
+    "options-file-viewing-statistics"
+  ],
+  "referenceRecording": {
+    "recorder": "oracle/record_preview_viewing_intervals.py",
+    "fixture": "oracle/fixtures/preview_viewing_intervals.json",
+    "image": "oracle/fixtures/preview_viewing_intervals.png",
+    "executed": true,
+    "executedAtUtc": "2026-10-05T05:26:07Z",
+    "finishedAtUtc": "2026-10-05T05:26:08Z",
+    "scope": "Actual FileViewingStatisticsPanel controls and UpdateOptions, typed ClientOptions JSON reopening, 90 real FileViewingStatsManager preview rows using imported still/video duration, 13 actual displayed CanvasPanel timing transitions under controlled time, and actual nonlocal/zero-resolution/do-not-show rejections. Real FinishViewing accumulates rows; only publication is isolated. No business-handler or canvas implementation replacements. The inspected PNG shows the real displayed preview."
+  },
+  "validation": {
+    "direct_rustfmt": true,
+    "cached_slint_source_compilation": true,
+    "python_syntax": true,
+    "reference_png_inspected": true,
+    "diff_check": true,
+    "independent_source_review": "repair_child_literal_context accepted after rendering acceptance/rejection and active rebind retirement repairs; reviewed durable cancelled-load/successor assertions and exact Qt unchanged-focus route.",
+    "local_cargo_builds_or_tests": false,
+    "hosted_ci": "pending"
+  },
+  "canonical_files_changed": false,
+  "claimsPromotion": "Proposed two unique original Missing leaves only, pending hosted validation. Canonical statuses and validated240 remain unchanged.",
+  "bounded_decode_followup": {
+    "implementation_commit": "5a616759159c4b0ff48f7ff28dff1e0e5932439b",
+    "behavior": "Lazy owner-local pool caps simultaneous decoders at two, retains only the latest queued request, and bounds replies. Queued decoders are discarded on close; idle workers retain only Weak Store references. Accepted rasters retain the original SetMedia timestamp; stale/blank replies create no views.",
+    "authored_tests": [
+      "crates/hydrus-gui/tests/gui/preview_viewing.rs::preview_workers_bound_slow_decodes_and_coalesce_the_latest_owned_target",
+      "crates/hydrus-gui/src/preview_window.rs::worker_tests::idle_preview_workers_do_not_retain_the_store",
+      "crates/hydrus-gui/src/preview_window.rs::worker_tests::retiring_pool_drops_queued_decoder_and_releases_running_store_after_decode"
+    ],
+    "validation": "Root source review, rustfmt, git diff and cached Slint checks passed. Existing held-decode tests are unchanged. Rust runtime validation remains pending hosted CI; the two original proposals are unchanged."
+  }
+}

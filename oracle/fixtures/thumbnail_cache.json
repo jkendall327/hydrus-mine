@@ -1,0 +1,277 @@
+{
+  "initial": {
+    "bytes": 33554432,
+    "timeout": 86400
+  },
+  "controls": [
+    {
+      "input": [
+        1,
+        299
+      ],
+      "separated": [
+        1,
+        1
+      ],
+      "saved": [
+        1,
+        299
+      ],
+      "estimate": "(at 150x125, about 0 thumbnails)"
+    },
+    {
+      "input": [
+        1024,
+        300
+      ],
+      "separated": [
+        1,
+        1024
+      ],
+      "saved": [
+        1024,
+        300
+      ],
+      "estimate": "(at 150x125, about 0 thumbnails)"
+    },
+    {
+      "input": [
+        32768,
+        301
+      ],
+      "separated": [
+        32,
+        1024
+      ],
+      "saved": [
+        32768,
+        301
+      ],
+      "estimate": "(at 150x125, about 0 thumbnails)"
+    },
+    {
+      "input": [
+        33554432,
+        86400
+      ],
+      "separated": [
+        32,
+        1048576
+      ],
+      "saved": [
+        33554432,
+        86400
+      ],
+      "estimate": "(at 150x125, about 596 thumbnails)"
+    },
+    {
+      "input": [
+        1152921504606846976,
+        172800
+      ],
+      "separated": [
+        1048576,
+        1099511627776
+      ],
+      "saved": [
+        1152921504606846976,
+        172800
+      ],
+      "estimate": "(at 150x125, about 20,496,382,304,121 thumbnails)"
+    }
+  ],
+  "timeout_boundaries": {
+    "loaded": 299,
+    "unchanged_apply": 299,
+    "edited_minimum": 300
+  },
+  "bytes_boundaries": {
+    "raw": 1048577,
+    "loaded": 1048576,
+    "unchanged_apply": 1048576
+  },
+  "cache": [
+    {
+      "action": "add a",
+      "now": 0.0,
+      "keys": [
+        "a"
+      ],
+      "bytes": 60,
+      "limit": 100
+    },
+    {
+      "action": "add b",
+      "now": 1,
+      "keys": [
+        "a",
+        "b"
+      ],
+      "bytes": 100,
+      "limit": 100
+    },
+    {
+      "action": "add c",
+      "now": 2,
+      "keys": [
+        "a",
+        "b",
+        "c"
+      ],
+      "bytes": 120,
+      "limit": 100
+    },
+    {
+      "action": "get a",
+      "now": 2,
+      "keys": [
+        "b",
+        "c",
+        "a"
+      ],
+      "bytes": 120,
+      "limit": 100
+    },
+    {
+      "action": "add d",
+      "now": 3,
+      "keys": [
+        "c",
+        "a",
+        "d"
+      ],
+      "bytes": 90,
+      "limit": 100
+    },
+    {
+      "action": "maintain size",
+      "now": 3,
+      "keys": [
+        "c",
+        "a",
+        "d"
+      ],
+      "bytes": 90,
+      "limit": 100
+    },
+    {
+      "action": "maintain exact timeout",
+      "now": 302,
+      "keys": [
+        "c",
+        "a",
+        "d"
+      ],
+      "bytes": 90,
+      "limit": 100
+    },
+    {
+      "action": "maintain past timeout",
+      "now": 302.001,
+      "keys": [
+        "d"
+      ],
+      "bytes": 10,
+      "limit": 100
+    },
+    {
+      "action": "touch d",
+      "now": 302.001,
+      "keys": [
+        "d"
+      ],
+      "bytes": 10,
+      "limit": 100
+    },
+    {
+      "action": "maintain idle",
+      "now": 603,
+      "keys": [],
+      "bytes": 0,
+      "limit": 100
+    },
+    {
+      "action": "add huge",
+      "now": 603,
+      "keys": [
+        "huge"
+      ],
+      "bytes": 120,
+      "limit": 100
+    },
+    {
+      "action": "shrink",
+      "now": 603,
+      "keys": [],
+      "bytes": 0,
+      "limit": 50
+    },
+    {
+      "action": "add e",
+      "now": 603,
+      "keys": [
+        "e"
+      ],
+      "bytes": 20,
+      "limit": 50
+    },
+    {
+      "action": "add f",
+      "now": 603,
+      "keys": [
+        "e",
+        "f"
+      ],
+      "bytes": 40,
+      "limit": 50
+    },
+    {
+      "action": "extend timeout",
+      "now": 603,
+      "keys": [
+        "e",
+        "f"
+      ],
+      "bytes": 40,
+      "limit": 50
+    },
+    {
+      "action": "clear",
+      "now": 603,
+      "keys": [],
+      "bytes": 0,
+      "limit": 50
+    },
+    {
+      "action": "add e",
+      "now": 603,
+      "keys": [
+        "e"
+      ],
+      "bytes": 20,
+      "limit": 50
+    },
+    {
+      "action": "reload",
+      "now": 603,
+      "keys": [
+        "e"
+      ],
+      "bytes": 20,
+      "limit": 50
+    }
+  ],
+  "live_policy": {
+    "bytes": 100,
+    "timeout": 300
+  },
+  "debug": {
+    "label": "clear thumbnail cache",
+    "tooltip": "Tell the thumbnail cache to forget everything and redraw all current thumbs.",
+    "published": [
+      "clear_thumbnail_cache",
+      "notify_complete_thumbnail_reset"
+    ],
+    "keys": []
+  }
+}

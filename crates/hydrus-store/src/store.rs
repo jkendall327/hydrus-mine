@@ -40,6 +40,11 @@ pub fn lock_login(dir: &Path) -> std::io::Result<Option<std::fs::File>> {
     lock(dir, "login.lock")
 }
 
+/// Serialize physical file-maintenance passes across GUI and daemon processes.
+pub fn lock_file_maintenance(dir: &Path) -> std::io::Result<Option<std::fs::File>> {
+    lock(dir, "file-maintenance.lock")
+}
+
 /// Changes to snapshot-backed state, shared between independently opened stores.
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
 struct SnapshotRevision(u64);
@@ -170,6 +175,7 @@ impl Drop for MediaClaim {
 /// A hydrus-rs database directory, open.
 #[derive(Debug)]
 pub struct Store {
+    weak: std::sync::Weak<Self>,
     dir: PathBuf,
     db: Db,
     snapshot: Arc<ArcSwap<Snapshot>>,
@@ -183,6 +189,9 @@ impl Store {
     pub fn open(dir: &Path) -> Result<Arc<Self>> {
         std::fs::create_dir_all(dir)?;
         let db = Db::open(&dir.join(DB_FILE_NAME), reader_count())?;
+        // Bootstrap pre-upgrade identities before a runner can hold/delete the
+        // highest existing queue, even before the first new queue allocation.
+        db.write(|ctx| crate::queues::initialize_sequence(ctx.conn()))?;
         let empty: bool = db.read(|c| {
             Ok(
                 c.query_row("SELECT NOT EXISTS (SELECT 1 FROM services)", [], |r| {
@@ -201,7 +210,10 @@ impl Store {
             })?;
         }
         let snapshot = db.read(Snapshot::load)?;
-        Ok(Arc::new(Self {
+        // Borrowed Store APIs can give media providers a weak owner without
+        // retaining a connection or creating a strong self cycle.
+        Ok(Arc::new_cyclic(|weak| Self {
+            weak: weak.clone(),
             dir: dir.to_path_buf(),
             db,
             snapshot: Arc::new(ArcSwap::from_pointee(snapshot)),
@@ -213,6 +225,11 @@ impl Store {
     /// Reserve one migration while leaving at least one pooled reader for the UI.
     pub(crate) fn claim_tag_migration(&self) -> Result<crate::tag_migration::Guard> {
         crate::tag_migration::Guard::claim(self.migration_active.clone())
+    }
+
+    /// A non-owning handle for live settings providers, including borrowed callers.
+    pub fn downgrade(&self) -> std::sync::Weak<Self> {
+        self.weak.clone()
     }
 
     pub fn dir(&self) -> &Path {
@@ -365,6 +382,80 @@ fn reader_count() -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn pre_existing_queue_without_sequence_keeps_its_retired_identity_after_upgrade() {
+        use crate::queues::{self, QueueKind};
+        use hydrus_core::import_options::ImportOptionsSlice;
+        let dir = tempfile::tempdir().unwrap();
+        // Prepare an actual pre-feature database; do not use the new allocator.
+        let mut old = Connection::open(dir.path().join(DB_FILE_NAME)).unwrap();
+        crate::schema::configure(&old).unwrap();
+        crate::schema::migrate(&mut old).unwrap();
+        old.execute(
+            "INSERT INTO import_queues (queue_id, kind, name, created, options, extra) VALUES (77, 'urls', 'same owner', 0, ?, '{}')",
+            [serde_json::to_string(&ImportOptionsSlice::default()).unwrap()],
+        ).unwrap();
+        assert!(
+            !old.query_row(
+                "SELECT EXISTS (SELECT 1 FROM settings WHERE key = 'import_queue_sequence')",
+                [],
+                |row| row.get::<_, bool>(0)
+            )
+            .unwrap()
+        );
+        drop(old);
+        let store = Store::open(dir.path()).unwrap();
+        let retired = store.read(|conn| queues::queue(conn, 77)).unwrap().unwrap();
+        store
+            .write(move |ctx| queues::delete_queue(ctx.conn(), retired.id))
+            .unwrap();
+        let successor = store
+            .write(|ctx| {
+                queues::create_queue(
+                    ctx.conn(),
+                    QueueKind::Urls,
+                    "same owner",
+                    None,
+                    &ImportOptionsSlice::default(),
+                    0,
+                )
+            })
+            .unwrap();
+        assert_eq!(
+            successor, 78,
+            "opening persisted the old maximum before deletion"
+        );
+        drop(store);
+        let observer = Connection::open(dir.path().join(DB_FILE_NAME)).unwrap();
+        observer
+            .execute("DELETE FROM import_queues WHERE queue_id = ?", [successor])
+            .unwrap();
+        let before: i64 = observer
+            .query_row("PRAGMA data_version", [], |row| row.get(0))
+            .unwrap();
+        let reopened = Store::open(dir.path()).unwrap();
+        let after: i64 = observer
+            .query_row("PRAGMA data_version", [], |row| row.get(0))
+            .unwrap();
+        assert_eq!(
+            after, before,
+            "a saved mark above an empty table is not rewritten on reopen"
+        );
+        let next = reopened
+            .write(|ctx| {
+                queues::create_queue(
+                    ctx.conn(),
+                    QueueKind::Urls,
+                    "same owner",
+                    None,
+                    &ImportOptionsSlice::default(),
+                    0,
+                )
+            })
+            .unwrap();
+        assert_eq!(next, 79, "reopening retained the persisted high-water mark");
+    }
 
     #[test]
     fn new_store_has_default_services() {

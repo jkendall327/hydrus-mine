@@ -219,17 +219,42 @@ pub async fn finish_and_dismiss_popup(
     .await
 }
 
-/// Popups made through the API never have a button to press.
+/// Queue the current live producer's callable; API-created jobs have none.
 pub async fn call_user_callable(
     State(app): State<Arc<AppState>>,
     req: ApiRequest,
 ) -> ApiResult<ApiResponse> {
-    change(app, req, |_, _| {
-        Err(ApiError::bad_request(
-            "This job doesn't have a user callable!",
-        ))
-    })
-    .await
+    app.authenticate(&req)?.check(Permission::ManagePopups)?;
+    let p = req.params.clone();
+    app.clone()
+        .blocking(move |app| {
+            let raw_key = job_key(&p)?;
+            let key: [u8; 32] = raw_key.try_into().map_err(|_| no_such_job())?;
+            let dispatched = app.store.write(move |ctx| {
+                let Some(job) = hydrus_store::popups::get(ctx.conn(), &key, now_whole())? else {
+                    return Ok(None);
+                };
+                let Some(owner) = job.action_owner else {
+                    return Ok(Some(false));
+                };
+                hydrus_store::popup_actions::request(
+                    ctx.conn(),
+                    &key,
+                    &owner,
+                    now_whole(),
+                    hydrus_store::popup_actions::Request::Call,
+                )
+                .map(Some)
+            })?;
+            match dispatched {
+                None => Err(no_such_job()),
+                Some(false) => Err(ApiError::bad_request(
+                    "This job doesn't have a user callable!",
+                )),
+                Some(true) => Ok(ApiResponse::Empty),
+            }
+        })
+        .await
 }
 
 pub async fn get_popups(

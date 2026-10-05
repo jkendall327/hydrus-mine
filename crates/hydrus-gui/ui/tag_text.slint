@@ -1,0 +1,40 @@
+import { Theme, ListText } from "theme.slint";
+export component PaintedTagText inherits Rectangle {
+    in property <ListText> item;
+    in property <bool> selected;
+    clip:true;
+    if root.item.parts.length == 0: Text {
+        text:root.item.text;
+        color:root.selected ? Theme.highlight-text : root.item.colour;
+        vertical-alignment:center;
+        overflow:elide;
+    }
+    if root.item.parts.length > 0: HorizontalLayout {
+        spacing:0px;alignment:start;
+        for part in root.item.parts: Rectangle {
+            min-width:label.preferred-width + 2px;
+            preferred-width:label.preferred-width + 2px;
+            horizontal-stretch:0;
+            // Qt paints each solid run through the remaining row, then overlays
+            // fading runs only within their fixed text/background block.
+            Rectangle {
+                // Wider children otherwise centre on the text run and cover
+                // the preceding connector's gradient.
+                x:0px;y:0px;
+                width:max(0px,root.width - parent.x);height:parent.height;
+                background:root.selected && !part.fade ? part.colour : transparent;
+            }
+            Rectangle {
+                x:0px;y:0px;
+                width:label.preferred-width + 2px;height:parent.height;
+                background:root.selected && part.fade ? @linear-gradient(90deg,part.previous-colour,part.colour) : transparent;
+            }
+            label := Text {
+                text:part.text;
+                width:self.preferred-width;
+                color:root.selected ? Theme.panel : (part.fade ? @linear-gradient(90deg,part.previous-colour,part.colour) : part.colour);
+                vertical-alignment:center;
+            }
+        }
+    }
+}

@@ -1,5 +1,5 @@
 //! Reference string PNG export parameters and visible grayscale headers.
-use hydrus_store::settings::Setting;
+use hydrus_store::settings::{GuiFormatting, Setting};
 use serde::{Deserialize, Serialize};
 
 /// Remember the last successful PNG export folder, as the reference picker does.
@@ -11,14 +11,25 @@ impl Setting for Directory {
 
 /// `GetPayloadDescriptionAndBytes` describes string length in characters.
 pub fn payload_description(payload: &str) -> String {
+    payload_description_with_format(payload, &GuiFormatting::default())
+}
+pub fn payload_description_with_format(payload: &str, formatting: &GuiFormatting) -> String {
     format!(
         "String - {}",
-        hydrus_core::numbers::human_bytes(payload.chars().count() as u64)
+        crate::gui_format::bytes(formatting, payload.chars().count() as u64)
     )
 }
 
 /// The reference describes selected serialisable objects by type and count.
 pub fn object_payload_description(payload: &str, object_type: &str, count: usize) -> String {
+    object_payload_description_with_format(payload, object_type, count, &GuiFormatting::default())
+}
+pub fn object_payload_description_with_format(
+    payload: &str,
+    object_type: &str,
+    count: usize,
+    formatting: &GuiFormatting,
+) -> String {
     let kind = if count == 1 {
         object_type.to_owned()
     } else {
@@ -29,7 +40,7 @@ pub fn object_payload_description(payload: &str, object_type: &str, count: usize
     };
     format!(
         "{kind} - {}",
-        hydrus_core::numbers::human_bytes(payload.chars().count() as u64)
+        crate::gui_format::bytes(formatting, payload.chars().count() as u64)
     )
 }
 

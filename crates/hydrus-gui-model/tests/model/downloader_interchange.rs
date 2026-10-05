@@ -17,6 +17,221 @@ fn payload() -> Vec<exchange::Definition> {
         })
         .collect()
 }
+
+fn mixed_login_payload() -> Vec<exchange::Definition> {
+    let fixture = hydrus_testkit::fixture_json("mixed_login_packages.json");
+    exchange::decode_text(&fixture["reference"].to_string()).unwrap()
+}
+
+fn recorded_login_manager() -> hydrus_parse::login::LoginManager {
+    use hydrus_parse::login::{Access, DomainLogin, LoginManager, Validity};
+    let fixture = hydrus_testkit::fixture_json("mixed_login_packages.json");
+    let Native::Login(mut old) = mixed_login_payload()
+        .into_iter()
+        .find(|definition| matches!(definition.native, Native::Login(_)))
+        .unwrap()
+        .native
+    else {
+        unreachable!()
+    };
+    let before = &fixture["before"]["domains"]["packages.example"];
+    old.key = before[0].as_str().unwrap().into();
+    old.examples.truncate(1);
+    old.examples[0].access = Access::UserPreferences;
+    old.examples[0].description = before[4].as_str().unwrap().into();
+    LoginManager {
+        scripts: vec![old],
+        domains: [(
+            "packages.example".into(),
+            DomainLogin {
+                script_key: before[0].as_str().unwrap().into(),
+                script_name: before[1].as_str().unwrap().into(),
+                credentials: serde_json::from_value(before[2].clone()).unwrap(),
+                access: Access::UserPreferences,
+                description: before[4].as_str().unwrap().into(),
+                active: before[5].as_bool().unwrap(),
+                validity: Validity::Invalid,
+                validity_error: before[7].as_str().unwrap().into(),
+                no_work_until: before[8].as_i64().unwrap(),
+                delay_reason: before[9].as_str().unwrap().into(),
+            },
+        )]
+        .into(),
+    }
+}
+
+#[test]
+fn mixed_login_import_replays_qt_duplicates_links_and_saved_consumer_without_exporting_credentials()
+{
+    let fixture = hydrus_testkit::fixture_json("mixed_login_packages.json");
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let original = recorded_login_manager();
+    let saved = original.clone();
+    store
+        .write(move |ctx| hydrus_store::logins::save(ctx.conn(), &saved))
+        .unwrap();
+    let mut draft = Draft::load(&store).unwrap();
+    let review = draft.import(mixed_login_payload()).unwrap();
+    assert_eq!(
+        review.added.len(),
+        fixture["mixed"].as_array().unwrap().len()
+    );
+    assert!(review.text().contains("Login Script: mixed package login"));
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), original);
+    let mut concurrent = original.clone();
+    let domain = concurrent.domains.get_mut("packages.example").unwrap();
+    domain
+        .credentials
+        .insert("username".into(), "concurrentdummyuser".into());
+    domain.active = true;
+    let saved = concurrent.clone();
+    store
+        .write(move |ctx| hydrus_store::logins::save(ctx.conn(), &saved))
+        .unwrap();
+    draft.save(&store).unwrap();
+    let reopened = Draft::load(&store).unwrap();
+    let manager = store.read(hydrus_store::logins::load).unwrap();
+    assert_eq!(
+        manager.scripts.len(),
+        fixture["accepted"]["scripts"].as_array().unwrap().len()
+    );
+    let current = manager.domains.get("packages.example").unwrap();
+    let script = manager.script(current).unwrap();
+    assert_eq!(script.name, "mixed package login");
+    assert_ne!(script.key, "71".repeat(32));
+    assert_ne!(script.key, original.scripts[0].key);
+    assert_eq!(
+        current.credentials,
+        concurrent.domains["packages.example"].credentials
+    );
+    assert!(current.active);
+    assert_eq!(
+        current.validity_error,
+        original.domains["packages.example"].validity_error
+    );
+    assert_eq!(
+        current.no_work_until,
+        original.domains["packages.example"].no_work_until
+    );
+    assert_eq!(
+        current.delay_reason,
+        original.domains["packages.example"].delay_reason
+    );
+    assert_eq!(
+        current.access.code(),
+        fixture["accepted"]["domains"]["packages.example"][3]
+            .as_i64()
+            .unwrap()
+    );
+    assert_eq!(
+        current.description,
+        fixture["accepted"]["domains"]["packages.example"][4]
+            .as_str()
+            .unwrap()
+    );
+    assert!(!manager.domains.contains_key("unconfigured.example"));
+    script.check_valid().unwrap();
+    script.check_credentials(&current.credentials).unwrap();
+    assert!(
+        store
+            .read(settings::get::<hydrus_store::network::LoginDomains>)
+            .unwrap()
+            .0
+            .contains(&"packages.example".into())
+    );
+    let definitions = reopened.definitions();
+    let selected: std::collections::BTreeSet<_> = definitions
+        .iter()
+        .enumerate()
+        .filter_map(|(i, definition)| {
+            matches!(&definition.native, Native::Login(script) if script.key == current.script_key)
+                .then_some(i)
+        })
+        .collect();
+    let login_only = reopened.export(&selected);
+    assert_eq!(
+        login_only.len(),
+        fixture["login_only"].as_array().unwrap().len()
+    );
+    let text = exchange::encode_text(&login_only).unwrap();
+    assert!(!text.contains("concurrentdummyuser"));
+    assert!(!text.contains("dummy-retained-password"));
+    let decoded = hydrus_downloader_exchange::logins::decode_text(&text).unwrap();
+    assert_eq!(&decoded[0], script);
+    let nested = definitions
+        .iter()
+        .position(|definition| matches!(&definition.native, Native::Gug(AnyGug::Nested(_))))
+        .unwrap();
+    let with_dependencies = reopened.export(&[nested].into());
+    assert_eq!(with_dependencies.len(), 5);
+    assert!(
+        !with_dependencies
+            .iter()
+            .any(|definition| matches!(definition.native, Native::Login(_)))
+    );
+    let mut duplicate = reopened.clone();
+    let review = duplicate.import(mixed_login_payload()).unwrap();
+    assert_eq!(review.duplicates, 6);
+    assert!(review.added.is_empty());
+}
+
+#[test]
+fn mixed_login_cancel_malformed_and_stale_scripts_never_partially_save_downloaders() {
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let mut cancelled = Draft::load(&store).unwrap();
+    cancelled.import(mixed_login_payload()).unwrap();
+    drop(cancelled);
+    assert!(
+        store
+            .read(hydrus_store::logins::load)
+            .unwrap()
+            .scripts
+            .is_empty()
+    );
+    let mut stale = Draft::load(&store).unwrap();
+    let original = stale.definitions();
+    let mut unsupported = mixed_login_payload();
+    unsupported.push(exchange::Definition::new(Native::Content(
+        hydrus_gui_model::parser_editors::new_content(),
+    )));
+    assert!(stale.import(unsupported).is_err());
+    assert_eq!(stale.definitions(), original);
+    stale.import(mixed_login_payload()).unwrap();
+    store
+        .write(|ctx| {
+            let mut manager = hydrus_store::logins::load(ctx.conn())?;
+            manager
+                .scripts
+                .push(hydrus_parse::login::LoginScript::default());
+            hydrus_store::logins::save(ctx.conn(), &manager)
+        })
+        .unwrap();
+    assert!(stale.save(&store).is_err());
+    assert!(
+        store
+            .read::<Downloaders>(settings::get)
+            .unwrap()
+            .parsers
+            .is_empty()
+    );
+    assert!(
+        store
+            .read::<UrlClassSettings>(settings::get)
+            .unwrap()
+            .url_classes
+            .is_empty()
+    );
+    assert_eq!(
+        store
+            .read(hydrus_store::logins::load)
+            .unwrap()
+            .scripts
+            .len(),
+        1
+    );
+}
 #[test]
 fn reference_duplicate_rules_remap_nested_members_and_keep_auxiliary_context() {
     let fixture = hydrus_testkit::fixture_json("downloader_interchange.json");

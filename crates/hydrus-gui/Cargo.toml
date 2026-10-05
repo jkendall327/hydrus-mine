@@ -17,7 +17,9 @@ hydrus-gui-model.workspace = true
 hydrus-store.workspace = true
 hydrus-parse.workspace = true
 hydrus-net.workspace = true
+hydrus-download.workspace = true
 tokio.workspace = true
+tracing.workspace = true
 hydrus-downloader-exchange = { path = "../hydrus-downloader-exchange" }
 rusqlite.workspace = true
 hydrus-search.workspace = true
@@ -41,6 +43,9 @@ slint = { version = "1.18", default-features = false, features = ["std", "compat
 slint-build = "1.18"
 
 [dev-dependencies]
+hydrus-api.workspace = true
+axum.workspace = true
+tower.workspace = true
 hydrus-legacy.workspace = true
 hydrus-testkit.workspace = true
 

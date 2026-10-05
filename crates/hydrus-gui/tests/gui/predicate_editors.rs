@@ -8,7 +8,7 @@
 use std::sync::Arc;
 
 use serde_json::Value as Json;
-use slint::{ComponentHandle as _, Model as _};
+use slint::{ComponentHandle as _, Model as _, platform::WindowAdapter as _};
 
 use hydrus_core::search::context::{LocationContext, TagContext};
 use hydrus_core::service::builtin_keys;
@@ -739,7 +739,7 @@ fn native_viewtime_milliseconds_survive_accept_recent_reopen_and_cancel() {
 fn the_editor_window_shows_what_trees_and_buttons_change() {
     let boundaries = hydrus_testkit::fixture_json("predicate_boundaries.json");
     let (_dirs, store) = store();
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
@@ -840,12 +840,22 @@ fn the_editor_window_shows_what_trees_and_buttons_change() {
     window.invoke_pressed(0, 3);
     assert!(
         window
-            .get_error()
+            .get_notice_message()
             .starts_with("Unfortunately, some hashes did not parse correctly."),
         "{}",
-        window.get_error()
+        window.get_notice_message()
     );
-    assert!(window.get_error().contains("\"not a hash\""));
+    assert!(window.get_notice_message().contains("\"not a hash\""));
+    assert!(window.get_notice_open());
+    // Acknowledge the actual owned warning before opening its removal question.
+    windows
+        .get(windows.count() - 1)
+        .unwrap()
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::KeyPressed {
+            text: slint::platform::Key::Return.into(),
+        });
+    assert!(!window.get_notice_open());
     assert_eq!(
         field(&window, 0, 2).text,
         boundaries["hash"][0]["text"].as_str().unwrap()
@@ -946,16 +956,34 @@ fn more_suggestions_than_fit_scroll_rather_than_spill_over() {
     let all: Vec<_> = ui.get_suggestions().iter().collect();
     assert!(all.len() > 14, "{} suggestions", all.len());
 
-    // the first row, where highlighting it changes the window
-    ui.set_highlighted(-1);
+    // Read autocomplete paints its actual dense selection mask, as Qt paints
+    // selected terms. Mutating only `highlighted` leaves that mask unchanged.
+    ui.invoke_suggestion_selection_clicked(0, false, false);
+    assert!(ui.invoke_suggestions_deselected());
+    assert_eq!(ui.get_suggestion_selected().row_count(), all.len());
+    assert!(
+        ui.get_suggestion_selected()
+            .iter()
+            .all(|selected| !selected)
+    );
     let plain = draw();
-    ui.set_highlighted(0);
+    ui.invoke_suggestion_selection_clicked(0, false, false);
+    assert_eq!(ui.get_highlighted(), 0);
+    let selected: Vec<_> = ui.get_suggestion_selected().iter().collect();
+    assert_eq!(selected.len(), all.len());
+    assert!(selected[0]);
+    assert!(selected[1..].iter().all(|selected| !selected));
     let first = differing(&plain, &draw());
     let top = *first.first().expect("the highlight drawn");
     // twelve rows of 22 pixels show, under which the window is as it is
     // with no more than twelve suggestions
     let bottom = top + 12 * 22 + 2;
-    ui.set_highlighted(-1);
+    assert!(ui.invoke_suggestions_deselected());
+    assert!(
+        ui.get_suggestion_selected()
+            .iter()
+            .all(|selected| !selected)
+    );
     let everything = draw();
     ui.set_suggestions(slint::ModelRc::new(slint::VecModel::from(
         all[..12].to_vec(),
@@ -974,13 +1002,41 @@ fn more_suggestions_than_fit_scroll_rather_than_spill_over() {
     // the last highlighted is scrolled into view
     ui.set_suggestions(slint::ModelRc::new(slint::VecModel::from(all.clone())));
     draw();
-    ui.set_highlighted(i32::try_from(all.len() - 1).unwrap());
+    let last = i32::try_from(all.len() - 1).unwrap();
+    ui.invoke_suggestion_selection_clicked(last, false, false);
+    assert_eq!(ui.get_highlighted(), last);
+    let selected: Vec<_> = ui.get_suggestion_selected().iter().collect();
+    assert_eq!(selected.len(), all.len());
+    assert!(selected[all.len() - 1]);
+    assert!(selected[..all.len() - 1].iter().all(|selected| !selected));
     let scrolled = differing(&everything, &draw());
+    let scroll_y = ui.get_read_scroll_y();
+    let view_height = ui.get_read_view_height();
+    let content_height = ui.get_read_content_height();
+    let last_top = last as f32 * 22.0;
+    let last_bottom = last_top + 22.0;
+    assert!(scroll_y < 0.0, "last row did not move the scroll viewport");
+    assert!(view_height > 0.0);
+    assert!(content_height >= last_bottom);
+    assert!(scroll_y >= view_height - content_height - 1.0);
+    assert!(last_top + scroll_y >= -1.0);
+    assert!(last_bottom + scroll_y <= view_height + 1.0);
     assert!(!scrolled.is_empty(), "the last suggestion not shown");
     assert!(
         scrolled.iter().all(|y| (top - 2..bottom).contains(y)),
         "{scrolled:?} outside {top}..{bottom}"
     );
+
+    // Moving back to the first row uses the same real selection callback and
+    // scrolls upward, rather than leaving an off-screen dense selection mask.
+    ui.invoke_suggestion_selection_clicked(0, false, false);
+    let first_again = differing(&plain, &draw());
+    assert!(
+        ui.get_read_scroll_y().abs() < f32::EPSILON,
+        "the first row returns the viewport to its origin"
+    );
+    assert!(!first_again.is_empty(), "the first suggestion not restored");
+    assert!(first_again.iter().all(|y| (top - 2..bottom).contains(y)));
 }
 
 #[test]

@@ -490,6 +490,34 @@ impl ClientOptions {
         out
     }
 
+    /// Ordered namespace weight rows in the related-tag Options tables.
+    pub fn related_tag_weights(&self, result: bool) -> DecodeResult<Option<Vec<(String, u16)>>> {
+        let settings = Settings::new(KIND, &self.dictionary)?;
+        let key = if result {
+            "related_tags_result_tag_slices_weight_percent"
+        } else {
+            "related_tags_search_tag_slices_weight_percent"
+        };
+        settings
+            .get(key)
+            .map(|meta| {
+                list_items(expect_object(meta, key)?)?
+                    .iter()
+                    .map(|item| {
+                        let value = plain(KIND, item, key)?;
+                        let [slice, weight] = tuple::<2>(KIND, &value, key)?;
+                        let weight = u16::try_from(int(KIND, weight, key)?)
+                            .map_err(|_| malformed(KIND, "related weight is outside 0..10000"))?;
+                        if weight > 10_000 {
+                            return Err(malformed(KIND, "related weight is outside 0..10000"));
+                        }
+                        Ok((string(KIND, slice, key)?, weight))
+                    })
+                    .collect()
+            })
+            .transpose()
+    }
+
     /// The conversion most recently accepted in a conversion child editor.
     pub fn last_used_string_conversion(
         &self,
@@ -658,15 +686,27 @@ pub fn recent_predicates(
         let predicates: Vec<_> = list_items(expect_object(kept, "recent predicates")?)?
             .iter()
             .filter_map(Meta::as_object)
-            .filter_map(
-                |object| match super::predicates::predicate_with_scales(object, scales) {
-                    Ok(Predicate::System(p)) => Some(p),
-                    _ => None,
-                },
-            )
+            .filter_map(|object| super::predicates::predicate_with_scales(object, scales).ok())
             .collect();
-        if !predicates.is_empty() {
-            out.by_type.insert(kind, predicates);
+        let systems: Vec<_> = predicates
+            .iter()
+            .filter_map(|p| {
+                if let Predicate::System(p) = p {
+                    Some(p.clone())
+                } else {
+                    None
+                }
+            })
+            .collect();
+        let others: Vec<_> = predicates
+            .into_iter()
+            .filter(|p| !matches!(p, Predicate::System(_)))
+            .collect();
+        if !systems.is_empty() {
+            out.by_type.insert(kind, systems);
+        }
+        if !others.is_empty() {
+            out.non_system.insert(kind, others);
         }
     }
     Ok(out)

@@ -172,6 +172,7 @@ fn replay(kind: Kind, recorded: &Value) {
         .unwrap();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     // download, then gallery or watcher
     ui.invoke_new_page();
@@ -262,6 +263,8 @@ fn replay(kind: Kind, recorded: &Value) {
                     })
                     .unwrap();
                 (bound.sync)();
+                // The Qt fixture calls _UpdateImportStatusNow after this injected work.
+                bound.downloader_updates.force();
             }
             "file limit" => {
                 let limit = i32::try_from(step["argument"].as_i64().unwrap()).unwrap();

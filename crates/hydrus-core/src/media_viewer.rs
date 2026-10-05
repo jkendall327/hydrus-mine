@@ -453,9 +453,43 @@ pub fn canvas_zooms(
     canvas: (u32, u32),
     device_pixel_ratio: f64,
 ) -> BTreeMap<ZoomType, f64> {
+    canvas_zooms_for(
+        settings,
+        mime,
+        resolution,
+        canvas,
+        device_pixel_ratio,
+        false,
+    )
+}
+
+/// Preview zooms use the independent preview show action and up/down rules.
+pub fn preview_canvas_zooms(
+    settings: &MediaViewerSettings,
+    mime: Mime,
+    resolution: Option<(u32, u32)>,
+    canvas: (u32, u32),
+    device_pixel_ratio: f64,
+) -> BTreeMap<ZoomType, f64> {
+    canvas_zooms_for(settings, mime, resolution, canvas, device_pixel_ratio, true)
+}
+
+fn canvas_zooms_for(
+    settings: &MediaViewerSettings,
+    mime: Mime,
+    resolution: Option<(u32, u32)>,
+    canvas: (u32, u32),
+    device_pixel_ratio: f64,
+    preview: bool,
+) -> BTreeMap<ZoomType, f64> {
     let mut zooms: BTreeMap<ZoomType, f64> = ZoomType::ALL.iter().map(|t| (*t, 1.0)).collect();
     let view = settings.view(mime);
-    if !view.media_show_action.zoomable() {
+    let show = if preview {
+        view.preview_show_action
+    } else {
+        view.media_show_action
+    };
+    if !show.zoomable() {
         return zooms;
     }
     let (media_width, media_height) = media_size(mime, resolution, 1.0);
@@ -500,6 +534,8 @@ pub fn canvas_zooms(
     };
     let (scale_up, scale_down) = if mime.general_class() == Some(Mime::GeneralAudio) {
         (ScaleAction::Full, ScaleAction::ToCanvas)
+    } else if preview {
+        (rules.preview_scale_up, rules.preview_scale_down)
     } else {
         (rules.media_scale_up, rules.media_scale_down)
     };

@@ -1,0 +1,471 @@
+{
+  "keys": [
+    "copy_notes_dialog_copy_all",
+    "copy_notes_dialog_copy_json",
+    "start_note_editing_at_end",
+    "copy_notes_quick_click_only_copies_text"
+  ],
+  "initial": [
+    true,
+    true,
+    true,
+    false
+  ],
+  "labels": [
+    "Start editing notes with the text cursor at the end of the document: ",
+    "When middle-clicking a note hover, only copy the text: "
+  ],
+  "options": [
+    {
+      "input": [
+        false,
+        true
+      ],
+      "before": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "staged": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "saved": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "round_trip": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "reopened": [
+        false,
+        true
+      ]
+    },
+    {
+      "input": [
+        true,
+        false
+      ],
+      "before": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "staged": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "saved": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "round_trip": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "reopened": [
+        true,
+        false
+      ]
+    }
+  ],
+  "options_cancelled": [
+    true,
+    true,
+    true,
+    false
+  ],
+  "notes": {
+    "note10": "  ten\r\nurl https://notes.example/item  \n\n",
+    "note2": "two 🦊",
+    "empty": "\n   "
+  },
+  "menu": [
+    {
+      "label": "copy all notes",
+      "separator": false,
+      "checkable": true,
+      "checked": true,
+      "enabled": true,
+      "tooltip": "Copy all the notes in the dialog, or just the one in view?"
+    },
+    {
+      "label": "copy as JSON",
+      "separator": false,
+      "checkable": true,
+      "checked": true,
+      "enabled": true,
+      "tooltip": "Copy as technical JSON, which the paste button will accept, or as prettier, human text?"
+    },
+    {
+      "label": "",
+      "separator": true,
+      "checkable": false,
+      "checked": false,
+      "enabled": true,
+      "tooltip": ""
+    },
+    {
+      "label": "start editing with text cursor at the end",
+      "separator": false,
+      "checkable": true,
+      "checked": true,
+      "enabled": true,
+      "tooltip": "Start editing notes with the text cursor at the end of the document."
+    },
+    {
+      "label": "on middle-click note hover copy, only copy text",
+      "separator": false,
+      "checkable": true,
+      "checked": false,
+      "enabled": true,
+      "tooltip": "Otherwise, copy title and text."
+    }
+  ],
+  "cog_openings": [
+    {
+      "button": "right",
+      "changed": false,
+      "preferences": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "menus": []
+    },
+    {
+      "button": "left",
+      "changed": false,
+      "preferences": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "menus": [
+        [
+          true,
+          true,
+          true,
+          false
+        ]
+      ]
+    },
+    {
+      "button": "right",
+      "changed": true,
+      "preferences": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "menus": []
+    },
+    {
+      "button": "left",
+      "changed": true,
+      "preferences": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "menus": [
+        [
+          true,
+          true,
+          false,
+          false
+        ]
+      ]
+    }
+  ],
+  "initial_cursors": [
+    {
+      "name": "empty",
+      "text": "\n   ",
+      "cursor": 4,
+      "anchor": 4
+    },
+    {
+      "name": "note10",
+      "text": "  ten\nurl https://notes.example/item  \n\n",
+      "cursor": 40,
+      "anchor": 40
+    },
+    {
+      "name": "note2",
+      "text": "two 🦊",
+      "cursor": 6,
+      "anchor": 6
+    }
+  ],
+  "switched_cursors": [
+    {
+      "name": "empty",
+      "text": "\n   ",
+      "cursor": 4,
+      "anchor": 4
+    },
+    {
+      "name": "note10",
+      "text": "  ten\nurl https://notes.example/item  \n\n",
+      "cursor": 40,
+      "anchor": 40
+    },
+    {
+      "name": "note2",
+      "text": "two 🦊",
+      "cursor": 1,
+      "anchor": 1
+    }
+  ],
+  "cursors_after_flip": [
+    {
+      "name": "empty",
+      "text": "\n   ",
+      "cursor": 4,
+      "anchor": 4
+    },
+    {
+      "name": "note10",
+      "text": "  ten\nurl https://notes.example/item  \n\n",
+      "cursor": 40,
+      "anchor": 40
+    },
+    {
+      "name": "note2",
+      "text": "two 🦊",
+      "cursor": 1,
+      "anchor": 1
+    }
+  ],
+  "future_cursor": {
+    "name": "future",
+    "text": "future 🦊 note",
+    "cursor": 0,
+    "anchor": 0
+  },
+  "inserted": {
+    "name": "future",
+    "text": "Xfuture 🦊 note",
+    "cursor": 1,
+    "anchor": 1
+  },
+  "future_paste": "{\"future\": \"future \\ud83e\\udd8a note\"}",
+  "paste_notice": "Pasted 1 new notes!",
+  "copies": [
+    {
+      "all": true,
+      "json": true,
+      "notes": {
+        "note10": "ten\nurl https://notes.example/item",
+        "note2": "two 🦊",
+        "future": "Xfuture 🦊 note"
+      },
+      "current": "note2",
+      "clipboard": [
+        "{\"note10\": \"ten\\nurl https://notes.example/item\", \"note2\": \"two \\ud83e\\udd8a\", \"future\": \"Xfuture \\ud83e\\udd8a note\"}"
+      ],
+      "notice": [
+        "Copied 3 encoded notes!"
+      ]
+    },
+    {
+      "all": false,
+      "json": true,
+      "notes": {
+        "note10": "ten\nurl https://notes.example/item",
+        "note2": "two 🦊",
+        "future": "Xfuture 🦊 note"
+      },
+      "current": "note2",
+      "clipboard": [
+        "{\"note2\": \"two \\ud83e\\udd8a\"}"
+      ],
+      "notice": [
+        "Copied 1 encoded notes!"
+      ]
+    },
+    {
+      "all": true,
+      "json": false,
+      "notes": {
+        "note10": "ten\nurl https://notes.example/item",
+        "note2": "two 🦊",
+        "future": "Xfuture 🦊 note"
+      },
+      "current": "note2",
+      "clipboard": [
+        "future\n\nXfuture 🦊 note\n\n\n\nnote2\n\ntwo 🦊\n\n\n\nnote10\n\nten\nurl https://notes.example/item"
+      ],
+      "notice": [
+        "Copied 3 notes!"
+      ]
+    },
+    {
+      "all": false,
+      "json": false,
+      "notes": {
+        "note10": "ten\nurl https://notes.example/item",
+        "note2": "two 🦊",
+        "future": "Xfuture 🦊 note"
+      },
+      "current": "note2",
+      "clipboard": [
+        "note2\n\ntwo 🦊"
+      ],
+      "notice": [
+        "Copied 1 notes!"
+      ]
+    },
+    {
+      "all": false,
+      "json": true,
+      "notes": {
+        "note10": "ten\nurl https://notes.example/item",
+        "note2": "two 🦊",
+        "future": "Xfuture 🦊 note"
+      },
+      "current": "empty",
+      "clipboard": [
+        "{\"empty\": \"\"}"
+      ],
+      "notice": [
+        "Copied 1 encoded notes!"
+      ]
+    },
+    {
+      "all": false,
+      "json": false,
+      "notes": {
+        "note10": "ten\nurl https://notes.example/item",
+        "note2": "two 🦊",
+        "future": "Xfuture 🦊 note"
+      },
+      "current": "empty",
+      "clipboard": [
+        "empty\n\n"
+      ],
+      "notice": [
+        "Copied 1 notes!"
+      ]
+    }
+  ],
+  "hover": [
+    {
+      "text_only": false,
+      "clipboard": [
+        "note2\n\ntwo 🦊"
+      ]
+    },
+    {
+      "text_only": true,
+      "clipboard": [
+        "two 🦊"
+      ]
+    }
+  ],
+  "before_cancel": [
+    false,
+    false,
+    false,
+    true
+  ],
+  "after_cancel": [
+    false,
+    false,
+    false,
+    true
+  ],
+  "final_round_trip": [
+    false,
+    false,
+    false,
+    true
+  ],
+  "reopened_menu": [
+    {
+      "label": "copy all notes",
+      "separator": false,
+      "checkable": true,
+      "checked": false,
+      "enabled": true,
+      "tooltip": "Copy all the notes in the dialog, or just the one in view?"
+    },
+    {
+      "label": "copy as JSON",
+      "separator": false,
+      "checkable": true,
+      "checked": false,
+      "enabled": true,
+      "tooltip": "Copy as technical JSON, which the paste button will accept, or as prettier, human text?"
+    },
+    {
+      "label": "",
+      "separator": true,
+      "checkable": false,
+      "checked": false,
+      "enabled": true,
+      "tooltip": ""
+    },
+    {
+      "label": "start editing with text cursor at the end",
+      "separator": false,
+      "checkable": true,
+      "checked": false,
+      "enabled": true,
+      "tooltip": "Start editing notes with the text cursor at the end of the document."
+    },
+    {
+      "label": "on middle-click note hover copy, only copy text",
+      "separator": false,
+      "checkable": true,
+      "checked": true,
+      "enabled": true,
+      "tooltip": "Otherwise, copy title and text."
+    }
+  ],
+  "reopened_cursors": [
+    {
+      "name": "empty",
+      "text": "\n   ",
+      "cursor": 0,
+      "anchor": 0
+    },
+    {
+      "name": "note10",
+      "text": "  ten\nurl https://notes.example/item  \n\n",
+      "cursor": 0,
+      "anchor": 0
+    },
+    {
+      "name": "note2",
+      "text": "two 🦊",
+      "cursor": 0,
+      "anchor": 0
+    }
+  ],
+  "questions": [
+    "It looks like you have made changes--are you sure you want to cancel?",
+    "It looks like you have made changes--are you sure you want to cancel?"
+  ]
+}

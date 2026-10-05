@@ -14,8 +14,7 @@ use tokio::sync::Semaphore;
 use tokio_util::sync::CancellationToken;
 
 use hydrus_core::bandwidth::{BandwidthType, GalleryTokenKind, Manager, Tracker};
-use hydrus_core::numbers::human_bytes;
-use hydrus_core::time::timestamp_to_pretty_time_delta;
+use hydrus_core::numbers::human_bytes_with_figures;
 use hydrus_core::url::functions::{check_full_url, ensure_url_is_encoded};
 use hydrus_core::url::pyurl::urljoin;
 use hydrus_core::url::{UrlType, psl};
@@ -23,6 +22,7 @@ use hydrus_store::Store;
 use hydrus_store::bandwidth::{BandwidthSettings, HistoryResets};
 use hydrus_store::network::{self, Approval, NetworkContext};
 use hydrus_store::network_runtime::{self, WaitReason};
+use hydrus_store::settings::GuiFormatting;
 
 use crate::cookies::{CookieChange, CookieUrl, cookie_header, set_cookie_changes};
 use crate::error::{NetError, StatusOutcome, status_outcome};
@@ -453,6 +453,7 @@ pub struct NetEngine {
     /// The bandwidth rules and usage, and when the usage was last saved.
     bandwidth: Arc<Mutex<(Manager, i64, HistoryResets)>>,
     bandwidth_settings: Arc<RwLock<BandwidthSettings>>,
+    formatting: Arc<RwLock<GuiFormatting>>,
     /// Last successfully persisted counts and their reset generations. Serializes
     /// saves without holding the live bandwidth-manager lock across store I/O.
     saved_bandwidth: Arc<Mutex<BandwidthCheckpoint>>,
@@ -738,12 +739,13 @@ impl NetEngine {
     pub fn new(store: Arc<Store>, options: NetOptions) -> Result<Self, NetError> {
         let client = http_client(&options)?;
         let now = now();
-        let (bandwidth_settings, usage, history_resets) = store
+        let (bandwidth_settings, usage, history_resets, formatting) = store
             .read(|conn| {
                 Ok((
                     hydrus_store::settings::get::<BandwidthSettings>(conn)?,
                     hydrus_store::bandwidth::usage(conn, now)?,
                     hydrus_store::settings::get::<HistoryResets>(conn)?,
+                    hydrus_store::settings::get::<GuiFormatting>(conn)?,
                 ))
             })
             .map_err(|e| NetError::Io(e.to_string()))?;
@@ -762,6 +764,7 @@ impl NetEngine {
             domain_slots: Arc::new(Mutex::default()),
             bandwidth: Arc::new(Mutex::new((manager, now, history_resets))),
             bandwidth_settings: Arc::new(RwLock::new(bandwidth_settings)),
+            formatting: Arc::new(RwLock::new(formatting)),
             saved_bandwidth: Arc::new(Mutex::new(saved_bandwidth)),
             domain_errors: Arc::new(Mutex::default()),
             wake: Arc::new(Mutex::default()),
@@ -809,12 +812,13 @@ impl NetEngine {
     /// have changed (the options window, say, changed them); whether
     /// they had.
     pub fn reload_settings(&self) -> Result<bool, NetError> {
-        let (network, bandwidth) = self
+        let (network, bandwidth, formatting) = self
             .store
             .read(|conn| {
                 Ok((
                     hydrus_store::settings::get::<hydrus_store::network::NetworkSettings>(conn)?,
                     hydrus_store::settings::get::<BandwidthSettings>(conn)?,
+                    hydrus_store::settings::get::<GuiFormatting>(conn)?,
                 ))
             })
             .map_err(|e| NetError::Io(e.to_string()))?;
@@ -831,7 +835,46 @@ impl NetEngine {
                 .set_all_rules(bandwidth.rules.clone());
             *self.bandwidth_settings.write() = bandwidth;
         }
+        if formatting != *self.formatting.read() {
+            *self.formatting.write() = formatting;
+            changed = true;
+            // Repaint waiting labels through their existing predicate loop.
+            // Accounting, tokens, deadlines and cancellation remain owned by jobs.
+            let jobs = self
+                .jobs
+                .lock()
+                .values()
+                .map(|(job, _)| job.clone())
+                .collect::<Vec<_>>();
+            for job in jobs {
+                if matches!(
+                    job.state.lock().wait,
+                    WaitReason::Bandwidth | WaitReason::Gallery
+                ) {
+                    job.wake.notify_one();
+                }
+            }
+        }
         Ok(changed)
+    }
+
+    fn wait_time(&self, value: i64, now: i64, imminent: &str, no_prefix: bool) -> String {
+        if self.formatting.read().iso {
+            return hydrus_core::time::timestamp_to_iso(Some(value));
+        }
+        let delta = value.abs_diff(now);
+        if delta <= 2 {
+            return imminent.into();
+        }
+        let span =
+            hydrus_core::time::pretty_time_delta(i64::try_from(delta).unwrap_or(i64::MAX), false);
+        if value < now {
+            format!("{span} ago")
+        } else if no_prefix {
+            span
+        } else {
+            format!("in {span}")
+        }
     }
 
     /// When it started, the data it has read since, and in the last second
@@ -1071,10 +1114,7 @@ impl NetEngine {
                 Some(at) if at - now < seconds => (at, "overriding bandwidth"),
                 _ => (now.saturating_add(seconds), "bandwidth free"),
             };
-            let when = match timestamp_to_pretty_time_delta(until, now, "") {
-                t if t == "now" => "imminently".to_owned(),
-                t => t,
-            };
+            let when = self.wait_time(until, now, "imminently", false);
             job.set_wait(WaitReason::Bandwidth);
             job.set_status(format!(
                 "{what} {when}\u{2026} ({})",
@@ -1183,10 +1223,7 @@ impl NetEngine {
                     return Ok(());
                 }
                 Err(next) => {
-                    let when = match timestamp_to_pretty_time_delta(next, now, "") {
-                        t if t == "now" => "checking".to_owned(),
-                        t => t,
-                    };
+                    let when = self.wait_time(next, now, "checking", true);
                     job.set_wait(WaitReason::Gallery);
                     job.set_status(format!("waiting to start: {when}"));
                     job.sleep(0.8).await?;
@@ -1221,8 +1258,9 @@ impl NetEngine {
                 state.bytes_total = None;
                 state.speed = 0;
                 state.url.clone_from(&request.url);
-                state.obeys_bandwidth =
-                    self.options.read().obey_bandwidth && request.method == Method::Get;
+                state.obeys_bandwidth = self.options.read().obey_bandwidth
+                    && request.method == Method::Get
+                    && !request.for_login;
             }
             *job.tracker.lock() = Some(Tracker::new(now()));
             job.override_bandwidth.store(false, Ordering::Relaxed);
@@ -1604,7 +1642,7 @@ impl NetEngine {
                 .map(|s| now().saturating_add(i64::try_from(s).unwrap_or(i64::MAX)));
             self.wait_for_bandwidth(
                 &attempt.contexts,
-                request.method == Method::Get,
+                request.method == Method::Get && !request.for_login,
                 override_at,
                 job,
             )
@@ -2165,7 +2203,7 @@ impl NetEngine {
                 {
                     return Err(NetError::Network(format!(
                         "Too much data: Was expecting {}, but the server continued responding!",
-                        human_bytes(total)
+                        human_bytes_with_figures(total, self.formatting.read().figures)
                     ))
                     .into());
                 }
@@ -2174,7 +2212,7 @@ impl NetEngine {
                 {
                     return Err(NetError::Network(format!(
                         "Too much data: Was expecting {} in this range chunk, but the server continued responding!",
-                        human_bytes(expected)
+                        human_bytes_with_figures(expected, self.formatting.read().figures)
                     ))
                     .into());
                 }
@@ -2259,6 +2297,217 @@ fn parse_last_modified(value: &str) -> Option<i64> {
 mod reload_tests {
     use super::*;
     use hydrus_store::network::NetworkSettings;
+
+    #[test]
+    fn saved_formatting_replays_actual_backend_waits_and_reopens_without_changing_rules() {
+        let fixture = hydrus_testkit::fixture_json("gui_format_backend.json");
+        let (dir, store, engine) = engine();
+        let original_options = engine.options();
+        let original_slots = engine.slots.read().clone();
+        let original_rules = engine.bandwidth_settings();
+        let now = fixture["now"].as_i64().unwrap();
+        for event in fixture["events"].as_array().unwrap() {
+            let formatting: GuiFormatting = serde_json::from_value(event["saved"].clone()).unwrap();
+            store
+                .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &formatting))
+                .unwrap();
+            engine.reload_settings().unwrap();
+            let outputs = &event["consumers"];
+            assert_eq!(
+                format!(
+                    "bandwidth free {}… (global)",
+                    engine.wait_time(now + 90, now, "imminently", false)
+                ),
+                outputs["bandwidth"]
+            );
+            assert_eq!(
+                format!(
+                    "overriding bandwidth {}… (global)",
+                    engine.wait_time(now + 45, now, "imminently", false)
+                ),
+                outputs["override"]
+            );
+            assert_eq!(
+                format!(
+                    "waiting to start: {}",
+                    engine.wait_time(now + 90, now, "checking", true)
+                ),
+                outputs["gallery"]
+            );
+            assert_eq!(
+                format!(
+                    "bandwidth free {}… (global)",
+                    engine.wait_time(now + 2, now, "imminently", false)
+                ),
+                outputs["imminently"]
+            );
+            assert_eq!(
+                format!(
+                    "waiting to start: {}",
+                    engine.wait_time(now + 2, now, "checking", true)
+                ),
+                outputs["checking"]
+            );
+            assert_eq!(
+                format!(
+                    "bandwidth free {}… (global)",
+                    engine.wait_time(now + 3, now, "imminently", false)
+                ),
+                outputs["bandwidth_three"]
+            );
+            assert_eq!(
+                format!(
+                    "waiting to start: {}",
+                    engine.wait_time(now + 3, now, "checking", true)
+                ),
+                outputs["gallery_three"]
+            );
+            assert!(!engine.reload_settings().unwrap());
+            assert_eq!(engine.options(), original_options);
+            assert!(Arc::ptr_eq(&original_slots, &engine.slots.read()));
+            assert_eq!(engine.bandwidth_settings(), original_rules);
+            let reopened = Store::open(dir.path()).unwrap();
+            let restarted = NetEngine::new(reopened, original_options.clone()).unwrap();
+            assert_eq!(*restarted.formatting.read(), *engine.formatting.read());
+        }
+    }
+
+    #[tokio::test]
+    async fn formatting_refresh_keeps_a_bandwidth_wait_and_its_usage_and_cancel_reason() {
+        use hydrus_core::bandwidth::{Rule, Rules};
+        let (_dir, store, engine) = engine();
+        store
+            .write(|ctx| {
+                let rules = BandwidthSettings {
+                    rules: vec![(
+                        NetworkContext::global(),
+                        Rules::new([Rule::new(BandwidthType::Requests, Some(3600), 1)]),
+                    )],
+                    ..Default::default()
+                };
+                hydrus_store::settings::set(ctx.conn(), &rules)
+            })
+            .unwrap();
+        engine.reload_settings().unwrap();
+        let contexts = vec![NetworkContext::global()];
+        let started = now();
+        engine.bandwidth.lock().0.report_request(&contexts, started);
+        let trackers = engine.bandwidth.lock().0.all_trackers();
+        let (seconds, _) = engine
+            .bandwidth
+            .lock()
+            .0
+            .waiting_estimate_and_context(&contexts, started);
+        let target = started + i64::try_from(seconds).unwrap();
+        let job = Job::new();
+        engine
+            .jobs
+            .lock()
+            .insert(1, ((*job).clone(), contexts.clone()));
+        let waiting = engine.wait_for_bandwidth(&contexts, true, None, &job);
+        tokio::pin!(waiting);
+        tokio::select! { result = &mut waiting => panic!("bandwidth wait completed: {result:?}"), () = tokio::time::sleep(Duration::from_millis(10)) => {} }
+        let before = job.state.lock().clone();
+        assert_eq!(before.wait, WaitReason::Bandwidth);
+        store
+            .write(|ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &GuiFormatting {
+                        iso: true,
+                        figures: 2,
+                    },
+                )
+            })
+            .unwrap();
+        engine.reload_settings().unwrap();
+        tokio::select! { result = &mut waiting => panic!("formatting bypassed bandwidth: {result:?}"), () = tokio::time::sleep(Duration::from_millis(10)) => {} }
+        let mut after = job.state.lock().clone();
+        assert_eq!(
+            after.status,
+            format!(
+                "bandwidth free {}… (global)",
+                hydrus_core::time::timestamp_to_iso(Some(target))
+            )
+        );
+        after.status = before.status.clone();
+        assert_eq!(after, before);
+        assert_eq!(engine.bandwidth.lock().0.all_trackers(), trackers);
+        job.cancel_because("formatting regression");
+        assert!(matches!(waiting.await, Err(NetError::Cancelled)));
+        assert!(job.cancelled_note().contains("formatting regression"));
+    }
+
+    #[tokio::test]
+    async fn formatting_refresh_wakes_a_pending_gallery_label_and_preserves_its_token_and_job() {
+        let (_dir, store, engine) = engine();
+        store
+            .write(|ctx| {
+                let mut rules: BandwidthSettings = hydrus_store::settings::get(ctx.conn())?;
+                rules.gallery_page_wait_pages = 3600;
+                hydrus_store::settings::set(ctx.conn(), &rules)
+            })
+            .unwrap();
+        engine.reload_settings().unwrap();
+        let kind = GalleryTokenKind::DownloadPage;
+        let started = now();
+        engine
+            .bandwidth
+            .lock()
+            .0
+            .try_to_consume_gallery_token("format.example", kind, 3600, started)
+            .unwrap();
+        let target = engine
+            .bandwidth
+            .lock()
+            .0
+            .try_to_consume_gallery_token("format.example", kind, 3600, started)
+            .unwrap_err();
+        let job = Job::new();
+        job.state.lock().bytes_read = 1536;
+        job.state.lock().bytes_total = Some(243_200);
+        engine.jobs.lock().insert(1, ((*job).clone(), Vec::new()));
+        let waiting = engine.wait_for_gallery_token("format.example", kind, &job);
+        tokio::pin!(waiting);
+        tokio::select! { result = &mut waiting => panic!("pending token completed: {result:?}"), () = tokio::time::sleep(Duration::from_millis(10)) => {} }
+        let before = job.state.lock().clone();
+        assert_eq!(before.wait, WaitReason::Gallery);
+        assert!(!before.tokens_ok);
+        store
+            .write(|ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &GuiFormatting {
+                        iso: true,
+                        figures: 6,
+                    },
+                )
+            })
+            .unwrap();
+        assert!(engine.reload_settings().unwrap());
+        tokio::select! { result = &mut waiting => panic!("formatting consumed token: {result:?}"), () = tokio::time::sleep(Duration::from_millis(10)) => {} }
+        let mut after = job.state.lock().clone();
+        assert_eq!(
+            after.status,
+            format!(
+                "waiting to start: {}",
+                hydrus_core::time::timestamp_to_iso(Some(target))
+            )
+        );
+        after.status = before.status.clone();
+        assert_eq!(after, before, "formatting changed work state");
+        assert_eq!(
+            engine
+                .bandwidth
+                .lock()
+                .0
+                .try_to_consume_gallery_token("format.example", kind, 3600, now())
+                .unwrap_err(),
+            target
+        );
+        job.cancel();
+        assert!(matches!(waiting.await, Err(NetError::Cancelled)));
+    }
 
     #[test]
     fn job_speed_samples_the_current_second_and_expires_at_rollover() {

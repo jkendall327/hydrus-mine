@@ -1,3 +1,5 @@
+import { Theme } from "theme.slint";
+import { ViewerEyeMenu, ViewerEyeButton } from "viewer_eye_menu.slint";
 // The media viewer's window: one file, at its default zoom (fitted to the
 // window, by default). Right and left (or down and up, page down and up,
 // or the mouse wheel) move through the page's files, home and end to the
@@ -23,9 +25,11 @@
 // the file's info line. A right-click opens the viewer's menu, whose
 // slideshow submenu may ask for a period to type.
 
+import { ViewerTagsHover } from "viewer_tags_hover.slint";
 import { LineEdit } from "std-widgets.slint";
 import { ListText } from "theme.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
+import { NoteHoverCopy } from "note_hover_copy.slint";
 
 export struct ViewerUrlRow { label: string, url: string }
 
@@ -58,7 +62,7 @@ export struct RatingRow {
 }
 
 // Shared passive rating drawing; input belongs only to the hover's own TouchArea.
-component RatingGraphic inherits Rectangle {
+export component RatingGraphic inherits Rectangle {
     in property <RatingRow> rating;
     in property <length> icon-size: 12px;
     in property <length> incdec-height: 12px;
@@ -122,9 +126,21 @@ import { TransparencyBackdrop } from "transparency_backdrop.slint";
 
 export component MediaViewerWindow inherits Window {
     title: root.caption;
+    in-out property <bool> viewer-window-top;
+    in-out property <bool> viewer-top-while-playing;
+    in-out property <bool> viewer-window-frameless;
+    in property <bool> media-playing;
+    always-on-top: root.viewer-window-top;
+    changed media-playing => {
+        if root.viewer-top-while-playing { root.viewer-window-top = root.media-playing; }
+    }
+    no-frame: root.viewer-window-frameless;
+    in property <ViewerEyeMenu> eye-menu;
+    callback eye-menu-requested();
+    callback eye-menu-chosen(int);
     preferred-width: 1000px;
     preferred-height: 750px;
-    background: #202020;
+    background: Theme.colour(10, #202020);
 
     in property <image> media;
     in property <int> transparency-mode;
@@ -166,12 +182,24 @@ export component MediaViewerWindow inherits Window {
     in property <string> caption;
     // the file's tags, for the hover frame
     in property <[ListText]> tags;
+    in property <int> tag-wheel-policy: 2;
+    in-out property <length> tag-scroll-offset;
+    out property <length> tag-scroll-maximum: tags-hover.maximum;
+    out property <length> tag-row-height: tags-hover.row-height;
+    callback tag-wheel(float,bool,length,length);
+    callback tag-media-changed();
+    in property <[string]> tag-identities;
+    in property <string> tag-file;
+    callback tag-search-requested(string,string);
     // the file's notes, for the right hover frame under the ratings, shown
     // while the pointer is over it
     in property <[NoteRow]> notes;
-    out property <bool> notes-showing: (root.hover-focus-good || (!root.another-window-active && root.notes-raised)) && root.hover-notes-enabled && root.notes.length > 0 && pointer.has-hover
+    callback note-copy-requested(int);
+    out property <length> notes-hover-y: notes-box.y;
+    out property <length> notes-hover-height: notes-box.height;
+    out property <bool> notes-showing: (root.hover-focus-good || (!root.another-window-active && root.notes-raised)) && root.hover-notes-enabled && root.notes.length > 0 && (notes-box.has-hover || (pointer.has-hover
         && pointer.mouse-x >= notes-box.x
-        && pointer.mouse-y >= notes-box.y && pointer.mouse-y <= notes-box.y + notes-box.height;
+        && pointer.mouse-y >= notes-box.y && pointer.mouse-y <= notes-box.y + notes-box.height));
     // the file's info line, for the top hover frame, which shows with the
     // pointer over it or near it, in the window's middle three fifths
     in property <string> info-line;
@@ -201,7 +229,7 @@ export component MediaViewerWindow inherits Window {
     out property <bool> ratings-showing: (root.hover-focus-good || (!root.another-window-active && root.ratings-raised)) && root.hover-ratings-enabled && (root.ratings.length > 0 || root.url-links.length > 0) && (ratings-frame.has-hover
         || (pointer.has-hover && pointer.mouse-x >= root.width - ratings-box.preferred-width - 20px
             && pointer.mouse-y <= ratings-box.preferred-height + 20px));
-    out property <bool> tags-showing: (root.hover-focus-good || (!root.another-window-active && root.tags-raised)) && root.hover-tags-enabled && pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
+    out property <bool> tags-showing: (root.hover-focus-good || (!root.another-window-active && root.tags-raised)) && root.hover-tags-enabled && (tags-hover.has-hover || (pointer.has-hover && pointer.mouse-x < root.width * 0.2)) && root.tags.length > 0;
 
     // a question to answer (a deletion): enter is yes, escape no
     in property <string> question;
@@ -291,6 +319,12 @@ export component MediaViewerWindow inherits Window {
     property <length> drag-y;
 
     callback next();
+    callback shortcut-key(string,int)->bool;
+    callback shortcut-mouse(int,int,int)->bool;
+    callback shortcut-wheel(float,int)->bool;
+    in property <bool> shortcut-native-pointer;
+    in-out property <bool> shortcut-double-consumed;
+    private property <int> shortcut-mouse-bits;
     callback previous();
     callback close-requested();
     callback toggle-pause();
@@ -307,6 +341,11 @@ export component MediaViewerWindow inherits Window {
     callback zoom(int, bool, length, length);
     callback pan(int, int);
     callback drag(length, length);
+    callback drag-started(length,length);
+    callback drag-moved(length,length);
+    callback drag-finished();
+    in property <bool> anchor-drag;
+    in property <bool> touch-drag-unanchor;
     callback canvas-resized(length, length);
     // a rating control clicked: its row, left (else right), and how far
     // along it
@@ -339,6 +378,7 @@ export component MediaViewerWindow inherits Window {
                 }
                 return accept;
             }
+            if root.shortcut-key(event.text,(event.modifiers.control?1:0)+(event.modifiers.alt?2:0)+(event.modifiers.shift?4:0)+(event.modifiers.meta?32:0)) { return accept; }
             if (event.text == Key.F3) {
                 root.manage-tags();
                 return accept;
@@ -859,11 +899,11 @@ export component MediaViewerWindow inherits Window {
             banner-information := VerticalLayout {
                 padding: 0px; spacing: 3px; alignment: start;
                 if root.tag-banner != "": Text {
-                    text: root.tag-banner; color: #f0f0f0; font-size: 14px;
+                    text: root.tag-banner; color: Theme.colour(11, #f0f0f0); font-size: 14px;
                     horizontal-alignment: center; overflow: elide;
                 }
                 if root.info-line != "": Text {
-                    text: root.info-line; color: #f0f0f0; font-size: 14px;
+                    text: root.info-line; color: Theme.colour(11, #f0f0f0); font-size: 14px;
                     horizontal-alignment: center; overflow: elide;
                 }
             }
@@ -883,8 +923,8 @@ export component MediaViewerWindow inherits Window {
                     if root.file-trashed: Image { width: 16px; height: 16px; source: @image-url("../../../static/trash.png"); }
                     if root.file-inbox: Image { width: 16px; height: 16px; source: @image-url("../../../static/inbox.png"); }
                 }
-                for location in root.location-strings: Text { text: location; color: #f0f0f0; horizontal-alignment: right; }
-                for link in root.url-links: Text { text: link.label; color: #f0f0f0; horizontal-alignment: right; overflow: elide; }
+                for location in root.location-strings: Text { text: location; color: Theme.colour(11, #f0f0f0); horizontal-alignment: right; }
+                for link in root.url-links: Text { text: link.label; color: Theme.colour(11, #f0f0f0); horizontal-alignment: right; overflow: elide; }
             }
         }
         Rectangle {
@@ -897,8 +937,8 @@ export component MediaViewerWindow inherits Window {
                 padding: 6px; spacing: 8px; alignment: start;
                 for note in root.notes: VerticalLayout {
                     spacing: 2px;
-                    Text { text: note.name; color: #f0f0f0; font-weight: 700; horizontal-alignment: center; wrap: word-wrap; }
-                    Text { text: note.text; color: #e0e0e0; wrap: word-wrap; }
+                    Text { text: note.name; color: Theme.colour(11, #f0f0f0); font-weight: 700; horizontal-alignment: center; wrap: word-wrap; }
+                    Text { text: note.text; color: Theme.colour(11, #e0e0e0); wrap: word-wrap; }
                 }
             }
         }
@@ -907,7 +947,7 @@ export component MediaViewerWindow inherits Window {
             x: root.width - self.preferred-width - 3px;
             y: root.height - self.preferred-height - 3px;
             text: root.index-background-text;
-            color: #f0f0f0;
+            color: Theme.colour(11, #f0f0f0);
             font-size: 14px;
         }
         if root.transparency-mode > 0: TransparencyBackdrop {
@@ -941,13 +981,18 @@ export component MediaViewerWindow inherits Window {
             changed mouse-x => { if (!self.pressed) { root.drag-cursor-hidden = false; } }
             changed mouse-y => { if (!self.pressed) { root.drag-cursor-hidden = false; } }
             pointer-event(event) => {
+                root.shortcut-mouse-bits=(event.modifiers.control?1:0)+(event.modifiers.alt?2:0)+(event.modifiers.shift?4:0)+(event.modifiers.meta?32:0);
+                if event.kind==PointerEventKind.down {root.shortcut-double-consumed=false;}
+                if (event.kind==PointerEventKind.down || event.kind==PointerEventKind.up) && root.shortcut-mouse(event.button==PointerEventButton.left?0:event.button==PointerEventButton.right?1:event.button==PointerEventButton.middle?2:event.button==PointerEventButton.back?7:event.button==PointerEventButton.forward?8:9,event.kind==PointerEventKind.down?0:1,root.shortcut-mouse-bits) {return;}
                 if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
                     root.drag-accepted = !root.disallow-duration-drag || !root.media-has-duration;
                     root.drag-x = self.mouse-x;
                     root.drag-y = self.mouse-y;
+                    if root.drag-accepted { root.drag-started(self.mouse-x,self.mouse-y); }
                 }
                 if (event.kind == PointerEventKind.up || event.kind == PointerEventKind.cancel) {
                     root.drag-accepted = false;
+                    root.drag-finished();
                 }
                 // as the reference's default: a middle click closes it
                 if (event.kind == PointerEventKind.down && event.button == PointerEventButton.middle) {
@@ -962,11 +1007,15 @@ export component MediaViewerWindow inherits Window {
                 }
             }
             // as is a (left) double-click, as the reference's default
-            double-clicked => { root.close-requested(); }
+            double-clicked => {
+                if !root.shortcut-native-pointer {root.shortcut-double-consumed=root.shortcut-mouse(0,2,root.shortcut-mouse-bits);}
+                if !root.shortcut-double-consumed {root.close-requested();}
+                root.shortcut-double-consumed=false;
+            }
             moved => {
                 if (root.drag-accepted) {
                     if (self.mouse-x != root.drag-x || self.mouse-y != root.drag-y) {
-                        root.drag(self.mouse-x - root.drag-x, self.mouse-y - root.drag-y);
+                        root.drag-moved(self.mouse-x,self.mouse-y);
                         root.drag-cursor-hidden = root.hide-during-drag;
                     }
                     root.drag-x = self.mouse-x;
@@ -976,6 +1025,7 @@ export component MediaViewerWindow inherits Window {
                 }
             }
             scroll-event(event) => {
+                if root.shortcut-wheel(event.delta-y/1px,(event.modifiers.control?1:0)+(event.modifiers.alt?2:0)+(event.modifiers.shift?4:0)+(event.modifiers.meta?32:0)) {return accept;}
                 if (event.modifiers.control) {
                     if (event.delta-y > 0) {
                         root.zoom(1, true, self.mouse-x, self.mouse-y);
@@ -1262,6 +1312,11 @@ export component MediaViewerWindow inherits Window {
                                 icon: @image-url("../../../static/drag.png");
                                 clicked => { root.show-in-file-browser(); }
                             }
+                            ViewerEyeButton {
+                                menu: root.eye-menu;
+                                requested => { root.eye-menu-requested(); }
+                                chosen(id) => { root.eye-menu-chosen(id); }
+                            }
                             HoverButton {
                                 icon: @image-url("../../../static/stop.png");
                                 clicked => { root.close-requested(); }
@@ -1283,34 +1338,27 @@ export component MediaViewerWindow inherits Window {
                 }
             }
         }
-        // (nothing in it takes the pointer, so the area below keeps it)
-        notes-box := Rectangle {
+        // The note text keeps the hover alive and middle-clicks copy that note.
+        notes-box := TouchArea {
             x: root.width * 0.8;
             y: root.ratings.length > 0 || root.url-links.length > 0 ? ratings-box.preferred-height + 4px : 0;
             width: root.width * 0.2;
             height: min(notes-layout.preferred-height, root.height - self.y);
+            visible: root.notes-showing;
+            Rectangle {
+            width: parent.width; height: parent.height;
             background: #202020e8;
             clip: true;
-            visible: root.notes-showing;
             notes-layout := VerticalLayout {
                 padding: 6px;
                 spacing: 8px;
                 alignment: start;
-                for note in root.notes: VerticalLayout {
-                    spacing: 2px;
-                    Text {
-                        text: note.name;
-                        color: #f0f0f0;
-                        font-weight: 700;
-                        horizontal-alignment: center;
-                        wrap: word-wrap;
-                    }
-                    Text {
-                        text: note.text;
-                        color: #e0e0e0;
-                        wrap: word-wrap;
-                    }
+                for note[i] in root.notes: NoteHoverCopy {
+                    name: note.name;
+                    text: note.text;
+                    copied => { root.note-copy-requested(i); }
                 }
+            }
             }
         }
         ratings-frame := TouchArea {
@@ -1364,24 +1412,18 @@ export component MediaViewerWindow inherits Window {
                 }
             }
         }
-        // (nothing in it takes the pointer, so the area above keeps it)
-        if root.tags-showing: Rectangle {
+        tags-hover := ViewerTagsHover {
+            visible: root.tags-showing;
             x: 0;
             y: 0;
             width: root.width * 0.2;
             height: root.height;
-            background: #202020e8;
-            clip: true;
-            VerticalLayout {
-                padding: 6px;
-                spacing: 2px;
-                alignment: start;
-                for tag in root.tags: Text {
-                    text: tag.text;
-                    color: tag.colour;
-                    overflow: elide;
-                }
-            }
+            tags: root.tags;
+            identities: root.tag-identities;
+            file: root.tag-file;
+            search(file,tag) => { root.tag-search-requested(file,tag); }
+            offset <=> root.tag-scroll-offset;
+            wheel(delta,control,x,y) => { root.tag-wheel(delta,control,x,y); }
         }
     }
 }

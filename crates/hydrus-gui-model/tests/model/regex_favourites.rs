@@ -143,3 +143,56 @@ fn matcher_favourite_menu_matches_actual_qt_actions_and_copy_payloads() {
     assert_eq!(actions, [MenuAction::Manage, MenuAction::Instruction]);
     assert!(empty[0].usable());
 }
+
+#[test]
+fn readonly_row_input_menu_uses_saved_pairs_without_recursive_management() {
+    use hydrus_gui_model::regex_favourites::{MenuAction, input_menu};
+    use serde_json::json;
+    let f = hydrus_testkit::fixture_json("regex_options_editor.json");
+    for case in f["descriptions"].as_array().unwrap() {
+        let text = case["input"].as_str().unwrap();
+        let actual = hydrus_gui_model::regex_favourites::description_validity(text);
+        if let Some(error) = case["error"].as_str() {
+            assert_eq!(actual.unwrap_err(), error);
+        } else {
+            assert!(actual.is_ok());
+            assert_eq!(text, case["value"].as_str().unwrap());
+        }
+    }
+    for step in f["steps"].as_array().unwrap() {
+        for recorded in step["menus"].as_array().unwrap() {
+            let saved = RegexFavourites(serde_json::from_value(recorded["saved"].clone()).unwrap());
+            let (entries, actions) = input_menu(&saved);
+            let actual = entries
+                .iter()
+                .map(|e| match e {
+                    hydrus_gui_model::main_menu::Entry::Separator => json!({"separator":true}),
+                    _ => json!({"label":e.label(),"enabled":e.usable()}),
+                })
+                .collect::<Vec<_>>();
+            assert_eq!(json!(actual), recorded["rows"]);
+            assert!(!actions.contains(&MenuAction::Manage));
+            assert_eq!(actions[0], MenuAction::Instruction);
+            let copied = actions
+                .iter()
+                .filter_map(|a| {
+                    if let MenuAction::Copy(s) = a {
+                        Some(s)
+                    } else {
+                        None
+                    }
+                })
+                .collect::<Vec<_>>();
+            assert_eq!(json!(copied), step["copied"]);
+            assert_ne!(
+                json!(saved.0),
+                step["after"]["draft"],
+                "row menu reads saved preferences, not edited list rows"
+            );
+        }
+    }
+    let (entries, actions) = input_menu(&RegexFavourites(Vec::new()));
+    assert_eq!(actions, [MenuAction::Instruction]);
+    assert_eq!(entries.len(), 2);
+    assert!(entries[0].usable());
+}

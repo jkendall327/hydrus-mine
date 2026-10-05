@@ -88,6 +88,7 @@ fn options_apply_cancel_reopen_and_rendered_tag_service_topologies() {
     let (_directory, store, files) = fixture::seed(&recorded);
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(
         &ui,
         Pages::single(SearchPage::fixed(
@@ -190,6 +191,7 @@ fn expanded_parent_rows_keep_colour_and_activate_their_originating_tag() {
         .unwrap();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(
         &ui,
         Pages::single(SearchPage::fixed(

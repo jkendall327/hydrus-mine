@@ -9,7 +9,6 @@ use hydrus_core::{HashId, Mime, Sha256};
 
 use crate::content::DomainRoles;
 use crate::error::Result;
-use crate::master::id_array;
 use crate::settings;
 use crate::store::Store;
 use crate::transfer::MediaOwnership;
@@ -23,78 +22,176 @@ pub struct PurgeReport {
     pub kept: usize,
 }
 
-/// Delete from disk the media of files that have left local storage.
-///
-/// Deletes are queued by the write that removes a file from local storage
-/// and done here, outside any transaction: a file is only ever deleted
-/// after its removal has committed. Media shared with another install (an
-/// in-place import) is never deleted.
+/// Permanent cancellation for one maintenance owner's interruptible waits.
+#[derive(Debug, Clone, Default)]
+pub struct PurgeControl(std::sync::Arc<PurgeWait>);
+#[derive(Debug, Default)]
+struct PurgeWait {
+    cancelled: std::sync::Mutex<bool>,
+    changed: std::sync::Condvar,
+}
+impl PurgeControl {
+    /// Wake a pending wait and prevent later queue admissions for this owner.
+    pub fn cancel(&self) {
+        *self
+            .0
+            .cancelled
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = true;
+        self.0.changed.notify_all();
+    }
+    /// Whether this owner was permanently retired.
+    pub fn is_cancelled(&self) -> bool {
+        *self
+            .0
+            .cancelled
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+    }
+    /// Wait outside the writer; returns false when the owner was cancelled.
+    /// Bounded slices avoid platform timeout overflow for raw imported periods.
+    pub fn wait(&self, duration: std::time::Duration) -> bool {
+        let started = std::time::Instant::now();
+        let mut cancelled = self
+            .0
+            .cancelled
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        while !*cancelled {
+            let Some(left) = duration.checked_sub(started.elapsed()) else {
+                return true;
+            };
+            if left.is_zero() {
+                return true;
+            }
+            (cancelled, _) = self
+                .0
+                .changed
+                .wait_timeout(cancelled, left.min(std::time::Duration::from_secs(1)))
+                .unwrap_or_else(std::sync::PoisonError::into_inner);
+        }
+        false
+    }
+}
+
+/// Delete queued media after its logical removal commits, waiting after every
+/// file/thumbnail pair (including the last), as the reference maintenance does.
 pub fn purge_deleted_media(store: &Store, batch: usize) -> Result<PurgeReport> {
-    if store
-        .read(settings::get::<MediaOwnership>)?
-        .shared_with
-        .is_some()
+    purge_deleted_media_with_control(store, batch, &PurgeControl::default())
+}
+/// A daemon-owned pass that shutdown can wake without admitting another pair.
+pub fn purge_deleted_media_with_control(
+    store: &Store,
+    batch: usize,
+    control: &PurgeControl,
+) -> Result<PurgeReport> {
+    purge_with_wait(store, batch, control, &mut |duration| {
+        control.wait(duration)
+    })
+}
+fn purge_with_wait(
+    store: &Store,
+    batch: usize,
+    control: &PurgeControl,
+    wait: &mut dyn FnMut(std::time::Duration) -> bool,
+) -> Result<PurgeReport> {
+    if control.is_cancelled()
+        || store
+            .read(settings::get::<MediaOwnership>)?
+            .shared_with
+            .is_some()
     {
         return Ok(PurgeReport::default());
     }
-    // (thumbnails are always deleted for good, as in the reference)
+    // Qt captures the period once at entry; edits affect the next pass.
+    let period = store.read(crate::physical_delete::load)?.wait_ms;
+    let period = std::time::Duration::from_millis(u64::try_from(period).unwrap_or(0));
     let recycle = store
         .read(settings::get::<settings::FolderSettings>)?
         .delete_to_recycle_bin;
-    let snap = store.snapshot();
-    let claims = store.media_claims();
-    let local_storage = DomainRoles::new(&snap.services)?.local_file_storage;
-    // Runs on the writer, so no write can re-add a file between the check
-    // and the delete; importers claim a file before writing it to disk.
-    store.write(move |ctx| {
-        let conn = ctx.conn();
-        let mut report = PurgeReport::default();
-        let mut stmt = conn.prepare(
-            "SELECT q.hash_id, h.sha256, f.mime,
-                    EXISTS (SELECT 1 FROM file_domain_current d WHERE d.service_id = ?1 AND d.hash_id = q.hash_id)
-             FROM deferred_physical_deletes q JOIN hashes h USING (hash_id) LEFT JOIN files f USING (hash_id)
-             ORDER BY q.queued_ms LIMIT ?2",
-        )?;
-        let rows = stmt.query_map(params![local_storage, i64::try_from(batch).unwrap_or(i64::MAX)], |r| {
-            Ok((
-                r.get::<_, HashId>(0)?,
-                r.get::<_, Vec<u8>>(1)?,
-                r.get::<_, Option<u8>>(2)?,
-                r.get::<_, bool>(3)?,
-            ))
-        })?;
-        let mut done = Vec::new();
-        for row in rows {
-            let (id, hash, mime, stored) = row?;
-            let Ok(hash) = Sha256::from_slice(&hash) else {
-                done.push(id);
-                continue;
-            };
-            if stored {
-                report.kept += 1;
-                done.push(id);
-                continue;
-            }
-            // an import of this file is in progress: leave it queued
-            let Some(_claim) = claims.try_claim(hash) else {
-                continue;
-            };
-            if let Some(path) = mime.and_then(Mime::from_code).and_then(|m| snap.storage.file_path(&hash, m))
-                && remove_if_present(&path, recycle)?
-            {
-                report.files_deleted += 1;
-            }
-            if let Some(path) = snap.storage.thumbnail_path(&hash)
-                && remove_if_present(&path, false)?
-            {
-                report.thumbnails_deleted += 1;
-            }
-            done.push(id);
+    let ids = store.read(|conn| {
+        Ok(conn
+            .prepare(
+                "SELECT hash_id FROM deferred_physical_deletes ORDER BY queued_ms,hash_id LIMIT ?",
+            )?
+            .query_map([i64::try_from(batch).unwrap_or(i64::MAX)], |row| {
+                row.get::<_, HashId>(0)
+            })?
+            .collect::<rusqlite::Result<Vec<_>>>()?)
+    })?;
+    let mut report = PurgeReport::default();
+    for id in ids {
+        if control.is_cancelled() {
+            break;
         }
-        conn.prepare_cached("DELETE FROM deferred_physical_deletes WHERE hash_id IN rarray(?1)")?
-            .execute([id_array(&done)])?;
-        Ok(report)
-    })
+        let snap = store.snapshot();
+        let local_storage = DomainRoles::new(&snap.services)?.local_file_storage;
+        let claims = store.media_claims();
+        let cancellation = control.clone();
+        // Each pair commits before its wait. Re-adds/queue removals and import
+        // claims are rechecked on the writer, with no gap before filesystem IO.
+        let step = store.write(move |ctx| {
+            let conn = ctx.conn();
+            if cancellation.is_cancelled()
+                || settings::get::<MediaOwnership>(conn)?.shared_with.is_some()
+            {
+                return Ok(None);
+            }
+            let queued: bool = conn.query_row(
+                "SELECT EXISTS(SELECT 1 FROM deferred_physical_deletes WHERE hash_id=?)",
+                [id],
+                |r| r.get(0),
+            )?;
+            if !queued {
+                return Ok(None);
+            }
+            let (hash, mime, stored): (Vec<u8>, Option<u8>, bool) = conn.query_row(
+                "SELECT h.sha256,f.mime,EXISTS(SELECT 1 FROM file_domain_current d WHERE d.service_id=?1 AND d.hash_id=h.hash_id)
+                 FROM hashes h LEFT JOIN files f USING(hash_id) WHERE h.hash_id=?2",
+                params![local_storage, id],
+                |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
+            )?;
+            let hash = Sha256::from_slice(&hash)
+                .map_err(|e| crate::StoreError::Corrupt(e.to_string()))?;
+            let mut step = PurgeReport::default();
+            if stored {
+                step.kept = 1;
+            } else {
+                let Some(_claim) = claims.try_claim(hash) else {
+                    return Ok(None);
+                };
+                let mime = mime
+                    .and_then(Mime::from_code)
+                    .filter(|mime| *mime != Mime::ApplicationUnknown)
+                    .ok_or_else(|| crate::StoreError::Corrupt(
+                        "physical delete was queued without valid file metadata".into(),
+                    ))?;
+                if let Some(path) = snap.storage.file_path(&hash, mime)
+                    && remove_if_present(&path, recycle)?
+                {
+                    step.files_deleted = 1;
+                }
+                if let Some(path) = snap.storage.thumbnail_path(&hash)
+                    && remove_if_present(&path, false)?
+                {
+                    step.thumbnails_deleted = 1;
+                }
+            }
+            conn.execute("DELETE FROM deferred_physical_deletes WHERE hash_id=?", [id])?;
+            Ok(Some(step))
+        })?;
+        if let Some(step) = step {
+            report.files_deleted += step.files_deleted;
+            report.thumbnails_deleted += step.thumbnails_deleted;
+            report.kept += step.kept;
+            // Missing physical paths and the final attempted pair still wait.
+            // Retained local membership only cleans a stale queue, without IO.
+            if step.kept == 0 && !wait(period) {
+                break;
+            }
+        }
+    }
+    Ok(report)
 }
 
 /// Drop and rebuild every derived table from the primary ones (ADR-6):
@@ -165,6 +262,254 @@ mod tests {
     use super::*;
     use crate::import::tests::import_basic;
     use crate::transfer::{TransferMode, transfer_media};
+
+    fn three_owned_files(store: &Store) -> Vec<(HashId, std::path::PathBuf)> {
+        let snap = store.snapshot();
+        let local = DomainRoles::new(&snap.services).unwrap().local_file_storage;
+        store.read(|conn| {
+            let rows=conn.prepare("SELECT h.hash_id,h.sha256,f.mime FROM file_domain_current d JOIN hashes h USING(hash_id) JOIN files f USING(hash_id) WHERE service_id=? ORDER BY hash_id LIMIT 3")?
+                .query_map([local],|r|Ok((r.get::<_,HashId>(0)?,r.get::<_,Vec<u8>>(1)?,r.get::<_,u8>(2)?)))?.collect::<rusqlite::Result<Vec<_>>>()?;
+            Ok(rows.into_iter().map(|(id,hash,mime)| (id,snap.storage.file_path(&Sha256::from_slice(&hash).unwrap(),Mime::from_code(mime).unwrap()).unwrap())).collect())
+        }).unwrap()
+    }
+
+    #[test]
+    fn retained_local_queue_cleanup_does_not_wait_or_remove_physical_paths() {
+        let (_source, _directory, store, id, path) = owned_store();
+        let hash = store
+            .read(|conn| crate::master::hash(conn, id))
+            .unwrap()
+            .unwrap();
+        let thumbnail = store.snapshot().storage.thumbnail_path(&hash).unwrap();
+        let had_thumbnail = thumbnail.exists();
+        // Re-add normally removes this queue. An old inconsistent queue must
+        // still preserve restored media without becoming a physical attempt.
+        store
+            .write(move |ctx| {
+                ctx.conn().execute(
+                    "INSERT INTO deferred_physical_deletes(hash_id,queued_ms) VALUES(?,0)",
+                    [id],
+                )?;
+                Ok(())
+            })
+            .unwrap();
+        let report = purge_with_wait(&store, 100, &PurgeControl::default(), &mut |_| {
+            panic!("retained current media is not an attempted physical pair")
+        })
+        .unwrap();
+        assert_eq!(
+            report,
+            PurgeReport {
+                kept: 1,
+                ..PurgeReport::default()
+            }
+        );
+        assert!(path.is_file());
+        assert_eq!(thumbnail.exists(), had_thumbnail);
+        assert_eq!(
+            store
+                .read(|conn| Ok(conn.query_row(
+                    "SELECT count(*) FROM deferred_physical_deletes WHERE hash_id=?",
+                    [id],
+                    |row| row.get::<_, i64>(0),
+                )?))
+                .unwrap(),
+            0
+        );
+    }
+
+    #[test]
+    fn captured_wait_follows_committed_pairs_including_last_and_allows_live_readd() {
+        let (_source, _directory, store, _, _) = owned_store();
+        let files = three_owned_files(&store);
+        assert_eq!(files.len(), 3);
+        for (id, _) in &files {
+            purge_file(&store, *id);
+        }
+        store
+            .write(|ctx| {
+                settings::set(
+                    ctx.conn(),
+                    &crate::physical_delete::Preferences { wait_ms: 600 },
+                )
+            })
+            .unwrap();
+        let control = PurgeControl::default();
+        let mut waits = Vec::new();
+        let report = purge_with_wait(&store, 100, &control, &mut |duration| {
+            waits.push(duration.as_millis());
+            assert!(!files[0].1.exists());
+            assert!(
+                !store
+                    .read(|conn| Ok(conn.query_row(
+                        "SELECT EXISTS(SELECT 1 FROM deferred_physical_deletes WHERE hash_id=?)",
+                        [files[0].0],
+                        |r| r.get::<_, bool>(0)
+                    )?))
+                    .unwrap(),
+                "queue clear commits before wait"
+            );
+            if waits.len() == 1 {
+                let restored = files[1].0;
+                store
+                    .write_content(move |writer| {
+                        writer.add_files(writer.roles().local[0], &[(restored, Some(10))])
+                    })
+                    .unwrap();
+                store
+                    .write(|ctx| {
+                        settings::set(
+                            ctx.conn(),
+                            &crate::physical_delete::Preferences { wait_ms: 900 },
+                        )
+                    })
+                    .unwrap();
+            }
+            true
+        })
+        .unwrap();
+        assert_eq!(report.files_deleted, 2);
+        assert_eq!(waits, [600, 600], "per-pass policy plus final-pair wait");
+        assert!(files[1].1.exists());
+        assert!(!files[2].1.exists());
+        purge_file(&store, files[1].0);
+        waits.clear();
+        assert_eq!(
+            purge_with_wait(&store, 100, &control, &mut |duration| {
+                waits.push(duration.as_millis());
+                true
+            })
+            .unwrap()
+            .files_deleted,
+            1
+        );
+        assert_eq!(
+            waits,
+            [900],
+            "successor pass captures edited policy and still waits after its last pair"
+        );
+    }
+
+    #[test]
+    fn pair_failure_keeps_its_queue_and_previous_pair_commit_and_does_not_wait() {
+        let (_source, _directory, store, _, _) = owned_store();
+        let files = three_owned_files(&store);
+        for (id, _) in &files {
+            purge_file(&store, *id);
+        }
+        let broken = files[1].0;
+        store
+            .write(move |ctx| {
+                ctx.conn().execute(
+                    "UPDATE files SET mime=? WHERE hash_id=?",
+                    params![Mime::ApplicationUnknown as u8, broken],
+                )?;
+                Ok(())
+            })
+            .unwrap();
+        let mut waits = 0;
+        assert!(
+            purge_with_wait(&store, 100, &PurgeControl::default(), &mut |_| {
+                waits += 1;
+                true
+            })
+            .is_err()
+        );
+        assert_eq!(waits, 1, "failure itself has no successful-pair wait");
+        assert!(!files[0].1.exists());
+        assert!(files[1].1.exists());
+        assert!(files[2].1.exists());
+        assert_eq!(
+            store
+                .read(|conn| Ok(conn.query_row(
+                    "SELECT count(*) FROM deferred_physical_deletes",
+                    [],
+                    |r| r.get::<_, i64>(0)
+                )?))
+                .unwrap(),
+            2
+        );
+    }
+
+    #[test]
+    fn missing_file_still_waits_after_its_thumbnail_and_queue_commit() {
+        let (_source, _directory, store, id, path) = owned_store();
+        let hash = store
+            .read(|conn| crate::master::hash(conn, id))
+            .unwrap()
+            .unwrap();
+        let thumbnail = store.snapshot().storage.thumbnail_path(&hash).unwrap();
+        let had_thumbnail = thumbnail.exists();
+        std::fs::remove_file(path).unwrap();
+        purge_file(&store, id);
+        let mut waits = Vec::new();
+        let report = purge_with_wait(&store, 100, &PurgeControl::default(), &mut |period| {
+            assert!(!thumbnail.exists());
+            waits.push(period.as_millis());
+            true
+        })
+        .unwrap();
+        assert_eq!(report.files_deleted, 0);
+        assert_eq!(report.thumbnails_deleted, usize::from(had_thumbnail));
+        assert_eq!(
+            waits,
+            [600],
+            "missing physical original does not erase the final-pair delay"
+        );
+    }
+
+    #[test]
+    fn cancelled_owned_wait_releases_writer_and_never_admits_a_successor_pair() {
+        let (_source, _directory, store, _, _) = owned_store();
+        let files = three_owned_files(&store);
+        for (id, _) in &files {
+            purge_file(&store, *id);
+        }
+        store
+            .write(|ctx| {
+                settings::set(
+                    ctx.conn(),
+                    &crate::physical_delete::Preferences { wait_ms: 60_000 },
+                )
+            })
+            .unwrap();
+        let control = PurgeControl::default();
+        let worker_control = control.clone();
+        let worker_store = store.clone();
+        let (waiting, entered) = std::sync::mpsc::channel();
+        let worker = std::thread::spawn(move || {
+            purge_with_wait(&worker_store, 100, &worker_control, &mut |duration| {
+                waiting.send(duration).unwrap();
+                worker_control.wait(duration)
+            })
+        });
+        assert_eq!(
+            entered
+                .recv_timeout(std::time::Duration::from_secs(10))
+                .unwrap(),
+            std::time::Duration::from_secs(60)
+        );
+        // This actual writer command completes while physical maintenance waits.
+        store
+            .write(|ctx| {
+                settings::set(
+                    ctx.conn(),
+                    &crate::physical_delete::Preferences { wait_ms: 20 },
+                )
+            })
+            .unwrap();
+        control.cancel();
+        let report = worker.join().unwrap().unwrap();
+        assert_eq!(report.files_deleted, 1);
+        assert!(!files[0].1.exists());
+        assert!(files[1].1.exists() && files[2].1.exists());
+        assert_eq!(
+            purge_deleted_media_with_control(&store, 100, &control).unwrap(),
+            PurgeReport::default(),
+            "cancelled old owner cannot resurrect on another pass"
+        );
+        assert!(!control.wait(std::time::Duration::from_secs(60)));
+    }
 
     /// A store with its own copy of the basic fixture's media, and a file in it.
     fn owned_store() -> (

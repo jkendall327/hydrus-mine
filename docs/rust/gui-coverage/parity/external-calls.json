@@ -1,0 +1,1483 @@
+{
+  "schema_version": 1,
+  "task": "Registered external-call Options and owned process/command children",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "source_commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+  "implementation_commits": [
+    "159b75911db952753351d9886ba2f3e2289d950d",
+    "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+    "992c47d02ea0b11249ce8c61ffbeab31bfb7ec99",
+    "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+    "9ac22c60851462185542749743d0c5dcdc989d52"
+  ],
+  "eligible_concrete_first_pass_count": 5,
+  "parent_promotions": 0,
+  "validation": {
+    "reference": "Executed prior actual Qt external-call list and new command queue/clipboard recorder; both PNGs inspected",
+    "formatting": "rustfmt --edition2024, Python py_compile and git diff --check passed",
+    "slint_source_check": "cached warning-aware Slint compiler passed; no Cargo",
+    "rust_tests": "Prior external-call regressions plus authored exact queue/clipboard/model/native/store/substitution replays; hosted CI pending, no local Cargo",
+    "independent_review": "Prior three list actions independently accepted by follow_migration at0e9. tag_filters reviewed the command controls, identified four selection/edit defects, and accepted the recorded six-history correction9ac22c608 plus updated evidencea855476b. The two command leaves were Missing in the frozen original baseline; their intermediate Partial inventory assessment does not change that baseline. Hosted CI pending."
+  },
+  "entries": [
+    {
+      "reference_id": "audit-options-external-programs-external-calls-delete",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "The actual Delete button captures selected call keys and asks the exact Remove all selected? question. Decline/close keep rows; acceptance deletes those keys including OS file/URL launch rows. Pending selection is blocked. Changes stay staged until Options Apply and persist/reopen; Cancel/retired answers cannot write. Actual Qt uses simple deletion without a protected-call branch.",
+      "behavior": "The actual Delete button captures selected call keys and asks the exact Remove all selected? question. Decline/close keep rows; acceptance deletes those keys including OS file/URL launch rows. Pending selection is blocked. Changes stay staged until Options Apply and persist/reopen; Cancel/retired answers cannot write. Actual Qt uses simple deletion without a protected-call branch.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 1345,
+        "symbol": "ExternalProgramsPanel"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 15,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub struct Table"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1277,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 114,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub fn delete("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 82,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub(crate) fn ask("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 179,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn list_duplicate_defaults_delete_capture_and_options_persistence()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 563,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_change_saved_calls()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_calls.py",
+        "fixture": "oracle/fixtures/external_calls.json",
+        "screenshot": "oracle/fixtures/external_calls.png",
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "executed_at": "2026-10-05 01:57:33\u201301:57:35 UTC",
+        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+      },
+      "limitations": [
+        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+        "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI."
+      ]
+    },
+    {
+      "reference_id": "audit-options-external-programs-external-calls-duplicate",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "Duplicate snapshots selected calls in visible order, preserves typed rules/flags, regenerates keys and resolves exact nonduplicate names. Import-size warnings use recorded boundaries and Python list repr. Accepting the complete queue selects new copies alongside original selection and sorts. Declining a later warning aborts the remainder while retaining earlier appended, unsorted, unselected copies. Parent Cancel discards all staged copies; stale warning callbacks cannot append. Accepted Options Apply persists six independent identities in the native consumer.",
+      "behavior": "Duplicate snapshots selected calls in visible order, preserves typed rules/flags, regenerates keys and resolves exact nonduplicate names. Import-size warnings use recorded boundaries and Python list repr. Accepting the complete queue selects new copies alongside original selection and sorts. Declining a later warning aborts the remainder while retaining earlier appended, unsorted, unselected copies. Parent Cancel discards all staged copies; stale warning callbacks cannot append. Accepted Options Apply persists six independent identities in the native consumer.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 1345,
+        "symbol": "ExternalProgramsPanel"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 15,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub struct Table"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1277,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 117,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn duplicate_next("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 68,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub fn append("
+        },
+        {
+          "relativepath": "crates/hydrus-core/src/external_calls.rs",
+          "line": 294,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub fn import_warning("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 460,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_and_retired_question_cannot_append"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+          "line": 314,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn duplicate_import_warnings_match_python_repr_and_all_size_boundaries()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+          "line": 137,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn actual_qt_sort_tie_break_casefold_and_duplicate_selection_routes()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_calls.py",
+        "fixture": "oracle/fixtures/external_calls.json",
+        "screenshot": "oracle/fixtures/external_calls.png",
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "executed_at": "2026-10-05 01:57:33\u201301:57:35 UTC",
+        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+      },
+      "limitations": [
+        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+        "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI."
+      ]
+    },
+    {
+      "reference_id": "audit-options-external-programs-external-calls-add-defaults",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "The button-only native menu offers the exact add them all/select from a list routes. Both ask the platform/everything question. Returned defaults match the executed three-platform factory outputs. All adds every returned call; the owned selector starts unchecked and adds only accepted choices. Added calls receive fresh keys/nonduplicate names and join prior selection before current-column sorting. Selector Cancel/parent Cancel/forced child close/stale answers discard their scope; parent Apply persists/reopens.",
+      "behavior": "The button-only native menu offers the exact add them all/select from a list routes. Both ask the platform/everything question. Returned defaults match the executed three-platform factory outputs. All adds every returned call; the owned selector starts unchecked and adds only accepted choices. Added calls receive fresh keys/nonduplicate names and join prior selection before current-column sorting. Selector Cancel/parent Cancel/forced child close/stale answers discard their scope; parent Apply persists/reopens.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 1345,
+        "symbol": "ExternalProgramsPanel"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 15,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub struct Table"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1277,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 19,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn defaults("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/external_calls.slint",
+          "line": 35,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "defaults-menu := ContextMenuArea"
+        },
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/src/external_calls.rs",
+          "line": 258,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub fn defaults("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 179,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn list_duplicate_defaults_delete_capture_and_options_persistence()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+          "line": 260,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn actual_defaults_menu_routes_preserve_prior_selection_and_generate_unique_named_keys()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+          "line": 137,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn actual_qt_sort_tie_break_casefold_and_duplicate_selection_routes()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_calls.py",
+        "fixture": "oracle/fixtures/external_calls.json",
+        "screenshot": "oracle/fixtures/external_calls.png",
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "executed_at": "2026-10-05 01:57:33\u201301:57:35 UTC",
+        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+      },
+      "limitations": [
+        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+        "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+        "Native platform controls are authored for each hosted OS; reference Linux/Windows/macOS factories are recorded. No external browser or OS launcher is executed."
+      ]
+    },
+    {
+      "reference_id": "audit-options-external-programs-external-calls",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "partial",
+      "proposed_status": "partial",
+      "exactBehavior": "Owned staged registered-call table exposes seven list actions and parent persistence.",
+      "behavior": "Owned staged registered-call table exposes seven list actions and parent persistence.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 1370,
+        "symbol": "external calls"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 15,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub struct Table"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1277,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 179,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn list_duplicate_defaults_delete_capture_and_options_persistence()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 75,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_calls.py",
+        "fixture": "oracle/fixtures/external_calls.json",
+        "screenshot": "oracle/fixtures/external_calls.png",
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "executed_at": "2026-10-05 01:57:33\u201301:57:35 UTC",
+        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+      },
+      "limitations": [
+        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+        "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+        "Complete list/production launch routing is not claimed."
+      ]
+    },
+    {
+      "reference_id": "audit-options-external-programs-external-calls-editor-list",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "partial",
+      "proposed_status": "partial",
+      "exactBehavior": "Name/job/command rows use key-based selection, stable casefolded full-tuple sorting, and write sorted order into the Options draft.",
+      "behavior": "Name/job/command rows use key-based selection, stable casefolded full-tuple sorting, and write sorted order into the Options draft.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 1395,
+        "symbol": "Registered external callable list"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 15,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub struct Table"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1277,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+          "line": 137,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn actual_qt_sort_tie_break_casefold_and_duplicate_selection_routes()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 179,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn list_duplicate_defaults_delete_capture_and_options_persistence()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_calls.py",
+        "fixture": "oracle/fixtures/external_calls.json",
+        "screenshot": "oracle/fixtures/external_calls.png",
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "executed_at": "2026-10-05 01:57:33\u201301:57:35 UTC",
+        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+      },
+      "limitations": [
+        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+        "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+        "Reference column-state persistence and keyboard selection are incomplete. Standalone Add sorts immediately instead of leaving its row appended unsorted."
+      ]
+    },
+    {
+      "reference_id": "audit-options-external-programs-external-calls-add",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "partial",
+      "proposed_status": "partial",
+      "exactBehavior": "Add owns a new-call child; only accepted child values receive a fresh list identity and remain staged until parent Apply.",
+      "behavior": "Add owns a new-call child; only accepted child values receive a fresh list identity and remain staged until parent Apply.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 1399,
+        "symbol": "add"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 15,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub struct Table"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1277,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 75,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_calls.py",
+        "fixture": "oracle/fixtures/external_calls.json",
+        "screenshot": "oracle/fixtures/external_calls.png",
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "executed_at": "2026-10-05 01:57:33\u201301:57:35 UTC",
+        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+      },
+      "limitations": [
+        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+        "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+        "Full nested callable/actual/process and keyboard interactions remain incomplete."
+      ]
+    },
+    {
+      "reference_id": "audit-options-external-programs-external-calls-edit",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "partial",
+      "proposed_status": "partial",
+      "exactBehavior": "Captured selected call key survives accepted edits; command/string-processor children stage independently.",
+      "behavior": "Captured selected call key survives accepted edits; command/string-processor children stage independently.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 1400,
+        "symbol": "edit"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 15,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub struct Table"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1277,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 75,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_calls.py",
+        "fixture": "oracle/fixtures/external_calls.json",
+        "screenshot": "oracle/fixtures/external_calls.png",
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "executed_at": "2026-10-05 01:57:33\u201301:57:35 UTC",
+        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+      },
+      "limitations": [
+        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+        "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+        "Full process/OS-launch controls and reference dialogue interactions remain incomplete."
+      ]
+    },
+    {
+      "reference_id": "audit-options-external-programs-external-calls-export",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "partial",
+      "proposed_status": "partial",
+      "exactBehavior": "Supported typed selected calls export named reference tuples/list via shared clipboard/JSON/PNG exchange and owned PNG child.",
+      "behavior": "Supported typed selected calls export named reference tuples/list via shared clipboard/JSON/PNG exchange and owned PNG child.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 1345,
+        "symbol": "ExternalProgramsPanel"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 15,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub struct Table"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1277,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 327,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn imported_reference_calls_review_cancel_and_saved_process_test_consumer()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_calls.py",
+        "fixture": "oracle/fixtures/external_calls.json",
+        "screenshot": "oracle/fixtures/external_calls.png",
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "executed_at": "2026-10-05 01:57:33\u201301:57:35 UTC",
+        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+      },
+      "limitations": [
+        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+        "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+        "Per-call PNG batches and complete original export-menu/file UX are absent. Recognized unsupported nested conversions cannot be reference-encoded; regression primarily covers import."
+      ]
+    },
+    {
+      "reference_id": "audit-options-external-programs-external-calls-import",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "partial",
+      "proposed_status": "partial",
+      "exactBehavior": "Supported reference callable/list payloads are decoded/reviewed before fresh-key/nonduplicate-name additions. Invalid input and canceled review do not change persistence.",
+      "behavior": "Supported reference callable/list payloads are decoded/reviewed before fresh-key/nonduplicate-name additions. Invalid input and canceled review do not change persistence.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 1472,
+        "symbol": "import"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 15,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub struct Table"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1277,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 327,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn imported_reference_calls_review_cancel_and_saved_process_test_consumer()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_calls.py",
+        "fixture": "oracle/fixtures/external_calls.json",
+        "screenshot": "oracle/fixtures/external_calls.png",
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "executed_at": "2026-10-05 01:57:33\u201301:57:35 UTC",
+        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+      },
+      "limitations": [
+        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+        "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+        "Mixed valid/wrong-class packages reject atomically instead of accepting valid members. Large imports have no override prompt. Drop import and recognized unknown conversion exchange are absent."
+      ]
+    },
+    {
+      "reference_id": "audit-options-nested-external-call",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "partial",
+      "proposed_status": "partial",
+      "exactBehavior": "Detached name/job/call editor preserves edit identity and owns staged descendant acceptance/cancellation.",
+      "behavior": "Detached name/job/call editor preserves edit identity and owns staged descendant acceptance/cancellation.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 1144,
+        "symbol": "External callable editor: pipeline and actual call"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 15,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub struct Table"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1277,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 654,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub fn open("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 390,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn command_open("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 75,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_calls.py",
+        "fixture": "oracle/fixtures/external_calls.json",
+        "screenshot": "oracle/fixtures/external_calls.png",
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "executed_at": "2026-10-05 01:57:33\u201301:57:35 UTC",
+        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+      },
+      "limitations": [
+        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+        "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+        "Full callable/actual/process workflow remains incomplete."
+      ]
+    },
+    {
+      "reference_id": "audit-options-nested-external-call-actual",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "partial",
+      "proposed_status": "partial",
+      "exactBehavior": "File/URL jobs select typed process/default-OS call variants, retaining the process draft while switching.",
+      "behavior": "File/URL jobs select typed process/default-OS call variants, retaining the process draft while switching.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 751,
+        "symbol": "Actual call type and validity"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 15,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub struct Table"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1277,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 654,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub fn open("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 390,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn command_open("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 75,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_calls.py",
+        "fixture": "oracle/fixtures/external_calls.json",
+        "screenshot": "oracle/fixtures/external_calls.png",
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "executed_at": "2026-10-05 01:57:33\u201301:57:35 UTC",
+        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+      },
+      "limitations": [
+        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+        "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+        "OS-launch testing/production routing is absent."
+      ]
+    },
+    {
+      "reference_id": "audit-options-nested-external-call-process",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "partial",
+      "proposed_status": "partial",
+      "exactBehavior": "Process draft stages command, rules/processors, timeout/flags and preview/test inputs; saved values reach the actual local test worker.",
+      "behavior": "Process draft stages command, rules/processors, timeout/flags and preview/test inputs; saved values reach the actual local test worker.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 496,
+        "symbol": "Executable path, parameter template and process options"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 15,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub struct Table"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1277,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 654,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub fn open("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 390,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn command_open("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 75,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 377,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn reopened_saved_process_uses_real_editor_inputs_and_owned_test_call_worker()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_calls.py",
+        "fixture": "oracle/fixtures/external_calls.json",
+        "screenshot": "oracle/fixtures/external_calls.png",
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "executed_at": "2026-10-05 01:57:33\u201301:57:35 UTC",
+        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+      },
+      "limitations": [
+        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+        "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+        "Output/response processing, full process errors and process-group ownership remain incomplete."
+      ]
+    },
+    {
+      "reference_id": "audit-options-nested-external-call-command",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "partial",
+      "proposed_status": "partial",
+      "exactBehavior": "Owned executable/ordered argument child stages Add/Edit/Delete/reordering, copy/paste review and Apply/Cancel.",
+      "behavior": "Owned executable/ordered argument child stages Add/Edit/Delete/reordering, copy/paste review and Apply/Cancel.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 256,
+        "symbol": "Edit executable and ordered parameter templates"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 15,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub struct Table"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1277,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 654,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub fn open("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 390,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn command_open("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 75,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_calls.py",
+        "fixture": "oracle/fixtures/external_calls.json",
+        "screenshot": "oracle/fixtures/external_calls.png",
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "executed_at": "2026-10-05 01:57:33\u201301:57:35 UTC",
+        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+      },
+      "limitations": [
+        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+        "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+        "The argument queue and template clipboard controls are separately completed. Executable picker/PATH, complete command-dialog geometry, Qt PageUp/PageDown/type-ahead/scroll-to-current and physical tooltip placement remain outside this parent."
+      ]
+    },
+    {
+      "reference_id": "audit-options-nested-external-call-command-path",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "partial",
+      "proposed_status": "partial",
+      "exactBehavior": "Executable text stages in the command child with independent acceptance, cancellation and missing-executable warnings.",
+      "behavior": "Executable text stages in the command child with independent acceptance, cancellation and missing-executable warnings.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 262,
+        "symbol": "Executable picker and PATH help"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 15,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub struct Table"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1277,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 654,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub fn open("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 390,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn command_open("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 75,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_calls.py",
+        "fixture": "oracle/fixtures/external_calls.json",
+        "screenshot": "oracle/fixtures/external_calls.png",
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "executed_at": "2026-10-05 01:57:33\u201301:57:35 UTC",
+        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+      },
+      "limitations": [
+        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+        "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+        "Reference file picker and complete cross-platform availability resolution are absent."
+      ]
+    },
+    {
+      "reference_id": "audit-options-nested-external-call-command-arguments",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "Parameter Add leaves the new row unselected; Edit edits the first selectedItems entry (selection insertion order) even with several selected, using the exact Enter parameter message/default/placeholder and reference first-line whitespace cleaning. Delete captures indices and asks Remove N selected?, with decline/close unchanged. Up/Down iterate original selected indices including selected neighbours at boundaries, preserving Qt current focus and Shift origin. Focused list extended selection, arrows/Home/End, Ctrl+A/C/Insert/Space and Delete (macOS Backspace too) reach the real queue. Selected-text copy preserves selectedItems insertion order; the command example uses cleaned values. Child/parent Cancel and retired callbacks discard drafts; accepted values persist/reopen and feed saved Process.command token substitution. Select-all retains the previous Shift origin; Ctrl navigation replaces that origin without changing selected rows. Captured deletion chooses the previous current neighbour and retains its range origin. Reverse-order Edit and all five origin/deletion histories match actual Qt and native real pointer/key dispatch.",
+      "behavior": "Parameter Add leaves the new row unselected; Edit edits the first selectedItems entry (selection insertion order) even with several selected, using the exact Enter parameter message/default/placeholder and reference first-line whitespace cleaning. Delete captures indices and asks Remove N selected?, with decline/close unchanged. Up/Down iterate original selected indices including selected neighbours at boundaries, preserving Qt current focus and Shift origin. Focused list extended selection, arrows/Home/End, Ctrl+A/C/Insert/Space and Delete (macOS Backspace too) reach the real queue. Selected-text copy preserves selectedItems insertion order; the command example uses cleaned values. Child/parent Cancel and retired callbacks discard drafts; accepted values persist/reopen and feed saved Process.command token substitution. Select-all retains the previous Shift origin; Ctrl navigation replaces that origin without changing selected rows. Captured deletion chooses the previous current neighbour and retains its range origin. Reverse-order Edit and all five origin/deletion histories match actual Qt and native real pointer/key dispatch.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 449,
+        "symbol": "Parameter list, add/edit/delete/reorder and command example"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_command.rs",
+          "line": 7,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "pub struct Queue"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 370,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "fn command_open("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 240,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "fn command_action("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/list_selection.rs",
+          "line": 26,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "pub fn click("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 159,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "fn text_child("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 669,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 863,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+          "line": 365,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "fn command_parameter_queue_selection_reorder_and_keyboard_match_actual_qt()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+          "line": 331,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "fn command_clipboard_review_and_cleaned_example_match_actual_qt()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+          "line": 459,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "fn command_queue_reverse_edit_and_keyboard_origins_match_actual_qt()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 990,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "fn parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_command.py",
+        "fixture": "oracle/fixtures/external_command.json",
+        "screenshot": "oracle/fixtures/external_command.png",
+        "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+        "executed_at": "2026-10-05 03:04:45\u201303:04:47 UTC",
+        "result": "Actual v688 Qt temporary basic client, real parameter queue button/list key handlers: boundary selected-neighbour rotations, multi-selected first-row edit, Unicode/newline cleaning, Add/Edit/Delete cancellation, clicked current/Shift anchor after reorder, selectedItems copy insertion order and Ctrl+Insert/Delete. Ten clipboard texts accepted and declined cover zero/one/many arguments, literal quotes, repeated spaces, tab/newline, Unicode/C0 whitespace and truncated summaries. Missing clipboard text records actual Error message. Only dialog responses/clipboard transport are scripted; no external program/network/OS launcher executed. Actual Qt PNG inspected. Final rerun additionally drives six real Qt queue histories: reverse-selected Edit, Ctrl+A contraction, prior Shift anchor through Ctrl+A, Ctrl+Home then Shift, and deletion of current/non-current selection followed by Shift."
+      },
+      "limitations": [
+        "Broader external-program/list/reopen and command/process parents remain Partial; executable picker/PATH/availability breadth, OS launch routing and full process output are not claimed. No new windows or parent/alias promotions.",
+        "These controls edit displayed typed process calls; legacy executable-manager migration and missing OS-launch constructor regeneration remain absent.",
+        "Physical tooltip placement, Qt list PageUp/PageDown/type-ahead/scroll-to-current and complete command dialog geometry are outside these two explicit control leaves.",
+        "Authored native keyboard/owner/store regressions and native command PNG await hosted CI; no local Cargo/tests or mutation testing were run."
+      ]
+    },
+    {
+      "reference_id": "audit-options-nested-external-call-command-copy",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "Full-template Copy uses cleaned parameters and publishes exact unescaped text. Paste strips Python whitespace then splits literal spaces, retaining raw rows and quote fragments; the exact unsorted count/summary review handles zero, one, blank/repeated, Unicode/C0, tab/newline and truncated many-argument cases. No/close keep the draft; Yes updates executable/raw rows and cleaned example. Copy/accepted paste show Copied!/Pasted! feedback. Missing clipboard text opens owned Error/ok with No text on the clipboard!; access failures do not mutate the draft. Child Apply cleans arguments; parent Apply persists them, with reopened saved Process.command preserving literals/Unicode and substituting tokens. Parent Cancel and retired reviews cannot publish.",
+      "behavior": "Full-template Copy uses cleaned parameters and publishes exact unescaped text. Paste strips Python whitespace then splits literal spaces, retaining raw rows and quote fragments; the exact unsorted count/summary review handles zero, one, blank/repeated, Unicode/C0, tab/newline and truncated many-argument cases. No/close keep the draft; Yes updates executable/raw rows and cleaned example. Copy/accepted paste show Copied!/Pasted! feedback. Missing clipboard text opens owned Error/ok with No text on the clipboard!; access failures do not mutate the draft. Child Apply cleans arguments; parent Apply persists them, with reopened saved Process.command preserving literals/Unicode and substituting tokens. Parent Cancel and retired reviews cannot publish.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 385,
+        "symbol": "Copy command / paste parsed parameters"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_command.rs",
+          "line": 7,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "pub struct Queue"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 370,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "fn command_open("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 240,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "fn command_action("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/list_selection.rs",
+          "line": 26,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "pub fn click("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_command.rs",
+          "line": 141,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "pub struct Paste"
+        },
+        {
+          "relativepath": "crates/hydrus-core/src/external_calls.rs",
+          "line": 175,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "pub fn clean_arguments("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 669,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 863,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+          "line": 365,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "fn command_parameter_queue_selection_reorder_and_keyboard_match_actual_qt()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+          "line": 331,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "fn command_clipboard_review_and_cleaned_example_match_actual_qt()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+          "line": 459,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "fn command_queue_reverse_edit_and_keyboard_origins_match_actual_qt()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 990,
+          "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+          "symbol": "fn parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_command.py",
+        "fixture": "oracle/fixtures/external_command.json",
+        "screenshot": "oracle/fixtures/external_command.png",
+        "commit": "9ac22c60851462185542749743d0c5dcdc989d52",
+        "executed_at": "2026-10-05 03:04:45\u201303:04:47 UTC",
+        "result": "Actual v688 Qt temporary basic client, real parameter queue button/list key handlers: boundary selected-neighbour rotations, multi-selected first-row edit, Unicode/newline cleaning, Add/Edit/Delete cancellation, clicked current/Shift anchor after reorder, selectedItems copy insertion order and Ctrl+Insert/Delete. Ten clipboard texts accepted and declined cover zero/one/many arguments, literal quotes, repeated spaces, tab/newline, Unicode/C0 whitespace and truncated summaries. Missing clipboard text records actual Error message. Only dialog responses/clipboard transport are scripted; no external program/network/OS launcher executed. Actual Qt PNG inspected. Final rerun additionally drives six real Qt queue histories: reverse-selected Edit, Ctrl+A contraction, prior Shift anchor through Ctrl+A, Ctrl+Home then Shift, and deletion of current/non-current selection followed by Shift."
+      },
+      "limitations": [
+        "Broader external-program/list/reopen and command/process parents remain Partial; executable picker/PATH/availability breadth, OS launch routing and full process output are not claimed. No new windows or parent/alias promotions.",
+        "These controls edit displayed typed process calls; legacy executable-manager migration and missing OS-launch constructor regeneration remain absent.",
+        "Physical tooltip placement, Qt list PageUp/PageDown/type-ahead/scroll-to-current and complete command dialog geometry are outside these two explicit control leaves.",
+        "Authored native keyboard/owner/store regressions and native command PNG await hosted CI; no local Cargo/tests or mutation testing were run."
+      ]
+    },
+    {
+      "reference_id": "audit-options-nested-external-call-input-rules",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "partial",
+      "proposed_status": "partial",
+      "exactBehavior": "Typed enabled tokens and shared owned StringProcessor children feed real preview/test input substitution.",
+      "behavior": "Typed enabled tokens and shared owned StringProcessor children feed real preview/test input substitution.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 150,
+        "symbol": "Per-input enable flag, replacement token and String Processor"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 15,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub struct Table"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1277,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 654,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub fn open("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 390,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn command_open("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 75,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 377,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn reopened_saved_process_uses_real_editor_inputs_and_owned_test_call_worker()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_calls.py",
+        "fixture": "oracle/fixtures/external_calls.json",
+        "screenshot": "oracle/fixtures/external_calls.png",
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "executed_at": "2026-10-05 01:57:33\u201301:57:35 UTC",
+        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+      },
+      "limitations": [
+        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+        "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+        "Rule clipboard transfer and full rule/response input UI are absent."
+      ]
+    },
+    {
+      "reference_id": "audit-options-nested-external-call-process-timeout",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "partial",
+      "proposed_status": "partial",
+      "exactBehavior": "Saved seconds/long-lived values reach bounded process testing; long-lived tests force a15second deadline.",
+      "behavior": "Saved seconds/long-lived values reach bounded process testing; long-lived tests force a15second deadline.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 661,
+        "symbol": "Timeout / long-lived process, hide terminal and text mode"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 15,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub struct Table"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1277,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 654,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub fn open("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 390,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn command_open("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 377,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn reopened_saved_process_uses_real_editor_inputs_and_owned_test_call_worker()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+          "line": 199,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn cancelling_the_owner_terminates_and_reaps_its_started_direct_child()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_calls.py",
+        "fixture": "oracle/fixtures/external_calls.json",
+        "screenshot": "oracle/fixtures/external_calls.png",
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "executed_at": "2026-10-05 01:57:33\u201301:57:35 UTC",
+        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+      },
+      "limitations": [
+        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+        "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+        "Reference minutes/seconds widget and complete timeout/error presentation are incomplete."
+      ]
+    },
+    {
+      "reference_id": "audit-options-nested-external-call-test-availability",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "partial",
+      "proposed_status": "partial",
+      "exactBehavior": "General process availability uses the native PATH resolver and owner-scoped worker/test status.",
+      "behavior": "General process availability uses the native PATH resolver and owner-scoped worker/test status.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 1018,
+        "symbol": "Test callable availability"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 15,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub struct Table"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1277,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 654,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub fn open("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 390,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn command_open("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 377,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn reopened_saved_process_uses_real_editor_inputs_and_owned_test_call_worker()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_calls.py",
+        "fixture": "oracle/fixtures/external_calls.json",
+        "screenshot": "oracle/fixtures/external_calls.png",
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "executed_at": "2026-10-05 01:57:33\u201301:57:35 UTC",
+        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+      },
+      "limitations": [
+        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+        "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+        "Full platform shutil.which equivalence, OS-launch availability and original response dialog are not claimed."
+      ]
+    },
+    {
+      "reference_id": "audit-options-nested-external-call-test-execution",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "partial",
+      "proposed_status": "partial",
+      "exactBehavior": "Reopened saved process calls use real input rules and argument vectors in one fallible worker. Closing cancels/reaps the direct child and invalidates publication. Owned publication timer captures Weak<Timer>, and per-Slots lease prevents parallel tests.",
+      "behavior": "Reopened saved process calls use real input rules and argument vectors in one fallible worker. Closing cancels/reaps the direct child and invalidates publication. Owned publication timer captures Weak<Timer>, and per-Slots lease prevents parallel tests.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
+        "line": 1068,
+        "symbol": "Test input values, run callable and review result"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
+          "line": 180,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
+          "line": 15,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub struct Table"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 1277,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 654,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "pub fn open("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 390,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn command_open("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 377,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn reopened_saved_process_uses_real_editor_inputs_and_owned_test_call_worker()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+          "line": 199,
+          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "symbol": "fn cancelling_the_owner_terminates_and_reaps_its_started_direct_child()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_external_calls.py",
+        "fixture": "oracle/fixtures/external_calls.json",
+        "screenshot": "oracle/fixtures/external_calls.png",
+        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+        "executed_at": "2026-10-05 01:57:33\u201301:57:35 UTC",
+        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+      },
+      "limitations": [
+        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
+        "Legacy executable-manager import remains absent. Open Externally OS-default draft regeneration and per-file-type production routing now have their separate original-leaf evidence packet open-externally.json; these older claims still apply to the registered typed calls displayed by this owner.",
+        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
+        "Output is discarded; OS launch tests, descendant process groups, production routing and all exact error strings are absent. Batch/shell interpreters retain their argument syntax."
+      ]
+    }
+  ],
+  "native_navigation": {
+    "options_kind": 30,
+    "inspection_owner": {
+      "relativepath": "crates/hydrus-gui/src/lib.rs",
+      "line": 277,
+      "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+      "symbol": "pub options_external_calls:"
+    },
+    "new_windows": [
+      "ExternalCallWindow",
+      "ExternalCommandWindow",
+      "ExternalDefaultsWindow"
+    ],
+    "edges": [
+      "OptionsWindow -> ExternalCallWindow (Add/Edit)",
+      "OptionsWindow -> ExternalDefaultsWindow (Add Defaults select from a list)",
+      "OptionsWindow -> SessionDialog (Delete/Duplicate/platform question)",
+      "ExternalCallWindow -> ExternalCommandWindow (edit command and parameters)",
+      "ExternalCallWindow -> StringProcessorWindow (input rule processor)",
+      "ExternalCommandWindow -> SessionDialog (parameter, captured delete/paste review, clipboard Error/ok)",
+      "OptionsWindow -> DownloaderExchangeWindow (typed external-call exchange)",
+      "DownloaderExchangeWindow -> PngExportWindow (frozen export payload)"
+    ],
+    "native_png": "external_callable.png (authored CARGO_TARGET_TMPDIR; hosted CI pending)",
+    "native_pngs": [
+      "external_callable.png",
+      "external-command-parameters.png"
+    ]
+  }
+}

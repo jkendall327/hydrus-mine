@@ -97,7 +97,7 @@ pub fn open(
                 return;
             }
             let s = state.borrow();
-            let definitions = s
+            let definitions: Vec<_> = s
                 .selection
                 .in_order(&(0..s.values.formulae.len()).collect::<Vec<_>>())
                 .into_iter()
@@ -138,7 +138,7 @@ pub fn open(
             match crate::downloader_interchange_window::open(
                 &slots.exchange,
                 importing,
-                definitions,
+                &definitions,
                 preview,
                 applied,
             ) {

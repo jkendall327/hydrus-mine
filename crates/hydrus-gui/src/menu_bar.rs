@@ -20,6 +20,13 @@ type ShownLines = Rc<RefCell<Vec<(Vec<MenuLine>, ModelRc<MenuLine>)>>>;
 
 /// What the menu bar works with.
 pub(crate) struct Hooks {
+    pub debug_long_popup: crate::debug_long_popup::Control,
+    pub debug_session_reload: crate::debug_session_reload::Control,
+    pub debug_fetch: crate::debug_fetch::Control,
+    pub force_idle: crate::force_idle::Control,
+    pub quick_export_directory: crate::quick_export_directory::Control,
+    pub darkmode: Rc<dyn Fn()>,
+    pub sidebar_layout: Rc<dyn Fn(hydrus_gui_model::page_layout::Action)>,
     /// Open the siblings or parents editor.
     pub tag_display: Rc<dyn Fn(bool)>,
     pub tag_relationships: Rc<dyn Fn(hydrus_store::display::RelationKind)>,
@@ -71,6 +78,11 @@ pub(crate) struct Hooks {
     pub review_services: Rc<dyn Fn()>,
     /// Open staged service management.
     pub manage_services: Rc<dyn Fn()>,
+    pub repair_archive_times: Rc<dyn Fn()>,
+    pub viewing_maintenance: Rc<dyn Fn(bool)>,
+    pub clear_thumbnail_cache: Rc<dyn Fn()>,
+    pub file_history: Rc<dyn Fn()>,
+    pub file_maintenance: Rc<dyn Fn()>,
     /// Toggle watcher or other recognised clipboard URL imports.
     pub watch_clipboard: Rc<dyn Fn(bool)>,
 }
@@ -107,6 +119,12 @@ pub(crate) fn facts(pages: &RefCell<Pages>, weigh: bool) -> Facts {
     };
     facts.search_added = labelled(history.added);
     facts.search_removed = labelled(history.removed);
+    facts
+}
+
+fn owned_facts(hooks: &Hooks, weigh: bool) -> Facts {
+    let mut facts = facts(&hooks.pages, weigh);
+    facts.force_idle = hooks.force_idle.enabled();
     facts
 }
 
@@ -195,7 +213,7 @@ pub(crate) fn bind(
         let titles_model: Rc<VecModel<MenuTitle>> = Rc::new(VecModel::default());
         window.set_menu_titles(ModelRc::from(titles_model.clone()));
         Rc::new(move || {
-            let titles: Vec<MenuTitle> = main_menu::menubar(&facts(&hooks.pages, false))
+            let titles: Vec<MenuTitle> = main_menu::menubar(&owned_facts(&hooks, false))
                 .iter()
                 .map(|menu| MenuTitle {
                     label: main_menu::title(menu.label()).into(),
@@ -224,7 +242,7 @@ pub(crate) fn bind(
         let hooks = hooks.clone();
         let titles = titles.clone();
         move |top: usize, x: f32, y: f32| {
-            let menus = main_menu::menubar(&facts(&hooks.pages, true));
+            let menus = main_menu::menubar(&owned_facts(&hooks, true));
             open.borrow_mut().open(menus, top, x, y);
             titles();
         }
@@ -404,7 +422,7 @@ pub(crate) fn bind(
                 open.borrow_mut().key(MenuKey::Down);
             };
             if alt {
-                let menus = main_menu::menubar(&facts(&hooks.pages, false));
+                let menus = main_menu::menubar(&owned_facts(&hooks, false));
                 if let Some(top) = main_menu::mnemonic(&menus, &text) {
                     by_key(top);
                     show();
@@ -461,6 +479,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
     let store = hooks.pages.borrow().store().clone();
     let change_pages = &hooks.change_pages;
     match command {
+        Command::Sidebar(action) => (hooks.sidebar_layout)(action),
         Command::DuplicateTab { depth, index } => {
             change_pages(&|pages| pages.duplicate_tab(depth, index));
         }
@@ -625,6 +644,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             Err(e) => eprintln!("could not find the installation directory: {e}"),
         },
         Command::OpenDatabaseDirectory => crate::launch(&store.dir().to_string_lossy()),
+        Command::OpenQuickExportDirectory => hooks.quick_export_directory.open(),
         Command::Exit => {
             let _ = window
                 .window()
@@ -669,6 +689,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::AppendSession(name) => change_pages(&|pages| pages.append_session(&name)),
         // asked first, then (any page objecting) asked again, as the
         // reference's `LoadGUISession` asks
+        Command::DebugReloadSession => hooks.debug_session_reload.start(),
         Command::ClearAndLoadSession(name) => {
             let pages = hooks.pages.clone();
             let change_pages = hooks.change_pages.clone();
@@ -740,6 +761,21 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             hooks.pages.borrow_mut().clear_watcher_highlights();
             (hooks.reshow)();
         }
+        Command::FileHistory => (hooks.file_history)(),
+        Command::ManageFileMaintenance => (hooks.file_maintenance)(),
+        Command::RepairArchiveTimes => (hooks.repair_archive_times)(),
+        Command::ClearThumbnailCache => (hooks.clear_thumbnail_cache)(),
+        Command::DebugFetchUrl => hooks.debug_fetch.open(),
+        Command::DebugLongTextPopup => hooks.debug_long_popup.start(),
+        Command::DebugForceIdleMode => {
+            hooks.force_idle.toggle();
+        }
+        Command::DebugDelayedTextPopup => hooks.debug_long_popup.start_delayed_popup(),
+        Command::DebugDelayedNewPage(location) => {
+            hooks.debug_long_popup.start_delayed_page(location)
+        }
+        Command::ClearViewingStatistics => (hooks.viewing_maintenance)(false),
+        Command::CullViewingStatistics => (hooks.viewing_maintenance)(true),
         Command::FileMaintenance(idle) => {
             flip::<hydrus_store::file_maintenance::FileMaintenanceSettings>(&store, move |m| {
                 let field = if idle {
@@ -813,6 +849,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::ImportFiles => (hooks.import_files)(),
         Command::SearchDomain(choice) => (hooks.search_domain)(choice),
         Command::Favourite(action) => (hooks.favourite)(action),
+        Command::Darkmode => (hooks.darkmode)(),
         Command::About => (hooks.about)(),
         Command::ReviewServices => (hooks.review_services)(),
         Command::ManageServices => (hooks.manage_services)(),

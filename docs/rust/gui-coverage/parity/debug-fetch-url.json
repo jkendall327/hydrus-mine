@@ -1,0 +1,615 @@
+{
+  "schema_version": 1,
+  "agent": "debug-fetch-url",
+  "baseline_git_head": "0816f3388272b7081feb73b33029f6701f811ad2",
+  "source_commit": "5387f8786b695e81481b22f00283c69b75bffc3e",
+  "implementation_commits": [
+    "5387f8786b695e81481b22f00283c69b75bffc3e"
+  ],
+  "frozen_original_inventory": {
+    "path": "docs/rust/gui-coverage/reference-inventory.json",
+    "git_head": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+    "sha256": "bf09a4fea025c553416ca52efdd0b2e410dbf0b8248c0c41b6a26330967bbd0e",
+    "before": {
+      "audit-options-help-debug-action-fetch-a-url": "missing"
+    }
+  },
+  "eligibility": {
+    "completed_ledger_path": "docs/rust/gui-coverage/overnight/progress.json",
+    "completed_ledger_at_base_sha256": "168d8057e3b023cf822af82b703b4fe018baba266694d06b5c7ae79bf1d20ca6",
+    "completed_array_lengths": [
+      240,
+      51
+    ],
+    "listed_ids_already_completed": [],
+    "existing_parity_packets_with_listed_ids": [],
+    "parity_json_packets_checked": 109,
+    "semantic_alias_audit": "Both original completed arrays and all109 predecessor packet JSON schemas/raw strings inspected. No target ID, debug fetch producer, exact request-complete question or debug-network-job action claim exists. Existing parser/formula raw fetch helpers are different editor consumers, and network-data current-jobs review is already implemented/reused without credit. Import clipboard/favourites are semantic aliases of prior real subscription/sessions implementations and were excluded; external-program import entry lacks its runtime worker and remains unsupported. Frozen target is a terminal original action with zero descendants."
+  },
+  "proposed_completed_count": 1,
+  "eligible_concrete_first_pass_count": 1,
+  "parent_promotions": 0,
+  "claims": [
+    {
+      "id": "audit-options-help-debug-action-fetch-a-url",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "change_kind": "implementation",
+      "countAsCompletedLeaf": true,
+      "source_commit": "5387f8786b695e81481b22f00283c69b75bffc3e",
+      "implementation_commits": [
+        "5387f8786b695e81481b22f00283c69b75bffc3e"
+      ],
+      "behavior": "Actual Help/debug/network action opens the exact URL prompt, admits ordinary NetEngine GET with saved cookies/headers/bandwidth and accounting, shows real Working progress, supports native popup stop\u2192actual Job cancellation, and finishes the progress card on a three-second stored deadline. Each overlapping request/result is captured by stable per-binding identity. Success asks the exact byte-length question with save-to-file/copy-to-clipboard/forget; saves raw response bytes and copies charset-decoded text. Input Cancel, response forget, HTTP error/cancel and file-picker cancellation are meaningful consumers. Visible/current child and Main question guards reject stale/direct callbacks; saved bytes are revalidated after picker return. Existing admitted hidden work still delivers a result question, but hidden new launch is refused. Rebind/accepted exit/final Bound clone drop/Main destruction permanently cancel jobs and hide children through weak callbacks/timers, without affecting Cancel-exit.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 1228,
+        "symbol": "def _DebugFetchAURL",
+        "line_sha256": "b50436ea37d78b09904c437f2e807a83ad49ff54f6778c09c9ace85474d5d276",
+        "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 15,
+          "symbol": "struct Running",
+          "line_sha256": "dec63853c2c596aed07f46414b8b48fbbdef5086b4f2181ba3a335a62e05333b",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 41,
+          "symbol": "fn live(&self)",
+          "line_sha256": "836ab6be2cd8a4867dc62854d5de4884be6b9388bc5ade9a58745b3e52f066ee",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 44,
+          "symbol": "fn valid_child",
+          "line_sha256": "a45b7b2a2bac439d79e5ff451fbb42e04607312d4dcc9f70b41ad651ad178d79",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 56,
+          "symbol": "fn close(&self",
+          "line_sha256": "48b140d8f7957f07c0535af8fb2f2f981c9fa7f12d1350eea41030729eae3b40",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 62,
+          "symbol": "fn retire(&self)",
+          "line_sha256": "711991b1c2d1ec8f1f831a6816e57c2d81aceb89098105bfe5d7a57494f2f909",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 76,
+          "symbol": "fn show(",
+          "line_sha256": "a176986b1422b963c9880c390caa5127274940b8934dbd36635d87d1992bbfb2",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 112,
+          "symbol": "window.on_accepted",
+          "line_sha256": "83034adaf8e66cbe8f9fad1c5988c920d1f7f20e146a28850ad0e6259d7761ca",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 130,
+          "symbol": "window.on_choice",
+          "line_sha256": "3c8786516efcce1eaff6de55e265e5bddedb1d877c9e17b7effd93eac1fb69d8",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 149,
+          "symbol": "state.live()",
+          "line_sha256": "53d1d3bf176376f9b4d4c3fc808bf4c8f799827d949a931d7c99f933182d1f56",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 147,
+          "symbol": "crate::copy_to_clipboard",
+          "line_sha256": "ad6b7a8836b3e61b660b21d425f49a5e76297d3c222793dfac6b0e19eed88d64",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 150,
+          "symbol": "std::fs::write",
+          "line_sha256": "08ac7ea0a40d4acc8024b103583e5058995301a9d0d0dfdbc4bbc01feb3e236b",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 96,
+          "symbol": "Rc::downgrade(self)",
+          "line_sha256": "0bb2df23cf5395a47ea0b269bdda4b28e95b5db56e9cea04a98ebdb68b54f9fd",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 173,
+          "symbol": "fn start(self",
+          "line_sha256": "0d1fe1f166b84cb5b469011bbb8a8fcf8091b8184f0344b0ae636a5bfcea9a9a",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 179,
+          "symbol": "Working::new",
+          "line_sha256": "88a1ca645ad4d07927c1de2ed097126af5e72e3db799b54e944a059b80837ba4",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 180,
+          "symbol": "popup.set_network_job",
+          "line_sha256": "90493f9c7f9b28fee06ed0d3cd189d4a9abd33fe6b67bc169557c6ab3a62e280",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 198,
+          "symbol": "NetOptions::from_settings",
+          "line_sha256": "450fd115d8fca5f3c8654a7894cb402069ec513a4f294f80035a23fe387d8610",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 202,
+          "symbol": ".fetch(&Request::get",
+          "line_sha256": "0cdef80b281a9fd558e1ab184cc88f196783730aeefbddc43231c35ac72c62cf",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 205,
+          "symbol": ".save_bandwidth()",
+          "line_sha256": "4236c6ec162cf22f6257fab467a08b81f5c905d81d377bb84d0a62835422fae2",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 213,
+          "symbol": "finish_and_dismiss_after(3)",
+          "line_sha256": "019c1a0dca1c7f18abbdacd625bde946d4f6bbacf699972fdb4f45667f5ef5ab",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 243,
+          "symbol": "fn tick(self",
+          "line_sha256": "9c46cc0c7c75ab3436abaf916a1d994c04db496dcc039eca1755b13516a320a4",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 250,
+          "symbol": "run.popup.is_cancelled",
+          "line_sha256": "a2c28a38327dd23fcabf1db5dcf31b460a9ce9284e7c719bd75a6a74d4e7d955",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 256,
+          "symbol": "run.job.is_cancelled",
+          "line_sha256": "35f345edbeb5853c9c81ab271a7f56890ed029550be7c3bfcf6b6e7361c74132",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 286,
+          "symbol": "impl Drop for State",
+          "line_sha256": "6dd323766e413d24ba3bc1d92c0347f8c5eae7921079839f319bb2dceac4c6ef",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 293,
+          "symbol": "pub struct Control",
+          "line_sha256": "379cab42a0c8a651721985faf3022b3530f0bb6ab6d2537511078277b31ebb36",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 295,
+          "symbol": "impl Drop for Owner",
+          "line_sha256": "3806ad3163a6069fe80abc5fcf2967c2e112e3b78368233667e861a4c012f1dc",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 332,
+          "symbol": "pub fn open(&self)",
+          "line_sha256": "4cc2b4d0bfdfe338d24e7337dac387eb52476a1306fa5f06f5eb487b95fe198f",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/debug_fetch.rs",
+          "line": 353,
+          "symbol": "pub fn windows(&self)",
+          "line_sha256": "5fb2cb82ef526a1e7655a4dc0260b051b1b2ca26efd5b816978cfa383a5c9d20",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-download/src/popups.rs",
+          "line": 456,
+          "symbol": "pub fn finish_and_dismiss_after",
+          "line_sha256": "948f42e82a42016f3c5c8cfa4647859c72e01331741195e65c0ec4cb7dd30591",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-download/src/popups.rs",
+          "line": 463,
+          "symbol": "Some(seconds.max(0))",
+          "line_sha256": "12d7d36820ae9bd16462b75e9902221d969c90edc645fde9730c547e760ee27b",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-download/src/popups.rs",
+          "line": 552,
+          "symbol": "theirs.dismiss_at = ours.dismiss_at",
+          "line_sha256": "8aac2c3409f1c797e1e82e3076e911f0ab8cd00c8f84d18a38929f6179aff927",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-download/src/popups.rs",
+          "line": 602,
+          "symbol": "fn completed_deadline_survives_producer_drop",
+          "line_sha256": "727e0ada1c2a100142f8cf4e089b21f3643b55313f211364e8dada9d0f9ff65a",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 339,
+          "symbol": "_debug_fetch_owner: Rc<debug_fetch::Owner>",
+          "line_sha256": "e90d451eb46d4f361f7ed1a092b404e2308253b6bca66546d99d24af3de6e79f",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 613,
+          "symbol": "let debug_fetch = debug_fetch::Control::new",
+          "line_sha256": "47eef3581c04556ef8fbde9cb81659baeecf1180ad89d34ab073fbe18a7edcae",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 3086,
+          "symbol": "debug_fetch.set_published",
+          "line_sha256": "715c980ad2285362eea3b4191b222911cc83fccdb728d398c8c7f6f08fd570b9",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 4821,
+          "symbol": "_debug_fetch_owner: Rc::new(debug_fetch.owner())",
+          "line_sha256": "3b64f8f5eb829dd3878ca236c3c532b176cb92015b3f0b24d6155937bf1cf40a",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 5442,
+          "symbol": "fn pick_debug_response",
+          "line_sha256": "79f3df163c9029b0a503c8f027fc1f87eb3959a4583c866fb904e4ddc09cc1b1",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 5449,
+          "symbol": "set_file_name(\"output.txt\")",
+          "line_sha256": "005de24bd9fe2f330f4b4abf108ece006b35cd8d5862a178ed0248da61e5c20e",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 685,
+          "symbol": "debug_fetch.retire();",
+          "line_sha256": "75e5bd9f8f2938b2eec5a7d149fcce6b15dc02990de81cbe92c107850f958677",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 3127,
+          "symbol": "debug_fetch.retire();",
+          "line_sha256": "20946c45ca78c874c354e42821487c66e341396efd847e8dd8df9b87aa6e9529",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 265,
+          "symbol": "DebugFetchUrl,",
+          "line_sha256": "a6ecb122d4aab52655b4c244d93a9f091eca548fac3ffb9d12fcec074ff5a1af",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/main_menu.rs",
+          "line": 1298,
+          "symbol": "\"fetch a url\", Command::DebugFetchUrl",
+          "line_sha256": "8dc8bd67668008b9821afeb8dd0fa02eee6ed3a3cc51bc30b8ef04c349f81fd3",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/menu_bar.rs",
+          "line": 764,
+          "symbol": "Command::DebugFetchUrl =>",
+          "line_sha256": "f7406c3fad269105f307d990ddaab60106f3cb436129c06a035fb528ba7c45b6",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/debug_fetch.slint",
+          "line": 3,
+          "symbol": "export component DebugFetchWindow",
+          "line_sha256": "b5275fc814f96931003af3165cfd0f5fc3999f76aa25906945f7de2c3875d246",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/debug_fetch.slint",
+          "line": 4,
+          "symbol": "title: root.input-mode",
+          "line_sha256": "2d3c9753bb4f0a0f968a04405e42948577fe3d41df0450957c1d80601c2d45a9",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/debug_fetch.slint",
+          "line": 14,
+          "symbol": "public function focus-result",
+          "line_sha256": "13b871a6eaf43e0dbdb73c95214e217d0ba72717e20a769fcfcfe7becf2fb51e",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/debug_fetch.slint",
+          "line": 28,
+          "symbol": "text <=> root.url",
+          "line_sha256": "1fe95ca55e5deac5fa01a5c264674c996e8992b3a045981804b0163322e5c4c9",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/debug_fetch.slint",
+          "line": 36,
+          "symbol": "text: \"copy to clipboard\"",
+          "line_sha256": "ea8aba6c9c269d71fc56f29e61c2a5cb3991f87aa38f4cc1148b7f759da569a8",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/debug_fetch.slint",
+          "line": 37,
+          "symbol": "text: \"forget it\"",
+          "line_sha256": "8e8300827d79a9cac14ee28801a41acb5dac8167ebda6cb3ac342abe7396e80a",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_fetch.rs",
+          "line": 78,
+          "symbol": "fn actual_menu_binary_save",
+          "line_sha256": "f55d1a8795e802f0dfc4059dc03d10a175ac8a7a2920dece838dcd026848e2e7",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_fetch.rs",
+          "line": 237,
+          "symbol": "fn overlapping_held_jobs",
+          "line_sha256": "76fb37ad235844e0c629bb54456f1462eceecb3677fb5ba1f7af4f4b28d6494d",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_fetch.rs",
+          "line": 289,
+          "symbol": "fn hidden_children_close",
+          "line_sha256": "53c8506ce2167cba32868143ea7d37d6fa977653e5007b4695cf65769d65aa3b",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_fetch.rs",
+          "line": 358,
+          "symbol": "fn ordinary_get_waits",
+          "line_sha256": "4571eb33bcafbb02654ffce68798f9f674afef00fa698d1aa52fd001c3a92461",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_fetch.rs",
+          "line": 205,
+          "symbol": "owner retirement during file picker",
+          "line_sha256": "893375323c36ba95fbf4d39fa338c5854e098f468af9aec178417424aec17e60",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_fetch.rs",
+          "line": 197,
+          "symbol": "control.retire();",
+          "line_sha256": "9b4ef0ae09a4664234cd8e9eefef94b6b36501007517041325bc7fe673130e7a",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/debug_fetch.rs",
+          "line": 226,
+          "symbol": "BandwidthType::Requests),",
+          "line_sha256": "8cb6502c17a0dbd46daa31b491d1ca58b3c061ae0f4a2ca3b2f46b2cc0b74d8b",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/main_menu.rs",
+          "line": 160,
+          "symbol": "serde_json::json!([\"review current network jobs\", fetch])",
+          "line_sha256": "68ebff15c8cfd927461474388a37c4a3e669338bd94fe9a5cebcde85ae8a62a6",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 42,
+          "symbol": "pub(super) fn start_with_response",
+          "line_sha256": "9bc7fd0487dfa9ca4ed236480f65be8105e932a57cfcbcf2a177c394c86bc4b6",
+          "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+        }
+      ],
+      "limits": [
+        "The attached native download row is display-only; reference embedded stop/cog parity is not claimed. Native popup bottom stop reaches the actual Job; broader popup/network-control family stays Partial.",
+        "Native child questions are owned detached windows and the existing system file picker, rather than Qt modal panels. Native HTTP/IO exception wording comes from existing Rust errors.",
+        "The existing GUI-local per-request NetEngine pattern preserves ordinary policy/accounting; this does not claim joint scheduling/ceilings with a separately running daemon or all network-family consumers.",
+        "Permanent GUI retirement cancellation is native owner policy; existing hidden work is allowed to complete, matching recorded Qt delivery.",
+        "Exact Rust/native replay and native PNG inspection remain hosted pending. No parents, semantic aliases or new native window IDs receive credit."
+      ]
+    }
+  ],
+  "reference": {
+    "recorder": "oracle/record_debug_fetch_url.py",
+    "fixture": "oracle/fixtures/debug_fetch_url.json",
+    "fixture_sha256": "ed0555383c9248033cf48e4a0156bf80ad2ba4669fe649778313dc9c86658bb5",
+    "render": "oracle/fixtures/debug_fetch_url.png",
+    "render_sha256": "6da4b484ed080a2aed4806eb5767f61a47bbf04b7f1cb75e1b69d8e7c777b011",
+    "executed_utc": "2026-10-05 15:45:14\u201315:45:26 UTC",
+    "commit": "5387f8786b695e81481b22f00283c69b75bffc3e",
+    "result": "Actual QAction and unmodified controller threads/NetworkJob/engine/CallAfterQtSafe against disclosed loopback80 HTTP. Scripted dialogs answer real handlers: exact seven byte binary file, ISO-8859-1 decoded clipboard with NUL/\u00ff, forget/inputCancel, existing hidden delivery; actual404 NotFoundException and real embedded NetworkJobControl.Cancel yield no response choice and real three-second JobStatus deadlines. Actual toaster PNG individually inspected. Saved HTTP cookie appears on subsequent four requests. No scheduler/network completion/clock is mocked.",
+    "source_anchors": [
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 1228,
+        "symbol": "def _DebugFetchAURL",
+        "line_sha256": "b50436ea37d78b09904c437f2e807a83ad49ff54f6778c09c9ace85474d5d276",
+        "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+      },
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 1234,
+        "symbol": "Length of response is",
+        "line_sha256": "cfe1563dab895b9d89a29995e00e054f59a23e2c27d5730218bf361d83355741",
+        "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+      },
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 1238,
+        "symbol": "save to file",
+        "line_sha256": "2b51ed35fa5d5c820a310f4e1bb3ddbb5a82bfb103d15bba6a89313c3ecbe353",
+        "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+      },
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 1239,
+        "symbol": "copy to clipboard",
+        "line_sha256": "d371685ac1df290b793befb559645be8527902d0fd72ad3b4ee50a311bc8c0c5",
+        "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+      },
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 1252,
+        "symbol": "select where to save content",
+        "line_sha256": "061ed1bbb918953e9ad5622501e85aed9d60741bcfc31e484de74ea176ab5c51",
+        "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+      },
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 1258,
+        "symbol": "with open( path, 'wb' )",
+        "line_sha256": "f503e730fcd45c2484789c433a035bb198037a9e661fc6eda7671afaf31529bd",
+        "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+      },
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 1283,
+        "symbol": "job_status.SetNetworkJob( network_job )",
+        "line_sha256": "01ee00c85caef3331dc82cefbda3c319459b5c0762b95b1a989549c76983bab6",
+        "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+      },
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 1295,
+        "symbol": "job_status.FinishAndDismiss( seconds = 3 )",
+        "line_sha256": "6f49edc2e3aafc65d04401a7bf2a6b25a3f982486ee467297a31c49b9651de66",
+        "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+      },
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 1303,
+        "symbol": "'Enter the URL.'",
+        "line_sha256": "719c776d84ced5eac467e443a716ee9aa948c730944a0f347def7f814b4c1165",
+        "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+      },
+      {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 3690,
+        "symbol": "'fetch a url'",
+        "line_sha256": "49cea7f27413b74b544ffa130b841bc2f12494415e2fc8e6f31cf38d45bf9532",
+        "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+      },
+      {
+        "relativepath": "hydrus/client/gui/networking/ClientGUINetworkJobControl.py",
+        "line": 322,
+        "symbol": "def Cancel( self )",
+        "line_sha256": "1fa0802cf6ccce6f0ab8dbea7f512329bb4c6ea91e7045b34fca070175b0dafd",
+        "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+      }
+    ]
+  },
+  "native_components": [
+    {
+      "id": "window.debug-fetch",
+      "label": "Debug URL prompt and captured response choices",
+      "source": {
+        "relativepath": "crates/hydrus-gui/ui/debug_fetch.slint",
+        "line": 3,
+        "symbol": "export component DebugFetchWindow",
+        "line_sha256": "b5275fc814f96931003af3165cfd0f5fc3999f76aa25906945f7de2c3875d246",
+        "commit": "5387f8786b695e81481b22f00283c69b75bffc3e"
+      },
+      "referenceRoot": "audit-options-help-debug-action-fetch-a-url",
+      "status": "partial",
+      "countAsCompletedLeaf": false,
+      "groups": [
+        {
+          "label": "URL input",
+          "controls": [
+            "Enter the URL.",
+            "apply",
+            "cancel"
+          ],
+          "mode": "input"
+        },
+        {
+          "label": "Captured response",
+          "controls": [
+            "save to file",
+            "copy to clipboard",
+            "forget it"
+          ],
+          "mode": "response"
+        }
+      ],
+      "ownership": "One component with mutually exclusive input/result modes. Each current child is keyed in the binding-owned controller; weak child callbacks and permanent retirement prevent stale write/copy/relaunch. It is not a second original feature count."
+    }
+  ],
+  "validation": {
+    "executed": [
+      "Actual serialized Qt normal local HTTP requests, real thread/JobStatus/toaster and wall deadline with Cancel/error/hidden results",
+      "Actual Qt PNG individually viewed",
+      "Frozen435 concrete original/240+51 completed arrays/all109 predecessor packet alias audit",
+      "Direct rustfmt --check/Python py_compile/git diff --check",
+      "Cached Slint source compilation without Cargo"
+    ],
+    "authored_not_executed": [
+      "Four native real HTTP/Store/toaster tests in gui/debug_fetch.rs including exact raw bytes/decoded fixture output, header/cookie/accounting, saved bandwidth0 waiter with no HTTP, overlapping held jobs/popup stop, owner/filepicker/hidden/ExitCancel/acceptedExit/rebind/finalclone/MainDrop",
+      "Working completed-deadline/producer-drop regression",
+      "Existing exact model main-menu golden extended with both reference network actions in their recorded order"
+    ],
+    "pending": [
+      "Hosted strict Clippy/Rust/native replay",
+      "Exact native debug-fetch-result.png inspection"
+    ]
+  },
+  "independent_review": {
+    "reviewer": "appearance_final_review",
+    "mode": "Read-only immutable source/reference/HTTP/ownership/pinned packet audit; no local Rust",
+    "status": "Accepted immutable5387f8786b695e81481b22f00283c69b75bffc3e bounded source and pinned packet. Reviewer independently checked actual Qt reference/fixture/PNG, normal saved-policy GET/bytes/charset/error/cancel, strict3s popup deadline, keyed captured responses, weak children/timer edges, after-picker permanent owner revalidation, admitted hidden results and shared Rc Bound lease. All70 recursive raw-line occurrences (68 distinct), immutable source/base ancestry, fixture/render/frozen/ledger hashes, both240/51 completed arrays and109 predecessor original/semantic aliases verified. Exactly1 conditional original terminal action accepted; separate native component Partial0, no parent promotions. Display-only attachment, shared-daemon scheduling and native HTTP-text limits remain explicit; hosted Rust/native replay and exact native PNG inspection pending."
+  },
+  "canonical_changes": false,
+  "completed_ledger_changes": false,
+  "parents_counted": false
+}

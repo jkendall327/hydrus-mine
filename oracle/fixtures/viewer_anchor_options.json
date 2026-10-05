@@ -1,0 +1,487 @@
+{
+  "initial": {
+    "anchor": true,
+    "touch_override": false
+  },
+  "cases": [
+    {
+      "anchor": false,
+      "touch_override": false,
+      "moves": [
+        {
+          "point": [
+            140,
+            150
+          ],
+          "delta": [
+            20,
+            10
+          ],
+          "last": [
+            140,
+            150
+          ],
+          "touch": false,
+          "warp": []
+        },
+        {
+          "point": [
+            170,
+            140
+          ],
+          "delta": [
+            30,
+            -10
+          ],
+          "last": [
+            170,
+            140
+          ],
+          "touch": false,
+          "warp": []
+        },
+        {
+          "point": [
+            171,
+            140
+          ],
+          "delta": [
+            1,
+            0
+          ],
+          "last": [
+            171,
+            140
+          ],
+          "touch": false,
+          "warp": []
+        },
+        {
+          "point": [
+            180,
+            150
+          ],
+          "delta": [
+            9,
+            10
+          ],
+          "last": [
+            180,
+            150
+          ],
+          "touch": false,
+          "warp": []
+        },
+        {
+          "point": [
+            120,
+            140
+          ],
+          "delta": [
+            -60,
+            -10
+          ],
+          "last": [
+            120,
+            140
+          ],
+          "touch": true,
+          "warp": []
+        },
+        {
+          "point": [
+            121,
+            140
+          ],
+          "delta": [
+            1,
+            0
+          ],
+          "last": [
+            121,
+            140
+          ],
+          "touch": true,
+          "warp": []
+        }
+      ],
+      "ordinary_delta": [
+        0,
+        0
+      ],
+      "new_drag_touch": false,
+      "saved": {
+        "anchor_canvas_drags": false,
+        "touchscreen_canvas_drags_unanchor": false
+      }
+    },
+    {
+      "anchor": false,
+      "touch_override": true,
+      "moves": [
+        {
+          "point": [
+            140,
+            150
+          ],
+          "delta": [
+            20,
+            10
+          ],
+          "last": [
+            140,
+            150
+          ],
+          "touch": false,
+          "warp": []
+        },
+        {
+          "point": [
+            170,
+            140
+          ],
+          "delta": [
+            30,
+            -10
+          ],
+          "last": [
+            170,
+            140
+          ],
+          "touch": false,
+          "warp": []
+        },
+        {
+          "point": [
+            171,
+            140
+          ],
+          "delta": [
+            1,
+            0
+          ],
+          "last": [
+            171,
+            140
+          ],
+          "touch": false,
+          "warp": []
+        },
+        {
+          "point": [
+            180,
+            150
+          ],
+          "delta": [
+            9,
+            10
+          ],
+          "last": [
+            180,
+            150
+          ],
+          "touch": false,
+          "warp": []
+        },
+        {
+          "point": [
+            120,
+            140
+          ],
+          "delta": [
+            -60,
+            -10
+          ],
+          "last": [
+            120,
+            140
+          ],
+          "touch": true,
+          "warp": []
+        },
+        {
+          "point": [
+            121,
+            140
+          ],
+          "delta": [
+            1,
+            0
+          ],
+          "last": [
+            121,
+            140
+          ],
+          "touch": true,
+          "warp": []
+        }
+      ],
+      "ordinary_delta": [
+        0,
+        0
+      ],
+      "new_drag_touch": false,
+      "saved": {
+        "anchor_canvas_drags": false,
+        "touchscreen_canvas_drags_unanchor": true
+      }
+    },
+    {
+      "anchor": true,
+      "touch_override": false,
+      "moves": [
+        {
+          "point": [
+            140,
+            150
+          ],
+          "delta": [
+            20,
+            10
+          ],
+          "last": [
+            120,
+            140
+          ],
+          "touch": false,
+          "warp": [
+            [
+              120,
+              140
+            ]
+          ]
+        },
+        {
+          "point": [
+            170,
+            140
+          ],
+          "delta": [
+            50,
+            0
+          ],
+          "last": [
+            120,
+            140
+          ],
+          "touch": false,
+          "warp": [
+            [
+              120,
+              140
+            ]
+          ]
+        },
+        {
+          "point": [
+            171,
+            140
+          ],
+          "delta": [
+            51,
+            0
+          ],
+          "last": [
+            120,
+            140
+          ],
+          "touch": true,
+          "warp": [
+            [
+              120,
+              140
+            ]
+          ]
+        },
+        {
+          "point": [
+            180,
+            150
+          ],
+          "delta": [
+            60,
+            10
+          ],
+          "last": [
+            120,
+            140
+          ],
+          "touch": true,
+          "warp": [
+            [
+              120,
+              140
+            ]
+          ]
+        },
+        {
+          "point": [
+            120,
+            140
+          ],
+          "delta": [
+            0,
+            0
+          ],
+          "last": [
+            120,
+            140
+          ],
+          "touch": true,
+          "warp": []
+        },
+        {
+          "point": [
+            121,
+            140
+          ],
+          "delta": [
+            1,
+            0
+          ],
+          "last": [
+            120,
+            140
+          ],
+          "touch": true,
+          "warp": [
+            [
+              120,
+              140
+            ]
+          ]
+        }
+      ],
+      "ordinary_delta": [
+        0,
+        0
+      ],
+      "new_drag_touch": false,
+      "saved": {
+        "anchor_canvas_drags": true,
+        "touchscreen_canvas_drags_unanchor": false
+      }
+    },
+    {
+      "anchor": true,
+      "touch_override": true,
+      "moves": [
+        {
+          "point": [
+            140,
+            150
+          ],
+          "delta": [
+            20,
+            10
+          ],
+          "last": [
+            120,
+            140
+          ],
+          "touch": false,
+          "warp": [
+            [
+              120,
+              140
+            ]
+          ]
+        },
+        {
+          "point": [
+            170,
+            140
+          ],
+          "delta": [
+            50,
+            0
+          ],
+          "last": [
+            120,
+            140
+          ],
+          "touch": false,
+          "warp": [
+            [
+              120,
+              140
+            ]
+          ]
+        },
+        {
+          "point": [
+            171,
+            140
+          ],
+          "delta": [
+            51,
+            0
+          ],
+          "last": [
+            171,
+            140
+          ],
+          "touch": true,
+          "warp": []
+        },
+        {
+          "point": [
+            180,
+            150
+          ],
+          "delta": [
+            9,
+            10
+          ],
+          "last": [
+            180,
+            150
+          ],
+          "touch": true,
+          "warp": []
+        },
+        {
+          "point": [
+            120,
+            140
+          ],
+          "delta": [
+            -60,
+            -10
+          ],
+          "last": [
+            120,
+            140
+          ],
+          "touch": true,
+          "warp": []
+        },
+        {
+          "point": [
+            121,
+            140
+          ],
+          "delta": [
+            1,
+            0
+          ],
+          "last": [
+            121,
+            140
+          ],
+          "touch": true,
+          "warp": []
+        }
+      ],
+      "ordinary_delta": [
+        0,
+        0
+      ],
+      "new_drag_touch": false,
+      "saved": {
+        "anchor_canvas_drags": true,
+        "touchscreen_canvas_drags_unanchor": true
+      }
+    }
+  ]
+}

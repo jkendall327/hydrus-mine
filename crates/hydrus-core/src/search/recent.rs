@@ -6,7 +6,7 @@ use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 
-use super::predicate::SystemPredicate;
+use super::predicate::{Predicate, SystemPredicate};
 
 /// How many of each type are kept.
 pub const KEPT: usize = 5;
@@ -17,6 +17,8 @@ pub const KEPT: usize = 5;
 #[serde(default)]
 pub struct RecentPredicates {
     pub by_type: BTreeMap<u8, Vec<SystemPredicate>>,
+    /// Simple and OR predicates edited alongside the system panels.
+    pub non_system: BTreeMap<u8, Vec<Predicate>>,
 }
 
 impl RecentPredicates {
@@ -25,6 +27,27 @@ impl RecentPredicates {
     pub fn push(&mut self, predicates: &[SystemPredicate]) {
         for predicate in predicates {
             let kept = self.by_type.entry(predicate.reference_type()).or_default();
+            kept.retain(|p| p != predicate);
+            kept.insert(0, predicate.clone());
+            kept.truncate(KEPT);
+        }
+    }
+
+    /// Keep all values from an accepted mixed edit, preserving the existing
+    /// system-only API and serialized system history.
+    pub fn push_all(&mut self, predicates: &[Predicate]) {
+        for predicate in predicates {
+            let kind = match predicate {
+                Predicate::System(p) => {
+                    self.push(std::slice::from_ref(p));
+                    continue;
+                }
+                Predicate::Tag { .. } => 0,
+                Predicate::Namespace { .. } => 1,
+                Predicate::Wildcard { .. } => 3,
+                Predicate::Or(_) => 30,
+            };
+            let kept = self.non_system.entry(kind).or_default();
             kept.retain(|p| p != predicate);
             kept.insert(0, predicate.clone());
             kept.truncate(KEPT);
@@ -109,5 +132,38 @@ mod tests {
             recent.by_type[&13],
             [width(4), width(5), width(3), width(2)]
         );
+    }
+}
+
+#[cfg(test)]
+mod mixed_tests {
+    use super::*;
+    use crate::Tag;
+    #[test]
+    fn old_system_history_decodes_and_simple_edits_keep_newest_five_per_type() {
+        let mut recent: RecentPredicates = serde_json::from_str(r#"{"by_type":{}}"#).unwrap();
+        assert!(recent.non_system.is_empty());
+        let tag = |n| Predicate::Tag {
+            tag: Tag::from_clean(format!("series:{n}")),
+            inclusive: true,
+        };
+        for n in 0..7 {
+            recent.push_all(&[tag(n)]);
+        }
+        recent.push_all(&[
+            tag(3),
+            Predicate::Namespace {
+                namespace: "series".into(),
+                inclusive: false,
+            },
+        ]);
+        assert_eq!(
+            recent.non_system[&0],
+            [tag(3), tag(6), tag(5), tag(4), tag(2)]
+        );
+        assert_eq!(recent.non_system[&1].len(), 1);
+        let restored: RecentPredicates =
+            serde_json::from_str(&serde_json::to_string(&recent).unwrap()).unwrap();
+        assert_eq!(restored, recent);
     }
 }

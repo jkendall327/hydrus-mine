@@ -2,7 +2,7 @@
 //! tests, and for screenshots.
 
 use std::cell::RefCell;
-use std::rc::Rc;
+use std::rc::{Rc, Weak};
 
 use slint::PhysicalSize;
 use slint::platform::software_renderer::{
@@ -10,9 +10,40 @@ use slint::platform::software_renderer::{
 };
 use slint::platform::{Clipboard, Platform, PlatformError, WindowAdapter};
 
-/// Every window made so far, in order.
+// The platform must never retain an adapter strongly: each adapter's Window
+// retains the Slint context, which owns this platform. Visible windows also
+// retain their component until hidden. Both edges need owner cleanup.
+#[derive(Default)]
+struct Registry(RefCell<Vec<Weak<MinimalSoftwareWindow>>>);
+impl Registry {
+    fn hide_all(&self) {
+        let windows: Vec<_> = self.0.borrow().iter().filter_map(Weak::upgrade).collect();
+        for window in windows {
+            let _ = window.window().hide();
+        }
+    }
+}
+#[derive(Default)]
+struct Collected {
+    registry: Rc<Registry>,
+    windows: RefCell<Vec<Rc<MinimalSoftwareWindow>>>,
+}
+impl Drop for Collected {
+    fn drop(&mut self) {
+        self.registry.hide_all();
+        self.windows.get_mut().clear();
+    }
+}
+/// Every window made so far, in order. The last collector hides and releases
+/// its adapters, including visible components retained by Slint. Keep a collector
+/// alive for the entire UI scope and release it before returning from that thread.
+/// A helper returning windows must pass the collector to its caller too.
+///
+/// Cleanup must not run from a thread-local destructor: releasing callbacks can
+/// drop a Store and join its writer, which deadlocks under Windows' loader lock.
+#[must_use = "retain the collector for the entire UI scope, then drop it before thread return"]
 #[derive(Clone, Default)]
-pub struct Windows(Rc<RefCell<Vec<Rc<MinimalSoftwareWindow>>>>);
+pub struct Windows(Rc<Collected>);
 
 impl std::fmt::Debug for Windows {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -23,11 +54,11 @@ impl std::fmt::Debug for Windows {
 impl Windows {
     /// The `n`th window made (0 is the first).
     pub fn get(&self, n: usize) -> Option<Rc<MinimalSoftwareWindow>> {
-        self.0.borrow().get(n).cloned()
+        self.0.windows.borrow().get(n).cloned()
     }
 
     pub fn count(&self) -> usize {
-        self.0.borrow().len()
+        self.0.windows.borrow().len()
     }
 }
 
@@ -46,7 +77,8 @@ pub fn clipboard_text() -> Option<String> {
 }
 
 struct Headless {
-    windows: Windows,
+    registry: Rc<Registry>,
+    collector: Weak<Collected>,
 }
 
 impl Platform for Headless {
@@ -64,17 +96,22 @@ impl Platform for Headless {
     }
     fn create_window_adapter(&self) -> Result<Rc<dyn WindowAdapter>, PlatformError> {
         let window = MinimalSoftwareWindow::new(RepaintBufferType::NewBuffer);
-        self.windows.0.borrow_mut().push(window.clone());
+        self.registry.0.borrow_mut().push(Rc::downgrade(&window));
+        if let Some(collector) = self.collector.upgrade() {
+            collector.windows.borrow_mut().push(window.clone());
+        }
         Ok(window)
     }
 }
 
 /// Make this process draw its windows headless (call once, before creating
-/// any window, on the thread that will use them).
+/// any window, on the thread that will use them). Retain the returned collector
+/// until every window in that UI scope has finished; drop it before thread exit.
 pub fn init() -> Windows {
     let windows = Windows::default();
     slint::platform::set_platform(Box::new(Headless {
-        windows: windows.clone(),
+        registry: windows.0.registry.clone(),
+        collector: Rc::downgrade(&windows.0),
     }))
     .expect("no platform was set yet");
     windows

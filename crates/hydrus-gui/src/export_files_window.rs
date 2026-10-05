@@ -58,6 +58,7 @@ pub fn open(
     }
     let window = ExportFilesWindow::new()?;
     let active = Rc::new(Cell::new(true));
+    crate::gui_colours::bind(window.global::<crate::Theme<'_>>(), store, active.clone());
     window.set_pattern_shortcuts(ModelRc::new(VecModel::from(
         export_files::PATTERN_SHORTCUTS
             .iter()
@@ -227,6 +228,33 @@ pub fn open(
                 if let Some(w) = weak.upgrade() {
                     w.set_status(error.into());
                 }
+            }
+        }),
+    );
+    crate::menu_choice_wheel::bind(
+        window.global::<crate::MenuChoicePolicy<'_>>(),
+        store,
+        Rc::new({
+            let active = active.clone();
+            let weak = window.as_weak();
+            let slot = Rc::downgrade(&slots.window);
+            let sidecars = crate::menu_choice_wheel::occupied(&slots.sidecars.routers);
+            let menu = tag_menu.clone();
+            move || {
+                active.get()
+                    && !sidecars()
+                    && !menu.busy()
+                    && weak.upgrade().is_some_and(|window| {
+                        window.window().is_visible()
+                            && !window.get_working()
+                            && !window.get_asking()
+                            && window.get_tag_menu_question().is_empty()
+                            && slot.upgrade().is_some_and(|slot| {
+                                slot.borrow().as_ref().is_some_and(|current| {
+                                    std::ptr::eq(current.window(), window.window())
+                                })
+                            })
+                    })
             }
         }),
     );

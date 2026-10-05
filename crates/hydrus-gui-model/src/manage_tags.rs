@@ -19,10 +19,12 @@ pub struct TagRow {
     pub tag: String,
     pub colour_tag: String,
     pub label: String,
+    pub parts: Vec<hydrus_core::tag_presentation::TagText>,
     pub parent_row: bool,
 }
 
 pub struct ManageTags {
+    sorts: Vec<crate::manage_tags_sort::Control>,
     store: Arc<Store>,
     files: Vec<HashId>,
     location: hydrus_core::search::context::LocationContext,
@@ -37,6 +39,7 @@ pub struct ManageTags {
     staged: Vec<BTreeMap<String, BTreeMap<HashId, bool>>>,
     input: WriteAutocomplete,
     dialog_preferences: hydrus_store::tag_editing::TagEditingSettings,
+    suggestion_preferences: hydrus_store::settings::TagSuggestionSettings,
 }
 
 impl std::fmt::Debug for ManageTags {
@@ -51,6 +54,19 @@ impl std::fmt::Debug for ManageTags {
 impl ManageTags {
     /// Manage `files`' tags; `None` without files or local tag services.
     pub fn new(store: Arc<Store>, files: Vec<HashId>) -> Option<Self> {
+        Self::new_at(
+            store,
+            files,
+            hydrus_store::manage_tags_sort::Context::SearchPage,
+        )
+    }
+
+    /// Capture this presentation context's default for every owned service tab.
+    pub fn new_at(
+        store: Arc<Store>,
+        files: Vec<HashId>,
+        context: hydrus_store::manage_tags_sort::Context,
+    ) -> Option<Self> {
         if files.is_empty() {
             return None;
         }
@@ -98,7 +114,14 @@ impl ManageTags {
             location.clone(),
         );
         input.set_context_tags(stored[service].keys().cloned());
+        let suggestion_preferences = store.read(hydrus_store::settings::get).unwrap_or_default();
+        let defaults: hydrus_store::manage_tags_sort::Settings =
+            store.read(hydrus_store::settings::get).unwrap_or_default();
         Some(Self {
+            sorts: vec![
+                crate::manage_tags_sort::Control::new(defaults.get(context));
+                services.len()
+            ],
             staged: vec![BTreeMap::new(); services.len()],
             store,
             files,
@@ -109,6 +132,7 @@ impl ManageTags {
             deleted,
             input,
             dialog_preferences: preference,
+            suggestion_preferences,
         })
     }
 
@@ -122,6 +146,12 @@ impl ManageTags {
     /// Selected file IDs used to launch migration.
     pub fn files(&self) -> &[HashId] {
         &self.files
+    }
+    pub fn sort_control(&self) -> &crate::manage_tags_sort::Control {
+        &self.sorts[self.service]
+    }
+    pub fn choose_sort(&mut self, part: usize, index: usize) {
+        self.sorts[self.service].choose(part, index);
     }
     /// Stable key of the active tag service.
     pub fn migration_service_key(&self) -> Option<hydrus_core::ServiceKey> {
@@ -319,7 +349,7 @@ impl ManageTags {
         }
     }
     /// Storage rows include current counts and, when shown, deleted counts,
-    /// sorted as the media viewer's list is; each as (logical tag, row).
+    /// Sorted under this dialog service's captured/local policy; each logical tag and row.
     fn plain_rows(&self) -> Vec<(String, String)> {
         use hydrus_core::tag_sort::sort_tags;
         let presentation: hydrus_core::tag_presentation::TagPresentation = self
@@ -335,16 +365,50 @@ impl ManageTags {
         for tag in deleted.keys() {
             tags.entry(tag.clone()).or_default();
         }
-        let mut rows: Vec<(String, usize)> = tags.into_iter().collect();
+        let rows: Vec<(String, usize)> = tags.into_iter().collect();
+        let sort = self.sort_control().value;
+        let mut best: BTreeMap<String, String> =
+            if sort.use_siblings && self.dialog_preferences.tag_list_show_siblings {
+                let snapshot = self.store.snapshot();
+                let graph = snapshot.display.get(self.services[self.service].0);
+                self.store
+                    .read(|conn| {
+                        let mut best = BTreeMap::new();
+                        for (tag, _) in &rows {
+                            if let Some(id) =
+                                hydrus_store::master::tag_id(conn, &Tag::from_clean(tag.clone()))?
+                            {
+                                let ideal = graph.ideal(id);
+                                let text = hydrus_store::master::tags(conn, &[ideal])?;
+                                if let Some(text) = text.get(&ideal) {
+                                    best.insert(tag.clone(), text.as_str().to_owned());
+                                }
+                            }
+                        }
+                        Ok(best)
+                    })
+                    .unwrap_or_default()
+            } else {
+                BTreeMap::new()
+            };
+        // Keep the effective key on each owned row: sorting borrows that row's
+        // key while retaining its original logical storage tag and count.
+        let mut rows: Vec<_> = rows
+            .into_iter()
+            .map(|(tag, count)| {
+                let key = best.remove(&tag).unwrap_or_else(|| tag.clone());
+                (tag, count, key)
+            })
+            .collect();
         sort_tags(
-            &presentation.media_viewer_sort,
+            &sort.order,
             &mut rows,
-            |(tag, _)| tag,
-            |(_, n)| *n as u64,
+            |(_, _, key)| key,
+            |(tag, n, _)| (*n + deleted.get(tag).map_or(0, BTreeSet::len)) as u64,
             &presentation.user_namespaces,
         );
         rows.into_iter()
-            .map(|(tag, n)| {
+            .map(|(tag, n, _)| {
                 let mut row = presentation.render(&tag);
                 if n > 0 {
                     row.push_str(&format!(" ({})", hydrus_core::numbers::human_int(n as u64)));
@@ -405,15 +469,23 @@ impl ManageTags {
                 Ok(details)
             })
             .unwrap_or_default();
+        let colours: hydrus_core::tag_presentation::NamespaceColours = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        let style: hydrus_core::tag_presentation::SiblingConnectorColours = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
         let preferences = &self.dialog_preferences;
         let mut out = Vec::new();
         for (tag, mut label) in rows {
             let (ideal, parents) = details.get(&tag).cloned().unwrap_or_default();
-            if preferences.tag_list_show_siblings
-                && let Some(ideal) = ideal
-            {
+            let prefix = label.clone();
+            let shown_ideal = ideal.filter(|_| preferences.tag_list_show_siblings);
+            if let Some(ideal) = &shown_ideal {
                 label.push_str(&presentation.sibling_connector);
-                label.push_str(&ideal);
+                label.push_str(ideal);
             }
             if preferences.tag_list_show_parents
                 && !preferences.tag_list_expand_parents
@@ -424,10 +496,31 @@ impl ManageTags {
                     hydrus_core::numbers::human_int(parents.len() as u64)
                 ));
             }
+            let parts = if let Some(ideal) = shown_ideal.as_ref() {
+                let suffix = label
+                    .strip_prefix(&format!(
+                        "{prefix}{}{ideal}",
+                        presentation.sibling_connector
+                    ))
+                    .unwrap_or_default()
+                    .to_owned();
+                style.runs(
+                    (&tag, prefix),
+                    &presentation.sibling_connector,
+                    (ideal, ideal.clone()),
+                    suffix,
+                    &colours,
+                    false,
+                )
+            } else {
+                let suffix = label.strip_prefix(&prefix).unwrap_or_default().to_owned();
+                style.parent_runs((&tag, prefix), suffix, &colours, false)
+            };
             out.push(TagRow {
                 tag: tag.clone(),
                 colour_tag: tag.clone(),
                 label,
+                parts,
                 parent_row: false,
             });
             if preferences.tag_list_show_parents && preferences.tag_list_expand_parents {
@@ -436,6 +529,7 @@ impl ManageTags {
                         tag: tag.clone(),
                         colour_tag: parent.clone(),
                         label: format!("    {parent}"),
+                        parts: Vec::new(),
                         parent_row: true,
                     });
                 }
@@ -450,6 +544,107 @@ impl ManageTags {
         self.stage_tag(typed)?;
         self.input.clear();
         Ok(())
+    }
+
+    /// Side panels capture their layout at opening, like the reference dialog.
+    pub fn suggestion_preferences(&self) -> &hydrus_store::settings::TagSuggestionSettings {
+        &self.suggestion_preferences
+    }
+
+    /// Capture the service and current/pending selected-file context for a worker.
+    pub fn related_query(
+        &self,
+        local: bool,
+        display: bool,
+    ) -> hydrus_store::Result<hydrus_store::related_tags::Query> {
+        let preferences: hydrus_store::related_tags::Settings =
+            self.store.read(hydrus_store::settings::get)?;
+        let mut tags = self.current_tags();
+        for (tag, files) in status_tags(
+            &self.store,
+            self.services[self.service].0,
+            &self.files,
+            hydrus_core::ContentStatus::Pending,
+        ) {
+            tags.entry(tag).or_default().extend(files);
+        }
+        Ok(hydrus_store::related_tags::Query {
+            service: self.migration_service_key().ok_or_else(|| {
+                hydrus_store::StoreError::Invalid("The tag service has been removed.".into())
+            })?,
+            searches: tags.into_keys().collect(),
+            local,
+            display,
+            weights: preferences.weights,
+            concurrence_percent: preferences.concurrence_percent,
+        })
+    }
+    /// Filter related results with the same add-only current/pending rule as other sides.
+    pub fn useful_related(&self, source: Vec<String>) -> Vec<String> {
+        let mut counts = self.current_tags();
+        for (tag, files) in status_tags(
+            &self.store,
+            self.services[self.service].0,
+            &self.files,
+            hydrus_core::ContentStatus::Pending,
+        ) {
+            counts.entry(tag).or_default().extend(files);
+        }
+        crate::tag_suggestions::useful(
+            source,
+            &counts
+                .into_iter()
+                .map(|(tag, files)| (tag, files.len()))
+                .collect(),
+            self.files.len(),
+        )
+    }
+
+    /// Re-read broadcast most-used changes, filtering current/pending tags on every file.
+    pub fn side_suggestions(&self, recent: bool) -> Vec<String> {
+        let snapshot = self.store.snapshot();
+        let service = self.services[self.service].0;
+        let source = if recent {
+            crate::tag_suggestions::recent(
+                &self.store,
+                service,
+                self.suggestion_preferences.recent_limit.unwrap_or(20),
+            )
+            .unwrap_or_default()
+        } else {
+            snapshot
+                .services
+                .get(service)
+                .map(|s| crate::tag_suggestions::most_used(&self.store, &s.key))
+                .unwrap_or_default()
+        };
+        let mut counts = self.current_tags();
+        for (tag, files) in status_tags(
+            &self.store,
+            service,
+            &self.files,
+            hydrus_core::ContentStatus::Pending,
+        ) {
+            counts.entry(tag).or_default().extend(files);
+        }
+        crate::tag_suggestions::useful(
+            source,
+            &counts
+                .into_iter()
+                .map(|(tag, files)| (tag, files.len()))
+                .collect(),
+            self.files.len(),
+        )
+    }
+
+    /// Suggestion activation only adds missing mappings, even for a stale selection.
+    pub fn add_side_suggestions(&mut self, tags: &[String]) {
+        for tag in tags.iter().filter_map(|tag| Tag::new(tag)) {
+            for file in self.files.clone() {
+                self.stage_mapping(tag.as_str(), file, true);
+            }
+        }
+        self.input.set_context_tags(self.tags().into_keys());
     }
     fn stage_tag(&mut self, typed: &str) -> Result<(), String> {
         let tag = Tag::new(typed).ok_or_else(|| format!("\"{typed}\" is not a valid tag"))?;
@@ -492,6 +687,7 @@ impl ManageTags {
             }
         }
         self.store.write_content(move |w| {
+            let now = hydrus_core::time::TimestampMs::now().0;
             for (service, tag, add, files) in &changes {
                 let tag = Tag::new(tag).expect("cleaned when entered");
                 let id = hydrus_store::master::intern_tag(w.conn(), &tag)?;
@@ -501,6 +697,12 @@ impl ManageTags {
                     MappingAction::Delete
                 };
                 w.update_mappings(*service, &action, id, files)?;
+                if *add {
+                    let preferences: hydrus_store::settings::TagSuggestionSettings = hydrus_store::settings::get(w.conn())?;
+                    if preferences.recent_limit.is_some() {
+                        w.conn().execute("INSERT INTO recent_tags(service_id,tag_id,used_ms) VALUES(?,?,?) ON CONFLICT(service_id,tag_id) DO UPDATE SET used_ms=excluded.used_ms",rusqlite::params![service,id,now])?;
+                    }
+                }
             }
             Ok(())
         })

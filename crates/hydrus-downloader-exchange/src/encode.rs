@@ -432,6 +432,7 @@ pub(crate) fn native(n: &Native) -> Result<Value> {
         Native::Content(c) => content(c)?,
         Native::Formula(f) => formula(f)?,
         Native::Simple(f) => named(63, &f.name, 1, formula(&f.formula)?),
+        Native::Login(script) => crate::logins::script_tuple(script)?,
         Native::Gug(g) => {
             valid_key(g.key())?;
             match g {

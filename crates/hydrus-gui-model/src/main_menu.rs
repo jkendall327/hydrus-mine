@@ -3,8 +3,8 @@
 //! that fill them): its menus and entries as hydrus shows them, from what
 //! the client knows at the time ([`Facts`]). An entry does what hydrus's
 //! does where hydrus-rs can ([`Command`]); the others are shown greyed out
-//! until it can. Left out (DIFFERENCES.md): help > debug, hydrus's own
-//! debugging tools, and "about Qt"; the services menu's "administrate",
+//! until it can. Left out (DIFFERENCES.md): other help > debug tools and
+//! "about Qt"; the services menu's "administrate",
 //! for repository admins; the database menu's backup entries as hydrus has
 //! them for a database across several locations.
 
@@ -118,6 +118,9 @@ impl Pause {
 /// What an entry does.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Command {
+    Darkmode,
+    /// Resize/show/save the live page sidebar and preview.
+    Sidebar(crate::page_layout::Action),
     /// Open tags > siblings or parents.
     /// Display/search (false) or relationship application (true).
     TagDisplay(bool),
@@ -216,6 +219,7 @@ pub enum Command {
     ManageServices,
     OpenInstallDirectory,
     OpenDatabaseDirectory,
+    OpenQuickExportDirectory,
     Exit,
     /// Forget the closed pages, asking first.
     ClearClosedPages,
@@ -250,6 +254,26 @@ pub enum Command {
     ClearWatcherHighlights,
     /// Switch file maintenance during idle (false: normal) time.
     FileMaintenance(bool),
+    ManageFileMaintenance,
+    /// Scan and optionally fill missing global archive times.
+    RepairArchiveTimes,
+    ClearViewingStatistics,
+    /// Clear only this GUI incarnation's thumbnail cache and redraw its current grid.
+    ClearThumbnailCache,
+    /// Publish two real cards and grow their text/title at the recorded cadence.
+    DebugLongTextPopup,
+    /// Save a private current snapshot and reconstruct fresh GUI pages asynchronously.
+    DebugReloadSession,
+    /// Ordinary network-engine GET and captured response save/copy choices.
+    DebugFetchUrl,
+    /// Override the current owned live idle decision until toggled or retired.
+    DebugForceIdleMode,
+    /// Publish the actual delayed message after five seconds.
+    DebugDelayedTextPopup,
+    /// Freeze the Help menu's default location for a delayed real query page.
+    DebugDelayedNewPage(hydrus_core::search::context::LocationContext),
+    CullViewingStatistics,
+    FileHistory,
     /// Forget a repository's pending content, asking first.
     ForgetPending(ServiceKey),
     OpenUrl(&'static str),
@@ -302,6 +326,9 @@ pub struct Pending {
 /// What the menus show, as the reference's updaters read it.
 #[derive(Debug, Clone, Default)]
 pub struct Facts {
+    pub darkmode: bool,
+    /// Current unpersisted main-binding debug idle override.
+    pub force_idle: bool,
     pub advanced: bool,
     pub folders: FolderSettings,
     /// The import and export folders' names.
@@ -318,6 +345,7 @@ pub struct Facts {
     /// The pages shown, the latest last; none before any has been.
     pub history: Option<Vec<(PageKey, String)>>,
     pub page_navigation: hydrus_store::settings::PageNavigationSettings,
+    pub page_layout: hydrus_store::page_layout::PageLayout,
     /// The saved sessions' names, a-z.
     pub sessions: Vec<String>,
     /// Historical snapshots grouped by saved-session name.
@@ -325,6 +353,8 @@ pub struct Facts {
     /// File search pages offered: the local file domains, the trash and
     /// the file repositories.
     pub search_domains: Vec<(ServiceKey, String)>,
+    /// The default local file location captured when this menu is constructed.
+    pub default_location: hydrus_core::search::context::LocationContext,
     pub maintenance: FileMaintenanceSettings,
     pub pauses: Pauses,
     pub network_boot_pause: hydrus_store::settings::NetworkBootPause,
@@ -379,6 +409,7 @@ impl Facts {
                     .collect()
             });
             Ok(Facts {
+                darkmode: hydrus_store::gui_colours::load(conn)?.current == 1,
                 advanced,
                 folders: settings::get(conn)?,
                 import_folders,
@@ -389,7 +420,10 @@ impl Facts {
                     .collect(),
                 session_backups: hydrus_store::session_backups::names(conn)?,
                 page_navigation: settings::get(conn)?,
+                page_layout: hydrus_store::page_layout::load(conn)?,
                 search_domains,
+                default_location: settings::get::<settings::SearchDefaults>(conn)?
+                    .resolved_local_location(services),
                 maintenance: settings::get(conn)?,
                 pauses: settings::get(conn)?,
                 network_boot_pause: settings::get(conn)?,
@@ -573,7 +607,7 @@ fn file_menu(facts: &Facts) -> Entry {
                 vec![
                     item("installation directory", Command::OpenInstallDirectory),
                     item("database directory", Command::OpenDatabaseDirectory),
-                    todo("quick export directory"),
+                    item("quick export directory", Command::OpenQuickExportDirectory),
                 ],
             ),
             SEP,
@@ -695,17 +729,26 @@ fn pages_menu(facts: &Facts) -> Entry {
     let sidebar = menu(
         "sidebar",
         vec![
-            todo("show/hide sidebar and preview panel"),
+            item(
+                "show/hide sidebar and preview panel",
+                Command::Sidebar(crate::page_layout::Action::Toggle),
+            ),
             SEP,
             check(
                 "save current page's sidebar/preview size on client exit",
-                None,
-                true,
+                Some(Command::Sidebar(crate::page_layout::Action::SaveOnExit)),
+                facts.page_layout.save_on_exit,
             ),
             SEP,
-            todo("save current page's sidebar/preview size now"),
+            item(
+                "save current page's sidebar/preview size now",
+                Command::Sidebar(crate::page_layout::Action::SaveNow),
+            ),
             SEP,
-            todo("restore all pages' sidebar/preview sizes to saved value"),
+            item(
+                "restore all pages' sidebar/preview sizes to saved value",
+                Command::Sidebar(crate::page_layout::Action::RestoreAll),
+            ),
         ],
     );
     let mut sessions = Vec::new();
@@ -872,12 +915,15 @@ fn database_menu(facts: &Facts) -> Entry {
             todo(dots("locations")),
             SEP,
             todo("how boned am I?"),
-            todo("view file history"),
+            item("view file history", Command::FileHistory),
             SEP,
             menu(
                 "file maintenance",
                 vec![
-                    todo(dots("manage scheduled jobs")),
+                    item(
+                        dots("manage scheduled jobs"),
+                        Command::ManageFileMaintenance,
+                    ),
                     SEP,
                     check(
                         "work file jobs during idle time",
@@ -892,7 +938,10 @@ fn database_menu(facts: &Facts) -> Entry {
                     SEP,
                     todo(dots("clear orphan files")),
                     SEP,
-                    todo(dots("fix missing file archived times")),
+                    item(
+                        dots("fix missing file archived times"),
+                        Command::RepairArchiveTimes,
+                    ),
                 ],
             ),
             menu(
@@ -954,10 +1003,16 @@ fn database_menu(facts: &Facts) -> Entry {
             ),
             menu(
                 "clear",
-                all_todo(&[
-                    &dots("clear all file viewing statistics"),
-                    &dots("cull file viewing statistics based on current min/max values"),
-                ]),
+                vec![
+                    item(
+                        dots("clear all file viewing statistics"),
+                        Command::ClearViewingStatistics,
+                    ),
+                    item(
+                        dots("cull file viewing statistics based on current min/max values"),
+                        Command::CullViewingStatistics,
+                    ),
+                ],
             ),
             SEP,
             todo(dots("set a password")),
@@ -1170,7 +1225,7 @@ fn pending_menu(pending: &[Pending]) -> Entry {
     }
 }
 
-/// `_InitialiseMenuInfoHelp`, less its debug menu and "about Qt".
+/// `_InitialiseMenuInfoHelp`, with implemented debug GUI and thumbnail-memory actions.
 fn help_menu(facts: &Facts) -> Entry {
     let link = |label: &str, url: &'static str| item(label, Command::OpenUrl(url));
     menu(
@@ -1210,8 +1265,51 @@ fn help_menu(facts: &Facts) -> Entry {
             SEP,
             todo(dots("add the PTR")),
             SEP,
-            check("darkmode", None, false),
+            check("darkmode", Some(Command::Darkmode), facts.darkmode),
             check("advanced mode", Some(Command::AdvancedMode), facts.advanced),
+            SEP,
+            menu(
+                "debug",
+                vec![
+                    menu(
+                        "debug modes",
+                        vec![check(
+                            "force idle mode",
+                            Some(Command::DebugForceIdleMode),
+                            facts.force_idle,
+                        )],
+                    ),
+                    menu(
+                        "gui actions",
+                        vec![
+                            item(
+                                "close and reload current gui session",
+                                Command::DebugReloadSession,
+                            ),
+                            item("make a long text popup", Command::DebugLongTextPopup),
+                            item(
+                                "make a new page in five seconds",
+                                Command::DebugDelayedNewPage(facts.default_location.clone()),
+                            ),
+                            item(
+                                "make a popup in five seconds",
+                                Command::DebugDelayedTextPopup,
+                            ),
+                        ],
+                    ),
+                    menu(
+                        "memory actions",
+                        vec![item("clear thumbnail cache", Command::ClearThumbnailCache)],
+                    ),
+                    menu(
+                        "network actions",
+                        vec![
+                            item("review current network jobs", Command::NetworkData(false)),
+                            item("fetch a url", Command::DebugFetchUrl),
+                        ],
+                    ),
+                ],
+            ),
             SEP,
             item("about", Command::About),
         ],

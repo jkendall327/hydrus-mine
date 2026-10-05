@@ -8,6 +8,58 @@ fn reference() -> Value {
     hydrus_testkit::fixture_json("downloader_interchange.json")
 }
 #[test]
+fn registered_mixed_login_package_preserves_json_png_rules_and_rejects_partial_decoding() {
+    let fixture = hydrus_testkit::fixture_json("mixed_login_packages.json");
+    let definitions = decode_text(&fixture["reference"].to_string()).unwrap();
+    let png = std::fs::read(hydrus_testkit::fixture_path("mixed_login_packages.png")).unwrap();
+    assert_eq!(decode_png(&png).unwrap(), definitions);
+    assert_eq!(
+        serde_json::from_str::<Value>(&encode_text(&definitions).unwrap()).unwrap(),
+        fixture["reference"]
+    );
+    let login = definitions
+        .iter()
+        .find(|definition| matches!(definition.native, Native::Login(_)))
+        .unwrap();
+    let Native::Login(script) = &login.native else {
+        unreachable!()
+    };
+    assert_eq!(
+        script.name,
+        fixture["login_only"][0]["name"].as_str().unwrap()
+    );
+    assert_eq!(script.credentials.len(), 2);
+    assert_eq!(script.steps.len(), 2);
+    assert_eq!(script.examples.len(), 2);
+    assert_eq!(
+        hydrus_downloader_exchange::logins::decode_text(
+            &encode_text(std::slice::from_ref(login)).unwrap()
+        )
+        .unwrap()[0],
+        *script
+    );
+    assert!(fixture["duplicate_ignores_key_and_name"].as_bool().unwrap());
+    let exported = encode_png(&definitions).unwrap();
+    assert_eq!(decode_png(&exported).unwrap(), definitions);
+    let mut malformed = fixture["reference"].clone();
+    malformed[2]
+        .as_array_mut()
+        .unwrap()
+        .push(json!([2, [999_999, 1, []]]));
+    assert!(decode_text(&malformed.to_string()).is_err());
+    let mut unsupported = definitions;
+    let Native::Login(script) = &mut unsupported
+        .iter_mut()
+        .find(|definition| matches!(definition.native, Native::Login(_)))
+        .unwrap()
+        .native
+    else {
+        unreachable!()
+    };
+    script.steps[0].method = "PATCH".into();
+    assert!(encode_text(&unsupported).is_err());
+}
+#[test]
 fn reference_json_and_real_png_roundtrip_without_losing_subsidiary_or_editor_data() {
     let fixture = reference();
     let text = fixture["reference"].to_string();

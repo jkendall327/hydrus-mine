@@ -38,12 +38,22 @@ pub fn float_to_percentage(f: f64) -> String {
 /// `10.3 MB`; every whole digit is kept, and the rounding is half to even,
 /// on the exact value.
 pub fn human_bytes(size: u64) -> String {
-    human_bytes_ratio(u128::from(size), 1)
+    human_bytes_with_figures(size, 3)
+}
+
+/// Client-configured pseudo significant figures, preserving every whole digit.
+pub fn human_bytes_with_figures(size: u64, figures: u8) -> String {
+    human_bytes_ratio_with_figures(u128::from(size), 1, figures)
 }
 
 /// [`human_bytes`] of `numerator / denominator` exactly (a rate, say): as
 /// the reference words a float, under 1 KB its whole bytes.
 pub fn human_bytes_ratio(numerator: u128, denominator: u128) -> String {
+    human_bytes_ratio_with_figures(numerator, denominator, 3)
+}
+
+/// The same exact half-even rounding for a rate with configured precision.
+pub fn human_bytes_ratio_with_figures(numerator: u128, denominator: u128, figures: u8) -> String {
     let denominator = denominator.max(1);
     if numerator < 1024 * denominator {
         return format!("{}B", human_int((numerator / denominator) as u64));
@@ -55,7 +65,7 @@ pub fn human_bytes_ratio(numerator: u128, denominator: u128) -> String {
         suffix += 1;
     }
     let whole_digits = (numerator / divisor).to_string().len();
-    let decimals = 3usize.saturating_sub(whole_digits);
+    let decimals = usize::from(figures.clamp(1, 6)).saturating_sub(whole_digits);
     // the value to `decimals` places, rounded half to even
     let scaled = numerator * 10u128.pow(decimals as u32);
     let (mut rounded, remainder) = (scaled / divisor, scaled % divisor);

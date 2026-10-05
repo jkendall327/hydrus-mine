@@ -1,0 +1,234 @@
+{
+  "schema_version": 1,
+  "agent": "follow-notebook-tree",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "base_checkout": "c2abce109547b61a2d9027ef719a2c0ef71dc571",
+  "implementationCommits": [
+    "5681a681098ad2d05706fcc1a9225412a19f8907"
+  ],
+  "claims": [
+    {
+      "reference_id": "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-show-tab-tree-view",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "change_kind": "implementation",
+      "implementationCommit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+      "exactBehavior": "Options > gui pages stages None/Left/Right tree choice with legacy import, saved Apply/Cancel/reopen and actual main-window consumption. The tree now preserves stable page-key cursor/expansion, default parent-collapse child states, separate single-click/arrow cursor versus Return/double-click activation, Collapse all/Expand all, ancestor reveal on actual page changes and stable selection through hierarchy resets/closed nodes. Hidden tabs retain hierarchy access; cursor/disclosure actions leave actual session/notebook selection unchanged.",
+      "limits": [
+        "The original show-tree option is the only new feature claim. Alignment, elision and hide leaves retain their existing claims; broader GUI Pages/navigation/tree families remain Partial.",
+        "Tree drag/drop, context menus, filters, depth controls, tree history, cog controls, empty-space page creation, optional collapse-descendants and broader keyboard shortcuts are not ported.",
+        "Cursor/expansion are owner-local live view state preserved across stable-key structure changes, not newly persisted session content. Native190px sidebar,26px rows and text toolbar buttons differ from Qt splitter/configurable rows/icon toolbar.",
+        "Native real pointer checks cover single-click and disclosure; Return/arrow/Home/End are dispatched through the focused real Slint window. Double-click sequences are replayed through the consumer callbacks as well as the real Qt mouse recording. Hosted native execution/PNG review remains pending; no local Cargo builds/tests were run."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/page_tree.rs",
+          "line": 14,
+          "commit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+          "kind": "source",
+          "symbol": "pub struct Tree"
+        },
+        {
+          "path": "crates/hydrus-gui/src/tab_presentation.rs",
+          "line": 79,
+          "commit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+          "kind": "source",
+          "symbol": "pub(crate) fn bind_tree"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 101,
+          "commit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+          "kind": "source",
+          "symbol": "pub(crate) page_tree:"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+          "line": 199,
+          "commit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+          "kind": "source",
+          "symbol": "export component NotebookTree"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/main.slint",
+          "line": 943,
+          "commit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+          "kind": "source",
+          "symbol": "page-tree-widget := NotebookTree"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2127,
+          "commit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+          "kind": "source",
+          "symbol": "\"EXPERIMENTAL: Show tab tree view: \""
+        },
+        {
+          "path": "crates/hydrus-store/src/settings.rs",
+          "line": 332,
+          "commit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+          "kind": "source",
+          "symbol": "pub struct TabPresentationSettings"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 356,
+          "commit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+          "kind": "source",
+          "symbol": "let mut tabs ="
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_tree.rs",
+          "line": 5,
+          "commit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+          "kind": "reference_replay",
+          "symbol": "fn cursor_expansion_and_activation"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/page_tree.rs",
+          "line": 77,
+          "commit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+          "kind": "model_regression",
+          "symbol": "fn stable_keys_survive"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_tree.rs",
+          "line": 28,
+          "commit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_tree_mouse_and_keys"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/tab_presentation.rs",
+          "line": 43,
+          "commit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+          "kind": "existing_options_replay",
+          "symbol": "fn legacy_defaults_and_staged_controls"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_presentation.rs",
+          "line": 142,
+          "commit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+          "kind": "existing_options_consumer_regression",
+          "symbol": "fn apply_cancel_reopen_and_four_sides"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_notebook_tree.py",
+          "line": 8,
+          "commit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+          "kind": "reference_recorder",
+          "symbol": "def record("
+        },
+        "fixture": {
+          "path": "oracle/fixtures/notebook_tree.json",
+          "line": 2,
+          "commit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+          "kind": "reference_fixture",
+          "symbol": "\"steps\""
+        },
+        "executed": true,
+        "executedAt": "2026-10-04T23:42:57Z\u20132026-10-04T23:43:00Z",
+        "driver": "hydrus_driver.run_client(basic); actual frame notebook/tree/toolbar, Qt mouse/key events; source unchanged",
+        "png": "oracle/fixtures/notebook_tree_qt.png"
+      },
+      "supportingRecordings": [
+        {
+          "recorder": "oracle/record_tab_presentation.py",
+          "fixture": "oracle/fixtures/tab_presentation.json",
+          "executedAt": "2026-10-04T22:34:12Z\u20132026-10-04T22:34:15Z",
+          "behavior": "actual staged None/Left/Right choice, Cancel/apply/serialize/reopen and tree-dependent tab hiding"
+        }
+      ]
+    }
+  ],
+  "nativeComponents": [
+    {
+      "name": "MainWindow",
+      "existingNativeId": "catalog.mainwindow",
+      "file": "crates/hydrus-gui/ui/main.slint",
+      "newExportedWindows": 0,
+      "controls": [
+        "owned collapsible NotebookTree; disclosure, separate cursor, actual page activation",
+        "Collapse all/Expand all and focused basic cursor keys"
+      ],
+      "referenceRoots": [
+        "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-show-tab-tree-view"
+      ],
+      "source": {
+        "path": "crates/hydrus-gui/ui/main.slint",
+        "line": 943,
+        "commit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+        "kind": "source",
+        "symbol": "page-tree-widget := NotebookTree"
+      },
+      "tests": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/notebook_tree.rs",
+          "line": 28,
+          "commit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_tree_mouse_and_keys"
+        }
+      ]
+    },
+    {
+      "name": "OptionsWindow",
+      "existingNativeId": "catalog.optionswindow",
+      "file": "crates/hydrus-gui/ui/options.slint",
+      "newExportedWindows": 0,
+      "controls": [
+        "existing staged None/Left/Right tree option"
+      ],
+      "referenceRoots": [
+        "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-show-tab-tree-view"
+      ],
+      "source": {
+        "path": "crates/hydrus-gui-model/src/options.rs",
+        "line": 2127,
+        "commit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+        "kind": "source",
+        "symbol": "\"EXPERIMENTAL: Show tab tree view: \""
+      },
+      "tests": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_presentation.rs",
+          "line": 142,
+          "commit": "5681a681098ad2d05706fcc1a9225412a19f8907",
+          "kind": "existing_options_consumer_regression",
+          "symbol": "fn apply_cancel_reopen_and_four_sides"
+        }
+      ]
+    }
+  ],
+  "hierarchySupplement": {
+    "parentReferenceId": "audit-options-gui-pages-navigation-and-drag-and-drop",
+    "originalFeatureIds": [
+      "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-show-tab-tree-view"
+    ],
+    "existingNativeOwners": [
+      "MainWindow",
+      "OptionsWindow"
+    ],
+    "counting": "Exactly one frozen original Missing control proposed; no new native disclosure/keyboard/button IDs counted. Broad tree/drag/drop/context hierarchy remains Partial."
+  },
+  "validation": {
+    "executed": [
+      "actual Qt frame recorder2026-10-04T23:42:57Z\u201323:43:00Z",
+      "cargo fmt --all",
+      "git diff --check",
+      "Python py_compile",
+      "warning-aware cached Slint source checker"
+    ],
+    "hostedPending": [
+      "model page_tree exact Qt replay/stable-key regression",
+      "GUI notebook_tree pointer/key consumer replay and native PNG",
+      "strict Clippy and all-platform compilation"
+    ],
+    "localCargoBuildsOrTests": false
+  }
+}

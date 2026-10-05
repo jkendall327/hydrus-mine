@@ -66,8 +66,8 @@ pub use context::{FileSearchContext, LocationContext, TagContext};
 pub use entry::enter_predicates;
 pub use error::{ApiSearchError, ParseError, ParseErrorKind};
 pub use exec::{
-    Clock, FileSort, SearchError, SortBy, SortOrder, collect_page_files, search_files, sort_files,
-    sort_page_files,
+    Clock, FileSort, SearchError, SortBy, SortOrder, collect_page_files, search_files,
+    search_files_without_implicit_limit, sort_files, sort_page_files,
 };
 pub use filetype::FiletypeSet;
 pub use number::{

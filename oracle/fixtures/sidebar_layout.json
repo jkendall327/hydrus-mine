@@ -1,0 +1,1017 @@
+{
+  "signed_legacy_probes": [
+    {
+      "requested": [
+        -900,
+        600
+      ],
+      "actual": {
+        "sash": [
+          488,
+          -788
+        ],
+        "horizontal": [
+          488,
+          900
+        ],
+        "vertical": [
+          134,
+          788
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "requested": [
+        400,
+        0
+      ],
+      "actual": {
+        "sash": [
+          400,
+          -922
+        ],
+        "horizontal": [
+          400,
+          988
+        ],
+        "vertical": [
+          0,
+          922
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "requested": [
+        0,
+        -240
+      ],
+      "actual": {
+        "sash": [
+          0,
+          -240
+        ],
+        "horizontal": [
+          0,
+          1388
+        ],
+        "vertical": [
+          682,
+          240
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    }
+  ],
+  "preview_consumer": [
+    {
+      "action": "accepted before preference",
+      "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    },
+    {
+      "action": "new media rejected while hidden globally",
+      "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    },
+    {
+      "action": "clear rejected while hidden globally",
+      "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    },
+    {
+      "action": "restore hide retains accepted media",
+      "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    },
+    {
+      "action": "other page cannot display first page media",
+      "shown": null
+    },
+    {
+      "action": "collapsed hide retains accepted media",
+      "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    }
+  ],
+  "defaults": {
+    "hpos": 400,
+    "vpos": -240,
+    "hide_preview": false,
+    "save_on_exit": true
+  },
+  "steps": [
+    {
+      "action": "initial",
+      "current": "one",
+      "saved": [
+        400,
+        -240
+      ],
+      "hide_preview": false,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          400,
+          -240
+        ],
+        "horizontal": [
+          400,
+          988
+        ],
+        "vertical": [
+          682,
+          240
+        ],
+        "sidebar_visible": true,
+        "preview_visible": true,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          0,
+          -240
+        ],
+        "horizontal": [
+          0,
+          0
+        ],
+        "vertical": [
+          0,
+          0
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "drag sidebar",
+      "current": "one",
+      "saved": [
+        400,
+        -240
+      ],
+      "hide_preview": false,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          470,
+          -240
+        ],
+        "horizontal": [
+          470,
+          918
+        ],
+        "vertical": [
+          682,
+          240
+        ],
+        "sidebar_visible": true,
+        "preview_visible": true,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          0,
+          -240
+        ],
+        "horizontal": [
+          0,
+          0
+        ],
+        "vertical": [
+          0,
+          0
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "drag preview",
+      "current": "one",
+      "saved": [
+        400,
+        -240
+      ],
+      "hide_preview": false,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          470,
+          -295
+        ],
+        "horizontal": [
+          470,
+          918
+        ],
+        "vertical": [
+          627,
+          295
+        ],
+        "sidebar_visible": true,
+        "preview_visible": true,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          0,
+          -240
+        ],
+        "horizontal": [
+          0,
+          0
+        ],
+        "vertical": [
+          0,
+          0
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "hide unsaved preview",
+      "current": "one",
+      "saved": [
+        400,
+        -240
+      ],
+      "hide_preview": false,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          0,
+          -295
+        ],
+        "horizontal": [
+          0,
+          1392
+        ],
+        "vertical": [
+          627,
+          295
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          0,
+          -240
+        ],
+        "horizontal": [
+          0,
+          0
+        ],
+        "vertical": [
+          0,
+          0
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "save hidden unsaved preview",
+      "current": "one",
+      "saved": [
+        0,
+        -295
+      ],
+      "hide_preview": false,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          0,
+          -295
+        ],
+        "horizontal": [
+          0,
+          1392
+        ],
+        "vertical": [
+          627,
+          295
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          0,
+          -295
+        ],
+        "horizontal": [
+          0,
+          0
+        ],
+        "vertical": [
+          0,
+          0
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "resize second",
+      "current": "two",
+      "saved": [
+        400,
+        -240
+      ],
+      "hide_preview": false,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          470,
+          -295
+        ],
+        "horizontal": [
+          470,
+          918
+        ],
+        "vertical": [
+          627,
+          295
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          460,
+          -280
+        ],
+        "horizontal": [
+          460,
+          928
+        ],
+        "vertical": [
+          642,
+          280
+        ],
+        "sidebar_visible": true,
+        "preview_visible": true,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "return first retains sizes",
+      "current": "one",
+      "saved": [
+        400,
+        -240
+      ],
+      "hide_preview": false,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          470,
+          -295
+        ],
+        "horizontal": [
+          470,
+          918
+        ],
+        "vertical": [
+          627,
+          295
+        ],
+        "sidebar_visible": true,
+        "preview_visible": true,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          460,
+          -280
+        ],
+        "horizontal": [
+          460,
+          928
+        ],
+        "vertical": [
+          642,
+          280
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "save current now",
+      "current": "one",
+      "saved": [
+        470,
+        -295
+      ],
+      "hide_preview": false,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          470,
+          -295
+        ],
+        "horizontal": [
+          470,
+          918
+        ],
+        "vertical": [
+          627,
+          295
+        ],
+        "sidebar_visible": true,
+        "preview_visible": true,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          460,
+          -280
+        ],
+        "horizontal": [
+          460,
+          928
+        ],
+        "vertical": [
+          642,
+          280
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "hide sidebar",
+      "current": "one",
+      "saved": [
+        470,
+        -295
+      ],
+      "hide_preview": false,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          0,
+          -295
+        ],
+        "horizontal": [
+          0,
+          1392
+        ],
+        "vertical": [
+          627,
+          295
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          460,
+          -280
+        ],
+        "horizontal": [
+          460,
+          928
+        ],
+        "vertical": [
+          642,
+          280
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "save while hidden",
+      "current": "one",
+      "saved": [
+        0,
+        -295
+      ],
+      "hide_preview": false,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          0,
+          -295
+        ],
+        "horizontal": [
+          0,
+          1392
+        ],
+        "vertical": [
+          627,
+          295
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          460,
+          -280
+        ],
+        "horizontal": [
+          460,
+          928
+        ],
+        "vertical": [
+          642,
+          280
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "reveal uses saved",
+      "current": "one",
+      "saved": [
+        0,
+        -295
+      ],
+      "hide_preview": false,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          0,
+          -295
+        ],
+        "horizontal": [
+          0,
+          1388
+        ],
+        "vertical": [
+          627,
+          295
+        ],
+        "sidebar_visible": true,
+        "preview_visible": true,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          460,
+          -280
+        ],
+        "horizontal": [
+          460,
+          928
+        ],
+        "vertical": [
+          642,
+          280
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "restore all",
+      "current": "one",
+      "saved": [
+        420,
+        -260
+      ],
+      "hide_preview": false,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          420,
+          -260
+        ],
+        "horizontal": [
+          420,
+          968
+        ],
+        "vertical": [
+          662,
+          260
+        ],
+        "sidebar_visible": true,
+        "preview_visible": true,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          420,
+          -260
+        ],
+        "horizontal": [
+          420,
+          968
+        ],
+        "vertical": [
+          662,
+          260
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "cancel hide preference",
+      "current": "one",
+      "saved": [
+        420,
+        -260
+      ],
+      "hide_preview": false,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          420,
+          -260
+        ],
+        "horizontal": [
+          420,
+          968
+        ],
+        "vertical": [
+          662,
+          260
+        ],
+        "sidebar_visible": true,
+        "preview_visible": true,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          420,
+          -260
+        ],
+        "horizontal": [
+          420,
+          968
+        ],
+        "vertical": [
+          662,
+          260
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "apply hide preference retains existing split",
+      "current": "one",
+      "saved": [
+        420,
+        -260
+      ],
+      "hide_preview": true,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          420,
+          -260
+        ],
+        "horizontal": [
+          420,
+          968
+        ],
+        "vertical": [
+          662,
+          260
+        ],
+        "sidebar_visible": true,
+        "preview_visible": true,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          420,
+          -260
+        ],
+        "horizontal": [
+          420,
+          968
+        ],
+        "vertical": [
+          662,
+          260
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "restore obeys hide preference",
+      "current": "one",
+      "saved": [
+        420,
+        -260
+      ],
+      "hide_preview": true,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          420,
+          -260
+        ],
+        "horizontal": [
+          420,
+          968
+        ],
+        "vertical": [
+          926,
+          0
+        ],
+        "sidebar_visible": true,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          420,
+          -260
+        ],
+        "horizontal": [
+          420,
+          968
+        ],
+        "vertical": [
+          662,
+          260
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "preview double click clear",
+      "current": "one",
+      "saved": [
+        420,
+        -260
+      ],
+      "hide_preview": true,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          420,
+          -260
+        ],
+        "horizontal": [
+          420,
+          968
+        ],
+        "vertical": [
+          926,
+          0
+        ],
+        "sidebar_visible": true,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          420,
+          -260
+        ],
+        "horizontal": [
+          420,
+          968
+        ],
+        "vertical": [
+          926,
+          0
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "restore visible preview",
+      "current": "one",
+      "saved": [
+        420,
+        -260
+      ],
+      "hide_preview": false,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          420,
+          -260
+        ],
+        "horizontal": [
+          420,
+          968
+        ],
+        "vertical": [
+          662,
+          260
+        ],
+        "sidebar_visible": true,
+        "preview_visible": true,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          420,
+          -260
+        ],
+        "horizontal": [
+          420,
+          968
+        ],
+        "vertical": [
+          666,
+          260
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "disable exit save",
+      "current": "one",
+      "saved": [
+        420,
+        -260
+      ],
+      "hide_preview": false,
+      "save_on_exit": false,
+      "one": {
+        "sash": [
+          420,
+          -260
+        ],
+        "horizontal": [
+          420,
+          968
+        ],
+        "vertical": [
+          662,
+          260
+        ],
+        "sidebar_visible": true,
+        "preview_visible": true,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          420,
+          -260
+        ],
+        "horizontal": [
+          420,
+          968
+        ],
+        "vertical": [
+          666,
+          260
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "enable exit save",
+      "current": "one",
+      "saved": [
+        420,
+        -260
+      ],
+      "hide_preview": false,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          420,
+          -260
+        ],
+        "horizontal": [
+          420,
+          968
+        ],
+        "vertical": [
+          662,
+          260
+        ],
+        "sidebar_visible": true,
+        "preview_visible": true,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          420,
+          -260
+        ],
+        "horizontal": [
+          420,
+          968
+        ],
+        "vertical": [
+          666,
+          260
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    }
+  ],
+  "new_page": {
+    "sash": [
+      470,
+      -295
+    ],
+    "horizontal": [
+      470,
+      918
+    ],
+    "vertical": [
+      627,
+      295
+    ],
+    "sidebar_visible": true,
+    "preview_visible": true,
+    "preview_splitter_hidden": false
+  },
+  "hidden_new": {
+    "sash": [
+      420,
+      -260
+    ],
+    "horizontal": [
+      420,
+      968
+    ],
+    "vertical": [
+      926,
+      0
+    ],
+    "sidebar_visible": true,
+    "preview_visible": false,
+    "preview_splitter_hidden": false
+  },
+  "abandoned_hide_before": false,
+  "closed": {
+    "sash": [
+      475,
+      -290
+    ],
+    "horizontal": [
+      475,
+      913
+    ],
+    "vertical": [
+      632,
+      290
+    ],
+    "sidebar_visible": true,
+    "preview_visible": true,
+    "preview_splitter_hidden": false
+  },
+  "reopened": {
+    "sash": [
+      475,
+      -290
+    ],
+    "horizontal": [
+      475,
+      913
+    ],
+    "vertical": [
+      632,
+      290
+    ],
+    "sidebar_visible": false,
+    "preview_visible": false,
+    "preview_splitter_hidden": false
+  },
+  "limits": [
+    "Native minimum sizes/font/layout may differ; signed legacy positions and physical Qt results retained here.",
+    "Accepted exit calls _SaveSplitterPositions after confirmation in _Exit; the recorder does not exit the driver-owned frame.",
+    "Session serialization does not include live Page splitter geometry."
+  ]
+}

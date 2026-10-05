@@ -1,0 +1,337 @@
+{
+  "schema_version": 1,
+  "task": "Main sidebar sort/collect and Options Default Collect live tag-context cogs",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "source_commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e",
+  "validation": {
+    "reference": "Actual Qt recorder executed successfully; actual materialized menu PNGs inspected",
+    "source_checks": "cargo fmt --all, git diff --check, Python syntax and cached warning-aware Slint compiler passed",
+    "rust_tests": "Meaningful model/native replay regressions authored; await hosted CI; no local Cargo"
+  },
+  "eligible_concrete_first_pass_count": 1,
+  "excluded_menu_nodes": 2,
+  "parent_promotions": 0,
+  "entries": [
+    {
+      "reference_id": "audit-options-nested-sort-collect-cog-default-collect",
+      "kind": "menu",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Default Collect in Options exposes the actual grouped tag-service cog and unmatched submenu, refreshes current checks at every normal button opening, preserves its full independent context, stages until Apply, discards Cancel and retained closed-owner actions, and persists through serialization, reopening and new-page initialization.",
+      "exactBehavior": "Default Collect in Options exposes the actual grouped tag-service cog and unmatched submenu, refreshes current checks at every normal button opening, preserves its full independent context, stages until Apply, discards Cancel and retained closed-owner actions, and persists through serialization, reopening and new-page initialization.",
+      "reference_source": {
+        "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelSortCollect.py",
+        "line": 321,
+        "line_sha256": "215512736c2caea0c8ae1c59ed42866b13ab7d7716940e370c522df6d356cd34"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/sidebar_context_cog.rs",
+          "line": 124,
+          "symbol": "pub(crate) fn bind(",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/sidebar_context_cog.rs",
+          "line": 229,
+          "symbol": "pub(crate) fn bind_options(",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 1970,
+          "symbol": "pub fn apply_sort_cog",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/sort_collect_cog.slint",
+          "line": 9,
+          "symbol": "export component SortCollectCog",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/sort_cog.rs",
+          "line": 61,
+          "symbol": "pub fn services",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+          "line": 142,
+          "symbol": "fn sidebar_actions_replay",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+          "line": 321,
+          "symbol": "fn default_collect_cog_stages",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/sort_cog.rs",
+          "line": 100,
+          "symbol": "fn actual_sidebar_availability",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "oracle/record_sidebar_sort_collect_cogs.py",
+          "role": "executed_reference_recorder",
+          "executed": true,
+          "description": "Executed actual Qt v688 via /workspace/parallel/with-oracle; final run 2026-10-05 01:22:46\u201301:22:50 UTC. Real fixed-hash locked Page sidebar QAction activations broadcast to its real media-results panel. Only PopupMenu presentation is observed for the real mouse-route record; no business handlers/media content/tag mappings replaced."
+        },
+        {
+          "path": "oracle/fixtures/sidebar_sort_collect_cogs.json",
+          "role": "reference_fixture",
+          "executed": true,
+          "description": "Three availability snapshots, 16 sort cases, eight collection cases with full independent contexts and exact ordered media, actual left/right mouse routes, two Options staging/Apply/serialization/reopen cases and Cancel."
+        },
+        {
+          "path": "oracle/fixtures/sidebar_sort_cog_1.png",
+          "role": "executed_reference_render",
+          "executed": true,
+          "description": "Inspected rendered actual Qt namespace display submenu, ordered three checks with single-media selected."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+          "role": "authored_native_regression",
+          "executed": false,
+          "description": "Real MainWindow/OptionsWindow callbacks, typed generated menu models, exact 16+8 media consumer replay; matching recorded search context/locked page; stale popup, hidden and switched page, Default Collect stage/Apply/Cancel/reopen/new-page and retired successor boundaries. Await hosted CI."
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/sort_cog.rs",
+          "role": "authored_model_regression",
+          "executed": false,
+          "description": "Actual menu groups/separators/checks, availability, independent context metadata and canonical serialization; await hosted CI."
+        }
+      ],
+      "limitations": [
+        "Broader search/sidebar and Options file-sort/collect parents remain Partial.",
+        "Native grouped Slint popup replaces Qt widgets; automatic right-click opening is disabled because actual Qt cog buttons do not open on right-click.",
+        "Repository metadata may appear among registered services; this slice implements no remote repository/network work.",
+        "Native/model Rust tests authored but not executed locally; hosted CI owns compilation/lint/test validation."
+      ],
+      "eligible_concrete_first_pass_count": 0,
+      "metric_exclusion": "kind=menu is excluded from the completion metric"
+    },
+    {
+      "reference_id": "audit-options-search-sort-collect-tag-service",
+      "kind": "menu",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "The search sidebar sort cog is visible for namespace/number-of-tags sorting and the collect cog is always available. Both expose local/repository/combined tag-service groups with separators and current checks, mutate only their own context service, preserve display-service/current/pending metadata, and immediately feed actual page sorting/grouping. Normal button opening refreshes checks; stale popup ids, switched pages, changed contexts and hidden owners cannot act.",
+      "exactBehavior": "The search sidebar sort cog is visible for namespace/number-of-tags sorting and the collect cog is always available. Both expose local/repository/combined tag-service groups with separators and current checks, mutate only their own context service, preserve display-service/current/pending metadata, and immediately feed actual page sorting/grouping. Normal button opening refreshes checks; stale popup ids, switched pages, changed contexts and hidden owners cannot act.",
+      "reference_source": {
+        "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelSortCollect.py",
+        "line": 412,
+        "line_sha256": "faba204abcdb47db165de80a1492c9e38843a4f65e8c1c858bd7ddda0deae8bd"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/sidebar_context_cog.rs",
+          "line": 124,
+          "symbol": "pub(crate) fn bind(",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/sidebar_context_cog.rs",
+          "line": 229,
+          "symbol": "pub(crate) fn bind_options(",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 1970,
+          "symbol": "pub fn apply_sort_cog",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/sort_collect_cog.slint",
+          "line": 9,
+          "symbol": "export component SortCollectCog",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/sort_cog.rs",
+          "line": 61,
+          "symbol": "pub fn services",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+          "line": 142,
+          "symbol": "fn sidebar_actions_replay",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+          "line": 321,
+          "symbol": "fn default_collect_cog_stages",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/sort_cog.rs",
+          "line": 100,
+          "symbol": "fn actual_sidebar_availability",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "oracle/record_sidebar_sort_collect_cogs.py",
+          "role": "executed_reference_recorder",
+          "executed": true,
+          "description": "Executed actual Qt v688 via /workspace/parallel/with-oracle; final run 2026-10-05 01:22:46\u201301:22:50 UTC. Real fixed-hash locked Page sidebar QAction activations broadcast to its real media-results panel. Only PopupMenu presentation is observed for the real mouse-route record; no business handlers/media content/tag mappings replaced."
+        },
+        {
+          "path": "oracle/fixtures/sidebar_sort_collect_cogs.json",
+          "role": "reference_fixture",
+          "executed": true,
+          "description": "Three availability snapshots, 16 sort cases, eight collection cases with full independent contexts and exact ordered media, actual left/right mouse routes, two Options staging/Apply/serialization/reopen cases and Cancel."
+        },
+        {
+          "path": "oracle/fixtures/sidebar_sort_cog_1.png",
+          "role": "executed_reference_render",
+          "executed": true,
+          "description": "Inspected rendered actual Qt namespace display submenu, ordered three checks with single-media selected."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+          "role": "authored_native_regression",
+          "executed": false,
+          "description": "Real MainWindow/OptionsWindow callbacks, typed generated menu models, exact 16+8 media consumer replay; matching recorded search context/locked page; stale popup, hidden and switched page, Default Collect stage/Apply/Cancel/reopen/new-page and retired successor boundaries. Await hosted CI."
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/sort_cog.rs",
+          "role": "authored_model_regression",
+          "executed": false,
+          "description": "Actual menu groups/separators/checks, availability, independent context metadata and canonical serialization; await hosted CI."
+        }
+      ],
+      "limitations": [
+        "Broader search/sidebar and Options file-sort/collect parents remain Partial.",
+        "Native grouped Slint popup replaces Qt widgets; automatic right-click opening is disabled because actual Qt cog buttons do not open on right-click.",
+        "Repository metadata may appear among registered services; this slice implements no remote repository/network work.",
+        "Native/model Rust tests authored but not executed locally; hosted CI owns compilation/lint/test validation."
+      ],
+      "eligible_concrete_first_pass_count": 0,
+      "metric_exclusion": "kind=menu is excluded from the completion metric"
+    },
+    {
+      "reference_id": "audit-options-search-sort-collect-tag-display",
+      "kind": "action",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "The actual namespace-sort cog exposes display tags, multiple media view tags and single media view tags in reference order 1,3,2 with live current checks. Activations update only the typed namespace display mode, immediately resort the actual visible page, preserve sort/search/collect contexts independently, and follow the existing save-page-sort-on-change preference.",
+      "exactBehavior": "The actual namespace-sort cog exposes display tags, multiple media view tags and single media view tags in reference order 1,3,2 with live current checks. Activations update only the typed namespace display mode, immediately resort the actual visible page, preserve sort/search/collect contexts independently, and follow the existing save-page-sort-on-change preference.",
+      "reference_source": {
+        "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelSortCollect.py",
+        "line": 915,
+        "line_sha256": "72992cedf9b61cc06e01668180ad1c1dde132a346e2bc8bd2e264092a57add3c"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/sidebar_context_cog.rs",
+          "line": 124,
+          "symbol": "pub(crate) fn bind(",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/sidebar_context_cog.rs",
+          "line": 229,
+          "symbol": "pub(crate) fn bind_options(",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 1970,
+          "symbol": "pub fn apply_sort_cog",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/sort_collect_cog.slint",
+          "line": 9,
+          "symbol": "export component SortCollectCog",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/sort_cog.rs",
+          "line": 61,
+          "symbol": "pub fn services",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+          "line": 142,
+          "symbol": "fn sidebar_actions_replay",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+          "line": 321,
+          "symbol": "fn default_collect_cog_stages",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/sort_cog.rs",
+          "line": 100,
+          "symbol": "fn actual_sidebar_availability",
+          "commit": "c774c0f5fcdae58b93a1818c47bd63fde944697e"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "oracle/record_sidebar_sort_collect_cogs.py",
+          "role": "executed_reference_recorder",
+          "executed": true,
+          "description": "Executed actual Qt v688 via /workspace/parallel/with-oracle; final run 2026-10-05 01:22:46\u201301:22:50 UTC. Real fixed-hash locked Page sidebar QAction activations broadcast to its real media-results panel. Only PopupMenu presentation is observed for the real mouse-route record; no business handlers/media content/tag mappings replaced."
+        },
+        {
+          "path": "oracle/fixtures/sidebar_sort_collect_cogs.json",
+          "role": "reference_fixture",
+          "executed": true,
+          "description": "Three availability snapshots, 16 sort cases, eight collection cases with full independent contexts and exact ordered media, actual left/right mouse routes, two Options staging/Apply/serialization/reopen cases and Cancel."
+        },
+        {
+          "path": "oracle/fixtures/sidebar_sort_cog_1.png",
+          "role": "executed_reference_render",
+          "executed": true,
+          "description": "Inspected rendered actual Qt namespace display submenu, ordered three checks with single-media selected."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/sidebar_context_cogs.rs",
+          "role": "authored_native_regression",
+          "executed": false,
+          "description": "Real MainWindow/OptionsWindow callbacks, typed generated menu models, exact 16+8 media consumer replay; matching recorded search context/locked page; stale popup, hidden and switched page, Default Collect stage/Apply/Cancel/reopen/new-page and retired successor boundaries. Await hosted CI."
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/sort_cog.rs",
+          "role": "authored_model_regression",
+          "executed": false,
+          "description": "Actual menu groups/separators/checks, availability, independent context metadata and canonical serialization; await hosted CI."
+        }
+      ],
+      "limitations": [
+        "Broader search/sidebar and Options file-sort/collect parents remain Partial.",
+        "Native grouped Slint popup replaces Qt widgets; automatic right-click opening is disabled because actual Qt cog buttons do not open on right-click.",
+        "Repository metadata may appear among registered services; this slice implements no remote repository/network work.",
+        "Native/model Rust tests authored but not executed locally; hosted CI owns compilation/lint/test validation."
+      ],
+      "eligible_concrete_first_pass_count": 1,
+      "metric_exclusion": null
+    }
+  ]
+}

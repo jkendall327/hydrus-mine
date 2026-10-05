@@ -1,0 +1,239 @@
+{
+  "defaults": {
+    "name": "hydrus client",
+    "activate": false,
+    "enabled": true
+  },
+  "names": [
+    {
+      "raw": "",
+      "typed": null,
+      "apply": false,
+      "displayed": "",
+      "saved": "",
+      "reopened": "",
+      "application_display_name": "hydrus client 688",
+      "child_window_title": "synthetic child title",
+      "child_native_title": "synthetic child title"
+    },
+    {
+      "raw": "",
+      "typed": null,
+      "apply": true,
+      "displayed": "",
+      "saved": "hydrus client",
+      "reopened": "hydrus client",
+      "application_display_name": "hydrus client 688",
+      "child_window_title": "synthetic child title",
+      "child_native_title": "synthetic child title"
+    },
+    {
+      "raw": "  ",
+      "typed": null,
+      "apply": true,
+      "displayed": "  ",
+      "saved": "  ",
+      "reopened": "  ",
+      "application_display_name": "   688",
+      "child_window_title": "synthetic child title",
+      "child_native_title": "synthetic child title"
+    },
+    {
+      "raw": "original",
+      "typed": "night library",
+      "apply": false,
+      "displayed": "original",
+      "saved": "original",
+      "reopened": "original",
+      "application_display_name": "   688",
+      "child_window_title": "synthetic child title",
+      "child_native_title": "synthetic child title"
+    },
+    {
+      "raw": "original",
+      "typed": "night library",
+      "apply": true,
+      "displayed": "original",
+      "saved": "night library",
+      "reopened": "night library",
+      "application_display_name": "night library 688",
+      "child_window_title": "synthetic child title",
+      "child_native_title": "synthetic child title"
+    }
+  ],
+  "activation": [
+    {
+      "enabled": false,
+      "active": false,
+      "batch": false,
+      "before": false,
+      "saved": false,
+      "reopened": false,
+      "publications": [
+        {
+          "activation": false,
+          "name": "creator:synthetic person, series:canonical_under_score",
+          "predicates": [
+            "creator:synthetic person",
+            "series:canonical_under_score"
+          ],
+          "location": [
+            103,
+            1,
+            [
+              [
+                "6c6f63616c2066696c6573"
+              ],
+              []
+            ]
+          ],
+          "main_active_before": false
+        }
+      ],
+      "requests": []
+    },
+    {
+      "enabled": true,
+      "active": false,
+      "batch": false,
+      "before": false,
+      "saved": true,
+      "reopened": true,
+      "publications": [
+        {
+          "activation": true,
+          "name": "creator:synthetic person, series:canonical_under_score",
+          "predicates": [
+            "creator:synthetic person",
+            "series:canonical_under_score"
+          ],
+          "location": [
+            103,
+            1,
+            [
+              [
+                "6c6f63616c2066696c6573"
+              ],
+              []
+            ]
+          ],
+          "main_active_before": false
+        }
+      ],
+      "requests": [
+        "main"
+      ]
+    },
+    {
+      "enabled": true,
+      "active": true,
+      "batch": false,
+      "before": true,
+      "saved": true,
+      "reopened": true,
+      "publications": [
+        {
+          "activation": true,
+          "name": "creator:synthetic person, series:canonical_under_score",
+          "predicates": [
+            "creator:synthetic person",
+            "series:canonical_under_score"
+          ],
+          "location": [
+            103,
+            1,
+            [
+              [
+                "6c6f63616c2066696c6573"
+              ],
+              []
+            ]
+          ],
+          "main_active_before": true
+        }
+      ],
+      "requests": []
+    },
+    {
+      "enabled": true,
+      "active": false,
+      "batch": true,
+      "before": true,
+      "saved": true,
+      "reopened": true,
+      "publications": [
+        {
+          "activation": true,
+          "name": "creator:synthetic person",
+          "predicates": [
+            "creator:synthetic person"
+          ],
+          "location": [
+            103,
+            1,
+            [
+              [
+                "6c6f63616c2066696c6573"
+              ],
+              []
+            ]
+          ],
+          "main_active_before": false
+        },
+        {
+          "activation": false,
+          "name": "series:canonical_under_score",
+          "predicates": [
+            "series:canonical_under_score"
+          ],
+          "location": [
+            103,
+            1,
+            [
+              [
+                "6c6f63616c2066696c6573"
+              ],
+              []
+            ]
+          ],
+          "main_active_before": false
+        }
+      ],
+      "requests": [
+        "main"
+      ]
+    }
+  ],
+  "middle_press": {
+    "handled": true,
+    "accepted": true,
+    "publications": [
+      {
+        "activation": true,
+        "name": "creator:synthetic person",
+        "predicates": [
+          "creator:synthetic person"
+        ],
+        "location": [
+          103,
+          1,
+          [
+            [
+              "6c6f63616c2066696c6573"
+            ],
+            []
+          ]
+        ],
+        "main_active_before": false
+      }
+    ],
+    "requests": [
+      "main"
+    ]
+  },
+  "cancelled_activation": {
+    "saved": true,
+    "reopened": true
+  },
+  "version": 688
+}

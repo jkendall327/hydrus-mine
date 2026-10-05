@@ -71,21 +71,28 @@ box. Each one is a commit that passes CI on its own.
    current breadth-work instruction is to omit mutation testing: use the
    reference, behavioral regressions, rendered UI inspection and independent
    review instead. Do not run cargo-mutants unless the owner requests it.
-6. **Look at it.** The GUI runs headless in tests, but a person should
-   see new windows at least once (`cargo run -p hydrus-gui -- <store
-   dir>`; with no display, under Xvfb with `xdotool` driving it).
+6. **Keep full visual verification deferred.** The owner's current instruction
+   (2026-10-05) prioritizes implementation with cheap validation. Use the reference
+   and cached Slint source checks as needed; defer native GUI compilation,
+   full suites, rendered review and exhaustive audits to the final project pass.
 7. **Write it down.** `docs/rust/GUI.md` says what works, in the user's
    terms; `docs/rust/DIFFERENCES.md` says what is missing or different
    from the reference, and why. Update both in the same commit as the
    code.
-8. **Run CI's checks** before pushing: `scripts/check.sh` (everything),
-   or `scripts/check.sh hydrus-gui-model hydrus-gui` when only those
-   changed. CI denies warnings, including clippy's pedantic set.
+8. **Use cheap validation.** Formatting, strict backend/model Clippy/type checks,
+   simple builds and targeted fast tests are appropriate. Automatic CI has one
+   Linux lint/model lane excluding `hydrus-gui`: its generated metadata exceeded
+   the cheap budget (over 12 minutes and about 9 GiB in one compiler process).
+   Native GUI Clippy/type checking, `scripts/check.sh`, full workspace/native
+   suites, platform runs and audits
+   are deferred until the owner requests the final validation pass. Preserve
+   authored regressions for that pass. Keep implemented and fully validated item
+   counts separate. CI denies warnings, including clippy's pedantic set.
 
 ## Commits
 
-- Small and self-contained, each passing CI. Fix red CI before starting
-  anything new.
+- Small and self-contained. Fix build/type errors and other bugs that block
+  ongoing work; record non-blocking defects for the deferred validation pass.
 - Subject in the imperative, saying what the user gets, often "..., as
   the reference does". The body says what changed and which recording
   proves it.
@@ -104,12 +111,10 @@ box. Each one is a commit that passes CI on its own.
   `docs/rust/DIFFERENCES.md`. Keep edits there small (a module line, a
   callback's wiring, a paragraph) so merges stay easy; put the bulk of a
   feature in its own files.
-- Integrate small slices as they become ready and run their relevant
-  backend/model tests immediately. Batch GUI compilation and run targeted GUI
-  regressions for the batch. Start the GUI batch with strict Clippy so warnings
-  and type errors are caught before expensive test code generation. Run the
-  full `scripts/check.sh` before pushing
-  the assembled slate. Changes or failures justify additional checks.
+- Integrate slices as they become ready and use cheap backend/model checks.
+  Run strict Clippy before expensive code generation; avoid full GUI compilation
+  and suites during implementation mode. Keep one current integration CI run,
+  cancelling superseded heads, rather than validating every intermediate branch.
 - When worktrees share a Cargo target directory, set `HYDRUS_FIXTURE_DIR`
   to the current worktree's absolute `oracle/fixtures` path. Otherwise a
   cached `hydrus-testkit` can read the checkout it was compiled in.
@@ -131,6 +136,18 @@ box. Each one is a commit that passes CI on its own.
   A `Window`'s `title` can't be set from Rust; give the window its own
   `window-title` property. `StandardTableView` selects one row only; use
   `ListTable`.
+- **Slint geometry**: a child-to-parent two-way link keeps the parent's
+  existing binding or value. An unbound parent output can therefore replace
+  measured child geometry with its default zero. Expose measured geometry
+  through read-only direct bindings to structurally present items; the source
+  compiler alone does not detect this runtime binding failure.
+- **Resizable Slint windows**: use `preferred-width`/`preferred-height` for the
+  opening size. A literal `width` binding can constant-fold descendant viewport
+  measurements even after the native window resizes. Check real narrow/wide
+  measurements when a layout consumer depends on the viewport.
+- **Winit event filters**: `on_winit_window_event` replaces the prior callback.
+  Compose opening observers and existing drop handlers in one owner-local filter;
+  query native geometry there because Slint has not yet updated its resize cache.
 - **Key handling**: the main window's shortcuts are a
   `capture-key-pressed` on the outermost `FocusScope`, so they work
   whatever has focus; a widget's own keys go in its own `FocusScope`.

@@ -1,0 +1,193 @@
+{
+  "menu_path": [
+    "help",
+    "debug",
+    "network actions",
+    "fetch a url"
+  ],
+  "body_hex": "636166e900ff0a",
+  "prompts": [
+    {
+      "message": "Enter the URL.",
+      "title": "Enter Text",
+      "parent_main": true
+    },
+    {
+      "message": "Enter the URL.",
+      "title": "Enter Text",
+      "parent_main": true
+    },
+    {
+      "message": "Enter the URL.",
+      "title": "Enter Text",
+      "parent_main": true
+    },
+    {
+      "message": "Enter the URL.",
+      "title": "Enter Text",
+      "parent_main": true
+    },
+    {
+      "message": "Enter the URL.",
+      "title": "Enter Text",
+      "parent_main": true
+    },
+    {
+      "message": "Enter the URL.",
+      "title": "Enter Text",
+      "parent_main": true
+    }
+  ],
+  "questions": [
+    {
+      "message": "Request complete. Length of response is 7B.",
+      "title": "Are you sure?",
+      "yes_tuples": [
+        [
+          "save to file",
+          "file"
+        ],
+        [
+          "copy to clipboard",
+          "clipboard"
+        ]
+      ],
+      "no_label": "forget it",
+      "parent_main": true,
+      "main_visible": true
+    },
+    {
+      "message": "Request complete. Length of response is 7B.",
+      "title": "Are you sure?",
+      "yes_tuples": [
+        [
+          "save to file",
+          "file"
+        ],
+        [
+          "copy to clipboard",
+          "clipboard"
+        ]
+      ],
+      "no_label": "forget it",
+      "parent_main": true,
+      "main_visible": false
+    },
+    {
+      "message": "Request complete. Length of response is 7B.",
+      "title": "Are you sure?",
+      "yes_tuples": [
+        [
+          "save to file",
+          "file"
+        ],
+        [
+          "copy to clipboard",
+          "clipboard"
+        ]
+      ],
+      "no_label": "forget it",
+      "parent_main": true,
+      "main_visible": true
+    }
+  ],
+  "file_picks": [
+    {
+      "title": "select where to save content",
+      "default_filename": "output.txt",
+      "parent_main": true
+    }
+  ],
+  "saved_hex": "636166e900ff0a",
+  "clipboard": [
+    [
+      "text",
+      "caf\u00e9\u0000\u00ff\n"
+    ]
+  ],
+  "results": [
+    {
+      "case": "file",
+      "done": true,
+      "cancellable": false,
+      "network_done": true,
+      "body_hex": "636166e900ff0a",
+      "text": "caf\u00e9\u0000\u00ff\n",
+      "dismiss_at": 1791215121,
+      "dismissed_at_completion": false,
+      "main_visible": true
+    },
+    {
+      "case": "clipboard",
+      "done": true,
+      "cancellable": false,
+      "network_done": true,
+      "body_hex": "636166e900ff0a",
+      "text": "caf\u00e9\u0000\u00ff\n",
+      "dismiss_at": 1791215122,
+      "dismissed_at_completion": false,
+      "main_visible": false
+    },
+    {
+      "case": "forget",
+      "done": true,
+      "cancellable": false,
+      "network_done": true,
+      "body_hex": "636166e900ff0a",
+      "text": "caf\u00e9\u0000\u00ff\n",
+      "dismiss_at": 1791215123,
+      "dismissed_at_completion": false,
+      "main_visible": true
+    },
+    {
+      "case": "cancel",
+      "jobs": 3,
+      "questions": 3
+    },
+    {
+      "case": "error",
+      "done": true,
+      "network_done": true,
+      "network_error": true,
+      "network_cancelled": true,
+      "error_type": "NotFoundException",
+      "questions_unchanged": true,
+      "dismiss_at": 1791215124
+    },
+    {
+      "case": "cancel-network",
+      "done": true,
+      "network_done": true,
+      "network_error": false,
+      "network_cancelled": true,
+      "error_type": null,
+      "questions_unchanged": true,
+      "dismiss_at": 1791215125
+    }
+  ],
+  "all_dismissed_after_real_deadline": true,
+  "requests": [
+    {
+      "path": "/bytes",
+      "cookie": null
+    },
+    {
+      "path": "/bytes",
+      "cookie": "debug-fetch=recorded"
+    },
+    {
+      "path": "/bytes",
+      "cookie": "debug-fetch=recorded"
+    },
+    {
+      "path": "/error",
+      "cookie": "debug-fetch=recorded"
+    },
+    {
+      "path": "/hold",
+      "cookie": "debug-fetch=recorded"
+    }
+  ],
+  "scheduler": "unmodified NetworkJob/engine/CallToThread/CallAfterQtSafe",
+  "authored_transport": "loopback-only HTTP server and scripted dialog answers"
+}

@@ -1,0 +1,70 @@
+import { Button, ScrollView } from "std-widgets.slint";
+import { ListTable, TableRow } from "list_table.slint";
+import { DeletionReasonQueue } from "deletion_reasons.slint";
+import { Theme } from "theme.slint";
+export component OpenExternallyTable inherits Rectangle {
+    in property <[TableRow]> urls;
+    in property <[TableRow]> files;
+    in property <bool> url-selected;
+    in property <bool> file-single;
+    in property <bool> file-delete;
+    in property <bool> child-open;
+    in property <string> error;
+    callback url-clicked(int,bool,bool);
+    callback url-activated(int);
+    callback url-action(string);
+    callback file-clicked(int,bool,bool);
+    callback file-activated(int);
+    callback file-action(string);
+    min-height:540px;
+    VerticalLayout {
+        spacing:6px;
+        Text {text:"This page uses the executable calls as set under the \"external programs\" panel. Go there first if you need to define a new url/file call.\n\nIf you rename calls there, the new labels will not update here until dialog ok. If you delete calls there, they will be removed from here on dialog ok.";wrap:word-wrap;color:Theme.text;}
+        Text {text:"URL calls";font-weight:700;color:Theme.text;}
+        Text {text:"Choose registered URL calls; the top-most is the default for quicker actions like shortcuts or left-clicks on hyperlinks.";wrap:word-wrap;color:Theme.text;}
+        DeletionReasonQueue {rows:root.urls;enabled:true;selected:root.url-selected;child-open:root.child-open;row-clicked(i,c,s)=>{root.url-clicked(i,c,s);}row-activated(i)=>{root.url-activated(i);}action(a)=>{root.url-action(a);}}
+        Text {text:"single file calls";font-weight:700;color:Theme.text;}
+        Text {text:"The \"all files\" entry is a backstop for all files. You can set an entry for \"image\", to mean all images, or specifically down to each filetype. A specific entry completely overwrites a more general entry.";wrap:word-wrap;color:Theme.text;}
+        ListTable {rows:root.files;columns:[{title:"filetype",width:160px},{title:"external call",width:300px,stretch:true}];min-height:160px;row-clicked(i,c,s)=>{if !root.child-open {root.file-clicked(i,c,s);}}row-activated(i)=>{if !root.child-open {root.file-activated(i);}}delete-pressed=>{if !root.child-open {root.file-action("delete");}}}
+        HorizontalLayout {
+            Button {text:"add";enabled:!root.child-open;clicked=>{root.file-action("add");}}
+            Button {text:"edit";enabled:root.file-single && !root.child-open;clicked=>{root.file-action("edit");}}
+            Button {text:"delete";enabled:root.file-delete && !root.child-open;clicked=>{root.file-action("delete");}}
+        }
+        Text {text:root.error;wrap:word-wrap;color:Theme.error;}
+    }
+}
+export component OpenFileCallsWindow inherits Window {
+    in property <string> window-title:"edit calls";
+    title:root.window-title;
+    preferred-width:580px;preferred-height:340px;background:Theme.window;
+    in property <[TableRow]> rows;
+    in property <bool> selected;
+    in property <bool> child-open;
+    callback clicked(int,bool,bool);
+    callback activated(int);
+    callback action(string);
+    callback apply();
+    callback cancel();
+    VerticalLayout {
+        padding:10px;spacing:8px;
+        Text {text:"You can select multiple programs, and these choices will be exposed in the media \"open externally\" menus; for quicker actions like button clicks or shortcuts, the top-most is the default.";wrap:word-wrap;color:Theme.text;}
+        DeletionReasonQueue {rows:root.rows;enabled:true;selected:root.selected;child-open:root.child-open;row-clicked(i,c,s)=>{root.clicked(i,c,s);}row-activated(i)=>{root.activated(i);}action(a)=>{root.action(a);}}
+        HorizontalLayout {alignment:end;Button {text:"apply";enabled:!root.child-open;clicked=>{root.apply();}}Button {text:"cancel";clicked=>{root.cancel();}}}
+    }
+}
+export component ExternalRoutingChoiceWindow inherits Window {
+    in property <string> window-title;
+    title:root.window-title;
+    preferred-width:520px;preferred-height:440px;background:Theme.window;
+    in property <[string]> choices;
+    in property <string> choice-description;
+    callback chosen(int);
+    callback cancel();
+    VerticalLayout {
+        padding:10px;spacing:6px;
+        ScrollView {VerticalLayout {spacing:6px;for label[i] in root.choices:Button {text:label;clicked=>{root.chosen(i);}}}}
+        Text {text:root.choice-description;wrap:word-wrap;color:Theme.text;}
+        Button {text:"cancel";clicked=>{root.cancel();}}
+    }
+}

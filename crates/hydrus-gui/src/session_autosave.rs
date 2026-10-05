@@ -227,6 +227,7 @@ struct Inner {
     window: slint::Weak<MainWindow>,
     schedule: RefCell<Autosave>,
     idle: RefCell<Idle>,
+    force_idle: RefCell<Option<Weak<crate::force_idle::State>>>,
     previous: RefCell<Option<String>>,
     api_seen: std::cell::Cell<i64>,
     size_warning: RefCell<SizeWarning>,
@@ -259,6 +260,7 @@ pub(crate) fn bind(window: &MainWindow, pages: &Rc<RefCell<Pages>>) -> Monitor {
         window: window.as_weak(),
         schedule: RefCell::new(Autosave::new(now, &config)),
         idle: RefCell::new(Idle::new(now)),
+        force_idle: RefCell::new(None),
         previous: RefCell::new(None),
         api_seen: std::cell::Cell::new(0),
         size_warning: RefCell::new(SizeWarning::default()),
@@ -301,7 +303,18 @@ impl Monitor {
     pub fn api_at(&self, now_ms: i64) {
         self.0.idle.borrow_mut().api(now_ms);
     }
+    pub(crate) fn attach_force_idle(&self, state: Weak<crate::force_idle::State>) {
+        *self.0.force_idle.borrow_mut() = Some(state);
+    }
     pub fn idle_at(&self, now_ms: i64) -> bool {
+        if let Some(source) = self.0.force_idle.borrow().as_ref() {
+            let Some(state) = source.upgrade() else {
+                return false;
+            };
+            if let Some(idle) = state.idle_override() {
+                return idle;
+            }
+        }
         let config: GuiIdleSettings = self
             .0
             .pages

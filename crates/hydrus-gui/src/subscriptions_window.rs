@@ -24,7 +24,7 @@ use crate::edit_subscription_window::Slots;
 use crate::subscriptions_dedupe::{Answer, Dedupe, Question};
 use crate::subscriptions_dialog::{
     CheckNow, Choice, DELETE_QUESTION, DialogQuery, ImportOptionsPaste, LOWERCASE_QUESTION,
-    MERGE_PRIMARY, MERGE_QUESTION, NOT_MERGEABLE, Picked, RESET_QUESTION, SELECT_MESSAGE,
+    MERGE_PRIMARY, MERGE_QUESTION, Merge, NOT_MERGEABLE, Picked, RESET_QUESTION, SELECT_MESSAGE,
     SEPARATE_CHOICES, SEPARATE_MERGED_CHOICES, SEPARATE_MERGED_NAME, SEPARATE_MERGED_QUESTION,
     SEPARATE_NAME, SEPARATE_PICK, SEPARATE_QUESTION, Separate, Subscriptions, added_message,
     picked,
@@ -37,6 +37,11 @@ const MULTIPLE_FAVOURITE_LOAD: &str = "Hey, multiple items in the subscriptions 
 
 /// What a question waits on.
 enum Asking {
+    DirectImportNotice(String, String, crate::subscription_import::Queue),
+    DirectImportMissing(
+        Box<hydrus_downloader_exchange::subscriptions::Subscription>,
+        crate::subscription_import::Queue,
+    ),
     MissingHistory(
         Box<hydrus_downloader_exchange::subscriptions::Subscription>,
         Vec<hydrus_downloader_exchange::subscriptions::Subscription>,
@@ -55,12 +60,13 @@ enum Asking {
     RetryIgnored,
     Merge,
     /// A merge group's primary; the groups after it.
-    MergePrimary(Vec<u64>, Vec<Vec<u64>>),
+    MergePrimary(Vec<u64>, Vec<Vec<u64>>, Vec<Merge>),
     /// A merged subscription's name; the groups after it.
     MergeName {
         group: Vec<u64>,
         primary: u64,
         rest: Vec<Vec<u64>>,
+        accepted: Vec<Merge>,
     },
     SeparateHow,
     /// "only extract some": the queries ticked.
@@ -90,6 +96,7 @@ struct AsRead {
 
 /// The dialog's state while it is open.
 struct Open {
+    formatting: hydrus_store::settings::GuiFormatting,
     services: Arc<hydrus_store::store::Snapshot>,
     dialog: Subscriptions,
     /// Each subscription as read, by id.
@@ -144,6 +151,7 @@ fn read(store: &Store) -> hydrus_store::Result<Open> {
         }
         let naming: hydrus_core::pages::PageNameSettings = hydrus_store::settings::get(conn)?;
         Ok(Open {
+            formatting: hydrus_store::settings::get(conn)?,
             services: store.snapshot(),
             dialog: Subscriptions::new(loaded),
             read,
@@ -382,23 +390,29 @@ fn ask_separate_name(open: &mut Open, how: Separate) {
     open.asking = Some(Asking::SeparateName(how));
 }
 
-/// Merge a group into its primary, named `name` (or its own name), and
-/// ask about the next group, if there is one.
+/// Stage a group's decision; change the list only after every group succeeds.
 fn merge_named(
     open: &mut Open,
     group: &[u64],
     primary: u64,
     mut rest: Vec<Vec<u64>>,
+    mut accepted: Vec<Merge>,
     name: Option<&str>,
 ) {
     let name = name
         .map(str::to_owned)
         .or_else(|| open.dialog.get(primary).map(|s| s.name.clone()))
         .unwrap_or_default();
-    open.dialog.merge(primary, group, &name);
-    if !rest.is_empty() {
+    accepted.push(Merge {
+        primary,
+        group: group.to_vec(),
+        name,
+    });
+    if rest.is_empty() {
+        open.dialog.merge_many(&accepted);
+    } else {
         let next = rest.remove(0);
-        open.asking = Some(Asking::MergePrimary(next, rest));
+        open.asking = Some(Asking::MergePrimary(next, rest, accepted));
     }
 }
 
@@ -422,16 +436,45 @@ fn import_next(
     }
 }
 
+fn direct_import_next(open: &mut Open, mut queue: crate::subscription_import::Queue) {
+    use crate::subscription_import::Event;
+    while let Some(event) = queue.next() {
+        match event {
+            Event::Subscription(subscription) => {
+                if subscription.queries.iter().any(|q| q.log.is_none()) {
+                    open.asking = Some(Asking::DirectImportMissing(subscription, queue));
+                    return;
+                }
+                match hydrus_gui_model::subscription_exchange::stage(
+                    &mut open.dialog,
+                    vec![*subscription],
+                ) {
+                    Ok(()) => (),
+                    Err(error) => {
+                        open.asking = Some(Asking::Message(error));
+                        return;
+                    }
+                }
+            }
+            Event::Notice(title, message) => {
+                open.asking = Some(Asking::DirectImportNotice(title, message, queue));
+                return;
+            }
+            Event::File(_, _) => unreachable!("queue loads file events before returning"),
+        }
+    }
+}
+
 /// Show the dialog's list, buttons and question.
 fn show(window: &SubscriptionsWindow, open: &Open) {
     let now = now();
     let dialog = &open.dialog;
     let rows: Vec<TableRow> = dialog
-        .rows(now, open.short)
+        .rows_with_format(now, open.short, &open.formatting)
         .into_iter()
         .map(|(key, mut cells, selected)| {
             if let Some(subscription) = dialog.get(key) {
-                cells[8] = crate::import_options_editor::container_summary(
+                cells[8] = crate::import_options_editor::container_summary_with_format(
                     &subscription.settings.import_options,
                     &|key| {
                         hex::decode(key)
@@ -444,6 +487,7 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
                             })
                             .map_or_else(|| "unknown service".into(), |s| s.name.clone())
                     },
+                    &open.formatting,
                 );
             }
             let cells: Vec<SharedString> = cells.into_iter().map(Into::into).collect();
@@ -483,8 +527,18 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
             .collect()
     };
     let question = match &open.asking {
-        Some(Asking::MissingHistory(subscription, _)) => Some((
+        Some(
+            Asking::DirectImportMissing(subscription, _) | Asking::MissingHistory(subscription, _),
+        ) => Some((
             hydrus_gui_model::subscription_exchange::missing_history_question(&subscription.name),
+            false,
+        )),
+        Some(Asking::DirectImportNotice(title, message, _)) => Some((
+            Choice {
+                title: title.clone(),
+                message: message.clone(),
+                choices: vec!["ok".into()],
+            },
             false,
         )),
         Some(Asking::Reset) => yes_no(RESET_QUESTION),
@@ -501,7 +555,7 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
             },
             false,
         )),
-        Some(Asking::MergePrimary(group, _)) => Some((
+        Some(Asking::MergePrimary(group, _, _)) => Some((
             Choice {
                 title: MERGE_PRIMARY.into(),
                 message: String::new(),
@@ -1158,6 +1212,19 @@ pub(crate) fn open(
                 .map(|w| w.get_asked_text().to_string())
                 .unwrap_or_default();
             change(&|open| match open.asking.take() {
+                Some(Asking::DirectImportNotice(_, _, queue)) => direct_import_next(open, queue),
+                Some(Asking::DirectImportMissing(subscription, queue)) => {
+                    if index == 0
+                        && let Err(error) = hydrus_gui_model::subscription_exchange::stage(
+                            &mut open.dialog,
+                            vec![*subscription],
+                        )
+                    {
+                        open.asking = Some(Asking::Message(error));
+                        return;
+                    }
+                    direct_import_next(open, queue);
+                }
                 Some(Asking::MissingHistory(subscription, rest)) => {
                     if index == 0
                         && let Err(error) = hydrus_gui_model::subscription_exchange::stage(
@@ -1197,11 +1264,11 @@ pub(crate) fn open(
                             open.asking = Some(Asking::Message(NOT_MERGEABLE.into()));
                         } else {
                             let group = groups.remove(0);
-                            open.asking = Some(Asking::MergePrimary(group, groups));
+                            open.asking = Some(Asking::MergePrimary(group, groups, Vec::new()));
                         }
                     }
                 }
-                Some(Asking::MergePrimary(group, rest)) => {
+                Some(Asking::MergePrimary(group, rest, accepted)) => {
                     if let Some(&primary) = group.get(index) {
                         let name = open.dialog.get(primary).map(|s| s.name.clone());
                         *open.text.borrow_mut() = name;
@@ -1209,6 +1276,7 @@ pub(crate) fn open(
                             group,
                             primary,
                             rest,
+                            accepted,
                         });
                     }
                 }
@@ -1216,7 +1284,8 @@ pub(crate) fn open(
                     group,
                     primary,
                     rest,
-                }) => merge_named(open, &group, primary, rest, Some(&text)),
+                    accepted,
+                }) => merge_named(open, &group, primary, rest, accepted, Some(&text)),
                 Some(Asking::SeparateHow) => match index {
                     0 => {
                         open.dialog.separate(now(), &Separate::Half, "");
@@ -1290,13 +1359,18 @@ pub(crate) fn open(
         move || {
             change(&|open| {
                 match open.asking.take() {
+                    Some(
+                        Asking::DirectImportNotice(_, _, queue)
+                        | Asking::DirectImportMissing(_, queue),
+                    ) => direct_import_next(open, queue),
                     // A cancelled rename keeps the primary's original name.
                     Some(Asking::MergeName {
                         group,
                         primary,
                         rest,
+                        accepted,
                     }) => {
-                        merge_named(open, &group, primary, rest, None);
+                        merge_named(open, &group, primary, rest, accepted, None);
                     }
                     Some(Asking::MissingHistory(_, rest)) => {
                         import_next(open, rest);
@@ -1555,7 +1629,7 @@ pub(crate) fn open(
                         Ok(())
                     }
                 });
-                crate::downloader_interchange_window::open_subscriptions(&store, &slots, importing, definitions, preview, applied)
+                crate::downloader_interchange_window::open_subscriptions(&store, &slots, importing, &definitions, preview, applied)
             });
             if let Some(parent) = weak.upgrade() {
                 match result {
@@ -1582,13 +1656,31 @@ pub(crate) fn open(
         let active = active.clone();
         let weak = window.as_weak();
         let slots = exchange.clone();
+        let change = change.clone();
+        let state = state.clone();
         move |mode| {
-            if !active.get() || slots.has_open() || !(0..=5).contains(&mode) {
+            if !active.get()
+                || slots.has_open()
+                || !(0..=5).contains(&mode)
+                || state.borrow().asking.is_some()
+                || state
+                    .borrow()
+                    .favourites
+                    .as_ref()
+                    .is_some_and(|owner| owner.busy())
+            {
                 return;
             }
             let Some(parent) = weak.upgrade() else {
                 return;
             };
+            if mode >= 3 {
+                let queue = crate::subscription_import::Queue::from_mode(mode);
+                change(&|open| {
+                    direct_import_next(open, queue.clone());
+                });
+                return;
+            }
             parent.invoke_exchange(mode >= 3);
             let child = slots
                 .0

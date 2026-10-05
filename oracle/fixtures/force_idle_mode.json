@@ -1,0 +1,544 @@
+{
+  "initial": false,
+  "toggles": [
+    {
+      "before": false,
+      "checked": false,
+      "after": true,
+      "reopened": true,
+      "publications": [
+        "wake_idle_workers"
+      ],
+      "checkable": true
+    },
+    {
+      "before": true,
+      "checked": true,
+      "after": false,
+      "reopened": false,
+      "publications": [
+        "wake_idle_workers"
+      ],
+      "checkable": true
+    },
+    {
+      "before": false,
+      "checked": false,
+      "after": true,
+      "reopened": true,
+      "publications": [
+        "wake_idle_workers"
+      ],
+      "checkable": true
+    },
+    {
+      "before": true,
+      "checked": true,
+      "after": false,
+      "reopened": false,
+      "publications": [
+        "wake_idle_workers"
+      ],
+      "checkable": true
+    }
+  ],
+  "idle_matrix": [
+    {
+      "forced": false,
+      "shutdown": false,
+      "enabled": false,
+      "boot_recent": false,
+      "idle": false,
+      "busy": true,
+      "idle_started": null
+    },
+    {
+      "forced": false,
+      "shutdown": false,
+      "enabled": false,
+      "boot_recent": true,
+      "idle": false,
+      "busy": true,
+      "idle_started": null
+    },
+    {
+      "forced": false,
+      "shutdown": false,
+      "enabled": true,
+      "boot_recent": false,
+      "idle": true,
+      "busy": true,
+      "idle_started": 1000
+    },
+    {
+      "forced": false,
+      "shutdown": false,
+      "enabled": true,
+      "boot_recent": true,
+      "idle": false,
+      "busy": true,
+      "idle_started": null
+    },
+    {
+      "forced": false,
+      "shutdown": true,
+      "enabled": false,
+      "boot_recent": false,
+      "idle": false,
+      "busy": true,
+      "idle_started": null
+    },
+    {
+      "forced": false,
+      "shutdown": true,
+      "enabled": false,
+      "boot_recent": true,
+      "idle": false,
+      "busy": true,
+      "idle_started": null
+    },
+    {
+      "forced": false,
+      "shutdown": true,
+      "enabled": true,
+      "boot_recent": false,
+      "idle": false,
+      "busy": true,
+      "idle_started": null
+    },
+    {
+      "forced": false,
+      "shutdown": true,
+      "enabled": true,
+      "boot_recent": true,
+      "idle": false,
+      "busy": true,
+      "idle_started": null
+    },
+    {
+      "forced": true,
+      "shutdown": false,
+      "enabled": false,
+      "boot_recent": false,
+      "idle": true,
+      "busy": false,
+      "idle_started": 0
+    },
+    {
+      "forced": true,
+      "shutdown": false,
+      "enabled": false,
+      "boot_recent": true,
+      "idle": true,
+      "busy": false,
+      "idle_started": 0
+    },
+    {
+      "forced": true,
+      "shutdown": false,
+      "enabled": true,
+      "boot_recent": false,
+      "idle": true,
+      "busy": false,
+      "idle_started": 0
+    },
+    {
+      "forced": true,
+      "shutdown": false,
+      "enabled": true,
+      "boot_recent": true,
+      "idle": true,
+      "busy": false,
+      "idle_started": 0
+    },
+    {
+      "forced": true,
+      "shutdown": true,
+      "enabled": false,
+      "boot_recent": false,
+      "idle": false,
+      "busy": false,
+      "idle_started": null
+    },
+    {
+      "forced": true,
+      "shutdown": true,
+      "enabled": false,
+      "boot_recent": true,
+      "idle": false,
+      "busy": false,
+      "idle_started": null
+    },
+    {
+      "forced": true,
+      "shutdown": true,
+      "enabled": true,
+      "boot_recent": false,
+      "idle": false,
+      "busy": false,
+      "idle_started": null
+    },
+    {
+      "forced": true,
+      "shutdown": true,
+      "enabled": true,
+      "boot_recent": true,
+      "idle": false,
+      "busy": false,
+      "idle_started": null
+    }
+  ],
+  "recent_activity": [
+    {
+      "forced": false,
+      "idle": false,
+      "activity_unchanged": true
+    },
+    {
+      "forced": true,
+      "idle": true,
+      "activity_unchanged": true
+    },
+    {
+      "forced": false,
+      "idle": false,
+      "activity_unchanged": true
+    }
+  ],
+  "worker_entries": [
+    {
+      "worker": "trash",
+      "forced": false,
+      "normal": false,
+      "normally_idle": false,
+      "events": [],
+      "remaining": 1
+    },
+    {
+      "worker": "trash",
+      "forced": false,
+      "normal": false,
+      "normally_idle": true,
+      "events": [
+        [
+          "publish",
+          "wake_daemons"
+        ],
+        [
+          "read",
+          "trash_hashes"
+        ],
+        [
+          "write",
+          "content_updates",
+          1
+        ],
+        [
+          "sleep",
+          0.01
+        ],
+        [
+          "read",
+          "trash_hashes"
+        ],
+        [
+          "sleep",
+          2
+        ]
+      ],
+      "remaining": 0
+    },
+    {
+      "worker": "trash",
+      "forced": false,
+      "normal": true,
+      "normally_idle": false,
+      "events": [
+        [
+          "read",
+          "trash_hashes"
+        ],
+        [
+          "write",
+          "content_updates",
+          1
+        ],
+        [
+          "sleep",
+          0.01
+        ],
+        [
+          "read",
+          "trash_hashes"
+        ],
+        [
+          "sleep",
+          2
+        ]
+      ],
+      "remaining": 0
+    },
+    {
+      "worker": "trash",
+      "forced": false,
+      "normal": true,
+      "normally_idle": true,
+      "events": [
+        [
+          "publish",
+          "wake_daemons"
+        ],
+        [
+          "read",
+          "trash_hashes"
+        ],
+        [
+          "write",
+          "content_updates",
+          1
+        ],
+        [
+          "sleep",
+          0.01
+        ],
+        [
+          "read",
+          "trash_hashes"
+        ],
+        [
+          "sleep",
+          2
+        ]
+      ],
+      "remaining": 0
+    },
+    {
+      "worker": "trash",
+      "forced": true,
+      "normal": false,
+      "normally_idle": false,
+      "events": [
+        [
+          "read",
+          "trash_hashes"
+        ],
+        [
+          "write",
+          "content_updates",
+          1
+        ],
+        [
+          "sleep",
+          0.01
+        ],
+        [
+          "read",
+          "trash_hashes"
+        ],
+        [
+          "sleep",
+          2
+        ]
+      ],
+      "remaining": 0
+    },
+    {
+      "worker": "trash",
+      "forced": true,
+      "normal": false,
+      "normally_idle": true,
+      "events": [
+        [
+          "read",
+          "trash_hashes"
+        ],
+        [
+          "write",
+          "content_updates",
+          1
+        ],
+        [
+          "sleep",
+          0.01
+        ],
+        [
+          "read",
+          "trash_hashes"
+        ],
+        [
+          "sleep",
+          2
+        ]
+      ],
+      "remaining": 0
+    },
+    {
+      "worker": "trash",
+      "forced": true,
+      "normal": true,
+      "normally_idle": false,
+      "events": [
+        [
+          "read",
+          "trash_hashes"
+        ],
+        [
+          "write",
+          "content_updates",
+          1
+        ],
+        [
+          "sleep",
+          0.01
+        ],
+        [
+          "read",
+          "trash_hashes"
+        ],
+        [
+          "sleep",
+          2
+        ]
+      ],
+      "remaining": 0
+    },
+    {
+      "worker": "trash",
+      "forced": true,
+      "normal": true,
+      "normally_idle": true,
+      "events": [
+        [
+          "read",
+          "trash_hashes"
+        ],
+        [
+          "write",
+          "content_updates",
+          1
+        ],
+        [
+          "sleep",
+          0.01
+        ],
+        [
+          "read",
+          "trash_hashes"
+        ],
+        [
+          "sleep",
+          2
+        ]
+      ],
+      "remaining": 0
+    },
+    {
+      "worker": "deferred",
+      "forced": false,
+      "normal": false,
+      "normally_idle": false,
+      "events": [],
+      "remaining": 1
+    },
+    {
+      "worker": "deferred",
+      "forced": false,
+      "normal": false,
+      "normally_idle": true,
+      "events": [
+        [
+          "publish",
+          "wake_daemons"
+        ],
+        [
+          "read",
+          "deferred_physical_delete"
+        ]
+      ],
+      "remaining": 1
+    },
+    {
+      "worker": "deferred",
+      "forced": false,
+      "normal": true,
+      "normally_idle": false,
+      "events": [
+        [
+          "read",
+          "deferred_physical_delete"
+        ]
+      ],
+      "remaining": 1
+    },
+    {
+      "worker": "deferred",
+      "forced": false,
+      "normal": true,
+      "normally_idle": true,
+      "events": [
+        [
+          "publish",
+          "wake_daemons"
+        ],
+        [
+          "read",
+          "deferred_physical_delete"
+        ]
+      ],
+      "remaining": 1
+    },
+    {
+      "worker": "deferred",
+      "forced": true,
+      "normal": false,
+      "normally_idle": false,
+      "events": [
+        [
+          "read",
+          "deferred_physical_delete"
+        ]
+      ],
+      "remaining": 1
+    },
+    {
+      "worker": "deferred",
+      "forced": true,
+      "normal": false,
+      "normally_idle": true,
+      "events": [
+        [
+          "read",
+          "deferred_physical_delete"
+        ]
+      ],
+      "remaining": 1
+    },
+    {
+      "worker": "deferred",
+      "forced": true,
+      "normal": true,
+      "normally_idle": false,
+      "events": [
+        [
+          "read",
+          "deferred_physical_delete"
+        ]
+      ],
+      "remaining": 1
+    },
+    {
+      "worker": "deferred",
+      "forced": true,
+      "normal": true,
+      "normally_idle": true,
+      "events": [
+        [
+          "read",
+          "deferred_physical_delete"
+        ]
+      ],
+      "remaining": 1
+    }
+  ],
+  "limits": "Actual QAction/checked rebuilding/wake publication and controller/worker bodies run. Private clock/force globals, synthetic worker queue/database transport and sleep prevent reference media changes. Native DB/repository wake subscribers and CPUbusy backend are not represented by this Partial slice; trash/deferred schedules must not be reset on toggle."
+}

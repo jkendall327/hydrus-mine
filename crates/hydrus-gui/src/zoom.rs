@@ -602,6 +602,28 @@ impl Zoomed {
         (self.overlay)(None);
     }
 
+    /// Replace cached pixels and regenerate current tiles without resetting
+    /// zoom or pan, as an image-cache policy notification does.
+    pub fn refresh_still(&self, still: Option<Arc<hydrus_media::Raster>>) {
+        self.set_still(still);
+        self.draw();
+    }
+
+    /// Release still rendering when its owner closes, even if callers retain
+    /// the window handle. Dropping the channels lets the worker finish and exit.
+    pub fn close(&self) {
+        let mut sharp = self.sharp.borrow_mut();
+        sharp.polling.stop();
+        sharp.renderer = None;
+        sharp.still = None;
+        sharp.plan = None;
+        sharp.shown = None;
+        sharp.asked += 1;
+        drop(sharp);
+        *self.zoom.borrow_mut() = None;
+        (self.overlay)(None);
+    }
+
     /// Show a file of this type and resolution (none: of unknown type) at
     /// its default zoom.
     pub fn show(&self, shape: Option<(Mime, Option<(u32, u32)>)>) {
@@ -639,6 +661,14 @@ impl Zoomed {
     /// Draw the still sharply at `rect`: what was drawn moved along with
     /// it, if just moved, while the part now showing is rendered.
     fn sharpen(&self, rect: Rect) {
+        self.sharpen_with(rect, crate::still::Renderer::new);
+    }
+
+    fn sharpen_with(
+        &self,
+        rect: Rect,
+        make_renderer: impl FnOnce() -> std::io::Result<crate::still::Renderer>,
+    ) {
         let plan = {
             let sharp = self.sharp.borrow();
             let zoom = self.zoom.borrow();
@@ -703,9 +733,28 @@ impl Zoomed {
                 sharp.asked,
                 sharp.still.clone().expect("planned for a still"),
             );
+            if sharp.renderer.is_none() {
+                match make_renderer() {
+                    Ok(renderer) => sharp.renderer = Some(renderer),
+                    Err(error) => {
+                        // The original image is already drawn by Slint. Keep
+                        // that nearest-pixel fallback without a poller waiting
+                        // forever for a worker the OS could not start. Retain
+                        // the failed plan to avoid retrying on every paint;
+                        // another zoom, file or clipping plan can retry.
+                        eprintln!("could not start still rendering: {error}");
+                        sharp.shown = None;
+                        sharp.polling.stop();
+                        drop(sharp);
+                        (self.overlay)(None);
+                        return;
+                    }
+                }
+            }
             sharp
                 .renderer
-                .get_or_insert_with(crate::still::Renderer::new)
+                .as_ref()
+                .expect("renderer was started")
                 .request(id, still, plan);
             let this = Rc::downgrade(&self.sharp);
             let overlay = self.overlay.clone();
@@ -830,5 +879,75 @@ impl Zoomed {
     /// The size to render video at, if the file's zoom is known.
     pub fn render_size(&self) -> Option<(u32, u32)> {
         self.zoom.borrow().as_ref().map(Zoom::render_size)
+    }
+}
+
+#[cfg(test)]
+mod resource_tests {
+    use super::*;
+    use slint::ComponentHandle as _;
+
+    #[test]
+    fn an_unavailable_worker_keeps_the_original_image_and_stops_polling() {
+        let windows = crate::headless::init();
+        let window = crate::MediaViewerWindow::new().unwrap();
+        let raster = Arc::new(
+            hydrus_media::Raster::new(
+                2,
+                2,
+                3,
+                vec![255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255],
+            )
+            .unwrap(),
+        );
+        window.set_media(crate::image(&raster));
+        window.set_media_width(8.0);
+        window.set_media_height(8.0);
+        window.show().unwrap();
+        let drawn = windows.get(0).unwrap();
+        let before = crate::headless::render(&drawn, 32, 32);
+        let zoomed = crate::zoom_window!(window, MediaViewerSettings::default(), |_| (8, 8));
+        zoomed.set_still(Some(raster));
+        *zoomed.zoom.borrow_mut() = Some(Zoom::new(
+            MediaViewerSettings::default(),
+            Mime::ImageJpeg,
+            Some((2, 2)),
+            (8, 8),
+            1.0,
+        ));
+        zoomed.sharp.borrow().polling.start(
+            slint::TimerMode::Repeated,
+            std::time::Duration::from_secs(60),
+            || {},
+        );
+        let attempts = Cell::new(0);
+        let unavailable = || {
+            attempts.set(attempts.get() + 1);
+            Err(std::io::Error::new(
+                std::io::ErrorKind::WouldBlock,
+                "worker unavailable",
+            ))
+        };
+        zoomed.sharpen_with((0, 0, 8, 8), unavailable);
+        assert_eq!(attempts.get(), 1);
+        assert!(!window.get_sharp_shown());
+        let source_size = window.get_media().size();
+        assert_eq!((source_size.width, source_size.height), (2, 2));
+        assert_eq!(crate::headless::render_snapshot(&drawn, 32, 32), before);
+        assert!(zoomed.sharp.borrow().renderer.is_none());
+        assert!(!zoomed.sharp.borrow().polling.running());
+        zoomed.sharpen_with((0, 0, 8, 8), || {
+            panic!("unchanged failed plans must not repeatedly spawn workers")
+        });
+        zoomed.sharpen_with((0, 0, 16, 16), unavailable);
+        assert_eq!(attempts.get(), 2, "a changed plan can retry");
+        zoomed.close();
+        assert!(zoomed.sharp.borrow().still.is_none());
+        assert!(zoomed.sharp.borrow().plan.is_none());
+        assert!(zoomed.zoom.borrow().is_none());
+        zoomed.sharpen_with((0, 0, 8, 8), || {
+            panic!("retained closed canvases must not restart workers")
+        });
+        window.hide().unwrap();
     }
 }

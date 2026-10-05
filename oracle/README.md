@@ -7,6 +7,12 @@ Nothing in the Rust test suite runs Python: the outputs of these scripts are
 committed under `oracle/fixtures/` and `oracle/recordings/`. Re-running a
 script and committing a changed fixture is a deliberate, reviewable act.
 
+`record_gui_format_backend.py` records actual backend bandwidth/gallery waits,
+import size rejection, whole/range over-length responses and critical-drive
+diagnostics while staging, saving, reopening and cancelling the two GUI
+formatting controls. Time, wait decisions, response data and free space are
+scripted inputs; the reference business handlers run unchanged.
+
 ## Setup
 
 ```sh
@@ -39,12 +45,19 @@ export QT_QPA_PLATFORM=offscreen
 | `record_network_sessions.py` | `fixtures/network_sessions.json`: real Qt session/cookie/header rows, editor validation and clear/delete questions |
 | `record_clipboard_urls.py` | `fixtures/clipboard_urls.json`: real Qt clipboard watcher changes, independent switches, recognition and failure behavior on synthetic domains |
 | `record_tag_archives.py` | `fixtures/tag_archives.json` and `tag_archive_*.db`: real Qt archive inspectors/confirmations, four hash kinds and scope conversion, pair-count gates and actual Python/native-codec/Python SQLite round trips (`--rust-executable`, standalone `archive_exchange_harness.rs` compiled with cached third-party SQLite only) |
+| `record_popup_actions.py` | `fixtures/popup_actions.json`: actual Qt PopupMessage controls, current full clipboard/callable before refresh, repeated and cancelled callable, paused question visibility and both FinishAndDismiss replies |
 | `record_tag_migration_progress.py` | `fixtures/tag_migration_progress.json`: real MigrationJob, settings panel and Qt popup phases/speed, independent close, pause/cancel/dismiss and strict delayed dismissal |
 | `record_tag_migration_pause.py` | `fixtures/tag_migration_pause.json`: actual MigrationJob and Qt PopupMessage pause/resume/cancel with 11 identical entries in batches of three |
 | `record_tag_migration_filter_summaries.py` | `fixtures/tag_migration_filter_summaries.json`: 12 actual Qt sibling/parent confirmations with equal, asymmetric and equal-text distinct filter rules |
 | `record_tag_migration.py` | `fixtures/tag_migration.json`: real Qt migration controls/questions and reference mapping/pair destination changes |
 | `record_downloader_interchange.py` | `fixtures/downloader_interchange.json` and `.png`: reference definition formats, recent version upgrades and Rust JSON/PNG exports loaded by Python |
 | `record_subscription_add.py` | `fixtures/subscription_add.json`: real Qt separate gallery chooser and subscription editor acceptance/cancellation chain |
+| `record_metadata_file_jobs.py` | `fixtures/metadata_file_jobs.json`: real accepted/rejected Qt metadata dialogs, actual temporary-file timestamp/extension workers, stepped prefix/cancellation, delayed/immediate popup publication and copy-fallback cleanup scheduling |
+| `record_legacy_seed_caches.py` | `fixtures/legacy_seed_caches.json`: actual serialisable cache upgrades 1–7 and Qt legacy subscription list imports/exports; ordered URL/path histories, first-occurrence deduplication, timestamp/note migration, cached counts/examples, duplicate/complex-note preservation in Python and malformed-upgrade failures |
+| `record_idle_timeout_constructors.py` | `fixtures/idle_timeout_constructors.json`: actual Qt raw imported seconds, fresh controls, abandoned drafts and unchanged UpdateOptions normalization for 0/59/119/60060/None |
+| `record_image_cache.py` | `fixtures/image_cache.json`, authored RGB/RGBA PNGs and actual Options PNG: real Qt bytes/timeout/percentage staging/reopen and held actual ImageRenderer initialization showing estimate-to-loaded accounting, strict admission, soft overflow, LRU/expiry and policy changes |
+| `record_thumbnail_cache.py` | `fixtures/thumbnail_cache.json` and PNG: actual Qt byte/unit and timeout controls, real DataCache LRU/soft-overflow/strict last-access/policy/clear boundaries and real Help/debug thumbnail-clear QAction/reset publication |
+| `record_viewing_maintenance.py` | `fixtures/viewing_maintenance.json`: actual Qt global clear/cull callbacks, original questions/notices and reference SQLite culling for separate viewers, untouched timestamps/other canvases, zero/None bounds and invalid-rule rejection |
 | `dump_metadata_flags.py` | `fixtures/metadata_flags.json`: the XMP, IPTC and software/source flags of the corpus and of `fixtures/metadata/` (images carrying those) |
 | `dump_delete_lock.py` | `fixtures/delete_lock.json`: Client API deletes, duplicate deletes and trash emptying with the archived-file delete lock on, and each file's inbox state and domains after each |
 | `dump_tag_rendering.py` | `fixtures/tag_rendering.json`: awkward tags as `RenderTag` shows them to the user under several presentation options |
@@ -97,6 +110,17 @@ export QT_QPA_PLATFORM=offscreen
 
 ## The driver
 
+`record_mixed_login_packages.py` records the actual mixed downloader export
+panel's registered login chooser (Cancel, selected Add and remaining choices),
+nested-GUG/class/parser dependencies, summary confirmation and real
+PNGExportPanel.Export. The real mixed import panel ingests that PNG, records
+decline/accept, script key/name duplicate comparison and existing-domain link
+updates while retaining dummy saved credentials/activation/delay. It leaves new
+example domains unconfigured. Real chooser/PNG dialogs are answered by Qt timers;
+business handlers and transport functions remain unchanged. Fixtures:
+`mixed_login_packages.json` and `mixed_login_packages.png`. Native regression
+sources await hosted CI; no Cargo build is needed to execute this recorder.
+
 `hydrus_driver.py` boots the unmodified reference client **in-process** with an
 offscreen Qt platform, then runs a hook on a worker thread with the live
 controller and the client's own Client API (enabled on a local port with fixed
@@ -142,3 +166,167 @@ content publication. No remote service is exercised.
 record-clear decisions, accepted store updates, local domain counts and import
 status of a permanent deletion versus a trash file (executed 2026-10-04 21:43:09
 UTC on a freshly unpacked basic fixture). The review panel PNG is recorded too.
+
+`record_rating_preview_one_star.py` records four actual numerical example controls
+on an uncommitted duplicate of the imported service with allow-zero disabled.
+Centre clicks, one/seven-star changes and checkbox toggles capture both rendered
+fractions and the separate saved one-star normalization. Executed 2026-10-04
+22:14:39–22:14:41 UTC on a freshly unpacked basic fixture; no preview/conversion
+hooks or registered services were changed. Fixture: `rating_preview_one_star.json`.
+
+
+`record_service_rating_preview.py` opens the actual local like/dislike, numerical
+and inc/dec service configuration panels on a copied basic fixture. It records
+four independent sample controls, normal/right/middle-click decisions, live
+colour/shape/star-count/padding/fraction updates, opening numerical conversion,
+empty example persistence values and unchanged original services. The counter's
+real edit-value dialog receives scripted accept/cancel decisions. Qt example PNGs
+are saved beside `service_rating_preview.json`; no fixture service edits commit.
+
+
+`record_rating_preview_pointer.py` dispatches real Qt numerical example pointer
+presses, held left-button motion, outside movement/presses, release, ordinary
+motion and clicks on painted fraction text, for all three opening fraction sides.
+It records whole-widget positions/dimensions, fractions and the unchanged second
+sample, preserves original fixture services, and saves a populated drag-state PNG.
+
+`record_rating_context_sizes.py` drives the four real RatingsPanel double-spin
+boxes, their editingFinished consumers, UpdateOptions, reopened controls and
+actual option serialization. Six cases cover defaults, independent fractional
+values, both bounds and binary half boundaries: 31.755 → 31.75, 6.125 → 6.13
+and 12.125 → 12.13. Real RatingLike/Numerical/IncDec dialog and preview
+controls capture pixel sizes, including five-digit counter widths; the actual
+Manage Ratings dialog captures all three sizes and held-right/left mouse moves.
+An abandoned detached Options draft preserves saved values. Executed successfully
+2026-10-04 23:04:43–23:04:45 UTC via the serialized `with-oracle` helper, on a
+freshly unpacked basic fixture with clean reference shutdown. The fixture and
+inspected PNG are `rating_context_sizes.json` and `rating_context_sizes.png`. No
+rating handlers or registered services were replaced; the dialog was cancelled.
+
+
+The rating pointer recorder additionally dispatches mixed Left+Right presses,
+Right release with Left still held, continuing/outside/re-entered Left motion,
+Left release, and right-only dragging. It captures the reference's Left-priority
+press routing. Native delivered in-widget chord movement is covered; Slint's
+loss of capture after Right release remains a documented cross-edge limitation.
+
+
+`record_notes_preferences.py` records the real Notes Options checkboxes through
+UpdateOptions, serialization and reopened panels; an abandoned draft preserves
+the saved values. The actual Manage Notes cog is materialized from its own
+menu template and real QAction triggers invert live global preferences. Unicode
+editor cursors, tab retention, future-note creation through actual Paste, keyboard
+insertion, six copy variants (including empty-current JSON/plain text), and actual
+NotePanel middle mouse events capture the consumers. Both real modal DialogEdit
+Cancels close their owners through recorded dirty-note confirmations while keeping
+changed preferences; reopened menus/cursors and serialized flags are captured.
+Actual cog mouse clicks confirm right-click opens nothing and left-click opens a
+fresh menu, including after another preference owner changes the saved cursor
+flag. Popup presentation alone is observed; the real button and menu creation
+remain active. Executed successfully 2026-10-04 23:48:17–23:48:20 UTC via serialized `with-oracle`,
+on a fresh basic fixture with clean shutdown. `notes_preferences.json` and its
+inspected PNG contain the evidence. Clipboard input/publication and notifications
+are supplied/observed; no note handler or registered file content is replaced.
+
+`record_tag_suggestions.py` records the real Options tag-suggestions controls and
+per-service most-used list handlers, then the real SuggestedTagsPanel for both
+layouts and all four default choices with related/lookup disabled. It captures
+two-service retained edits/removal, Apply/reopen/cancel, filtered current tags,
+add-only selected activation, recent data and a populated PNG. Recent worker
+scheduling alone is made synchronous; real reads/publishers and all parsing,
+sorting, list, options and activation handlers remain intact. Run with the shared
+oracle lock on a fresh basic fixture.
+
+`record_duplicate_colours.py` drives real `DuplicatesPanel` NoneableSpinCtrl
+and checkbox fields, UpdateOptions/serialisation/reopen, and an abandoned page
+draft. It creates a real `CanvasFilterDuplicates` over the basic fixture's
+transparent PNG A and opaque JPEG B, switches with `SwitchMedia`, and records
+its colour generator and `StaticImage._DrawBackground` painter. No canvas
+business handler or colour function is replaced. The final v688 offscreen run
+used `/workspace/parallel/with-oracle` on 2026-10-05 00:18:52–00:18:54 UTC;
+`duplicate_colours.json` has five Options cases, 143 colour cases and eight
+canvas cases; `duplicate_colours.png` is the actual Qt canvas. The sandbox's
+unrelated Client API bind failed; recording and clean client shutdown completed.
+The abandoned Qt page is not a claim of the full Manage Options modal Cancel
+path; native tests separately cover the actual Options owner Cancel route.
+
+`record_read_tag_tabs.py` additionally records literal `system:inbox` and
+wildcard-parent activation through the actual favourite list, child activation/
+exclusion/removal, and restored negative tag contexts. Its independent `inbox`
+chain establishes that Qt cleans descendant lookup spelling in
+`GetDescendantsForTags`/`GetTagId`, while preserving the literal active predicate.
+The final offscreen run completed on 2026-10-05 at 03:46:56–58 UTC via
+`with-oracle` on a fresh basic fixture with clean shutdown. The unrelated
+sandbox Client API socket bind failed; the DB/Qt recording completed.
+Native/model replay assertions were authored without local Cargo builds, Rust
+tests or mutation runs. This is boundary evidence, with no new parity claim.
+
+`record_import_work_slots.py` records the actual ImportingPanel's five 1–500
+controls, staged/save/serialization/reopen/abandoned draft boundaries and raw
+loaded integer normalization on unchanged Apply. Real ClientController named
+AcquireThreadSlot/ReleaseThreadSlot and limit refresh exercise capacity two,
+shrink below running counts, strict admission after release, and growth to three
+for every category. It authors no network request. The final offscreen run
+completed 2026-10-05 04:17:32–04:17:34 UTC with clean shutdown on a fresh basic fixture;
+the unrelated sandbox Client API socket bind failed. The inspected actual Qt
+image is `import_work_slots.png`; evidence is `import_work_slots.json`.
+Constructor spinner seeds are 5/15/5/15/10, but real ClientOptions defaults loaded
+into them are 15/5/15/5/10. Authored Rust/native/downloader tests remain unrun
+locally and require hosted CI before the five proposed control claims promote.
+
+`record_existing_tags_filter.py` drives the real per-service
+`_EditOnlyAddExistingTagsFilter` action. Qt timers answer actual modal dialogs;
+editor, business handlers, serialization and database reads are unchanged.
+Synthetic current tags on fixture files distinguish selected-service counts
+from another service, and parsed from additional candidates. It records child
+Cancel/accept, automatic enablement, saving/reopening the typed service options,
+and `GetTags` consumers with enabled/disabled gates. The final offscreen run
+completed 2026-10-05 04:35:36–38 UTC with clean shutdown; its unrelated sandbox
+Client API bind failed. Evidence is `existing_tags_filter.json` and the inspected
+actual Qt `existing_tags_filter.png`. Rust/native/importer replay assertions are
+authored for hosted CI and were not run locally.
+
+`record_subscription_import_flow.py` records the actual subscription list's
+permitted-type filtering and ordered clipboard/JSON/PNG import handlers on a
+fresh basic fixture. Eleven cases cover nested valid/wrong-type packages,
+missing-log rejection, warning and information counts, final selection, accepted
+prefixes before invalid/unreadable files, and one future-version warning while
+subsequent files continue. Full exported histories and the registered Python
+class names are retained. The final offscreen run completed 2026-10-05
+04:42:25–04:42:30 UTC under the shared oracle lock with clean shutdown; the
+unrelated sandbox Client API socket bind failed. Synthetic subscriptions use
+only fixture URLs. Business loading/import/export handlers are unmodified;
+clock, fresh-name generation, clipboard text availability and user dialogs are
+held or recorded. Authored codec/native/Store replay and owner cancellation
+regressions await hosted CI. Clipboard bitmap precedence, drops, native error
+bodies and full unrelated-object payload validation remain outside this slice;
+subscriptions-exchange stays Partial with zero completion credit.
+
+`record_shortcut_capture.py` drives the actual EditShortcutAndCommandPanel and
+its keyboard/mouse widgets through Qt events. `shortcut_capture.json` records
+56 steps: both non-number numpad policies, sorted modifiers/effective event
+flags, Unicode casefold, number/Return/Enter/arrow keypad identities, modifier
+keys, Backtab, F24 and ignored null; both mouse label policies, six buttons,
+press/release choice, double-click, strict accumulated small wheel values and
+horizontal rejection. The final offscreen run completed 2026-10-05
+05:18:09–05:18:12 UTC on a fresh basic fixture via `with-oracle`, with clean
+shutdown. The unrelated sandbox Client API socket bind failed. Qt style values
+were 400 ms and five pixels; recording those values does not prove a Winit
+fallback matches native Qt double-click or angleDelta semantics. Mouse remains
+Partial/0. Model/native persistence, Cancel/stale ownership and main/viewer
+consumer assertions are authored for hosted CI, without local Rust execution.
+
+`record_popup_question_layout.py` drives actual private Qt PopupMessage instances at fixed32, variable16 and fixed16 character caps, with a long question and clipboard/callable/cancel controls. It records card/control rectangles, the question label's actual non-wrapped policy and real Cancel results; the variable16 PNG is captured before Cancel. The serialized offscreen run completed cleanly 2026-10-05 12:54:13–12:54:16 UTC on a copied basic fixture (private API listener disabled). No reference handlers or geometry are replaced. Native full-button bounds/render/pointer regressions are authored for hosted execution, with no local Rust run.
+
+`record_debug_delayed_popup.py` triggers the genuine Help/debug QAction twice one second apart, forwards the real controller CallLater and pub unchanged, and records actual background SingleJob deadlines/publications while Main is hidden. The real message manager presents both jobs after re-show; its populated PNG is `debug_delayed_popup.png`. Exact delay arguments are five seconds; observed arrivals were 5054.124 ms and 6002.523 ms after the first launch (second launch1001.516 ms). The unmodified reference scheduler/clock ran cleanly 2026-10-05 13:14:50–13:14:59 UTC under the shared oracle lock on a fresh private basic fixture with its API listener disabled. No fake delayed tasks or JobStatus setters are drained. Native exact-deadline, overlap, persistence, long-producer coexistence and lifetime tests are authored only; no local Rust execution.
+
+`record_ffmpeg_timeout.py` records real Qt timeout controls and actual reference metadata/version calls against a disclosed delayed local executable, including immutable deadlines and three-second polling.
+
+`record_viewer_prefetch.py` records the three real SpeedAndMemoryPanel spinboxes,
+caption/warning, serialized save/reopen and Cancel, actual CanvasMediaListNavigable
+circular neighbour order and hidden/shown `_MaintainNeighbourPrefetch`, and real
+ImageRendererCache/DataCache one-miss/readiness and atomic finished-only flush
+behavior. Real PIL initialization uses the existing image_cache PNG corpus;
+only renderer CallToThread is held to expose pending work. Detached cache clocks
+and suppressed automatic finished-image event delivery make explicit passes
+replayable without editing the reference or changing decoder policy.

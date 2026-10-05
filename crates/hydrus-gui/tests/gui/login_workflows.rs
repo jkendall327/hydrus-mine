@@ -699,7 +699,34 @@ fn script_editor_runs_real_http_with_fresh_cookies_and_reviews_without_saving() 
         fixture[0]["reviews"][0]["data"].as_str().unwrap()
     );
     first_review.invoke_action("close".into());
-    until_login(|| !window.get_running());
+    until_login(|| {
+        slots
+            .test_control
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .information_window()
+            .is_some()
+    });
+    let information = slots
+        .test_control
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .information_window()
+        .unwrap();
+    assert!(
+        window.get_running(),
+        "Qt keeps testing active while Information is visible"
+    );
+    assert!(window.get_child_open());
+    assert!(window.get_final_result().is_empty());
+    assert_eq!(
+        information.get_message(),
+        fixture[0]["outcome"].as_str().unwrap()
+    );
+    information.invoke_cancelled();
+    assert!(!window.get_running());
     assert_eq!(
         window.get_final_result(),
         fixture[0]["outcome"].as_str().unwrap()
@@ -803,7 +830,7 @@ fn domain_login_confirmation_saves_then_real_http_persists_session_and_outcome()
             )
         })
         .unwrap();
-    headless::init();
+    let _headless_windows = headless::init();
     let slots = hydrus_gui::login_domains_window::Slots::default();
     let window = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
     window.invoke_row_clicked(0, false, false);
@@ -995,17 +1022,9 @@ fn shared_cookie_list_owns_matchers_and_stages_both_script_and_step_consumers() 
     script.invoke_step_clicked(1);
     script.invoke_action("edit-step".into());
     let step = slots.step.step.borrow().as_ref().unwrap().clone_strong();
-    step.invoke_action("cookies".into());
-    let child = slots
-        .step
-        .cookies
-        .window
-        .borrow()
-        .as_ref()
-        .unwrap()
-        .clone_strong();
-    child.invoke_row_clicked(0, false, false);
-    child.invoke_action("edit".into());
+    step.invoke_cookie_clicked(0, false, false);
+    step.invoke_action("edit-cookie".into());
+    assert!(slots.step.cookies.window.borrow().is_none());
     let name_match = slots
         .step
         .cookies
@@ -1017,21 +1036,25 @@ fn shared_cookie_list_owns_matchers_and_stages_both_script_and_step_consumers() 
         .clone_strong();
     name_match.invoke_apply();
     fixed_cookie_matcher(&slots.step.cookies, "updated");
-    child.invoke_action("apply".into());
     step.invoke_action("apply".into());
     script.invoke_action("apply".into());
     list.invoke_action("apply".into());
     let saved = store.read(hydrus_store::logins::load).unwrap();
     assert_eq!(saved.scripts[0].required_cookies.len(), 2);
-    assert!(
-        saved.scripts[0]
-            .required_cookies
-            .iter()
-            .any(|row| row.name == hydrus_core::url::strings::StringMatch::fixed("probe"))
-    );
+    assert!(saved.scripts[0].required_cookies.iter().any(|row| row.name
+        == hydrus_core::url::strings::StringMatch {
+            kind: hydrus_core::url::strings::MatchKind::Fixed("probe".into()),
+            example: "probe".into(),
+            ..hydrus_core::url::strings::StringMatch::any()
+        }));
+    let mut expected_value = original.scripts[0].steps[1].required_cookies[0]
+        .value
+        .clone();
+    expected_value.kind = hydrus_core::url::strings::MatchKind::Fixed("updated".into());
+    expected_value.example = "updated".into();
     assert_eq!(
         saved.scripts[0].steps[1].required_cookies[0].value,
-        hydrus_core::url::strings::StringMatch::fixed("updated")
+        expected_value
     );
     let site = LoginSite::start();
     let mut executing = saved.scripts[0].clone();
@@ -1208,6 +1231,164 @@ fn string_table(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> serde_json::Valu
             })
             .collect::<Vec<_>>()
     )
+}
+
+#[test]
+fn embedded_step_cookie_actions_replay_qt_and_retire_matchers_with_the_owner() {
+    let fixture = hydrus_testkit::fixture_json("login_step_cookies.json");
+    assert_eq!(fixture["topology"]["embedded"], true);
+    assert_eq!(
+        fixture["topology"]["buttons"],
+        serde_json::json!(["add", "edit", "delete"])
+    );
+    assert_eq!(
+        fixture["topology"]["columns"],
+        serde_json::json!(["key", "matching"])
+    );
+    let original = legacy::login_step(
+        &SerialisableObject::from_tuple_str(&fixture["original"].to_string()).unwrap(),
+    )
+    .unwrap();
+    let (_dir, store, saved) = store();
+    let rendered = headless::init();
+    let slots = hydrus_gui::login_step_window::Slots::default();
+    let accepted = Rc::new(RefCell::new(None));
+    let applied: hydrus_gui::login_step_window::Applied = Rc::new({
+        let accepted = accepted.clone();
+        move |step| {
+            *accepted.borrow_mut() = Some(step);
+            Ok(())
+        }
+    });
+    let window =
+        hydrus_gui::login_step_window::open(&store, &original, &slots, applied.clone()).unwrap();
+    let adapter = rendered.get(rendered.count() - 1).unwrap();
+    for state in &fixture["states"].as_array().unwrap()[1..] {
+        let action = state["action"].as_str().unwrap();
+        if action == "delete" {
+            if !state["answer"].as_bool().unwrap() {
+                window.invoke_cookie_clicked(0, false, false);
+                window.invoke_cookie_clicked(1, true, false);
+                assert!(window.get_cookie_any() && !window.get_cookie_one());
+            }
+            window.invoke_action("delete-cookie".into());
+            assert!(window.get_deleting());
+            window.invoke_action(
+                if state["answer"] == true {
+                    "confirm-delete"
+                } else {
+                    "back"
+                }
+                .into(),
+            );
+        } else {
+            if action == "edit" {
+                window.invoke_cookie_clicked(
+                    i32::try_from(window.get_cookies().row_count() - 1).unwrap(),
+                    false,
+                    false,
+                );
+                assert!(window.get_cookie_one());
+            }
+            window.invoke_action(format!("{action}-cookie").into());
+            assert!(
+                slots.cookies.window.borrow().is_none(),
+                "matcher opens directly from the embedded step list"
+            );
+            for (index, title) in state["dialogs"].as_array().unwrap().iter().enumerate() {
+                let child = slots
+                    .cookies
+                    .strings
+                    .step
+                    .borrow()
+                    .as_ref()
+                    .unwrap()
+                    .clone_strong();
+                assert_eq!(child.get_window_title(), title.as_str().unwrap());
+                assert_eq!(
+                    child.get_match_type(),
+                    i32::from(state["initial"][index][2][0] != 3)
+                );
+                assert_eq!(
+                    child.get_fixed(),
+                    state["initial"][index][2][1].as_str().unwrap()
+                );
+                assert_eq!(
+                    child.get_match_example(),
+                    state["initial"][index][2][4].as_str().unwrap()
+                );
+                assert!(window.get_child_open());
+                window.invoke_action("apply".into());
+                window.invoke_action("delete-cookie".into());
+                assert!(accepted.borrow().is_none());
+                if let Some(text) = state["answers"][index].as_str() {
+                    fixed_cookie_matcher(&slots.cookies, text);
+                } else {
+                    child.invoke_cancel();
+                }
+            }
+        }
+        assert!(!window.get_child_open() && !window.get_deleting());
+        assert!(slots.cookies.strings.step.borrow().is_none());
+        assert_eq!(string_table(&window.get_cookies()), state["state"]["rows"]);
+        let selected: Vec<_> = (0..window.get_cookies().row_count())
+            .filter_map(|i| {
+                let row = window.get_cookies().row_data(i).unwrap();
+                row.selected.then(|| {
+                    vec![
+                        row.cells.row_data(0).unwrap().to_string(),
+                        row.cells.row_data(1).unwrap().to_string(),
+                    ]
+                })
+            })
+            .collect();
+        assert_eq!(serde_json::json!(selected), state["state"]["selected"]);
+        assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
+    }
+    headless::render(&adapter, 880, 1100);
+    let pixels = headless::render(&adapter, 880, 1100);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("login_step_embedded_cookies.png"),
+        &pixels,
+        880,
+        1100,
+    )
+    .unwrap();
+    window.invoke_action("apply".into());
+    let value = accepted.borrow_mut().take().unwrap();
+    assert_eq!(
+        hydrus_downloader_exchange::logins::step_tuple(&value).unwrap(),
+        fixture["states"].as_array().unwrap().last().unwrap()["state"]["value"]
+    );
+    for value_stage in [false, true] {
+        let retired =
+            hydrus_gui::login_step_window::open(&store, &original, &slots, applied.clone())
+                .unwrap();
+        retired.invoke_action("add-cookie".into());
+        if value_stage {
+            fixed_cookie_matcher(&slots.cookies, "retired");
+        }
+        let matcher = slots
+            .cookies
+            .strings
+            .step
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        retired.invoke_action("cancel".into());
+        assert!(!matcher.window().is_visible());
+        let successor =
+            hydrus_gui::login_step_window::open(&store, &value, &slots, applied.clone()).unwrap();
+        successor.set_name("successor draft".into());
+        matcher.invoke_apply();
+        retired.invoke_action("apply".into());
+        assert_eq!(successor.get_name(), "successor draft");
+        assert_eq!(successor.get_cookies().row_count(), 1);
+        assert!(accepted.borrow().is_none());
+        assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
+        successor.invoke_action("cancel".into());
+    }
 }
 #[test]
 fn step_argument_prompts_replay_reference_questions_defaults_cancel_and_stale_owner() {
@@ -1988,7 +2169,26 @@ fn script_test_domain_prompt_replays_memory_cancel_clear_timing_and_real_http() 
         assert_eq!(window.get_running(), started);
         if started {
             assert_eq!(window.get_results().row_count(), 0);
-            until_login(|| !window.get_running());
+            until_login(|| {
+                slots
+                    .test_control
+                    .borrow()
+                    .as_ref()
+                    .unwrap()
+                    .information_window()
+                    .is_some()
+            });
+            let information = slots
+                .test_control
+                .borrow()
+                .as_ref()
+                .unwrap()
+                .information_window()
+                .unwrap();
+            assert!(window.get_running());
+            assert_eq!(information.get_message(), "Login OK!");
+            information.invoke_cancelled();
+            assert!(!window.get_running());
             assert_eq!(window.get_results().row_count(), 1);
         } else {
             assert_eq!(string_table(&window.get_results()), previous);

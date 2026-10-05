@@ -258,7 +258,7 @@ pub fn open(
             let result = crate::downloader_interchange_window::open_steps(
                 &slots.exchange,
                 importing,
-                steps,
+                &steps,
                 applied,
             );
             if let Some(window) = weak.upgrade() {
@@ -852,10 +852,23 @@ fn bind_step_favourites(
                     Ok(())
                 }
             });
-            let result = crate::regex_favourites_window::open(
+            let result = crate::regex_favourites_window::open_owned(
                 &favourites.borrow(),
                 &slots.favourites,
                 applied,
+                Rc::new({
+                    let store = store.clone();
+                    move || {
+                        store
+                            .read(hydrus_store::regex_favourites::load)
+                            .map_err(|e| e.to_string())
+                    }
+                }),
+                Rc::new({
+                    let active = active.clone();
+                    let weak = weak.clone();
+                    move || active.get() && weak.upgrade().is_some_and(|w| w.window().is_visible())
+                }),
             );
             if let Some(window) = weak.upgrade() {
                 match result {

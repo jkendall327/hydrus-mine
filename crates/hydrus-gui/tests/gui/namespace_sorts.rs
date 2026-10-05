@@ -10,7 +10,7 @@ use hydrus_search::{FileSearchContext, LocationContext};
 use hydrus_store::{Store, settings};
 use slint::{ComponentHandle as _, Model as _};
 use std::sync::Arc;
-fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
+pub(super) fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();
     hydrus_store::import::import_legacy(

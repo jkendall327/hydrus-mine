@@ -6,6 +6,15 @@ use hydrus_legacy::{objects::logins as legacy, serialisable::SerialisableObject}
 use hydrus_parse::login::CredentialKind;
 use serde_json::{Value, json};
 use std::collections::BTreeMap;
+fn fixed_editor_value(
+    original: &hydrus_core::url::strings::StringMatch,
+    text: &str,
+) -> hydrus_core::url::strings::StringMatch {
+    let mut child = hydrus_gui_model::string_editors::MatchEditor::new(original);
+    child.set_type(1);
+    text.clone_into(&mut child.fixed);
+    child.value().expect("the recorded fixed matcher is valid")
+}
 fn manager(fixture: &Value) -> hydrus_parse::login::LoginManager {
     legacy::manager(&SerialisableObject::from_tuple_str(&fixture["manager"].to_string()).unwrap())
         .unwrap()
@@ -349,21 +358,23 @@ fn cookie_requirements_match_real_qt_pair_edits_cancel_and_duplicate_looking_key
         if let Some(value) = values.get(1).and_then(serde_json::Value::as_str) {
             let index = if state["action"] == "edit" {
                 editor.rows.iter().position(|row| {
-                    row.name == hydrus_core::url::strings::StringMatch::fixed("token")
+                    row.name.kind == hydrus_core::url::strings::MatchKind::Fixed("token".into())
                 })
             } else {
                 None
             };
-            editor.put(
-                index,
-                hydrus_parse::login::CookieRequirement {
-                    name: hydrus_core::url::strings::StringMatch::fixed(
-                        values[0].as_str().unwrap(),
-                    ),
-                    value: hydrus_core::url::strings::StringMatch::fixed(value),
+            let mut cookie = index.map_or_else(
+                || hydrus_parse::login::CookieRequirement {
+                    name: hydrus_core::url::strings::StringMatch::any(),
+                    value: hydrus_core::url::strings::StringMatch::any(),
                     reference_auxiliary: None,
                 },
+                |i| editor.rows[i].clone(),
             );
+            cookie.name = fixed_editor_value(&cookie.name, values[0].as_str().unwrap());
+            cookie.value = fixed_editor_value(&cookie.value, value);
+            cookie.reference_auxiliary = None;
+            editor.put(index, cookie);
         }
         script.required_cookies = editor.value();
         assert_eq!(
@@ -394,6 +405,80 @@ fn cookie_requirements_match_real_qt_pair_edits_cancel_and_duplicate_looking_key
     editor.delete();
     assert_eq!(editor.rows.len(), 1);
     assert!(editor.selection.is_empty());
+}
+
+#[test]
+fn embedded_step_cookie_list_replays_sorted_pair_actions_and_confirmed_bulk_delete() {
+    let fixture = hydrus_testkit::fixture_json("login_step_cookies.json");
+    let original = legacy::login_step(
+        &SerialisableObject::from_tuple_str(&fixture["original"].to_string()).unwrap(),
+    )
+    .unwrap();
+    let mut editor = StepEditor::new(&original);
+    let states = fixture["states"].as_array().unwrap();
+    for state in &states[1..] {
+        let action = state["action"].as_str().unwrap();
+        if action == "delete" {
+            if state["answer"].as_bool().unwrap() {
+                editor.cookies.delete();
+            } else {
+                let order = editor.cookies.order();
+                editor.cookies.selection.click(&order, 0, false, false);
+                editor.cookies.selection.click(&order, 1, true, false);
+            }
+            assert_eq!(state["questions"][0], "Remove all selected?");
+        } else {
+            let index = if action == "edit" {
+                editor.cookies.order().last().copied()
+            } else {
+                None
+            };
+            if let Some(index) = index {
+                editor.cookies.selection.select_only(Some(index));
+            }
+            let answers = state["answers"].as_array().unwrap();
+            if let Some(value) = answers.get(1).and_then(Value::as_str) {
+                let mut cookie = index.map_or_else(
+                    || hydrus_parse::login::CookieRequirement {
+                        name: hydrus_core::url::strings::StringMatch::any(),
+                        value: hydrus_core::url::strings::StringMatch::any(),
+                        reference_auxiliary: None,
+                    },
+                    |i| editor.cookies.rows[i].clone(),
+                );
+                // Replay the real matcher child: fixed text becomes its example
+                // and clears length limits, as the recorded Qt GetValue does.
+                cookie.name = fixed_editor_value(&cookie.name, answers[0].as_str().unwrap());
+                cookie.value = fixed_editor_value(&cookie.value, value);
+                cookie.reference_auxiliary = None;
+                editor.cookies.put(index, cookie);
+            }
+        }
+        assert_eq!(
+            hydrus_downloader_exchange::logins::step_tuple(&editor.value()).unwrap(),
+            state["state"]["value"]
+        );
+        assert_eq!(
+            json!(
+                editor
+                    .cookies
+                    .value()
+                    .iter()
+                    .map(|row| vec![
+                        row.name.describe(false, false),
+                        row.value.describe(false, false)
+                    ])
+                    .collect::<Vec<_>>()
+            ),
+            state["state"]["rows"]
+        );
+        assert_eq!(
+            hydrus_downloader_exchange::logins::step_tuple(&original).unwrap(),
+            fixture["original"]
+        );
+    }
+    assert_eq!(editor.cookies.rows.len(), 1);
+    assert_eq!(original.required_cookies.len(), 1);
 }
 
 #[test]

@@ -237,6 +237,7 @@ fn a_slideshow_moving_on_leaves_the_menu_and_questions_with_their_file() {
     )
     .unwrap();
     let store = Store::open(native.path()).unwrap();
+    super::common::remove_trashed_from_view(&store);
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));

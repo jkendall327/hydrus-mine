@@ -1,0 +1,1104 @@
+{
+  "menu_path": [
+    "help",
+    "debug",
+    "gui actions",
+    "make a long text popup"
+  ],
+  "words": [
+    "test",
+    "a",
+    "longish",
+    "statictext",
+    "m8"
+  ],
+  "word_choice": "cycle from index0 across both real producer loops",
+  "published": [
+    {
+      "index": 0,
+      "text": "test",
+      "title": null,
+      "done": true,
+      "cancellable": false,
+      "pausable": false
+    },
+    {
+      "index": 1,
+      "text": "test long title",
+      "title": null,
+      "done": true,
+      "cancellable": false,
+      "pausable": false
+    }
+  ],
+  "schedule": [
+    {
+      "delay": 0.2,
+      "at_ms": 200,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a"
+    },
+    {
+      "delay": 0.4,
+      "at_ms": 400,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish"
+    },
+    {
+      "delay": 0.6000000000000001,
+      "at_ms": 600,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext"
+    },
+    {
+      "delay": 0.8,
+      "at_ms": 800,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8"
+    },
+    {
+      "delay": 1.0,
+      "at_ms": 1000,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test"
+    },
+    {
+      "delay": 1.2,
+      "at_ms": 1200,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a"
+    },
+    {
+      "delay": 1.4,
+      "at_ms": 1400,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 1.5999999999999999,
+      "at_ms": 1600,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 1.7999999999999998,
+      "at_ms": 1800,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 1.9999999999999998,
+      "at_ms": 2000,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 2.1999999999999997,
+      "at_ms": 2200,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 2.4,
+      "at_ms": 2400,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 2.6,
+      "at_ms": 2600,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 2.8000000000000003,
+      "at_ms": 2800,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 3.0000000000000004,
+      "at_ms": 3000,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 3.2000000000000006,
+      "at_ms": 3200,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 3.400000000000001,
+      "at_ms": 3400,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 3.600000000000001,
+      "at_ms": 3600,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 3.800000000000001,
+      "at_ms": 3800,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 4.000000000000001,
+      "at_ms": 4000,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 4.200000000000001,
+      "at_ms": 4200,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 4.400000000000001,
+      "at_ms": 4400,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 4.600000000000001,
+      "at_ms": 4600,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 4.800000000000002,
+      "at_ms": 4800,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 5.000000000000002,
+      "at_ms": 5000,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 5.200000000000002,
+      "at_ms": 5200,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 5.400000000000002,
+      "at_ms": 5400,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 5.600000000000002,
+      "at_ms": 5600,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 5.8000000000000025,
+      "at_ms": 5800,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 6.000000000000003,
+      "at_ms": 6000,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 6.200000000000003,
+      "at_ms": 6200,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 6.400000000000003,
+      "at_ms": 6400,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 6.600000000000003,
+      "at_ms": 6600,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 6.800000000000003,
+      "at_ms": 6800,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 7.0000000000000036,
+      "at_ms": 7000,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 7.200000000000004,
+      "at_ms": 7200,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 7.400000000000004,
+      "at_ms": 7400,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 7.600000000000004,
+      "at_ms": 7600,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 7.800000000000004,
+      "at_ms": 7800,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 8.000000000000004,
+      "at_ms": 8000,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 8.200000000000003,
+      "at_ms": 8200,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 8.400000000000002,
+      "at_ms": 8400,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 8.600000000000001,
+      "at_ms": 8600,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 8.8,
+      "at_ms": 8800,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 9.0,
+      "at_ms": 9000,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 9.2,
+      "at_ms": 9200,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 9.399999999999999,
+      "at_ms": 9400,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 9.599999999999998,
+      "at_ms": 9600,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 9.799999999999997,
+      "at_ms": 9800,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 9.999999999999996,
+      "at_ms": 10000,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 10.199999999999996,
+      "at_ms": 10200,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 10.399999999999995,
+      "at_ms": 10400,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 10.599999999999994,
+      "at_ms": 10600,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 10.799999999999994,
+      "at_ms": 10800,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 10.999999999999993,
+      "at_ms": 11000,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 11.199999999999992,
+      "at_ms": 11200,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 11.399999999999991,
+      "at_ms": 11400,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 11.59999999999999,
+      "at_ms": 11600,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 11.79999999999999,
+      "at_ms": 11800,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 11.99999999999999,
+      "at_ms": 12000,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 12.199999999999989,
+      "at_ms": 12200,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 12.399999999999988,
+      "at_ms": 12400,
+      "index": 0,
+      "method": "SetStatusText",
+      "value": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 12.599999999999987,
+      "at_ms": 12600,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8"
+    },
+    {
+      "delay": 12.799999999999986,
+      "at_ms": 12800,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test"
+    },
+    {
+      "delay": 12.999999999999986,
+      "at_ms": 13000,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a"
+    },
+    {
+      "delay": 13.199999999999985,
+      "at_ms": 13200,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish"
+    },
+    {
+      "delay": 13.399999999999984,
+      "at_ms": 13400,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 13.599999999999984,
+      "at_ms": 13600,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 13.799999999999983,
+      "at_ms": 13800,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 13.999999999999982,
+      "at_ms": 14000,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 14.199999999999982,
+      "at_ms": 14200,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 14.39999999999998,
+      "at_ms": 14400,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 14.59999999999998,
+      "at_ms": 14600,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 14.79999999999998,
+      "at_ms": 14800,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 14.999999999999979,
+      "at_ms": 15000,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 15.199999999999978,
+      "at_ms": 15200,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 15.399999999999977,
+      "at_ms": 15400,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 15.599999999999977,
+      "at_ms": 15600,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 15.799999999999976,
+      "at_ms": 15800,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 15.999999999999975,
+      "at_ms": 16000,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 16.199999999999974,
+      "at_ms": 16200,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 16.399999999999974,
+      "at_ms": 16400,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 16.599999999999973,
+      "at_ms": 16600,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 16.799999999999972,
+      "at_ms": 16800,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 16.99999999999997,
+      "at_ms": 17000,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 17.19999999999997,
+      "at_ms": 17200,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 17.39999999999997,
+      "at_ms": 17400,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 17.59999999999997,
+      "at_ms": 17600,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 17.79999999999997,
+      "at_ms": 17800,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 17.999999999999968,
+      "at_ms": 18000,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 18.199999999999967,
+      "at_ms": 18200,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 18.399999999999967,
+      "at_ms": 18400,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 18.599999999999966,
+      "at_ms": 18600,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 18.799999999999965,
+      "at_ms": 18800,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 18.999999999999964,
+      "at_ms": 19000,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 19.199999999999964,
+      "at_ms": 19200,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 19.399999999999963,
+      "at_ms": 19400,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 19.599999999999962,
+      "at_ms": 19600,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 19.79999999999996,
+      "at_ms": 19800,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 19.99999999999996,
+      "at_ms": 20000,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 20.19999999999996,
+      "at_ms": 20200,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 20.39999999999996,
+      "at_ms": 20400,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 20.59999999999996,
+      "at_ms": 20600,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 20.799999999999958,
+      "at_ms": 20800,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 20.999999999999957,
+      "at_ms": 21000,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 21.199999999999957,
+      "at_ms": 21200,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 21.399999999999956,
+      "at_ms": 21400,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 21.599999999999955,
+      "at_ms": 21600,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 21.799999999999955,
+      "at_ms": 21800,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 21.999999999999954,
+      "at_ms": 22000,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 22.199999999999953,
+      "at_ms": 22200,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 22.399999999999952,
+      "at_ms": 22400,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 22.59999999999995,
+      "at_ms": 22600,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 22.79999999999995,
+      "at_ms": 22800,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 22.99999999999995,
+      "at_ms": 23000,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 23.19999999999995,
+      "at_ms": 23200,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 23.39999999999995,
+      "at_ms": 23400,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 23.599999999999948,
+      "at_ms": 23600,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 23.799999999999947,
+      "at_ms": 23800,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    },
+    {
+      "delay": 23.999999999999947,
+      "at_ms": 24000,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a"
+    },
+    {
+      "delay": 24.199999999999946,
+      "at_ms": 24200,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish"
+    },
+    {
+      "delay": 24.399999999999945,
+      "at_ms": 24400,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext"
+    },
+    {
+      "delay": 24.599999999999945,
+      "at_ms": 24600,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8"
+    },
+    {
+      "delay": 24.799999999999944,
+      "at_ms": 24800,
+      "index": 1,
+      "method": "SetStatusTitle",
+      "value": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test"
+    }
+  ],
+  "trace": [
+    {
+      "at_ms": 0,
+      "jobs": [
+        {
+          "text": "test",
+          "title": null,
+          "done": true,
+          "dismissed": false
+        },
+        {
+          "text": "test long title",
+          "title": null,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "cards": [
+        {
+          "text": "test",
+          "title": "",
+          "title_hidden": true,
+          "width": 28,
+          "height": 25
+        },
+        {
+          "text": "test long title",
+          "title": "",
+          "title_hidden": true,
+          "width": 79,
+          "height": 25
+        }
+      ]
+    },
+    {
+      "at_ms": 200,
+      "jobs": [
+        {
+          "text": "test a",
+          "title": null,
+          "done": true,
+          "dismissed": false
+        },
+        {
+          "text": "test long title",
+          "title": null,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "cards": [
+        {
+          "text": "test a",
+          "title": "",
+          "title_hidden": true,
+          "width": 37,
+          "height": 25
+        },
+        {
+          "text": "test long title",
+          "title": "",
+          "title_hidden": true,
+          "width": 79,
+          "height": 25
+        }
+      ]
+    },
+    {
+      "at_ms": 12400,
+      "jobs": [
+        {
+          "text": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish",
+          "title": null,
+          "done": true,
+          "dismissed": false
+        },
+        {
+          "text": "test long title",
+          "title": null,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "cards": [
+        {
+          "text": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish",
+          "title": "",
+          "title_hidden": true,
+          "width": 425,
+          "height": 85
+        },
+        {
+          "text": "test long title",
+          "title": "",
+          "title_hidden": true,
+          "width": 79,
+          "height": 25
+        }
+      ]
+    },
+    {
+      "at_ms": 12600,
+      "jobs": [
+        {
+          "text": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish",
+          "title": null,
+          "done": true,
+          "dismissed": false
+        },
+        {
+          "text": "test long title",
+          "title": "statictext m8",
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "cards": [
+        {
+          "text": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish",
+          "title": "",
+          "title_hidden": true,
+          "width": 425,
+          "height": 85
+        },
+        {
+          "text": "test long title",
+          "title": "statictext m8",
+          "title_hidden": false,
+          "width": 82,
+          "height": 42
+        }
+      ]
+    },
+    {
+      "at_ms": 24800,
+      "jobs": [
+        {
+          "text": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish",
+          "title": null,
+          "done": true,
+          "dismissed": false
+        },
+        {
+          "text": "test long title",
+          "title": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test",
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "cards": [
+        {
+          "text": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish",
+          "title": "",
+          "title_hidden": true,
+          "width": 425,
+          "height": 85
+        },
+        {
+          "text": "test long title",
+          "title": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test",
+          "title_hidden": false,
+          "width": 429,
+          "height": 102
+        }
+      ]
+    },
+    {
+      "at_ms": 25000,
+      "jobs": [
+        {
+          "text": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish",
+          "title": null,
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "text": "test long title",
+          "title": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test",
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "cards": [
+        {
+          "text": "test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish",
+          "title": "",
+          "title_hidden": true,
+          "width": 425,
+          "height": 85
+        },
+        {
+          "text": "test long title",
+          "title": "statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test a longish statictext m8 test",
+          "title_hidden": false,
+          "width": 429,
+          "height": 102
+        }
+      ]
+    }
+  ]
+}

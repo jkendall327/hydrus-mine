@@ -2502,9 +2502,12 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "arboard",
+ "axum",
  "crossbeam-channel",
  "hex",
+ "hydrus-api",
  "hydrus-core",
+ "hydrus-download",
  "hydrus-downloader-exchange",
  "hydrus-duplicates",
  "hydrus-gui-model",
@@ -2527,6 +2530,8 @@ dependencies = [
  "slint-build",
  "tempfile",
  "tokio",
+ "tower",
+ "tracing",
 ]
 
 [[package]]

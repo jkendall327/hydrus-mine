@@ -1,0 +1,523 @@
+{
+  "schema_version": 1,
+  "task": "Four Files and Trash view-removal controls with captured native page ownership",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "implementation_base": "8f7951582d7d10c4f97caa76a3972303966edbc2",
+  "source_commit": "06249a6ece16a324d6119f253f3d86d23cac009e",
+  "implementation_commits": [
+    "06249a6ece16a324d6119f253f3d86d23cac009e"
+  ],
+  "eligible_concrete_first_pass_count": 4,
+  "parent_promotions": 0,
+  "parents_remain_partial": [
+    "options-files-and-trash"
+  ],
+  "validation": {
+    "reference": "Actual Qt recording completed; four controls and dependent enabled state inspected in Qt PNG.",
+    "source_checks": "Cached Slint compiler, final rustfmt --check over all changed/new Rust, git diff --check and Python py_compile passed.",
+    "rust_tests": "Meaningful model/store/native regressions authored only; hosted CI pending. No local Cargo/Rust/mutation runs.",
+    "independent_review": "repair_child_literal_context accepted after retained-thumbnail cache invalidation, actual affected subsets for simple/advanced deletion, strict no-op/replaced-service real-menu regressions and binding retirement. Final filter affected-subset helper sent for final review."
+  },
+  "consumer_reference_anchors": [
+    {
+      "relativepath": "hydrus/client/gui/canvas/ClientGUICanvas.py",
+      "line": 3907,
+      "symbol": "CanvasMediaListFilterArchiveDelete.UserOKToClose",
+      "line_sha256": "4c0cdb4487e3507efeace95a38b3ceee8679d750ece174678c480271ef8fc8b0"
+    },
+    {
+      "relativepath": "hydrus/client/media/ClientMediaList.py",
+      "line": 788,
+      "symbol": "    def ProcessContentUpdatePackage(",
+      "line_sha256": "2216f665b43ca7c1b9ac9f5f3ff5c383526fc96bfb13fc8eb57ed71f8b414c44"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/FilesAndTrashPanel.py",
+      "line": 254,
+      "symbol": "    def _UpdateRemoveFiltered(",
+      "line_sha256": "f0f1605d0f39ab6aaa2606356efe8f2f4b9be7301c304f9fbee6812732d5ce57"
+    }
+  ],
+  "entries": [
+    {
+      "reference_id": "audit-options-files-and-trash-remove-files-from-view-when-they-are-archive-delete-filtered",
+      "id": "audit-options-files-and-trash-remove-files-from-view-when-they-are-archive-delete-filtered",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "Default-false exact checkbox stages until Apply, persists/reopens and imports legacy remove_filtered_files. Accepted filter removes committed keep/delete decisions only when enabled; Forget and Resume preserve rows. Hidden, retired or closed-source filter commits are rejected; switching pages preserves the captured source page. Retained rows refresh thumbnail facts without rerunning the query.",
+      "behavior": "Default-false exact checkbox stages until Apply, persists/reopens and imports legacy remove_filtered_files. Accepted filter removes committed keep/delete decisions only when enabled; Forget and Resume preserve rows. Hidden, retired or closed-source filter commits are rejected; switching pages preserves the captured source page. Retained rows refresh thumbnail facts without rerunning the query.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/FilesAndTrashPanel.py",
+        "line": 164,
+        "symbol": "FilesAndTrashPanel",
+        "line_sha256": "144da5d907fcb01ceffd3617022c4aca9327875766fac0ac3099b19e90b19931"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 751,
+          "symbol": "pub struct FileViewRemoval",
+          "line_sha256": "c4e9bba8cf6adb1cb09f18529d60b3bbdf1575d4cdf0a2b71695bc270540ae9a",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 902,
+          "symbol": "let mut view_removal =",
+          "line_sha256": "ffbb3f25bd8391e68d948707495989a0de8200021255996beaea62b077a99920",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2076,
+          "symbol": "\"Remove files from view when they are archive/delete filtered: \"",
+          "line_sha256": "4364995fb084bd64593bfb27829467c6d57f7ed9273fef3c732723e296230aea",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/archive_delete.rs",
+          "line": 165,
+          "symbol": "pub fn removed_from_view(",
+          "line_sha256": "aa6a091271e1122c541deefc749369189806ba9d046633b637f1a13ee6277bed",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/archive_delete.rs",
+          "line": 282,
+          "symbol": "pub fn commit_changed(",
+          "line_sha256": "009046bdfd608b9c115555e2d2208f68857d58cf448175128fca06b657ddbe4c",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/archive_delete_window.rs",
+          "line": 237,
+          "symbol": "window.on_commit(",
+          "line_sha256": "07e984856b0baf9067a35b5255c22b9705748f7a5289812556d9101c16e59b56",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 1508,
+          "symbol": "let remove_from: RemoveFrom =",
+          "line_sha256": "3ff3b165978e1e220f95162140bc6b9913135452740f1ebfa71a8fbffc0e6ced",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_view_removal.rs",
+          "line": 114,
+          "symbol": "fn options_match_actual_qt_dependency_apply_cancel_reopen_and_retired_callbacks(",
+          "line_sha256": "3e33c8e5b705038d20e1d5fc19c36abddb85838a58ceb4f2c7fcd10498761122",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 4720,
+          "symbol": "fn file_view_removal_imports_legacy_and_typed_flags_independently(",
+          "line_sha256": "6e7581a2eb677bb5ac298baff83d2e14df033d13ad732d8121a70f0c9cd7d9ed",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_view_removal.rs",
+          "line": 171,
+          "symbol": "fn filter_accept_forget_resume_switch_and_closed_source_never_target_successor(",
+          "line_sha256": "6916c7489b7ab0aa8842111fd7a8b8c069d63dfede773c73e3f718680fed9393",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_view_removal.rs",
+          "line": 134,
+          "symbol": "fn filter_removal_matches_recorded_commit_gates_and_skipped_return_file(",
+          "line_sha256": "9f0082b30f9545bbfbf696c9a2d4d2669a83accd7323ed963175ba5f9f54b04f",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_view_removal.rs",
+          "line": 198,
+          "symbol": "fn filter_content_pruning_reports_only_domain_departures_after_intervening_trash(",
+          "line_sha256": "6e7ae247e3ad5ab7fe6d7fdd5ed355e3915817c893a62cae79a43f7ea2de8404",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_files_view_removal.py",
+        "fixture": "oracle/fixtures/files_view_removal.json",
+        "screenshots": [
+          "oracle/fixtures/files_view_removal.png"
+        ],
+        "commit": "06249a6ece16a324d6119f253f3d86d23cac009e",
+        "executed": true,
+        "executed_utc": "2026-10-05T06:23:41Z",
+        "command": "/workspace/parallel/with-oracle python oracle/record_files_view_removal.py",
+        "result": "Completed actual Qt FilesAndTrashPanel setters/UpdateOptions (16 combinations), real UserOKToClose filter handling/removal signals/focus (12 accept/forget/cancel combinations), and real MediaList ProcessContentUpdatePackage (120 trash/move/physical location/membership combinations). Exact finish answers are scripted; CommitArchiveDelete worker publication is captured, not executed. Detached real media managers receive synthetic domain updates and display timestamps. No production network/process/physical migration operation.",
+        "environment_notes": "Reference startup logs report sandbox-denied client API socket listening and headless MPV DRM warnings; targeted recorder completes with all assertions and fixture/PNG output. Detached imported timestamps are authored after each Duplicate because the reference TimesManager.Duplicate omits service maps; this avoids unrelated hover-text exceptions."
+      },
+      "limits": [
+        "The Files and Trash parent remains Partial; these four original controls receive bounded first-pass proposals only. No new ID, alias, preview/audio/physical-migration family or parent completion is counted.",
+        "General external/API/out-of-process content-update broadcasting to every open native page remains Partial. These controls govern the reachable owned native filter, thumbnail/viewer deletion and thumbnail local-domain transfer consumers. Broader deletion/service-choice/undelete and filtering families are outside this slice.",
+        "Rust model/store/native regressions are authored for hosted CI and remain unexecuted locally. No local Cargo build, Rust tests, mutation tests, pushes or canonical inventory writes were performed."
+      ],
+      "limitations": [
+        "The Files and Trash parent remains Partial; these four original controls receive bounded first-pass proposals only. No new ID, alias, preview/audio/physical-migration family or parent completion is counted.",
+        "General external/API/out-of-process content-update broadcasting to every open native page remains Partial. These controls govern the reachable owned native filter, thumbnail/viewer deletion and thumbnail local-domain transfer consumers. Broader deletion/service-choice/undelete and filtering families are outside this slice.",
+        "Rust model/store/native regressions are authored for hosted CI and remain unexecuted locally. No local Cargo build, Rust tests, mutation tests, pushes or canonical inventory writes were performed."
+      ]
+    },
+    {
+      "reference_id": "audit-options-files-and-trash-even-skipped-files",
+      "id": "audit-options-files-and-trash-even-skipped-files",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "Default-false dependent checkbox is enabled only while filtered removal is checked, retains its saved value while disabled and stages/persists independently. Accepted filtering includes skipped rows only when both flags are true. With filtered removal enabled and skipped removal disabled, source-page selection returns to the first surviving skipped file. Cancel/Forget/Resume and stale callbacks preserve rows and settings.",
+      "behavior": "Default-false dependent checkbox is enabled only while filtered removal is checked, retains its saved value while disabled and stages/persists independently. Accepted filtering includes skipped rows only when both flags are true. With filtered removal enabled and skipped removal disabled, source-page selection returns to the first surviving skipped file. Cancel/Forget/Resume and stale callbacks preserve rows and settings.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/FilesAndTrashPanel.py",
+        "line": 165,
+        "symbol": "FilesAndTrashPanel",
+        "line_sha256": "857fd66bc8c45a8fe2f22d1c86bcc6337a51611bef8e3b78e8b189041dcf98eb"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 751,
+          "symbol": "pub struct FileViewRemoval",
+          "line_sha256": "c4e9bba8cf6adb1cb09f18529d60b3bbdf1575d4cdf0a2b71695bc270540ae9a",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 902,
+          "symbol": "let mut view_removal =",
+          "line_sha256": "ffbb3f25bd8391e68d948707495989a0de8200021255996beaea62b077a99920",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2076,
+          "symbol": "\"Remove files from view when they are archive/delete filtered: \"",
+          "line_sha256": "4364995fb084bd64593bfb27829467c6d57f7ed9273fef3c732723e296230aea",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/archive_delete.rs",
+          "line": 185,
+          "symbol": "pub fn return_file(",
+          "line_sha256": "70f38d6bfdb7dd34a086652fe1c155ee35f3b14a3ac5bb6b81d70d9e48bbbb1c",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/archive_delete.rs",
+          "line": 165,
+          "symbol": "pub fn removed_from_view(",
+          "line_sha256": "aa6a091271e1122c541deefc749369189806ba9d046633b637f1a13ee6277bed",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 3420,
+          "symbol": "let return_to: Rc<dyn Fn(HashId)> =",
+          "line_sha256": "0ea6641aca558c6e9ab045dbb650d9eeed7c4a201f1b69dab7a69ca2d17db3f4",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_view_removal.rs",
+          "line": 114,
+          "symbol": "fn options_match_actual_qt_dependency_apply_cancel_reopen_and_retired_callbacks(",
+          "line_sha256": "3e33c8e5b705038d20e1d5fc19c36abddb85838a58ceb4f2c7fcd10498761122",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 4720,
+          "symbol": "fn file_view_removal_imports_legacy_and_typed_flags_independently(",
+          "line_sha256": "6e7581a2eb677bb5ac298baff83d2e14df033d13ad732d8121a70f0c9cd7d9ed",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_view_removal.rs",
+          "line": 171,
+          "symbol": "fn filter_accept_forget_resume_switch_and_closed_source_never_target_successor(",
+          "line_sha256": "6916c7489b7ab0aa8842111fd7a8b8c069d63dfede773c73e3f718680fed9393",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_view_removal.rs",
+          "line": 134,
+          "symbol": "fn filter_removal_matches_recorded_commit_gates_and_skipped_return_file(",
+          "line_sha256": "9f0082b30f9545bbfbf696c9a2d4d2669a83accd7323ed963175ba5f9f54b04f",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_files_view_removal.py",
+        "fixture": "oracle/fixtures/files_view_removal.json",
+        "screenshots": [
+          "oracle/fixtures/files_view_removal.png"
+        ],
+        "commit": "06249a6ece16a324d6119f253f3d86d23cac009e",
+        "executed": true,
+        "executed_utc": "2026-10-05T06:23:41Z",
+        "command": "/workspace/parallel/with-oracle python oracle/record_files_view_removal.py",
+        "result": "Completed actual Qt FilesAndTrashPanel setters/UpdateOptions (16 combinations), real UserOKToClose filter handling/removal signals/focus (12 accept/forget/cancel combinations), and real MediaList ProcessContentUpdatePackage (120 trash/move/physical location/membership combinations). Exact finish answers are scripted; CommitArchiveDelete worker publication is captured, not executed. Detached real media managers receive synthetic domain updates and display timestamps. No production network/process/physical migration operation.",
+        "environment_notes": "Reference startup logs report sandbox-denied client API socket listening and headless MPV DRM warnings; targeted recorder completes with all assertions and fixture/PNG output. Detached imported timestamps are authored after each Duplicate because the reference TimesManager.Duplicate omits service maps; this avoids unrelated hover-text exceptions."
+      },
+      "limits": [
+        "The Files and Trash parent remains Partial; these four original controls receive bounded first-pass proposals only. No new ID, alias, preview/audio/physical-migration family or parent completion is counted.",
+        "General external/API/out-of-process content-update broadcasting to every open native page remains Partial. These controls govern the reachable owned native filter, thumbnail/viewer deletion and thumbnail local-domain transfer consumers. Broader deletion/service-choice/undelete and filtering families are outside this slice.",
+        "Rust model/store/native regressions are authored for hosted CI and remain unexecuted locally. No local Cargo build, Rust tests, mutation tests, pushes or canonical inventory writes were performed."
+      ],
+      "limitations": [
+        "The Files and Trash parent remains Partial; these four original controls receive bounded first-pass proposals only. No new ID, alias, preview/audio/physical-migration family or parent completion is counted.",
+        "General external/API/out-of-process content-update broadcasting to every open native page remains Partial. These controls govern the reachable owned native filter, thumbnail/viewer deletion and thumbnail local-domain transfer consumers. Broader deletion/service-choice/undelete and filtering families are outside this slice.",
+        "Rust model/store/native regressions are authored for hosted CI and remain unexecuted locally. No local Cargo build, Rust tests, mutation tests, pushes or canonical inventory writes were performed."
+      ]
+    },
+    {
+      "reference_id": "audit-options-files-and-trash-remove-files-from-view-when-they-are-sent-to-the-trash",
+      "id": "audit-options-files-and-trash-remove-files-from-view-when-they-are-sent-to-the-trash",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "Default-false exact checkbox stages, imports legacy remove_trashed_files and affects live native simple/advanced thumbnail/viewer deletion and filter content events after Apply. Only successful domain departures can prune rows; actual post-write trash membership is intersected and a current one-domain trash view is exempt. Multiple-local-domain survivors, already-trash selections and locked physical no-ops retain rows/selection. Actual physical deletion still prunes wholly current local views independently. Source-page callbacks cannot target a successor and retained rows invalidate stale inbox/trash icons.",
+      "behavior": "Default-false exact checkbox stages, imports legacy remove_trashed_files and affects live native simple/advanced thumbnail/viewer deletion and filter content events after Apply. Only successful domain departures can prune rows; actual post-write trash membership is intersected and a current one-domain trash view is exempt. Multiple-local-domain survivors, already-trash selections and locked physical no-ops retain rows/selection. Actual physical deletion still prunes wholly current local views independently. Source-page callbacks cannot target a successor and retained rows invalidate stale inbox/trash icons.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/FilesAndTrashPanel.py",
+        "line": 166,
+        "symbol": "FilesAndTrashPanel",
+        "line_sha256": "d56fc751060f1941984b2a04205ca65714c1ec8e243ed30a4d33d1e24829e2e0"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 751,
+          "symbol": "pub struct FileViewRemoval",
+          "line_sha256": "c4e9bba8cf6adb1cb09f18529d60b3bbdf1575d4cdf0a2b71695bc270540ae9a",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 902,
+          "symbol": "let mut view_removal =",
+          "line_sha256": "ffbb3f25bd8391e68d948707495989a0de8200021255996beaea62b077a99920",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2076,
+          "symbol": "\"Remove files from view when they are archive/delete filtered: \"",
+          "line_sha256": "4364995fb084bd64593bfb27829467c6d57f7ed9273fef3c732723e296230aea",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/file_view_removal.rs",
+          "line": 17,
+          "symbol": "pub fn removed(",
+          "line_sha256": "ff9cd58ed05a56260dc26cf51cb0cb339ff289ad0dcc362dec4be34317f682f6",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/media_actions.rs",
+          "line": 159,
+          "symbol": "pub fn delete_changed(",
+          "line_sha256": "e88aa04e3064e9eae5236fb63111fdfdda2dbe15334e37e8b4e0aef309bbd654",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/delete_files.rs",
+          "line": 272,
+          "symbol": "pub fn apply_with_choice(",
+          "line_sha256": "91371744b45b762470fe311831b65f1084ab60c348c52a2a9b116eb96adea616",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/delete_files_window.rs",
+          "line": 74,
+          "symbol": "pub fn open_with_choice(",
+          "line_sha256": "ce44b77e8f2f88ec64a08be9539667be2215294997bb658d1d397615847284fb",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_view_removal.rs",
+          "line": 114,
+          "symbol": "fn options_match_actual_qt_dependency_apply_cancel_reopen_and_retired_callbacks(",
+          "line_sha256": "3e33c8e5b705038d20e1d5fc19c36abddb85838a58ceb4f2c7fcd10498761122",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 4720,
+          "symbol": "fn file_view_removal_imports_legacy_and_typed_flags_independently(",
+          "line_sha256": "6e7581a2eb677bb5ac298baff83d2e14df033d13ad732d8121a70f0c9cd7d9ed",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_view_removal.rs",
+          "line": 66,
+          "symbol": "fn actual_qt_media_list_trash_move_and_physical_pruning_matrix(",
+          "line_sha256": "129c7bcb99926d3a9c5ce0f6ac636c8f199002fcc7056e1026a30eb6af80727b",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_view_removal.rs",
+          "line": 516,
+          "symbol": "fn mixed_already_trash_advanced_choice_and_locked_physical_noop_retain_unaffected_rows(",
+          "line_sha256": "258711ff679d315c8e73a9a8ebe571d5a7a77083a4fd8ec9813104d96db53941",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_view_removal.rs",
+          "line": 321,
+          "symbol": "fn live_trash_policy_uses_actual_membership_and_move_menu_only_removes_source(",
+          "line_sha256": "5ae7e2d05c5c9749cfca5be85b373559bdedf3714ee43dc5aac6bfdb3ed95fa7",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_files_view_removal.py",
+        "fixture": "oracle/fixtures/files_view_removal.json",
+        "screenshots": [
+          "oracle/fixtures/files_view_removal.png"
+        ],
+        "commit": "06249a6ece16a324d6119f253f3d86d23cac009e",
+        "executed": true,
+        "executed_utc": "2026-10-05T06:23:41Z",
+        "command": "/workspace/parallel/with-oracle python oracle/record_files_view_removal.py",
+        "result": "Completed actual Qt FilesAndTrashPanel setters/UpdateOptions (16 combinations), real UserOKToClose filter handling/removal signals/focus (12 accept/forget/cancel combinations), and real MediaList ProcessContentUpdatePackage (120 trash/move/physical location/membership combinations). Exact finish answers are scripted; CommitArchiveDelete worker publication is captured, not executed. Detached real media managers receive synthetic domain updates and display timestamps. No production network/process/physical migration operation.",
+        "environment_notes": "Reference startup logs report sandbox-denied client API socket listening and headless MPV DRM warnings; targeted recorder completes with all assertions and fixture/PNG output. Detached imported timestamps are authored after each Duplicate because the reference TimesManager.Duplicate omits service maps; this avoids unrelated hover-text exceptions."
+      },
+      "limits": [
+        "The Files and Trash parent remains Partial; these four original controls receive bounded first-pass proposals only. No new ID, alias, preview/audio/physical-migration family or parent completion is counted.",
+        "General external/API/out-of-process content-update broadcasting to every open native page remains Partial. These controls govern the reachable owned native filter, thumbnail/viewer deletion and thumbnail local-domain transfer consumers. Broader deletion/service-choice/undelete and filtering families are outside this slice.",
+        "Rust model/store/native regressions are authored for hosted CI and remain unexecuted locally. No local Cargo build, Rust tests, mutation tests, pushes or canonical inventory writes were performed."
+      ],
+      "limitations": [
+        "The Files and Trash parent remains Partial; these four original controls receive bounded first-pass proposals only. No new ID, alias, preview/audio/physical-migration family or parent completion is counted.",
+        "General external/API/out-of-process content-update broadcasting to every open native page remains Partial. These controls govern the reachable owned native filter, thumbnail/viewer deletion and thumbnail local-domain transfer consumers. Broader deletion/service-choice/undelete and filtering families are outside this slice.",
+        "Rust model/store/native regressions are authored for hosted CI and remain unexecuted locally. No local Cargo build, Rust tests, mutation tests, pushes or canonical inventory writes were performed."
+      ]
+    },
+    {
+      "reference_id": "audit-options-files-and-trash-remove-files-from-view-when-they-are-moved-to-another-local-file-domain",
+      "id": "audit-options-files-and-trash-remove-files-from-view-when-they-are-moved-to-another-local-file-domain",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "Default-false exact checkbox stages, imports typed remove_local_domain_moved_files and affects live thumbnail strict/merge transfers after Apply. Successful actual transferred IDs are removed only from the captured view including the source domain. Copy, Cancel, strict destination-becomes-current no-op and replaced-service failure preserve source rows/selection. Existing physical migration semantics remain unchanged and transfer errors remain visible in their owned child.",
+      "behavior": "Default-false exact checkbox stages, imports typed remove_local_domain_moved_files and affects live thumbnail strict/merge transfers after Apply. Successful actual transferred IDs are removed only from the captured view including the source domain. Copy, Cancel, strict destination-becomes-current no-op and replaced-service failure preserve source rows/selection. Existing physical migration semantics remain unchanged and transfer errors remain visible in their owned child.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/FilesAndTrashPanel.py",
+        "line": 167,
+        "symbol": "FilesAndTrashPanel",
+        "line_sha256": "8ec710b2bb8842422041e24ff38d1b3d2fc1b3e465c993271d6a4c7faa8b9074"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 751,
+          "symbol": "pub struct FileViewRemoval",
+          "line_sha256": "c4e9bba8cf6adb1cb09f18529d60b3bbdf1575d4cdf0a2b71695bc270540ae9a",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 902,
+          "symbol": "let mut view_removal =",
+          "line_sha256": "ffbb3f25bd8391e68d948707495989a0de8200021255996beaea62b077a99920",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 2076,
+          "symbol": "\"Remove files from view when they are archive/delete filtered: \"",
+          "line_sha256": "4364995fb084bd64593bfb27829467c6d57f7ed9273fef3c732723e296230aea",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/file_view_removal.rs",
+          "line": 17,
+          "symbol": "pub fn removed(",
+          "line_sha256": "ff9cd58ed05a56260dc26cf51cb0cb339ff289ad0dcc362dec4be34317f682f6",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/local_transfer_window.rs",
+          "line": 32,
+          "symbol": "pub fn open_with_result(",
+          "line_sha256": "ae106789138f353e77f5d3fb042bd490b6327169475ea64692352693756046a3",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 3986,
+          "symbol": "hydrus_gui_model::file_view_removal::Change::Moved(",
+          "line_sha256": "e5dc5633b56226feee79f368a8ea1d98a211ddea08799e72f3b46f55800f908f",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_view_removal.rs",
+          "line": 114,
+          "symbol": "fn options_match_actual_qt_dependency_apply_cancel_reopen_and_retired_callbacks(",
+          "line_sha256": "3e33c8e5b705038d20e1d5fc19c36abddb85838a58ceb4f2c7fcd10498761122",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 4720,
+          "symbol": "fn file_view_removal_imports_legacy_and_typed_flags_independently(",
+          "line_sha256": "6e7581a2eb677bb5ac298baff83d2e14df033d13ad732d8121a70f0c9cd7d9ed",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/file_view_removal.rs",
+          "line": 66,
+          "symbol": "fn actual_qt_media_list_trash_move_and_physical_pruning_matrix(",
+          "line_sha256": "129c7bcb99926d3a9c5ce0f6ac636c8f199002fcc7056e1026a30eb6af80727b",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/file_view_removal.rs",
+          "line": 321,
+          "symbol": "fn live_trash_policy_uses_actual_membership_and_move_menu_only_removes_source(",
+          "line_sha256": "5ae7e2d05c5c9749cfca5be85b373559bdedf3714ee43dc5aac6bfdb3ed95fa7",
+          "commit": "06249a6ece16a324d6119f253f3d86d23cac009e"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_files_view_removal.py",
+        "fixture": "oracle/fixtures/files_view_removal.json",
+        "screenshots": [
+          "oracle/fixtures/files_view_removal.png"
+        ],
+        "commit": "06249a6ece16a324d6119f253f3d86d23cac009e",
+        "executed": true,
+        "executed_utc": "2026-10-05T06:23:41Z",
+        "command": "/workspace/parallel/with-oracle python oracle/record_files_view_removal.py",
+        "result": "Completed actual Qt FilesAndTrashPanel setters/UpdateOptions (16 combinations), real UserOKToClose filter handling/removal signals/focus (12 accept/forget/cancel combinations), and real MediaList ProcessContentUpdatePackage (120 trash/move/physical location/membership combinations). Exact finish answers are scripted; CommitArchiveDelete worker publication is captured, not executed. Detached real media managers receive synthetic domain updates and display timestamps. No production network/process/physical migration operation.",
+        "environment_notes": "Reference startup logs report sandbox-denied client API socket listening and headless MPV DRM warnings; targeted recorder completes with all assertions and fixture/PNG output. Detached imported timestamps are authored after each Duplicate because the reference TimesManager.Duplicate omits service maps; this avoids unrelated hover-text exceptions."
+      },
+      "limits": [
+        "The Files and Trash parent remains Partial; these four original controls receive bounded first-pass proposals only. No new ID, alias, preview/audio/physical-migration family or parent completion is counted.",
+        "General external/API/out-of-process content-update broadcasting to every open native page remains Partial. These controls govern the reachable owned native filter, thumbnail/viewer deletion and thumbnail local-domain transfer consumers. Broader deletion/service-choice/undelete and filtering families are outside this slice.",
+        "Rust model/store/native regressions are authored for hosted CI and remain unexecuted locally. No local Cargo build, Rust tests, mutation tests, pushes or canonical inventory writes were performed."
+      ],
+      "limitations": [
+        "The Files and Trash parent remains Partial; these four original controls receive bounded first-pass proposals only. No new ID, alias, preview/audio/physical-migration family or parent completion is counted.",
+        "General external/API/out-of-process content-update broadcasting to every open native page remains Partial. These controls govern the reachable owned native filter, thumbnail/viewer deletion and thumbnail local-domain transfer consumers. Broader deletion/service-choice/undelete and filtering families are outside this slice.",
+        "Rust model/store/native regressions are authored for hosted CI and remain unexecuted locally. No local Cargo build, Rust tests, mutation tests, pushes or canonical inventory writes were performed."
+      ]
+    }
+  ]
+}

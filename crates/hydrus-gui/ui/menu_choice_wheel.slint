@@ -1,0 +1,58 @@
+// Wheel behavior belongs only to actual Qt MenuChoiceButton counterparts.
+// The ordinary ComboBox retains its existing pointer/key/menu engine.
+import { ComboBox } from "std-widgets.slint";
+export global MenuChoicePolicy {
+    callback allowed() -> bool;
+    pure callback owner-valid() -> bool;
+    pure callback next(int,int,float) -> int;
+}
+export struct MenuChoiceFrame { x:length,y:length,w:length,h:length }
+export component WheelMenuChoice inherits TouchArea {
+    property <bool> pass-wheel: false;
+    out property <MenuChoiceFrame> frame: {x:self.absolute-position.x,y:self.absolute-position.y,w:self.width,h:self.height};
+    in property <[string]> model <=> choice.model;
+    in property <int> current-index;
+    in property <int> wheel-count: root.model.length;
+    out property <string> current-value: choice.current-value;
+    out property <bool> popup-open: choice.accessible-expanded;
+    callback selected(int);
+    min-width: layout.min-width;
+    min-height: layout.min-height;
+    horizontal-stretch: 1;
+    vertical-stretch: 0;
+    forward-focus: choice;
+    changed current-index => { choice.current-index = root.current-index; }
+    layout := VerticalLayout {
+        choice := ComboBox {
+            enabled:root.enabled && !root.pass-wheel;
+            current-index:root.current-index;
+            selected => { if MenuChoicePolicy.owner-valid() { root.selected(self.current-index); } }
+        }
+    }
+    // ComboBoxBase otherwise handles focused-wheel input before its parent.
+    // Intercept wheels in front, delegating a click to the same native popup.
+    TouchArea {
+        enabled: root.enabled;
+        clicked => {
+            if MenuChoicePolicy.owner-valid() {
+                choice.focus();
+                choice.accessible-action-expand();
+            }
+        }
+        scroll-event(event) => {
+            if !MenuChoicePolicy.allowed() {
+                // Disable only for this event: the native focused ComboBox
+                // must not consume it before our parent can bubble it.
+                root.pass-wheel = true;
+                return reject;
+            }
+            let next = MenuChoicePolicy.next(root.current-index, root.wheel-count, event.delta-y / 1px);
+            if next >= 0 { root.selected(next); }
+            return accept;
+        }
+    }
+    scroll-event(event) => {
+        root.pass-wheel = false;
+        return reject;
+    }
+}

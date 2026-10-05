@@ -1,0 +1,154 @@
+{
+  "events": [
+    {
+      "accepted": false,
+      "before": {
+        "enabled": false,
+        "rules": []
+      },
+      "dialog": {
+        "title": "edit already-exist filter",
+        "tabs": [
+          "whitelist",
+          "blacklist",
+          "advanced"
+        ],
+        "before": {
+          "enabled": false,
+          "rules": []
+        },
+        "edited_rules": [
+          [
+            ":",
+            1
+          ]
+        ]
+      },
+      "after": {
+        "enabled": false,
+        "rules": []
+      }
+    },
+    {
+      "accepted": true,
+      "before": {
+        "enabled": false,
+        "rules": []
+      },
+      "dialog": {
+        "title": "edit already-exist filter",
+        "tabs": [
+          "whitelist",
+          "blacklist",
+          "advanced"
+        ],
+        "before": {
+          "enabled": false,
+          "rules": []
+        },
+        "edited_rules": [
+          [
+            ":",
+            1
+          ]
+        ]
+      },
+      "after": {
+        "enabled": true,
+        "rules": [
+          [
+            ":",
+            1
+          ]
+        ]
+      }
+    }
+  ],
+  "initial": {
+    "enabled": false,
+    "rules": []
+  },
+  "saved": {
+    "enabled": true,
+    "rules": [
+      [
+        ":",
+        1
+      ]
+    ]
+  },
+  "reopened": {
+    "enabled": true,
+    "rules": [
+      [
+        ":",
+        1
+      ]
+    ]
+  },
+  "saved_tuple": [
+    65,
+    4,
+    [
+      true,
+      [
+        44,
+        1,
+        []
+      ],
+      [
+        "parity added plain",
+        "parity absent added",
+        "series:added"
+      ],
+      true,
+      true,
+      true,
+      true,
+      [
+        44,
+        1,
+        [
+          [
+            ":",
+            1
+          ]
+        ]
+      ],
+      false,
+      false
+    ]
+  ],
+  "known": [
+    "parity existing plain",
+    "parity added plain"
+  ],
+  "parsed": [
+    "parity existing plain",
+    "parity new plain",
+    "creator:fresh"
+  ],
+  "additional": [
+    "parity added plain",
+    "parity absent added",
+    "series:added"
+  ],
+  "consumer": [
+    "creator:fresh",
+    "parity added plain",
+    "parity existing plain",
+    "series:added"
+  ],
+  "second_service_consumer": [
+    "creator:fresh",
+    "series:added"
+  ],
+  "disabled_consumer": [
+    "creator:fresh",
+    "parity absent added",
+    "parity added plain",
+    "parity existing plain",
+    "parity new plain",
+    "series:added"
+  ]
+}

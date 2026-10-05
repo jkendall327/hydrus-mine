@@ -1,0 +1,416 @@
+{
+  "schema_version": 1,
+  "task": "Tag suggestion layout and per-service most-used Options",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "source_commit": "195723a4fa0051ede79742055b28fb1a63876399",
+  "implementation_commits": [
+    "580ab59ae1caa8eab6b9d5fc078c0ee66adc116a",
+    "195723a4fa0051ede79742055b28fb1a63876399",
+    "08b67685d2ffe9bf6907a42c9d5f103f158d860f"
+  ],
+  "eligible_concrete_first_pass_count": 3,
+  "parent_promotions": 0,
+  "entries": [
+    {
+      "reference_id": "audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "Exact20\u201365535px preference stages in Options, persists/reopens, and captures the minimum width of actual most-used/recent lists in subsequently opened Manage Tags dialogs. Both notebook and columns layouts use the saved width; neither owner Cancel nor stale Apply commits a changed value.",
+      "behavior": "Exact20\u201365535px preference stages in Options, persists/reopens, and captures the minimum width of actual most-used/recent lists in subsequently opened Manage Tags dialogs. Both notebook and columns layouts use the saved width; neither owner Cancel nor stale Apply commits a changed value.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/TagSuggestionsPanel.py",
+        "line": 288,
+        "symbol": "Width of suggested tags columns: "
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3107,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "Width of suggested tags columns: "
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/tag_suggestions.slint",
+          "line": 4,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "export component TagSuggestionPanels"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_tags_window.rs",
+          "line": 117,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "let refresh_sides = Rc::new({"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 65,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "pub struct TagSuggestionSettings"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_suggestions.rs",
+          "line": 23,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "fn layout_and_default_choices_replay_all_recorded_available_pages_without_eager_writes()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 65,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "fn most_used_child_stages_each_service_cancels_descendants_and_persists_options()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/manage_tags.rs",
+          "line": 35,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "fn most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers()"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 4042,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "fn suggested_layout_and_unavailable_default_pages_migrate_without_losing_choices()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_tag_suggestions.py",
+        "fixture": "oracle/fixtures/tag_suggestions.json",
+        "screenshot": "oracle/fixtures/tag_suggestions.png",
+        "commit": "580ab59ae1caa8eab6b9d5fc078c0ee66adc116a",
+        "executed_at": "2026-10-04 23:35:53\u201323:35:56 UTC",
+        "result": "Actual v688 Qt Options controls and two-service most-used Add/Remove/switch/reopen/cancel; actual SuggestedTagsPanel notebook/columns with all four default choices and related/lookup disabled, current-on-all filtering, selected only_add=True activation/removal, real recent reader/publisher, unchanged draft before Apply and cancelled edits. Fresh temporary basic fixture, no Python reference edits or remote URLs. Populated columns PNG inspected. Scheduling only recent worker/publisher synchronous; handlers/sorting/filtering unmodified."
+      },
+      "limitations": [
+        "Broader suggested tags, recent/children/related/lookup and Options parents remain Partial. No aliases or additional leaf counts.",
+        "Related/lookup panels, weights/durations and complete suggestion-list keyboard/context menus are absent. Their ordinary availability/default selection is not claimed.",
+        "Recent history is a real read/add consumer; Clear confirmation/read-time decay and recent settings editor remain unimplemented.",
+        "Native per-service editing uses an owned selection/list window and shared write-tag child instead of embedding the original input directly in Options. Existing write-autocomplete consumers/limitations are retained.",
+        "Only already-present most-used panels broadcast updates, as Qt; native polls persisted settings every200ms and captures layout/availability at opening. No remote/IPFS fetching or uploads; lists can retain imported real service keys.",
+        "Author did not run local Cargo builds/tests/mutations; hosted CI and native authored PNG inspection are pending."
+      ]
+    },
+    {
+      "reference_id": "audit-options-tag-suggestions-suggested-tags-column-layout",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "The original notebook/side-by-side choice stages, persists and reopens. A real Manage Tags consumer displays most-used/recent as selected notebook pages or adjacent columns with actual independent lists, context filtering and staged add-only activation. Already-open dialogs retain their opening layout, matching reference construction.",
+      "behavior": "The original notebook/side-by-side choice stages, persists and reopens. A real Manage Tags consumer displays most-used/recent as selected notebook pages or adjacent columns with actual independent lists, context filtering and staged add-only activation. Already-open dialogs retain their opening layout, matching reference construction.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/TagSuggestionsPanel.py",
+        "line": 289,
+        "symbol": "Column layout: "
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3113,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "Column layout: "
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/tag_suggestions.slint",
+          "line": 4,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "export component TagSuggestionPanels"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_tags_window.rs",
+          "line": 117,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "let refresh_sides = Rc::new({"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 65,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "pub struct TagSuggestionSettings"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_suggestions.rs",
+          "line": 23,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "fn layout_and_default_choices_replay_all_recorded_available_pages_without_eager_writes()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 65,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "fn most_used_child_stages_each_service_cancels_descendants_and_persists_options()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/manage_tags.rs",
+          "line": 35,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "fn most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers()"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 4042,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "fn suggested_layout_and_unavailable_default_pages_migrate_without_losing_choices()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_tag_suggestions.py",
+        "fixture": "oracle/fixtures/tag_suggestions.json",
+        "screenshot": "oracle/fixtures/tag_suggestions.png",
+        "commit": "580ab59ae1caa8eab6b9d5fc078c0ee66adc116a",
+        "executed_at": "2026-10-04 23:35:53\u201323:35:56 UTC",
+        "result": "Actual v688 Qt Options controls and two-service most-used Add/Remove/switch/reopen/cancel; actual SuggestedTagsPanel notebook/columns with all four default choices and related/lookup disabled, current-on-all filtering, selected only_add=True activation/removal, real recent reader/publisher, unchanged draft before Apply and cancelled edits. Fresh temporary basic fixture, no Python reference edits or remote URLs. Populated columns PNG inspected. Scheduling only recent worker/publisher synchronous; handlers/sorting/filtering unmodified."
+      },
+      "limitations": [
+        "Broader suggested tags, recent/children/related/lookup and Options parents remain Partial. No aliases or additional leaf counts.",
+        "Related/lookup panels, weights/durations and complete suggestion-list keyboard/context menus are absent. Their ordinary availability/default selection is not claimed.",
+        "Recent history is a real read/add consumer; Clear confirmation/read-time decay and recent settings editor remain unimplemented.",
+        "Native per-service editing uses an owned selection/list window and shared write-tag child instead of embedding the original input directly in Options. Existing write-autocomplete consumers/limitations are retained.",
+        "Only already-present most-used panels broadcast updates, as Qt; native polls persisted settings every200ms and captures layout/availability at opening. No remote/IPFS fetching or uploads; lists can retain imported real service keys.",
+        "Author did not run local Cargo builds/tests/mutations; hosted CI and native authored PNG inspection are pending."
+      ]
+    },
+    {
+      "reference_id": "audit-options-tag-suggestions-suggested-tags-default-notebook-page",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "partial",
+      "proposed_status": "partial",
+      "exactBehavior": "All four reference keys/labels are retained, imported and staged/persisted/reopened. Actual most-used/recent selection and first-available fallback match the recorded Qt cases with related/lookup disabled. Related/File Lookup ordinary availability and their actual default-page consumers remain absent.",
+      "behavior": "All four reference keys/labels are retained, imported and staged/persisted/reopened. Actual most-used/recent selection and first-available fallback match the recorded Qt cases with related/lookup disabled. Related/File Lookup ordinary availability and their actual default-page consumers remain absent.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/TagSuggestionsPanel.py",
+        "line": 290,
+        "symbol": "Default notebook page: "
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3119,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "Default notebook page: "
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/tag_suggestions.slint",
+          "line": 4,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "export component TagSuggestionPanels"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_tags_window.rs",
+          "line": 117,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "let refresh_sides = Rc::new({"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/settings.rs",
+          "line": 65,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "pub struct TagSuggestionSettings"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_suggestions.rs",
+          "line": 23,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "fn layout_and_default_choices_replay_all_recorded_available_pages_without_eager_writes()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 65,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "fn most_used_child_stages_each_service_cancels_descendants_and_persists_options()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/manage_tags.rs",
+          "line": 35,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "fn most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers()"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 4042,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "fn suggested_layout_and_unavailable_default_pages_migrate_without_losing_choices()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_tag_suggestions.py",
+        "fixture": "oracle/fixtures/tag_suggestions.json",
+        "screenshot": "oracle/fixtures/tag_suggestions.png",
+        "commit": "580ab59ae1caa8eab6b9d5fc078c0ee66adc116a",
+        "executed_at": "2026-10-04 23:35:53\u201323:35:56 UTC",
+        "result": "Actual v688 Qt Options controls and two-service most-used Add/Remove/switch/reopen/cancel; actual SuggestedTagsPanel notebook/columns with all four default choices and related/lookup disabled, current-on-all filtering, selected only_add=True activation/removal, real recent reader/publisher, unchanged draft before Apply and cancelled edits. Fresh temporary basic fixture, no Python reference edits or remote URLs. Populated columns PNG inspected. Scheduling only recent worker/publisher synchronous; handlers/sorting/filtering unmodified."
+      },
+      "limitations": [
+        "Broader suggested tags, recent/children/related/lookup and Options parents remain Partial. No aliases or additional leaf counts.",
+        "Related/lookup panels, weights/durations and complete suggestion-list keyboard/context menus are absent. Their ordinary availability/default selection is not claimed.",
+        "Recent history is a real read/add consumer; Clear confirmation/read-time decay and recent settings editor remain unimplemented.",
+        "Native per-service editing uses an owned selection/list window and shared write-tag child instead of embedding the original input directly in Options. Existing write-autocomplete consumers/limitations are retained.",
+        "Only already-present most-used panels broadcast updates, as Qt; native polls persisted settings every200ms and captures layout/availability at opening. No remote/IPFS fetching or uploads; lists can retain imported real service keys.",
+        "Author did not run local Cargo builds/tests/mutations; hosted CI and native authored PNG inspection are pending."
+      ]
+    },
+    {
+      "reference_id": "audit-options-nested-tag-suggestions-favourites",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "Options selects each real tag service and edits its independent most-used list through the real shared write autocomplete/paste/removal child. Service switching retains accepted drafts; child and list Apply remain staged until Options Apply. Save merges changed service keys without overwriting concurrent other-service/children-cap edits and preserves untouched unknown entries. Descendant Cancel/owner close and retained callbacks cannot apply or clear successor slots. Persisted lists reach existing-panel broadcasts and the actual Manage Tags most-used consumer, sorted by search-page tag sort, current/pending-on-all filtering, multi-selected add-only staging, real mapping writes and reopen. Existing global autocomplete favourites are unchanged and not counted again.",
+      "behavior": "Options selects each real tag service and edits its independent most-used list through the real shared write autocomplete/paste/removal child. Service switching retains accepted drafts; child and list Apply remain staged until Options Apply. Save merges changed service keys without overwriting concurrent other-service/children-cap edits and preserves untouched unknown entries. Descendant Cancel/owner close and retained callbacks cannot apply or clear successor slots. Persisted lists reach existing-panel broadcasts and the actual Manage Tags most-used consumer, sorted by search-page tag sort, current/pending-on-all filtering, multi-selected add-only staging, real mapping writes and reopen. Existing global autocomplete favourites are unchanged and not counted again.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/TagSuggestionsPanel.py",
+        "line": 59,
+        "symbol": "self._suggested_most_used_services"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_suggestions_window.rs",
+          "line": 36,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "pub fn open("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 4011,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "pub fn set_most_used_tags("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/manage_tags.rs",
+          "line": 464,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "pub fn side_suggestions("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/manage_tags.rs",
+          "line": 501,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "pub fn add_side_suggestions("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_tags_window.rs",
+          "line": 290,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "window.on_side_activated({"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_suggestions.rs",
+          "line": 23,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "fn layout_and_default_choices_replay_all_recorded_available_pages_without_eager_writes()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 65,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "fn most_used_child_stages_each_service_cancels_descendants_and_persists_options()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/manage_tags.rs",
+          "line": 35,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "fn most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers()"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 4042,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "fn suggested_layout_and_unavailable_default_pages_migrate_without_losing_choices()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_suggestions.rs",
+          "line": 76,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "fn most_used_options_merge_per_service_and_reach_filtered_add_only_media()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_suggestions.rs",
+          "line": 169,
+          "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+          "symbol": "fn broadcast_keeps_selected_tag_identity_but_switching_services_retires_selection()"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_tag_suggestions.py",
+        "fixture": "oracle/fixtures/tag_suggestions.json",
+        "screenshot": "oracle/fixtures/tag_suggestions.png",
+        "commit": "580ab59ae1caa8eab6b9d5fc078c0ee66adc116a",
+        "executed_at": "2026-10-04 23:35:53\u201323:35:56 UTC",
+        "result": "Actual v688 Qt Options controls and two-service most-used Add/Remove/switch/reopen/cancel; actual SuggestedTagsPanel notebook/columns with all four default choices and related/lookup disabled, current-on-all filtering, selected only_add=True activation/removal, real recent reader/publisher, unchanged draft before Apply and cancelled edits. Fresh temporary basic fixture, no Python reference edits or remote URLs. Populated columns PNG inspected. Scheduling only recent worker/publisher synchronous; handlers/sorting/filtering unmodified."
+      },
+      "limitations": [
+        "Broader suggested tags, recent/children/related/lookup and Options parents remain Partial. No aliases or additional leaf counts.",
+        "Related/lookup panels, weights/durations and complete suggestion-list keyboard/context menus are absent. Their ordinary availability/default selection is not claimed.",
+        "Recent history is a real read/add consumer; Clear confirmation/read-time decay and recent settings editor remain unimplemented.",
+        "Native per-service editing uses an owned selection/list window and shared write-tag child instead of embedding the original input directly in Options. Existing write-autocomplete consumers/limitations are retained.",
+        "Only already-present most-used panels broadcast updates, as Qt; native polls persisted settings every200ms and captures layout/availability at opening. No remote/IPFS fetching or uploads; lists can retain imported real service keys.",
+        "Author did not run local Cargo builds/tests/mutations; hosted CI and native authored PNG inspection are pending."
+      ]
+    }
+  ],
+  "validation": {
+    "reference": "Executed actual Qt recorder; inspected PNG",
+    "source": "rustfmt, git diff --check, Python py_compile and cached warning-aware Slint compilation passed",
+    "rust_tests": "Meaningful model/native/store consumer regressions authored; root hosted CI pending; no local Cargo or mutations"
+  },
+  "native_hierarchy": {
+    "new_component": "MostUsedTagsWindow",
+    "owner": "OptionsWindow via explicit Bound.options_suggested_tags_slot",
+    "reference_id": "audit-options-nested-tag-suggestions-favourites",
+    "controls": [
+      "real service choice",
+      "retained per-service list",
+      "edit most used tags",
+      "Apply",
+      "Cancel"
+    ],
+    "owned_child": "existing WriteTagsWindow with real-service context/additions-only list editing",
+    "source": {
+      "relativepath": "crates/hydrus-gui/src/lib.rs",
+      "line": 269,
+      "commit": "195723a4fa0051ede79742055b28fb1a63876399",
+      "symbol": "pub options_suggested_tags_slot:"
+    },
+    "consumer": "existing ManageTagsWindow > TagSuggestionPanels, most used/recent supported pages",
+    "native_png": "most-used-tags-options.png (hosted CARGO_TARGET_TMPDIR; authored, CI pending)"
+  },
+  "repair_followups": [
+    {
+      "commit": "08b67685d2ffe9bf6907a42c9d5f103f158d860f",
+      "scope": "Existing suggested-list consumer repair; no new claims or count changes.",
+      "cause": "With recent disabled and notebook layout, the shared native notebook retained page1 after visiting a service without an opening most-used list. Returning to a populated service enabled its list but failed to select its only available page.",
+      "behavior": "When most-used is enabled and recent is absent, refresh selects most-used page0. Existing captured panel availability remains unchanged, and unrelated supported panels/preferences retain their prior scope.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/ClientGUITagSuggestions.py",
+        "line": 858,
+        "symbol": "class SuggestedTagsPanel",
+        "behavior": "Each service owns an independent notebook. Construction adds only available panels and falls back to its first tab when the requested page is absent."
+      },
+      "source_anchor": {
+        "relativepath": "crates/hydrus-gui/src/manage_tags_window.rs",
+        "line": 137,
+        "commit": "08b67685d2ffe9bf6907a42c9d5f103f158d860f",
+        "symbol": "else if !w.get_recent_tags_enabled()"
+      },
+      "test_anchor": {
+        "relativepath": "crates/hydrus-gui/tests/gui/manage_tags.rs",
+        "line": 161,
+        "commit": "08b67685d2ffe9bf6907a42c9d5f103f158d860f",
+        "symbol": "fn switching_from_empty_service_restores_the_only_suggestion_page"
+      },
+      "native_png": "suggested_tags_service_switch.png (authored for hosted CARGO_TARGET_TMPDIR)",
+      "validation": "cargo fmt --all, git diff --check and cached warning-aware Slint source compilation passed; no local Cargo builds/tests or new Qt fixture execution. Existing actual Qt fixture and reference constructor inspected. Native execution pending root hosted CI.",
+      "limits": "Default-page remains Partial, including unavailable Related/File Lookup panels. This repairs valid page fallback and does not add independent per-service native notebook-page history."
+    }
+  ]
+}

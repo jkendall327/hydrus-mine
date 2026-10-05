@@ -15,6 +15,7 @@ pub type Slot = Rc<RefCell<Option<DeleteFilesWindow>>>;
 pub type Guard = Rc<dyn Fn() -> bool>;
 /// Refresh the owner after the accepted mutation.
 pub type Applied = Rc<dyn Fn()>;
+pub type AppliedChoice = Rc<dyn Fn(&hydrus_gui_model::delete_files::Choice)>;
 
 /// Discard the owned draft, including callbacks retained by a stale handle.
 pub fn cancel(slot: &Slot) {
@@ -59,6 +60,26 @@ pub fn open(
     guard: Guard,
     applied: Applied,
 ) -> Result<Option<DeleteFilesWindow>, String> {
+    open_with_choice(
+        slot,
+        store,
+        files,
+        suggested,
+        default_reason,
+        guard,
+        Rc::new(move |_| applied()),
+    )
+}
+/// Report the captured actionable choice rather than the original mixed selection.
+pub fn open_with_choice(
+    slot: &Slot,
+    store: &Arc<Store>,
+    files: &[hydrus_core::HashId],
+    suggested: Option<&DeletionAction>,
+    default_reason: &str,
+    guard: Guard,
+    applied: AppliedChoice,
+) -> Result<Option<DeleteFilesWindow>, String> {
     if let Some(window) = slot.borrow().as_ref() {
         return Ok(Some(window.clone_strong()));
     }
@@ -70,15 +91,17 @@ pub fn open(
         .read(hydrus_store::settings::get)
         .map_err(|e| e.to_string())?;
     if draft.already_resolved(preferences.confirm_trash) {
-        if guard() {
-            draft.apply(store).map_err(|e| e.to_string())?;
-            applied();
+        if guard()
+            && let Some(choice) = draft.apply_with_choice(store).map_err(|e| e.to_string())?
+        {
+            applied(&choice);
         }
         return Ok(None);
     }
     let window = DeleteFilesWindow::new().map_err(|e| e.to_string())?;
     window.set_custom(draft.custom.as_str().into());
     show(&window, &draft);
+    let initial_radio = if draft.choices.len() > 1 { 0 } else { 1 };
     let draft = Rc::new(RefCell::new(draft));
     let active = Rc::new(Cell::new(true));
     let close: Rc<dyn Fn()> = Rc::new({
@@ -94,6 +117,25 @@ pub fn open(
             }
             if let Some(slot) = slot.upgrade() {
                 slot.borrow_mut().take();
+            }
+        }
+    });
+    window.on_force_radio_ok({
+        let active = active.clone();
+        let guard = guard.clone();
+        let weak = window.as_weak();
+        let store = store.clone();
+        move || {
+            if !active.get() || !guard() || weak.upgrade().is_none_or(|w| !w.window().is_visible())
+            {
+                return false;
+            }
+            match store.read(hydrus_store::radio_return::load) {
+                Ok(policy) => policy.force_dialog_ok,
+                Err(error) => {
+                    eprintln!("Could not read the radio Return preference: {error}");
+                    false
+                }
             }
         }
     });
@@ -151,11 +193,16 @@ pub fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            if !window.window().is_visible() {
+                return;
+            }
             draft.borrow_mut().custom = window.get_custom().to_string();
-            match draft.borrow().apply(&store) {
-                Ok(()) => {
+            match draft.borrow().apply_with_choice(&store) {
+                Ok(choice) => {
                     close();
-                    applied();
+                    if let Some(choice) = choice {
+                        applied(&choice);
+                    }
                 }
                 Err(error) => {
                     window.set_error(error.to_string().into());
@@ -173,5 +220,6 @@ pub fn open(
     });
     *slot.borrow_mut() = Some(window.clone_strong());
     window.show().map_err(|e| e.to_string())?;
+    window.set_radio_focus(initial_radio);
     Ok(Some(window))
 }

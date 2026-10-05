@@ -1,0 +1,35 @@
+// Raw Options grouping queue, including the two sentinel namespace entries.
+import { Button } from "std-widgets.slint";
+import { ListTable, TableRow } from "list_table.slint";
+export component TagNamespaceOrder {
+    in property <[TableRow]> rows;
+    in property <bool> selected;
+    in property <bool> child-open;
+    callback row-clicked(int,bool,bool);
+    callback row-activated(int);
+    callback action(string);
+    min-width: 420px; min-height: 200px;
+    VerticalLayout {
+        spacing: 4px;
+        HorizontalLayout {
+            ListTable {
+                rows: root.rows;
+                columns: [{title:"",width:360px,stretch:true}];
+                row-clicked(i,ctrl,shift) => { if !root.child-open { root.row-clicked(i,ctrl,shift); } }
+                row-activated(i) => { if !root.child-open { root.row-activated(i); } }
+                delete-pressed => { if !root.child-open { root.action("delete"); } }
+            }
+            VerticalLayout {
+                spacing: 4px;
+                Button { text: "↑"; enabled: root.selected && !root.child-open; clicked => { root.action("up"); } }
+                Button { text: "X"; enabled: root.selected && !root.child-open; clicked => { root.action("delete"); } }
+                Button { text: "↓"; enabled: root.selected && !root.child-open; clicked => { root.action("down"); } }
+            }
+        }
+        HorizontalLayout {
+            spacing: 4px;
+            Button { text: "add"; enabled: !root.child-open; clicked => { root.action("add"); } }
+            Button { text: "edit"; enabled: root.selected && !root.child-open; clicked => { root.action("edit"); } }
+        }
+    }
+}

@@ -1636,6 +1636,10 @@ pub(crate) mod tests {
                 .unwrap()
         );
         assert_eq!(
+            input.settings["sibling_connector_colours"],
+            serde_json::json!({"fade":true,"namespace":"system"})
+        );
+        assert_eq!(
             input.settings["tag_display_filters"],
             serde_json::to_value(crate::tag_display::TagDisplayFilters::default()).unwrap()
         );
@@ -1672,10 +1676,10 @@ pub(crate) mod tests {
                 )
             })
         );
-        // recorded, counting the media viewer and the Client API
+        // Recorded media/preview bounds, counting the media viewer and Client API.
         assert_eq!(
             input.settings["file_viewing_statistics"],
-            serde_json::json!({"active": true, "archive_delete":true, "duplicates":false, "media_min_ms":2000,"media_max_ms":600_000, "menu_display":"combined", "interesting_canvases": [0, 4]})
+            serde_json::json!({"active": true, "archive_delete":true, "duplicates":false, "media_min_ms":2000,"media_max_ms":600_000, "preview_min_ms":5_000,"preview_max_ms":60_000, "menu_display":"combined", "interesting_canvases": [0, 4]})
         );
     }
 

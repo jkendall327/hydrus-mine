@@ -3,29 +3,41 @@
 //! and linked separately).
 
 mod common;
+mod headless_lifetime;
 
 mod about;
+mod active_predicates;
 mod animation;
+mod animation_start;
+mod api_update_toasts;
 mod archive_delete;
 mod auto_resolution_preview;
 mod auto_resolution_review;
 mod auto_resolution_rules;
+mod client_exit;
 mod clipboard_urls;
 mod collect;
 mod downloader_definitions;
 mod downloader_lists;
+mod downloader_update_times;
+mod duplicate_colours;
 mod duplicate_filter;
 mod duplicates_page;
 mod edit_subscription;
 mod embedded_metadata;
+mod existing_tags_filter;
 mod favourites;
 mod file_log;
+mod file_view_removal;
 mod filename_rules;
 mod filename_simple;
+mod filesize_predicate;
 mod folder_manager_lifecycle;
 mod folders;
 mod force_filetype;
+mod force_idle;
 mod formula_editors;
+mod hash_predicate;
 mod import_files;
 mod import_folder_log;
 mod import_options;
@@ -33,29 +45,42 @@ mod import_options_panel;
 mod importer_list_menu;
 mod info_lines;
 mod list_drag;
+mod login_script_controls;
 mod login_workflows;
+mod main_identity;
 mod main_shortcuts;
 mod manage_notes;
 mod manage_ratings;
 mod manage_tags;
+mod manage_tags_sort;
 mod manage_times;
 mod manage_urls;
 mod media_actions;
 mod media_shortcuts;
 mod media_sort;
 mod menu_bar;
+mod menu_choice_wheel;
 mod merge_options;
 mod mpv;
+mod namespace_colours;
+mod normal_time_maintenance;
 mod notebook_new_page;
 mod notebook_refresh;
 mod notebook_sessions;
+mod notes_preferences;
 mod options_window;
 mod page_chooser_options;
 mod page_navigation_options;
 mod page_scroll;
+mod physical_delete_delay;
+mod popup_freeze;
+mod popup_job_actions;
+mod popup_width;
 mod popups;
 mod predicate_editors;
 mod predicate_history;
+mod preview_viewing;
+mod rating_sizes;
 mod ratings;
 mod recent_predicates;
 mod scanbar;
@@ -63,9 +88,11 @@ mod search_domains;
 mod search_lock;
 mod search_log;
 mod search_page;
+mod selected_deletion_records;
 mod session;
 mod session_autosave;
 mod session_startup;
+mod shortcut_capture;
 mod sidecars;
 mod simple_downloader;
 mod slideshow;
@@ -75,8 +102,12 @@ mod subscriptions;
 mod subscriptions_dedupe;
 mod subscriptions_duplicate;
 mod subscriptions_separate;
+mod thumbnail_appearance;
+mod thumbnail_cache;
 mod thumbnail_icons;
 mod thumbnail_menu;
+mod thumbnail_navigation;
+mod thumbnail_preview_selection;
 mod thumbnail_ratings;
 mod thumbnail_selection;
 mod unlock;
@@ -105,14 +136,17 @@ mod downloader_interchange;
 mod tag_migration;
 
 mod regex_favourites;
+mod regex_options_editor;
 mod tag_filter_favourites;
 
 mod downloader_display;
 mod favourite_search_editor;
 
+mod sibling_colours;
 mod sibling_connector;
 mod tag_dialog_defaults;
 mod tag_dialog_preferences;
+mod tag_namespace_order;
 mod unselected_tag_cap;
 
 mod write_autocomplete;
@@ -124,6 +158,7 @@ mod gallery_source;
 mod namespace_sorts;
 mod tag_list_display_types;
 
+mod sidebar_context_cogs;
 mod sort_cog;
 
 mod command_palette;
@@ -137,3 +172,55 @@ mod manage_tag_counts;
 
 mod frame_locations;
 mod incremental_tagging;
+
+mod notebook_tree;
+mod tab_drag;
+mod tab_presentation;
+
+mod archive_repair;
+
+mod file_history;
+mod file_maintenance_current;
+
+mod autocomplete_tabs;
+mod gui_colours;
+mod gui_format;
+mod preview_default_zoom;
+mod related_weight_table;
+
+mod external_calls;
+mod open_externally;
+mod viewer_drag;
+mod window_rescue;
+
+mod viewer_tag_wheel;
+
+mod idle_timeout_options;
+
+mod import_work_slots;
+mod viewing_maintenance;
+
+mod local_transfer;
+
+mod sidebar_layout;
+
+mod hidden_page_preview;
+mod or_connector;
+
+mod image_cache;
+mod image_colour;
+
+mod debug_delayed_pages;
+mod debug_delayed_popup;
+mod debug_fetch;
+mod debug_long_popup;
+mod debug_session_reload;
+mod duplicates_progress;
+mod quick_export_directory;
+
+mod archive_delete_policies;
+
+mod ffmpeg_timeout;
+mod radio_return;
+
+mod viewer_prefetch;

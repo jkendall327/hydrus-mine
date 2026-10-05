@@ -8,6 +8,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use rusqlite::{Connection, params};
 
+use hydrus_core::HashId;
 use hydrus_import::FileImporter;
 use hydrus_media::MediaTools;
 use hydrus_store::Store;
@@ -15,6 +16,252 @@ use hydrus_store::file_maintenance::JobType;
 
 /// md5, sha1 and sha512.
 type Digests = (Option<Vec<u8>>, Option<Vec<u8>>, Option<Vec<u8>>);
+
+#[test]
+fn controlled_runner_cancels_after_one_committed_file_without_consuming_the_next() {
+    use std::sync::atomic::{AtomicBool, Ordering};
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    hydrus_store::import::import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    let files = store
+        .read(|conn| {
+            let mut query = conn.prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT 2")?;
+            Ok(query
+                .query_map([], |row| row.get(0))?
+                .collect::<rusqlite::Result<Vec<HashId>>>()?)
+        })
+        .unwrap();
+    let captured = files.clone();
+    store
+        .write(move |ctx| {
+            hydrus_store::file_maintenance::cancel_jobs(ctx.conn(), &JobType::ALL)?;
+            hydrus_store::file_maintenance::add_jobs(ctx.conn(), &captured, JobType::HasExif, 0)
+        })
+        .unwrap();
+    let importer = FileImporter::new(store.clone(), MediaTools::new());
+    let active = AtomicBool::new(true);
+    let mut progress = Vec::new();
+    let result = importer
+        .run_file_maintenance_controlled(
+            u64::MAX,
+            u64::MAX,
+            &|_| true,
+            &|| active.load(Ordering::Acquire),
+            &mut |report| {
+                progress.push(report.total());
+                active.store(false, Ordering::Release);
+            },
+        )
+        .unwrap();
+    assert_eq!(result.total(), 1);
+    assert_eq!(progress, [1]);
+    assert_eq!(
+        store
+            .read(|conn| hydrus_store::file_maintenance::job_counts(conn, i64::MAX))
+            .unwrap()[&JobType::HasExif],
+        (1, 0)
+    );
+    assert!(
+        hydrus_store::store::lock_file_maintenance(store.dir())
+            .unwrap()
+            .is_some()
+    );
+}
+
+fn controlled_fixture() -> ([tempfile::TempDir; 2], std::sync::Arc<Store>, Vec<HashId>) {
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    hydrus_store::import::import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    let files = store
+        .read(|conn| {
+            let mut query = conn.prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT 3")?;
+            Ok(query
+                .query_map([], |row| row.get(0))?
+                .collect::<rusqlite::Result<Vec<HashId>>>()?)
+        })
+        .unwrap();
+    store
+        .write(|ctx| hydrus_store::file_maintenance::cancel_jobs(ctx.conn(), &JobType::ALL))
+        .unwrap();
+    ([legacy, native], store, files)
+}
+
+#[test]
+fn ordinary_contended_pass_defers_without_waiting_or_consuming_jobs() {
+    let (_guards, store, files) = controlled_fixture();
+    store
+        .write(move |ctx| {
+            hydrus_store::file_maintenance::add_jobs(ctx.conn(), &files, JobType::HasExif, 0)
+        })
+        .unwrap();
+    let lease = hydrus_store::store::lock_file_maintenance(store.dir())
+        .unwrap()
+        .unwrap();
+    let (sent, received) = std::sync::mpsc::channel();
+    let worker_store = store.clone();
+    let worker = std::thread::spawn(move || {
+        let importer = FileImporter::new(worker_store, MediaTools::new());
+        sent.send(importer.run_file_maintenance(u64::MAX, u64::MAX))
+            .unwrap();
+    });
+    let result = received.recv_timeout(std::time::Duration::from_secs(1));
+    // Release before asserting so a regressed blocking worker is not stranded.
+    drop(lease);
+    worker.join().unwrap();
+    assert_eq!(result.unwrap().unwrap().total(), 0);
+    assert_eq!(
+        store
+            .read(|conn| hydrus_store::file_maintenance::job_counts(conn, i64::MAX))
+            .unwrap()[&JobType::HasExif],
+        (3, 0)
+    );
+}
+
+#[test]
+fn pre_job_hook_precedes_work_and_clear_runs_between_fetched_batches() {
+    use hydrus_import::maintenance::MaintenanceCallbacks;
+    use std::cell::Cell;
+    let (_guards, store, files) = controlled_fixture();
+    let captured = files.clone();
+    store
+        .write(move |ctx| {
+            hydrus_store::file_maintenance::add_jobs(
+                ctx.conn(),
+                &captured[..2],
+                JobType::HasExif,
+                0,
+            )?;
+            hydrus_store::file_maintenance::add_jobs(
+                ctx.conn(),
+                &captured[2..],
+                JobType::HasIccProfile,
+                0,
+            )?;
+            hydrus_store::file_maintenance::add_jobs(
+                ctx.conn(),
+                &captured[..1],
+                JobType::HasIccProfile,
+                i64::MAX,
+            )?;
+            hydrus_store::file_maintenance::add_jobs(
+                ctx.conn(),
+                &captured[..1],
+                JobType::HasXmp,
+                i64::MAX,
+            )
+        })
+        .unwrap();
+    let batches = Cell::new(0);
+    let committed = Cell::new(0);
+    let mut gauges = Vec::new();
+    let importer = FileImporter::new(store.clone(), MediaTools::new());
+    let report = importer
+        .run_file_maintenance_with_callbacks(
+            u64::MAX,
+            u64::MAX,
+            &|_| true,
+            &|| true,
+            MaintenanceCallbacks {
+                before_batch: &mut || {
+                    batches.set(batches.get() + 1);
+                    assert!(
+                        hydrus_store::store::lock_file_maintenance(store.dir())
+                            .unwrap()
+                            .is_none()
+                    );
+                    if batches.get() == 2 {
+                        assert_eq!(committed.get(), 2);
+                        let counts = store
+                            .read(|conn| {
+                                hydrus_store::file_maintenance::job_counts(conn, i64::MAX - 1)
+                            })
+                            .unwrap();
+                        assert!(!counts.contains_key(&JobType::HasExif));
+                        assert_eq!(counts[&JobType::HasIccProfile], (1, 1));
+                        store.write(|ctx| {
+                            hydrus_store::file_maintenance::cancel_jobs(
+                                ctx.conn(),
+                                &[JobType::HasIccProfile],
+                            )
+                        })?;
+                    }
+                    Ok(())
+                },
+                before_job: &mut |attempted| {
+                    assert_eq!(committed.get() + 1, attempted);
+                    assert!(
+                        store
+                            .read(|conn| hydrus_store::file_maintenance::job_counts(
+                                conn,
+                                i64::MAX - 1
+                            ))
+                            .unwrap()
+                            .contains_key(&JobType::HasExif)
+                    );
+                    gauges.push(attempted);
+                },
+                committed: &mut |report| committed.set(report.total()),
+            },
+        )
+        .unwrap();
+    assert_eq!(report.total(), 2);
+    assert_eq!(gauges, [1, 2]);
+    assert_eq!(batches.get(), 2);
+    assert_eq!(
+        store
+            .read(|conn| hydrus_store::file_maintenance::job_counts(conn, i64::MAX - 1))
+            .unwrap(),
+        [(JobType::HasXmp, (0, 1))].into()
+    );
+}
+
+#[test]
+fn cancellation_from_pre_job_hook_finishes_current_file_then_preserves_next() {
+    use hydrus_import::maintenance::MaintenanceCallbacks;
+    use std::cell::Cell;
+    let (_guards, store, files) = controlled_fixture();
+    store
+        .write(move |ctx| {
+            hydrus_store::file_maintenance::add_jobs(ctx.conn(), &files[..2], JobType::HasExif, 0)
+        })
+        .unwrap();
+    let active = Cell::new(true);
+    let mut gauges = Vec::new();
+    let report = FileImporter::new(store.clone(), MediaTools::new())
+        .run_file_maintenance_with_callbacks(
+            u64::MAX,
+            u64::MAX,
+            &|_| true,
+            &|| active.get(),
+            MaintenanceCallbacks {
+                before_batch: &mut || Ok(()),
+                before_job: &mut |attempted| {
+                    gauges.push(attempted);
+                    active.set(false);
+                },
+                committed: &mut |_| {},
+            },
+        )
+        .unwrap();
+    assert_eq!(gauges, [1]);
+    assert_eq!(report.total(), 1);
+    assert_eq!(
+        store
+            .read(|conn| hydrus_store::file_maintenance::job_counts(conn, i64::MAX))
+            .unwrap()[&JobType::HasExif],
+        (1, 0)
+    );
+}
 
 /// (flags, pixel hash, md5, sha1, sha512, perceptual hashes, in the search)
 type Facts = (

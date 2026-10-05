@@ -94,3 +94,36 @@ fn downloads_lines_say_what_the_references_network_job_control_says() {
         assert_eq!(line.can_cancel, case["can_cancel"], "{case}");
     }
 }
+
+#[test]
+fn owned_precision_replays_actual_network_job_controls_without_changing_gauges_or_cancellation() {
+    use hydrus_store::live::{network_job_line, network_job_line_with_figures};
+    let fixture = hydrus_testkit::fixture_json("gui_format.json");
+    for event in fixture["events"].as_array().unwrap() {
+        let figures = u8::try_from(event["saved"]["figures"].as_u64().unwrap()).unwrap();
+        for case in event["consumers"]["network_jobs"].as_array().unwrap() {
+            let job = &case["input"];
+            let line = network_job_line_with_figures(
+                "receiving\nsecond line",
+                job["speed"].as_u64().unwrap(),
+                job["read"].as_u64(),
+                job["total"].as_u64(),
+                job["error"].as_bool().unwrap(),
+                job["done"].as_bool().unwrap(),
+                figures,
+            );
+            let default = network_job_line(
+                "receiving\nsecond line",
+                job["speed"].as_u64().unwrap(),
+                job["read"].as_u64(),
+                job["total"].as_u64(),
+                job["error"].as_bool().unwrap(),
+                job["done"].as_bool().unwrap(),
+            );
+            assert_eq!(line.left, case["left"].as_str().unwrap());
+            assert_eq!(line.right, case["right"].as_str().unwrap());
+            assert_eq!(line.can_cancel, case["can_cancel"].as_bool().unwrap());
+            assert_eq!(line.gauge, default.gauge);
+        }
+    }
+}

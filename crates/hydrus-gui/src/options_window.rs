@@ -37,11 +37,125 @@ fn int(n: i64) -> i32 {
     i32::try_from(n).unwrap_or(if n < 0 { i32::MIN } else { i32::MAX })
 }
 
+/// Negative native row indexes remain out of range rather than selecting row zero.
+fn at(index: i32) -> usize {
+    usize::try_from(index).unwrap_or(usize::MAX)
+}
+
 /// A collect's choices for the files that match none of it, as the
 /// reference's cog menu has them ("unmatched files").
 type SortCogTarget = (usize, usize, Vec<hydrus_gui_model::sort_cog::Entry>);
 
 const UNMATCHED: [&str; 2] = ["collect into one group", "leave separate"];
+
+fn refresh_byte_row(
+    weak: &slint::Weak<OptionsWindow>,
+    editor: &RefCell<Editor>,
+    store: &Store,
+    index: i32,
+) {
+    let Some(window) = weak.upgrade() else {
+        return;
+    };
+    let editor = editor.borrow();
+    let rows = editor.rows();
+    let Some(row) = rows.get(at(index)) else {
+        return;
+    };
+    if !matches!(row,Row::Opt{option,..} if matches!(option.kind,Kind::Bytes)) {
+        return;
+    }
+    if let Some(model) = window
+        .get_rows()
+        .as_any()
+        .downcast_ref::<VecModel<OptionRow>>()
+    {
+        model.set_row_data(
+            at(index),
+            OptionRow {
+                found: editor.found(at(index)),
+                ..option_row(row, store, &[])
+            },
+        );
+    }
+}
+
+fn image_cache_row(row: &Row<'_>) -> bool {
+    matches!(row, Row::Opt { option, .. } if matches!(option.label, "Memory reserved for image cache:" | "Image cache timeout:" | "Maximum image size (in % of cache) that can be cached:" | "Maximum % of cache that will be prefetched per media viewer:" | "Num previous to prefetch in Media Viewer:" | "Num next to prefetch in Media Viewer:"))
+}
+fn refresh_image_cache_rows(window: &OptionsWindow, editor: &Editor) {
+    let policy = editor.applied().0;
+    window.set_prefetch_warning(
+        hydrus_gui_model::viewer_prefetch::warning(
+            policy.image_cache.bytes,
+            policy.viewer_prefetch,
+        )
+        .into(),
+    );
+    for (index, row) in editor.rows().iter().enumerate() {
+        if !image_cache_row(row) {
+            continue;
+        }
+        let Some(mut shown) = window.get_rows().row_data(index) else {
+            continue;
+        };
+        if shown.kind == 33 {
+            shown.text = crate::windows::display_size(window.window())
+                .map(|screen| {
+                    hydrus_gui_model::image_cache::screen_estimate(policy.image_cache.bytes, screen)
+                })
+                .unwrap_or_default()
+                .into();
+        } else if shown.kind == 2
+            && matches!(row,Row::Opt {option,..} if option.label=="Maximum % of cache that will be prefetched per media viewer:")
+        {
+            shown.unit = hydrus_gui_model::viewer_prefetch::percentage_estimate(
+                policy.image_cache.bytes,
+                policy.viewer_prefetch.percentage,
+                policy.info_line.nice_resolutions,
+            )
+            .into();
+        } else if shown.kind == 2
+            && matches!(row,Row::Opt {option,..} if option.label=="Maximum image size (in % of cache) that can be cached:")
+        {
+            shown.unit = hydrus_gui_model::image_cache::percentage_estimate(
+                policy.image_cache,
+                policy.info_line.nice_resolutions,
+            )
+            .into();
+        }
+        window.get_rows().set_row_data(index, shown);
+    }
+}
+
+fn tag_sort_row(out: &mut OptionRow, sort: hydrus_core::tag_sort::TagSort) {
+    out.kind = 12;
+    let strings = |items: &[&str]| {
+        ModelRc::new(VecModel::from(
+            items
+                .iter()
+                .map(|&s| s.into())
+                .collect::<Vec<SharedString>>(),
+        ))
+    };
+    let types: Vec<&str> = TAG_SORT_TYPES.iter().map(|(name, _)| *name).collect();
+    out.items = strings(&types);
+    out.index = int(TAG_SORT_TYPES
+        .iter()
+        .position(|(_, t)| *t == sort.sort_type)
+        .unwrap_or(0) as i64);
+    let (orders, order) = tag_sort_orders(&sort);
+    out.orders = strings(&orders);
+    out.order_index = int(order as i64);
+    let groups: Vec<&str> = TAG_SORT_GROUPS.iter().map(|(name, _)| *name).collect();
+    out.groups = strings(&groups);
+    out.group_index = int(TAG_SORT_GROUPS
+        .iter()
+        .position(|(_, g)| *g == sort.group_by)
+        .unwrap_or(0) as i64);
+    // (as the reference's, a subtag sort doesn't group)
+    out.grouped = sort.sort_type != hydrus_core::tag_sort::TagSortType::Subtag;
+}
 
 /// A row as the window shows it (a sort's types are the store's).
 fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)]) -> OptionRow {
@@ -63,9 +177,39 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
             out.label = option.label.into();
             out.depth = int(*depth as i64);
             match (&option.kind, value) {
+                (Kind::Shortcuts, Value::Shortcuts(_)) => {
+                    out.kind = 32;
+                }
                 (Kind::Check, Value::Check(b)) => {
                     out.kind = 1;
                     out.checked = *b;
+                }
+                (Kind::Bytes, Value::Bytes { amount, unit }) => {
+                    out.kind = 33;
+                    out.number = int(*amount);
+                    out.minimum = 0;
+                    out.maximum = 1_048_576;
+                    out.items = ModelRc::new(VecModel::from(
+                        ["B", "KB", "MB", "GB", "TB"]
+                            .into_iter()
+                            .map(SharedString::from)
+                            .collect::<Vec<_>>(),
+                    ));
+                    out.index = int(*unit as i64);
+                    if option.label == "Memory reserved for image cache:" {
+                        return out;
+                    }
+                    let bounds = store.snapshot().thumbnails;
+                    let bytes = hydrus_gui_model::thumbnail_cache::combined(*amount, *unit);
+                    let per =
+                        3 * u64::from(bounds.bounding_width) * u64::from(bounds.bounding_height);
+                    out.text = format!(
+                        "(at {}x{}, about {} thumbnails)",
+                        bounds.bounding_width,
+                        bounds.bounding_height,
+                        hydrus_core::numbers::human_int(bytes / per.max(1))
+                    )
+                    .into();
                 }
                 (Kind::Int { min, max }, Value::Int(n)) => {
                     out.kind = 2;
@@ -128,9 +272,13 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                         .position(|(value, _)| value == name)
                         .map_or(-1, |index| int(index as i64));
                 }
-                (Kind::Directory, Value::Text(text)) => {
+                (Kind::Directory | Kind::FilePath, Value::Text(text)) => {
                     out.kind = 20;
                     out.text = text.as_str().into();
+                }
+                (Kind::Text, Value::PlainNoneableText(text)) => {
+                    out.kind = 6;
+                    out.text = text.as_deref().unwrap_or_default().into();
                 }
                 (Kind::Text, Value::Text(text)) => {
                     out.kind = 6;
@@ -198,6 +346,8 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                 }
                 (Kind::Sort, Value::Sort(sort)) => {
                     out.kind = 10;
+                    out.sort_wheel_count =
+                        i32::try_from(crate::sort::known_choice_count(store)).unwrap_or(i32::MAX);
                     out.sort_cog = !hydrus_gui_model::sort_cog::groups(sort).is_empty();
                     let choices = crate::sort::page_choices(store, &sort.by);
                     let names: Vec<SharedString> =
@@ -211,42 +361,40 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                         out.order_index = i32::from(!sort.ascending);
                     }
                 }
-                (Kind::TagSort, Value::TagSort(sort)) => {
-                    out.kind = 12;
-                    let strings = |items: &[&str]| {
-                        ModelRc::new(VecModel::from(
-                            items
-                                .iter()
-                                .map(|&s| s.into())
-                                .collect::<Vec<SharedString>>(),
-                        ))
-                    };
-                    let types: Vec<&str> = TAG_SORT_TYPES.iter().map(|(name, _)| *name).collect();
-                    out.items = strings(&types);
-                    out.index = int(TAG_SORT_TYPES
-                        .iter()
-                        .position(|(_, t)| *t == sort.sort_type)
-                        .unwrap_or(0) as i64);
-                    let (orders, order) = tag_sort_orders(sort);
-                    out.orders = strings(&orders);
-                    out.order_index = int(order as i64);
-                    let groups: Vec<&str> = TAG_SORT_GROUPS.iter().map(|(name, _)| *name).collect();
-                    out.groups = strings(&groups);
-                    out.group_index = int(TAG_SORT_GROUPS
-                        .iter()
-                        .position(|(_, g)| *g == sort.group_by)
-                        .unwrap_or(0) as i64);
-                    // (as the reference's, a subtag sort doesn't group)
-                    out.grouped = sort.sort_type != hydrus_core::tag_sort::TagSortType::Subtag;
+                (Kind::TagSort, Value::TagSort(sort)) => tag_sort_row(&mut out, *sort),
+                (Kind::ManageTagsSort, Value::ManageTagsSort(control)) => {
+                    tag_sort_row(&mut out, control.value.order);
+                    out.kind = 35;
+                    out.sibling_sort_visible =
+                        control.value.order.sort_type != hydrus_core::tag_sort::TagSortType::Count;
+                    out.sibling_sort_index = i32::from(!control.value.use_siblings);
                 }
                 (Kind::LocalLocation, Value::Location(location)) => {
                     out.kind = 16;
                     out.text =
                         crate::domains::location_label(&store.snapshot().services, location).into();
                 }
+                (Kind::TagNamespaceOrder, Value::TagNamespaceOrder(_)) => {
+                    out.kind = 37;
+                }
+                (Kind::GuiColours, Value::GuiColours(_)) => {
+                    out.kind = 36;
+                }
+                (Kind::NamespaceColours, Value::NamespaceColours(_)) => {
+                    out.kind = 31;
+                }
+                (Kind::OpenExternally, Value::OpenExternally(_)) => {
+                    out.kind = 34;
+                }
                 (Kind::FavouriteTags, Value::FavouriteTags(_)) => {
                     out.kind = 17;
                     out.text = "edit favourite tags".into();
+                }
+                (Kind::RelatedWeights, Value::RelatedWeights(_)) => {
+                    out.kind = 29;
+                }
+                (Kind::MostUsedTags, Value::MostUsedTags(_)) => {
+                    out.kind = 28;
                 }
                 (Kind::GallerySource, Value::GallerySource(current)) => {
                     out.kind = 19;
@@ -278,6 +426,9 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                 }
                 (Kind::DeletionReasons, Value::DeletionReasons(_)) => {
                     out.kind = 25;
+                }
+                (Kind::ExternalCalls, Value::ExternalCalls(_)) => {
+                    out.kind = 30;
                 }
                 (Kind::FrameLocations, Value::FrameLocations(_)) => {
                     out.kind = 26;
@@ -316,13 +467,18 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
 
 /// Open the window on the store's settings; it forgets itself from `slot`
 /// when closed, and calls `applied` once changes are written.
+#[allow(clippy::too_many_arguments)] // Explicit parent-owned child slots preserve cancellation and inspection.
 pub(crate) fn open(
     store: &Arc<Store>,
     slot: &Rc<RefCell<Option<OptionsWindow>>>,
     checker_slot: &Rc<RefCell<Option<CheckerOptionsWindow>>>,
     reason_slot: &crate::options_deletion::Slot,
+    colour_slot: &crate::options_namespace_colours::Slot,
     frame_slot: &crate::options_frames::Slot,
     banner_slot: &crate::tag_banner_window::Slot,
+    suggested_slot: &crate::tag_suggestions_window::Slots,
+    external_slots: &crate::external_call_window::Slots,
+    routing_slots: &crate::options_open_externally::Slots,
     applied: Rc<dyn Fn()>,
 ) -> Result<OptionsWindow, String> {
     let settings = store
@@ -352,6 +508,7 @@ pub(crate) fn open(
     let import_slot: crate::import_options_panel_window::Slot = Rc::default();
     let namespace_slot: crate::namespace_sorts_window::Slot = Rc::default();
     let active = Rc::new(Cell::new(true));
+    crate::gui_colours::bind(window.global::<crate::Theme<'_>>(), store, active.clone());
     let cog_target: Rc<RefCell<Option<SortCogTarget>>> = Rc::default();
     let names: Vec<StandardListViewItem> = editor
         .borrow()
@@ -361,11 +518,145 @@ pub(crate) fn open(
         .collect();
     window.set_pages(ModelRc::new(VecModel::from(names)));
     let show_providers = crate::options_palette::bind(&window, &editor, &active);
+    let tag_namespace_order = crate::options_tag_namespace_order::bind(&window, &editor, &active);
     let reason_queue = crate::options_deletion::bind(&window, &editor, &active, reason_slot);
+    let gui_colour_list = crate::options_gui_colours::bind(&window, &editor, &active);
+    let colour_list =
+        crate::options_namespace_colours::bind(&window, &editor, &active, colour_slot);
     let frame_table = crate::options_frames::bind(&window, &editor, &active, frame_slot);
+    let shortcuts = crate::shortcut_windows::bind(
+        &window,
+        &editor,
+        &active,
+        Rc::new({
+            let slots = routing_slots.clone();
+            let regex_slot = regex_slot.clone();
+            move || slots.has_open() || crate::regex_favourites_window::has_open(&regex_slot)
+        }),
+    );
+    let routing_table = crate::options_open_externally::bind(
+        &window,
+        &editor,
+        &active,
+        routing_slots,
+        Rc::new({
+            let shortcuts_open = shortcuts.has_open.clone();
+            let regex_slot = regex_slot.clone();
+            move || shortcuts_open() || crate::regex_favourites_window::has_open(&regex_slot)
+        }),
+    );
+    let external_table =
+        crate::options_external_calls::bind(store, &window, &editor, &active, external_slots);
+    crate::menu_choice_wheel::bind(
+        window.global::<crate::MenuChoicePolicy<'_>>(),
+        store,
+        Rc::new({
+            let active = active.clone();
+            let weak = window.as_weak();
+            let blocked = [
+                tag_namespace_order.has_open.clone(),
+                gui_colour_list.has_open.clone(),
+                colour_list.has_open.clone(),
+                reason_queue.has_open.clone(),
+                frame_table.has_open.clone(),
+                external_table.has_open.clone(),
+                routing_table.has_open.clone(),
+                shortcuts.has_open.clone(),
+                crate::menu_choice_wheel::occupied(checker_slot),
+                crate::menu_choice_wheel::occupied(banner_slot),
+                crate::menu_choice_wheel::occupied(&regex_slot),
+                crate::menu_choice_wheel::occupied(&gallery_slot),
+                crate::menu_choice_wheel::occupied(&location_slot),
+                crate::menu_choice_wheel::occupied(&tag_slot),
+                crate::menu_choice_wheel::occupied(&import_slot),
+                crate::menu_choice_wheel::occupied(&namespace_slot),
+                crate::menu_choice_wheel::occupied(&suggested_slot.editor),
+                crate::menu_choice_wheel::occupied(&suggested_slot.tags),
+                crate::menu_choice_wheel::occupied(&suggested_slot.weights),
+            ];
+            move || {
+                active.get()
+                    && !blocked.iter().any(|open| open())
+                    && weak
+                        .upgrade()
+                        .is_some_and(|window| window.window().is_visible())
+            }
+        }),
+    );
+    let image_controls_blocked: Rc<dyn Fn() -> bool> = Rc::new({
+        let active = active.clone();
+        let weak = window.as_weak();
+        let gui_colours = gui_colour_list.has_open.clone();
+        let colours = colour_list.has_open.clone();
+        let frames = frame_table.has_open.clone();
+        let reasons = reason_queue.has_open.clone();
+        let namespaces = tag_namespace_order.has_open.clone();
+        let shortcuts = shortcuts.has_open.clone();
+        let routing = routing_table.has_open.clone();
+        let external = external_table.has_open.clone();
+        let checker = Rc::downgrade(checker_slot);
+        let tag = Rc::downgrade(&tag_slot);
+        let imports = Rc::downgrade(&import_slot);
+        let namespace = Rc::downgrade(&namespace_slot);
+        let gallery = Rc::downgrade(&gallery_slot);
+        let location = Rc::downgrade(&location_slot);
+        let regex = Rc::downgrade(&regex_slot);
+        let banner = Rc::downgrade(banner_slot);
+        let suggested = Rc::downgrade(&suggested_slot.editor);
+        let suggested_tags = Rc::downgrade(&suggested_slot.tags);
+        let suggested_weights = Rc::downgrade(&suggested_slot.weights);
+        move || {
+            !active.get()
+                || !weak
+                    .upgrade()
+                    .is_some_and(|window| window.window().is_visible())
+                || gui_colours()
+                || colours()
+                || frames()
+                || reasons()
+                || namespaces()
+                || shortcuts()
+                || routing()
+                || external()
+                || checker
+                    .upgrade()
+                    .is_some_and(|slot| slot.borrow().is_some())
+                || tag.upgrade().is_some_and(|slot| slot.borrow().is_some())
+                || imports
+                    .upgrade()
+                    .is_some_and(|slot| slot.borrow().is_some())
+                || namespace
+                    .upgrade()
+                    .is_some_and(|slot| slot.borrow().is_some())
+                || gallery
+                    .upgrade()
+                    .is_some_and(|slot| slot.borrow().is_some())
+                || location
+                    .upgrade()
+                    .is_some_and(|slot| slot.borrow().is_some())
+                || regex
+                    .upgrade()
+                    .is_some_and(|slot| crate::regex_favourites_window::has_open(&slot))
+                || banner.upgrade().is_some_and(|slot| slot.borrow().is_some())
+                || suggested
+                    .upgrade()
+                    .is_some_and(|slot| slot.borrow().is_some())
+                || suggested_tags
+                    .upgrade()
+                    .is_some_and(|slot| slot.borrow().is_some())
+                || suggested_weights
+                    .upgrade()
+                    .is_some_and(|slot| slot.borrow().is_some())
+        }
+    });
     // (the rows are made anew only as the page changes: an edit leaves its
     // control as the user left it)
     let show_page = {
+        let show_routing = routing_table.show.clone();
+        let show_external = external_table.show.clone();
+        let show_tag_namespace_order = tag_namespace_order.show.clone();
+        let show_gui_colours = gui_colour_list.show.clone();
+        let show_colours = colour_list.show.clone();
         let cog_target = cog_target.clone();
         let session_choices = session_choices.clone();
         let editor = editor.clone();
@@ -374,20 +665,28 @@ pub(crate) fn open(
         move || {
             cog_target.borrow_mut().take();
             let Some(window) = weak.upgrade() else { return };
-            let editor = editor.borrow();
-            let rows: Vec<OptionRow> = editor
+            let state = editor.borrow();
+            let rows: Vec<OptionRow> = state
                 .rows()
                 .iter()
                 .enumerate()
                 .map(|(i, row)| OptionRow {
-                    found: editor.found(i),
+                    found: state.found(i),
                     ..option_row(row, &store, &session_choices)
                 })
                 .collect();
-            window.set_page(int(editor.page() as i64));
+            window.set_page(int(state.page() as i64));
             window.set_rows(ModelRc::new(VecModel::from(rows)));
+            refresh_image_cache_rows(&window, &state);
             show_providers();
-            if let Some(name) = editor.remembered_panel()
+            drop(state);
+            show_tag_namespace_order();
+            show_gui_colours();
+            show_colours();
+            show_routing();
+            show_external();
+            let state = editor.borrow();
+            if let Some(name) = state.remembered_panel()
                 && let Err(error) = store.write(move |ctx| {
                     let mut preferences: hydrus_store::settings::OptionsPreferences =
                         hydrus_store::settings::get(ctx.conn())?;
@@ -403,25 +702,35 @@ pub(crate) fn open(
         }
     };
     show_page();
+    crate::sidebar_context_cog::bind_options(&window, &editor, store, &active, show_page.clone());
     (reason_queue.show)();
     (frame_table.show)();
+    (external_table.show)();
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
         let import_slot = import_slot.clone();
         let namespace_slot = namespace_slot.clone();
         let banner_slot = banner_slot.clone();
+        let suggested_slot = suggested_slot.clone();
         let regex_slot = regex_slot.clone();
         let gallery_slot = gallery_slot.clone();
         let location_slot = location_slot.clone();
         let tag_slot = tag_slot.clone();
         let active = active.clone();
+        let cancel_tag_namespace_order = tag_namespace_order.cancel.clone();
+        let cancel_gui_colours = gui_colour_list.cancel.clone();
+        let cancel_colours = colour_list.cancel.clone();
         let cancel_reasons = reason_queue.cancel.clone();
         let cancel_frames = frame_table.cancel.clone();
+        let cancel_routing = routing_table.cancel.clone();
+        let cancel_external = external_table.cancel.clone();
+        let cancel_shortcuts = shortcuts.cancel.clone();
         move || {
             if !active.replace(false) {
                 return;
             }
+            cancel_shortcuts();
             let child = tag_slot
                 .borrow()
                 .as_ref()
@@ -429,11 +738,17 @@ pub(crate) fn open(
             if let Some(child) = child {
                 child.invoke_cancel();
             }
+            cancel_tag_namespace_order();
+            cancel_gui_colours();
+            cancel_colours();
             cancel_reasons();
             cancel_frames();
+            cancel_external();
+            cancel_routing();
             crate::import_options_panel_window::cancel(&import_slot);
             crate::namespace_sorts_window::cancel(&namespace_slot);
             crate::tag_banner_window::cancel(&banner_slot);
+            crate::tag_suggestions_window::cancel(&suggested_slot);
             crate::locations_window::cancel(&location_slot);
             crate::regex_favourites_window::cancel(&regex_slot);
             crate::gallery_source_window::cancel(&gallery_slot);
@@ -443,7 +758,6 @@ pub(crate) fn open(
             slot.borrow_mut().take();
         }
     };
-    let at = |i: i32| usize::try_from(i).unwrap_or(usize::MAX);
     // the search: suggestions as it is typed in; one chosen shows its page,
     // its row highlighted, and the search is cleared (as the reference's)
     window.set_search_placeholder(SEARCH_PLACEHOLDER.into());
@@ -481,7 +795,20 @@ pub(crate) fn open(
         let matches = matches.clone();
         let show_page = show_page.clone();
         let weak = window.as_weak();
+        let tag_namespace_open = tag_namespace_order.has_open.clone();
+        let gui_colours_open = gui_colour_list.has_open.clone();
+        let routing_open = routing_table.has_open.clone();
+        let shortcuts_open = shortcuts.has_open.clone();
+        let regex_slot = regex_slot.clone();
         move |i| {
+            if tag_namespace_open()
+                || gui_colours_open()
+                || routing_open()
+                || shortcuts_open()
+                || crate::regex_favourites_window::has_open(&regex_slot)
+            {
+                return;
+            }
             let chosen = usize::try_from(i)
                 .ok()
                 .and_then(|i| matches.borrow().get(i).cloned());
@@ -560,6 +887,74 @@ pub(crate) fn open(
             }
         }
     });
+    window.on_related_weights_clicked({
+        let slots = suggested_slot.clone();
+        let editor = editor.clone();
+        let active = active.clone();
+        let show_page = show_page.clone();
+        move || {
+            if !active.get() || slots.editor.borrow().is_some() || slots.weights.borrow().is_some()
+            {
+                return;
+            }
+            let initial = editor.borrow().edited_related_weights();
+            let accepted = Rc::new({
+                let editor = editor.clone();
+                let active = active.clone();
+                let show_page = show_page.clone();
+                move |weights| {
+                    if active.get() {
+                        editor.borrow_mut().set_related_weights(weights);
+                        show_page();
+                    }
+                }
+            });
+            if let Err(error) = crate::related_weights_window::open(
+                &slots.weights,
+                &initial,
+                active.clone(),
+                accepted,
+            ) {
+                eprintln!("could not edit related weights: {error}");
+            }
+        }
+    });
+    window.on_most_used_tags_clicked({
+        let store = store.clone();
+        let suggested_slot = suggested_slot.clone();
+        let editor = editor.clone();
+        let active = active.clone();
+        let show_page = show_page.clone();
+        move || {
+            if !active.get()
+                || suggested_slot.editor.borrow().is_some()
+                || suggested_slot.weights.borrow().is_some()
+            {
+                return;
+            }
+            let initial = editor.borrow().edited_most_used_tags();
+            let applied = Rc::new({
+                let active = active.clone();
+                let editor = editor.clone();
+                let show_page = show_page.clone();
+                move |tags| {
+                    if active.get() {
+                        editor.borrow_mut().set_most_used_tags(tags);
+                        show_page();
+                    }
+                }
+            });
+            if let Err(error) = crate::tag_suggestions_window::open(
+                &store,
+                &suggested_slot,
+                initial,
+                active.clone(),
+                applied,
+            ) {
+                eprintln!("could not edit most used tags: {error}");
+            }
+        }
+    });
     window.on_gallery_source_clicked({
         let editor = editor.clone();
         let gallery_slot = gallery_slot.clone();
@@ -595,24 +990,69 @@ pub(crate) fn open(
         let editor = editor.clone();
         let regex_slot = regex_slot.clone();
         let show_page = show_page.clone();
+        let active = active.clone();
+        let weak = window.as_weak();
+        let store = store.clone();
+        let tag_namespace_open = tag_namespace_order.has_open.clone();
+        let gui_colours_open = gui_colour_list.has_open.clone();
+        let routing_open = routing_table.has_open.clone();
+        let shortcuts_open = shortcuts.has_open.clone();
         move || {
-            if crate::regex_favourites_window::has_open(&regex_slot) {
+            if !active.get()
+                || !weak.upgrade().is_some_and(|w| w.window().is_visible())
+                || tag_namespace_open()
+                || gui_colours_open()
+                || routing_open()
+                || shortcuts_open()
+                || crate::regex_favourites_window::has_open(&regex_slot)
+            {
                 return;
             }
+            let valid: Rc<dyn Fn() -> bool> = Rc::new({
+                let active = active.clone();
+                let weak = weak.clone();
+                move || active.get() && weak.upgrade().is_some_and(|w| w.window().is_visible())
+            });
             let favourites = editor.borrow().edited_regex_favourites();
             let applied = Rc::new({
                 let editor = editor.clone();
                 let show_page = show_page.clone();
+                let valid = valid.clone();
                 move |favourites| {
+                    if !valid() {
+                        return Err("The options window has closed.".into());
+                    }
                     editor.borrow_mut().set_regex_favourites(favourites);
                     show_page();
                     Ok(())
                 }
             });
-            if let Err(error) =
-                crate::regex_favourites_window::open(&favourites, &regex_slot, applied)
-            {
-                eprintln!("could not open regex favourites: {error}");
+            match crate::regex_favourites_window::open_owned(
+                &favourites,
+                &regex_slot,
+                applied,
+                Rc::new({
+                    let store = store.clone();
+                    move || {
+                        store
+                            .read(hydrus_store::regex_favourites::load)
+                            .map_err(|e| e.to_string())
+                    }
+                }),
+                valid,
+            ) {
+                Ok(child) => {
+                    if let Some(window) = weak.upgrade() {
+                        window.set_regex_child_open(true);
+                    }
+                    let weak = weak.clone();
+                    child.on_closed(move || {
+                        if let Some(window) = weak.upgrade() {
+                            window.set_regex_child_open(false);
+                        }
+                    });
+                }
+                Err(error) => eprintln!("could not open regex favourites: {error}"),
             }
         }
     });
@@ -714,21 +1154,67 @@ pub(crate) fn open(
     window.on_page_chosen({
         let editor = editor.clone();
         let show_page = show_page.clone();
+        let weak = window.as_weak();
+        let active = active.clone();
+        let tag_namespace_open = tag_namespace_order.has_open.clone();
+        let gui_colours_open = gui_colour_list.has_open.clone();
+        let routing_open = routing_table.has_open.clone();
+        let shortcuts_open = shortcuts.has_open.clone();
+        let regex_slot = regex_slot.clone();
         move |i| {
+            if !active.get()
+                || !weak
+                    .upgrade()
+                    .is_some_and(|window| window.window().is_visible())
+            {
+                return;
+            }
+            if tag_namespace_open()
+                || gui_colours_open()
+                || routing_open()
+                || shortcuts_open()
+                || crate::regex_favourites_window::has_open(&regex_slot)
+            {
+                // The list's two-way current-item binding can precede this
+                // callback. Retain the editor's page while a child owns input.
+                if let Some(window) = weak.upgrade() {
+                    window.set_page(int(editor.borrow().page() as i64));
+                }
+                return;
+            }
             editor.borrow_mut().show_page(at(i));
             show_page();
         }
     });
     window.on_check_toggled({
+        let show_tag_namespace_order = tag_namespace_order.show.clone();
+        let show_gui_colours = gui_colour_list.show.clone();
         let editor = editor.clone();
         let weak = window.as_weak();
         let active = active.clone();
+        let colours_open = colour_list.has_open.clone();
         let reasons_open = reason_queue.has_open.clone();
         let frames_open = frame_table.has_open.clone();
+        let tag_namespace_open = tag_namespace_order.has_open.clone();
+        let gui_colours_open = gui_colour_list.has_open.clone();
+        let routing_open = routing_table.has_open.clone();
+        let external_open = external_table.has_open.clone();
+        let shortcuts_open = shortcuts.has_open.clone();
         move |i, checked| {
+            let appearance = matches!(editor.borrow().rows().get(at(i)), Some(Row::Opt { option, .. }) if matches!(option.label.trim(), "Fade thumbnails:" | "Use blurhash missing thumbnail fallback:" | "Use the new thumbnail rendering tech (only applies to new pages):"));
+            if appearance && !weak.upgrade().is_some_and(|window| window.window().is_visible()) { return; }
             if !active.get()
+                || !weak
+                    .upgrade()
+                    .is_some_and(|window| window.window().is_visible())
+                || colours_open()
                 || reasons_open()
                 || frames_open()
+                || external_open()
+                || shortcuts_open()
+                || tag_namespace_open()
+                || gui_colours_open()
+                || routing_open()
                 || !matches!(
                     editor.borrow().rows().get(at(i)),
                     Some(Row::Opt { enabled: true, .. })
@@ -737,6 +1223,8 @@ pub(crate) fn open(
                 return;
             }
             editor.borrow_mut().check(at(i), checked);
+            show_tag_namespace_order();
+            show_gui_colours();
             if let Some(window) = weak.upgrade() {
                 for (index, row) in editor.borrow().rows().iter().enumerate() {
                     if let Row::Opt { enabled, .. } = row
@@ -759,8 +1247,19 @@ pub(crate) fn open(
         }
     });
     window.on_number_edited({
+        let image_controls_blocked = image_controls_blocked.clone();
         let editor = editor.clone();
-        move |i, n| editor.borrow_mut().number(at(i), i64::from(n))
+        let weak = window.as_weak();
+        let store = store.clone();
+        let active = active.clone();
+        move |i, n| {
+            if editor.borrow().rows().get(at(i)).is_some_and(image_cache_row) && image_controls_blocked() { return; }
+            let start = matches!(editor.borrow().rows().get(at(i)), Some(Row::Opt { option, .. }) if option.label == "Start animations this % in:");
+            if start && (!active.get() || !weak.upgrade().is_some_and(|window| window.window().is_visible())) { return; }
+            editor.borrow_mut().number(at(i), i64::from(n));
+            refresh_byte_row(&weak, &editor, &store, i);
+            if let Some(window) = weak.upgrade() { refresh_image_cache_rows(&window, &editor.borrow()); }
+        }
     });
     window.on_none_toggled({
         let editor = editor.clone();
@@ -768,13 +1267,54 @@ pub(crate) fn open(
     });
     window.on_text_edited({
         let editor = editor.clone();
-        move |i, text| editor.borrow_mut().text(at(i), &text)
+        let active = active.clone();
+        let weak = window.as_weak();
+        move |i, text| {
+            if active.get() && weak.upgrade().is_some_and(|w| w.window().is_visible()) {
+                editor.borrow_mut().text(at(i), &text);
+            }
+        }
+    });
+    window.on_background_path_pick({
+        let active = active.clone();
+        let weak = window.as_weak();
+        move |current| {
+            if !active.get()
+                || !weak
+                    .upgrade()
+                    .is_some_and(|window| window.window().is_visible())
+            {
+                return SharedString::new();
+            }
+            crate::thumbnail_background::pick(&current)
+                .unwrap_or_default()
+                .into()
+        }
     });
     window.on_directory_browse({
         let editor = editor.clone();
         let active = active.clone();
         let show_page = show_page.clone();
+        let weak = window.as_weak();
         move |i| {
+            let file = matches!(editor.borrow().rows().get(at(i)), Some(Row::Opt { option, .. }) if option.kind == Kind::FilePath);
+            if file {
+                let Some(window) = weak.upgrade().filter(|window| active.get() && window.window().is_visible()) else { return; };
+                let page = editor.borrow().page();
+                let current = match editor.borrow().rows().get(at(i)) {
+                    Some(Row::Opt { value: Value::Text(value), .. }) => value.clone(),
+                    _ => return,
+                };
+                let path = window.invoke_background_path_pick(current.into());
+                if !path.is_empty()
+                    && active.get() && window.window().is_visible()
+                    && editor.borrow().page() == page
+                    && matches!(editor.borrow().rows().get(at(i)), Some(Row::Opt { option, .. }) if option.kind == Kind::FilePath)
+                {
+                    editor.borrow_mut().text(at(i), &crate::thumbnail_background::normalized_path(&path)); show_page();
+                }
+                return;
+            }
             if !active.get() || !matches!(editor.borrow().rows().get(at(i)), Some(Row::Opt { option, .. }) if option.kind == Kind::Directory) {
                 return;
             }
@@ -787,8 +1327,16 @@ pub(crate) fn open(
         }
     });
     window.on_field_edited({
+        let image_controls_blocked = image_controls_blocked.clone();
         let editor = editor.clone();
-        move |i, field, n| editor.borrow_mut().field(at(i), at(field), i64::from(n))
+        let active = active.clone();
+        let weak = window.as_weak();
+        move |i, field, n| {
+            if editor.borrow().rows().get(at(i)).is_some_and(image_cache_row) && image_controls_blocked() { return; }
+            let deletion = matches!(editor.borrow().rows().get(at(i)), Some(Row::Opt {option,..}) if option.label == "When maintenance physically deletes files, wait this long between each delete: ");
+            if deletion && (!active.get() || !weak.upgrade().is_some_and(|w| w.window().is_visible())) {return;}
+            editor.borrow_mut().field(at(i), at(field), i64::from(n));
+        }
     });
     // checker options' button: their editor (with advanced mode's tiny
     // least times if the options have it on, as the reference's reads
@@ -841,10 +1389,21 @@ pub(crate) fn open(
         }
     });
     window.on_choice_chosen({
+        let image_controls_blocked = image_controls_blocked.clone();
         let session_choices=session_choices.clone();
+        let active=active.clone();let gui_colours_open=gui_colour_list.has_open.clone();
         let editor = editor.clone();
         let store = store.clone();
+        let weak=window.as_weak();
         move |i, index| {
+            if editor.borrow().rows().get(at(i)).is_some_and(image_cache_row) && image_controls_blocked() { return; }
+            if !active.get()||gui_colours_open()||!weak.upgrade().is_some_and(|window|window.window().is_visible()){return;}
+
+            if matches!(editor.borrow().rows().get(at(i)),Some(Row::Opt{option,..}) if matches!(option.kind,Kind::Bytes)) {
+                editor.borrow_mut().choose(at(i),at(index));refresh_byte_row(&weak,&editor,&store,i);
+                if let Some(window) = weak.upgrade() { refresh_image_cache_rows(&window, &editor.borrow()); }
+                return;
+            }
             let mut editor = editor.borrow_mut();
             if matches!(editor.rows().get(at(i)),Some(Row::Opt {option,..}) if matches!(option.kind,Kind::SavedSession)) {
                 if let Some((name,_))=session_choices.get(at(index)) {editor.saved_session(at(i),name.clone());}
@@ -868,8 +1427,8 @@ pub(crate) fn open(
             }
         }
     });
-    // a sort's type (in its default order, as the reference's control
-    // sets it), or its order; the row shows the type's orders
+    // A type change preserves the order when both labels match the previous
+    // choices; otherwise it selects the new type's default order.
     let sort_edited = {
         let session_choices = session_choices.clone();
         let editor = editor.clone();
@@ -908,8 +1467,9 @@ pub(crate) fn open(
         move |i, index| {
             sort_edited(i, &|sort, choices| {
                 if let Some(choice) = choices.get(at(index)) {
+                    let ascending = crate::sort::type_ascending(sort, choices, choice);
                     sort.by = choice.by.clone();
-                    sort.ascending = choice.default_ascending;
+                    sort.ascending = ascending;
                 }
             });
         }
@@ -1025,11 +1585,15 @@ pub(crate) fn open(
     // a tag sort's type, order or grouping; the row shows the type's
     // orders, and grouping only where the type groups
     window.on_tag_sort_chosen({
+        let tag_namespace_open = tag_namespace_order.has_open.clone();
         let session_choices = session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
         let weak = window.as_weak();
         move |i, part, index| {
+            if tag_namespace_open() {
+                return;
+            }
             let Some(window) = weak.upgrade() else { return };
             let mut editor = editor.borrow_mut();
             editor.tag_sort(at(i), at(part), at(index));
@@ -1095,8 +1659,16 @@ pub(crate) fn open(
         });
     });
     window.on_apply({
+        let regex_slot = regex_slot.clone();
+        let suggested_slot = suggested_slot.clone();
+        let colours_open = colour_list.has_open.clone();
         let reasons_open = reason_queue.has_open.clone();
         let frames_open = frame_table.has_open.clone();
+        let tag_namespace_open = tag_namespace_order.has_open.clone();
+        let gui_colours_open = gui_colour_list.has_open.clone();
+        let routing_open = routing_table.has_open.clone();
+        let external_open = external_table.has_open.clone();
+        let shortcuts_open = shortcuts.has_open.clone();
         let import_slot = import_slot.clone();
         let namespace_slot = namespace_slot.clone();
         let banner_slot = banner_slot.clone();
@@ -1105,14 +1677,27 @@ pub(crate) fn open(
         let editor = editor.clone();
         let store = store.clone();
         let close = close.clone();
+        let weak = window.as_weak();
         move || {
             if !active.get()
+                || !weak
+                    .upgrade()
+                    .is_some_and(|window| window.window().is_visible())
+                || colours_open()
                 || reasons_open()
                 || frames_open()
+                || external_open()
+                || shortcuts_open()
+                || tag_namespace_open()
+                || gui_colours_open()
+                || routing_open()
+                || crate::regex_favourites_window::has_open(&regex_slot)
                 || tag_slot.borrow().is_some()
                 || import_slot.borrow().is_some()
                 || namespace_slot.borrow().is_some()
                 || banner_slot.borrow().is_some()
+                || suggested_slot.editor.borrow().is_some()
+                || suggested_slot.weights.borrow().is_some()
             {
                 return;
             }
@@ -1130,6 +1715,13 @@ pub(crate) fn open(
                 after.export.default_directory = Some(
                     hydrus_gui_model::export_files::default_directory(&store, &after.export),
                 );
+            }
+            if weak
+                .upgrade()
+                .is_some_and(|window| window.get_routing_prepared())
+                || before.open_externally != hydrus_core::open_externally::Routing::default()
+            {
+                after.open_externally.wash(&mut after.external_calls);
             }
             let saved = store.write_and_refresh(move |ctx| {
                 after.save(ctx.conn(), &before)?;
