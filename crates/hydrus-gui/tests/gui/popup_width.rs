@@ -131,7 +131,7 @@ fn options_cancel_apply_successor_stale_callbacks_and_real_popup_geometry() {
     store
         .write(move |ctx| {
             popups::update(ctx.conn(), &key, now(), |j| {
-                j.status_text_1 = Some("synthetic words ".repeat(40))
+                j.status_text_1 = Some("synthetic words ".repeat(40));
             })
         })
         .unwrap();

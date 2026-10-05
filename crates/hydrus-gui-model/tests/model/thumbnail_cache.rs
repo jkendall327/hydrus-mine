@@ -10,7 +10,7 @@ fn byte_lru_soft_overflow_timeout_touch_policy_and_clear_match_actual_reference(
         bytes: 100,
         timeout: 300,
     });
-    let id = |name: &str| HashId(i64::from(name.as_bytes()[0]));
+    let id = |name: &str| HashId(u32::from(name.as_bytes()[0]));
     for event in fixture["cache"].as_array().unwrap() {
         let now = Duration::from_secs_f64(event["now"].as_f64().unwrap());
         let action = event["action"].as_str().unwrap();
