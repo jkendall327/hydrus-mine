@@ -136,7 +136,10 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     )?;
     insert_setting(
         &mut input,
-        &crate::api_update_toasts::Preferences::from_legacy(&options),
+        &options.as_ref().map_or_else(
+            crate::api_update_toasts::Preferences::default,
+            crate::api_update_toasts::Preferences::from_legacy,
+        ),
     )?;
     insert_setting(
         &mut input,
@@ -3415,6 +3418,41 @@ mod tests {
             [dump.into_bytes()],
         )
         .unwrap();
+    }
+
+    #[test]
+    fn api_update_toasts_import_present_and_absent_client_options() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "notify_client_api_cookies"], [0, false]]"#,
+                r#"[[0, "notify_client_api_cookies"], [0, true]]"#,
+            )],
+        );
+        let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        let saved: crate::api_update_toasts::Preferences =
+            serde_json::from_value(input.settings["api_update_toasts"].clone()).unwrap();
+        assert!(saved.enabled);
+        let conn = rusqlite::Connection::open(source.path().join("client.db")).unwrap();
+        assert_eq!(
+            conn.execute(
+                "DELETE FROM json_dumps WHERE dump_type = ?",
+                [i64::from(
+                    hydrus_legacy::serialisable::SerialisableType::CLIENT_OPTIONS.0
+                )]
+            )
+            .unwrap(),
+            1
+        );
+        drop(conn);
+        let db = LegacyDb::open(source.path()).unwrap();
+        assert!(db.client_options().unwrap().is_none());
+        let input = decode_input(&db).unwrap();
+        let saved: crate::api_update_toasts::Preferences =
+            serde_json::from_value(input.settings["api_update_toasts"].clone()).unwrap();
+        assert_eq!(saved, crate::api_update_toasts::Preferences::default());
+        assert!(!saved.enabled);
     }
 
     #[test]
