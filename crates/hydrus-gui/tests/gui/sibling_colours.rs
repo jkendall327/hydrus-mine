@@ -311,6 +311,7 @@ fn options_cancel_retired_apply_reopen_and_all_segmented_native_consumers() {
     let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
     let draft = child.get_text();
     let selected: Vec<_> = child.get_selected().iter().collect();
+    let snapshot_revision = store.snapshot().revision;
     store
         .write(|ctx| {
             settings::set(
@@ -322,6 +323,21 @@ fn options_cancel_retired_apply_reopen_and_all_segmented_native_consumers() {
             )
         })
         .unwrap();
+    assert_eq!(
+        store.snapshot().revision,
+        snapshot_revision,
+        "plain colour preference commits do not republish the Store snapshot"
+    );
+    assert_eq!(
+        store
+            .read::<SiblingConnectorColours>(settings::get)
+            .unwrap(),
+        SiblingConnectorColours {
+            fade: false,
+            namespace: Some("system".into())
+        },
+        "the observer must notice the durable policy independently of snapshot revision"
+    );
     let has_custom_connector = |rows: &ModelRc<ListText>| {
         rows.iter().any(|row| {
             row.parts

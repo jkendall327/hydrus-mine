@@ -110,17 +110,20 @@ impl Launcher {
                 .into_iter()
                 .next()
                 .ok_or_else(|| "This file is not local--it cannot be opened!".to_owned())?;
-            let local_storage = store
+            // load_basic supplies hash/file properties only; locations are deliberately
+            // absent. Read live domain membership at dispatch, including trash/updates
+            // in local storage and excluding deleted files with retained physical paths.
+            let local = store
                 .read(|conn| {
                     let services = hydrus_store::services::ServiceRegistry::load(conn)?;
-                    Ok(hydrus_store::content::DomainRoles::new(&services)?.local_file_storage)
+                    let local_storage =
+                        hydrus_store::content::DomainRoles::new(&services)?.local_file_storage;
+                    Ok(hydrus_store::media::current_domains(conn, &[id])?
+                        .get(&id)
+                        .is_some_and(|domains| domains.contains(&local_storage)))
                 })
                 .map_err(|error| error.to_string())?;
-            if !media
-                .current
-                .iter()
-                .any(|location| location.service == local_storage)
-            {
+            if !local {
                 return Err("This file is not local--it cannot be opened!".into());
             }
             let path = crate::thumbnail_menu::paths(store, &[id])

@@ -1829,65 +1829,133 @@ fn direct_import_menus_replay_qt_type_warnings_file_prefixes_and_missing_rejecti
     use hydrus_downloader_exchange::subscriptions as exchange;
     let fixture = hydrus_testkit::fixture_json("subscription_import_flow.json");
     let recorded_now = fixture["now"].as_i64().unwrap();
-    for case in fixture["cases"].as_array().unwrap() {
-        let (_dirs, store) = store();
-        let _windows = headless::init();
-        let ui = MainWindow::new().unwrap();
-        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
-        let dialog = open_dialog(&ui, &bound);
-        let files = tempfile::tempdir().unwrap();
-        let mode = case["mode"].as_str().unwrap();
-        if mode == "clipboard" {
-            let text = case["sources"][case["inputs"][0].as_str().unwrap()]
-                .as_str()
-                .unwrap()
-                .to_owned();
-            hydrus_gui::set_paster(move || text.clone());
-        } else {
-            let mut paths = Vec::new();
-            for (index, key) in case["inputs"].as_array().unwrap().iter().enumerate() {
-                let path = files.path().join(format!("{index}.{mode}"));
-                let Some(source) = case["sources"][key.as_str().unwrap()].as_str() else {
-                    paths.push(path);
-                    continue;
-                };
-                let bytes = if mode == "png" && source != "not json" {
-                    hydrus_downloader_exchange::text_png::encode(source, 512, &vec![255; 512])
-                        .unwrap()
-                } else {
-                    source.as_bytes().to_vec()
-                };
-                std::fs::write(&path, bytes).unwrap();
-                paths.push(path);
-            }
-            let expected_title = if mode == "png" {
-                "select the png or pngs with the encoded data"
+    // Slint's platform is initialized once per thread. Each independent case
+    // owns its windows/context until the joined thread releases them.
+    for case in fixture["cases"].as_array().unwrap().iter().cloned() {
+        std::thread::spawn(move || {
+            let (_dirs, store) = store();
+            let _windows = headless::init();
+            let ui = MainWindow::new().unwrap();
+            let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+            let dialog = open_dialog(&ui, &bound);
+            let files = tempfile::tempdir().unwrap();
+            let mode = case["mode"].as_str().unwrap();
+            if mode == "clipboard" {
+                let text = case["sources"][case["inputs"][0].as_str().unwrap()]
+                    .as_str()
+                    .unwrap()
+                    .to_owned();
+                hydrus_gui::set_paster(move || text.clone());
             } else {
-                "select the json or jsons with the serialised data"
-            };
-            hydrus_gui::set_picker(move |_, title| {
-                assert_eq!(title, expected_title);
-                paths.clone()
+                let mut paths = Vec::new();
+                for (index, key) in case["inputs"].as_array().unwrap().iter().enumerate() {
+                    let path = files.path().join(format!("{index}.{mode}"));
+                    let Some(source) = case["sources"][key.as_str().unwrap()].as_str() else {
+                        paths.push(path);
+                        continue;
+                    };
+                    let bytes = if mode == "png" && source != "not json" {
+                        hydrus_downloader_exchange::text_png::encode(source, 512, &vec![255; 512])
+                            .unwrap()
+                    } else {
+                        source.as_bytes().to_vec()
+                    };
+                    std::fs::write(&path, bytes).unwrap();
+                    paths.push(path);
+                }
+                let expected_title = if mode == "png" {
+                    "select the png or pngs with the encoded data"
+                } else {
+                    "select the json or jsons with the serialised data"
+                };
+                hydrus_gui::set_picker(move |_, title| {
+                    assert_eq!(title, expected_title);
+                    paths.clone()
+                });
+            }
+            dialog.invoke_exchange_mode(match mode {
+                "clipboard" => 3,
+                "json" => 4,
+                "png" => 5,
+                _ => unreachable!(),
             });
-        }
-        dialog.invoke_exchange_mode(match mode {
-            "clipboard" => 3,
-            "json" => 4,
-            "png" => 5,
-            _ => unreachable!(),
-        });
-        assert!(
-            !bound.subscription_exchange.has_open(),
-            "actual menu imports add to the list directly"
-        );
-        for notice in case["messages"].as_array().unwrap() {
-            let (title, text, _) = asked(&dialog);
+            assert!(
+                !bound.subscription_exchange.has_open(),
+                "actual menu imports add to the list directly"
+            );
+            for notice in case["messages"].as_array().unwrap() {
+                let (title, text, _) = asked(&dialog);
+                let shown = rows(&dialog);
+                assert_eq!(
+                    serde_json::json!(shown.iter().map(|r| &r.0[0]).collect::<Vec<_>>()),
+                    notice["during"],
+                    "{}",
+                    case["case"]
+                );
+                assert_eq!(
+                    serde_json::json!(
+                        shown
+                            .iter()
+                            .filter(|r| r.1)
+                            .map(|r| &r.0[0])
+                            .collect::<Vec<_>>()
+                    ),
+                    notice["selected"]
+                );
+                match notice["kind"].as_str().unwrap() {
+                    "warning" => {
+                        assert_eq!(title, "Warning");
+                        let expected = notice["text"].as_str().unwrap();
+                        let mut actual_types = text
+                            .split("\n\n")
+                            .nth(1)
+                            .unwrap()
+                            .lines()
+                            .collect::<Vec<_>>();
+                        let mut expected_types = expected
+                            .split("\n\n")
+                            .nth(1)
+                            .unwrap()
+                            .lines()
+                            .collect::<Vec<_>>();
+                        actual_types.sort_unstable();
+                        expected_types.sort_unstable();
+                        assert_eq!(actual_types, expected_types);
+                        assert_eq!(
+                            text.split("\n\n").skip(2).collect::<Vec<_>>(),
+                            expected.split("\n\n").skip(2).collect::<Vec<_>>()
+                        );
+                    }
+                    "information" => {
+                        assert_eq!(title, "Information");
+                        assert_eq!(text, notice["text"]);
+                    }
+                    "question" => {
+                        assert_eq!(title, notice["title"]);
+                        assert_eq!(text, notice["text"]);
+                    }
+                    "critical" => {
+                        assert_eq!(title, notice["title"]);
+                        assert!(!text.is_empty());
+                    }
+                    _ => unreachable!(),
+                }
+                dialog.invoke_apply();
+                assert!(
+                    store.read(subscriptions::subscriptions).unwrap().is_empty(),
+                    "notices and missing-history decisions retain the draft owner"
+                );
+                if notice["kind"] == "question" {
+                    dialog.invoke_chosen(1);
+                } else {
+                    dialog.invoke_chosen(0);
+                }
+            }
+            assert!(!dialog.get_asking());
             let shown = rows(&dialog);
             assert_eq!(
                 serde_json::json!(shown.iter().map(|r| &r.0[0]).collect::<Vec<_>>()),
-                notice["during"],
-                "{}",
-                case["case"]
+                case["names"]
             );
             assert_eq!(
                 serde_json::json!(
@@ -1897,134 +1965,74 @@ fn direct_import_menus_replay_qt_type_warnings_file_prefixes_and_missing_rejecti
                         .map(|r| &r.0[0])
                         .collect::<Vec<_>>()
                 ),
-                notice["selected"]
+                case["selected"]
             );
-            match notice["kind"].as_str().unwrap() {
-                "warning" => {
-                    assert_eq!(title, "Warning");
-                    let expected = notice["text"].as_str().unwrap();
-                    let mut actual_types = text
-                        .split("\n\n")
-                        .nth(1)
-                        .unwrap()
-                        .lines()
-                        .collect::<Vec<_>>();
-                    let mut expected_types = expected
-                        .split("\n\n")
-                        .nth(1)
-                        .unwrap()
-                        .lines()
-                        .collect::<Vec<_>>();
-                    actual_types.sort_unstable();
-                    expected_types.sort_unstable();
-                    assert_eq!(actual_types, expected_types);
+            dialog.invoke_apply();
+            let saved = store.read(subscriptions::subscriptions).unwrap();
+            assert_eq!(
+                serde_json::json!(saved.iter().map(|s| &s.name).collect::<Vec<_>>()),
+                case["names"]
+            );
+            let mut queue_ids = std::collections::BTreeSet::new();
+            let mut history_names = std::collections::BTreeSet::new();
+            let headers = store
+                .read(
+                    hydrus_store::settings::get::<hydrus_gui_model::subscription_exchange::Headers>,
+                )
+                .unwrap();
+            for saved in saved {
+                let object = case["exported"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .find(|object| object[2][0][1] == saved.name)
+                    .unwrap();
+                let expected = exchange::decode_text_at(&object.to_string(), recorded_now)
+                    .unwrap()
+                    .remove(0);
+                assert_eq!(saved.settings, expected.settings);
+                let queries = store
+                    .read(|conn| subscriptions::queries(conn, saved.id))
+                    .unwrap();
+                assert_eq!(queries.len(), expected.queries.len());
+                for (query, expected) in queries.iter().zip(&expected.queries) {
+                    assert!(
+                        queue_ids.insert(query.queue_id),
+                        "each import owns a different queue even for identical query text"
+                    );
+                    let name = headers.0[&query.queue_id][2][0].as_str().unwrap();
+                    assert_eq!(name.len(), 64);
+                    assert!(history_names.insert(name.to_owned()));
+                    assert_ne!(name, expected.log_name);
+                    assert_eq!(query.state, expected.state);
+                    let mut actual = store
+                        .read(|conn| {
+                            hydrus_gui_model::subscription_exchange::history(
+                                conn,
+                                query.queue_id,
+                                "native history",
+                            )
+                            .map_err(hydrus_store::StoreError::Invalid)
+                        })
+                        .unwrap();
+                    let expected = expected.log.as_ref().unwrap();
+                    actual.name.clone_from(&expected.name);
                     assert_eq!(
-                        text.split("\n\n").skip(2).collect::<Vec<_>>(),
-                        expected.split("\n\n").skip(2).collect::<Vec<_>>()
+                        &actual, expected,
+                        "saved ordered file and gallery histories"
                     );
                 }
-                "information" => {
-                    assert_eq!(title, "Information");
-                    assert_eq!(text, notice["text"]);
-                }
-                "question" => {
-                    assert_eq!(title, notice["title"]);
-                    assert_eq!(text, notice["text"]);
-                }
-                "critical" => {
-                    assert_eq!(title, notice["title"]);
-                    assert!(!text.is_empty());
-                }
-                _ => unreachable!(),
             }
-            dialog.invoke_apply();
-            assert!(
-                store.read(subscriptions::subscriptions).unwrap().is_empty(),
-                "notices and missing-history decisions retain the draft owner"
+            let reopened = open_dialog(&ui, &bound);
+            assert_eq!(
+                serde_json::json!(rows(&reopened).iter().map(|r| &r.0[0]).collect::<Vec<_>>()),
+                case["names"]
             );
-            if notice["kind"] == "question" {
-                dialog.invoke_chosen(1);
-            } else {
-                dialog.invoke_chosen(0);
-            }
-        }
-        assert!(!dialog.get_asking());
-        let shown = rows(&dialog);
-        assert_eq!(
-            serde_json::json!(shown.iter().map(|r| &r.0[0]).collect::<Vec<_>>()),
-            case["names"]
-        );
-        assert_eq!(
-            serde_json::json!(
-                shown
-                    .iter()
-                    .filter(|r| r.1)
-                    .map(|r| &r.0[0])
-                    .collect::<Vec<_>>()
-            ),
-            case["selected"]
-        );
-        dialog.invoke_apply();
-        let saved = store.read(subscriptions::subscriptions).unwrap();
-        assert_eq!(
-            serde_json::json!(saved.iter().map(|s| &s.name).collect::<Vec<_>>()),
-            case["names"]
-        );
-        let mut queue_ids = std::collections::BTreeSet::new();
-        let mut history_names = std::collections::BTreeSet::new();
-        let headers = store
-            .read(hydrus_store::settings::get::<hydrus_gui_model::subscription_exchange::Headers>)
-            .unwrap();
-        for saved in saved {
-            let object = case["exported"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .find(|object| object[2][0][1] == saved.name)
-                .unwrap();
-            let expected = exchange::decode_text_at(&object.to_string(), recorded_now)
-                .unwrap()
-                .remove(0);
-            assert_eq!(saved.settings, expected.settings);
-            let queries = store
-                .read(|conn| subscriptions::queries(conn, saved.id))
-                .unwrap();
-            assert_eq!(queries.len(), expected.queries.len());
-            for (query, expected) in queries.iter().zip(&expected.queries) {
-                assert!(
-                    queue_ids.insert(query.queue_id),
-                    "each import owns a different queue even for identical query text"
-                );
-                let name = headers.0[&query.queue_id][2][0].as_str().unwrap();
-                assert_eq!(name.len(), 64);
-                assert!(history_names.insert(name.to_owned()));
-                assert_ne!(name, expected.log_name);
-                assert_eq!(query.state, expected.state);
-                let mut actual = store
-                    .read(|conn| {
-                        hydrus_gui_model::subscription_exchange::history(
-                            conn,
-                            query.queue_id,
-                            "native history",
-                        )
-                        .map_err(hydrus_store::StoreError::Invalid)
-                    })
-                    .unwrap();
-                let expected = expected.log.as_ref().unwrap();
-                actual.name.clone_from(&expected.name);
-                assert_eq!(
-                    &actual, expected,
-                    "saved ordered file and gallery histories"
-                );
-            }
-        }
-        let reopened = open_dialog(&ui, &bound);
-        assert_eq!(
-            serde_json::json!(rows(&reopened).iter().map(|r| &r.0[0]).collect::<Vec<_>>()),
-            case["names"]
-        );
-        reopened.invoke_cancel();
-        hydrus_gui::set_picker(|_, _| Vec::new());
+            reopened.invoke_cancel();
+            hydrus_gui::set_picker(|_, _| Vec::new());
+        })
+        .join()
+        .unwrap();
     }
 }
 

@@ -339,6 +339,8 @@ fn actual_thumbnail_transfer_menu_captures_selection_and_checks_parent_identity(
         Pages::single(super::common::all_local_page(store.clone())),
     );
     ui.show().unwrap();
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
     headless::render(&windows.get(0).unwrap(), 1100, 750);
     let owner = bound.current.borrow().clone();
     owner.borrow_mut().select_files(&ids[..1]);
