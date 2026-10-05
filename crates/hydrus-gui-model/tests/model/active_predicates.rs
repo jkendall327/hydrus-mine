@@ -216,7 +216,7 @@ fn mixed_controls_replay_real_qt_values_row_order_cancel_and_parser_vetoes() {
 fn actual_qt_inherited_copy_payloads_and_page_routes_match_all_recorded_selections() {
     use hydrus_gui_model::active_predicates::routes::{self, Route};
     let recording = hydrus_testkit::fixture_json("active_predicate_routes.json");
-    assert_eq!(recording["cases"].as_array().unwrap().len(), 12);
+    assert_eq!(recording["cases"].as_array().unwrap().len(), 14);
     for case in recording["cases"].as_array().unwrap() {
         let current = predicates(&case["current"]);
         let raw_selected = predicates(&case["selected"]);

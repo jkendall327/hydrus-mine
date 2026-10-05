@@ -98,10 +98,12 @@ fn export_text(predicate: &Predicate, text: &TextContext) -> String {
                         .map(hydrus_core::PerceptualHash::to_hex),
                 )
                 .collect::<Vec<_>>();
-            format!(
-                "system:similar to data {} with distance of {max_distance}",
-                hashes.join(", ")
-            )
+            let base = format!("system:similar to data {}", hashes.join(", "));
+            if perceptual_hashes.is_empty() {
+                base
+            } else {
+                format!("{base} with distance of {max_distance}")
+            }
         }
         _ => predicate_text(predicate, text),
     }

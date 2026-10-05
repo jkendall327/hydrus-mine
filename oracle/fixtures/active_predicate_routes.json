@@ -7,6 +7,15 @@
           14,
           8,
           [
+            5,
+            null,
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
             0,
             "series:active alpha",
             true
@@ -18,15 +27,6 @@
           [
             0,
             "series:active beta",
-            true
-          ]
-        ],
-        [
-          14,
-          8,
-          [
-            5,
-            null,
             true
           ]
         ]
@@ -172,6 +172,15 @@
           14,
           8,
           [
+            5,
+            null,
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
             0,
             "series:active alpha",
             true
@@ -183,15 +192,6 @@
           [
             0,
             "series:active beta",
-            true
-          ]
-        ],
-        [
-          14,
-          8,
-          [
-            5,
-            null,
             true
           ]
         ]
@@ -1191,18 +1191,18 @@
           14,
           8,
           [
-            5,
-            null,
-            true
+            1,
+            "series",
+            false
           ]
         ],
         [
           14,
           8,
           [
-            1,
-            "series",
-            false
+            5,
+            null,
+            true
           ]
         ]
       ],
@@ -1481,6 +1481,15 @@
           14,
           8,
           [
+            0,
+            "creator:same tag",
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
             5,
             null,
             true
@@ -1492,15 +1501,6 @@
           [
             0,
             "series:same tag",
-            true
-          ]
-        ],
-        [
-          14,
-          8,
-          [
-            0,
-            "creator:same tag",
             true
           ]
         ]
@@ -1792,15 +1792,6 @@
           14,
           8,
           [
-            5,
-            null,
-            true
-          ]
-        ],
-        [
-          14,
-          8,
-          [
             12,
             [
               [
@@ -1809,6 +1800,15 @@
               ],
               "sha256"
             ],
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            5,
+            null,
             true
           ]
         ]
@@ -2330,8 +2330,377 @@
       "select_files_publications": []
     },
     {
+      "name": "pixel_only",
+      "current": [
+        [
+          14,
+          8,
+          [
+            5,
+            null,
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            48,
+            [
+              [
+                "0606060606060606060606060606060606060606060606060606060606060606"
+              ],
+              [],
+              7
+            ],
+            true
+          ]
+        ]
+      ],
+      "selected": [
+        [
+          14,
+          8,
+          [
+            48,
+            [
+              [
+                "0606060606060606060606060606060606060606060606060606060606060606"
+              ],
+              [],
+              7
+            ],
+            true
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "group": "copy",
+          "label": "system:similar to data 0606060606060606060606060606060606060606060606060606060606060606",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "system:similar to data 0606060606060606060606060606060606060606060606060606060606060606"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "similar to data 0606060606060606060606060606060606060606060606060606060606060606",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "similar to data 0606060606060606060606060606060606060606060606060606060606060606"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "similar_to_data_0606060606060606060606060606060606060606060606060606060606060606",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "similar_to_data_0606060606060606060606060606060606060606060606060606060606060606"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all tags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "system:inbox\nsystem:similar to data 0606060606060606060606060606060606060606060606060606060606060606"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all subtags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "inbox\nsimilar to data 0606060606060606060606060606060606060606060606060606060606060606"
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new search page for system:similar to data 0606060606060606060606060606060606060606060606060606060606060606",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    48,
+                    [
+                      [
+                        "0606060606060606060606060606060606060606060606060606060606060606"
+                      ],
+                      [],
+                      7
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "system:similar to data (1 pixel hashes)",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new duplicate filter page for system:similar to data 0606060606060606060606060606060606060606060606060606060606060606",
+          "publications": [
+            {
+              "topic": "new_page_duplicates",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    48,
+                    [
+                      [
+                        "0606060606060606060606060606060606060606060606060606060606060606"
+                      ],
+                      [],
+                      7
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "duplicates: system:similar to data (1 pixel hashes)",
+              "activate": false
+            }
+          ]
+        }
+      ],
+      "select_files_publications": []
+    },
+    {
+      "name": "perceptual_only",
+      "current": [
+        [
+          14,
+          8,
+          [
+            48,
+            [
+              [],
+              [
+                "0707070707070707"
+              ],
+              7
+            ],
+            true
+          ]
+        ],
+        [
+          14,
+          8,
+          [
+            5,
+            null,
+            true
+          ]
+        ]
+      ],
+      "selected": [
+        [
+          14,
+          8,
+          [
+            48,
+            [
+              [],
+              [
+                "0707070707070707"
+              ],
+              7
+            ],
+            true
+          ]
+        ]
+      ],
+      "actions": [
+        {
+          "group": "copy",
+          "label": "system:similar to data 0707070707070707 with distance of 7",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "system:similar to data 0707070707070707 with distance of 7"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "similar to data 0707070707070707 with distance of 7",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "similar to data 0707070707070707 with distance of 7"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "similar_to_data_0707070707070707_with_distance_of_7",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "similar_to_data_0707070707070707_with_distance_of_7"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all tags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "system:inbox\nsystem:similar to data 0707070707070707 with distance of 7"
+            }
+          ]
+        },
+        {
+          "group": "copy",
+          "label": "all subtags",
+          "publications": [
+            {
+              "topic": "clipboard",
+              "type": "text",
+              "text": "inbox\nsimilar to data 0707070707070707 with distance of 7"
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new search page for system:similar to data 0707070707070707 with distance of 7",
+          "publications": [
+            {
+              "topic": "new_page_query",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    48,
+                    [
+                      [],
+                      [
+                        "0707070707070707"
+                      ],
+                      7
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "system:similar to data (1 perceptual hashes) with distance of 7",
+              "activate": false
+            }
+          ]
+        },
+        {
+          "group": "open",
+          "label": "open a new duplicate filter page for system:similar to data 0707070707070707 with distance of 7",
+          "publications": [
+            {
+              "topic": "new_page_duplicates",
+              "location": [
+                103,
+                1,
+                [
+                  [
+                    "6c6f63616c2066696c6573"
+                  ],
+                  []
+                ]
+              ],
+              "predicates": [
+                [
+                  14,
+                  8,
+                  [
+                    48,
+                    [
+                      [],
+                      [
+                        "0707070707070707"
+                      ],
+                      7
+                    ],
+                    true
+                  ]
+                ]
+              ],
+              "name": "duplicates: system:similar to data (1 perceptual hashes) with distance of 7",
+              "activate": false
+            }
+          ]
+        }
+      ],
+      "select_files_publications": []
+    },
+    {
       "name": "two_tags_raise",
       "current": [
+        [
+          14,
+          8,
+          [
+            5,
+            null,
+            true
+          ]
+        ],
         [
           14,
           8,
@@ -2347,15 +2716,6 @@
           [
             0,
             "series:active beta",
-            true
-          ]
-        ],
-        [
-          14,
-          8,
-          [
-            5,
-            null,
             true
           ]
         ]

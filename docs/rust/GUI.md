@@ -3071,7 +3071,7 @@ use saved creation defaults for the tag service; duplicate filters use their own
 reference default tag contexts. The first page may activate the main window
 according to the saved tag-search setting. Captured menus refuse hidden/modal,
 changed-page/query, accepted-close and rebound owners. `active_predicate_routes.json`
-records twelve real Qt selections, their clipboard/new-page publications, and a
+records fourteen real Qt selections, their clipboard/new-page publications, and a
 real new-page consumer. Authored native transport and ownership replay awaits
 hosted execution. The active list’s inherited “select files” method is a no-op
 in Qt (the media tag list owns the working override); it is not represented here
