@@ -379,9 +379,15 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
     recorded_rows(items.as_array().unwrap(), &[], &mut rows);
     let mut mine = Vec::new();
     our_rows(&page.items, &[], &mut mine);
+    // Compare Qt controls with the values the native controls display,
+    // including spin-box clamping of imported/default out-of-range values.
+    let mut displayed = hydrus_gui_model::options::values(std::slice::from_ref(page), settings)
+        .remove(0)
+        .into_iter();
     let mut after = 0;
     for (boxes, item) in mine {
         let Item::Opt(option) = item else { continue };
+        let value = displayed.next().expect("one displayed value per option");
         // This reference page embeds the list; native opens the same transaction
         // in a child window, covered by dedicated regex/write-tag/gallery-source/import-options/namespace-queue recordings.
         if matches!(
@@ -421,7 +427,6 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
         {
             continue;
         }
-        let value = (option.get)(settings);
         if let Some(why) = compare(&option.kind, &value, &row.control, store) {
             problems.push(format!("{}: {:?}: {why}", page.name, option.label));
         }

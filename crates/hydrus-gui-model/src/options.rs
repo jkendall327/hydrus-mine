@@ -1574,28 +1574,6 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             "duplicates",
             vec![
                 boxed(
-                    "colours",
-                    vec![
-                        noneable(
-                            "background light/dark switch intensity for A:",
-                            none("do not change", 3, (1, 9), None),
-                            |s| s.duplicate_colours.intensity_a.map(i64::from),
-                            |s, v| s.duplicate_colours.intensity_a = v.map(|n| n as u8),
-                        ),
-                        noneable(
-                            "background light/dark switch intensity for B:",
-                            none("do not change", 3, (1, 9), None),
-                            |s| s.duplicate_colours.intensity_b.map(i64::from),
-                            |s, v| s.duplicate_colours.intensity_b = v.map(|n| n as u8),
-                        ),
-                        check(
-                            "draw image transparency as checkerboard in the duplicate filter:",
-                            |s| s.duplicate_colours.checkerboard,
-                            |s, v| s.duplicate_colours.checkerboard = v,
-                        ),
-                    ],
-                ),
-                boxed(
                     "open in a new duplicates filter page",
                     vec![check(
                         "Set to \"combined local file domains\" when hitting \"Open files in a new duplicates filter page\":",
@@ -1672,6 +1650,28 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             "Score for file with audio:",
                             |s| s.duplicate_filter.scores.has_audio,
                             |s, v| s.duplicate_filter.scores.has_audio = v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "colours",
+                    vec![
+                        noneable(
+                            "background light/dark switch intensity for A:",
+                            none("do not change", 3, (1, 9), None),
+                            |s| s.duplicate_colours.intensity_a.map(i64::from),
+                            |s, v| s.duplicate_colours.intensity_a = v.map(|n| n as u8),
+                        ),
+                        noneable(
+                            "background light/dark switch intensity for B:",
+                            none("do not change", 3, (1, 9), None),
+                            |s| s.duplicate_colours.intensity_b.map(i64::from),
+                            |s, v| s.duplicate_colours.intensity_b = v.map(|n| n as u8),
+                        ),
+                        check(
+                            "draw image transparency as checkerboard in the duplicate filter:",
+                            |s| s.duplicate_colours.checkerboard,
+                            |s, v| s.duplicate_colours.checkerboard = v,
                         ),
                     ],
                 ),
@@ -3245,7 +3245,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         },
                     ),
                     opt(
-                        "adjust scores by search tags / adjust scores by suggested tags",
+                        "adjust scores by search tags",
                         Kind::RelatedWeights,
                         Rc::new(|s| Value::RelatedWeights(s.related_tags.weights.clone())),
                         Rc::new(|s, v| {
@@ -3791,13 +3791,16 @@ impl Editor {
             return;
         };
         match self.kind(i) {
-            Kind::Int { .. } => self.values[self.page][i] = Value::Int(number),
+            Kind::Int { min, max } => {
+                self.values[self.page][i] = Value::Int(number.clamp(*min, *max));
+            }
             Kind::Velocity { .. } => {
                 if let Value::Velocity(_, seconds) = self.values[self.page][i] {
                     self.values[self.page][i] = Value::Velocity(number, seconds);
                 }
             }
-            Kind::Noneable { .. } => {
+            Kind::Noneable { min, max, .. } => {
+                let number = number.clamp(*min, *max);
                 self.numbers[self.page][i] = number;
                 if let Value::Noneable(Some(_)) = self.values[self.page][i] {
                     self.values[self.page][i] = Value::Noneable(Some(number));
@@ -4238,7 +4241,11 @@ mod tests {
         let before = settings();
         let pages = pages(&before);
         let mut values = values(&pages, &before);
-        assert_eq!(applied(&pages, &before, &values), (before.clone(), vec![]));
+        let mut displayed = before.clone();
+        // Qt's A-intensity spin box displays the minimum one for the saved
+        // default zero. Every Options Apply accepts that normalization.
+        displayed.duplicate_colours.intensity_a = Some(1);
+        assert_eq!(applied(&pages, &before, &values), (displayed, vec![]));
         let trash = pages
             .iter()
             .position(|p| p.name == "files and trash")

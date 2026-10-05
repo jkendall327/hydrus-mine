@@ -68,9 +68,10 @@ impl Editor {
         Ok(slice)
     }
     pub fn add(&mut self, slice: String, weight: u16) {
-        self.rows_mut().push((slice.clone(), weight));
+        let selected = slice.clone();
+        self.rows_mut().push((slice, weight));
         self.sort();
-        if let Some(index) = self.rows().iter().position(|(tag, _)| tag == &slice) {
+        if let Some(index) = self.rows().iter().position(|(tag, _)| tag == &selected) {
             self.selected.select_many(&[index]);
         }
     }
