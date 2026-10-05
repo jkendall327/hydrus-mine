@@ -3,7 +3,7 @@
 //! platform, library versions, boot time, directories and database
 //! settings; the optional libraries; the credits; and the license.
 
-use hydrus_core::time::timestamp_to_pretty_time_delta;
+use hydrus_store::settings::GuiFormatting;
 
 pub const TITLE: &str = "about hydrus";
 pub const SITE: &str = "https://hydrusnetwork.github.io/hydrus/";
@@ -60,6 +60,13 @@ fn availability(name: &str, ok: bool) -> String {
 
 /// The about window's texts, with the license's text if there is one.
 pub fn about(facts: &Facts, license: Option<&str>) -> About {
+    about_with_format(facts, license, &GuiFormatting::default())
+}
+pub fn about_with_format(
+    facts: &Facts,
+    license: Option<&str>,
+    formatting: &GuiFormatting,
+) -> About {
     let mut lines = vec![
         format!("running on {} {}", facts.arch, facts.os),
         format!("FFMPEG: {}", facts.ffmpeg.as_deref().unwrap_or("unknown")),
@@ -68,10 +75,10 @@ pub fn about(facts: &Facts, license: Option<&str>) -> About {
     ];
     lines.push(format!(
         "boot time: {} ({})",
-        timestamp_to_pretty_time_delta(
-            facts.boot_ms.div_euclid(1000),
-            facts.now_ms.div_euclid(1000),
-            " ago"
+        crate::gui_format::timestamp(
+            formatting,
+            Some(facts.boot_ms.div_euclid(1000)),
+            facts.now_ms.div_euclid(1000)
         ),
         pretty_time_ms(facts.boot_ms)
     ));

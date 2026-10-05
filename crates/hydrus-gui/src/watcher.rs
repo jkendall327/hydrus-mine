@@ -4,10 +4,11 @@
 //! page's totals.
 
 use hydrus_core::pages::DownloaderPageSettings;
-use hydrus_core::time::{pretty_time_delta, timestamp_to_pretty_time_delta};
 use hydrus_core::watchers::{CheckerStatus, WatcherState};
+use hydrus_gui_model::gui_format;
 use hydrus_store::live::{self, QueueLive};
 use hydrus_store::queues::{self, StatusCounts};
+use hydrus_store::settings::GuiFormatting;
 use rusqlite::Connection;
 
 use crate::gallery::{SimpleStatus, has_work, live_line};
@@ -114,6 +115,14 @@ impl WatcherView {
     /// What the list says of a watcher just added or entered again, for a
     /// while (`GetWatcherSimpleStatus`), else its own status.
     pub fn simple_status(&self, watcher: &WatcherRow, now: i64) -> (SimpleStatus, String) {
+        self.simple_status_with_format(watcher, now, &GuiFormatting::default())
+    }
+    pub fn simple_status_with_format(
+        &self,
+        watcher: &WatcherRow,
+        now: i64,
+        formatting: &GuiFormatting,
+    ) -> (SimpleStatus, String) {
         let said = |list: &[(i64, i64)]| {
             list.iter()
                 .any(|&(q, at)| q == watcher.queue && now <= at + SAID_FOR)
@@ -123,21 +132,22 @@ impl WatcherView {
         } else if said(&self.already) {
             (SimpleStatus::Working, "already watching".into())
         } else {
-            watcher.simple_status(now)
+            watcher.simple_status_with_format(now, formatting)
         }
     }
 
     /// The list's rows, in its order.
-    pub fn rows(&self, now: i64) -> Vec<[String; 6]> {
+    pub fn rows_with_format(&self, now: i64, formatting: &GuiFormatting) -> Vec<[String; 6]> {
         self.watchers
             .iter()
             .map(|w| {
-                w.row(
+                w.row_with_format(
                     self.state.highlighted == Some(w.queue),
-                    &self.simple_status(w, now).1,
+                    &self.simple_status_with_format(w, now, formatting).1,
                     &self.settings,
                     self.short_summary,
                     now,
+                    formatting,
                 )
             })
             .collect()
@@ -188,8 +198,8 @@ impl Column {
 
 /// `TimestampToPrettyTimeDelta` with its `no_prefix` (no "in " before a
 /// time to come).
-fn until(timestamp: i64, now: i64) -> String {
-    let text = timestamp_to_pretty_time_delta(timestamp, now, " ago");
+fn until(timestamp: i64, now: i64, formatting: &GuiFormatting) -> String {
+    let text = gui_format::timestamp(formatting, Some(timestamp), now);
     text.strip_prefix("in ").map_or(text.clone(), str::to_owned)
 }
 
@@ -251,27 +261,34 @@ impl WatcherRow {
 
     /// Why it isn't working, while it can't (a server's error, say),
     /// and when it will again.
-    fn held_off(&self, now: i64) -> Option<String> {
+    fn held_off(&self, now: i64, formatting: &GuiFormatting) -> Option<String> {
         let s = &self.state;
         (now <= s.no_work_until).then(|| match self.next_check() {
             None => format!(
                 "{} - working again {}",
                 s.no_work_until_reason,
-                timestamp_to_pretty_time_delta(s.no_work_until, now, " ago")
+                gui_format::timestamp(formatting, Some(s.no_work_until), now)
             ),
             Some(next) => format!(
                 "{} - next check {}",
                 s.no_work_until_reason,
-                timestamp_to_pretty_time_delta(s.no_work_until.max(next), now, " ago")
+                gui_format::timestamp(formatting, Some(s.no_work_until.max(next)), now)
             ),
         })
     }
 
     /// What it is up to (`WatcherImport.GetSimpleStatus`).
     pub fn simple_status(&self, now: i64) -> (SimpleStatus, String) {
+        self.simple_status_with_format(now, &GuiFormatting::default())
+    }
+    pub fn simple_status_with_format(
+        &self,
+        now: i64,
+        formatting: &GuiFormatting,
+    ) -> (SimpleStatus, String) {
         let s = &self.state;
         let next = self.next_check();
-        if let Some(text) = self.held_off(now) {
+        if let Some(text) = self.held_off(now, formatting) {
             return (SimpleStatus::Deferred, text);
         }
         let check_passed = next.is_none_or(|n| now > n);
@@ -297,7 +314,10 @@ impl WatcherRow {
         } else if check_passed {
             fixed(SimpleStatus::Pending)
         } else {
-            (SimpleStatus::Deferred, until(next.unwrap_or(0), now))
+            (
+                SimpleStatus::Deferred,
+                until(next.unwrap_or(0), now, formatting),
+            )
         }
     }
 
@@ -305,6 +325,7 @@ impl WatcherRow {
     /// subject (starred if shown), its files' pause, its checking's pause
     /// (or stop, dead), its status, its short file log status and when it
     /// was added.
+    #[cfg(test)]
     pub fn row(
         &self,
         highlighted: bool,
@@ -312,6 +333,24 @@ impl WatcherRow {
         settings: &DownloaderPageSettings,
         short_summary: (bool, bool),
         now: i64,
+    ) -> [String; 6] {
+        self.row_with_format(
+            highlighted,
+            status,
+            settings,
+            short_summary,
+            now,
+            &GuiFormatting::default(),
+        )
+    }
+    pub fn row_with_format(
+        &self,
+        highlighted: bool,
+        status: &str,
+        settings: &DownloaderPageSettings,
+        short_summary: (bool, bool),
+        now: i64,
+        formatting: &GuiFormatting,
     ) -> [String; 6] {
         let checking = if self.dead() {
             settings.stop_character.clone()
@@ -334,27 +373,31 @@ impl WatcherRow {
             checking,
             status.to_owned(),
             queues::file_log_short_status(&self.files, short_summary.0, short_summary.1),
-            hydrus_core::time::timestamp_to_pretty_time_delta_minutes(
-                self.state.created,
-                now,
-                " ago",
-            ),
+            gui_format::timestamp_minutes(formatting, self.state.created, now),
         ]
     }
 
     /// The highlighted watcher box's files line (`GetStatus`): what its
     /// file work is doing.
+    #[cfg(test)]
     pub fn files_line(&self, now: i64) -> String {
-        self.held_off(now).unwrap_or_else(|| {
+        self.files_line_with_format(now, &GuiFormatting::default())
+    }
+    pub fn files_line_with_format(&self, now: i64, formatting: &GuiFormatting) -> String {
+        self.held_off(now, formatting).unwrap_or_else(|| {
             live_line(&self.live.files_status, self.files_paused, self.working())
         })
     }
 
     /// The box's checker line (`WatcherReviewPanel._UpdateStatus`): what
     /// its checking is doing, or when it checks next.
+    #[cfg(test)]
     pub fn checker_line(&self, now: i64) -> String {
+        self.checker_line_with_format(now, &GuiFormatting::default())
+    }
+    pub fn checker_line_with_format(&self, now: i64, formatting: &GuiFormatting) -> String {
         let s = &self.state;
-        let line = self.held_off(now).unwrap_or_else(|| {
+        let line = self.held_off(now, formatting).unwrap_or_else(|| {
             live_line(&self.live.gallery_status, s.checking_paused, self.working())
         });
         match self.next_check() {
@@ -363,11 +406,7 @@ impl WatcherRow {
             Some(next) if now > next => "checking imminently".into(),
             Some(next) => format!(
                 "next check {}",
-                if next == now {
-                    "now".into()
-                } else {
-                    format!("in {}", pretty_time_delta(next - now, false))
-                }
+                gui_format::timestamp_exact(formatting, next, now)
             ),
         }
     }
@@ -514,6 +553,47 @@ mod tests {
         QueueLive {
             gallery_job: Some(live::JobLive::default()),
             ..QueueLive::default()
+        }
+    }
+
+    #[test]
+    fn formatting_reaches_watcher_rows_status_and_checker_without_changing_work_state() {
+        let fixture = hydrus_testkit::fixture_json("gui_format.json");
+        let now = fixture["now"].as_i64().unwrap();
+        for event in fixture["events"].as_array().unwrap() {
+            let p: GuiFormatting = serde_json::from_value(event["saved"].clone()).unwrap();
+            for variant in event["consumers"]["variants"].as_array().unwrap() {
+                let at = variant["timestamp"].as_i64().unwrap();
+                let mut w = watcher(&[]);
+                w.state.created = at;
+                w.state.next_check_time = at;
+                let original = w.clone();
+                assert_eq!(
+                    w.row_with_format(
+                        false,
+                        "pending",
+                        &DownloaderPageSettings::default(),
+                        (false, false),
+                        now,
+                        &p
+                    )[5],
+                    variant["minutes"].as_str().unwrap()
+                );
+                if at >= now {
+                    assert_eq!(
+                        w.simple_status_with_format(now, &p),
+                        (
+                            SimpleStatus::Deferred,
+                            variant["no_prefix"].as_str().unwrap().into()
+                        )
+                    );
+                    assert_eq!(
+                        w.checker_line_with_format(now, &p),
+                        format!("next check {}", variant["exact"].as_str().unwrap())
+                    );
+                }
+                assert_eq!(w, original);
+            }
         }
     }
 

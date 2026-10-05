@@ -186,6 +186,27 @@ fn staged_controls_reopen_and_reach_real_log_rows_and_page_size_status() {
         );
         png.invoke_action("close".into());
         assert!(!png_slots.has_open());
+        let formula_slots = hydrus_gui::formula_window::Slots::default();
+        let preview = &event["consumers"]["parser_previews"][0];
+        let formula = hydrus_gui::formula_window::open(
+            &store,
+            &hydrus_gui::formula_editors::new_formula(false),
+            hydrus_gui::formula_window::FormulaTestData {
+                text: preview["input"].as_str().unwrap().into(),
+                ..hydrus_gui::formula_window::FormulaTestData::default()
+            },
+            &formula_slots,
+            std::rc::Rc::new(|_| panic!("inspecting a preview must not apply a formula")),
+        )
+        .unwrap();
+        *formula_slots.formula.borrow_mut() = Some(formula.clone_strong());
+        assert_eq!(
+            formula.get_raw_description(),
+            preview["label"].as_str().unwrap()
+        );
+        assert_eq!(formula.get_document(), preview["raw"].as_str().unwrap());
+        formula.invoke_cancel();
+        assert!(formula_slots.formula.borrow().is_none());
         ui.invoke_open_file_log();
         let log = bound.file_log.borrow().as_ref().unwrap().clone_strong();
         if saved.iso {

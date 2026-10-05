@@ -42,3 +42,30 @@ pub fn timestamp_with_offset(
         _ => format!("unparseable time {value}"),
     }
 }
+
+/// The downloader tables omit seconds in relative labels; ISO still wins.
+pub fn timestamp_minutes(settings: &GuiFormatting, value: i64, now: i64) -> String {
+    if settings.iso {
+        timestamp(settings, Some(value), now)
+    } else {
+        hydrus_core::time::timestamp_to_pretty_time_delta_minutes(value, now, " ago")
+    }
+}
+/// A scheduled check has no three-second "now" leeway.
+pub fn timestamp_exact(settings: &GuiFormatting, value: i64, now: i64) -> String {
+    if settings.iso {
+        timestamp(settings, Some(value), now)
+    } else if value == now {
+        "now".into()
+    } else {
+        let span = hydrus_core::time::pretty_time_delta(
+            i64::try_from(value.abs_diff(now)).unwrap_or(i64::MAX),
+            false,
+        );
+        if value < now {
+            format!("{span} ago")
+        } else {
+            format!("in {span}")
+        }
+    }
+}

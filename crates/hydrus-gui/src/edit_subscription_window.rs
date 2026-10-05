@@ -22,7 +22,7 @@ use crate::edit_subscription::{
     RetryIgnored,
 };
 use crate::subscriptions_dialog::{Choice, DELETE_QUESTION};
-use crate::subscriptions_list::{QueryFacts, ShortSummary, next_check_status};
+use crate::subscriptions_list::{QueryFacts, ShortSummary, next_check_status_with_format};
 use crate::{CheckerOptionsWindow, EditSubscriptionWindow, TableRow};
 
 /// What a question waits on.
@@ -57,6 +57,7 @@ type Change = Rc<dyn Fn(&dyn Fn(&mut Open))>;
 
 /// The dialog's state while it is open.
 struct Open {
+    store: Arc<Store>,
     dialog: EditSubscription,
     original_queues: BTreeSet<i64>,
     /// The client's downloaders: (key, name, initial search text).
@@ -113,7 +114,11 @@ fn read_fields(window: &EditSubscriptionWindow, dialog: &mut EditSubscription) {
 }
 
 /// The query editor's status line, from its check now and paused boxes.
-fn query_status(window: &EditSubscriptionWindow, editing: &Editing) -> String {
+fn query_status(
+    window: &EditSubscriptionWindow,
+    editing: &Editing,
+    formatting: &hydrus_store::settings::GuiFormatting,
+) -> String {
     let facts = QueryFacts {
         check_now: window.get_query_check_now(),
         paused: window.get_query_paused(),
@@ -121,7 +126,10 @@ fn query_status(window: &EditSubscriptionWindow, editing: &Editing) -> String {
         next_check_time: editing.state.next_check_time,
         ..QueryFacts::default()
     };
-    format!("next check: {}", next_check_status(&facts, now()))
+    format!(
+        "next check: {}",
+        next_check_status_with_format(&facts, now(), formatting)
+    )
 }
 
 /// Show the query editor on a query.
@@ -132,7 +140,14 @@ fn show_editor(window: &EditSubscriptionWindow, store: &Store, open: &Open, edit
     window.set_display_name_none(state.display_name.is_none());
     window.set_query_check_now(state.check_now);
     window.set_query_paused(state.paused);
-    window.set_query_status(query_status(window, editing).into());
+    window.set_query_status(
+        query_status(
+            window,
+            editing,
+            &hydrus_gui_model::gui_format::preferences(store),
+        )
+        .into(),
+    );
     let query = editing.key.and_then(|k| open.dialog.get(k));
     let files = query.map(|q| q.query.files.clone()).unwrap_or_default();
     let searches = query
@@ -149,7 +164,11 @@ fn show(window: &EditSubscriptionWindow, open: &Open) {
     let now = now();
     let dialog = &open.dialog;
     let rows: Vec<TableRow> = dialog
-        .rows(now, open.short)
+        .rows_with_format(
+            now,
+            open.short,
+            &hydrus_gui_model::gui_format::preferences(&open.store),
+        )
         .into_iter()
         .map(|(_, cells, selected)| TableRow {
             cells: strings(cells),
@@ -169,7 +188,11 @@ fn show(window: &EditSubscriptionWindow, open: &Open) {
     window.set_can_reset(dialog.can_reset(now));
     window.set_can_retry_failed(dialog.can_retry_failed(now));
     window.set_can_retry_ignored(dialog.can_retry_ignored(now));
-    window.set_delay(dialog.delay_text(now).into());
+    window.set_delay(
+        dialog
+            .delay_text_with_format(now, &hydrus_gui_model::gui_format::preferences(&open.store))
+            .into(),
+    );
     let found = open
         .gugs
         .iter()
@@ -263,6 +286,7 @@ pub(crate) fn open(
         .filter_map(|q| q.query.queue)
         .collect();
     let state = Rc::new(RefCell::new(Open {
+        store: store.clone(),
         dialog,
         original_queues,
         gugs: crate::gallery::offered_gugs(&definitions.gugs),
@@ -486,7 +510,14 @@ pub(crate) fn open(
         let state = state.clone();
         move || {
             if let (Some(window), Some(editing)) = (weak.upgrade(), &state.borrow().editing) {
-                window.set_query_status(query_status(&window, editing).into());
+                window.set_query_status(
+                    query_status(
+                        &window,
+                        editing,
+                        &hydrus_gui_model::gui_format::preferences(&state.borrow().store),
+                    )
+                    .into(),
+                );
             }
         }
     });

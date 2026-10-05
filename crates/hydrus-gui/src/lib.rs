@@ -6166,15 +6166,17 @@ fn show_gallery(window: &MainWindow, page: &SearchPage) {
         .duration_since(std::time::UNIX_EPOCH)
         .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX));
     let highlighted = gallery.state.highlighted;
+    let formatting = hydrus_gui_model::gui_format::preferences(page.store());
     let rows: Vec<TableRow> = gallery
         .queries
         .iter()
         .map(|q| {
-            let cells = q.row(
+            let cells = q.row_with_format(
                 highlighted == Some(q.queue),
                 &gallery.settings,
                 gallery.short_summary,
                 now,
+                &formatting,
             );
             table_row(&cells, gallery.selection.is_selected(q.queue))
         })
@@ -6266,8 +6268,9 @@ fn show_watchers(window: &MainWindow, page: &SearchPage) {
         return;
     };
     let now = page::now();
+    let formatting = hydrus_gui_model::gui_format::preferences(page.store());
     let rows: Vec<TableRow> = view
-        .rows(now)
+        .rows_with_format(now, &formatting)
         .iter()
         .zip(&view.watchers)
         .map(|(cells, w)| table_row(cells, view.selection.is_selected(w.queue)))
@@ -6316,11 +6319,14 @@ fn show_watchers(window: &MainWindow, page: &SearchPage) {
             .map(|w| w.state.url.as_str())
             .unwrap_or_default()
             .into(),
-        files_line: shown.map(|w| w.files_line(now)).unwrap_or_default().into(),
+        files_line: shown
+            .map(|w| w.files_line_with_format(now, &formatting))
+            .unwrap_or_default()
+            .into(),
         files_paused: shown.is_some_and(|w| w.files_paused),
         velocity_line: page.watcher_velocity().into(),
         checker_line: shown
-            .map(|w| w.checker_line(now))
+            .map(|w| w.checker_line_with_format(now, &formatting))
             .unwrap_or_default()
             .into(),
         checking_paused: shown.is_some_and(|w| w.state.checking_paused),

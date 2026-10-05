@@ -243,7 +243,11 @@ fn fields(value: &Value, permitted_types: &[usize]) -> Vec<DefinitionField> {
         }
     }
 }
-fn show_editor(w: &ParserEditWindow, e: &Editor) {
+fn show_editor(
+    w: &ParserEditWindow,
+    e: &Editor,
+    formatting: &hydrus_store::settings::GuiFormatting,
+) {
     w.set_fetch_has_error(e.fetch_control.error().is_some());
     w.set_subsidiary(e.subsidiary.is_some());
     if let Some(details) = &e.subsidiary {
@@ -257,9 +261,10 @@ fn show_editor(w: &ParserEditWindow, e: &Editor) {
         |(i, text)| format!("example {} ({} characters)", i + 1, text.chars().count()),
     )));
     w.set_example(i32::try_from(e.example).unwrap_or(0));
-    let raw = hydrus_gui_model::parser_test_data::preview(
+    let raw = hydrus_gui_model::parser_test_data::preview_with_format(
         &e.test.text,
         e.raw_mimes.get(e.example, &e.test.text),
+        formatting,
     );
     w.set_raw_description(raw.description.into());
     w.set_raw_preview(raw.text.into());
@@ -514,13 +519,18 @@ fn open_editor(
     let fetch = crate::parser_test_fetch::Slot::default();
     let fetch_errors = crate::network_job_control::Errors::default();
     let refresh: Rc<dyn Fn()> = Rc::new({
+        let store = store.clone();
         let weak = w.as_weak();
         let state = state.clone();
         let slots = slots.clone();
         let fetch = fetch.clone();
         move || {
             if let Some(w) = weak.upgrade() {
-                show_editor(&w, &state.borrow());
+                show_editor(
+                    &w,
+                    &state.borrow(),
+                    &hydrus_gui_model::gui_format::preferences(&store),
+                );
                 w.set_fetching(fetch.busy());
                 w.set_child_open(child_open(&slots, page) || fetch.busy());
             }

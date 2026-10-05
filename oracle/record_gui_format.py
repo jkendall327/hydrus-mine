@@ -20,6 +20,8 @@ def record(session):
         from hydrus.core import HydrusData,HydrusTime,HydrusSerialisable
         from hydrus.client.gui.panels.options.GUIPanel import GUIPanel
         from hydrus.client.gui.widgets.ClientGUICommon import EnterCatchingRadioButton
+        from hydrus.client.gui.parsing import ClientGUIParsingTest
+        from hydrus.client.importing.options import FileFilteringImportOptions as FFO,ImportOptionsConstants as IOC
         from hydrus.client.gui.importing import ClientGUIFileSeedCache as FC,ClientGUIGallerySeedLog as GL
         from hydrus.client.importing import ClientImportFileSeeds as FS,ClientImportGallerySeeds as GS
         c=session.controller;original=c.new_options.Duplicate();old_now=HydrusTime.GetNow;panels=[]
@@ -32,6 +34,15 @@ def record(session):
         gs=GS.GallerySeed('https://format.invalid/search');gs.created=NOW-86400;gs.modified=NOW+90
         log=GS.GallerySeedLog();log.AddGallerySeeds([gs]);gallery_panel=GL.EditGallerySeedLogPanel(c.gui,False,True,'search',log);panels.append(gallery_panel)
         events=[];radios=[]
+        parsing_panel=ClientGUIParsingTest.TestPanel(c.gui,lambda:None);panels.append(parsing_panel)
+        parsing_inputs=['<html>'+('x'*1523)+'</html>',json.dumps('x'*1534)]
+        filtering=FFO.FileFilteringImportOptions();filtering.SetMinSize(1536);filtering.SetMaxSize(243200);filtering.SetMaxGifSize(188213746)
+        def consumers():
+            previews=[]
+            for text in parsing_inputs:
+                parsing_panel._SetExampleData(text)
+                previews.append(dict(input=text,label=parsing_panel._example_data_raw_description.text(),raw=parsing_panel._example_data_raw))
+            return dict(filtering_summary=filtering.GetSummary(IOC.IMPORT_OPTIONS_CALLER_TYPE_LOCAL_IMPORT),parser_previews=previews,expiry=[dict(timestamp=t,text=HydrusTime.TimestampToPrettyExpires(t)) for t in (NOW-4,NOW,NOW+4)],variants=[dict(timestamp=t,minutes=HydrusTime.TimestampToPrettyTimeDelta(t,show_seconds=False),exact=HydrusTime.TimestampToPrettyTimeDelta(t,just_now_threshold=0),no_prefix=HydrusTime.TimestampToPrettyTimeDelta(t,no_prefix=True),forced_relative=HydrusTime.TimestampToPrettyTimeDelta(t,force_no_iso=True)) for t in (NOW-86400,NOW-4,NOW,NOW+4,NOW+86400)])
         try:
             defaults=prefs(c.new_options)
             for iso,figures in [(False,3),(True,1),(True,2),(False,4),(True,5),(False,6),(True,0),(False,7)]:
@@ -40,7 +51,7 @@ def record(session):
                 draft=dict(iso=p._always_show_iso_time.isChecked(),figures=p._human_bytes_sig_figs.value());staged=prefs(c.new_options)
                 p.UpdateOptions();c.ReinitGlobalSettings()
                 encoded=HydrusSerialisable.CreateFromSerialisableTuple(c.new_options.GetSerialisableTuple());reopened=GUIPanel(c.gui);panels.append(reopened)
-                events.append(dict(input=[iso,figures],before=before,draft=draft,staged=staged,saved=prefs(c.new_options),round_trip=prefs(encoded),reopened=dict(iso=reopened._always_show_iso_time.isChecked(),figures=reopened._human_bytes_sig_figs.value()),bytes=[dict(size=size,text=HydrusData.ToHumanBytes(size)) for size in sizes],timestamps=[dict(timestamp=t,text=HydrusTime.TimestampToPrettyTimeDelta(t)) for t in times],file_row=file_panel._ConvertFileSeedToDisplayTuple(fs),gallery_row=gallery_panel._ConvertGallerySeedToDisplayTuple(gs)))
+                events.append(dict(consumers=consumers(),input=[iso,figures],before=before,draft=draft,staged=staged,saved=prefs(c.new_options),round_trip=prefs(encoded),reopened=dict(iso=reopened._always_show_iso_time.isChecked(),figures=reopened._human_bytes_sig_figs.value()),bytes=[dict(size=size,text=HydrusData.ToHumanBytes(size)) for size in sizes],timestamps=[dict(timestamp=t,text=HydrusTime.TimestampToPrettyTimeDelta(t)) for t in times],file_row=file_panel._ConvertFileSeedToDisplayTuple(fs),gallery_row=gallery_panel._ConvertGallerySeedToDisplayTuple(gs)))
             p=GUIPanel(c.gui);before=prefs(c.new_options);p._always_show_iso_time.setChecked(not before['iso']);p._human_bytes_sig_figs.setValue(2);p.deleteLater();cancel_after=prefs(c.new_options)
             for force in (False,True):
                 c.new_options.SetBoolean('force_enter_on_radio_buttons_to_do_dialog_ok',force)

@@ -7,7 +7,7 @@ use hydrus_core::{
 };
 use hydrus_store::settings::ImportOptionsUiSettings;
 
-use crate::{import_options_editor::container_summary, list_selection::ListSelection};
+use crate::{import_options_editor::container_summary_with_format, list_selection::ListSelection};
 
 pub const WARNING: &str = "This panel is advanced! The default settings are fine, so if you are not sure what is going on, hold off or check the help.";
 pub const TLDR: &str = "tl;dr: Go into \"gallery/post urls\" and make sure tags are going where you want. Never touch this again, and, on occasion, set a \"custom\" import options override on a specific downloader.";
@@ -198,6 +198,18 @@ impl Editor {
         }
     }
     pub fn rows(&self, list: List, name: &dyn Fn(&str) -> String) -> Vec<Row> {
+        self.rows_with_format(
+            list,
+            name,
+            &hydrus_store::settings::GuiFormatting::default(),
+        )
+    }
+    pub fn rows_with_format(
+        &self,
+        list: List,
+        name: &dyn Fn(&str) -> String,
+        formatting: &hydrus_store::settings::GuiFormatting,
+    ) -> Vec<Row> {
         let manager = self.manager.borrow();
         let selection = &self.selections[list.index()];
         let mut rows = match list {
@@ -210,7 +222,9 @@ impl Editor {
                         caller.name().into(),
                         manager
                             .caller_default(caller)
-                            .map_or_else(String::new, |slice| container_summary(slice, name)),
+                            .map_or_else(String::new, |slice| {
+                                container_summary_with_format(slice, name, formatting)
+                            }),
                     ],
                     target: Target::Caller(caller),
                     selected: selection.selected.is_selected(id),
@@ -230,7 +244,9 @@ impl Editor {
                             class.url_type.name().unwrap_or_default().into(),
                             manager
                                 .url_class_default(&key)
-                                .map_or_else(String::new, |slice| container_summary(slice, name)),
+                                .map_or_else(String::new, |slice| {
+                                    container_summary_with_format(slice, name, formatting)
+                                }),
                         ],
                         target: Target::Url(key),
                         selected: selection.selected.is_selected(id),
@@ -243,7 +259,10 @@ impl Editor {
                 .filter_map(|(title, slice)| {
                     self.favourite_ids.get(title).map(|&id| Row {
                         id,
-                        cells: vec![title.clone(), container_summary(slice, name)],
+                        cells: vec![
+                            title.clone(),
+                            container_summary_with_format(slice, name, formatting),
+                        ],
                         target: Target::Favourite(title.clone()),
                         selected: selection.selected.is_selected(id),
                     })

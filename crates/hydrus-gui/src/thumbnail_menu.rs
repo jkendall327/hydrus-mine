@@ -516,6 +516,7 @@ fn views_entries(store: &Store, files: &[HashId], now_ms: i64) -> Vec<Entry> {
     let Ok(stats) = store.read(|c| hydrus_store::media::viewing_stats(c, files)) else {
         return Vec::new();
     };
+    let formatting = hydrus_gui_model::gui_format::preferences(store);
     let line = |canvases: &[CanvasType]| -> String {
         let of = || stats.iter().filter(|s| canvases.contains(&s.canvas));
         let views: u64 = of().map(|s| s.views).sum();
@@ -532,10 +533,10 @@ fn views_entries(store: &Store, files: &[HashId], now_ms: i64) -> Vec<Entry> {
         let last = match of().filter_map(|s| s.last_viewed).max() {
             Some(t) => format!(
                 "last {}",
-                hydrus_core::time::timestamp_to_pretty_time_delta(
-                    t.0.div_euclid(1000),
+                hydrus_gui_model::gui_format::timestamp(
+                    &formatting,
+                    Some(t.0.div_euclid(1000)),
                     now_ms.div_euclid(1000),
-                    " ago"
                 )
             ),
             None => "no recorded last view time".to_owned(),
