@@ -326,8 +326,7 @@ impl ActualCall {
         match self {
             Self::Process(p) => p
                 .command(inputs)
-                .map(|v| v.join(" "))
-                .unwrap_or_else(|e| format!("Error! {e}")),
+                .map_or_else(|e| format!("Error! {e}"), |v| v.join(" ")),
             Self::DefaultFile | Self::DefaultUrl => {
                 let parameter = if matches!(self, Self::DefaultFile) {
                     Parameter::Path
