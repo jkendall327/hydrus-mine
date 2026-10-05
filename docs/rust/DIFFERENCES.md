@@ -1639,6 +1639,12 @@ warning, slideshow-period input and owned advanced-delete child; this does not
 establish a general native modal policy for other detached dialogs. Headless
 request counters do not prove an OS focus grant.
 
+The retained viewer tag action compares a private Store-local file-ID token,
+not a content digest. The token, canonical-tag membership and existing owner
+guards are all required. The compile/lint API repairs preserve the full recorded
+assertions and add zero completion credit; exact-source hosted validation remains
+pending.
+
 Application display name remains an existing Partial refinement, with zero new
 credit: unchanged Apply now normalizes raw empty imported names, Cancel preserves
 them, whitespace remains literal, and title refresh belongs to the current live

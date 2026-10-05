@@ -583,6 +583,9 @@ skipping already-active native windows. Closed/re-shown viewers, stale file
 payloads, hidden owners and retired main bindings refuse searches; a declined
 main close leaves the producer live. Pending questions, warnings, slideshow-period
 input and the viewer's advanced-delete child block retained tag-search callbacks.
+The viewer's file identity is private to its original Store and canvas owner;
+the canonical tag identity stays separate from the rendered label. The API
+corrections add no completion credit and await exact-source hosted validation.
 Wayland activation and multi-tag/child-list
 activation remain unfinished. Exit and the window close button ask the recorded
 yes/no question when enabled, automatically accepting after 15 seconds; declining

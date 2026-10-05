@@ -130,12 +130,14 @@ impl MediaTools {
     }
 
     /// Use a fixed embedded ICC policy; defaults remain enabled.
+    #[must_use]
     pub fn with_icc_normalisation(self, enabled: bool) -> Self {
         self.with_icc_reader(std::sync::Arc::new(move || enabled))
     }
 
     /// Read an explicitly owned policy before each image conversion. The
     /// returned Boolean is held unchanged throughout that conversion.
+    #[must_use]
     pub fn with_icc_reader(
         mut self,
         reader: std::sync::Arc<dyn Fn() -> bool + Send + Sync>,

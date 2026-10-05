@@ -6,6 +6,12 @@ use std::{cell::RefCell, rc::Rc};
 
 pub(crate) type Launch = Rc<dyn Fn(hydrus_search::LocationContext, Vec<Vec<Predicate>>)>;
 
+// Private identity within this viewer's Store, not a displayed content digest.
+// The canvas/owner guards keep tokens from retired viewers out of successors.
+fn current_file_token(model: &MediaViewer) -> String {
+    model.current().0.to_string()
+}
+
 pub(crate) fn refresh(window: &MediaViewerWindow, model: &MediaViewer) {
     let entries = model.tag_entries();
     window.set_tags(ModelRc::new(VecModel::from(
@@ -20,7 +26,7 @@ pub(crate) fn refresh(window: &MediaViewerWindow, model: &MediaViewer) {
             .map(|(tag, _, _)| tag.into())
             .collect::<Vec<slint::SharedString>>(),
     )));
-    window.set_tag_file(model.current().to_hex().into());
+    window.set_tag_file(current_file_token(model).into());
 }
 
 pub(crate) fn bind(
@@ -46,7 +52,7 @@ pub(crate) fn bind(
             return;
         }
         let model = model.borrow();
-        if file.as_str() != model.current().to_hex()
+        if file.as_str() != current_file_token(&model)
             || file != window.get_tag_file()
             || !model
                 .tag_entries()
@@ -55,7 +61,7 @@ pub(crate) fn bind(
         {
             return;
         }
-        let Ok(tag) = hydrus_core::Tag::new(tag.as_str()) else {
+        let Some(tag) = hydrus_core::Tag::new(tag.as_str()) else {
             return;
         };
         let location = model.location().clone();

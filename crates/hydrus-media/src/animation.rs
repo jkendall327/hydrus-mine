@@ -136,6 +136,7 @@ impl Frames {
 
     /// Refresh an explicitly owned policy for each future frame conversion,
     /// without restarting the animation's timing or seek position.
+    #[must_use]
     pub fn with_icc_reader(
         mut self,
         reader: std::sync::Arc<dyn Fn() -> bool + Send + Sync>,
