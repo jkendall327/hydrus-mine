@@ -131,3 +131,4 @@ mod file_history;
 mod related_weights;
 
 mod external_calls;
+mod autocomplete_tabs;

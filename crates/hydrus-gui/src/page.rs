@@ -2124,6 +2124,51 @@ impl SearchPage {
             self.autocomplete.set_tab(tab);
         }
     }
+    /// Select results without changing the active query or a pending OR draft.
+    pub fn select_suggestion(&mut self, index: usize, ctrl: bool, shift: bool) {
+        if !self.locked && self.note.is_none() {
+            self.autocomplete.click(index, ctrl, shift);
+        }
+    }
+
+    /// Ctrl+A belongs to the result list, not the text input.
+    pub fn select_all_suggestions(&mut self) {
+        if !self.locked && self.note.is_none() {
+            self.autocomplete.select_all();
+        }
+    }
+
+    /// Clear an owned result selection without changing query predicates.
+    pub fn deselect_suggestions(&mut self) -> bool {
+        !self.locked && self.note.is_none() && self.autocomplete.deselect()
+    }
+
+    /// Immediate favourites edits refresh only autocomplete, retaining caller drafts.
+    pub fn refresh_autocomplete_tab(&mut self) {
+        if !self.locked && self.note.is_none() {
+            self.autocomplete.refresh_tab();
+        }
+    }
+
+    /// Broadcast a selected favourites/children batch through the real OR/query path.
+    pub fn activate_suggestions(&mut self, shift: bool) {
+        if self.locked || self.note.is_some() {
+            return;
+        }
+        let selected = self.autocomplete.selected_suggestions();
+        if self.autocomplete.tab() == hydrus_gui_model::write_autocomplete::Tab::Tags {
+            if let Some(index) = self.autocomplete.highlighted() {
+                self.choose_or(index, shift);
+            }
+            return;
+        }
+        let texts: Vec<_> = selected.into_iter().map(|row| row.predicate).collect();
+        match parse_api_search(&serde_json::json!(texts)) {
+            Ok(predicates) => self.broadcast_or(predicates, shift),
+            Err(error) => self.error = Some(error.to_string()),
+        }
+    }
+
     fn sync_autocomplete_tags(&mut self) {
         self.autocomplete
             .set_context_tags(self.predicates.iter().filter_map(|predicate| {
@@ -2153,6 +2198,10 @@ impl SearchPage {
     }
     /// Shift+Enter accumulates without changing the active search.
     pub fn enter_or(&mut self, shift: bool) {
+        if self.autocomplete.tab() != hydrus_gui_model::write_autocomplete::Tab::Tags {
+            self.activate_suggestions(shift);
+            return;
+        }
         if self.or_draft.terms().is_some()
             && !self.autocomplete.text().trim().is_empty()
             && self.autocomplete.tab() == hydrus_gui_model::write_autocomplete::Tab::Tags

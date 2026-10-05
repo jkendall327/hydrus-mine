@@ -8,9 +8,18 @@ export component ReadAutocomplete inherits Rectangle {
     in property <[ListText]> suggestions;
     in property <int> highlighted: -1;
     in property <int> tab-index;
-    out property <bool> has-focus: tabs.has-focus;
+    out property <bool> has-focus: tabs.has-focus || results.has-focus;
     callback tab-chosen(int);
+    in property <[bool]> selected;
     callback chosen(int);
+    callback selection-clicked(int,bool,bool);
+    callback activated(bool);
+    callback select-all();
+    callback deselect() -> bool;
+    callback move-highlight(int);
+    out property <length> results-x: results.results-x;
+    out property <length> results-y: results.results-y;
+    callback context-menu(int,length,length);
     in property <bool> or-active;
     in property <bool> advanced-visible;
     in property <bool> or-rewind-visible;
@@ -32,10 +41,17 @@ export component ReadAutocomplete inherits Rectangle {
             if root.or-rewind-visible: Button { enabled: root.enabled; text: "↶"; clicked => { root.or-action(1); } }
             Button { enabled: root.enabled; text: "cancel OR"; clicked => { root.or-action(2); } }
         }
-        ReadSuggestions {
+        results := ReadSuggestions {
             vertical-stretch: 1;
             suggestions: root.suggestions;
             highlighted: root.highlighted;
+            selected: root.selected;
+            move-highlight(by) => { if root.enabled { root.move-highlight(by); } }
+            selection-clicked(i,c,s) => { if root.enabled { root.selection-clicked(i,c,s); } }
+            activated(s) => { if root.enabled { root.activated(s); } }
+            deselect => { root.deselect() }
+            select-all => { if root.enabled { root.select-all(); } }
+            context-menu(i,x,y) => { if root.enabled { root.context-menu(i,x,y); } }
             chosen(i) => { if root.enabled { root.chosen(i); } }
         }
     }

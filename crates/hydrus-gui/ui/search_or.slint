@@ -23,6 +23,10 @@ export component SearchOrWindow inherits Window {
     callback edited(string);
     callback enter(bool);
     callback chosen(int);
+    in property <[bool]> selected;
+    callback selection-clicked(int,bool,bool);
+    callback select-all();
+    callback deselect() -> bool;
     callback remove(int);
     callback tab-chosen(int);
     callback move-highlight(int);
@@ -88,6 +92,12 @@ export component SearchOrWindow inherits Window {
                 vertical-stretch: 1;
                 suggestions: root.suggestions;
                 highlighted: root.highlighted;
+                selected: root.selected;
+                move-highlight(by) => { root.move-highlight(by); }
+                selection-clicked(i,c,s) => { root.selection-clicked(i,c,s); }
+                deselect => { root.deselect() }
+                select-all => { root.select-all(); }
+                activated(s) => { root.enter(s); }
                 tab-index: root.tab-index;
                 or-active: root.or-active;
                 or-rewind-visible: root.or-rewind-visible;

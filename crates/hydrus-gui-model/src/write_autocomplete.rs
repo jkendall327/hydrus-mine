@@ -94,21 +94,21 @@ impl Tab {
 /// The reference tag list keeps earlier selections during Shift ranges and
 /// uses Ctrl+Shift to remove a reversible range, unlike a table selection.
 #[derive(Debug, Default)]
-struct Selection {
-    selected: BTreeSet<usize>,
+pub(crate) struct Selection {
+    pub(crate) selected: BTreeSet<usize>,
     last: Option<usize>,
     anchor: Option<usize>,
     added: BTreeSet<usize>,
     removed: BTreeSet<usize>,
 }
 impl Selection {
-    fn reset(&mut self, first: Option<usize>) {
+    pub(crate) fn reset(&mut self, first: Option<usize>) {
         *self = Self::default();
         if let Some(first) = first {
             self.click(first, false, false);
         }
     }
-    fn click(&mut self, hit: usize, ctrl: bool, shift: bool) {
+    pub(crate) fn click(&mut self, hit: usize, ctrl: bool, shift: bool) {
         if !shift {
             self.anchor = Some(hit);
             self.added.clear();

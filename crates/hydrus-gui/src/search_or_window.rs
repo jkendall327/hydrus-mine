@@ -106,6 +106,7 @@ fn show(window: &SearchOrWindow, state: &State) {
                 .and_then(|i| i32::try_from(i).ok())
                 .unwrap_or(-1),
         );
+        window.set_selected(ModelRc::new(VecModel::from(autocomplete.selected())));
         window.set_tab_index(i32::try_from(autocomplete.tab().index()).unwrap_or(0));
         window.set_or_active(page.or_terms().is_some());
         window.set_or_rewind_visible(page.or_terms().is_some_and(|terms| terms.len() > 1));
@@ -308,6 +309,51 @@ pub fn open(
             if let Ok(index) = usize::try_from(index) {
                 state.page.borrow_mut().remove_predicate(index);
             }
+            if let Some(window) = weak.upgrade() {
+                show(&window, &state);
+            }
+        }
+    });
+    window.on_selection_clicked({
+        let state = state.clone();
+        let weak = window.as_weak();
+        move |index, ctrl, shift| {
+            if !state.valid() || state.blocked() {
+                return;
+            }
+            if let Ok(index) = usize::try_from(index) {
+                state
+                    .page
+                    .borrow_mut()
+                    .select_suggestion(index, ctrl, shift);
+            }
+            if let Some(window) = weak.upgrade() {
+                show(&window, &state);
+            }
+        }
+    });
+    window.on_deselect({
+        let state = state.clone();
+        let weak = window.as_weak();
+        move || {
+            if !state.valid() || state.blocked() {
+                return false;
+            }
+            let handled = state.page.borrow_mut().deselect_suggestions();
+            if let Some(window) = weak.upgrade() {
+                show(&window, &state);
+            }
+            handled
+        }
+    });
+    window.on_select_all({
+        let state = state.clone();
+        let weak = window.as_weak();
+        move || {
+            if !state.valid() || state.blocked() {
+                return;
+            }
+            state.page.borrow_mut().select_all_suggestions();
             if let Some(window) = weak.upgrade() {
                 show(&window, &state);
             }

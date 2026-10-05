@@ -2141,3 +2141,14 @@ the press across `pointer-event(Move)` followed by `moved`, and preserve ordinar
 unpressed tooltip hover.
 
 Related-tag weights use native owned drafts and inline namespace/weight question panes rather than Qt modal child frames. Native Manage Tags now offers related suggestions for its captured service/files, local/all-known domains and storage/display graphs. Its single coalescing worker computes the full corpus cosine scores, applies the recorded two weight stages and integer truncations, then returns the first 100 base-score candidates. Qt additionally samples large search-tag populations under configurable quick/medium/thorough time budgets; native does not implement those budgets, selected-main-tag search/exclusion mode, alternate tag-context service, repository Manage Tags, or file-lookup scripts. These wider suggested-tab/default-page families remain Partial; importing duration values does not make their controls usable. Default-page fallback excludes unavailable panels and per-service notebook selection is retained within the owner. The recorded binary64 result-weight boundary (100 × 29% truncates to 28) and sibling alias/ideal deduplication are preserved. In display mode, all-known queries intentionally use raw co-occurrences with display totals, matching the reference’s different local/all-known behavior. Numerical floating-point edge behavior beyond the fresh small-corpus ranking fixture remains unverified.
+
+The read autocomplete favourite/children panes now support selected batches and
+favourite editing, with a stable pointer surface and actual SearchPage/OR
+consumers. Settings notifications use one owner-held 100ms revision watcher for
+visible main read panes and detached write editors rather than Qt pubsub. Count
+queries remain synchronous, tab selection uses the native picker, and this
+slice does not add the full inherited read-list copy/open/relationship,
+decoration/display-mode, drag, or asynchronous child-query menus. Basic OR
+children share selection/broadcast but retain their existing context-menu
+boundary. Manage Tags' independently owned suggestion/related workers are
+unchanged. Broader shared read/write autocomplete parents remain Partial.

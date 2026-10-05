@@ -3066,3 +3066,14 @@ end; enabled scrolling moves the overflowing bar's viewport and preserves page
 selection. This works on horizontal and vertical notebook rows; Apply refreshes
 the live bars and Cancel leaves saved settings unchanged.
 Options > tag suggestions opens an owned related-weight draft with separate search/suggested namespace tables. Reserved and duplicate namespace warnings, 0–10,000 percent values, protected catch-all rows, add/edit/delete, and question Cancel follow the recorded Qt editor. Child Apply stages the tables; parent Apply persists them, while parent Cancel closes and invalidates the child. Already-open Manage Tags related lists re-query saved weight changes through one owned worker. Related suggestions preserve score order, filter tags already present on all captured files, and only add mappings when activated.
+
+Read autocomplete favourites and children now share the write list's reversible
+Ctrl/Shift selection. Enter or double-click broadcasts the selected batch;
+Shift sends it to the current OR draft, and cancelling that draft keeps the
+active search unchanged. Children exclude the tags just committed and keep the
+count-ranked, countless descendant list. Read panes expose the same immediate
+favourite/most-used add and confirmed removal actions as write panes. Visible
+read and detached write owners refresh changed favourites/children limits
+without clearing input drafts. A hidden, replaced, locked or switched read owner
+cannot accept a delayed favourite answer. The shared favourite editor remains
+an Options draft: child Apply stages it, parent Cancel discards it.
