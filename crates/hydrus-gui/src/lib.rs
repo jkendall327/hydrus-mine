@@ -6105,8 +6105,11 @@ fn show_importer(window: &MainWindow, page: &SearchPage) {
     window.set_import_fraction(fraction);
     window.set_import_paused(importer.paused);
     window.set_search_status(importer.search_status().into());
-    window.set_file_download(download_line(&importer.file_job_line()));
-    window.set_search_download(download_line(&importer.gallery_job_line()));
+    let formatting = hydrus_gui_model::gui_format::preferences(page.store());
+    window.set_file_download(download_line(&importer.file_job_line(formatting.figures)));
+    window.set_search_download(download_line(
+        &importer.gallery_job_line(formatting.figures),
+    ));
 }
 
 /// A simple downloader page's parsing box: its status line and pause, its

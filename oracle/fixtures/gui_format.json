@@ -104,6 +104,68 @@
   "events": [
     {
       "consumers": {
+        "network_jobs": [
+          {
+            "input": {
+              "read": 1536,
+              "total": 243200,
+              "speed": 1536,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "1.5 KB/238 KB 1.5 KB/s",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": 1536,
+              "speed": 1536,
+              "error": false,
+              "done": true
+            },
+            "left": "receiving",
+            "right": "1.5 KB",
+            "can_cancel": false
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": null,
+              "speed": 0,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "1.5 KB 0B/s",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 0,
+              "total": 243200,
+              "speed": 1536,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": 243200,
+              "speed": 1536,
+              "error": true,
+              "done": true
+            },
+            "left": "receiving",
+            "right": "",
+            "can_cancel": false
+          }
+        ],
         "filtering_summary": "allows all filetypes, excludes previously deleted, excludes < 1.5 KB, excludes > 238 KB, excludes gifs > 179 MB",
         "parser_previews": [
           {
@@ -305,6 +367,68 @@
     },
     {
       "consumers": {
+        "network_jobs": [
+          {
+            "input": {
+              "read": 1536,
+              "total": 243200,
+              "speed": 1536,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "2 KB/238 KB 2 KB/s",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": 1536,
+              "speed": 1536,
+              "error": false,
+              "done": true
+            },
+            "left": "receiving",
+            "right": "2 KB",
+            "can_cancel": false
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": null,
+              "speed": 0,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "2 KB 0B/s",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 0,
+              "total": 243200,
+              "speed": 1536,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": 243200,
+              "speed": 1536,
+              "error": true,
+              "done": true
+            },
+            "left": "receiving",
+            "right": "",
+            "can_cancel": false
+          }
+        ],
         "filtering_summary": "allows all filetypes, excludes previously deleted, excludes < 2 KB, excludes > 238 KB, excludes gifs > 179 MB",
         "parser_previews": [
           {
@@ -506,6 +630,68 @@
     },
     {
       "consumers": {
+        "network_jobs": [
+          {
+            "input": {
+              "read": 1536,
+              "total": 243200,
+              "speed": 1536,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "1.5 KB/238 KB 1.5 KB/s",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": 1536,
+              "speed": 1536,
+              "error": false,
+              "done": true
+            },
+            "left": "receiving",
+            "right": "1.5 KB",
+            "can_cancel": false
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": null,
+              "speed": 0,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "1.5 KB 0B/s",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 0,
+              "total": 243200,
+              "speed": 1536,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": 243200,
+              "speed": 1536,
+              "error": true,
+              "done": true
+            },
+            "left": "receiving",
+            "right": "",
+            "can_cancel": false
+          }
+        ],
         "filtering_summary": "allows all filetypes, excludes previously deleted, excludes < 1.5 KB, excludes > 238 KB, excludes gifs > 179 MB",
         "parser_previews": [
           {
@@ -707,6 +893,68 @@
     },
     {
       "consumers": {
+        "network_jobs": [
+          {
+            "input": {
+              "read": 1536,
+              "total": 243200,
+              "speed": 1536,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "1.5 KB/237.5 KB 1.5 KB/s",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": 1536,
+              "speed": 1536,
+              "error": false,
+              "done": true
+            },
+            "left": "receiving",
+            "right": "1.5 KB",
+            "can_cancel": false
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": null,
+              "speed": 0,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "1.5 KB 0B/s",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 0,
+              "total": 243200,
+              "speed": 1536,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": 243200,
+              "speed": 1536,
+              "error": true,
+              "done": true
+            },
+            "left": "receiving",
+            "right": "",
+            "can_cancel": false
+          }
+        ],
         "filtering_summary": "allows all filetypes, excludes previously deleted, excludes < 1.5 KB, excludes > 237.5 KB, excludes gifs > 179.5 MB",
         "parser_previews": [
           {
@@ -908,6 +1156,68 @@
     },
     {
       "consumers": {
+        "network_jobs": [
+          {
+            "input": {
+              "read": 1536,
+              "total": 243200,
+              "speed": 1536,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "1.5 KB/237.5 KB 1.5 KB/s",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": 1536,
+              "speed": 1536,
+              "error": false,
+              "done": true
+            },
+            "left": "receiving",
+            "right": "1.5 KB",
+            "can_cancel": false
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": null,
+              "speed": 0,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "1.5 KB 0B/s",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 0,
+              "total": 243200,
+              "speed": 1536,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": 243200,
+              "speed": 1536,
+              "error": true,
+              "done": true
+            },
+            "left": "receiving",
+            "right": "",
+            "can_cancel": false
+          }
+        ],
         "filtering_summary": "allows all filetypes, excludes previously deleted, excludes < 1.5 KB, excludes > 237.5 KB, excludes gifs > 179.49 MB",
         "parser_previews": [
           {
@@ -1109,6 +1419,68 @@
     },
     {
       "consumers": {
+        "network_jobs": [
+          {
+            "input": {
+              "read": 1536,
+              "total": 243200,
+              "speed": 1536,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "1.5 KB/237.5 KB 1.5 KB/s",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": 1536,
+              "speed": 1536,
+              "error": false,
+              "done": true
+            },
+            "left": "receiving",
+            "right": "1.5 KB",
+            "can_cancel": false
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": null,
+              "speed": 0,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "1.5 KB 0B/s",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 0,
+              "total": 243200,
+              "speed": 1536,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": 243200,
+              "speed": 1536,
+              "error": true,
+              "done": true
+            },
+            "left": "receiving",
+            "right": "",
+            "can_cancel": false
+          }
+        ],
         "filtering_summary": "allows all filetypes, excludes previously deleted, excludes < 1.5 KB, excludes > 237.5 KB, excludes gifs > 179.495 MB",
         "parser_previews": [
           {
@@ -1310,6 +1682,68 @@
     },
     {
       "consumers": {
+        "network_jobs": [
+          {
+            "input": {
+              "read": 1536,
+              "total": 243200,
+              "speed": 1536,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "2 KB/238 KB 2 KB/s",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": 1536,
+              "speed": 1536,
+              "error": false,
+              "done": true
+            },
+            "left": "receiving",
+            "right": "2 KB",
+            "can_cancel": false
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": null,
+              "speed": 0,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "2 KB 0B/s",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 0,
+              "total": 243200,
+              "speed": 1536,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": 243200,
+              "speed": 1536,
+              "error": true,
+              "done": true
+            },
+            "left": "receiving",
+            "right": "",
+            "can_cancel": false
+          }
+        ],
         "filtering_summary": "allows all filetypes, excludes previously deleted, excludes < 2 KB, excludes > 238 KB, excludes gifs > 179 MB",
         "parser_previews": [
           {
@@ -1511,6 +1945,68 @@
     },
     {
       "consumers": {
+        "network_jobs": [
+          {
+            "input": {
+              "read": 1536,
+              "total": 243200,
+              "speed": 1536,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "1.5 KB/237.5 KB 1.5 KB/s",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": 1536,
+              "speed": 1536,
+              "error": false,
+              "done": true
+            },
+            "left": "receiving",
+            "right": "1.5 KB",
+            "can_cancel": false
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": null,
+              "speed": 0,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "1.5 KB 0B/s",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 0,
+              "total": 243200,
+              "speed": 1536,
+              "error": false,
+              "done": false
+            },
+            "left": "receiving",
+            "right": "",
+            "can_cancel": true
+          },
+          {
+            "input": {
+              "read": 1536,
+              "total": 243200,
+              "speed": 1536,
+              "error": true,
+              "done": true
+            },
+            "left": "receiving",
+            "right": "",
+            "can_cancel": false
+          }
+        ],
         "filtering_summary": "allows all filetypes, excludes previously deleted, excludes < 1.5 KB, excludes > 237.5 KB, excludes gifs > 179.495 MB",
         "parser_previews": [
           {

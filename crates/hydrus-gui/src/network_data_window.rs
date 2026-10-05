@@ -950,7 +950,7 @@ impl Jobs {
                     done: false,
                     error: false,
                 }
-                .line()
+                .line_with_figures(hydrus_gui_model::gui_format::preferences(&self.store).figures)
             })
             .unwrap_or_default();
         self.window.set_download(crate::download_line(&line));
