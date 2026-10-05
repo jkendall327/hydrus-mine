@@ -3184,3 +3184,20 @@ preview decoders keep their existing owned test/backend contract independently
 of normal decoded-cache admission. The screen-count caption is omitted when the
 backend has no monitor information (including the headless adapter); the pixel
 budget remains available. Runtime/native render validation remains hosted-only.
+
+
+Force idle mode has a real current-binding menu/Monitor consumer, but remains
+Partial. The reference publishes `wake_idle_workers` on both toggles and subscribes
+database maintenance and repository synchronisation to that topic. Native owned
+idle-aware DB/repository wake subscribers, CPU/system-busy monitoring and the
+reference’s `idle_started = 0` very-idle classification are not implemented by this
+slice. It does not emit a fabricated wake event or reset trash/deferred/autosave
+deadlines: actual Qt trash does not subscribe to force-idle wake, and deferred
+physical deletes subscribe to their separate new-delete notification. These
+existing native jobs consume the changed classification at their scheduled entry;
+an already admitted pass keeps its snapshot. Runtime override state belongs to
+the main incarnation and is not imported/persisted; shutdown/retirement wins over
+forced idle. The recorder runs the genuine QAction and controller/worker bodies
+with private clock/force globals and synthetic worker database transport, leaving
+reference source/media and shared clocks unchanged. No local Rust/Cargo validation
+ran; hosted execution/rendering is pending and no completion is proposed.

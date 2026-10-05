@@ -29,6 +29,7 @@ mod filesize_predicate;
 mod filetype_tree;
 mod folders;
 mod force_filetype;
+mod force_idle;
 mod formula_editors;
 mod hash_predicate;
 mod image_cache;

@@ -3978,3 +3978,20 @@ rebind, accepted exit and final binding-owner drop permanently retire old cache
 admission. Actual Qt controls and renderer accounting are recorded in
 `image_cache.json`; authored native/model/import regressions and the Options PNG
 await hosted execution and inspection.
+
+
+Help → Debug → debug modes offers the checked “force idle mode” runtime action.
+It overrides the current main binding’s actual idle Monitor before the boot wait,
+disabled normal-idle setting and recent user/mouse/API checks. Activity continues
+to be recorded while forced; switching off resumes the original decision from
+those timestamps. Existing session autosave and automatic trash/deferred workers
+consume the override at their unchanged scheduled admissions. Ordinary hiding
+preserves the mode but refuses new hidden-window toggle requests; pending main
+prompts also refuse toggles. Exit Cancel preserves it, while accepted exit, rebind,
+missing main owner and the final Bound clone’s drop permanently retire it. A new
+binding starts off; no saved option or mutable global is introduced.
+The actual Qt recording captures four QAction toggles and fresh menu checks,
+sixteen controller idle/busy cases and sixteen genuine worker entry paths. Model
+and native real archive/deletion/ownership regressions are authored; runtime and
+one native menu PNG await hosted validation. This remains Partial with no
+completion credit.

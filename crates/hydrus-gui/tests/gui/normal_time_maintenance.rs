@@ -47,7 +47,7 @@ fn open(ui: &MainWindow, bound: &hydrus_gui::Bound) -> (OptionsWindow, [i32; 2])
     });
     (window, rows)
 }
-fn owned() -> (
+pub(super) fn owned() -> (
     [tempfile::TempDir; 2],
     Arc<Store>,
     Vec<(HashId, std::path::PathBuf)>,
@@ -98,7 +98,7 @@ fn owned() -> (
         .unwrap();
     (dirs, store, files)
 }
-fn wait(mut check: impl FnMut() -> bool) {
+pub(super) fn wait(mut check: impl FnMut() -> bool) {
     let until = Instant::now() + Duration::from_secs(10);
     while !check() {
         assert!(
@@ -109,7 +109,7 @@ fn wait(mut check: impl FnMut() -> bool) {
         std::thread::sleep(Duration::from_millis(10));
     }
 }
-fn queue(store: &Store, id: HashId) {
+pub(super) fn queue(store: &Store, id: HashId) {
     store
         .write_content(move |w| {
             w.inbox(&[id])?;

@@ -126,7 +126,22 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                 .unwrap()
                 .clone();
             memory["entries"] = serde_json::json!([clear]);
-            entry["entries"] = serde_json::json!([gui, memory]);
+            let mut modes = entry["entries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| e.get("menu").is_some_and(|name| name == "debug modes"))
+                .unwrap()
+                .clone();
+            let force = modes["entries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| e.get("check").is_some_and(|name| name == "force idle mode"))
+                .unwrap()
+                .clone();
+            modes["entries"] = serde_json::json!([force]);
+            entry["entries"] = serde_json::json!([modes, gui, memory]);
         }
 
         if let Some(inner) = entry.get("entries").and_then(Value::as_array) {

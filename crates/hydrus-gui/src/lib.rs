@@ -56,6 +56,7 @@ mod filter_window;
 mod folders_lifecycle;
 mod folders_window;
 mod force_filetype_window;
+pub mod force_idle;
 pub mod formula_window;
 mod gallery;
 pub mod gallery_source_window;
@@ -430,6 +431,9 @@ pub struct Bound {
     pub clipboard_monitor: clipboard_monitor::Monitor,
     /// Historical autosaves, with real input activity and a bounded timer.
     pub session_autosave: session_autosave::Monitor,
+    /// Current binding’s unpersisted debug idle override.
+    pub force_idle: force_idle::Control,
+    _force_idle_owner: Rc<force_idle::Owner>,
     /// Automatic maintenance uses this binding's fresh live idle admissions.
     pub maintenance: maintenance_runtime::Control,
     _maintenance_owner: Rc<maintenance_runtime::Owner>,
@@ -589,6 +593,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }),
     );
     let session_autosave = session_autosave::bind(window, &pages);
+    let force_idle = force_idle::Control::new(window, &session_autosave, binding_active.clone());
     let maintenance = maintenance_runtime::Control::bind(
         window,
         pages.borrow().store(),
@@ -651,6 +656,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     );
     window.on_retire_external_launches({
         let maintenance = maintenance.clone();
+        let force_idle = force_idle.clone();
         let debug_long_popup = debug_long_popup.clone();
         let image_cache = image_cache.clone();
         let options = options.clone();
@@ -664,6 +670,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         move || {
             binding_active.set(false);
             maintenance.retire();
+            force_idle.retire();
             debug_long_popup.retire();
             image_cache.retire();
             retire_colours();
@@ -2371,6 +2378,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         window,
         menu_bar::Hooks {
             debug_long_popup: debug_long_popup.clone(),
+            force_idle: force_idle.clone(),
             quick_export_directory: quick_export_directory.clone(),
             darkmode: gui_colour_actions.callback(),
             sidebar_layout: Rc::new({
@@ -3086,12 +3094,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let binding_active = binding_active.clone();
             let weak = window.as_weak();
             let maintenance = maintenance.clone();
+            let force_idle = force_idle.clone();
             let debug_long_popup = debug_long_popup.clone();
             let image_cache = image_cache.clone();
             move || {
                 sidebar_layout.accepted_exit();
                 binding_active.set(false);
                 maintenance.retire();
+                force_idle.retire();
                 debug_long_popup.retire();
                 image_cache.retire();
                 retire_colours();
@@ -4745,12 +4755,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     let debug_long_popup_owner = Rc::new(debug_long_popup.owner());
+    let force_idle_owner = Rc::new(force_idle.owner());
     Bound {
         _image_cache_owner: image_cache.owner(),
         image_cache,
         _gui_colour_actions: gui_colour_actions,
         preview,
         session_autosave,
+        force_idle,
+        _force_idle_owner: force_idle_owner,
         _maintenance_owner: Rc::new(maintenance.owner()),
         maintenance,
         pages,
