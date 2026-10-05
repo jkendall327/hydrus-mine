@@ -184,8 +184,17 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
 
     // the thumbnails' shortcuts, once a click gives them the keyboard
     let main_window = windows.get(0).unwrap();
+    // Viewer exit may retain a selected file. Clear it through the real main
+    // consumer so the pointer must actually select and focus the grid.
+    ui.invoke_select_none();
+    assert!(page.borrow().selected_files().is_empty());
     headless::render(&main_window, 1100, 700);
-    let first = slint::LogicalPosition::new(300.0 + 4.0 + 76.0, 4.0 + 63.0);
+    // The saved sidebar is independently sized (400 px by default), and
+    // native tab/menu heights differ. Use the actual grid's measured origin.
+    let first = slint::LogicalPosition::new(
+        ui.get_grid_origin_x() + ui.get_thumbnail_margin() + ui.get_thumbnail_width() / 2.0,
+        ui.get_grid_origin_y() + ui.get_thumbnail_margin() + ui.get_thumbnail_height() / 2.0,
+    );
     for event in [
         slint::platform::WindowEvent::PointerPressed {
             position: first,
