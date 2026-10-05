@@ -3634,3 +3634,5 @@ frame and playback position. Actual Qt checkbox staging, save/reopen, decoded
 pixels, animation frames, cache notifications and profile-free thumbnail encoding
 are recorded in `image_decoder_policies.json` and its reference PNG. Truncated
 image loading has no native control or completion claim.
+
+Popup cards now measure their body at the resolved card width before the outer stack allocates their height. The narrow long-question regression checks all five actual action-button bounds, the rendered lower stop border and a pointer delivered near that lower edge; the fixed-width and width-cap checks remain. This is a layout repair with no new coverage claim. Native execution is pending hosted CI.

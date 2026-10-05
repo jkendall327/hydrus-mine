@@ -2848,3 +2848,5 @@ paint pumps timers before layout; hit rectangles are published on a following
 keeps the exact full-name hover, target-key, clipped-target and captured-drag
 assertions, and leaves production pointer routing and paint unchanged. Hosted
 execution must validate this replay correction; no local Rust tests were run.
+
+The popup question label continues to wrap in the native client. Actual Qt `PopupMessage._text_yes_no` remains a single-line label at the same narrow/fixed width settings; the new `popup_question_layout.json`/PNG records that distinction and verifies every Qt action control fits within its card. The native layout repair preserves its existing wrapping while preventing the lower stop button from crossing the clipped card boundary. No Options or popup family completion status changes.
