@@ -80,7 +80,7 @@ fn refresh_byte_row(
     }
 }
 
-fn image_cache_row(row: &Row) -> bool {
+fn image_cache_row(row: &Row<'_>) -> bool {
     matches!(row, Row::Opt { option, .. } if matches!(option.label, "Memory reserved for image cache:" | "Image cache timeout:" | "Maximum image size (in % of cache) that can be cached:" | "Maximum % of cache that will be prefetched per media viewer:" | "Num previous to prefetch in Media Viewer:" | "Num next to prefetch in Media Viewer:"))
 }
 fn refresh_image_cache_rows(window: &OptionsWindow, editor: &Editor) {

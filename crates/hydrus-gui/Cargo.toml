@@ -19,6 +19,7 @@ hydrus-parse.workspace = true
 hydrus-net.workspace = true
 hydrus-download.workspace = true
 tokio.workspace = true
+tracing.workspace = true
 hydrus-downloader-exchange = { path = "../hydrus-downloader-exchange" }
 rusqlite.workspace = true
 hydrus-search.workspace = true
