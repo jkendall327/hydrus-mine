@@ -514,6 +514,14 @@ export component MainWindow inherits Window {
     in property <bool> tab-wheel-scroll;
     callback tab-wheel(int,int);
     callback tab-scrolled(int,float);
+    callback tab-geometry(string,string,int,int,length,length,length,length);
+    callback tab-geometry-measured(string,string,int,int,length,length,length,length);
+    callback tab-pointer(int,int,length,length,bool);
+    callback tab-drag-hovered(string,length,length,bool);
+    tab-drag-hovered(name,x,y,on) => { root.tab-tooltip=on ? name : ""; root.tab-tooltip-x=x; root.tab-tooltip-y=y; }
+    property <bool> tab-drag-shift;
+    in property <bool> tab-drag-active;
+    in property <string> tab-drag-hover-key;
     out property <length> tab-navigation-x: tab-navigation.absolute-position.x;
     out property <length> tab-navigation-y: tab-navigation.absolute-position.y;
     out property <length> tab-navigation-width: tab-navigation.width;
@@ -838,7 +846,10 @@ export component MainWindow inherits Window {
     FocusScope {
         width: 100%;
         height: 100%;
+        capture-key-released(event) => { root.tab-drag-shift=event.modifiers.shift; return reject; }
         capture-key-pressed(event) => {
+            root.tab-drag-shift=event.modifiers.shift;
+            if root.tab-drag-active && event.text == Key.Escape { root.tab-pointer(3,-1,0px,0px,false); return accept; }
             root.session-user-activity();
             if root.search-or-open { return accept; }
             // an open menu takes every key, and alt and a letter opens one
@@ -962,6 +973,10 @@ export component MainWindow inherits Window {
                     width: parent.vertical-tabs ? parent.tab-space : parent.width - parent.tree-space;
                     height: parent.vertical-tabs ? parent.height : parent.tab-space;
                     rows: root.tab-rows;
+                    shift: root.tab-drag-shift;
+                    hover-key: root.tab-drag-hover-key;
+                    geometry(key,parent,level,index,x,y,w,h) => { root.tab-geometry(key,parent,level,index,x,y,w,h); root.tab-geometry-measured(key,parent,level,index,x,y,w,h); }
+                    pointer(action,button,x,y,shift) => { root.tab-pointer(action,button,x,y,shift); }
                     vertical: parent.vertical-tabs;
                     clockwise: root.tab-alignment == 2;
                     reverse-levels: root.tab-alignment == 2 || root.tab-alignment == 3;

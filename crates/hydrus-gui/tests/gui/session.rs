@@ -118,10 +118,14 @@ fn the_last_session_opens_as_it_was_left() {
         pages.tabs(),
         [
             Tabs {
+                parent: None,
+                keys: session_again.pages.iter().map(|page| page.key).collect(),
                 names: vec!["pages".into(), "downloaders".into()],
                 selected: 0
             },
             Tabs {
+                parent: Some(session_again.pages[0].key),
+                keys: vec![search_key, downloader_key],
                 names: vec!["my search".into(), "threads".into()],
                 selected: 0
             },

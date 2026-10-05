@@ -415,6 +415,95 @@
       "accepted": true
     }
   ],
+  "transfers": [
+    {
+      "chase": false,
+      "source_index": 1,
+      "before": {
+        "order": [
+          "alpha",
+          "gamma",
+          "beta",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "nested",
+        "shown": "inner one",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      },
+      "after": {
+        "order": [
+          "alpha",
+          "beta",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "nested",
+        "shown": "inner one",
+        "nested": [
+          "gamma",
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      },
+      "accepted": true
+    },
+    {
+      "chase": true,
+      "source_index": 2,
+      "before": {
+        "order": [
+          "alpha",
+          "beta",
+          "gamma",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "nested",
+        "shown": "inner one",
+        "nested": [
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "inner one"
+      },
+      "after": {
+        "order": [
+          "alpha",
+          "beta",
+          "omega",
+          "nested"
+        ],
+        "root_selected": "nested",
+        "shown": "gamma",
+        "nested": [
+          "gamma",
+          "inner one",
+          "inner two"
+        ],
+        "nested_selected": "gamma"
+      },
+      "accepted": true
+    }
+  ],
+  "launches": [
+    [
+      "application/hydrus-tab"
+    ],
+    {
+      "disabled": false,
+      "launched": true
+    },
+    {
+      "disabled": true,
+      "launched": false
+    }
+  ],
   "overflow": [
     {
       "delta": -120,
@@ -490,6 +579,7 @@
     }
   ],
   "limits": [
-    "synthetic QDropEvent source bar seam; native OS drag loop not recorded"
+    "synthetic QDropEvent source bar seam; native OS drag loop not recorded",
+    "QDrag exec instrumentation records offered drag MIME while preserving real source-start decisions"
   ]
 }

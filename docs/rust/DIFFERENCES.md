@@ -2079,8 +2079,21 @@ configurable tree geometry. Broader navigation/tree families remain Partial;
 this slice changes only the original experimental show-tree option proposal.
 
 The tab-wheel option now consumes real wheel input in native notebook bars.
-Scroll increments use native120px steps instead of Qt's scroll-button/tab geometry;
-selection and scroll directions agree with the recording. The additional five
-drag checkboxes are staged/persisted at this checkpoint, but their source/drop
-consumers and reference-specific no-chase selection are still being implemented;
-registration alone is not a completion claim.
+Scroll increments use native 120px steps instead of Qt's scroll-button/tab geometry;
+selection and scroll directions agree with the recording. Owned in-window tab
+gestures now consume the independent normal/Shift chase and hover-navigation
+settings and the disable-page-tab-drag flag. The persistent capture surface
+survives nested-row changes, and rejects stale source parents, invalid targets
+and moves into a page's descendants. Reordering/transfers preserve original page
+keys and ordered media/selection rather than cloning pages.
+
+This consumer does not implement an OS QDrag loop, drag pixmaps/cursors, crossing
+windows, tree drag/drop, media/external-file drags, or dropping into an empty
+notebook's content body. Consequently the two hover-navigation preference leaves
+remain Partial: their page-tab consumer works, but Qt also consumes them for
+media/external drags. The broader navigation/drag/drop families remain Partial.
+The Qt recorder supplies the source TabBar on synthetic drop events and
+intercepts only QDrag.exec_ to observe whether a native source drag is offered;
+it does not replace reference decision handlers or claim platform drag behavior.
+Native pointer/Shift/Cancel/media/reopen replays and the saved transfer PNG are
+authored for hosted CI; no local Cargo builds or tests were run.

@@ -110,6 +110,7 @@ pub mod string_processor_window;
 mod subscription_quality_control;
 mod subscriptions_window;
 mod tab_context_window;
+mod tab_drag;
 mod tab_presentation;
 pub mod tag_banner_window;
 pub(crate) mod tag_display_window;
@@ -701,6 +702,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    tab_drag::bind(window, &pages, Rc::new(change_pages.clone()));
     tab_presentation::bind_tree(window, &pages);
     // the page chooser, while open
     let chooser: Rc<RefCell<Option<page_chooser::PageChooser>>> = Rc::default();
@@ -5938,6 +5940,17 @@ fn show_tabs(window: &MainWindow, pages: &Pages) {
         .map(|(tabs, labels)| {
             let names: Vec<SharedString> = labels.iter().map(|n| n.as_str().into()).collect();
             TabRow {
+                keys: ModelRc::new(VecModel::from(
+                    tabs.keys
+                        .iter()
+                        .map(|key| SharedString::from(key.to_hex()))
+                        .collect::<Vec<_>>(),
+                )),
+                parent: tabs
+                    .parent
+                    .map(|key| key.to_hex())
+                    .unwrap_or_default()
+                    .into(),
                 names: ModelRc::new(VecModel::from(names)),
                 full_names: ModelRc::new(VecModel::from(
                     tabs.names
