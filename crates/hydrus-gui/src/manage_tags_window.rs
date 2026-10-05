@@ -64,6 +64,30 @@ pub(crate) fn open(
             window.set_deleted_count_visible(model.deleted_count() > 0);
             window.set_show_deleted(model.show_deleted());
             window.set_service_index(i32::try_from(model.service()).unwrap_or(0));
+            let sort = model.sort_control().value;
+            window.set_sort_type(
+                i32::try_from(
+                    hydrus_gui_model::options::TAG_SORT_TYPES
+                        .iter()
+                        .position(|(_, kind)| *kind == sort.order.sort_type)
+                        .unwrap_or(0),
+                )
+                .unwrap_or(0),
+            );
+            window.set_sort_order(
+                i32::try_from(hydrus_gui_model::options::tag_sort_orders(&sort.order).1)
+                    .unwrap_or(0),
+            );
+            window.set_sort_group(
+                i32::try_from(
+                    hydrus_gui_model::options::TAG_SORT_GROUPS
+                        .iter()
+                        .position(|(_, group)| *group == sort.order.group_by)
+                        .unwrap_or(0),
+                )
+                .unwrap_or(0),
+            );
+            window.set_sort_siblings(i32::from(!sort.use_siblings));
             let tags: Vec<ListText> = model
                 .display_rows()
                 .iter()
@@ -445,6 +469,31 @@ pub(crate) fn open(
             };
             model.borrow_mut().add_side_suggestions(&tags);
             refresh();
+        }
+    });
+    window.on_sort_chosen({
+        let model = model.clone();
+        let weak = window.as_weak();
+        let active = active.clone();
+        let incremental_open = incremental_open.clone();
+        let pending = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
+        let refresh = refresh.clone();
+        move |part, index| {
+            if !active.get()
+                || incremental_open.get()
+                || pending.borrow().is_some()
+                || tag_menu.busy()
+                || !weak.upgrade().is_some_and(|window| {
+                    window.window().is_visible() && window.get_question().is_empty()
+                })
+            {
+                return;
+            }
+            if let (Ok(part), Ok(index)) = (usize::try_from(part), usize::try_from(index)) {
+                model.borrow_mut().choose_sort(part, index);
+                refresh();
+            }
         }
     });
     let colour_updates = crate::tag_text::watch(

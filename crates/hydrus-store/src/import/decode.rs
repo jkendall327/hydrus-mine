@@ -707,6 +707,7 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     insert_setting(&mut input, &lock)?;
     if let Some(options) = &options {
         insert_setting(&mut input, &tag_presentation(options))?;
+        insert_setting(&mut input, &manage_tags_sort(options))?;
         insert_setting(&mut input, &sibling_connector_colours(options))?;
     }
     insert_setting(
@@ -2538,12 +2539,46 @@ fn sibling_connector_colours(
     out
 }
 
+/// The two storage-tag dialogs have their own sorts, including siblings.
+fn manage_tags_sort(options: &legacy::ClientOptions) -> crate::manage_tags_sort::Settings {
+    let mut out = crate::manage_tags_sort::Settings::default();
+    for (code, field) in [(1, &mut out.search_page), (3, &mut out.media_viewer)] {
+        if let Some(saved) = options.default_tag_sorts.get(&code)
+            && let Some(order) = tag_sort(saved)
+        {
+            *field = crate::manage_tags_sort::Sort {
+                order,
+                use_siblings: saved.use_siblings,
+            };
+        }
+    }
+    out
+}
+
+fn tag_sort(saved: &legacy::TagSort) -> Option<hydrus_core::tag_sort::TagSort> {
+    use hydrus_core::tag_sort::{TagGroupBy, TagSort, TagSortType};
+    Some(TagSort {
+        sort_type: match saved.sort_type {
+            0 => TagSortType::Tag,
+            1 => TagSortType::Subtag,
+            2 => TagSortType::Count,
+            _ => return None,
+        },
+        ascending: saved.sort_order == legacy::SortOrder::Ascending,
+        group_by: match saved.group_by {
+            0 => TagGroupBy::Nothing,
+            1 => TagGroupBy::NamespaceAz,
+            2 => TagGroupBy::NamespaceUser,
+            _ => return None,
+        },
+    })
+}
+
 /// How tags are shown: RenderTag options, namespace order and tag sorts.
 fn tag_presentation(
     options: &legacy::ClientOptions,
 ) -> hydrus_core::tag_presentation::TagPresentation {
     use hydrus_core::tag_presentation::TagPresentation;
-    use hydrus_core::tag_sort::{TagGroupBy, TagSort, TagSortType};
     let mut out = TagPresentation::default();
     for (key, field) in [
         ("show_namespaces", &mut out.show_namespaces),
@@ -2596,29 +2631,12 @@ fn tag_presentation(
     if let Some(namespaces) = options.string_lists.get("user_namespace_group_by_sort") {
         out.user_namespaces.clone_from(namespaces);
     }
-    let sort = |legacy: &legacy::TagSort| -> Option<TagSort> {
-        Some(TagSort {
-            sort_type: match legacy.sort_type {
-                0 => TagSortType::Tag,
-                1 => TagSortType::Subtag,
-                2 => TagSortType::Count,
-                _ => return None,
-            },
-            ascending: legacy.sort_order == legacy::SortOrder::Ascending,
-            group_by: match legacy.group_by {
-                0 => TagGroupBy::Nothing,
-                1 => TagGroupBy::NamespaceAz,
-                2 => TagGroupBy::NamespaceUser,
-                _ => return None,
-            },
-        })
-    };
     // (`CC.TAG_PRESENTATION_SEARCH_PAGE` and `_MEDIA_VIEWER`)
     for (code, field) in [
         (0, &mut out.search_page_sort),
         (2, &mut out.media_viewer_sort),
     ] {
-        if let Some(converted) = options.default_tag_sorts.get(&code).and_then(sort) {
+        if let Some(converted) = options.default_tag_sorts.get(&code).and_then(tag_sort) {
             *field = converted;
         }
     }
@@ -4927,6 +4945,88 @@ mod tests {
                 }
             );
         }
+    }
+
+    #[test]
+    fn manage_tags_sort_contexts_import_siblings_independently_of_sidebar_sorts() {
+        use crate::manage_tags_sort::{Settings, Sort};
+        use hydrus_core::tag_sort::{TagGroupBy, TagSort, TagSortType};
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let db = LegacyDb::open(source.path()).unwrap();
+        let mut options = db.client_options().unwrap().unwrap();
+        assert_eq!(manage_tags_sort(&options), Settings::default());
+        let input = decode_input(&db).unwrap();
+        let imported: Settings =
+            serde_json::from_value(input.settings["manage_tags_sort"].clone()).unwrap();
+        assert_eq!(imported, Settings::default());
+        let other = tag_presentation(&options);
+        options.default_tag_sorts.insert(
+            1,
+            legacy::TagSort {
+                sort_type: 1,
+                sort_order: legacy::SortOrder::Descending,
+                use_siblings: false,
+                group_by: 1,
+            },
+        );
+        options.default_tag_sorts.insert(
+            3,
+            legacy::TagSort {
+                sort_type: 2,
+                sort_order: legacy::SortOrder::Ascending,
+                use_siblings: true,
+                group_by: 0,
+            },
+        );
+        assert_eq!(
+            manage_tags_sort(&options),
+            Settings {
+                search_page: Sort {
+                    order: TagSort {
+                        sort_type: TagSortType::Subtag,
+                        ascending: false,
+                        group_by: TagGroupBy::NamespaceAz
+                    },
+                    use_siblings: false
+                },
+                media_viewer: Sort {
+                    order: TagSort {
+                        sort_type: TagSortType::Count,
+                        ascending: true,
+                        group_by: TagGroupBy::Nothing
+                    },
+                    use_siblings: true
+                },
+            }
+        );
+        assert_eq!(tag_presentation(&options), other);
+        // Exercise the real serialized legacy boundary, not just the conversion helper.
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, 1], [2, [101, 1, [0, 0, true, 2]]]]"#,
+                    r#"[[0, 1], [2, [101, 1, [1, 1, false, 1]]]]"#,
+                ),
+                (
+                    r#"[[0, 3], [2, [101, 1, [0, 0, true, 2]]]]"#,
+                    r#"[[0, 3], [2, [101, 1, [2, 0, true, 0]]]]"#,
+                ),
+            ],
+        );
+        let changed = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        let imported: Settings =
+            serde_json::from_value(changed.settings["manage_tags_sort"].clone()).unwrap();
+        assert_eq!(imported, manage_tags_sort(&options));
+        let unchanged: hydrus_core::tag_presentation::TagPresentation =
+            serde_json::from_value(changed.settings["tag_presentation"].clone()).unwrap();
+        assert_eq!(unchanged, other);
+        options.default_tag_sorts.get_mut(&1).unwrap().group_by = 99;
+        assert_eq!(manage_tags_sort(&options).search_page, Sort::default());
+        assert_eq!(
+            manage_tags_sort(&options).media_viewer.order.sort_type,
+            TagSortType::Count
+        );
     }
 
     /// The user's tag presentation options come across, with the search

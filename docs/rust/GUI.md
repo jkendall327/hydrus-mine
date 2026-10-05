@@ -3506,3 +3506,16 @@ the old cache and cancels its staged Options owner and descendants. Raw byte-con
 clamping is saved on unchanged Apply; raw subminimum timeout values stay untouched
 until their fields are edited. Actual Qt controls, cache boundaries and debug QAction are
 recorded in `thumbnail_cache.json` and its PNG.
+
+Tag Sort now includes independent opening defaults for search-page and media-viewer
+Manage Tags dialogs. Both stage tag/subtag/count, text or count order, siblings/tags,
+and namespace grouping in the reference's four-row Options order. Apply saves the
+changed context; Cancel preserves it, and reopening restores it. Each local tag
+service tab captures its opening sort and offers the same choices within the
+Manage Tags window. Switching sort types remembers separate text and count
+orders. A later default change affects new dialogs; an open dialog retains its
+local sort. Search launch uses the selected files; viewer F3 uses its current file.
+Logical storage tags retain their labels, counts and segmented namespace/sibling
+colours while sorting can use their sibling ideals. The actual Qt recording
+`manage_tags_sort.json` covers 72 combinations and both captured-dialog lifetimes;
+`manage_tags_sort_options.png` shows the actual controls.

@@ -487,6 +487,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     }));
     let binding_active = Rc::new(Cell::new(true));
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
+    let manage_tags: Rc<RefCell<Option<ManageTagsWindow>>> = Rc::default();
 
     let pages = Rc::new(RefCell::new(pages));
     let session_autosave = session_autosave::bind(window, &pages);
@@ -511,6 +512,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let rows = Rc::new(ThumbnailRows::new(first));
     window.on_retire_external_launches({
         let options = options.clone();
+        let manage_tags = manage_tags.clone();
         let rows = rows.clone();
         let launcher = external_launches.clone();
         let binding_active = binding_active.clone();
@@ -519,6 +521,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             launcher.cancel();
             rows.retire();
             let child = options.borrow().as_ref().map(|child| child.clone_strong());
+            if let Some(child) = child {
+                child.invoke_cancel();
+            }
+            let child = manage_tags
+                .borrow()
+                .as_ref()
+                .map(|child| child.clone_strong());
             if let Some(child) = child {
                 child.invoke_cancel();
             }
@@ -1552,7 +1561,6 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     // F3: manage tags; once applied, the tags are counted again
-    let manage_tags: Rc<RefCell<Option<ManageTagsWindow>>> = Rc::default();
     let incremental_tags = incremental_tagging_window::Slot::default();
     let tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>> = Rc::default();
     let tag_display: Rc<RefCell<Option<TagDisplayWindow>>> = Rc::default();
@@ -1583,12 +1591,19 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let manage_tags = manage_tags.clone();
         let incremental_tags = incremental_tags.clone();
         let page = page.clone();
-        move |store: Arc<hydrus_store::Store>, files: Vec<HashId>, applied: Rc<dyn Fn()>| {
+        let binding_active = binding_active.clone();
+        move |store: Arc<hydrus_store::Store>,
+              files: Vec<HashId>,
+              applied: Rc<dyn Fn()>,
+              context: hydrus_store::manage_tags_sort::Context| {
+            if !binding_active.get() {
+                return;
+            }
             if let Some(window) = manage_tags.borrow().as_ref() {
                 let _ = window.show();
                 return;
             }
-            let Some(mut model) = manage_tags::ManageTags::new(store, files) else {
+            let Some(mut model) = manage_tags::ManageTags::new_at(store, files, context) else {
                 return;
             };
             model.set_location(page().borrow().location().clone());
@@ -1596,6 +1611,17 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 Ok(window) => *manage_tags.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open manage tags: {e}"),
             }
+        }
+    };
+    let open_manage_tags_viewer = {
+        let open = open_manage_tags.clone();
+        move |store, files, applied| {
+            open(
+                store,
+                files,
+                applied,
+                hydrus_store::manage_tags_sort::Context::MediaViewer,
+            )
         }
     };
     // a thumbnail's or the viewer's "manage > notes"
@@ -1723,7 +1749,12 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 "manage tags for {} files",
                 hydrus_core::numbers::human_int(files.len() as u64)
             );
-            open_manage_tags(page.store().clone(), files, tags_changed.clone());
+            open_manage_tags(
+                page.store().clone(),
+                files,
+                tags_changed.clone(),
+                hydrus_store::manage_tags_sort::Context::SearchPage,
+            );
             if let Some(window) = manage_tags.borrow().as_ref() {
                 window.set_window_title(title.into());
             }
@@ -2675,12 +2706,20 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let launcher = external_launches.clone();
             let retire_popups = popup_timer.retire_callback();
             let options = options.clone();
+            let manage_tags = manage_tags.clone();
             let rows = rows.clone();
             let binding_active = binding_active.clone();
             move || {
                 binding_active.set(false);
                 rows.retire();
                 let child = options.borrow().as_ref().map(|child| child.clone_strong());
+                if let Some(child) = child {
+                    child.invoke_cancel();
+                }
+                let child = manage_tags
+                    .borrow()
+                    .as_ref()
+                    .map(|child| child.clone_strong());
                 if let Some(child) = child {
                     child.invoke_cancel();
                 }
@@ -3548,7 +3587,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let files_changed = files_changed.clone();
         let removed = removed.clone();
         let tags_changed = tags_changed.clone();
-        let open_manage_tags = open_manage_tags.clone();
+        let open_manage_tags = open_manage_tags_viewer.clone();
         move |files: Vec<HashId>, start: usize| {
             let store = page().borrow().store().clone();
             let Some(model) = MediaViewer::new(store, files, start) else {
@@ -3592,6 +3631,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let viewer_deletion = viewer_deletion.clone();
         let viewing = viewing.clone();
         let change_pages: ChangePages = Rc::new(change_pages.clone());
+        let open_manage_tags = open_manage_tags_viewer.clone();
         let open_manage_notes = open_manage_notes.clone();
         let open_manage_urls = open_manage_urls.clone();
         let open_manage_ratings = open_manage_ratings.clone();
@@ -6027,8 +6067,17 @@ fn open_viewer(
     // are shown again
     let manage_tags_of: Rc<dyn Fn(HashId)> = Rc::new({
         let model = model.clone();
+        let canvas = viewing_stats.clone();
+        let weak = window.as_weak();
         let show = show.clone();
         move |file| {
+            if !canvas.active()
+                || !weak
+                    .upgrade()
+                    .is_some_and(|window| window.window().is_visible())
+            {
+                return;
+            }
             let store = model.borrow().store().clone();
             let show = show.clone();
             let tags_changed = tags_changed.clone();

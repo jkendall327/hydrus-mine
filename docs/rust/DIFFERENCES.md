@@ -320,8 +320,7 @@ search.
   the work slots; and on the media playback page, the preview's zoom,
   re-centring, the checkerboard, animations, mpv, Qt's player and the
   system settings; the system page omits filesystem wake waiting, and the GUI
-  has no periodic sleep checker of its own (the downloader daemon does); on the tag sort page, the
-  manage tags dialogs' sorts (ours sort as the media viewer's list) and
+  has no periodic sleep checker of its own (the downloader daemon does); on the tag sort page,
   the namespace grouping list; on the ratings page, the example
   rating service's dropdown, the clickable examples, and the preview
   window's and dialogs' sizes; and on the thumbnails page, fading, the blurhash fallback, focusing on ctrl- and shift-selection,
@@ -2632,3 +2631,15 @@ the reference process-wide cache. Image, tile, prefetch and video cache controls
 other debug actions and their parents remain Partial. Reference soft insertion,
 last-access expiry and immediate saved-policy maintenance are preserved. Native
 regressions are authored for hosted CI; no local Cargo/Rust/mutation runs occurred.
+
+The two original Manage Tags default-sort Options controls now reach separate
+search-selection and current-viewer-file consumers. Settings import legacy
+presentation contexts 1 and 3 independently of sidebar/viewer tag-display sorts;
+staged saves merge only the changed context. Native local service tabs capture
+opening defaults, remember separate text/count orders, and preserve local sorts
+across subsequent default changes. Sorts use sibling ideals when sibling
+information is enabled, without replacing the logical stored tags or their
+existing segmented colours. Broader Manage Tags transactions, repository tag
+services, immediate viewer commits, and tag-sort parent families remain Partial;
+this slice claims only the two default-sort controls. Model, import and native
+regressions are authored for hosted CI. No local Cargo/Rust/mutation runs occurred.
