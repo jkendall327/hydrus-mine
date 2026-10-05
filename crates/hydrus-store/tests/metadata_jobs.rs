@@ -18,6 +18,7 @@ use std::{
 };
 
 struct Script<'a> {
+    store: &'a Arc<Store>,
     now: Cell<i64>,
     speed: i64,
     cancel_at: Option<usize>,
@@ -40,15 +41,34 @@ impl Effects for Script<'_> {
             fs::rename(from, to)
         }
     }
-    fn before_step(&self, index: usize, _key: &[u8; 32]) {
+    fn before_step(&self, index: usize, key: &[u8; 32]) {
         self.progress.borrow_mut().push(index);
         self.now
             .set(1000 + i64::try_from(index).unwrap() * self.speed);
         if self.cancel_at.is_some_and(|at| index >= at) {
-            self.shutdown.store(true, Ordering::Release);
+            let cancelled_existing = self
+                .store
+                .write({
+                    let key = *key;
+                    let now = self.now();
+                    move |ctx| popups::update(ctx.conn(), &key, now, |job| job.cancel())
+                })
+                .unwrap()
+                .is_some();
+            self.shutdown.store(!cancelled_existing, Ordering::Release);
         }
     }
     fn published(&self, job: &popups::Job) {
+        if self.shutdown.swap(false, Ordering::AcqRel) {
+            let key = job.key;
+            let now = self.now();
+            self.store
+                .write(move |ctx| {
+                    popups::update(ctx.conn(), &key, now, |job| job.cancel())?;
+                    Ok(())
+                })
+                .unwrap();
+        }
         self.published.borrow_mut().push(json!({"title":job.status_title,"at":self.now(),"gauge":job.popup_gauge_1.map(|(a,b)|vec![a,b])}));
     }
 }
@@ -118,6 +138,7 @@ fn actual_qt_worker_inputs_replay_files_cancellation_progress_and_copy_cleanup()
         );
         let shutdown = AtomicBool::new(false);
         let effects = Script {
+            store: &store,
             now: Cell::new(1000),
             speed: case["seconds_per_file"].as_i64().unwrap(),
             cancel_at: case["cancel_at"]
@@ -141,6 +162,21 @@ fn actual_qt_worker_inputs_replay_files_cancellation_progress_and_copy_cleanup()
                 step: 250,
             }
         };
+        if !force {
+            let ids: Vec<_> = files.iter().map(|file| file.id).collect();
+            store
+                .write_content(move |writer| {
+                    for (index, id) in ids.into_iter().enumerate() {
+                        writer.set_file_time(
+                            &[id],
+                            &hydrus_store::content::FileTime::FileModified,
+                            1700000000123 + i64::try_from(index).unwrap() * 250,
+                        )?;
+                    }
+                    Ok(())
+                })
+                .unwrap();
+        }
         metadata_jobs::run(&store, &request, &shutdown, &effects).unwrap();
         assert_eq!(
             *effects.published.borrow(),
@@ -197,6 +233,22 @@ fn actual_qt_worker_inputs_replay_files_cancellation_progress_and_copy_cleanup()
                     UNIX_EPOCH + Duration::from_secs(1234567890)
                 );
             }
+            if !force {
+                let database_ms: i64 = store
+                    .read(|c| {
+                        Ok(c.query_row(
+                            "SELECT file_modified_ms FROM files WHERE hash_id=?1",
+                            [file.id],
+                            |row| row.get(0),
+                        )?)
+                    })
+                    .unwrap();
+                assert_eq!(
+                    database_ms,
+                    1700000000123 + i64::try_from(index).unwrap() * 250,
+                    "disk cancellation never rolls back DB changes"
+                );
+            }
             let forced: Option<u8> = store
                 .read(|c| {
                     Ok(c.query_row(
@@ -216,6 +268,24 @@ fn actual_qt_worker_inputs_replay_files_cancellation_progress_and_copy_cleanup()
                 .unwrap()
                 .is_empty()
         );
+        if effects.fallback {
+            assert!(
+                store
+                    .read(|c| hydrus_store::file_maintenance::due_jobs_of(c, 4600, &|_| true))
+                    .unwrap()
+                    .is_empty()
+            );
+            let due = store
+                .read(|c| hydrus_store::file_maintenance::due_jobs_of(c, 4601, &|_| true))
+                .unwrap();
+            assert_eq!(
+                due,
+                vec![(
+                    files[0].id,
+                    vec![hydrus_store::file_maintenance::JobType::DeleteNeighbourDupes]
+                )]
+            );
+        }
         assert_eq!(case["finished"], true);
         assert_eq!(case["dismissed"], true);
     }

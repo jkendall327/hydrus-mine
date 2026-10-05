@@ -47,7 +47,7 @@ impl Jobs {
         std::thread::Builder::new()
             .name("metadata files".into())
             .spawn(move || {
-                let result = metadata_jobs::run(&store, &request, &cancel, &Local);
+                let result = metadata_jobs::run(&store, &request, &cancel, &Local::default());
                 let _ = sender.send(result);
             })
             .map_err(|e| format!("Could not start metadata file work: {e}"))?;
