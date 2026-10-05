@@ -476,11 +476,30 @@ fn live_rating_examples_stage_only_configuration_and_retire_cancelled_owners() {
             ),
             result["labels"]
         );
-        assert_eq!(edit.get_examples().row_data(0).unwrap().icon_size, 20.0);
-        assert_eq!(edit.get_examples().row_data(1).unwrap().icon_size, 15.0);
-        assert_eq!(edit.get_examples().row_data(2).unwrap().icon_size, 12.0);
-        assert_eq!(edit.get_examples().row_data(3).unwrap().icon_size, 12.0);
-        assert_eq!(edit.get_examples().row_data(0).unwrap().incdec_height, 17.0);
+        assert_eq!(
+            edit.get_examples().row_data(0).unwrap().icon_size.to_bits(),
+            20.0_f32.to_bits()
+        );
+        assert_eq!(
+            edit.get_examples().row_data(1).unwrap().icon_size.to_bits(),
+            15.0_f32.to_bits()
+        );
+        assert_eq!(
+            edit.get_examples().row_data(2).unwrap().icon_size.to_bits(),
+            12.0_f32.to_bits()
+        );
+        assert_eq!(
+            edit.get_examples().row_data(3).unwrap().icon_size.to_bits(),
+            12.0_f32.to_bits()
+        );
+        assert_eq!(
+            edit.get_examples()
+                .row_data(0)
+                .unwrap()
+                .incdec_height
+                .to_bits(),
+            17.0_f32.to_bits()
+        );
         edit.invoke_preview_clicked(0, false, 0.5);
         edit.invoke_preview_clicked(2, false, 0.5);
         manage.invoke_apply_clicked();
@@ -505,7 +524,15 @@ fn live_rating_examples_stage_only_configuration_and_retire_cancelled_owners() {
                     .row_count(),
                 7
             );
-            assert_eq!(edit.get_examples().row_data(0).unwrap().graphic.pad, 3.0);
+            assert_eq!(
+                edit.get_examples()
+                    .row_data(0)
+                    .unwrap()
+                    .graphic
+                    .pad
+                    .to_bits(),
+                3.0_f32.to_bits()
+            );
             assert_eq!(
                 edit.get_examples().row_data(0).unwrap().fraction_placement,
                 2
@@ -527,7 +554,14 @@ fn live_rating_examples_stage_only_configuration_and_retire_cancelled_owners() {
                 edit.get_examples().row_data(3).unwrap().graphic.text,
                 "12,345"
             );
-            assert_eq!(edit.get_examples().row_data(3).unwrap().counter_width, 38.0);
+            assert_eq!(
+                edit.get_examples()
+                    .row_data(3)
+                    .unwrap()
+                    .counter_width
+                    .to_bits(),
+                38.0_f32.to_bits()
+            );
             assert_eq!(edit.get_examples().row_data(0).unwrap().graphic.text, "1");
         } else {
             let pen = example.graphic.shapes.row_data(0).unwrap().pen;
