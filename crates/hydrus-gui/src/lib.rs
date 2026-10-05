@@ -327,7 +327,7 @@ pub struct Bound {
     pub external_launches: open_externally_launch::Launcher,
     pub quick_export_directory: quick_export_directory::Control,
     pub debug_long_popup: debug_long_popup::Control,
-    _debug_long_popup_owner: debug_long_popup::Owner,
+    _debug_long_popup_owner: Rc<debug_long_popup::Owner>,
     pub options_suggested_tags_slot: tag_suggestions_window::Slots,
     /// The Ctrl+P command palette while open.
     pub command_palette: command_palette_window::Slot,
@@ -4611,7 +4611,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
-    let debug_long_popup_owner = debug_long_popup.owner();
+    let debug_long_popup_owner = Rc::new(debug_long_popup.owner());
     Bound {
         _gui_colour_actions: gui_colour_actions,
         preview,
