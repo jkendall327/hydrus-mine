@@ -87,6 +87,14 @@ macro_rules! settings {
             hydrus_store::settings::set($conn,&windows)?;
         }
     };
+    (@save $conn:ident, $after:ident, $before:ident, thumbnail_cache) => {
+        if $after.thumbnail_cache != $before.thumbnail_cache {
+            let mut latest:hydrus_store::settings::ThumbnailCacheSettings=hydrus_store::settings::get($conn)?;
+            if $after.thumbnail_cache.bytes!=$before.thumbnail_cache.bytes {latest.bytes=$after.thumbnail_cache.bytes;}
+            if $after.thumbnail_cache.timeout!=$before.thumbnail_cache.timeout {latest.timeout=$after.thumbnail_cache.timeout;}
+            hydrus_store::settings::set($conn,&latest)?;
+        }
+    };
     (@save $conn:ident, $after:ident, $before:ident, file_view_removal) => {
         if $after.file_view_removal != $before.file_view_removal {
             let mut latest: hydrus_store::settings::FileViewRemoval = hydrus_store::settings::get($conn)?;
@@ -228,6 +236,7 @@ settings! {
     export: ExportSettings,
     file_handling: FileHandlingSettings,
     file_view_removal: hydrus_store::settings::FileViewRemoval,
+    thumbnail_cache: hydrus_store::settings::ThumbnailCacheSettings,
     file_maintenance: FileMaintenanceSettings,
     file_viewing: FileViewingStatistics,
     folders: FolderSettings,
@@ -294,6 +303,10 @@ settings! {
 /// An option's value as its control holds it.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Value {
+    Bytes {
+        amount: i64,
+        unit: usize,
+    },
     Shortcuts(hydrus_core::shortcuts::Settings),
     Check(bool),
     Int(i64),
@@ -358,6 +371,8 @@ pub enum Value {
 /// What kind of control an option has.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Kind {
+    /// Reference byte amount plus B/KB/MB/GB/TB multiplier.
+    Bytes,
     Shortcuts,
     Check,
     Int {
@@ -3276,6 +3291,38 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             )],
         ),
         page(
+            "speed and memory",
+            vec![Item::Box(
+                "thumbnail cache",
+                vec![
+                    opt(
+                        "Memory reserved for thumbnail cache:",
+                        Kind::Bytes,
+                        Rc::new(|s| {
+                            let (amount, unit) =
+                                crate::thumbnail_cache::raw_separated(s.thumbnail_cache.bytes);
+                            Value::Bytes { amount, unit }
+                        }),
+                        Rc::new(|s, v| {
+                            if let Value::Bytes { amount, unit } = v {
+                                s.thumbnail_cache.bytes =
+                                    crate::thumbnail_cache::combined(*amount, *unit);
+                                Ok(())
+                            } else {
+                                Err(wrong("thumbnail cache bytes"))
+                            }
+                        }),
+                    ),
+                    duration(
+                        "Thumbnail cache timeout:",
+                        time(&[Unit::Days, Unit::Hours, Unit::Minutes], 300.0),
+                        |s| s.thumbnail_cache.timeout as f64,
+                        |s, v| s.thumbnail_cache.timeout = v as u64,
+                    ),
+                ],
+            )],
+        ),
+        page(
             "system",
             vec![boxed(
                 "system sleep",
@@ -3774,6 +3821,10 @@ pub fn values(pages: &[Page], settings: &Settings) -> Vec<Vec<Value>> {
             page.options()
                 .iter()
                 .map(|option| match (&option.kind, (option.get)(settings)) {
+                    (Kind::Bytes, Value::Bytes { amount, unit }) => Value::Bytes {
+                        amount: amount.clamp(0, 1_048_576),
+                        unit: unit.min(4),
+                    },
                     (Kind::Int { min, max }, Value::Int(number)) => {
                         Value::Int(number.clamp(*min, *max))
                     }
@@ -4195,6 +4246,11 @@ impl Editor {
             return;
         };
         match self.kind(i) {
+            Kind::Bytes => {
+                if let Value::Bytes { amount, .. } = &mut self.values[self.page][i] {
+                    *amount = number.clamp(0, 1_048_576);
+                }
+            }
             Kind::Int { min, max } => {
                 self.values[self.page][i] = Value::Int(number.clamp(*min, *max));
             }
@@ -4279,7 +4335,11 @@ impl Editor {
 
     pub fn choose(&mut self, row: usize, index: usize) {
         if let Some(i) = self.option_at(row) {
-            self.values[self.page][i] = Value::Choice(index);
+            if let Value::Bytes { unit, .. } = &mut self.values[self.page][i] {
+                *unit = index.min(4);
+            } else {
+                self.values[self.page][i] = Value::Choice(index);
+            }
         }
     }
 

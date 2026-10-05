@@ -2587,3 +2587,15 @@ through the client’s accepted-exit hook. Exit confirmation, Cancel and its
 auto-yes path remain owned by client_exit. Native regressions cover retained
 close/show, independent successor dispatch and untouched F7/default command
 Apply, with hosted execution pending. This adds no original leaf proposal.
+
+The three original thumbnail-cache controls now govern the real owned native grid:
+saved byte/unit and timeout preferences plus Help/debug clear. The reference can
+compress stored bitmap bytes; native accounting measures its decoded RGB/RGBA
+pixel buffers instead. Missing thumbnails use a bounded 128-byte negative entry.
+The byte limit covers cache-owned buffers, not images still held by the renderer,
+loader queues, or icon/tag metadata. A cache is shared across pages of one main
+GUI incarnation; separate main windows own separate caches rather than sharing
+the reference process-wide cache. Image, tile, prefetch and video cache controls,
+other debug actions and their parents remain Partial. Reference soft insertion,
+last-access expiry and immediate saved-policy maintenance are preserved. Native
+regressions are authored for hosted CI; no local Cargo/Rust/mutation runs occurred.

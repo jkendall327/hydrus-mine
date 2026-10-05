@@ -41,6 +41,13 @@ impl Pixels {
         }
     }
 
+    /// Actual decoded pixel allocation, before transferring its buffer into Slint.
+    pub fn byte_len(&self) -> u64 {
+        match self {
+            Self::Rgba(p) => u64::from(p.width()) * u64::from(p.height()) * 4,
+            Self::Rgb(p) => u64::from(p.width()) * u64::from(p.height()) * 3,
+        }
+    }
     pub fn image(self) -> slint::Image {
         match self {
             Pixels::Rgba(pixels) => slint::Image::from_rgba8(pixels),

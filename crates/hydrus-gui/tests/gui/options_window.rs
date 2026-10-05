@@ -263,6 +263,8 @@ fn the_options_window_applies_its_changes() {
             "popup notifications",
             "ratings",
             "regex favourites",
+            "shortcuts",
+            "speed and memory",
             "system",
             "tag autocomplete tabs",
             "tag editing",

@@ -326,6 +326,14 @@ export component OptionsWindow inherits Window {
                                     toggled => { root.check-toggled(i, self.checked); }
                                 }
                             }
+                            if row.kind == 33: VerticalLayout {
+                                width:400px;spacing:4px;
+                                HorizontalLayout {
+                                SpinBox {minimum:row.minimum;maximum:row.maximum;value:row.number;edited(value)=>{root.number-edited(i,value);}}
+                                ComboBox {model:row.items;current-index:row.index;selected(value)=>{root.choice-chosen(i,self.current-index);}}
+                                }
+                                Text {text:row.text;}
+                            }
                             if row.kind == 2: HorizontalLayout {
                                 width: 260px;
                                 SpinBox {

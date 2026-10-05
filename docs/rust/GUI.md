@@ -3480,3 +3480,18 @@ Native controls use job, producer, question and GUI incarnation tokens, so old
 rows, closed owners and prior bindings cannot affect successors. Accepted close
 retires pending GUI calls; an already committed answer survives GUI retirement.
 The actual Qt action recording is `oracle/fixtures/popup_actions.json`.
+
+Speed and Memory now stages the thumbnail-cache byte amount and B/KB/MB/GB/TB
+unit, plus its days/hours/minutes timeout. Apply persists the independent values
+and immediately enforces them in the main grid; Cancel keeps the saved policy.
+The grid keeps a byte-accounted least-recently-used decoded cache across its
+pages. Access refreshes the timeout; the existing GUI collection timer also
+expires idle entries. Like the reference, admission may exceed the soft limit
+by one incoming thumbnail until maintenance trims it. Help > debug > memory
+actions > clear thumbnail cache resets the cache and redraws current thumbnails
+without asking. Clear, scale round trips and thumbnail-setting changes reject
+old decode completions; rebinding or accepted client close permanently retires
+the old cache and cancels its staged Options owner and descendants. Raw byte-control
+clamping is saved on unchanged Apply; raw subminimum timeout values stay untouched
+until their fields are edited. Actual Qt controls, cache boundaries and debug QAction are
+recorded in `thumbnail_cache.json` and its PNG.

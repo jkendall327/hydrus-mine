@@ -3,10 +3,12 @@
 //! decoded off the UI thread when the grid first asks for them, shown as
 //! they arrive ([`ThumbnailRows::receive`]), then kept.
 
+use hydrus_gui_model::thumbnail_cache::Cache;
+use hydrus_store::settings::{self, ThumbnailCacheSettings};
 use std::cell::{Cell, RefCell};
 use std::collections::{BTreeSet, HashMap};
 use std::rc::Rc;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 use slint::{Model, ModelNotify, ModelRc, ModelTracker, SharedString, VecModel};
 
@@ -19,13 +21,12 @@ use crate::thumbnail_ratings::{self, Look};
 use crate::thumbnails::ThumbnailLoader;
 use crate::{RatingShape, SearchPage, ThumbBox, ThumbIcon, ThumbRating, Thumbnail, ThumbnailRow};
 
-/// Decoded thumbnails kept; past this, the cache starts afresh.
-const CACHED: usize = 4000;
-
 pub struct ThumbnailRows {
     page: RefCell<Rc<RefCell<SearchPage>>>,
     columns: Cell<usize>,
-    cache: RefCell<HashMap<HashId, slint::Image>>,
+    cache: RefCell<Cache<slint::Image>>,
+    clock: Instant,
+    active: Cell<bool>,
     loader: ThumbnailLoader,
     /// The window's scale factor, which thumbnails are decoded for.
     scale: Cell<f32>,
@@ -64,10 +65,17 @@ impl ThumbnailRows {
     pub fn new(page: Rc<RefCell<SearchPage>>) -> Self {
         let workers = std::thread::available_parallelism().map_or(2, |n| n.get().min(4));
         let loader = ThumbnailLoader::new(page.borrow().store(), workers);
+        let policy = page
+            .borrow()
+            .store()
+            .read(settings::get)
+            .unwrap_or_default();
         Self {
             page: RefCell::new(page),
             columns: Cell::new(1),
-            cache: RefCell::default(),
+            cache: RefCell::new(Cache::new(policy)),
+            clock: Instant::now(),
+            active: Cell::new(true),
             loader,
             scale: Cell::new(1.0),
             generation: Cell::new(0),
@@ -83,6 +91,12 @@ impl ThumbnailRows {
 
     /// Show the thumbnails decoded since last asked; how many.
     pub fn receive(&self) -> usize {
+        if !self.active.get() {
+            // Release late decoder buffers without publishing into a retired owner.
+            while self.loader.try_receive().is_some() {}
+            return 0;
+        }
+        self.maintain_cache();
         let mut received = Vec::new();
         while let Some(result) = self.loader.try_receive() {
             received.push(result);
@@ -115,14 +129,20 @@ impl ThumbnailRows {
                 {
                     continue;
                 }
-                if cache.len() >= CACHED {
-                    cache.clear();
+                if !self.active.get() {
+                    continue;
                 }
+                // Missing thumbnails keep a small, byte-accounted negative entry.
+                let bytes = pixels
+                    .as_ref()
+                    .map_or(128, crate::thumbnails::Pixels::byte_len);
                 cache.insert(
                     id,
                     pixels
                         .map(crate::thumbnails::Pixels::image)
                         .unwrap_or_default(),
+                    bytes,
+                    self.clock.elapsed(),
                 );
                 if let Some(index) = pending.remove(&id) {
                     rows.insert(index / self.columns.get());
@@ -150,21 +170,53 @@ impl ThumbnailRows {
     pub fn set_scale(&self, scale: f32) {
         if scale > 0.0 && scale.to_bits() != self.scale.get().to_bits() {
             self.scale.set(scale);
-            self.cache.borrow_mut().clear();
-            self.pending.borrow_mut().clear();
-            self.notify.reset();
+            self.clear_thumbnail_cache();
         }
     }
 
     /// The thumbnail settings changed (their size, say): every thumbnail is
     /// decoded again.
     pub fn thumbnails_changed(&self) {
-        self.generation.set(self.generation.get() + 1);
+        self.clear_thumbnail_cache();
+    }
+
+    /// Explicit debug reset also invalidates in-flight decode results.
+    pub fn clear_thumbnail_cache(&self) {
+        if !self.active.get() {
+            return;
+        }
+        self.generation.set(self.generation.get().wrapping_add(1));
         self.cache.borrow_mut().clear();
         self.pending.borrow_mut().clear();
         self.notify.reset();
     }
-
+    /// Permanently stop this GUI incarnation's cache and loader result publication.
+    pub fn retire(&self) {
+        self.clear_thumbnail_cache();
+        self.active.set(false);
+    }
+    /// Enforce saved preferences immediately, without changing decode generations.
+    pub fn set_cache_policy(&self, policy: ThumbnailCacheSettings) {
+        if self.active.get() {
+            self.cache
+                .borrow_mut()
+                .set_policy(policy, self.clock.elapsed());
+        }
+    }
+    /// Idle maintenance expires entries independently of scrolling or cache reads.
+    pub fn maintain_cache(&self) {
+        if self.active.get() {
+            self.cache.borrow_mut().maintain(self.clock.elapsed());
+        }
+    }
+    /// Byte estimate for owned cache buffers (renderer-held clones are separate).
+    pub fn cached_bytes(&self) -> u64 {
+        self.cache.borrow().bytes()
+    }
+    /// Current saved policy consumed by this grid.
+    pub fn cache_policy(&self) -> ThumbnailCacheSettings {
+        self.cache.borrow().policy()
+    }
     /// How many thumbnails have been decoded (and are kept).
     pub fn cached(&self) -> usize {
         self.cache.borrow().len()
@@ -341,8 +393,11 @@ impl ThumbnailRows {
 
     /// The file's thumbnail if decoded; otherwise a blank, and it is asked for.
     fn image(&self, id: HashId, index: usize) -> slint::Image {
-        if let Some(image) = self.cache.borrow().get(&id) {
-            return image.clone();
+        if !self.active.get() {
+            return slint::Image::default();
+        }
+        if let Some(image) = self.cache.borrow_mut().get(id, self.clock.elapsed()) {
+            return image;
         }
         if self.pending.borrow_mut().insert(id, index).is_none() {
             self.loader
@@ -480,4 +535,89 @@ fn thumb_rating(drawn: &thumbnail_ratings::Drawn) -> ThumbRating {
         out.text_size = text.pixel_size as f32;
     }
     out
+}
+
+#[cfg(test)]
+mod cache_regressions {
+    use super::*;
+    use slint::{Rgb8Pixel, SharedPixelBuffer};
+    fn rows() -> (tempfile::TempDir, ThumbnailRows) {
+        let legacy = hydrus_testkit::legacy_fixture("basic");
+        let dir = tempfile::tempdir().unwrap();
+        hydrus_store::import::import_legacy(
+            legacy.path(),
+            &dir.path().join(hydrus_store::store::DB_FILE_NAME),
+        )
+        .unwrap();
+        let store = hydrus_store::Store::open(dir.path()).unwrap();
+        (
+            dir,
+            ThumbnailRows::new(Rc::new(RefCell::new(SearchPage::new(store)))),
+        )
+    }
+    fn pixels() -> Option<crate::thumbnails::Pixels> {
+        Some(crate::thumbnails::Pixels::Rgb(
+            SharedPixelBuffer::<Rgb8Pixel>::new(3, 4),
+        ))
+    }
+    #[test]
+    fn clear_scale_roundtrip_settings_and_retirement_reject_held_decodes() {
+        let (_dir, rows) = rows();
+        let file = HashId(1);
+        let old = rows.generation.get();
+        rows.pending.borrow_mut().insert(file, 0);
+        rows.show(vec![(file, 1., old, pixels())]);
+        assert_eq!(rows.cached_bytes(), 36);
+        rows.clear_thumbnail_cache();
+        assert_eq!(rows.cached(), 0);
+        rows.pending.borrow_mut().insert(file, 0);
+        rows.show(vec![(file, 1., old, pixels())]);
+        assert!(rows.pending.borrow().contains_key(&file));
+        assert_eq!(rows.cached(), 0);
+        let before_roundtrip = rows.generation.get();
+        rows.set_scale(2.);
+        rows.set_scale(1.);
+        rows.pending.borrow_mut().insert(file, 0);
+        rows.show(vec![(file, 1., before_roundtrip, pixels())]);
+        assert!(rows.pending.borrow().contains_key(&file));
+        assert_eq!(rows.cached(), 0);
+        let before_settings = rows.generation.get();
+        rows.thumbnails_changed();
+        rows.pending.borrow_mut().insert(file, 0);
+        rows.show(vec![(file, 1., before_settings, pixels())]);
+        assert!(rows.pending.borrow().contains_key(&file));
+        rows.show(vec![(file, 1., rows.generation.get(), pixels())]);
+        assert!(rows.pending.borrow().is_empty());
+        assert_eq!(rows.cached_bytes(), 36);
+        let retired_generation = rows.generation.get();
+        rows.retire();
+        rows.show(vec![(file, 1., retired_generation, pixels())]);
+        assert_eq!(rows.cached_bytes(), 0);
+        assert!(rows.pending.borrow().is_empty());
+        assert_eq!(rows.image(file, 0).size().width, 0);
+    }
+    #[test]
+    fn receive_maintains_idle_cache_and_counts_missing_thumbnails() {
+        let (_dir, rows) = rows();
+        let file = HashId(1);
+        rows.set_cache_policy(ThumbnailCacheSettings {
+            bytes: 128,
+            timeout: 0,
+        });
+        rows.cache
+            .borrow_mut()
+            .insert(file, slint::Image::default(), 128, Duration::ZERO);
+        assert_eq!(rows.cached_bytes(), 128);
+        rows.receive();
+        assert_eq!(rows.cached_bytes(), 0);
+        assert!(rows.pending.borrow().is_empty());
+        rows.set_cache_policy(ThumbnailCacheSettings {
+            bytes: 1,
+            timeout: 300,
+        });
+        rows.show(vec![(file, 1., rows.generation.get(), None)]);
+        assert_eq!(rows.cached_bytes(), 128);
+        rows.maintain_cache();
+        assert_eq!(rows.cached(), 0);
+    }
 }
