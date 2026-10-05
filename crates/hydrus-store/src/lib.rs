@@ -25,6 +25,7 @@ pub mod logins;
 pub mod maintenance;
 pub mod master;
 pub mod media;
+pub mod metadata_jobs;
 pub mod network;
 pub mod network_runtime;
 pub mod paths;

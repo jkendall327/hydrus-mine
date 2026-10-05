@@ -46,6 +46,18 @@ fn choices(dialog: &ForceFiletypeWindow) -> Vec<String> {
     dialog.get_choices().iter().map(|c| c.to_string()).collect()
 }
 
+fn wait_for_file_work(bound: &Bound) {
+    let until = std::time::Instant::now() + std::time::Duration::from_secs(5);
+    while bound.metadata_jobs.running() != 0 {
+        assert!(
+            std::time::Instant::now() < until,
+            "metadata worker did not finish"
+        );
+        std::thread::sleep(std::time::Duration::from_millis(5));
+        slint::platform::update_timers_and_animations();
+    }
+}
+
 #[test]
 fn a_file_is_forced_to_another_filetype_and_back() {
     let legacy = hydrus_testkit::legacy_fixture("basic");
@@ -56,6 +68,16 @@ fn a_file_is_forced_to_another_filetype_and_back() {
     )
     .unwrap();
     let store: Arc<Store> = Store::open(native.path()).unwrap();
+    // This copied fixture's files belong to the test. Imported shared media
+    // remains copy-only until the user has transferred ownership.
+    store
+        .write(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::transfer::MediaOwnership::default(),
+            )
+        })
+        .unwrap();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
@@ -73,17 +95,39 @@ fn a_file_is_forced_to_another_filetype_and_back() {
     let index = i32::try_from(index).unwrap();
     ui.invoke_thumbnail_clicked(index, false, false);
 
-    // one jpeg: not offered jpeg, nothing to remove
+    // Reference rejection schedules no worker; retired callbacks cannot affect
+    // a successor or rewrite its captured target.
+    let rejected = open(&ui, &bound, index);
+    rejected.invoke_cancel();
+    assert_eq!(bound.metadata_jobs.running(), 0);
+    assert_eq!(info(&store, file).0.original_mime, None);
     let dialog = open(&ui, &bound, index);
+    rejected.invoke_apply();
+    rejected.invoke_cancel();
+    assert!(bound.force_filetype.borrow().is_some());
+    assert_eq!(bound.metadata_jobs.running(), 0);
+    // one jpeg: not offered jpeg, nothing to remove
     assert!(dialog.get_text().ends_with(
         "Of the 1 files, there are 1 jpeg. None are currently forced to be anything else."
     ));
     let offered = choices(&dialog);
     assert_eq!(offered[0], "image - png");
     assert!(!offered.contains(&"image - jpeg".to_owned()));
+    let another = results.iter().copied().find(|&id| id != file).unwrap();
+    let another_index =
+        i32::try_from(results.iter().position(|&id| id == another).unwrap()).unwrap();
+    let another_before = info(&store, another).0;
+    ui.invoke_thumbnail_clicked(another_index, false, false);
     dialog.set_chosen(0);
     dialog.invoke_apply();
     assert!(bound.force_filetype.borrow().is_none());
+    wait_for_file_work(&bound);
+    let after = info(&store, another).0;
+    assert_eq!(
+        (after.mime, after.original_mime),
+        (another_before.mime, another_before.original_mime)
+    );
+    ui.invoke_thumbnail_clicked(index, false, false);
     let (forced, _) = info(&store, file);
     assert_eq!(
         (forced.mime, forced.original_mime),
@@ -102,6 +146,7 @@ fn a_file_is_forced_to_another_filetype_and_back() {
     assert_eq!(choices(&dialog)[0], "remove all forced filetypes");
     dialog.set_chosen(0);
     dialog.invoke_apply();
+    wait_for_file_work(&bound);
     let (back, _) = info(&store, file);
     assert_eq!((back.mime, back.original_mime), (Mime::ImageJpeg, None));
     assert!(path(Mime::ImageJpeg).is_file());

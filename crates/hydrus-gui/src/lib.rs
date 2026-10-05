@@ -81,6 +81,7 @@ mod manage_times_window;
 mod manage_urls_window;
 mod menu_bar;
 pub mod merge_options_window;
+mod metadata_file_jobs;
 pub mod mpv;
 pub mod network_header_approval;
 pub mod options_deletion;
@@ -266,6 +267,8 @@ pub struct Bound {
     pub datetime_editor: Rc<RefCell<Option<DateTimeEditorWindow>>>,
     /// The force filetypes dialog while one is open.
     pub force_filetype: Rc<RefCell<Option<ForceFiletypeWindow>>>,
+    /// Finite file metadata workers accepted by this GUI.
+    pub metadata_jobs: metadata_file_jobs::Jobs,
     /// Manual file export dialog and sidecar editor.
     pub export_files: export_files_window::Slots,
     /// The focused file's detailed metadata window while open.
@@ -1505,17 +1508,20 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     // a thumbnail's or the viewer's "manage > times"
+    let metadata_jobs = metadata_file_jobs::Jobs::default();
     let manage_times: Rc<RefCell<Option<ManageTimesWindow>>> = Rc::default();
     let datetime_editor: Rc<RefCell<Option<DateTimeEditorWindow>>> = Rc::default();
     let open_manage_times: OpenOnFiles = Rc::new({
         let manage_times = manage_times.clone();
         let datetime_editor = datetime_editor.clone();
+        let jobs = metadata_jobs.clone();
         move |store: Arc<hydrus_store::Store>, files: Vec<HashId>, applied: Rc<dyn Fn()>| {
             match manage_times_window::open(
                 &store,
                 &files,
                 &manage_times,
                 &datetime_editor,
+                &jobs,
                 applied,
             ) {
                 Ok(window) => *manage_times.borrow_mut() = Some(window),
@@ -1540,8 +1546,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let force_filetype: Rc<RefCell<Option<ForceFiletypeWindow>>> = Rc::default();
     let open_force_filetype: OpenOnFiles = Rc::new({
         let force_filetype = force_filetype.clone();
+        let jobs = metadata_jobs.clone();
         move |store: Arc<hydrus_store::Store>, files: Vec<HashId>, applied: Rc<dyn Fn()>| {
-            match force_filetype_window::open(&store, &files, &force_filetype, applied) {
+            match force_filetype_window::open(&store, &files, &force_filetype, &jobs, applied) {
                 Ok(window) => *force_filetype.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open force filetypes: {e}"),
             }
@@ -3929,6 +3936,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         manage_times,
         datetime_editor,
         force_filetype,
+        metadata_jobs,
         export_files,
         embedded_metadata,
         manage_urls,
