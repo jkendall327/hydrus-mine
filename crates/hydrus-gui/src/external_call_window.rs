@@ -370,7 +370,7 @@ fn command_action(
 fn command_open(
     slots: &Slots,
     process: &Process,
-    accepted: Rc<dyn Fn(String, Vec<String>)>,
+    accepted: &Rc<dyn Fn(String, Vec<String>)>,
 ) -> Result<ExternalCommandWindow, String> {
     let w = ExternalCommandWindow::new().map_err(|e| e.to_string())?;
     w.set_executable(process.executable.as_str().into());
@@ -902,7 +902,7 @@ pub fn open(
                     refresh();
                 }
             });
-            if let Err(e) = command_open(&slots, &process, applied)
+            if let Err(e) = command_open(&slots, &process, &applied)
                 && let Some(w) = weak.upgrade()
             {
                 w.set_test_status(e.into());

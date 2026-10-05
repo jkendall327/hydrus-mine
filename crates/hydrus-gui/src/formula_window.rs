@@ -398,7 +398,7 @@ pub fn open(
             if blocked() {
                 return;
             }
-            let definitions = vec![Definition::new(Native::Formula(
+            let definitions = [Definition::new(Native::Formula(
                 state.borrow().formula.clone(),
             ))];
             let preview = Rc::new(|definitions: Vec<Definition>| {
@@ -426,7 +426,7 @@ pub fn open(
             match crate::downloader_interchange_window::open(
                 &slots.exchange,
                 importing,
-                definitions,
+                &definitions,
                 preview,
                 applied,
             ) {
@@ -638,7 +638,7 @@ pub fn open(
             if blocked() {
                 return;
             }
-            let definitions = {
+            let definitions: Vec<_> = {
                 let e = state.borrow();
                 let FormulaKind::Zipper { formulae, .. } = &e.formula.kind else {
                     return;
@@ -685,7 +685,7 @@ pub fn open(
             match crate::downloader_interchange_window::open(
                 &slots.exchange,
                 importing,
-                definitions,
+                &definitions,
                 preview,
                 applied,
             ) {

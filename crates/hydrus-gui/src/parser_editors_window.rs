@@ -1019,7 +1019,7 @@ fn open_editor(
                     let native=match &state.borrow().value{Value::Page(p)=>Native::Page((**p).clone()),Value::Content(c)=>Native::Content(c.value())};
                     let preview=Rc::new(move |definitions:Vec<Definition>| { if definitions.len()!=1 || !matches!((page,&definitions[0].native),(true,Native::Page(_))|(false,Native::Content(_))) { return Err("Import one matching page or content parser into this editor.".into()); } Ok(format!("Replace this draft with parser: {}",definitions[0].name())) });
                     let applied=Rc::new({let state=state.clone();let refresh=refresh.clone();move |mut definitions:Vec<Definition>| {let definition=definitions.pop().ok_or("No parser to import.")?;let mut e=state.borrow_mut();match (page,definition.native){(true,Native::Page(p))=>e.value=Value::Page(Box::new(p)),(false,Native::Content(c))=>{let test=if let Value::Content(old)=&e.value{old.test.clone()}else{FormulaTestData::default()};e.value=Value::Content(Box::new(ContentEditor::new(&c,test)));},_=>return Err("Import one matching parser.".into())}e.errors.clear();e.selected=None;e.subsidiary_selected=None;e.subsidiary_selection=ListSelection::default();drop(e);refresh();Ok(())}});
-                    let child=crate::downloader_interchange_window::open(&slots.exchange,action=="import",vec![Definition::new(native)],preview,applied)?; let refresh=refresh.clone(); child.on_closed(move||refresh());
+                    let child=crate::downloader_interchange_window::open(&slots.exchange,action=="import",&[Definition::new(native)],preview,applied)?; let refresh=refresh.clone(); child.on_closed(move||refresh());
                 }
                 "test" => { if state.borrow().raw_mimes.get(state.borrow().example,w.get_document().as_str()).is_some() {return Ok(());} let mut test = test_data(&w,&state.borrow(),true)?; let mut e = state.borrow_mut();let subsidiary=e.subsidiary.clone();let parsed = match &mut e.value { Value::Page(p) => {if let Some(details)=subsidiary {test.context.insert("post_index".into(),"0".into());details.borrow().preview(p,&mut test.context,&test.text)}else{p.parse(&mut test.context,&test.text)}}, Value::Content(c) => { c.test = test; c.preview().map(|p| vec![p]) } }; w.set_preview(match parsed { Ok(posts) => model::preview_text(&posts), Err(error) => error.to_string() }.into()); }
                 "delete-content" => { let mut e = state.borrow_mut(); if let Some(index) = e.selected.take() && let Value::Page(p) = &mut e.value && index < p.content_parsers.len() { p.content_parsers.remove(index); } }
@@ -1055,7 +1055,7 @@ fn open_editor(
                         e.subsidiary_selection.select_many(&added); e.subsidiary_selected = e.subsidiary_selection.one();
                         drop(e); refresh(); Ok(())
                     }});
-                    let child = crate::downloader_interchange_window::open_subsidiaries_with_store(&store,&slots.exchange, action == "import-subsidiary", parsers, preview, applied)?;
+                    let child = crate::downloader_interchange_window::open_subsidiaries_with_store(&store,&slots.exchange, action == "import-subsidiary", &parsers, preview, applied)?;
                     let refresh = refresh.clone(); child.on_closed(move || refresh());
                 }
                 "duplicate-subsidiary" => {
@@ -1595,7 +1595,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
                             }
                         });
                         let s = state.borrow();
-                        let definitions = s
+                        let definitions: Vec<_> = s
                             .selection
                             .in_order(&s.order)
                             .iter()
@@ -1610,7 +1610,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
                         let child = crate::downloader_interchange_window::open(
                             &slots.exchange,
                             action == "import",
-                            definitions,
+                            &definitions,
                             preview,
                             applied,
                         )?;

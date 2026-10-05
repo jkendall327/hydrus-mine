@@ -468,7 +468,7 @@ pub(crate) fn bind(
                         &store,
                         &slots.exchange,
                         importing,
-                        calls,
+                        &calls,
                         preview,
                         applied,
                     )

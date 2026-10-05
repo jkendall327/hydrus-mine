@@ -408,11 +408,11 @@ fn merge_named(
         group: group.to_vec(),
         name,
     });
-    if !rest.is_empty() {
+    if rest.is_empty() {
+        open.dialog.merge_many(&accepted);
+    } else {
         let next = rest.remove(0);
         open.asking = Some(Asking::MergePrimary(next, rest, accepted));
-    } else {
-        open.dialog.merge_many(&accepted);
     }
 }
 
@@ -1631,7 +1631,7 @@ pub(crate) fn open(
                         Ok(())
                     }
                 });
-                crate::downloader_interchange_window::open_subscriptions(&store, &slots, importing, definitions, preview, applied)
+                crate::downloader_interchange_window::open_subscriptions(&store, &slots, importing, &definitions, preview, applied)
             });
             if let Some(parent) = weak.upgrade() {
                 match result {

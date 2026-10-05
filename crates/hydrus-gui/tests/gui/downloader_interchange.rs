@@ -357,7 +357,7 @@ fn export_text_is_selectable_read_only_and_png_accepts_a_bare_relative_path() {
     let w = windows::open(
         &slots,
         false,
-        definitions.clone(),
+        &definitions,
         Rc::new(|_| Ok(String::new())),
         Rc::new(|_| Ok(())),
     )
@@ -439,7 +439,7 @@ fn dropping_the_final_exchange_owner_hides_and_invalidates_a_retained_window_han
     let w = windows::open(
         &slots,
         true,
-        Vec::new(),
+        &[],
         Rc::new(|_| Ok("reviewed".into())),
         Rc::new({
             let accepted = accepted.clone();
