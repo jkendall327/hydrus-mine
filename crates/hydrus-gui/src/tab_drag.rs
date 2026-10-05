@@ -184,7 +184,7 @@ pub(crate) fn bind(window: &MainWindow, pages: &Rc<RefCell<Pages>>, change: Chan
                             Ok(())
                         });
                     } else if button == 1
-                        && let Some(rect) = hit
+                        && let Some(rect) = hit.as_ref()
                         && rect.key.is_some()
                     {
                         window.invoke_tab_menu_requested(rect.depth, rect.index, x, y);
