@@ -72,8 +72,9 @@ fn import(store: &Arc<Store>, name: &str) -> HashId {
 #[test]
 fn options_cancel_hidden_modal_save_reopen_and_live_hidden_viewer_warming_leave_current_pixels_unchanged()
  {
-    let (_dirs, store) = crate::subscriptions::store();
-    let files = [
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let imported = [
         import(&store, "a.png"),
         import(&store, "b.png"),
         import(&store, "c.png"),
@@ -113,18 +114,13 @@ fn options_cancel_hidden_modal_save_reopen_and_live_hidden_viewer_warming_leave_
     headless::render(&adapter, 1400, 1000);
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
-    let index = bound
-        .current
-        .borrow()
-        .borrow()
-        .results()
-        .iter()
-        .position(|id| *id == files[2])
-        .unwrap();
-    ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let files = bound.current.borrow().borrow().results().to_vec();
+    assert_eq!(files.len(), 3);
+    assert!(imported.iter().all(|file| files.contains(file)));
+    ui.invoke_thumbnail_activated(0);
     let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
     assert_eq!(viewer.get_media().size().width, 10);
-    assert_eq!(bound.image_cache.keys(), vec![files[2]]);
+    assert_eq!(bound.image_cache.keys(), vec![files[0]]);
     let before = viewer.get_media();
     let before_pixels = before.to_rgba8().unwrap().as_bytes().to_vec();
     let cancelled = options(&ui, &bound);
@@ -203,7 +199,7 @@ fn options_cancel_hidden_modal_save_reopen_and_live_hidden_viewer_warming_leave_
     reopened.invoke_number_edited(row(&reopened, PREVIOUS), 1);
     reopened.invoke_apply();
     viewer.invoke_next();
-    pump_until(|| bound.image_cache.keys().contains(&files[0]));
+    pump_until(|| bound.image_cache.keys().contains(&files[2]));
     assert!(
         files
             .iter()
@@ -255,8 +251,9 @@ fn saved_policy_unchanged(store: &Store, stale: &OptionsWindow) {
 }
 #[test]
 fn archive_delete_uses_saved_neighbour_counts_and_retains_current_media_after_warm_readiness() {
-    let (_dirs, store) = crate::subscriptions::store();
-    let files = [
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let imported = [
         import(&store, "a.png"),
         import(&store, "b.png"),
         import(&store, "c.png"),
@@ -294,6 +291,9 @@ fn archive_delete_uses_saved_neighbour_counts_and_retains_current_media_after_wa
     );
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    assert_eq!(files.len(), 3);
+    assert!(imported.iter().all(|file| files.contains(file)));
     ui.invoke_archive_delete_filter();
     let archive = bound
         .archive_delete
