@@ -2582,3 +2582,11 @@ also matched the old colour-only gradient classifier. Exact hosted 760px and
 strip moved with the viewport. The unchanged fade-extent equality and trailing
 solid-colour assertions still verify rendering. Production paint is unchanged;
 cached Slint/static checks are separate from pending hosted Rust execution.
+
+The overflow-tab pointer replay waits for its actual strip and tab measurements
+to match the current viewport and wheel offset before delivering input. Headless
+paint pumps timers before layout; hit rectangles are published on a following
+1ms timer, so one render does not guarantee current geometry. The bounded wait
+keeps the exact full-name hover, target-key, clipped-target and captured-drag
+assertions, and leaves production pointer routing and paint unchanged. Hosted
+execution must validate this replay correction; no local Rust tests were run.

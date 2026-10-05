@@ -153,14 +153,14 @@ fn real_wheel_replays_qt_selection_and_staged_scroll_overflow_without_changing_s
         let offsets = offsets.clone();
         move |_, offset| offsets.borrow_mut().push(offset)
     });
-    headless::render(&native, 500, 500);
+    settle_scroll_geometry(&native, &ui, &rects, &offsets, &original);
     wheel(&native, &ui, -120.0);
-    headless::render(&native, 500, 500);
+    settle_scroll_geometry(&native, &ui, &rects, &offsets, &original);
     let first = *offsets.borrow().last().unwrap();
     assert!(first < 0.0);
     assert_eq!(bound.pages.borrow().shown().key, original.pages[0].key);
     wheel(&native, &ui, 120.0);
-    headless::render(&native, 500, 500);
+    settle_scroll_geometry(&native, &ui, &rects, &offsets, &original);
     assert!(*offsets.borrow().last().unwrap() > first);
     assert_eq!(bound.pages.borrow().session(), &original);
     // A captured Move/Up can be delivered beyond the bar. The laid-out last tab
@@ -276,7 +276,7 @@ fn geometry(ui: &MainWindow) -> Rects {
     ui.on_tab_geometry_measured({
         let rects = rects.clone();
         move |key, _, depth, index, x, y, w, h| {
-            if !key.is_empty() {
+            if !key.is_empty() || depth == 0 {
                 rects.borrow_mut().insert(
                     key.to_string(),
                     TabRect {
@@ -295,6 +295,43 @@ fn geometry(ui: &MainWindow) -> Rects {
 }
 fn tab_rect(rects: &Rects, key: PageKey) -> TabRect {
     rects.borrow()[&key.to_hex()]
+}
+fn settle_scroll_geometry(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    ui: &MainWindow,
+    rects: &Rects,
+    offsets: &Rc<RefCell<Vec<f32>>>,
+    session: &Session,
+) {
+    // render() ticks timers before layout. The strip/tab hit rectangles are
+    // published on the following 1ms timer, so one paint can leave old scroll
+    // coordinates in both the observer and production pointer router.
+    let started = std::time::Instant::now();
+    loop {
+        headless::render(native, 500, 500);
+        let offset = offsets.borrow().last().copied().unwrap_or(0.0);
+        let rects = rects.borrow();
+        if let (Some(viewport), Some(first), Some(last)) = (
+            rects.get(""),
+            rects.get(&session.pages[0].key.to_hex()),
+            rects.get(&session.pages[7].key.to_hex()),
+        ) && (viewport.x - ui.get_tab_navigation_x()).abs() < 0.1
+            && (viewport.y - ui.get_tab_navigation_y()).abs() < 0.1
+            && (viewport.w - ui.get_tab_navigation_width()).abs() < 0.1
+            && first.w > 0.0
+            && last.w > 0.0
+            && (first.x - viewport.x - 4.0 - offset).abs() < 0.1
+            && (first.y - viewport.y - 2.0).abs() < 0.1
+            && last.x > first.x
+        {
+            break;
+        }
+        assert!(
+            started.elapsed() < std::time::Duration::from_millis(250),
+            "live strip and tab hit geometry must settle at the current scroll offset"
+        );
+        std::thread::yield_now();
+    }
 }
 fn assert_live_geometry(ui: &MainWindow, rects: &Rects) {
     for (depth, row) in ui.get_tab_rows().iter().enumerate() {
