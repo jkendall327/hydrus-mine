@@ -4,7 +4,9 @@
   "baseline": "fec9a3071",
   "implementation_commits": [
     "c684f8ec79b4e32ed26830e91b07bcf56c504e9a",
-    "16c868523ca8b6005a57097072224204727f9083"
+    "16c868523ca8b6005a57097072224204727f9083",
+    "4cbc3f785",
+    "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
   ],
   "completed_original_leaves_proposed": 2,
   "claims": [
@@ -15,49 +17,49 @@
       "proposedStatus": "first_pass",
       "proposed_status": "first_pass",
       "change_kind": "implementation",
-      "exactBehavior": "The native children pane resolves transitive descendants for top-level context tags in the current tag service/display graph, excludes context tags, ranks by real local display counts while keeping zero-count known children, and renders countless rows. Configured finite/zero/unlimited cap is consumed. Reversible Ctrl/Shift selection and select-all now broadcast complete selected batches through the real SearchPage AND/OR path; committed child tags disappear from the descendant list. Shift batches remain drafts until committed and Cancel leaves query/history unchanged. Existing read current/pending independence and captured service/domain consumers remain intact. Shared write children selections broadcast to owned staged lists, with child Cancel and retired Apply unable to commit.",
+      "exactBehavior": "The native children pane resolves transitive descendants for top-level context tags in the current tag service/display graph, excludes context tags, ranks by real local display counts while keeping zero-count known children, and renders countless rows. Configured finite/zero/unlimited cap is consumed. Reversible Ctrl/Shift selection and select-all now broadcast complete selected batches through the real SearchPage AND/OR path; committed child tags disappear from the descendant list. Shift batches remain drafts until committed and Cancel leaves query/history unchanged. Existing read current/pending independence and captured service/domain consumers remain intact. Shared write children selections broadcast to owned staged lists, with child Cancel and retired Apply unable to commit. Literal wildcard/system-looking favourite or child tags remain inclusive Tag predicates; deselected normal/Shift activation leaves query, OR draft and history unchanged. A locked/noted current read page defers settings revision consumption until it can actually refresh.",
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/autocomplete.rs",
           "line": 153,
           "symbol": "pub fn click(",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         },
         {
           "relativepath": "crates/hydrus-gui/src/page.rs",
           "line": 2154,
           "symbol": "pub fn activate_suggestions(",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         },
         {
           "relativepath": "crates/hydrus-gui/src/autocomplete_tabs.rs",
           "line": 13,
           "symbol": "pub(crate) fn bind(",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         },
         {
           "relativepath": "crates/hydrus-gui/src/autocomplete_tabs.rs",
-          "line": 213,
+          "line": 225,
           "symbol": "pub(crate) fn watch(",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         },
         {
           "relativepath": "crates/hydrus-gui/ui/read_suggestions.slint",
           "line": 5,
           "symbol": "export component ReadSuggestions",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/autocomplete.rs",
           "line": 354,
           "symbol": "fn tab_suggestions(",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
           "line": 438,
           "symbol": "pub fn chosen_tags(",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         }
       ],
       "test_anchors": [
@@ -65,27 +67,39 @@
           "relativepath": "crates/hydrus-gui-model/tests/model/autocomplete_tabs.rs",
           "line": 19,
           "symbol": "fn read_and_write_selection_replay",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/autocomplete_tabs.rs",
           "line": 54,
           "symbol": "fn read_batches_favourite_questions",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/read_autocomplete.rs",
           "line": 108,
           "symbol": "fn real_page_tabs_apply_caps",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/autocomplete_tabs.rs",
+          "line": 488,
+          "symbol": "fn literal_batches_and_empty_activation",
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/autocomplete_tabs.rs",
+          "line": 158,
+          "symbol": "fn literal_favourite_rows_remain_selected",
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         }
       ],
       "referenceRecording": {
         "script": "oracle/record_autocomplete_tab_selection.py",
         "fixture": "oracle/fixtures/autocomplete_tab_selection.json",
-        "commit": "c684f8ec79b4e32ed26830e91b07bcf56c504e9a",
-        "executed_at": "2026-10-05 01:11:52 UTC",
-        "result": "Executed actual Qt read and write dropdowns on a copied basic fixture with synthetic local tag mappings and sibling/parent chains. Actual list _Hit/_Activate, read broadcast/OR/cancellation, real favourite QAction dispatch and exact No/Yes removal questions, window reopen, selected children and actual query count. Children AsyncQtJob work/publish scheduling is synchronous for stable capture; DB queries, selection and broadcast/persistence logic are not replaced. Favourite set and active-predicate set output are sorted for stable comparison; visible logical row order is preserved. Expected local API listen warnings are unrelated to direct Qt/DB recording."
+        "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016",
+        "executed_at": "2026-10-05 01:32:03 UTC",
+        "result": "Executed actual Qt read and write dropdowns on a copied basic fixture with synthetic local tag mappings and sibling/parent chains. Actual list _Hit/_Activate, read broadcast/OR/cancellation, real favourite QAction dispatch and exact No/Yes removal questions, window reopen, selected children and actual query count. Children AsyncQtJob work/publish scheduling is synchronous for stable capture; DB queries, selection and broadcast/persistence logic are not replaced. Favourite set and active-predicate set output are sorted for stable comparison; visible logical row order is preserved. Expected local API listen warnings are unrelated to direct Qt/DB recording. Extended replay captures literal parity:*, parity:star*, and system:inbox as explicit typed tag predicates in AND and Shift-OR paths; both deselected activation routes return false without changing query/draft; actual accepted AND/OR queries each match exactly one synthetic mapped file."
       },
       "limitations": [
         "Native tab picker replaces Qt notebook headers; count fetches remain synchronous.",
@@ -103,55 +117,55 @@
       "proposedStatus": "first_pass",
       "proposed_status": "first_pass",
       "change_kind": "implementation",
-      "exactBehavior": "Sorted unfiltered favourite tags are selectable in read/write panes. Read selected batches now broadcast together to active predicates or an OR draft. Single-tag read context menus reuse global/per-service most-used favourite add/remove actions; remove asks the exact recorded question, No leaves settings unchanged, Yes rereads settings inside the store write to preserve concurrent edits. Immediate favourite changes refresh the current pane without consuming its input/query draft and persist across fresh Store/dropdown opens. Visible read and detached write owners refresh external favourite/cap changes. Delayed read actions are gated against hidden/locked/switched/retired owners. Existing Options favourite-list child remains staged: Apply updates the parent draft, Cancel discards it, parent Apply persists/reopens and parent Cancel preserves saved settings.",
+      "exactBehavior": "Sorted unfiltered favourite tags are selectable in read/write panes. Read selected batches now broadcast together to active predicates or an OR draft. Single-tag read context menus reuse global/per-service most-used favourite add/remove actions; remove asks the exact recorded question, No leaves settings unchanged, Yes rereads settings inside the store write to preserve concurrent edits. Immediate favourite changes refresh the current pane without consuming its input/query draft and persist across fresh Store/dropdown opens. Visible read and detached write owners refresh external favourite/cap changes. Delayed read actions are gated against hidden/locked/switched/retired owners. Existing Options favourite-list child remains staged: Apply updates the parent draft, Cancel discards it, parent Apply persists/reopens and parent Cancel preserves saved settings. Literal wildcard/system-looking favourite or child tags remain inclusive Tag predicates; deselected normal/Shift activation leaves query, OR draft and history unchanged. A locked/noted current read page defers settings revision consumption until it can actually refresh.",
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/autocomplete.rs",
           "line": 153,
           "symbol": "pub fn click(",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         },
         {
           "relativepath": "crates/hydrus-gui/src/page.rs",
           "line": 2154,
           "symbol": "pub fn activate_suggestions(",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         },
         {
           "relativepath": "crates/hydrus-gui/src/autocomplete_tabs.rs",
           "line": 13,
           "symbol": "pub(crate) fn bind(",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         },
         {
           "relativepath": "crates/hydrus-gui/src/autocomplete_tabs.rs",
-          "line": 213,
+          "line": 225,
           "symbol": "pub(crate) fn watch(",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         },
         {
           "relativepath": "crates/hydrus-gui/ui/read_suggestions.slint",
           "line": 5,
           "symbol": "export component ReadSuggestions",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/write_tag_menu.rs",
           "line": 114,
           "symbol": "pub fn favourite_entries(",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/write_tag_menu.rs",
           "line": 69,
           "symbol": "pub fn persist(",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         },
         {
           "relativepath": "crates/hydrus-gui/src/write_tag_window.rs",
           "line": 67,
           "symbol": "pub fn open_favourites(",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         }
       ],
       "test_anchors": [
@@ -159,21 +173,33 @@
           "relativepath": "crates/hydrus-gui-model/tests/model/autocomplete_tabs.rs",
           "line": 19,
           "symbol": "fn read_and_write_selection_replay",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/autocomplete_tabs.rs",
           "line": 54,
           "symbol": "fn read_batches_favourite_questions",
-          "commit": "16c868523ca8b6005a57097072224204727f9083"
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/autocomplete_tabs.rs",
+          "line": 488,
+          "symbol": "fn literal_batches_and_empty_activation",
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/autocomplete_tabs.rs",
+          "line": 158,
+          "symbol": "fn literal_favourite_rows_remain_selected",
+          "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016"
         }
       ],
       "referenceRecording": {
         "script": "oracle/record_autocomplete_tab_selection.py",
         "fixture": "oracle/fixtures/autocomplete_tab_selection.json",
-        "commit": "c684f8ec79b4e32ed26830e91b07bcf56c504e9a",
-        "executed_at": "2026-10-05 01:11:52 UTC",
-        "result": "Executed actual Qt read and write dropdowns on a copied basic fixture with synthetic local tag mappings and sibling/parent chains. Actual list _Hit/_Activate, read broadcast/OR/cancellation, real favourite QAction dispatch and exact No/Yes removal questions, window reopen, selected children and actual query count. Children AsyncQtJob work/publish scheduling is synchronous for stable capture; DB queries, selection and broadcast/persistence logic are not replaced. Favourite set and active-predicate set output are sorted for stable comparison; visible logical row order is preserved. Expected local API listen warnings are unrelated to direct Qt/DB recording."
+        "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016",
+        "executed_at": "2026-10-05 01:32:03 UTC",
+        "result": "Executed actual Qt read and write dropdowns on a copied basic fixture with synthetic local tag mappings and sibling/parent chains. Actual list _Hit/_Activate, read broadcast/OR/cancellation, real favourite QAction dispatch and exact No/Yes removal questions, window reopen, selected children and actual query count. Children AsyncQtJob work/publish scheduling is synchronous for stable capture; DB queries, selection and broadcast/persistence logic are not replaced. Favourite set and active-predicate set output are sorted for stable comparison; visible logical row order is preserved. Expected local API listen warnings are unrelated to direct Qt/DB recording. Extended replay captures literal parity:*, parity:star*, and system:inbox as explicit typed tag predicates in AND and Shift-OR paths; both deselected activation routes return false without changing query/draft; actual accepted AND/OR queries each match exactly one synthetic mapped file."
       },
       "limitations": [
         "Native tab picker replaces Qt notebook headers; count fetches remain synchronous.",
@@ -263,5 +289,15 @@
   "screenshots_authored": [
     "CARGO_TARGET_TMPDIR/autocomplete_tab_select_all.png",
     "CARGO_TARGET_TMPDIR/autocomplete_tab_children.png"
-  ]
+  ],
+  "review_repairs": {
+    "independent_reviewer": "overnight_pages",
+    "commit": "83fc0eb0bd38152773ef56bda4a351c6e70f5016",
+    "findings_repaired": [
+      "Literal tag predicate shape for non-results batches",
+      "Empty batch cannot commit/create OR",
+      "Live current page lock/note defers settings revision acknowledgement"
+    ],
+    "native_lifecycle_regression": "Locked main owner keeps old rows while a detached write owner proves notification ran; unlock alone refreshes pending favourite change and preserves both inputs. Retained favourite answer also checks live lock before repaint."
+  }
 }
