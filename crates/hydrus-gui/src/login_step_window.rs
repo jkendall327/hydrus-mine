@@ -1,12 +1,13 @@
 //! Login request identity and named response parsers owned by a script draft.
 use crate::{LoginStepWindow, TableRow};
+use hydrus_core::url::strings::StringMatch;
 use hydrus_gui_model::{
     formula_editors::FormulaTestData,
     login_workflows::{ArgumentKind, StepEditor},
 };
 use hydrus_parse::{
     content::{ContentKind, ContentParser},
-    login::LoginStep,
+    login::{CookieRequirement, LoginStep},
 };
 use hydrus_store::Store;
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
@@ -124,23 +125,117 @@ fn show(window: &LoginStepWindow, editor: &StepEditor) {
         }
     }
     window.set_variables(ModelRc::new(VecModel::from(variables)));
+    let selected = editor.cookies.selection.in_order(&editor.cookies.order());
     window.set_cookies(ModelRc::new(VecModel::from(
         editor
-            .step
-            .required_cookies
-            .iter()
-            .map(|cookie| {
+            .cookies
+            .order()
+            .into_iter()
+            .map(|i| {
+                let cookie = &editor.cookies.rows[i];
                 row(
                     vec![
                         cookie.name.describe(false, false),
                         cookie.value.describe(false, false),
                     ],
-                    false,
+                    selected.contains(&i),
                 )
             })
             .collect::<Vec<_>>(),
     )));
+    window.set_cookie_one(selected.len() == 1);
+    window.set_cookie_any(!selected.is_empty());
 }
+fn edit_cookie(
+    window: &LoginStepWindow,
+    store: &Arc<Store>,
+    editor: &Rc<RefCell<StepEditor>>,
+    active: &Rc<Cell<bool>>,
+    strings: &crate::string_processor_window::Slots,
+    index: Option<usize>,
+) {
+    let cookie = index
+        .and_then(|i| editor.borrow().cookies.rows.get(i).cloned())
+        .unwrap_or_else(|| CookieRequirement {
+            name: StringMatch::any(),
+            value: StringMatch::any(),
+            reference_auxiliary: None,
+        });
+    window.set_child_open(true);
+    crate::string_processor_window::open_match(
+        store,
+        &cookie.name,
+        strings,
+        Rc::new({
+            let weak = window.as_weak();
+            let active = active.clone();
+            let editor = editor.clone();
+            let store = store.clone();
+            let strings = strings.clone();
+            let value = cookie.value;
+            move |name| {
+                if !active.get() {
+                    return;
+                }
+                let Some(window) = weak.upgrade() else {
+                    return;
+                };
+                window.set_child_open(true);
+                crate::string_processor_window::open_match(
+                    &store,
+                    &value,
+                    &strings,
+                    Rc::new({
+                        let weak = weak.clone();
+                        let active = active.clone();
+                        let editor = editor.clone();
+                        move |value| {
+                            if !active.get() {
+                                return;
+                            }
+                            editor.borrow_mut().cookies.put(
+                                index,
+                                CookieRequirement {
+                                    name: name.clone(),
+                                    value,
+                                    reference_auxiliary: None,
+                                },
+                            );
+                            if let Some(window) = weak.upgrade() {
+                                show(&window, &editor.borrow());
+                            }
+                        }
+                    }),
+                );
+                own_cookie_matcher(&window, &strings, "edit match");
+            }
+        }),
+    );
+    own_cookie_matcher(window, strings, "edit cookie name");
+}
+fn own_cookie_matcher(
+    window: &LoginStepWindow,
+    strings: &crate::string_processor_window::Slots,
+    title: &str,
+) {
+    let child = strings
+        .step
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong);
+    if let Some(child) = child {
+        child.set_window_title(title.into());
+        let weak = window.as_weak();
+        child.on_closed(move || {
+            if let Some(window) = weak.upgrade() {
+                window.set_child_open(false);
+            }
+        });
+    } else {
+        window.set_child_open(false);
+    }
+}
+
 fn edit_argument(
     window: &LoginStepWindow,
     editor: &Rc<RefCell<StepEditor>>,
@@ -265,6 +360,7 @@ pub fn open(
     let active = Rc::new(Cell::new(true));
     let selected_argument = Rc::new(RefCell::new(None::<(ArgumentKind, String)>));
     let deleting_argument = Rc::new(Cell::new(false));
+    let deleting_cookie = Rc::new(Cell::new(false));
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let slot = Rc::downgrade(&slots.step);
@@ -418,6 +514,28 @@ pub fn open(
             show(&window, &editor.borrow());
         }
     });
+    window.on_cookie_clicked({
+        let weak = window.as_weak();
+        let editor = editor.clone();
+        let active = active.clone();
+        move |index, ctrl, shift| {
+            if !active.get() {
+                return;
+            }
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if window.get_child_open() || window.get_deleting() {
+                return;
+            }
+            if let Ok(index) = usize::try_from(index) {
+                let mut editor = editor.borrow_mut();
+                let order = editor.cookies.order();
+                editor.cookies.selection.click(&order, index, ctrl, shift);
+                show(&window, &editor);
+            }
+        }
+    });
     window.on_content_clicked({
         let weak = window.as_weak();
         let editor = editor.clone();
@@ -478,6 +596,7 @@ pub fn open(
         let selected_argument = selected_argument.clone();
         let argument = slots.argument.clone();
         let deleting_argument = deleting_argument.clone();
+        let deleting_cookie = deleting_cookie.clone();
         let cookies = slots.cookies.clone();
         let store = store.clone();
         move |action| {
@@ -517,34 +636,21 @@ pub fn open(
             }
             let action = mapped.map_or(action.as_str(), |(_, action)| action);
             match action {
-                "cookies" => {
-                    let values = editor.borrow().step.required_cookies.clone();
-                    let accepted: crate::login_cookies_window::Applied = Rc::new({
-                        let weak = weak.clone();
-                        let editor = editor.clone();
-                        let active = active.clone();
-                        move |values| {
-                            if !active.get() {
-                                return Err("The login step editor has closed.".into());
-                            }
-                            editor.borrow_mut().step.required_cookies = values;
-                            if let Some(window) = weak.upgrade() {
-                                show(&window, &editor.borrow());
-                            }
-                            Ok(())
-                        }
-                    });
-                    match crate::login_cookies_window::open(&store, &values, &cookies, accepted) {
-                        Ok(child) => {
-                            window.set_child_open(true);
-                            let weak = weak.clone();
-                            child.on_closed(move || {
-                                if let Some(window) = weak.upgrade() {
-                                    window.set_child_open(false);
-                                }
-                            });
-                        }
-                        Err(error) => window.set_error(error.to_string().into()),
+                "add-cookie" | "edit-cookie" => {
+                    let index = if action == "edit-cookie" {
+                        editor.borrow().cookies.selection.one()
+                    } else {
+                        None
+                    };
+                    if action == "edit-cookie" && index.is_none() {
+                        return;
+                    }
+                    edit_cookie(&window, &store, &editor, &active, &cookies.strings, index);
+                }
+                "delete-cookie" => {
+                    if !editor.borrow().cookies.selection.is_empty() {
+                        deleting_cookie.set(true);
+                        window.set_deleting(true);
                     }
                 }
                 "add-variable" | "edit-variable" => {
@@ -594,7 +700,9 @@ pub fn open(
                     }
                 }
                 "confirm-delete" => {
-                    if deleting_argument.replace(false) {
+                    if deleting_cookie.replace(false) {
+                        editor.borrow_mut().cookies.delete();
+                    } else if deleting_argument.replace(false) {
                         editor
                             .borrow_mut()
                             .delete_arguments(ArgumentKind::from_index(window.get_variable_kind()));
@@ -608,6 +716,7 @@ pub fn open(
                     show(&window, &editor.borrow());
                 }
                 "back" => {
+                    deleting_cookie.set(false);
                     deleting_argument.set(false);
                     window.set_deleting(false);
                 }

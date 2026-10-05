@@ -349,21 +349,24 @@ fn cookie_requirements_match_real_qt_pair_edits_cancel_and_duplicate_looking_key
         if let Some(value) = values.get(1).and_then(serde_json::Value::as_str) {
             let index = if state["action"] == "edit" {
                 editor.rows.iter().position(|row| {
-                    row.name == hydrus_core::url::strings::StringMatch::fixed("token")
+                    row.name.kind == hydrus_core::url::strings::MatchKind::Fixed("token".into())
                 })
             } else {
                 None
             };
-            editor.put(
-                index,
-                hydrus_parse::login::CookieRequirement {
-                    name: hydrus_core::url::strings::StringMatch::fixed(
-                        values[0].as_str().unwrap(),
-                    ),
-                    value: hydrus_core::url::strings::StringMatch::fixed(value),
+            let mut cookie = index.map_or_else(
+                || hydrus_parse::login::CookieRequirement {
+                    name: hydrus_core::url::strings::StringMatch::any(),
+                    value: hydrus_core::url::strings::StringMatch::any(),
                     reference_auxiliary: None,
                 },
+                |i| editor.rows[i].clone(),
             );
+            cookie.name.kind =
+                hydrus_core::url::strings::MatchKind::Fixed(values[0].as_str().unwrap().to_owned());
+            cookie.value.kind = hydrus_core::url::strings::MatchKind::Fixed(value.to_owned());
+            cookie.reference_auxiliary = None;
+            editor.put(index, cookie);
         }
         script.required_cookies = editor.value();
         assert_eq!(
@@ -394,6 +397,81 @@ fn cookie_requirements_match_real_qt_pair_edits_cancel_and_duplicate_looking_key
     editor.delete();
     assert_eq!(editor.rows.len(), 1);
     assert!(editor.selection.is_empty());
+}
+
+#[test]
+fn embedded_step_cookie_list_replays_sorted_pair_actions_and_confirmed_bulk_delete() {
+    let fixture = hydrus_testkit::fixture_json("login_step_cookies.json");
+    let original = legacy::login_step(
+        &SerialisableObject::from_tuple_str(&fixture["original"].to_string()).unwrap(),
+    )
+    .unwrap();
+    let mut editor = StepEditor::new(&original);
+    let states = fixture["states"].as_array().unwrap();
+    for state in &states[1..] {
+        let action = state["action"].as_str().unwrap();
+        if action == "delete" {
+            if !state["answer"].as_bool().unwrap() {
+                let order = editor.cookies.order();
+                editor.cookies.selection.click(&order, 0, false, false);
+                editor.cookies.selection.click(&order, 1, true, false);
+            } else {
+                editor.cookies.delete();
+            }
+            assert_eq!(state["questions"][0], "Remove all selected?");
+        } else {
+            let index = if action == "edit" {
+                editor.cookies.order().last().copied()
+            } else {
+                None
+            };
+            if let Some(index) = index {
+                editor.cookies.selection.select_only(Some(index));
+            }
+            let answers = state["answers"].as_array().unwrap();
+            if let Some(value) = answers.get(1).and_then(Value::as_str) {
+                let mut cookie = index.map_or_else(
+                    || hydrus_parse::login::CookieRequirement {
+                        name: hydrus_core::url::strings::StringMatch::any(),
+                        value: hydrus_core::url::strings::StringMatch::any(),
+                        reference_auxiliary: None,
+                    },
+                    |i| editor.cookies.rows[i].clone(),
+                );
+                // Editing fixed text leaves the matchers' examples and limits intact.
+                cookie.name.kind = hydrus_core::url::strings::MatchKind::Fixed(
+                    answers[0].as_str().unwrap().to_owned(),
+                );
+                cookie.value.kind = hydrus_core::url::strings::MatchKind::Fixed(value.to_owned());
+                cookie.reference_auxiliary = None;
+                editor.cookies.put(index, cookie);
+            }
+        }
+        assert_eq!(
+            hydrus_downloader_exchange::logins::step_tuple(&editor.value()).unwrap(),
+            state["state"]["value"]
+        );
+        assert_eq!(
+            json!(
+                editor
+                    .cookies
+                    .value()
+                    .iter()
+                    .map(|row| vec![
+                        row.name.describe(false, false),
+                        row.value.describe(false, false)
+                    ])
+                    .collect::<Vec<_>>()
+            ),
+            state["state"]["rows"]
+        );
+        assert_eq!(
+            hydrus_downloader_exchange::logins::step_tuple(&original).unwrap(),
+            fixture["original"]
+        );
+    }
+    assert_eq!(editor.cookies.rows.len(), 1);
+    assert_eq!(original.required_cookies.len(), 1);
 }
 
 #[test]

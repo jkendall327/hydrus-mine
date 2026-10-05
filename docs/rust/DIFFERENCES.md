@@ -1617,15 +1617,20 @@ native information panel, and their popup style follows the native theme. Global
 import-options default management and external-program command editing still have
 separate incomplete coverage; this does not complete those broader controls.
 
-Login global/step cookie requirements are now editable through a shared child list
-with immediate sequential **edit cookie name** and **edit match** dialogs.
+Login global cookie requirements remain editable through an owned child list;
+step cookie requirements now use the reference's embedded list with direct
+Add/Edit/Delete and independent selection. Both use immediate sequential
+**edit cookie name** and **edit match** dialogs.
 Cancel at either stage retains the whole original pair, and edit dialogs preload
-the original matchers. The reference embeds its list in the script/step editor;
-the native editor still opens that list in an owned child Window. Independent matcher objects with
+the original matchers. The reference also embeds its global script list;
+the native script editor still opens that list in an owned child Window. Independent matcher objects with
 identical descriptions remain distinct, as in Python. Explicit matcher edits
 canonicalize their unused auxiliary matcher values. The three argument-list topology
 and selection gap is closed; example-domain add/edit/delete and the reference
-default/description-cancellation rules are implemented.
+default/description-cancellation rules are implemented. The step list's confirmed
+bulk deletion, sorted selection, direct matcher routing and owner Cancel are
+recorded by `oracle/record_login_step_cookies.py`; script-list topology remains
+a separate boundary. This parent workflow improvement receives no leaf credit.
 Startup recovery uses the native session-question window and a native GUI running
 marker rather than the reference controller's process marker. Choosing blank
 keeps the configured startup name for the next boot. Native importer workers
