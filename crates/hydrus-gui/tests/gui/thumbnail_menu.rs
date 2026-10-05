@@ -84,7 +84,25 @@ fn the_menu_is_the_reference_s() {
                 None,
             );
             let ours = described(&entries);
-            let recorded_ours = as_recorded(&ours);
+            let mut recorded_ours = as_recorded(&ours);
+            // The fixed template flattens a single local action as Qt's
+            // AppendMenuOrItem does; Slots retains its group for routing.
+            for locations in &mut recorded_ours {
+                if locations["menu"] == "locations" {
+                    for group in locations["entries"].as_array_mut().unwrap() {
+                        if group["entries"]
+                            .as_array()
+                            .is_some_and(|rows| rows.len() == 1)
+                        {
+                            *group = json!(format!(
+                                "{} {}",
+                                group["menu"].as_str().unwrap(),
+                                group["entries"][0].as_str().unwrap()
+                            ));
+                        }
+                    }
+                }
+            }
             // (and the window's template shows it as it is)
             let slots = Slots::new(&entries);
             assert!(slots.select.len() <= GROUPS && slots.remove.len() <= GROUPS);
@@ -92,7 +110,21 @@ fn the_menu_is_the_reference_s() {
             let mut theirs = unescaped(case["menu"].as_array().unwrap());
             // (the selection's info first, less what hydrus-rs doesn't have)
             let info = (!selected.is_empty()).then(|| theirs.remove(0));
+            // Locations are now implemented for these local fixture domains;
+            // viewer-only omissions still use the shared pruning policy.
+            let locations = theirs
+                .iter()
+                .find(|entry| entry["menu"] == "locations")
+                .cloned();
             let mut theirs = pruned(&theirs);
+            if let Some(locations) = locations {
+                let at = theirs
+                    .iter()
+                    .position(|entry| entry["menu"] == "manage")
+                    .unwrap()
+                    + 1;
+                theirs.insert(at, locations);
+            }
             if let Some(mut info) = info {
                 if let Some(entries) = info.get_mut("entries") {
                     let kept: Vec<Value> = entries.as_array().unwrap().clone();

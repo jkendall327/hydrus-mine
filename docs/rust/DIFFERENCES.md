@@ -2428,3 +2428,22 @@ native and real local-file-importer regressions await hosted CI; no local Cargo
 build, Rust test or mutation run was performed. This closes only the original
 `import-existing-tags-filter` action; broader service/import-option parents
 remain Partial, including other unimplemented controls.
+
+Local transfer confirmation parity is limited to the two Files and Trash
+checkboxes and thumbnail local-domain add/strict/merge commands with explicit
+sources. The broader locations and Files and Trash parents remain Partial:
+remote locations, viewer locations, shortcut source selection, importer and file
+removal-from-view preferences are outside this slice. Native transfers use one
+transaction and revalidate live memberships/service keys after confirmation;
+the reference schedules a block worker using captured media. An unavailable
+source is skipped, a replaced service is rejected, and a strict destination that
+became current is left alone. Large transfer jobs currently execute synchronously
+on the GUI thread, without the reference's progress/cancellation worker.
+
+The copy question preserves the reference's count before its final local filter:
+a selected trash-only file can contribute to the question while never reaching
+the migration. Merge preserves an already-current destination's time; restored
+destination memberships keep their recorded original import time. The evidence
+packet proposes only the two original Missing Options leaves. Authored Rust and
+native regressions await hosted CI; no local Cargo build, Rust test or mutation
+run was performed for this slice.

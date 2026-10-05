@@ -65,6 +65,7 @@ mod import_options_window;
 mod import_window;
 mod importer_list_menu;
 pub mod incremental_tagging_window;
+pub mod local_transfer_window;
 pub mod locations_window;
 pub mod login_cookies_window;
 pub mod login_credential_window;
@@ -350,6 +351,8 @@ pub struct Bound {
     pub open_page: Rc<dyn Fn(&page_chooser::NewPage)>,
     /// The advanced local deletion draft owned by the thumbnail panel.
     pub delete_files: delete_files_window::Slot,
+    /// The captured local-domain transfer confirmation.
+    pub local_transfer: local_transfer_window::Slot,
     /// The "review files to import" window while it is open, and its list.
     pub review_imports: ReviewSlot,
     /// Its "filename tagging" dialog.
@@ -466,6 +469,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let session_autosave = session_autosave::bind(window, &pages);
     let first = pages.borrow_mut().current();
     let current = Rc::new(RefCell::new(first.clone()));
+    let local_transfer: local_transfer_window::Slot = Rc::default();
     let rows = Rc::new(ThumbnailRows::new(first));
     window.set_thumbnail_rows(ModelRc::from(rows.clone()));
     rows.set_columns(usize::try_from(window.get_grid_columns()).unwrap_or(1));
@@ -537,6 +541,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     let change_pages = {
+        let local_transfer = local_transfer.clone();
         let viewer_exit_scrolls = viewer_exit_scrolls.clone();
         let scrolls = scrolls.clone();
         let pages = pages.clone();
@@ -562,6 +567,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 after();
             }
             if !Rc::ptr_eq(&opened, &current.borrow()) {
+                local_transfer_window::cancel(&local_transfer);
                 // Background pages pick up current tag presentation when activated.
                 opened.borrow_mut().refresh_tags();
             }
@@ -619,6 +625,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     };
     // Tag-list menus publish through weak main-window/page handles.
     write_tag_menu::install_search_launcher(Rc::new({
+        let local_transfer = Rc::downgrade(&local_transfer);
         let pages = Rc::downgrade(&pages);
         let current = Rc::downgrade(&current);
         let rows = Rc::downgrade(&rows);
@@ -689,6 +696,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let after = after_change.borrow().clone();
             if let Some(after) = after {
                 after();
+            }
+            if !Rc::ptr_eq(&opened, &current.borrow())
+                && let Some(local_transfer) = local_transfer.upgrade()
+            {
+                local_transfer_window::cancel(&local_transfer);
             }
             *current.borrow_mut() = opened.clone();
             rows.set_page(opened);
@@ -3572,7 +3584,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let menu_state: MenuState = Rc::default();
     let palette_media_items: Rc<RefCell<Vec<hydrus_gui_model::command_palette::MenuItem>>> =
         Rc::default();
+    let transfer_target = Rc::new(RefCell::new(None));
     window.on_thumbnail_menu_requested({
+        let transfer_target = transfer_target.clone();
         let page = page.clone();
         let reselect = reselect.clone();
         let menu_state = menu_state.clone();
@@ -3586,11 +3600,21 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 });
             }
             let page = page();
+            let owner = page.clone();
             let page = page.borrow();
             let files = thumbnail_menu::facts(page.store(), &page.files());
             let selected: std::collections::HashSet<HashId> =
                 page.selected_files().into_iter().collect();
             let snapshot = page.store().snapshot();
+            *transfer_target.borrow_mut() = Some((
+                owner,
+                page.selected_files(),
+                snapshot
+                    .services
+                    .all()
+                    .map(|s| (s.id, s.key.clone()))
+                    .collect::<Vec<_>>(),
+            ));
             let settings: hydrus_core::media_viewer::InfoLineSettings = page
                 .store()
                 .read(hydrus_store::settings::get)
@@ -3655,6 +3679,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     window.on_menu_chosen({
+        let transfer_target = transfer_target.clone();
+        let local_transfer = local_transfer.clone();
+        let current = current.clone();
         let page = page.clone();
         let menu_state = menu_state.clone();
         let weak = window.as_weak();
@@ -3752,6 +3779,60 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     delete(files, media_actions::Deletion::Physically);
                 }
                 Action::Undelete => window.invoke_undelete_selected(),
+                Action::Transfer(kind, destination, source) => {
+                    let Some((owner, files, services)) = transfer_target.borrow().clone() else {
+                        return;
+                    };
+                    if !Rc::ptr_eq(&owner, &page) {
+                        return;
+                    }
+                    let store = owner.borrow().store().clone();
+                    // A service ID may have been reused since this menu was built.
+                    let valid_service = |id| {
+                        services
+                            .iter()
+                            .find(|(old, _)| *old == id)
+                            .is_some_and(|(_, key)| {
+                                snapshot.services.get(id).is_ok_and(|s| &s.key == key)
+                            })
+                    };
+                    if !valid_service(destination) || source.is_some_and(|id| !valid_service(id)) {
+                        return;
+                    }
+                    let transfer = hydrus_gui_model::local_transfer::Transfer::load(
+                        &store,
+                        kind,
+                        destination,
+                        source,
+                        &files,
+                    );
+                    match transfer {
+                        Ok(Some(transfer)) => {
+                            let guard: Rc<dyn Fn() -> bool> = Rc::new({
+                                let owner = owner.clone();
+                                let current = current.clone();
+                                let weak = weak.clone();
+                                move || {
+                                    weak.upgrade()
+                                        .is_some_and(|window| window.window().is_visible())
+                                        && Rc::ptr_eq(&owner, &current.borrow())
+                                }
+                            });
+                            let applied = files_changed.clone();
+                            if let Err(error) = local_transfer_window::open(
+                                &local_transfer,
+                                &store,
+                                transfer,
+                                guard,
+                                applied,
+                            ) {
+                                eprintln!("could not transfer local files: {error}");
+                            }
+                        }
+                        Ok(None) => {}
+                        Err(error) => eprintln!("could not transfer local files: {error}"),
+                    }
+                }
                 Action::ManageTags => window.invoke_manage_tags_selected(),
                 Action::ManageNotes => {
                     let page = page.borrow();
@@ -4003,6 +4084,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         file_log: file_log_slot,
         archive_delete,
         delete_files,
+        local_transfer,
         filter,
         open_page,
         review_imports,
@@ -4272,7 +4354,31 @@ fn thumbnail_menu_rows(
     let share = slots.share.clone().unwrap_or_default();
     let (share_hashes_title, share_hashes) = share.hashes.clone().unwrap_or_default();
     let (share_hash_title, share_hash) = share.hash.clone().unwrap_or_default();
+    let local_rows = |title: &str| {
+        let entries = slots
+            .locations
+            .iter()
+            .filter_map(|entry| match entry {
+                thumbnail_menu::Entry::Menu(label, inner) if label == title => Some(inner.clone()),
+                _ => None,
+            })
+            .flatten()
+            .collect::<Vec<_>>();
+        let items = entries
+            .iter()
+            .filter_map(|entry| match entry {
+                thumbnail_menu::Entry::Item(label, action) => Some((label.clone(), *action)),
+                thumbnail_menu::Entry::Label(label) => Some((label.clone(), Action::Copy)),
+                _ => None,
+            })
+            .collect::<Vec<_>>();
+        rows(&items)
+    };
     ThumbnailMenu {
+        locations_current: local_rows("currently in"),
+        locations_copy: local_rows("add to"),
+        locations_merge: local_rows("move (merge)"),
+        locations_move: local_rows("move (strict)"),
         has_share: slots.share.is_some(),
         share_export: rows(&share.export.iter().cloned().collect::<Vec<_>>()),
         share_a: rows(&share.a),

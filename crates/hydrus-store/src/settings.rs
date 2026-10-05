@@ -674,6 +674,25 @@ pub enum DeletionAction {
     ClearRecord,
 }
 
+/// The two independently staged confirmation gates for local-domain migration.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct LocalTransferPreferences {
+    pub copy: bool,
+    pub move_files: bool,
+}
+impl Default for LocalTransferPreferences {
+    fn default() -> Self {
+        Self {
+            copy: true,
+            move_files: true,
+        }
+    }
+}
+impl Setting for LocalTransferPreferences {
+    const KEY: &'static str = "local_transfer_preferences";
+}
+
 /// Confirmation preferences for local file operations.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

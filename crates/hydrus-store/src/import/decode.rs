@@ -582,6 +582,22 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &preferences)?;
+    let mut transfer = crate::settings::LocalTransferPreferences::default();
+    if let Some(options) = &options {
+        if let Some(&value) = options
+            .booleans
+            .get("confirm_multiple_local_file_services_copy")
+        {
+            transfer.copy = value;
+        }
+        if let Some(&value) = options
+            .booleans
+            .get("confirm_multiple_local_file_services_move")
+        {
+            transfer.move_files = value;
+        }
+    }
+    insert_setting(&mut input, &transfer)?;
     let mut deletion = crate::settings::DeletionPreferences::default();
     for (key, field) in [
         ("confirm_trash", &mut deletion.confirm_trash),
@@ -4315,6 +4331,48 @@ mod tests {
             );
             assert_eq!(decoded(), code);
         }
+    }
+
+    #[test]
+    fn local_transfer_confirmations_decode_both_legacy_booleans() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "confirm_multiple_local_file_services_copy"], [0, true]]"#,
+                    r#"[[0, "confirm_multiple_local_file_services_copy"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "confirm_multiple_local_file_services_move"], [0, true]]"#,
+                    r#"[[0, "confirm_multiple_local_file_services_move"], [0, false]]"#,
+                ),
+            ],
+        );
+        let destination = tempfile::tempdir().unwrap();
+        crate::import::import_legacy(
+            source.path(),
+            &destination.path().join(crate::store::DB_FILE_NAME),
+        )
+        .unwrap();
+        let store = crate::Store::open(destination.path()).unwrap();
+        let preferences = store
+            .read(crate::settings::get::<crate::settings::LocalTransferPreferences>)
+            .unwrap();
+        assert_eq!(
+            preferences,
+            crate::settings::LocalTransferPreferences {
+                copy: false,
+                move_files: false
+            }
+        );
+        assert_eq!(
+            crate::Store::open(destination.path())
+                .unwrap()
+                .read(crate::settings::get::<crate::settings::LocalTransferPreferences>)
+                .unwrap(),
+            preferences
+        );
     }
 
     #[test]

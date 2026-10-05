@@ -81,6 +81,14 @@ macro_rules! settings {
             hydrus_store::settings::set($conn,&windows)?;
         }
     };
+    (@save $conn:ident, $after:ident, $before:ident, local_transfer) => {
+        if $after.local_transfer != $before.local_transfer {
+            let mut latest: hydrus_store::settings::LocalTransferPreferences = hydrus_store::settings::get($conn)?;
+            if $after.local_transfer.copy != $before.local_transfer.copy { latest.copy = $after.local_transfer.copy; }
+            if $after.local_transfer.move_files != $before.local_transfer.move_files { latest.move_files = $after.local_transfer.move_files; }
+            hydrus_store::settings::set($conn, &latest)?;
+        }
+    };
     (@save $conn:ident, $after:ident, $before:ident, deletion) => {
         if $after.deletion != $before.deletion {
             let mut deletion = $after.deletion.clone();
@@ -195,6 +203,7 @@ settings! {
     command_palette: CommandPaletteSettings,
     delete_lock: DeleteLock,
     deletion: hydrus_store::settings::DeletionPreferences,
+    local_transfer: hydrus_store::settings::LocalTransferPreferences,
     downloader_pages: DownloaderPageSettings,
     duplicate_filter: DuplicateFilterSettings,
     duplicate_colours: hydrus_store::settings::DuplicateColourSettings,
@@ -2042,6 +2051,16 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     "Confirm sending more than one file to archive or inbox: ",
                     |s| s.deletion.confirm_archive,
                     |s, v| s.deletion.confirm_archive = v,
+                ),
+                check(
+                    "Confirm when copying files across local file domains: ",
+                    |s| s.local_transfer.copy,
+                    |s, v| s.local_transfer.copy = v,
+                ),
+                check(
+                    "Confirm when moving files across local file domains: ",
+                    |s| s.local_transfer.move_files,
+                    |s, v| s.local_transfer.move_files = v,
                 ),
                 check(
                     "When physically deleting files or folders, send them to the OS's recycle bin: ",

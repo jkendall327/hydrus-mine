@@ -1,0 +1,1169 @@
+{
+  "defaults": [
+    true,
+    true
+  ],
+  "loaded": [
+    true,
+    true
+  ],
+  "source": "art",
+  "destination": "my files",
+  "options": [
+    {
+      "input": [
+        false,
+        true
+      ],
+      "before": [
+        true,
+        true
+      ],
+      "staged": [
+        true,
+        true
+      ],
+      "saved": [
+        false,
+        true
+      ],
+      "reopened": [
+        false,
+        true
+      ],
+      "round_trip": [
+        false,
+        true
+      ]
+    },
+    {
+      "input": [
+        true,
+        false
+      ],
+      "before": [
+        false,
+        true
+      ],
+      "staged": [
+        false,
+        true
+      ],
+      "saved": [
+        true,
+        false
+      ],
+      "reopened": [
+        true,
+        false
+      ],
+      "round_trip": [
+        true,
+        false
+      ]
+    },
+    {
+      "input": [
+        true,
+        true
+      ],
+      "before": [
+        true,
+        false
+      ],
+      "staged": [
+        true,
+        false
+      ],
+      "saved": [
+        true,
+        true
+      ],
+      "reopened": [
+        true,
+        true
+      ],
+      "round_trip": [
+        true,
+        true
+      ]
+    }
+  ],
+  "transfers": [
+    {
+      "kind": "copy",
+      "confirm": false,
+      "accepted": false,
+      "before": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "art"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": null
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ],
+      "questions": [],
+      "jobs": [
+        [
+          "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+        ]
+      ],
+      "after": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1700000000000
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ]
+    },
+    {
+      "kind": "copy",
+      "confirm": false,
+      "accepted": true,
+      "before": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "art"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": null
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ],
+      "questions": [],
+      "jobs": [
+        [
+          "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+        ]
+      ],
+      "after": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1700000000000
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ]
+    },
+    {
+      "kind": "copy",
+      "confirm": true,
+      "accepted": false,
+      "before": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "art"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": null
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ],
+      "questions": [
+        "Add 2 files to my files?"
+      ],
+      "jobs": [],
+      "after": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "art"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": null
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ]
+    },
+    {
+      "kind": "copy",
+      "confirm": true,
+      "accepted": true,
+      "before": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "art"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": null
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ],
+      "questions": [
+        "Add 2 files to my files?"
+      ],
+      "jobs": [
+        [
+          "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+        ]
+      ],
+      "after": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1700000000000
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ]
+    },
+    {
+      "kind": "move",
+      "confirm": false,
+      "accepted": false,
+      "before": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "art"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": null
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ],
+      "questions": [],
+      "jobs": [
+        [
+          "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+        ]
+      ],
+      "after": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "my files"
+          ],
+          "imports": {
+            "art": null,
+            "my files": 1700000000000
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ]
+    },
+    {
+      "kind": "move",
+      "confirm": false,
+      "accepted": true,
+      "before": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "art"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": null
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ],
+      "questions": [],
+      "jobs": [
+        [
+          "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+        ]
+      ],
+      "after": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "my files"
+          ],
+          "imports": {
+            "art": null,
+            "my files": 1700000000000
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ]
+    },
+    {
+      "kind": "move",
+      "confirm": true,
+      "accepted": false,
+      "before": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "art"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": null
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ],
+      "questions": [
+        "Move 1 files from art to my files?"
+      ],
+      "jobs": [],
+      "after": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "art"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": null
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ]
+    },
+    {
+      "kind": "move",
+      "confirm": true,
+      "accepted": true,
+      "before": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "art"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": null
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ],
+      "questions": [
+        "Move 1 files from art to my files?"
+      ],
+      "jobs": [
+        [
+          "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+        ]
+      ],
+      "after": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "my files"
+          ],
+          "imports": {
+            "art": null,
+            "my files": 1700000000000
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ]
+    },
+    {
+      "kind": "merge",
+      "confirm": false,
+      "accepted": false,
+      "before": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "art"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": null
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ],
+      "questions": [],
+      "jobs": [
+        [
+          "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+        ]
+      ],
+      "after": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "my files"
+          ],
+          "imports": {
+            "art": null,
+            "my files": 1700000000000
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "my files"
+          ],
+          "imports": {
+            "art": null,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ]
+    },
+    {
+      "kind": "merge",
+      "confirm": false,
+      "accepted": true,
+      "before": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "art"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": null
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ],
+      "questions": [],
+      "jobs": [
+        [
+          "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+        ]
+      ],
+      "after": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "my files"
+          ],
+          "imports": {
+            "art": null,
+            "my files": 1700000000000
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "my files"
+          ],
+          "imports": {
+            "art": null,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ]
+    },
+    {
+      "kind": "merge",
+      "confirm": true,
+      "accepted": false,
+      "before": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "art"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": null
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ],
+      "questions": [
+        "Move-merge 2 files from art to my files?"
+      ],
+      "jobs": [],
+      "after": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "art"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": null
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ]
+    },
+    {
+      "kind": "merge",
+      "confirm": true,
+      "accepted": true,
+      "before": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "art"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": null
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "art",
+            "my files"
+          ],
+          "imports": {
+            "art": 1234567890000,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ],
+      "questions": [
+        "Move-merge 2 files from art to my files?"
+      ],
+      "jobs": [
+        [
+          "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+        ]
+      ],
+      "after": [
+        {
+          "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+          "domains": [
+            "my files"
+          ],
+          "imports": {
+            "art": null,
+            "my files": 1700000000000
+          },
+          "inbox": false
+        },
+        {
+          "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+          "domains": [
+            "my files"
+          ],
+          "imports": {
+            "art": null,
+            "my files": 1234567890100
+          },
+          "inbox": true
+        },
+        {
+          "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+          "domains": [],
+          "imports": {
+            "art": null,
+            "my files": null
+          },
+          "inbox": false
+        }
+      ]
+    }
+  ],
+  "cancel": {
+    "before": [
+      true,
+      true
+    ],
+    "after": [
+      true,
+      true
+    ]
+  },
+  "menu": [
+    {
+      "label": "currently in",
+      "children": [
+        {
+          "label": "art (2 files)",
+          "children": []
+        },
+        {
+          "label": "my files (1 files)",
+          "children": []
+        }
+      ]
+    },
+    {
+      "label": "add to my files (1 files)",
+      "children": []
+    },
+    {
+      "label": "move (merge)",
+      "children": [
+        {
+          "label": "from art to my files (2 files)",
+          "children": []
+        },
+        {
+          "label": "from my files to art (1 files)",
+          "children": []
+        }
+      ]
+    },
+    {
+      "label": "move (strict) from art to my files (1 files)",
+      "children": []
+    }
+  ],
+  "undelete": {
+    "before": [
+      {
+        "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "domains": [
+          "art"
+        ],
+        "imports": {
+          "art": 1234567890000,
+          "my files": null
+        },
+        "inbox": false
+      },
+      {
+        "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+        "domains": [
+          "art",
+          "my files"
+        ],
+        "imports": {
+          "art": 1234567890000,
+          "my files": 1234567890100
+        },
+        "inbox": true
+      },
+      {
+        "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "domains": [],
+        "imports": {
+          "art": null,
+          "my files": null
+        },
+        "inbox": false
+      }
+    ],
+    "after": [
+      {
+        "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "domains": [
+          "my files"
+        ],
+        "imports": {
+          "art": null,
+          "my files": 1234567890200
+        },
+        "inbox": false
+      },
+      {
+        "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+        "domains": [
+          "art",
+          "my files"
+        ],
+        "imports": {
+          "art": 1234567890000,
+          "my files": 1234567890100
+        },
+        "inbox": true
+      },
+      {
+        "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "domains": [],
+        "imports": {
+          "art": null,
+          "my files": null
+        },
+        "inbox": false
+      }
+    ],
+    "questions": [
+      "Move 1 files from art to my files?"
+    ],
+    "jobs": [
+      [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ]
+    ]
+  }
+}

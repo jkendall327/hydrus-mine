@@ -1,4 +1,5 @@
 export { ExternalCallWindow, ExternalCommandWindow, ExternalRule, ExternalDefaultsWindow } from "external_calls.slint";
+export { LocalTransferWindow } from "local_transfer.slint";
 export { FrameLocationWindow } from "frame_locations.slint";
 export { RelatedWeightsWindow } from "related_weights.slint";
 export { MostUsedTagsWindow } from "tag_suggestions.slint";
@@ -1714,6 +1715,41 @@ export component MainWindow inherits Window {
                             for row in root.thumbnail-menu.manage: MenuItem {
                                 title: row.label;
                                 activated => { root.menu-chosen(row.id); }
+                            }
+                        }
+                        if root.thumbnail-menu.locations-current.length + root.thumbnail-menu.locations-copy.length + root.thumbnail-menu.locations-move.length + root.thumbnail-menu.locations-merge.length > 0: Menu {
+                            title: "locations";
+                            if root.thumbnail-menu.locations-current.length == 1: MenuItem {
+                                title: "currently in " + root.thumbnail-menu.locations-current[0].label;
+                                activated => { root.menu-chosen(root.thumbnail-menu.locations-current[0].id); }
+                            }
+                            if root.thumbnail-menu.locations-current.length > 1: Menu {
+                                title: "currently in";
+                                for row in root.thumbnail-menu.locations-current: MenuItem {title:row.label;activated=>{root.menu-chosen(row.id);}}
+                            }
+                            if root.thumbnail-menu.locations-copy.length == 1: MenuItem {
+                                title: "add to " + root.thumbnail-menu.locations-copy[0].label;
+                                activated => { root.menu-chosen(root.thumbnail-menu.locations-copy[0].id); }
+                            }
+                            if root.thumbnail-menu.locations-copy.length > 1: Menu {
+                                title: "add to";
+                                for row in root.thumbnail-menu.locations-copy: MenuItem {title:row.label;activated=>{root.menu-chosen(row.id);}}
+                            }
+                            if root.thumbnail-menu.locations-merge.length == 1: MenuItem {
+                                title: "move (merge) " + root.thumbnail-menu.locations-merge[0].label;
+                                activated => { root.menu-chosen(root.thumbnail-menu.locations-merge[0].id); }
+                            }
+                            if root.thumbnail-menu.locations-merge.length > 1: Menu {
+                                title: "move (merge)";
+                                for row in root.thumbnail-menu.locations-merge: MenuItem {title:row.label;activated=>{root.menu-chosen(row.id);}}
+                            }
+                            if root.thumbnail-menu.locations-move.length == 1: MenuItem {
+                                title: "move (strict) " + root.thumbnail-menu.locations-move[0].label;
+                                activated => { root.menu-chosen(root.thumbnail-menu.locations-move[0].id); }
+                            }
+                            if root.thumbnail-menu.locations-move.length > 1: Menu {
+                                title: "move (strict)";
+                                for row in root.thumbnail-menu.locations-move: MenuItem {title:row.label;activated=>{root.menu-chosen(row.id);}}
                             }
                         }
                         if root.thumbnail-menu.has-urls: Menu {

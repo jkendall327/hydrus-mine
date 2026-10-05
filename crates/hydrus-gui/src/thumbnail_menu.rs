@@ -59,6 +59,11 @@ pub enum Action {
     DeletePhysically,
     Undelete,
     ManageTags,
+    Transfer(
+        hydrus_store::content::TransferKind,
+        ServiceId,
+        Option<ServiceId>,
+    ),
     /// The selected files' ratings (the file shown's, in the viewer).
     ManageRatings,
     /// The focused file's notes.
@@ -1155,7 +1160,9 @@ pub fn menu(
             "manage".into(),
             manage_menu(services, notes.unwrap_or(0)),
         ));
-        // (the reference's locations, which hydrus-rs doesn't have yet)
+        if let Some(locations) = local_transfer_menu(services, &roles, &chosen) {
+            entries.push(locations);
+        }
         entries.extend(urls);
         entries.push(Entry::Menu("open".into(), open));
         entries.extend(share);
@@ -1269,6 +1276,7 @@ pub struct Slots {
     /// Deleting physically and undeleting.
     pub trash: Vec<SlotItem>,
     pub manage: Vec<SlotItem>,
+    pub locations: Vec<Entry>,
     pub urls: Option<UrlsSlots>,
     pub open: Option<OpenSlots>,
     pub share: Option<ShareSlots>,
@@ -1637,6 +1645,7 @@ impl Slots {
                     "remove" => slots.remove = groups(inner),
                     "rearrange" => slots.rearrange = items(inner),
                     "manage" => slots.manage = items(inner),
+                    "locations" => slots.locations = inner.clone(),
                     "urls" => slots.urls = Some(UrlsSlots::new(inner)),
                     "open" => slots.open = Some(OpenSlots::new(inner)),
                     "share" => slots.share = Some(ShareSlots::new(inner)),
@@ -1713,6 +1722,9 @@ impl Slots {
                 "manage".into(),
                 self.manage.iter().map(item).collect(),
             ));
+        }
+        if !self.locations.is_empty() {
+            out.push(Entry::Menu("locations".into(), self.locations.clone()));
         }
         out.extend(self.urls.iter().map(UrlsSlots::entry));
         out.extend(self.open.iter().map(OpenSlots::entry));
@@ -1931,4 +1943,92 @@ mod tests {
         assert!(offered("abcdef", 'a').is_none());
         assert!(offered("", 'a').is_none());
     }
+}
+
+/// Local-file migration commands. Each move fixes the source, as the reference
+/// thumbnail menu does; arbitrary shortcut source selection remains separate.
+pub fn local_transfer_menu(
+    services: &ServiceRegistry,
+    roles: &DomainRoles,
+    files: &[&FileFacts],
+) -> Option<Entry> {
+    use hydrus_store::content::TransferKind;
+    let mut current = Vec::new();
+    let mut copy = Vec::new();
+    let mut strict = Vec::new();
+    let mut merge = Vec::new();
+    let mut domains = services
+        .of_type(ServiceType::LocalFileDomain)
+        .collect::<Vec<_>>();
+    domains.sort_by(|a, b| a.name.cmp(&b.name));
+    for dest in &domains {
+        let count = files
+            .iter()
+            .filter(|f| f.current.contains(&dest.id))
+            .count();
+        if count > 0 {
+            current.push(Entry::Label(format!(
+                "{} ({} files)",
+                dest.name,
+                human_int(count as u64)
+            )));
+        }
+        let eligible = files
+            .iter()
+            .filter(|f| {
+                f.current.contains(&roles.combined_local_media) && !f.current.contains(&dest.id)
+            })
+            .count();
+        if eligible > 0 {
+            copy.push(Entry::Item(
+                format!("{} ({} files)", dest.name, human_int(eligible as u64)),
+                Action::Transfer(TransferKind::Copy, dest.id, None),
+            ));
+        }
+        for source in &domains {
+            if source.id == dest.id {
+                continue;
+            }
+            for (kind, entries) in [
+                (TransferKind::Move, &mut strict),
+                (TransferKind::Merge, &mut merge),
+            ] {
+                let count = files
+                    .iter()
+                    .filter(|f| {
+                        f.current.contains(&roles.combined_local_media)
+                            && f.current.contains(&source.id)
+                            && (kind == TransferKind::Merge || !f.current.contains(&dest.id))
+                    })
+                    .count();
+                if count > 0 {
+                    entries.push(Entry::Item(
+                        format!(
+                            "from {} to {} ({} files)",
+                            source.name,
+                            dest.name,
+                            human_int(count as u64)
+                        ),
+                        Action::Transfer(kind, dest.id, Some(source.id)),
+                    ));
+                }
+            }
+        }
+    }
+    let mut entries = Vec::new();
+    for (title, mut rows) in [
+        ("currently in", current),
+        ("add to", copy),
+        ("move (merge)", merge),
+        ("move (strict)", strict),
+    ] {
+        rows.sort_by_cached_key(|entry| match entry {
+            Entry::Item(label, _) | Entry::Label(label) => label.clone(),
+            _ => String::new(),
+        });
+        if !rows.is_empty() {
+            entries.push(Entry::Menu(title.into(), rows));
+        }
+    }
+    (!entries.is_empty()).then(|| Entry::Menu("locations".into(), entries))
 }

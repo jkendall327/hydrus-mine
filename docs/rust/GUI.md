@@ -3329,3 +3329,20 @@ callbacks. Parent Apply waits for the child. Saved importer options retain the
 filter after reopening and feed the file importer's existing-tag consumer for
 both parsed and additional tags. Only tags admitted by this filter are tested
 against current mappings on the chosen service; excluded tags bypass the test.
+
+Files and Trash now exposes the reference's independent copy and move confirmation
+checkboxes. Both default to enabled; imported values survive reopening. Edits stay
+in the Options draft until Apply, and Cancel or a retired Options callback cannot
+save them. Saving one checkbox preserves a concurrent change to the other.
+
+The thumbnail menu's local `locations` actions read those saved preferences when
+invoked. `add to`, `move (strict)` and `move (merge)` capture their files and explicit
+source/destination. Enabled gates ask the recorded Add/Move/Move-merge question;
+yes applies, while no, Escape, window close, a hidden question or a retired page
+cannot write. Switching away retires the question even if the page is revisited.
+Disabled gates perform the same transfer immediately. The transaction checks live
+local memberships and stable service keys, restores a deleted destination's original
+import time, adds the destination before removing the source, and keeps physical
+storage and inbox state. `local_transfer_confirmations.json` records actual Qt
+Options, the local action menu and real migration writes on a copied fixture DB;
+model/native regressions cover those decisions, persistence and stale owners.
