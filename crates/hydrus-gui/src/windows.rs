@@ -276,6 +276,22 @@ mod tests {
             },
             available_top_left: (0, 0),
         };
+        // MinimalSoftwareWindow has no OS position setter. Assert the exact
+        // opening decision, rather than pretending its position can be painted.
+        let mut decision =
+            OpeningRescue::new((2000, 2000), "main_gui", WindowRescueSettings::default());
+        assert_eq!(
+            decision.observe_size(owner.window(), &[screen], (0, 0)),
+            None
+        );
+        assert_eq!(
+            decision.observe_size(owner.window(), &[screen], (100, 100)),
+            Some((40, 40))
+        );
+        assert_eq!(
+            decision.observe_size(owner.window(), &[screen], (200, 200)),
+            None
+        );
         let received = Rc::new(RefCell::new(Vec::new()));
         let mut events = NamedEvents {
             opening: Some(OpeningRescue::new(
@@ -307,7 +323,6 @@ mod tests {
             ),
             EventResult::Propagate
         ));
-        assert_eq!(state(owner.window()).position, (40, 40));
         assert!(events.opening.as_ref().unwrap().finished);
         for path in ["/synthetic/first.png", "/synthetic/second.png"] {
             assert!(matches!(
@@ -330,9 +345,6 @@ mod tests {
                 "/synthetic/second.png".to_string()
             ]]
         );
-        owner
-            .window()
-            .set_position(slint::LogicalPosition::new(123.0, 234.0));
         assert!(matches!(
             events.event(
                 owner.window(),
@@ -342,7 +354,14 @@ mod tests {
             ),
             EventResult::Propagate
         ));
-        assert_eq!(state(owner.window()).position, (123, 234));
+        assert_eq!(
+            events
+                .opening
+                .as_mut()
+                .unwrap()
+                .observe_size(owner.window(), &[screen], (200, 200)),
+            None
+        );
         owner.hide().unwrap();
     }
 }
