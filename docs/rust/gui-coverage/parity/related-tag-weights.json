@@ -7,7 +7,8 @@
     "322ba8d2",
     "90e323bd",
     "006ae9b8",
-    "470887e7963d3cf9e3fab3cef2026234204792e5"
+    "470887e7963d3cf9e3fab3cef2026234204792e5",
+    "928b29524"
   ],
   "eligible_concrete_first_pass_count": 1,
   "parent_promotions": 0,
@@ -18,8 +19,8 @@
       "previous_status": "missing",
       "proposedStatus": "first_pass",
       "proposed_status": "first_pass",
-      "exactBehavior": "Options > tag suggestions opens an explicit owner-held draft with independent ordered search/result namespace tables. Namespace then weight questions append one colon, reject empty/colon catch-alls and duplicate slices, preserve exact warnings, accept 0..10000, allow catch-all weight edits but protect them from deletion, retain selected row identity and enable Edit only for one row. Question/child/parent Cancel discards the corresponding edits; child Apply only stages; parent Apply atomically saves changed weights and preserves live unrelated related preferences. Reopen restores persisted tables. Saved weights reach an already-open local Manage Tags related list, where independent search/result weighting, binary64 truncation, sibling-ideal deduplication, storage/display and local/all-known distinctions match fresh bounded actual Qt cases. Activation only adds missing tags to the captured files.",
-      "behavior": "Options > tag suggestions opens an explicit owner-held draft with independent ordered search/result namespace tables. Namespace then weight questions append one colon, reject empty/colon catch-alls and duplicate slices, preserve exact warnings, accept 0..10000, allow catch-all weight edits but protect them from deletion, retain selected row identity and enable Edit only for one row. Question/child/parent Cancel discards the corresponding edits; child Apply only stages; parent Apply atomically saves changed weights and preserves live unrelated related preferences. Reopen restores persisted tables. Saved weights reach an already-open local Manage Tags related list, where independent search/result weighting, binary64 truncation, sibling-ideal deduplication, storage/display and local/all-known distinctions match fresh bounded actual Qt cases. Activation only adds missing tags to the captured files.",
+      "exactBehavior": "Options > tag suggestions opens an explicit owner-held draft with independent ordered search/result namespace tables. Namespace then weight questions append one colon, reject empty/colon catch-alls and duplicate slices, preserve exact warnings, accept 0..10000, allow catch-all weight edits but protect them from deletion, retain selected row identity and enable Edit only for one row. Question/child/parent Cancel discards the corresponding edits; child Apply only stages; parent Apply atomically saves changed weights and preserves live unrelated related preferences. Reopen restores persisted tables. Saved weights reach an already-open local Manage Tags related list, where independent search/result weighting, binary64 truncation, sibling-ideal deduplication, storage/display and local/all-known distinctions match fresh bounded actual Qt cases. Activation only adds missing tags to the captured files. Namespace and numeric-weight headers use Python casefold/full-row tie-breaks in both directions, preserving stable equal keys and selected namespace identity. Each table retains independent selection and sort direction across the native view selector; Add replaces prior selection with the new namespace, matching Qt.",
+      "behavior": "Options > tag suggestions opens an explicit owner-held draft with independent ordered search/result namespace tables. Namespace then weight questions append one colon, reject empty/colon catch-alls and duplicate slices, preserve exact warnings, accept 0..10000, allow catch-all weight edits but protect them from deletion, retain selected row identity and enable Edit only for one row. Question/child/parent Cancel discards the corresponding edits; child Apply only stages; parent Apply atomically saves changed weights and preserves live unrelated related preferences. Reopen restores persisted tables. Saved weights reach an already-open local Manage Tags related list, where independent search/result weighting, binary64 truncation, sibling-ideal deduplication, storage/display and local/all-known distinctions match fresh bounded actual Qt cases. Activation only adds missing tags to the captured files. Namespace and numeric-weight headers use Python casefold/full-row tie-breaks in both directions, preserving stable equal keys and selected namespace identity. Each table retains independent selection and sort direction across the native view selector; Add replaces prior selection with the new namespace, matching Qt.",
       "reference_source": {
         "relativepath": "hydrus/client/gui/panels/options/TagSuggestionsPanel.py",
         "line": 327,
@@ -67,6 +68,18 @@
           "line": 494,
           "symbol": "pub fn related_tag_weights",
           "commit": "470887e7963d3cf9e3fab3cef2026234204792e5"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/related_weights.rs",
+          "line": 115,
+          "symbol": "pub fn sort_by",
+          "commit": "928b29524"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/related_weights_window.rs",
+          "line": 100,
+          "symbol": "window.on_sort",
+          "commit": "928b29524"
         }
       ],
       "test_anchors": [
@@ -105,6 +118,18 @@
           "line": 5849,
           "symbol": "fn related_weight_drafts",
           "commit": "470887e7963d3cf9e3fab3cef2026234204792e5"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/related_weights.rs",
+          "line": 347,
+          "symbol": "fn folded_header_sorts_add_selection_and_independent_tables_match_actual_qt",
+          "commit": "928b29524"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/related_weight_table.rs",
+          "line": 34,
+          "symbol": "fn owned_weight_headers_and_table_switches_replay_qt_without_changing_cancelled_settings",
+          "commit": "928b29524"
         }
       ],
       "reference_recording": {
@@ -121,13 +146,24 @@
         "Namespace/weight questions use inline blocking panes in an Options-owned child rather than Qt modal child frames; warning text is shown inline. Deeper shared dialog/frame hierarchy is not claimed.",
         "Manage Tags currently supports local tag services. Related query computes the full corpus; configurable quick/medium/thorough time budgets, Qt large-population sampling and selected-main-tag search/exclusion mode are not implemented.",
         "Alternate tag-context service, repository Manage Tags and file-lookup script suggestions remain unavailable. Full shared suggested-tabs and default-page families remain Partial; this packet promotes no parent or alias.",
-        "Float results beyond recorded integer-truncation and bounded corpus cases, large-corpus top100 tie behavior, cross-status duplicate mappings and timed sampling remain unverified. Hosted Rust/model/native executions and authored PNGs are pending, not reported executed."
+        "Float results beyond recorded integer-truncation and bounded corpus cases, large-corpus top100 tie behavior, cross-status duplicate mappings and timed sampling remain unverified. Hosted Rust/model/native executions and authored PNGs are pending, not reported executed.",
+        "Qt displays search and result lists simultaneously; the native shared view selector preserves their separate selection/sort state. Column-width/reordering, cross-owner remembered header preference, and keyboard shift-anchor continuity through resort remain outside this bounded repair."
       ],
       "limits": [
         "Namespace/weight questions use inline blocking panes in an Options-owned child rather than Qt modal child frames; warning text is shown inline. Deeper shared dialog/frame hierarchy is not claimed.",
         "Manage Tags currently supports local tag services. Related query computes the full corpus; configurable quick/medium/thorough time budgets, Qt large-population sampling and selected-main-tag search/exclusion mode are not implemented.",
         "Alternate tag-context service, repository Manage Tags and file-lookup script suggestions remain unavailable. Full shared suggested-tabs and default-page families remain Partial; this packet promotes no parent or alias.",
-        "Float results beyond recorded integer-truncation and bounded corpus cases, large-corpus top100 tie behavior, cross-status duplicate mappings and timed sampling remain unverified. Hosted Rust/model/native executions and authored PNGs are pending, not reported executed."
+        "Float results beyond recorded integer-truncation and bounded corpus cases, large-corpus top100 tie behavior, cross-status duplicate mappings and timed sampling remain unverified. Hosted Rust/model/native executions and authored PNGs are pending, not reported executed.",
+        "Qt displays search and result lists simultaneously; the native shared view selector preserves their separate selection/sort state. Column-width/reordering, cross-owner remembered header preference, and keyboard shift-anchor continuity through resort remain outside this bounded repair."
+      ],
+      "additional_reference_recordings": [
+        {
+          "recorder": "oracle/record_related_weight_table.py",
+          "fixture": "oracle/fixtures/related_weight_table.json",
+          "executed_utc": "2026-10-05 01:28:32–01:28:34 UTC",
+          "execution": "Actual Qt detached weights tables, real header sort and Add selection; only modal namespace/weight answers scripted. Private copied basic DB; reference source untouched.",
+          "commit": "928b29524"
+        }
       ]
     }
   ],
