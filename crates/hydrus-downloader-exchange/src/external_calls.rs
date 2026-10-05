@@ -252,3 +252,35 @@ pub fn decode_manager(raw: &str) -> Result<Manager> {
             .collect::<Result<_>>()?,
     })
 }
+
+/// Defaults emitted by the executed reference factory, for every platform.
+/// The list owner generates new keys and resolves duplicate names on insertion.
+pub fn defaults(platform_only: bool) -> Result<Vec<Callable>> {
+    let mut calls = decode_text(include_str!("external_call_defaults.json"))?;
+    if platform_only {
+        calls.retain(|call| {
+            let name = call.name.as_str();
+            if name.starts_with("Default OS ") {
+                return true;
+            }
+            if cfg!(target_os = "macos") {
+                name.ends_with("(macOS)")
+            } else if cfg!(windows) {
+                name.ends_with("(Windows)")
+                    || name.starts_with("firefox ") && !name.ends_with("(macOS)")
+            } else {
+                !name.ends_with("(Windows)") && !name.ends_with("(macOS)")
+            }
+        });
+    }
+    Ok(calls)
+}
+
+/// Export calls in the reference compressed PNG carrier.
+pub fn encode_png(calls: &[Callable]) -> Result<Vec<u8>> {
+    crate::transport::encode_payload(&encode_text(calls)?)
+}
+/// Decode a bounded reference PNG before the owner stages any calls.
+pub fn decode_png(bytes: &[u8]) -> Result<Vec<Callable>> {
+    decode_text(&crate::transport::decode_payload(bytes)?)
+}

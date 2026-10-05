@@ -1,4 +1,648 @@
 {
+  "warning_cases": [
+    {
+      "call": [
+        156,
+        "warning boundary",
+        1,
+        [
+          "0a710ce313c334b2d37b555837da84a6e6c05fcd589892dde046a4b10762e08d",
+          1,
+          [
+            157,
+            1,
+            [
+              "owned-program",
+              [
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a"
+              ],
+              [
+                26,
+                3,
+                []
+              ],
+              15,
+              false,
+              true,
+              true
+            ]
+          ]
+        ]
+      ],
+      "warning": null
+    },
+    {
+      "call": [
+        156,
+        "warning boundary",
+        1,
+        [
+          "c5f97a44c5e725f54b86299a55033e130ffd255b31bde50b3414dd69fa9a7b22",
+          1,
+          [
+            157,
+            1,
+            [
+              "owned-program",
+              [
+                "\u6f22\ud83d\ude00'\"",
+                "\u6f22\ud83d\ude00'\"",
+                "\u6f22\ud83d\ude00'\"",
+                "\u6f22\ud83d\ude00'\"",
+                "\u6f22\ud83d\ude00'\"",
+                "\u6f22\ud83d\ude00'\"",
+                "\u6f22\ud83d\ude00'\"",
+                "\u6f22\ud83d\ude00'\"",
+                "\u6f22\ud83d\ude00'\"",
+                "\u6f22\ud83d\ude00'\"",
+                "\u6f22\ud83d\ude00'\"",
+                "\u6f22\ud83d\ude00'\"",
+                "\u6f22\ud83d\ude00'\"",
+                "\u6f22\ud83d\ude00'\"",
+                "\u6f22\ud83d\ude00'\"",
+                "\u6f22\ud83d\ude00'\"",
+                "\u6f22\ud83d\ude00'\""
+              ],
+              [
+                26,
+                3,
+                []
+              ],
+              15,
+              false,
+              true,
+              true
+            ]
+          ]
+        ]
+      ],
+      "warning": "There are more than 16 parameters: ['\u6f22\ud83d\ude00\\'\"', '\u6f22\ud83d\ude00\\'\"', '\u6f22\ud83d\ude00\\'\"', '\u6f22\ud83d\ude00\\'\"', '\u6f22\ud83d\ude00\\'\"', '\u6f22\ud83d\ude00\\'\"', '\u6f22\ud83d\ude00\\'\"', '\u6f22\ud83d\ude00\\'\"', '\u6f22\ud83d\ude00\\'\"', '\u6f22\ud83d\ude00\\'\"', '\u6f22\ud83d\ude00\\'\"', '\u6f22\ud83d\ude00\\'\"', '\u6f22\ud83d\ude00\\'\"', '\u6f22\ud83d\ude00\\'\"', '\u6f22\ud83d\ude00\\'\"', '\u6f22\ud83d\ude00\\'\"', '\u6f22\ud83d\ude00\\'\"']"
+    },
+    {
+      "call": [
+        156,
+        "warning boundary",
+        1,
+        [
+          "168caf4fd4a60171bf85de89a4292b65f6a413621d3b827c826dd9d8c7859162",
+          1,
+          [
+            157,
+            1,
+            [
+              "owned-program",
+              [
+                "\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22"
+              ],
+              [
+                26,
+                3,
+                []
+              ],
+              15,
+              false,
+              true,
+              true
+            ]
+          ]
+        ]
+      ],
+      "warning": null
+    },
+    {
+      "call": [
+        156,
+        "warning boundary",
+        1,
+        [
+          "d373e9d4963ecbe878280dbc7d8ae48f219652aeaf494987bd8bde5711bd5129",
+          1,
+          [
+            157,
+            1,
+            [
+              "owned-program",
+              [
+                "\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22"
+              ],
+              [
+                26,
+                3,
+                []
+              ],
+              15,
+              false,
+              true,
+              true
+            ]
+          ]
+        ]
+      ],
+      "warning": "The parameters' total length is over 1024 characters: ['\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22\u6f22']"
+    },
+    {
+      "call": [
+        156,
+        "warning boundary",
+        1,
+        [
+          "dcb747b306dd2998eeb1e72f7cb6ee6f4bbb9ed66e0d3326feca8e21aab755dd",
+          1,
+          [
+            157,
+            1,
+            [
+              "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              [
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a",
+                "a"
+              ],
+              [
+                26,
+                3,
+                []
+              ],
+              15,
+              false,
+              true,
+              true
+            ]
+          ]
+        ]
+      ],
+      "warning": "The executable path is over 256 characters: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n\nThere are more than 16 parameters: ['a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a']"
+    }
+  ],
+  "default_routes": [
+    {
+      "route": "all",
+      "choices": [],
+      "names": [
+        "chrome (file path)",
+        "chrome (file path) (macOS)",
+        "chrome (file path) (Windows)",
+        "Default OS File Launch",
+        "firefox (file path)",
+        "firefox (file path) (macOS)",
+        "gio open (Gnome)",
+        "kioclient exec (KDE)",
+        "prior selection",
+        "xdg-open",
+        "chrome (URL)",
+        "chrome (URL) (macOS)",
+        "chrome (URL) (Windows)",
+        "Default OS URL Launch",
+        "firefox (URL)",
+        "firefox (URL) (macOS)"
+      ],
+      "selected": [
+        "chrome (file path)",
+        "chrome (file path) (macOS)",
+        "chrome (file path) (Windows)",
+        "Default OS File Launch",
+        "firefox (file path)",
+        "firefox (file path) (macOS)",
+        "gio open (Gnome)",
+        "kioclient exec (KDE)",
+        "prior selection",
+        "xdg-open",
+        "chrome (URL)",
+        "chrome (URL) (macOS)",
+        "chrome (URL) (Windows)",
+        "Default OS URL Launch",
+        "firefox (URL)",
+        "firefox (URL) (macOS)"
+      ],
+      "fresh_unique_keys": true
+    },
+    {
+      "route": "some",
+      "choices": [
+        {
+          "title": "select the defaults to add",
+          "choices": [
+            [
+              "Default OS File Launch",
+              false
+            ],
+            [
+              "xdg-open",
+              false
+            ],
+            [
+              "gio open (Gnome)",
+              false
+            ],
+            [
+              "kioclient exec (KDE)",
+              false
+            ],
+            [
+              "firefox (file path)",
+              false
+            ],
+            [
+              "chrome (file path)",
+              false
+            ],
+            [
+              "chrome (file path) (Windows)",
+              false
+            ],
+            [
+              "firefox (file path) (macOS)",
+              false
+            ],
+            [
+              "chrome (file path) (macOS)",
+              false
+            ],
+            [
+              "Default OS URL Launch",
+              false
+            ],
+            [
+              "firefox (URL)",
+              false
+            ],
+            [
+              "chrome (URL)",
+              false
+            ],
+            [
+              "chrome (URL) (Windows)",
+              false
+            ],
+            [
+              "firefox (URL) (macOS)",
+              false
+            ],
+            [
+              "chrome (URL) (macOS)",
+              false
+            ]
+          ]
+        }
+      ],
+      "names": [
+        "Default OS File Launch",
+        "prior selection",
+        "Default OS URL Launch"
+      ],
+      "selected": [
+        "Default OS File Launch",
+        "prior selection",
+        "Default OS URL Launch"
+      ],
+      "fresh_unique_keys": true
+    },
+    {
+      "route": "all-platform",
+      "choices": [],
+      "names": [
+        "chrome (file path)",
+        "Default OS File Launch",
+        "firefox (file path)",
+        "gio open (Gnome)",
+        "kioclient exec (KDE)",
+        "prior selection",
+        "xdg-open",
+        "chrome (URL)",
+        "Default OS URL Launch",
+        "firefox (URL)"
+      ],
+      "selected": [
+        "chrome (file path)",
+        "Default OS File Launch",
+        "firefox (file path)",
+        "gio open (Gnome)",
+        "kioclient exec (KDE)",
+        "prior selection",
+        "xdg-open",
+        "chrome (URL)",
+        "Default OS URL Launch",
+        "firefox (URL)"
+      ],
+      "fresh_unique_keys": true
+    }
+  ],
+  "duplicate_warnings": [
+    {
+      "accept": false,
+      "questions": [
+        {
+          "message": "Hey, a call you are trying to import, \"b unusual\", seems to be a bit weird. Are you sure you want to import it? The problem is:\n\nThe executable path is over 256 characters: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        }
+      ],
+      "error": "User declined to add--the import looked weird.",
+      "names": [
+        "a valid",
+        "b unusual",
+        "c tail",
+        "a valid (1)"
+      ],
+      "selected": [
+        "a valid",
+        "b unusual",
+        "c tail"
+      ],
+      "new_keys_fresh": true
+    },
+    {
+      "accept": true,
+      "questions": [
+        {
+          "message": "Hey, a call you are trying to import, \"b unusual\", seems to be a bit weird. Are you sure you want to import it? The problem is:\n\nThe executable path is over 256 characters: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        }
+      ],
+      "error": null,
+      "names": [
+        "a valid",
+        "a valid (1)",
+        "b unusual",
+        "b unusual (1)",
+        "c tail",
+        "c tail (1)"
+      ],
+      "selected": [
+        "a valid",
+        "a valid (1)",
+        "b unusual",
+        "b unusual (1)",
+        "c tail",
+        "c tail (1)"
+      ],
+      "new_keys_fresh": true
+    }
+  ],
+  "deletes": [
+    {
+      "accept": false,
+      "questions": [
+        {
+          "message": "Remove all selected?"
+        }
+      ],
+      "names": [
+        "Default OS File Launch",
+        "Default OS URL Launch",
+        "synthetic call"
+      ]
+    },
+    {
+      "accept": true,
+      "questions": [
+        {
+          "message": "Remove all selected?"
+        }
+      ],
+      "names": [
+        "synthetic call"
+      ]
+    }
+  ],
+  "sort_input": [
+    [
+      156,
+      "Zulu",
+      1,
+      [
+        "e4c93d8d8f6205cc67426df72be82566619c190f31384477689f1fc50bbc69d9",
+        1,
+        [
+          157,
+          1,
+          [
+            "same-program",
+            [
+              "literal"
+            ],
+            [
+              26,
+              3,
+              []
+            ],
+            15,
+            false,
+            true,
+            true
+          ]
+        ]
+      ]
+    ],
+    [
+      156,
+      "alpha",
+      1,
+      [
+        "15bc531526e15ed2c92c64515aefc8cdb430543c1506b555e8cde7d0db4f95ef",
+        1,
+        [
+          157,
+          1,
+          [
+            "same-program",
+            [
+              "literal"
+            ],
+            [
+              26,
+              3,
+              []
+            ],
+            15,
+            false,
+            true,
+            true
+          ]
+        ]
+      ]
+    ],
+    [
+      156,
+      "Stra\u00dfe",
+      1,
+      [
+        "20c4dfe7f36c7168c0c8423fc1d291462e1dbdba0aaa248841c5e4eb86eb63ae",
+        1,
+        [
+          157,
+          1,
+          [
+            "same-program",
+            [
+              "literal"
+            ],
+            [
+              26,
+              3,
+              []
+            ],
+            15,
+            false,
+            true,
+            true
+          ]
+        ]
+      ]
+    ],
+    [
+      156,
+      "STRASSE",
+      1,
+      [
+        "11a1c5da562d956990a099f9306dcd4e47dda3b61954fe443a58e2bdfc5bd209",
+        1,
+        [
+          157,
+          1,
+          [
+            "same-program",
+            [
+              "literal"
+            ],
+            [
+              26,
+              3,
+              []
+            ],
+            15,
+            false,
+            true,
+            true
+          ]
+        ]
+      ]
+    ]
+  ],
+  "sort_cases": [
+    {
+      "column": 0,
+      "ascending": true,
+      "names": [
+        "alpha",
+        "Stra\u00dfe",
+        "STRASSE",
+        "Zulu"
+      ]
+    },
+    {
+      "column": 0,
+      "ascending": false,
+      "names": [
+        "Zulu",
+        "Stra\u00dfe",
+        "STRASSE",
+        "alpha"
+      ]
+    },
+    {
+      "column": 1,
+      "ascending": true,
+      "names": [
+        "alpha",
+        "Stra\u00dfe",
+        "STRASSE",
+        "Zulu"
+      ]
+    },
+    {
+      "column": 1,
+      "ascending": false,
+      "names": [
+        "Zulu",
+        "Stra\u00dfe",
+        "STRASSE",
+        "alpha"
+      ]
+    },
+    {
+      "column": 2,
+      "ascending": true,
+      "names": [
+        "alpha",
+        "Stra\u00dfe",
+        "STRASSE",
+        "Zulu"
+      ]
+    },
+    {
+      "column": 2,
+      "ascending": false,
+      "names": [
+        "Zulu",
+        "Stra\u00dfe",
+        "STRASSE",
+        "alpha"
+      ]
+    }
+  ],
+  "before_duplicate_selected": [
+    "alpha"
+  ],
+  "duplicate_selected": [
+    "alpha (1)",
+    "alpha"
+  ],
+  "defaults_by_platform": {
+    "Linux": [
+      "Default OS File Launch",
+      "xdg-open",
+      "gio open (Gnome)",
+      "kioclient exec (KDE)",
+      "firefox (file path)",
+      "chrome (file path)",
+      "Default OS URL Launch",
+      "firefox (URL)",
+      "chrome (URL)"
+    ],
+    "Windows": [
+      "Default OS File Launch",
+      "firefox (file path)",
+      "chrome (file path) (Windows)",
+      "Default OS URL Launch",
+      "firefox (URL)",
+      "chrome (URL) (Windows)"
+    ],
+    "macOS": [
+      "Default OS File Launch",
+      "firefox (file path) (macOS)",
+      "chrome (file path) (macOS)",
+      "Default OS URL Launch",
+      "firefox (URL) (macOS)",
+      "chrome (URL) (macOS)"
+    ]
+  },
   "original_rows": [
     [
       "chrome (file path)",
@@ -160,7 +804,7 @@
             "edited \u65e5\u672c",
             1,
             [
-              "966cb688985c6a4b3f1dd465d3b548327a269ec9b85def38c30bb22b9d0c9b7a",
+              "d3dd9be33e721bfe04e5066957becabdb65ddcdcba562a2298f89c031f346c20",
               1,
               [
                 157,
@@ -372,7 +1016,7 @@
             "synthetic call (1)",
             1,
             [
-              "831fbac077612053f71b2b5c8254e89049ae95efe96cb092624e0d9b64ce8b7a",
+              "8e67d437322dbd8e9f8ba23faea5b9c92cda9b875fda95d5c809de50ae8b8234",
               1,
               [
                 157,
@@ -608,7 +1252,7 @@
     "Default OS URL Launch",
     "firefox (URL)"
   ],
-  "export": "[26, 3, [[2, [156, \"edited \\u65e5\\u672c\", 1, [\"966cb688985c6a4b3f1dd465d3b548327a269ec9b85def38c30bb22b9d0c9b7a\", 1, [157, 1, [\"/workspace/.cloud/hydrus/pyenv/bin/python\", [\"-c\", \"import pathlib,sys; pathlib.Path(sys.argv[1]).write_text(\\\"synthetic \\u65e5\\u672c\\\", encoding=\\\"utf-8\\\")\", \"%path%\"], [26, 3, [[2, [159, 1, [0, \"%path%\", [84, 1, [26, 3, []]]]]]]], 15, false, true, true]]]]], [2, [156, \"synthetic call (1)\", 1, [\"831fbac077612053f71b2b5c8254e89049ae95efe96cb092624e0d9b64ce8b7a\", 1, [157, 1, [\"/workspace/.cloud/hydrus/pyenv/bin/python\", [\"-c\", \"import pathlib,sys; pathlib.Path(sys.argv[1]).write_text(\\\"synthetic \\u65e5\\u672c\\\", encoding=\\\"utf-8\\\")\", \"%path%\"], [26, 3, [[2, [159, 1, [0, \"%path%\", [84, 1, [26, 3, []]]]]]]], 15, false, true, true]]]]]]]",
+  "export": "[26, 3, [[2, [156, \"edited \\u65e5\\u672c\", 1, [\"d3dd9be33e721bfe04e5066957becabdb65ddcdcba562a2298f89c031f346c20\", 1, [157, 1, [\"/workspace/.cloud/hydrus/pyenv/bin/python\", [\"-c\", \"import pathlib,sys; pathlib.Path(sys.argv[1]).write_text(\\\"synthetic \\u65e5\\u672c\\\", encoding=\\\"utf-8\\\")\", \"%path%\"], [26, 3, [[2, [159, 1, [0, \"%path%\", [84, 1, [26, 3, []]]]]]]], 15, false, true, true]]]]], [2, [156, \"synthetic call (1)\", 1, [\"8e67d437322dbd8e9f8ba23faea5b9c92cda9b875fda95d5c809de50ae8b8234\", 1, [157, 1, [\"/workspace/.cloud/hydrus/pyenv/bin/python\", [\"-c\", \"import pathlib,sys; pathlib.Path(sys.argv[1]).write_text(\\\"synthetic \\u65e5\\u672c\\\", encoding=\\\"utf-8\\\")\", \"%path%\"], [26, 3, [[2, [159, 1, [0, \"%path%\", [84, 1, [26, 3, []]]]]]]], 15, false, true, true]]]]]]]",
   "after_import": [
     "chrome (file path)",
     "Default OS File Launch",
@@ -632,6 +1276,21 @@
     },
     {
       "message": "Hey, you really need to put an exe name/path in the path box. Are you sure you want to save this?"
+    },
+    {
+      "message": "Want to see the calls just for your platform (Linux) or everything?",
+      "yes_label": "just for my platform",
+      "no_label": "no, show me everything"
+    },
+    {
+      "message": "Want to see the calls just for your platform (Linux) or everything?",
+      "yes_label": "just for my platform",
+      "no_label": "no, show me everything"
+    },
+    {
+      "message": "Want to see the calls just for your platform (Linux) or everything?",
+      "yes_label": "just for my platform",
+      "no_label": "no, show me everything"
     }
   ],
   "clean": [
@@ -698,7 +1357,7 @@
       "Default OS File Launch",
       1,
       [
-        "255ca7c4a47c0d5ecd38ae15cfb4c43f3e40c5109248ff0b9610a2bbd10e6d9b",
+        "c97381a3fa736f10586ef1ee80406111bd34022bdbd7c05dc118a57d8ae8ad39",
         1,
         [
           160,
@@ -712,7 +1371,7 @@
       "xdg-open",
       1,
       [
-        "268318a6d43042fcb6f2e3808efade1f151cd9b372a5ff850be5a47cb18307ed",
+        "3ac477f55c9ac8fcbc86849b7d6a5ebe52e01269fe84a0bbe0ca06a5e7b71e09",
         1,
         [
           157,
@@ -761,7 +1420,7 @@
       "gio open (Gnome)",
       1,
       [
-        "b0ba7e5e6625de3d6e8e4771c2b4226b314a40cfe9e74b3efe0ff9ea0ef7c104",
+        "fd86c1a44e6f0baf199c2930ae1d14051601f7936ddffd5704aaf20f0d842925",
         1,
         [
           157,
@@ -811,7 +1470,7 @@
       "kioclient exec (KDE)",
       1,
       [
-        "cdc74dcc7342ba6295f9203435465f573de955184dfdc99a20349b00a22e72f1",
+        "cc898d0e119689a97242b9dc410827f4500d1cbaec5753564a518010a6093ebf",
         1,
         [
           157,
@@ -861,7 +1520,7 @@
       "firefox (file path)",
       1,
       [
-        "d646752382ed9fa4477ea530800ff4c5475e6a8ebf58ba1cb166f861db224449",
+        "781710cc32042f5f2885a37a5c687dea45831de804e263c11cb4a74daa9066e3",
         1,
         [
           157,
@@ -910,7 +1569,7 @@
       "chrome (file path)",
       1,
       [
-        "7543e38836b44399d496a87dd570c5532e53d1e0fa6fc981464a121189fa7f9b",
+        "eb0a252e2b9bbc34aa77c8a576d2effa3f92871c5174b1c11476872b85a40132",
         1,
         [
           157,
@@ -959,7 +1618,7 @@
       "chrome (file path) (Windows)",
       1,
       [
-        "18b7126f98ff54151920912edefa5442e3aa8eea3856de9c3190e86045b11237",
+        "3e783b552ea9e7f04266899a6a96e0a073e8318b9a21c14e25f4da0d61dd941b",
         1,
         [
           157,
@@ -1008,7 +1667,7 @@
       "firefox (file path) (macOS)",
       1,
       [
-        "4ab7e217a921e3efd395d2bd2268334ab176c1ae7a54d759632ff774a5bed759",
+        "e25b100e813564fd38be1d6cbd22eb90ffb7e456f17a079e13a6875358a64313",
         1,
         [
           157,
@@ -1059,7 +1718,7 @@
       "chrome (file path) (macOS)",
       1,
       [
-        "f95a312b85538325fb82e1bb85086862bbaa83b031c4dddcfa91046f6150ac20",
+        "81598b068e16972d7ca3e4565b43748b9c2ee1575c3d90cf68944309dcaaecf9",
         1,
         [
           157,
@@ -1110,7 +1769,7 @@
       "Default OS URL Launch",
       1,
       [
-        "c4af4937cbd412bffae70a7cd9b5bc1939b9de616fbef2d4aeeb0e9a00e77630",
+        "f62d1fa381591ef5d317eb9adf9fd6ce39fee1a9205cd3c6280094a4f40e787f",
         2,
         [
           161,
@@ -1124,7 +1783,7 @@
       "firefox (URL)",
       1,
       [
-        "a2c9e0c8ba72ce211c63bf48d379a57ffab17a365c41d251db2932a3e5ec7ff9",
+        "7751c90e07070f9347fff7d3809ddeb0f0f6c036c2e960fe02f60e54fd022bc4",
         2,
         [
           157,
@@ -1173,7 +1832,7 @@
       "chrome (URL)",
       1,
       [
-        "7b59b367c3f49d66dcadace53b1509470f72bb18931a9248aa7c23e12d05d515",
+        "e87dc2c78e1b6ab6f098af8a193508492d2b8faedbc3f61d9354c352a5001a49",
         2,
         [
           157,
@@ -1222,7 +1881,7 @@
       "chrome (URL) (Windows)",
       1,
       [
-        "c911e1341444547d45b52ea5046e369acbc52081e29293d012bd59514a6ecbcf",
+        "d3236233d048579c0e1301a3b7494c4f3fddb001c927ca4a1683dd79201def99",
         2,
         [
           157,
@@ -1271,7 +1930,7 @@
       "firefox (URL) (macOS)",
       1,
       [
-        "99ecbf8bdb4366beb1d245d94c7e2a8ee9bf92780c31d28699ce688e0f8a3256",
+        "966fa00a8ac41c7a3d63797888e7404a010c56629c141a6cc124c4b64bb02bd5",
         2,
         [
           157,
@@ -1322,7 +1981,7 @@
       "chrome (URL) (macOS)",
       1,
       [
-        "57f70833179abdf797a26c6209e6fc408f9a09dc9bed3e71e6084011efb362c4",
+        "5a6386ce8df89c8571d84685e0d1e2a7bd60e594437710fd9c3fd7e66c1de45a",
         2,
         [
           157,

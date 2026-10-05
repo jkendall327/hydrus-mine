@@ -386,7 +386,8 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
         // in a child window, covered by dedicated regex/write-tag/gallery-source/import-options/namespace-queue recordings.
         if matches!(
             option.kind,
-            Kind::RegexFavourites
+            Kind::ExternalCalls
+                | Kind::RegexFavourites
                 | Kind::DeletionReasons
                 | Kind::FrameLocations
                 | Kind::FavouriteTags

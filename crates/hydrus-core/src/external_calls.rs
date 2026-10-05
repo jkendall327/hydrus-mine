@@ -191,6 +191,16 @@ pub fn clean_arguments(arguments: &[String]) -> Vec<String> {
         .map(|s| s.split_whitespace().collect::<Vec<_>>().join(" "))
         .collect()
 }
+fn python_strings(values: &[String]) -> String {
+    format!(
+        "[{}]",
+        values
+            .iter()
+            .map(|s| crate::url::string_descriptions::python_repr_str(s))
+            .collect::<Vec<_>>()
+            .join(", ")
+    )
+}
 impl Process {
     /// Build the final argument vector, with no shell interpretation.
     pub fn command(&self, inputs: &Inputs) -> Result<Vec<String>, String> {
@@ -217,7 +227,8 @@ impl Process {
                     .next()
                     .ok_or_else(|| {
                         format!(
-                            "The input parameter \"{values:?}\" did not string-process to anything!"
+                            "The input parameter \"{}\" did not string-process to anything!",
+                            python_strings(values)
                         )
                     })?;
                 used[i] = true;
@@ -290,14 +301,14 @@ impl Process {
         }
         if self.arguments.len() > 16 {
             issues.push(format!(
-                "There are more than 16 parameters: {:?}",
-                self.arguments
+                "There are more than 16 parameters: {}",
+                python_strings(&self.arguments)
             ));
         }
         if self.arguments.join(" ").chars().count() > 1024 {
             issues.push(format!(
-                "The parameters' total length is over 1024 characters: {:?}",
-                self.arguments
+                "The parameters' total length is over 1024 characters: {}",
+                python_strings(&self.arguments)
             ));
         }
         (!issues.is_empty()).then(|| issues.join("\n\n"))

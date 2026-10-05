@@ -3066,3 +3066,27 @@ end; enabled scrolling moves the overflowing bar's viewport and preserves page
 selection. This works on horizontal and vertical notebook rows; Apply refreshes
 the live bars and Cancel leaves saved settings unchanged.
 Options > tag suggestions opens an owned related-weight draft with separate search/suggested namespace tables. Reserved and duplicate namespace warnings, 0–10,000 percent values, protected catch-all rows, add/edit/delete, and question Cancel follow the recorded Qt editor. Child Apply stages the tables; parent Apply persists them, while parent Cancel closes and invalidates the child. Already-open Manage Tags related lists re-query saved weight changes through one owned worker. Related suggestions preserve score order, filter tags already present on all captured files, and only add mappings when activated.
+
+
+Options > external programs now has a staged registered-call table with name,
+job and command columns. Add/Edit own a detached callable editor and command
+queue; parent Cancel discards accepted child drafts, and parent Apply persists
+registered calls. Delete uses the reference's ordinary captured-selection
+question, including OS-launch entries. Duplicate generates fresh keys and
+nonduplicate names, retains prior selection and asks about unusually large
+commands; declining a later warning preserves earlier unselected, appended
+copies and aborts the remainder. Add Defaults exposes both “add them all” and
+“select from a list”, with the reference platform question and factory calls.
+Selected defaults gain fresh keys and names alongside the prior selection.
+
+Supported process calls expose enabled input rules, tokens and the existing
+string-processor child, an ordered command-argument editor, timeout/flags and
+preview/test inputs. Reopening a saved process and pressing its Test Call runs
+its argument vector in an owned worker. Closing the owner cancels and reaps its
+direct child; output is discarded, and long-lived test calls use a 15 second
+deadline. Clipboard/JSON-file/PNG exchange reviews supported callable exports
+before changing the Options draft. These editor/exchange/runtime families remain
+partial: legacy executable-manager import and missing OS-call regeneration,
+per-type launch routing, OS-launch test execution, rule clipboard controls,
+full process output/error handling and some command/dialog interactions are not
+ported. The complete scope is recorded in the external-call parity proposal.

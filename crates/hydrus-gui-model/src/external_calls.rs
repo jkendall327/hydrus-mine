@@ -1,9 +1,13 @@
 //! Detached Options call list and local execution of explicitly tested calls.
-//! Parent drafts own keys and selection; subprocesses never interpret a shell.
+//! Parent drafts own keys and selection; direct process calls use argument vectors.
 use crate::list_selection::ListSelection;
 use hydrus_core::external_calls::{ActualCall, Callable, Inputs, Manager, Process};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
+use std::sync::{
+    Arc,
+    atomic::{AtomicBool, Ordering},
+};
 use std::time::{Duration, Instant};
 
 /// Staged external-call rows, preserving selection across sorting and edits.
@@ -20,24 +24,25 @@ impl Table {
         let mut table = Self {
             manager,
             selection: ListSelection::default(),
-            sort_column: 0,
+            sort_column: 1,
             ascending: true,
         };
-        table.sort(0, true);
+        table.sort(1, true);
         table
     }
     /// Sort by the clicked reference name/job/command column.
     pub fn sort(&mut self, column: usize, ascending: bool) {
         self.sort_column = column.min(2);
         self.ascending = ascending;
-        self.manager.calls.sort_by_key(|c| match self.sort_column {
-            1 => c.pipeline.label().to_owned(),
-            2 => c.call.description(),
-            _ => c.name.clone(),
+        self.manager.calls.sort_by(|a, b| {
+            let key = |c: &Callable| {
+                let tuple = [c.name.as_str(), c.pipeline.label(), &c.call.description()]
+                    .map(hydrus_core::casefold::casefold);
+                (tuple[self.sort_column].clone(), tuple)
+            };
+            let order = key(a).cmp(&key(b));
+            if ascending { order } else { order.reverse() }
         });
-        if !ascending {
-            self.manager.calls.reverse();
-        }
     }
     /// Extended selection, retaining call identity rather than row positions.
     pub fn click(&mut self, index: usize, ctrl: bool, shift: bool) {
@@ -54,11 +59,18 @@ impl Table {
             .collect()
     }
     /// Add/import/duplicate with a fresh key and a nonduplicate name.
-    pub fn add(&mut self, mut call: Callable) {
+    pub fn add(&mut self, call: Callable) -> [u8; 32] {
+        let key = self.append(call);
+        self.sort(self.sort_column, self.ascending);
+        key
+    }
+    /// Append an import prefix without sorting until the complete batch succeeds.
+    pub fn append(&mut self, mut call: Callable) -> [u8; 32] {
         self.nondupe_name(&mut call, None);
         call.regenerate_key();
+        let key = call.key;
         self.manager.calls.push(call);
-        self.sort(self.sort_column, self.ascending);
+        key
     }
     fn nondupe_name(&self, call: &mut Callable, except: Option<[u8; 32]>) {
         let original = call.name.clone();
@@ -88,9 +100,15 @@ impl Table {
     }
     /// Duplicate each selected call through the same fresh-identity path.
     pub fn duplicate(&mut self) {
-        for call in self.selected() {
-            self.add(call);
+        self.add_selected(self.selected());
+    }
+    /// Import/default/duplicate rows become selected alongside the prior selection.
+    pub fn add_selected(&mut self, calls: Vec<Callable>) {
+        let mut selected = self.selected().iter().map(|c| c.key).collect::<Vec<_>>();
+        for call in calls {
+            selected.push(self.add(call));
         }
+        self.selection.select_many(&selected);
     }
     /// Delete the selected snapshots only after their captured confirmation.
     pub fn delete(&mut self, keys: &[[u8; 32]]) {
@@ -166,18 +184,26 @@ fn process_command(process: &Process, inputs: &Inputs) -> Result<Command, String
     Ok(command)
 }
 /// Run an explicitly requested test with a finite deadline. Detached calls use
-/// the reference's forced 15-second test timeout. Output pipes cannot deadlock:
-/// stdout/stderr go to owned temporary files while the child is polled.
+/// the reference's forced 15-second test timeout. Current reference calls return
+/// no response parameters, so stdout/stderr are discarded with bounded storage.
 pub fn test_call(call: &ActualCall, inputs: &Inputs) -> Result<(), String> {
+    test_call_cancellable(call, inputs, &Arc::new(AtomicBool::new(false)))
+}
+/// Owner-scoped worker: cancellation kills and reaps its direct child. Descendant
+/// process groups are not owned; a launched program remains responsible for them.
+pub fn test_call_cancellable(
+    call: &ActualCall,
+    inputs: &Inputs,
+    cancel: &Arc<AtomicBool>,
+) -> Result<(), String> {
     let ActualCall::Process(process) = call else {
         return Err("The OS launcher test is not supported by this native test panel.".into());
     };
     let mut command = process_command(process, inputs)?;
-    let output = tempfile::tempfile().map_err(|e| e.to_string())?;
-    let errors = tempfile::tempfile().map_err(|e| e.to_string())?;
-    command
-        .stdout(Stdio::from(output))
-        .stderr(Stdio::from(errors));
+    command.stdout(Stdio::null()).stderr(Stdio::null());
+    if cancel.load(Ordering::Acquire) {
+        return Err("External call cancelled.".into());
+    }
     let mut child = command.spawn().map_err(|e| {
         format!(
             "Problem running external local process! Final call list was \"{:?}\", error was: {e}",
@@ -205,6 +231,11 @@ pub fn test_call(call: &ActualCall, inputs: &Inputs) -> Result<(), String> {
                 let _ = child.wait();
                 return Err(error.to_string());
             }
+        }
+        if cancel.load(Ordering::Acquire) {
+            let _ = child.kill();
+            let _ = child.wait();
+            return Err("External call cancelled.".into());
         }
         if started.elapsed() >= timeout {
             let _ = child.kill();

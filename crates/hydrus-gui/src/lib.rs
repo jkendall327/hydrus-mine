@@ -42,6 +42,7 @@ mod duplicates_sidebar;
 mod edit_subscription_window;
 mod embedded_metadata_window;
 pub mod export_files_window;
+pub mod external_call_window;
 pub mod favourites_window;
 pub mod file_history_window;
 mod file_log_window;
@@ -82,6 +83,7 @@ pub mod merge_options_window;
 pub mod mpv;
 pub mod network_header_approval;
 pub mod options_deletion;
+mod options_external_calls;
 pub mod options_frames;
 mod options_palette;
 mod options_window;
@@ -271,6 +273,8 @@ pub struct Bound {
     pub options_frame_child: options_frames::Slot,
     /// The Options-owned detached banner editor, while one is open.
     pub options_banner_child: tag_banner_window::Slot,
+    /// Options-owned registered-call and command child family.
+    pub options_external_calls: external_call_window::Slots,
     pub options_suggested_tags_slot: tag_suggestions_window::Slots,
     /// The Ctrl+P command palette while open.
     pub command_palette: command_palette_window::Slot,
@@ -1797,6 +1801,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let options_reason_child: options_deletion::Slot = Rc::default();
     let options_frame_child: options_frames::Slot = Rc::default();
     let options_banner_child: tag_banner_window::Slot = Rc::default();
+    let options_external_calls = external_call_window::Slots::default();
     let options_suggested_tags_slot = tag_suggestions_window::Slots::default();
     let about: Rc<RefCell<Option<AboutWindow>>> = Rc::default();
     let services_review: Rc<RefCell<Option<ServicesReviewWindow>>> = Rc::default();
@@ -1970,6 +1975,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let reason_slot = options_reason_child.clone();
                 let frame_slot = options_frame_child.clone();
                 let banner_slot = options_banner_child.clone();
+                let external_slots = options_external_calls.clone();
                 let suggested_slot = options_suggested_tags_slot.clone();
                 let checker_slot = checker_options.clone();
                 let viewer = viewer.clone();
@@ -2016,6 +2022,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         &frame_slot,
                         &banner_slot,
                         &suggested_slot,
+                        &external_slots,
                         applied,
                     ) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
@@ -3896,6 +3903,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         options_frame_child,
         options_banner_child,
         options_suggested_tags_slot,
+        options_external_calls,
         command_palette,
         about,
         services_review,
