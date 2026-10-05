@@ -7,7 +7,7 @@
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox, TextEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
-import { Asking } from "subscriptions.slint";
+import { Asking, SubscriptionExchangeButton } from "subscriptions.slint";
 import { PairList, PairRow } from "auto_resolution_review.slint";
 
 component Label inherits Text {
@@ -136,6 +136,8 @@ export component AutoResolutionRulesWindow inherits Window {
     callback add();
     callback edit();
     callback delete();
+    /// export to clipboard/json/png (0-2), import from them (3-5), duplicate (6)
+    callback exchange(int);
     callback chosen(int);
     callback cancelled();
     callback apply();
@@ -214,6 +216,13 @@ export component AutoResolutionRulesWindow inherits Window {
                 text: "delete";
                 enabled: root.any-selected;
                 clicked => { root.delete(); }
+            }
+            SubscriptionExchangeButton { label: "export"; choices: ["to clipboard", "to json file", "to png file"]; available: root.any-selected && !root.asking; selected(mode) => { root.exchange(mode); } }
+            SubscriptionExchangeButton { label: "import"; choices: ["from clipboard", "from json files", "from png files (you can also drag and drop pngs onto this list)"]; available: !root.asking; selected(mode) => { root.exchange(mode + 3); } }
+            Button {
+                text: "duplicate";
+                enabled: root.any-selected && !root.asking;
+                clicked => { root.exchange(6); }
             }
             Rectangle { horizontal-stretch: 1; }
             Button {

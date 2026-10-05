@@ -3448,6 +3448,13 @@ manual save-last-session action and wider debug GUI/style families remain unclai
   work to show: every service reads as synced and "work hard now!" never
   appears. Repository "waiting on" lines can't arise without repositories.
 
+## Auto-resolution rule export and import
+
+- Rules export as hydrus-rs JSON, not the reference's serialised form, so
+  the reference can't import them; hydrus-rs imports both. Comparator lists
+  don't have their own export/import buttons, and an image on the clipboard
+  isn't read (use "from png files").
+
 ## Options kept but not used
 
 - These Options rows are kept and edited, as the reference keeps them, but

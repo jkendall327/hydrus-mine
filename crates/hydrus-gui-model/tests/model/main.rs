@@ -7,6 +7,7 @@ mod about;
 mod active_predicates;
 mod animation_start;
 mod api_update_toasts;
+mod auto_resolution_exchange;
 mod auto_resolution_review;
 mod auto_resolution_rules;
 mod checker_options;

@@ -9,6 +9,7 @@ pub mod about;
 pub mod active_predicates;
 pub mod archive_delete;
 pub mod audio;
+pub mod auto_resolution_exchange;
 pub mod auto_resolution_preview;
 pub mod auto_resolution_review;
 pub mod auto_resolution_rules;

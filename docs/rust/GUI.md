@@ -1516,8 +1516,12 @@ boundaries; authored store/model/native regressions await hosted execution.
 (`src/auto_resolution_rules_window.rs`,
 `hydrus-gui-model/src/auto_resolution_rules.rs`): the rules with their
 search, comparison, action, progress and operation, its warning, and
-"add suggested" (the reference's suggested rules), "add", "edit" and
-"delete" (asking first); "apply" writes them (a changed rule starting its
+"add suggested" (the reference's suggested rules), "add", "edit",
+"delete" (asking first), "export" (to the clipboard, a json file or a png),
+"import" (from the clipboard, json files or pngs: hydrus-rs's exports or the
+reference's own serialised rules, one or a list, saying "N objects added!",
+and warning of anything that isn't a rule) and "duplicate"; imported and
+duplicated rules are named apart from the others; "apply" writes them (a changed rule starting its
 work over, as the reference's does). The rule editor sets the name,
 paused, operation and most pending pairs, and has tabs for the search
 (which pairs, the location both searches search, chosen in the
