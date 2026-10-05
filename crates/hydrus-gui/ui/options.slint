@@ -190,6 +190,8 @@ export component OptionsWindow inherits Window {
     callback none-toggled(int, bool);
     callback text-edited(int, string);
     callback directory-browse(int);
+    // Owner-local picker request, seeded from the current staged FilePicker text.
+    callback background-path-pick(string) -> string;
     callback choice-chosen(int, int);
     // (a sort's type, or its order, by its place in the row's lists)
     callback sort-chosen(int, int);

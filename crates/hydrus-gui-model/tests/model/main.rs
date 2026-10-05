@@ -66,6 +66,7 @@ mod subscriptions_dedupe;
 mod subscriptions_list;
 mod tag_filter_editor;
 mod tag_filter_favourites;
+mod thumbnail_appearance;
 mod thumbnail_cache;
 mod thumbnail_navigation;
 mod thumbnail_preview_selection;

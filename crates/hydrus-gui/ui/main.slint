@@ -12,7 +12,11 @@ export { NamespaceSortsWindow } from "namespace_sorts.slint";
 import { PageSplitter } from "page_splitter.slint";
 import { Button, CheckBox, ComboBox, LineEdit, ListView, ProgressIndicator, ScrollView, VerticalBox } from "std-widgets.slint";
 import { ListText, Theme } from "theme.slint";
+<<<<<<< HEAD
 import { WriteTagLineEdit } from "write_tag_line_edit.slint";
+=======
+export { Theme }
+>>>>>>> 3f5760cf8 (Implement owned thumbnail recovery and viewport backgrounds; document bounded paint parity)
 import { TagMenuOverlay } from "write_autocomplete.slint";
 import { ReadAutocomplete } from "read_autocomplete.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
@@ -89,6 +93,7 @@ export { FilenameTaggingWindow, MiscRow } from "filename_tagging.slint";
 export { ImportOptionsWindow, SizeLimit, ResolutionLimit, TagServiceRow } from "import_options.slint";
 export { ExportFolderWindow, FolderActionRow, FoldersWindow, ImportFolderWindow } from "folders.slint";
 
+<<<<<<< HEAD
 // an icon over a thumbnail (`src/thumbnail_icons.rs`'s `Icon`), and where
 // its top left corner goes in the thumbnail
 export struct ThumbIcon {
@@ -149,6 +154,10 @@ export struct Thumbnail {
     top: string,
     bottom: string,
 }
+=======
+import { ThumbnailCellPaint, ThumbnailPaint, Thumbnail } from "thumbnail_paint.slint";
+export { ThumbIcon, ThumbRating, ThumbBox, Thumbnail, ThumbnailPaint } from "thumbnail_paint.slint";
+>>>>>>> 3f5760cf8 (Implement owned thumbnail recovery and viewport backgrounds; document bounded paint parity)
 
 component Predicate inherits Rectangle {
     in property <string> text;
@@ -247,7 +256,7 @@ component ThumbnailGrid inherits ListView {
     in property <color> banner-bottom-background;
     in property <color> banner-bottom-text;
     property <length> span-width: self.thumbnail-width + 2 * self.margin;
-    property <length> span-height: self.thumbnail-height + 2 * self.margin;
+    out property <length> span-height: self.thumbnail-height + 2 * self.margin;
     out property <int> columns: max(1, floor(self.visible-width / self.span-width));
     // how many rows a page up or down moves
     out property <int> page-rows: max(1, floor(self.visible-height / self.span-height));
@@ -294,6 +303,7 @@ component ThumbnailGrid inherits ListView {
             for thumbnail in row.thumbnails: Rectangle {
                 width: root.thumbnail-width;
                 height: root.thumbnail-height;
+<<<<<<< HEAD
                 background: Theme.thumbnail-background(thumbnail.local,thumbnail.selected);
                 // (what is drawn over it stays in it, as the reference
                 // paints each thumbnail on an image of its own)
@@ -432,6 +442,15 @@ component ThumbnailGrid inherits ListView {
                         : icon.kind == 11 ? @image-url("../../../static/ipfs_petitioned_small.png")
                         : @image-url("../../../static/collection.png");
                 }
+=======
+                background: transparent;
+                // (what is drawn over it stays in it, as the reference
+                // paints each thumbnail on an image of its own)
+                clip: true;
+                if thumbnail.fade-opacity < 1: ThumbnailCellPaint { paint: thumbnail.previous; }
+                ThumbnailCellPaint { paint: thumbnail.paint; opacity: thumbnail.fade-opacity; }
+
+>>>>>>> 3f5760cf8 (Implement owned thumbnail recovery and viewport backgrounds; document bounded paint parity)
             }
         }
         // one for the row, not one per thumbnail: a click redraws the row
@@ -651,6 +670,7 @@ export component MainWindow inherits Window {
     out property <length> read-content-height;
     in property <int> highlighted: -1;
     in property <[ThumbnailRow]> thumbnail-rows;
+    in property <image> thumbnail-background;
     // a thumbnail's cell: the thumbnail bounding box and its border; and
     // the margin round each
     in property <length> thumbnail-width: 152px;
@@ -912,10 +932,13 @@ export component MainWindow inherits Window {
     callback menu-chosen(int);
     callback columns-changed(int);
     // how many thumbnails fit across the grid
+    out property <length> grid-visible-width: grid.visible-width;
+    out property <length> grid-visible-height: grid.visible-height;
     out property <int> grid-columns: grid.columns;
+    out property <int> grid-first-row: max(0, floor(-grid.content-y / grid.span-height));
+    out property <int> grid-visible-rows: ceil(grid.visible-height / grid.span-height) + 1;
     out property <length> grid-origin-x: grid.absolute-position.x;
     out property <length> grid-origin-y: grid.absolute-position.y;
-    out property <length> grid-visible-height: grid.visible-height;
     out property <length> grid-content-height: grid.content-height;
     changed grid-columns => { root.columns-changed(self.grid-columns); }
 
@@ -2073,7 +2096,22 @@ export component MainWindow inherits Window {
                         }
                         property <int> viewer-reveal-request: root.viewer-reveal-request;
                         changed viewer-reveal-request => { grid.scroll-to(root.viewer-reveal-index); }
+<<<<<<< HEAD
                         Rectangle { width:parent.width;height:parent.height;background:Theme.grid-background; }
+=======
+                        Rectangle {
+                            x: grid.x; y: grid.y;
+                            width: grid.visible-width; height: grid.visible-height;
+                            clip: true;
+                            Image {
+                                source: root.thumbnail-background;
+                                width: self.source.width * 1px;
+                                height: self.source.height * 1px;
+                                x: parent.width - self.width;
+                                y: parent.height - self.height;
+                            }
+                        }
+>>>>>>> 3f5760cf8 (Implement owned thumbnail recovery and viewport backgrounds; document bounded paint parity)
                         grid := ThumbnailGrid {
                             width: 100%;
                             height: 100%;

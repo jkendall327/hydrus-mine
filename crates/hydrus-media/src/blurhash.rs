@@ -140,9 +140,103 @@ pub fn blurhash(image: &Raster) -> Option<String> {
     Some(encode(image, cx, cy))
 }
 
+/// Hydrus's missing-thumbnail recovery: decode at at most 32x32, then
+/// use its OpenCV resize. The vendored decoder accepts all base83 size codes.
+pub fn decode_blurhash(code: &str, width: u32, height: u32) -> crate::error::Result<Raster> {
+    use crate::error::MediaError;
+    let invalid = || MediaError::damaged("invalid blurhash");
+    let bytes = code.as_bytes();
+    if bytes.len() < 6 || width == 0 || height == 0 {
+        return Err(invalid());
+    }
+    let number = |bytes: &[u8]| -> Option<u32> {
+        bytes.iter().try_fold(0, |value, byte| {
+            let digit = ALPHABET.iter().position(|candidate| candidate == byte)?;
+            Some(value * 83 + digit as u32)
+        })
+    };
+    let size = number(&bytes[..1]).ok_or_else(invalid)?;
+    let (cx, cy) = ((size % 9 + 1) as usize, (size / 9 + 1) as usize);
+    if bytes.len() != 4 + 2 * cx * cy {
+        return Err(invalid());
+    }
+    let maximum = f64::from(number(&bytes[1..2]).ok_or_else(invalid)? + 1) / 166.0;
+    let dc = number(&bytes[2..6]).ok_or_else(invalid)?;
+    // The reference does not mask the DC red channel before linearisation.
+    let linear = |value: u32| {
+        let value = f64::from(value) / 255.0;
+        if value <= 0.04045 {
+            value / 12.92
+        } else {
+            ((value + 0.055) / 1.055).powf(2.4)
+        }
+    };
+    let mut components = vec![[linear(dc >> 16), linear((dc >> 8) & 255), linear(dc & 255)]];
+    for ac in bytes[6..].chunks_exact(2) {
+        let ac = number(ac).ok_or_else(invalid)?;
+        let channel = |value| sign_pow((f64::from(value) - 9.0) / 9.0, 2.0) * maximum;
+        components.push([channel(ac / 361), channel((ac / 19) % 19), channel(ac % 19)]);
+    }
+    let (w, h) = if width > 32 || height > 32 {
+        (32, 32)
+    } else {
+        (width, height)
+    };
+    let mut pixels = Vec::with_capacity(w as usize * h as usize * 3);
+    for y in 0..h {
+        for x in 0..w {
+            let mut rgb = [0.0; 3];
+            for j in 0..cy {
+                for i in 0..cx {
+                    let basis = (std::f64::consts::PI * f64::from(x) * i as f64 / f64::from(w))
+                        .cos()
+                        * (std::f64::consts::PI * f64::from(y) * j as f64 / f64::from(h)).cos();
+                    for (channel, value) in rgb.iter_mut().enumerate() {
+                        *value += components[i + j * cx][channel] * basis;
+                    }
+                }
+            }
+            pixels.extend(rgb.map(|value| linear_to_srgb(value) as u8));
+        }
+    }
+    let image = Raster::new(w, h, 3, pixels)?;
+    if (w, h) == (width, height) {
+        return Ok(image);
+    }
+    // ResizeNumPyImage's historical square-source shortcut and filter choice.
+    let filter = if width > h || height > w {
+        Interpolation::Lanczos4
+    } else {
+        Interpolation::Area
+    };
+    Ok(crate::resample::resize(&image, width, height, filter))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn recovery_pixels_and_invalid_inputs_match_actual_reference_decoder() {
+        let fixture = hydrus_testkit::fixture_json("thumbnail_appearance.json");
+        for case in fixture["recovery"]["pixels"].as_array().unwrap() {
+            let result = decode_blurhash(
+                case["code"].as_str().unwrap(),
+                case["size"][0].as_u64().unwrap() as u32,
+                case["size"][1].as_u64().unwrap() as u32,
+            );
+            if let Some(expected) = case["pixels"].as_str() {
+                assert_eq!(
+                    result.unwrap().data(),
+                    hex::decode(expected).unwrap(),
+                    "{case}"
+                );
+            } else {
+                assert!(result.is_err(), "{case}");
+            }
+        }
+        assert!(decode_blurhash("000000", 0, 1).is_err());
+    }
 
     #[test]
     fn base83_encoding() {

@@ -3621,6 +3621,7 @@ viewer can still act on its files, while its forgotten source and successor page
 receive no row removals. Accepted client exit permanently retires its binding;
 a reopened client starts a fresh binding.
 
+<<<<<<< HEAD
 Media Playback > system now stages “Apply image ICC Profile colour adjustments”.
 It defaults on, imports the saved ClientOptions value, and persists on Apply;
 Cancel keeps the original value. Turning it off ignores embedded profiles while
@@ -3662,3 +3663,36 @@ Options > colours stages the independent override checkbox, current default/dark
 Saved roles reach the existing thumbnail grid, autocomplete editor/results, active/selected tag lists, manual export tags, preview, viewer and archive/delete/duplicate canvases through owner-local weak observers (at most 250ms). Thumbnail local/remote fill and border use current physical local-file-storage membership, including trash; retained disk bytes are insufficient. Help > darkmode toggles the legacy colourset, showing the reference warning first when override is off. Accepted close, rebind and the final Bound drop retire that action and its notice. Application Palette, stylesheet and OS colour scheme remain independently owned by their style controls.
 
 The real Qt fixture `gui_coloursets.json` records all 26 RGB values, staged/Cancel/reopen/serialization, actual QColorDialog acceptance/rejection, clipboard parsing, four Help cases and thirteen real backend colour consumers. Native/model regressions additionally cover field merges, retained legacy fallback, hidden/rebound owners, physical deletion/restoration and role painting. Source-only checks are complete; hosted Rust/renderer checks and exact-source PNG review remain required.
+=======
+Thumbnail appearance now stages the reference fade, blurhash-recovery, renderer
+choice and background-file controls. File browsing uses the currently typed
+draft, preserves it on picker Cancel, and changes storage only on Apply. Blank
+clears the background; whitespace remains a literal path. The image keeps its
+own dimensions at the clipped viewport's bottom-right, across scrolling and
+resizing. Both old and default-new reference renderers have that background
+consumer. Hidden/cancelled/retired Options owners cannot stage the new controls.
+
+Missing physical thumbnails first use the existing read/regeneration path. If
+that fails, enabled recovery decodes the file's saved blurhash at the reference
+thumbnail resolution (32x32 followed by OpenCV resizing for larger results).
+Disabled, absent or invalid blurhashes show the bundled hydrus thumbnail. This
+recovery never writes blurry pixels to physical thumbnail storage. A policy
+change invalidates cached/in-flight recovery; stored thumbnails remain independent
+of the ICC option. Earlier native imports fall back to retained ClientOptions
+until a native appearance value is saved.
+
+Pages admit their renderer choice at creation, so Apply affects future pages.
+Native decorated-cell snapshots retain image, selection, icons, ratings, banners
+and colours while their owned transition runs. The default transition uses the
+recorded 13/60-second policy; old-mode frame accumulation uses the older policy.
+Fade and renderer-tech parity remain Partial: software rendering applies opacity
+to individual primitives, rather than Qt's precomposed bitmap. This work does
+not claim whole-bitmap blend fidelity or Qt's separate rendering/layout engines.
+
+Actual Qt evidence is recorded in `thumbnail_appearance.json` and its three PNGs;
+the reference painter's inherited new-background method is driven at two scroll
+origins. Authored native regressions cover real loader recovery, held policy
+results, current typed browse seeds, hidden/cancelled owners, clipped/nonuniform
+background pixels, real selection transitions, cached revisits and retirement.
+Rust/Clippy/native execution and native PNG inspection are hosted-CI pending.
+>>>>>>> 3f5760cf8 (Implement owned thumbnail recovery and viewport backgrounds; document bounded paint parity)

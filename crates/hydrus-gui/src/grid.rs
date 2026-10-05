@@ -27,6 +27,10 @@ pub struct ThumbnailRows {
     cache: RefCell<Cache<slint::Image>>,
     clock: Instant,
     active: Cell<bool>,
+    paint_owner: Rc<()>,
+    admissions: RefCell<HashMap<HashId, u64>>,
+    next_admission: Cell<u64>,
+    paint_clock: RefCell<Rc<dyn Fn() -> Duration>>,
     loader: ThumbnailLoader,
     /// The window's scale factor, which thumbnails are decoded for.
     scale: Cell<f32>,
@@ -48,6 +52,11 @@ pub struct ThumbnailRows {
     /// collection's) say, read as its row is first shown.
     summaries: RefCell<hydrus_core::tag_summary::TagSummaries>,
     banners: RefCell<HashMap<HashId, (SharedString, SharedString)>>,
+    paints: RefCell<crate::thumbnail_paint::Paints>,
+    palette: RefCell<crate::thumbnail_paint::Palette>,
+    appearance: RefCell<hydrus_store::thumbnail_appearance::Preferences>,
+    visible: Cell<bool>,
+    background: RefCell<crate::thumbnail_background::Background>,
     notify: ModelNotify,
 }
 
@@ -70,7 +79,17 @@ impl ThumbnailRows {
             .store()
             .read(settings::get)
             .unwrap_or_default();
+        let appearance = page
+            .borrow()
+            .store()
+            .read(hydrus_store::thumbnail_appearance::load)
+            .unwrap_or_default();
+        let paint_start = Instant::now();
         Self {
+            paint_owner: Rc::new(()),
+            admissions: RefCell::default(),
+            next_admission: Cell::new(0),
+            paint_clock: RefCell::new(Rc::new(move || paint_start.elapsed())),
             page: RefCell::new(page),
             columns: Cell::new(1),
             cache: RefCell::new(Cache::new(policy)),
@@ -85,6 +104,11 @@ impl ThumbnailRows {
             rating_settings: Cell::new(ThumbnailRatingSettings::default()),
             summaries: RefCell::default(),
             banners: RefCell::default(),
+            paints: RefCell::default(),
+            palette: RefCell::default(),
+            appearance: RefCell::new(appearance),
+            visible: Cell::new(false),
+            background: RefCell::default(),
             notify: ModelNotify::default(),
         }
     }
@@ -144,6 +168,10 @@ impl ThumbnailRows {
                     bytes,
                     self.clock.elapsed(),
                 );
+                let admission = self.next_admission.get().wrapping_add(1);
+                self.next_admission.set(admission);
+                self.admissions.borrow_mut().insert(id, admission);
+                self.paints.borrow_mut().dirty(id);
                 if let Some(index) = pending.remove(&id) {
                     rows.insert(index / self.columns.get());
                 }
@@ -188,12 +216,22 @@ impl ThumbnailRows {
         self.generation.set(self.generation.get().wrapping_add(1));
         self.cache.borrow_mut().clear();
         self.pending.borrow_mut().clear();
+        self.admissions.borrow_mut().clear();
+        self.paints.borrow_mut().clear();
         self.notify.reset();
     }
     /// Permanently stop this GUI incarnation's cache and loader result publication.
     pub fn retire(&self) {
-        self.clear_thumbnail_cache();
-        self.active.set(false);
+        if !self.active.replace(false) {
+            return;
+        }
+        self.generation.set(self.generation.get().wrapping_add(1));
+        self.cache.borrow_mut().clear();
+        self.pending.borrow_mut().clear();
+        self.admissions.borrow_mut().clear();
+        self.paints.borrow_mut().clear();
+        self.background.borrow_mut().clear();
+        self.notify.reset();
     }
     /// Enforce saved preferences immediately, without changing decode generations.
     pub fn set_cache_policy(&self, policy: ThumbnailCacheSettings) {
@@ -207,6 +245,10 @@ impl ThumbnailRows {
     pub fn maintain_cache(&self) {
         if self.active.get() {
             self.cache.borrow_mut().maintain(self.clock.elapsed());
+            let retained: BTreeSet<_> = self.cache.borrow().keys().into_iter().collect();
+            self.admissions
+                .borrow_mut()
+                .retain(|id, _| retained.contains(id));
         }
     }
     /// Byte estimate for owned cache buffers (renderer-held clones are separate).
@@ -224,6 +266,7 @@ impl ThumbnailRows {
 
     /// Show another page's files.
     pub fn set_page(&self, page: Rc<RefCell<SearchPage>>) {
+        self.paints.borrow_mut().clear();
         *self.page.borrow_mut() = page;
         self.icon_facts.borrow_mut().clear();
         self.banners.borrow_mut().clear();
@@ -232,6 +275,7 @@ impl ThumbnailRows {
 
     /// The page's files changed.
     pub fn reset(&self) {
+        self.paints.borrow_mut().dirty_all();
         self.icon_facts.borrow_mut().clear();
         self.banners.borrow_mut().clear();
         self.notify.reset();
@@ -240,6 +284,7 @@ impl ThumbnailRows {
     /// A thumbnail's border, and its width and height with it.
     pub fn set_cell(&self, border: i32, width: i32, height: i32) {
         if self.cell.get() != (border, width, height) {
+            self.paints.borrow_mut().clear();
             self.cell.set((border, width, height));
             self.notify.reset();
         }
@@ -248,6 +293,7 @@ impl ThumbnailRows {
     /// Some files were changed (archived or rated, say): their icons and
     /// ratings are read again.
     pub fn forget_files(&self) {
+        self.paints.borrow_mut().dirty_all();
         self.icon_facts.borrow_mut().clear();
         for row in 0..self.row_count() {
             self.notify.row_changed(row);
@@ -257,6 +303,7 @@ impl ThumbnailRows {
     /// How ratings are drawn over thumbnails (the options').
     pub fn set_rating_settings(&self, settings: ThumbnailRatingSettings) {
         if self.rating_settings.get() != settings {
+            self.paints.borrow_mut().dirty_all();
             self.rating_settings.set(settings);
             self.notify.reset();
         }
@@ -265,6 +312,7 @@ impl ThumbnailRows {
     /// The tag summaries drawn over thumbnails (the options').
     pub fn set_summaries(&self, summaries: hydrus_core::tag_summary::TagSummaries) {
         if *self.summaries.borrow() != summaries {
+            self.paints.borrow_mut().dirty_all();
             *self.summaries.borrow_mut() = summaries;
             self.banners.borrow_mut().clear();
             self.notify.reset();
@@ -375,12 +423,22 @@ impl ThumbnailRows {
 
     /// The file at `index` changed (e.g. its selection).
     pub fn file_changed(&self, index: usize) {
+        if let Some(&id) = self.page.borrow().borrow().results().get(index) {
+            self.paints.borrow_mut().dirty(id);
+        }
         self.notify.row_changed(index / self.columns.get());
     }
 
     /// The files selected changed from `before` to `after` (by index):
     /// the rows whose files' selection changed are drawn again.
     pub fn selection_changed(&self, before: &BTreeSet<usize>, after: &BTreeSet<usize>) {
+        let page = self.page.borrow();
+        let page = page.borrow();
+        for index in before.symmetric_difference(after) {
+            if let Some(&id) = page.results().get(*index) {
+                self.paints.borrow_mut().dirty(id);
+            }
+        }
         let columns = self.columns.get();
         let rows: BTreeSet<usize> = before
             .symmetric_difference(after)
@@ -404,6 +462,86 @@ impl ThumbnailRows {
                 .request(id, self.scale.get(), self.generation.get());
         }
         slint::Image::default()
+    }
+
+    /// Ownable clock for deterministic rendering/replays; swapping it drops old
+    /// snapshots, so deadlines from a former clock cannot enter this owner.
+    pub fn set_paint_clock(&self, clock: Rc<dyn Fn() -> Duration>) {
+        *self.paint_clock.borrow_mut() = clock;
+        self.paints.borrow_mut().clear();
+        self.notify.reset();
+    }
+
+    /// Saved policy propagates only at Apply; renderer mode belongs to the page.
+    pub fn set_appearance(&self, appearance: hydrus_store::thumbnail_appearance::Preferences) {
+        if !self.active.get() {
+            return;
+        }
+        let invalidate = self.appearance.borrow().blurhash != appearance.blurhash;
+        *self.appearance.borrow_mut() = appearance;
+        if invalidate {
+            self.clear_thumbnail_cache();
+        }
+    }
+    pub fn background(&self) -> slint::Image {
+        if !self.active.get() {
+            return slint::Image::default();
+        }
+        self.background
+            .borrow_mut()
+            .get(self.appearance.borrow().background.as_deref())
+    }
+    /// Palette changes admit a new decorated cell, retaining the old colours during fade.
+    pub fn set_paint_palette(&self, palette: crate::thumbnail_paint::Palette) {
+        if self.active.get() && *self.palette.borrow() != palette {
+            *self.palette.borrow_mut() = palette;
+            self.paints.borrow_mut().dirty_all();
+            self.notify.reset();
+        }
+    }
+    /// Keep snapshots only for the visible grid slice, and release every old
+    /// layer at completion. Hidden/retired windows own no fade snapshots.
+    pub fn paint_tick(&self, visible: bool, first_row: usize, count: usize) {
+        let changed_visibility =
+            self.visible.replace(visible && self.active.get()) != self.visible.get();
+        if !self.visible.get() {
+            self.paints.borrow_mut().clear();
+            if changed_visibility {
+                self.notify.reset();
+            }
+            return;
+        }
+        if changed_visibility {
+            self.notify.reset();
+        }
+        let page = self.page.borrow();
+        let page = page.borrow();
+        let start = first_row.saturating_mul(self.columns.get());
+        let end = start
+            .saturating_add(count.saturating_mul(self.columns.get()))
+            .min(page.results().len());
+        let keys = page
+            .results()
+            .get(start..end)
+            .unwrap_or_default()
+            .iter()
+            .copied()
+            .collect();
+        let mut paints = self.paints.borrow_mut();
+        paints.retain(&keys);
+        let changed = paints.tick(
+            (self.paint_clock.borrow())(),
+            page.new_thumbnail_renderer(),
+            self.appearance.borrow().fade,
+        );
+        drop(paints);
+        for row in changed
+            .into_iter()
+            .map(|index| index / self.columns.get())
+            .collect::<BTreeSet<_>>()
+        {
+            self.notify.row_changed(row);
+        }
     }
 }
 
@@ -470,187 +608,44 @@ impl Model for ThumbnailRows {
                 let (top, bottom) = self.banners(&page, results[i]);
                 (i, overlay, top, bottom)
             })
-            .map(|(i, overlay, top, bottom)| Thumbnail {
-                icons: ModelRc::new(VecModel::from(overlay.icons)),
-                ratings: ModelRc::new(VecModel::from(overlay.ratings)),
-                rating_boxes: ModelRc::new(VecModel::from(overlay.boxes)),
-                top,
-                bottom,
-                image: self.image(results[i], i),
-                selected: page.is_selected(i),
-                local: local[i - start],
-                files: page
-                    .collection(results[i])
-                    .map_or_else(SharedString::new, |files| {
-                        hydrus_core::numbers::human_int(files.len() as u64).into()
-                    }),
-            })
-            .collect();
-        Some(ThumbnailRow {
-            first: i32::try_from(start).unwrap_or(i32::MAX),
-            thumbnails: ModelRc::new(VecModel::from(thumbnails)),
-        })
-    }
-
-    fn model_tracker(&self) -> &dyn ModelTracker {
-        &self.notify
-    }
-}
-
-/// What is drawn over a thumbnail: its icons, and its ratings over their
-/// boxes.
-struct Overlay {
-    icons: Vec<ThumbIcon>,
-    ratings: Vec<ThumbRating>,
-    boxes: Vec<ThumbBox>,
-}
-
-/// How wide a rating's "stars/of" is at a pixel size: the reference
-/// measures it in its font; this guesses at the grid's (digits and "/"
-/// about six tenths of the size wide).
-fn text_width(text: &str, pixel_size: i32) -> i32 {
-    let chars = i32::try_from(text.chars().count()).unwrap_or(i32::MAX);
-    (chars * pixel_size * 6 + 9) / 10
-}
-
-/// A rating as the grid draws it.
-fn thumb_rating(drawn: &thumbnail_ratings::Drawn) -> ThumbRating {
-    let colour =
-        |rgb: hydrus_store::services::Rgb| slint::Color::from_rgb_u8(rgb.0[0], rgb.0[1], rgb.0[2]);
-    let mut out = ThumbRating {
-        x: drawn.x as f32,
-        y: drawn.y as f32,
-        ..ThumbRating::default()
-    };
-    let text = match &drawn.look {
-        Look::Shapes {
-            path,
-            first,
-            size,
-            step,
-            shapes,
-            text,
-        } => {
-            out.kind = 0;
-            out.path = (*path).into();
-            out.first = *first as f32;
-            out.size = *size as f32;
-            out.step = *step as f32;
-            out.outline = crate::ratings::outline_width(f64::from(*size)) as f32;
-            let shapes: Vec<RatingShape> = shapes
-                .iter()
-                .map(|s| RatingShape {
-                    pen: colour(s.pen),
-                    brush: colour(s.brush),
-                })
-                .collect();
-            out.shapes = ModelRc::new(VecModel::from(shapes));
-            text.as_ref()
-        }
-        Look::Counter {
-            width,
-            height,
-            colours,
-            text,
-        } => {
-            out.kind = 1;
-            out.width = *width as f32;
-            out.height = *height as f32;
-            out.pen = colour(colours.pen);
-            out.brush = colour(colours.brush);
-            out.text_height = (*height - 1) as f32;
-            Some(text)
-        }
-    };
-    if let Some(text) = text {
-        out.text = text.text.as_str().into();
-        out.text_x = text.x as f32;
-        out.text_y = text.y as f32;
-        out.text_width = text.width as f32;
-        out.text_size = text.pixel_size as f32;
-    }
-    out
-}
-
-#[cfg(test)]
-mod cache_regressions {
-    use super::*;
-    use slint::{Rgb8Pixel, SharedPixelBuffer};
-    fn rows() -> (tempfile::TempDir, ThumbnailRows) {
-        let legacy = hydrus_testkit::legacy_fixture("basic");
-        let dir = tempfile::tempdir().unwrap();
-        hydrus_store::import::import_legacy(
-            legacy.path(),
-            &dir.path().join(hydrus_store::store::DB_FILE_NAME),
-        )
-        .unwrap();
-        let store = hydrus_store::Store::open(dir.path()).unwrap();
-        (
-            dir,
-            ThumbnailRows::new(Rc::new(RefCell::new(SearchPage::new(store)))),
-        )
-    }
-    fn pixels() -> crate::thumbnails::Pixels {
-        crate::thumbnails::Pixels::Rgb(SharedPixelBuffer::<Rgb8Pixel>::new(3, 4))
-    }
-    #[test]
-    fn clear_scale_roundtrip_settings_and_retirement_reject_held_decodes() {
-        let (_dir, rows) = rows();
-        let file = HashId(1);
-        let old = rows.generation.get();
-        rows.pending.borrow_mut().insert(file, 0);
-        rows.show(vec![(file, 1., old, Some(pixels()))]);
-        assert_eq!(rows.cached_bytes(), 36);
-        rows.clear_thumbnail_cache();
-        assert_eq!(rows.cached(), 0);
-        rows.pending.borrow_mut().insert(file, 0);
-        rows.show(vec![(file, 1., old, Some(pixels()))]);
-        assert!(rows.pending.borrow().contains_key(&file));
-        assert_eq!(rows.cached(), 0);
-        let before_roundtrip = rows.generation.get();
-        rows.set_scale(2.);
-        rows.set_scale(1.);
-        rows.pending.borrow_mut().insert(file, 0);
-        rows.show(vec![(file, 1., before_roundtrip, Some(pixels()))]);
-        assert!(rows.pending.borrow().contains_key(&file));
-        assert_eq!(rows.cached(), 0);
-        let before_settings = rows.generation.get();
-        rows.thumbnails_changed();
-        rows.pending.borrow_mut().insert(file, 0);
-        rows.show(vec![(file, 1., before_settings, Some(pixels()))]);
-        assert!(rows.pending.borrow().contains_key(&file));
-        rows.show(vec![(file, 1., rows.generation.get(), Some(pixels()))]);
-        assert!(rows.pending.borrow().is_empty());
-        assert_eq!(rows.cached_bytes(), 36);
-        let retired_generation = rows.generation.get();
-        rows.retire();
-        rows.show(vec![(file, 1., retired_generation, Some(pixels()))]);
-        assert_eq!(rows.cached_bytes(), 0);
-        assert!(rows.pending.borrow().is_empty());
-        assert_eq!(rows.image(file, 0).size().width, 0);
-    }
-    #[test]
-    fn receive_maintains_idle_cache_and_counts_missing_thumbnails() {
-        let (_dir, rows) = rows();
-        let file = HashId(1);
-        rows.set_cache_policy(ThumbnailCacheSettings {
-            bytes: 128,
-            timeout: 0,
-        });
-        rows.cache
-            .borrow_mut()
-            .insert(file, slint::Image::default(), 128, Duration::ZERO);
-        assert_eq!(rows.cached_bytes(), 128);
-        rows.receive();
-        assert_eq!(rows.cached_bytes(), 0);
-        assert!(rows.pending.borrow().is_empty());
-        rows.set_cache_policy(ThumbnailCacheSettings {
-            bytes: 1,
-            timeout: 300,
-        });
-        rows.show(vec![(file, 1., rows.generation.get(), None)]);
-        assert_eq!(rows.cached_bytes(), 128);
-        rows.maintain_cache();
-        assert_eq!(rows.cached(), 0);
-    }
-}
+            .map(|(i, overlay, top, bottom)| {
+                let mut thumbnail = Thumbnail {
+                    icons: ModelRc::new(VecModel::from(overlay.icons)),
+                    ratings: ModelRc::new(VecModel::from(overlay.ratings)),
+                    rating_boxes: ModelRc::new(VecModel::from(overlay.boxes)),
+                    top,
+                    bottom,
+                    image: self.image(results[i], i),
+                    selected: page.is_selected(i),
+                    local: local[i - start],
+                    files: page
+                        .collection(results[i])
+                        .map_or_else(SharedString::new, |files| {
+                            hydrus_core::numbers::human_int(files.len() as u64).into()
+                        }),
+                    ..Thumbnail::default()
+                };
+                let paint = self
+                    .palette
+                    .borrow()
+                    .paint(&thumbnail, self.cell.get().0, thumbnail.local);
+                let first = thumbnail.image.size().width > 0
+                    && page.admit_thumbnail_fade(
+                        results[i],
+                        &self.paint_owner,
+                        self.admissions
+                            .borrow()
+                            .get(&results[i])
+                            .copied()
+                            .unwrap_or(0),
+                    );
+                self.paints.borrow_mut().decorate(
+                    results[i],
+                    i,
+                    paint,
+                    &mut thumbnail,
+                    (self.paint_clock.borrow())(),
+                    self.visible.get() && self.appearance.borrow().fade,
+                    !page.new_thumbnail_renderer() && first,
+                );
+                thumbnail
