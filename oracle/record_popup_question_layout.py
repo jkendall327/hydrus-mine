@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Real narrow/fixed Qt question cards: wrapped text and all action bounds.
+"""Real narrow/fixed Qt question cards: question label and all action bounds.
 
 Synthetic private JobStatus only; actual PopupMessage layout and Cancel handler.
 """
