@@ -659,16 +659,12 @@ mod tests {
             .insert(HashId(1), pending.clone(), 30, Duration::ZERO);
         let (entered, seen) = crossbeam_channel::bounded(1);
         let (release, held) = crossbeam_channel::bounded(1);
-        let waiter = std::thread::spawn({
-            let cache = cache.clone();
-            move || {
-                pending.wait_while_active(|| {
-                    entered.send(()).unwrap();
-                    held.recv().unwrap();
-                    let _active = cache.active();
-                    false
-                })
-            }
+        let waiter = std::thread::spawn(move || {
+            pending.wait_while_active(|| {
+                entered.send(()).unwrap();
+                held.recv().unwrap();
+                false
+            });
         });
         seen.recv_timeout(Duration::from_secs(5)).unwrap();
         let (done, result) = crossbeam_channel::bounded(1);
@@ -676,7 +672,7 @@ mod tests {
             let cache = cache.clone();
             move || {
                 done.send(cache.render_using(HashId(1), 30, true, None, true, || Some(raster(3))))
-                    .unwrap()
+                    .unwrap();
             }
         });
         let current = result.recv_timeout(Duration::from_secs(5));
@@ -716,7 +712,7 @@ mod tests {
                         .render_using(HashId(1), 30, true, None, true, || Some(raster(3)))
                         .unwrap(),
                 )
-                .unwrap()
+                .unwrap();
             }
         });
         let current = result.recv_timeout(Duration::from_secs(5));
