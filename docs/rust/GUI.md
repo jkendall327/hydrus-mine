@@ -3121,3 +3121,27 @@ preserves the requested position. Hidden owners defer the one-time check.
 real offscreen display decisions and the unmodified Qt rescue handler over an
 explicit two-display topology. Native geometry and Options screenshot regressions
 are authored for hosted CI; native OS monitor behavior has not been executed here.
+
+
+Options > external programs now has a staged registered-call table with name,
+job and command columns. Add/Edit own a detached callable editor and command
+queue; parent Cancel discards accepted child drafts, and parent Apply persists
+registered calls. Delete uses the reference's ordinary captured-selection
+question, including OS-launch entries. Duplicate generates fresh keys and
+nonduplicate names, retains prior selection and asks about unusually large
+commands; declining a later warning preserves earlier unselected, appended
+copies and aborts the remainder. Add Defaults exposes both “add them all” and
+“select from a list”, with the reference platform question and factory calls.
+Selected defaults gain fresh keys and names alongside the prior selection.
+
+Supported process calls expose enabled input rules, tokens and the existing
+string-processor child, an ordered command-argument editor, timeout/flags and
+preview/test inputs. Reopening a saved process and pressing its Test Call runs
+its argument vector in an owned worker. Closing the owner cancels and reaps its
+direct child; output is discarded, and long-lived test calls use a 15 second
+deadline. Clipboard/JSON-file/PNG exchange reviews supported callable exports
+before changing the Options draft. These editor/exchange/runtime families remain
+partial: legacy executable-manager import and missing OS-call regeneration,
+per-type launch routing, OS-launch test execution, rule clipboard controls,
+full process output/error handling and some command/dialog interactions are not
+ported. The complete scope is recorded in the external-call parity proposal.

@@ -1,4 +1,5 @@
 import { SortCollectCog, ContextCogServices, ContextCogItem } from "sort_collect_cog.slint";
+import { ExternalCallsTable } from "external_calls.slint";
 import { FrameLocationsTable } from "frame_locations.slint";
 // The options window (file > options, `src/options.rs`), as the
 // reference's "manage options" dialog: its pages listed on the left, the
@@ -106,6 +107,17 @@ export component OptionsWindow inherits Window {
     preferred-height: 640px;
     background: Theme.window;
 
+    in property <string> external-call-error;
+    in property <[TableRow]> external-call-rows;
+    in property <bool> external-call-selected;
+    in property <bool> external-call-single;
+    in property <bool> external-call-child-open;
+    in property <int> external-call-sort-column;
+    in property <bool> external-call-ascending;
+    callback external-call-clicked(int,bool,bool);
+    callback external-call-activated(int);
+    callback external-call-sort(int,bool);
+    callback external-call-action(string);
     in property <[TableRow]> frame-rows;
     in property <bool> frame-selected;
     in property <bool> frame-single;
@@ -501,6 +513,10 @@ export component OptionsWindow inherits Window {
                                 }
                             }
                           }
+                            if row.kind == 30: ExternalCallsTable {
+                                error:root.external-call-error;rows:root.external-call-rows;selected:root.external-call-selected;single:root.external-call-single;child-open:root.external-call-child-open;sort-column:root.external-call-sort-column;ascending:root.external-call-ascending;
+                                clicked(i,c,s)=>{root.external-call-clicked(i,c,s);}activated(i)=>{root.external-call-activated(i);}sort(i,a)=>{root.external-call-sort(i,a);}action(a)=>{root.external-call-action(a);}
+                            }
                             if row.kind == 26: FrameLocationsTable {
                                 rows:root.frame-rows;
                                 selected:root.frame-selected;

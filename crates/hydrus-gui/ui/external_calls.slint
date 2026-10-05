@@ -1,0 +1,165 @@
+import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox } from "std-widgets.slint";
+import { ListTable, TableRow } from "list_table.slint";
+export struct ExternalRule { label:string, enabled:bool, token:string, summary:string, value:string }
+export component ExternalCallsTable inherits Rectangle {
+    in property <string> error;
+    in property <[TableRow]> rows;
+    in property <bool> selected;
+    in property <bool> single;
+    in property <bool> child-open;
+    in property <int> sort-column;
+    in property <bool> ascending;
+    callback clicked(int,bool,bool);
+    callback activated(int);
+    callback sort(int,bool);
+    callback action(string);
+    min-height:350px;
+    VerticalLayout {
+        spacing:6px;
+        Text { text:"IF YOU IMPORT A CALL HERE THAT SOMEONE ELSE MADE, MAKE SURE YOU INSPECT IT BEFORE HOOKING IT UP TO ANYTHING. LOOK AT THE PARAMETERS.\n\nUSE YOUR BRAIN. DO NOT CALL THINGS BLINDLY.";wrap:word-wrap; }
+        ListTable {
+            rows:root.rows;sort-column:root.sort-column;ascending:root.ascending;
+            columns:[{title:"name",width:160px,stretch:true},{title:"type",width:110px},{title:"command",width:240px,stretch:true}];
+            row-clicked(i,c,s)=>{if !root.child-open{root.clicked(i,c,s);}}
+            row-activated(i)=>{if !root.child-open{root.activated(i);}}
+            sort(i,a)=>{if !root.child-open{root.sort(i,a);}}
+        }
+        Text {text:root.error;wrap:word-wrap;}
+        HorizontalLayout {
+            Button{text:"add";enabled:!root.child-open;clicked=>{root.action("add");}}
+            Button{text:"edit";enabled:root.single && !root.child-open;clicked=>{root.action("edit");}}
+            Button{text:"delete";enabled:root.selected && !root.child-open;clicked=>{root.action("delete");}}
+            Button{text:"export";enabled:root.selected && !root.child-open;clicked=>{root.action("export");}}
+            Button{text:"import";enabled:!root.child-open;clicked=>{root.action("import");}}
+            Button{text:"duplicate";enabled:root.selected && !root.child-open;clicked=>{root.action("duplicate");}}
+            defaults-menu := ContextMenuArea {
+                enabled:false;
+                width:140px;height:32px;
+                Menu {
+                    MenuItem {title:"add them all";activated=>{root.action("defaults-all");}}
+                    MenuItem {title:"select from a list";activated=>{root.action("defaults");}}
+                }
+                Button {text:"add defaults";enabled:!root.child-open;clicked=>{defaults-menu.show({x:0px,y:defaults-menu.height});}}
+            }
+        }
+    }
+}
+export component ExternalCallWindow inherits Window {
+    title:"edit external program call";
+    width:1050px;height:760px;
+    in-out property <string> name;
+    in-out property <int> pipeline;
+    in-out property <int> call-type;
+    in property <string> command-template;
+    in property <[ExternalRule]> rules;
+    in property <string> validity;
+    in-out property <int> timeout:15;
+    in-out property <bool> long-lived;
+    in-out property <bool> hide-terminal:true;
+    in-out property <bool> output-text:true;
+    in property <string> preview;
+    in property <string> test-status;
+    in property <bool> testing;
+    in property <bool> child-open;
+    callback changed();
+    callback rule-enabled(int,bool);
+    callback rule-token(int,string);
+    callback rule-process(int);
+    callback test-input(int,string);
+    callback command-edit();
+    callback show-path();
+    callback test(bool);
+    callback apply();
+    callback cancel();
+    VerticalLayout {
+        padding:12px;spacing:8px;
+        HorizontalLayout {
+            VerticalLayout {
+                spacing:7px;
+                Text{text:"pipeline";font-weight:700;}
+                Text{text:"Set a name for this external call and select the job it will do.";wrap:word-wrap;}
+                HorizontalLayout {Text{text:"name: ";}LineEdit{text<=>root.name;enabled:!root.child-open;}}
+                HorizontalLayout {Text{text:"job: ";}ComboBox{model:["send single file","send single URL"];current-index<=>root.pipeline;enabled:!root.child-open;selected=>{root.changed();}}}
+                Text{text:root.pipeline==0 ? "This tells the client how to open a file in another program." : "This tells the client how to open a URL in another program.";wrap:word-wrap;}
+                Text{text:"actual call";font-weight:700;}
+                ComboBox{model:root.pipeline==0 ? ["local process call","default OS launch file call"] : ["local process call","default OS launch URL call"];current-index<=>root.call-type;enabled:!root.child-open;selected=>{root.changed();}}
+                if root.call-type==0: VerticalLayout {
+                    spacing:6px;
+                    Button{text:"show PATH";enabled:!root.child-open;clicked=>{root.show-path();}}
+                    Text{text:"input parameters";font-weight:700;}
+                    for row[i] in root.rules: HorizontalLayout {
+                        spacing:4px;
+                        Text{text:row.label;min-width:110px;}
+                        LineEdit{text:row.token;enabled:row.enabled && !root.child-open;edited=>{root.rule-token(i,self.text);}}
+                        Button{text:row.summary;enabled:row.enabled && !root.child-open;clicked=>{root.rule-process(i);}}
+                        CheckBox{text:"use this parameter: ";checked:row.enabled;enabled:!root.child-open;toggled=>{root.rule-enabled(i,self.checked);}}
+                    }
+                    HorizontalLayout { Text{text:"command template: ";} LineEdit{text:root.command-template;read-only:true;} Button{text:"edit";enabled:!root.child-open;clicked=>{root.command-edit();}} }
+                    HorizontalLayout {Text{text:"timeout: ";}SpinBox{value<=>root.timeout;minimum:1;maximum:3600000;enabled:!root.long-lived && !root.child-open;edited=>{root.changed();}}CheckBox{text:"this can live for a very long time";checked<=>root.long-lived;enabled:!root.child-open;toggled=>{root.changed();}}}
+                    CheckBox{text:"hide terminal: ";checked<=>root.hide-terminal;enabled:!root.child-open;toggled=>{root.changed();}}
+                    CheckBox{text:"output is text: ";checked<=>root.output-text;enabled:!root.child-open;toggled=>{root.changed();}}
+                }
+                if root.call-type==1: Text{text:root.pipeline==0 ? "Call the OS default file launcher." : "Call the OS default URL launcher.";wrap:word-wrap;}
+                Text{text:root.validity;wrap:word-wrap;}
+            }
+            VerticalLayout {
+                spacing:6px;
+                Text{text:"testing";font-weight:700;}
+                Text{text:"Test your call here. Put in a real path or URL in the provided input parameter box and click \"test call!\". It will fire for real, so don't screw around!";wrap:word-wrap;}
+                Button{text:"test availability!";enabled:root.call-type==0 && !root.testing && !root.child-open;clicked=>{root.test(true);}}
+                Text{text:"test input parameters";font-weight:700;}
+                for row[i] in root.rules: HorizontalLayout {
+                    visible:row.enabled;
+                    Text{text:row.label;}
+                    LineEdit{text:row.value;enabled:!root.testing && !root.child-open;edited=>{root.test-input(i,self.text);}}
+                }
+                LineEdit{text:root.preview;read-only:true;}
+                Button{text:"test call!";enabled:root.call-type==0 && !root.testing && !root.child-open;clicked=>{root.test(false);}}
+                Text{text:root.test-status;wrap:word-wrap;vertical-stretch:1;}
+            }
+        }
+        HorizontalLayout {alignment:end;Button{text:"apply";enabled:!root.child-open && !root.testing;clicked=>{root.apply();}}Button{text:"cancel";clicked=>{root.cancel();}}}
+    }
+}
+export component ExternalCommandWindow inherits Window {
+    title:"edit command and parameters";
+    width:760px;height:590px;
+    in-out property <string> executable;
+    in property <[TableRow]> rows;
+    in property <bool> selected;
+    in property <bool> single;
+    in property <bool> child-open;
+    in property <string> full-template;
+    in property <string> error;
+    callback changed();
+    callback clicked(int,bool,bool);
+    callback action(string);
+    callback apply();
+    callback cancel();
+    VerticalLayout {
+        padding:12px;spacing:8px;
+        Text{text:"Set the command and its parameters. Do not put parameters in the command input section. Put the %path% or %url% style parameter replacement token in the appropriate place in your parameter list.";wrap:word-wrap;}
+        HorizontalLayout{Text{text:"executable command/path: ";}LineEdit{text<=>root.executable;enabled:!root.child-open;edited=>{root.changed();}}}
+        Text{text:"parameters: ";}
+        ListTable{rows:root.rows;columns:[{title:"parameter",width:550px,stretch:true}];row-clicked(i,c,s)=>{if !root.child-open{root.clicked(i,c,s);}}row-activated(i)=>{if !root.child-open{root.clicked(i,false,false);root.action("edit");}}}
+        HorizontalLayout{
+            Button{text:"add";enabled:!root.child-open;clicked=>{root.action("add");}}
+            Button{text:"edit";enabled:root.single && !root.child-open;clicked=>{root.action("edit");}}
+            Button{text:"delete";enabled:root.selected && !root.child-open;clicked=>{root.action("delete");}}
+            Button{text:"↑";enabled:root.selected && !root.child-open;clicked=>{root.action("up");}}
+            Button{text:"↓";enabled:root.selected && !root.child-open;clicked=>{root.action("down");}}
+        }
+        HorizontalLayout{Text{text:"current full template: ";}LineEdit{text:root.full-template;read-only:true;}}
+        HorizontalLayout{Button{text:"copy";enabled:!root.child-open;clicked=>{root.action("copy");}}Button{text:"paste";enabled:!root.child-open;clicked=>{root.action("paste");}}}
+        Text{text:root.error;wrap:word-wrap;}
+        HorizontalLayout{alignment:end;Button{text:"apply";enabled:!root.child-open;clicked=>{root.apply();}}Button{text:"cancel";clicked=>{root.cancel();}}}
+    }
+}
+export component ExternalDefaultsWindow inherits Window {
+    title:"select the defaults to add";
+    width:600px;height:550px;
+    in property <[TableRow]> rows;
+    callback toggled(int);
+    callback apply();callback cancel();
+    VerticalLayout {padding:12px;spacing:8px;ListTable{rows:root.rows;columns:[{title:"defaults",width:500px,stretch:true}];row-clicked(i,c,s)=>{root.toggled(i);}row-activated(i)=>{root.toggled(i);}}HorizontalLayout{alignment:end;Button{text:"apply";clicked=>{root.apply();}}Button{text:"cancel";clicked=>{root.cancel();}}}}
+}

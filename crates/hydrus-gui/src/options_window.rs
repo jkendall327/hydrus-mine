@@ -292,6 +292,9 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                 (Kind::DeletionReasons, Value::DeletionReasons(_)) => {
                     out.kind = 25;
                 }
+                (Kind::ExternalCalls, Value::ExternalCalls(_)) => {
+                    out.kind = 30;
+                }
                 (Kind::FrameLocations, Value::FrameLocations(_)) => {
                     out.kind = 26;
                 }
@@ -339,6 +342,7 @@ pub(crate) fn open(
     frame_slot: &crate::options_frames::Slot,
     banner_slot: &crate::tag_banner_window::Slot,
     suggested_slot: &crate::tag_suggestions_window::Slots,
+    external_slots: &crate::external_call_window::Slots,
     applied: Rc<dyn Fn()>,
 ) -> Result<OptionsWindow, String> {
     let settings = store
@@ -381,6 +385,8 @@ pub(crate) fn open(
     let colour_list =
         crate::options_namespace_colours::bind(&window, &editor, &active, colour_slot);
     let frame_table = crate::options_frames::bind(&window, &editor, &active, frame_slot);
+    let external_table =
+        crate::options_external_calls::bind(store, &window, &editor, &active, external_slots);
     // (the rows are made anew only as the page changes: an edit leaves its
     // control as the user left it)
     let show_page = {
@@ -426,6 +432,7 @@ pub(crate) fn open(
     crate::sidebar_context_cog::bind_options(&window, &editor, &store, &active, show_page.clone());
     (reason_queue.show)();
     (frame_table.show)();
+    (external_table.show)();
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
@@ -441,6 +448,7 @@ pub(crate) fn open(
         let cancel_colours = colour_list.cancel.clone();
         let cancel_reasons = reason_queue.cancel.clone();
         let cancel_frames = frame_table.cancel.clone();
+        let cancel_external = external_table.cancel.clone();
         move || {
             if !active.replace(false) {
                 return;
@@ -455,6 +463,7 @@ pub(crate) fn open(
             cancel_colours();
             cancel_reasons();
             cancel_frames();
+            cancel_external();
             crate::import_options_panel_window::cancel(&import_slot);
             crate::namespace_sorts_window::cancel(&namespace_slot);
             crate::tag_banner_window::cancel(&banner_slot);
@@ -819,11 +828,13 @@ pub(crate) fn open(
         let colours_open = colour_list.has_open.clone();
         let reasons_open = reason_queue.has_open.clone();
         let frames_open = frame_table.has_open.clone();
+        let external_open = external_table.has_open.clone();
         move |i, checked| {
             if !active.get()
                 || colours_open()
                 || reasons_open()
                 || frames_open()
+                || external_open()
                 || !matches!(
                     editor.borrow().rows().get(at(i)),
                     Some(Row::Opt { enabled: true, .. })
@@ -1194,6 +1205,7 @@ pub(crate) fn open(
         let colours_open = colour_list.has_open.clone();
         let reasons_open = reason_queue.has_open.clone();
         let frames_open = frame_table.has_open.clone();
+        let external_open = external_table.has_open.clone();
         let import_slot = import_slot.clone();
         let namespace_slot = namespace_slot.clone();
         let banner_slot = banner_slot.clone();
@@ -1207,6 +1219,7 @@ pub(crate) fn open(
                 || colours_open()
                 || reasons_open()
                 || frames_open()
+                || external_open()
                 || tag_slot.borrow().is_some()
                 || import_slot.borrow().is_some()
                 || namespace_slot.borrow().is_some()

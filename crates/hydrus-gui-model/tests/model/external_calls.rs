@@ -62,7 +62,8 @@ fn list_acceptance_retains_edit_key_and_selection_but_regenerates_import_and_dup
     assert_eq!(table.selected()[0].key, key);
     table.duplicate();
     assert_eq!(table.manager.calls.len(), 3);
-    assert_eq!(table.selected()[0].key, key);
+    assert_eq!(table.selected().len(), 2);
+    assert!(table.selected().iter().any(|c| c.key == key));
     table.click(2, false, false);
     table.delete(&[key]);
     assert_eq!(table.manager.calls.len(), 2);
@@ -87,13 +88,21 @@ fn saved_call_executes_owned_harmless_process_with_exact_single_argument_and_no_
         ..Process::default()
     };
     #[cfg(windows)]
-    let process = Process {
-        executable: "cmd.exe".into(),
-        arguments: vec![
-            "/C".into(),
-            format!("echo synthetic 日本>\"{}\"", output.display()),
-        ],
-        ..Process::default()
+    let process = {
+        let script = dir.path().join("owned-argument-fixture.cmd");
+        std::fs::write(&script, "@chcp 65001 >nul\r\n@echo \"%~1\">\"%~2\"\r\n").unwrap();
+        Process {
+            executable: "cmd.exe".into(),
+            arguments: vec![
+                "/D".into(),
+                "/C".into(),
+                script.to_string_lossy().into_owned(),
+                "%path%".into(),
+                output.to_string_lossy().into_owned(),
+            ],
+            rules: vec![Rule::new(Parameter::Path)],
+            ..Process::default()
+        }
     };
     let native = tempfile::tempdir().unwrap();
     let store = hydrus_store::Store::open(native.path()).unwrap();
@@ -118,5 +127,202 @@ fn saved_call_executes_owned_harmless_process_with_exact_single_argument_and_no_
     #[cfg(not(windows))]
     assert_eq!(std::fs::read_to_string(output).unwrap(), value);
     #[cfg(windows)]
-    assert!(output.is_file());
+    assert_eq!(
+        std::fs::read_to_string(output).unwrap().trim(),
+        format!("\"{value}\"")
+    );
+}
+
+#[test]
+fn actual_qt_sort_tie_break_casefold_and_duplicate_selection_routes() {
+    let reference = hydrus_testkit::fixture_json("external_calls.json");
+    let calls = reference["sort_input"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .flat_map(|v| {
+            hydrus_downloader_exchange::external_calls::decode_text(&v.to_string()).unwrap()
+        })
+        .collect::<Vec<_>>();
+    let mut table = Table::new(Manager { calls });
+    for case in reference["sort_cases"].as_array().unwrap() {
+        table.sort(
+            usize::try_from(case["column"].as_u64().unwrap()).unwrap(),
+            case["ascending"].as_bool().unwrap(),
+        );
+        assert_eq!(
+            serde_json::to_value(
+                table
+                    .manager
+                    .calls
+                    .iter()
+                    .map(|c| c.name.as_str())
+                    .collect::<Vec<_>>()
+            )
+            .unwrap(),
+            case["names"]
+        );
+    }
+    let row = table
+        .manager
+        .calls
+        .iter()
+        .position(|c| c.name == "alpha")
+        .unwrap();
+    table.click(row, false, false);
+    table.duplicate();
+    assert_eq!(
+        serde_json::to_value(
+            table
+                .selected()
+                .iter()
+                .map(|c| c.name.as_str())
+                .collect::<Vec<_>>()
+        )
+        .unwrap(),
+        reference["duplicate_selected"]
+    );
+    let defaults = hydrus_downloader_exchange::external_calls::defaults(true).unwrap();
+    assert_eq!(
+        serde_json::to_value(defaults.iter().map(|c| c.name.as_str()).collect::<Vec<_>>()).unwrap(),
+        reference["defaults_by_platform"][if cfg!(windows) {
+            "Windows"
+        } else if cfg!(target_os = "macos") {
+            "macOS"
+        } else {
+            "Linux"
+        }]
+    );
+}
+
+#[test]
+fn cancelling_the_owner_terminates_and_reaps_its_started_direct_child() {
+    use std::sync::{
+        Arc,
+        atomic::{AtomicBool, Ordering},
+    };
+    let owned = tempfile::tempdir().unwrap();
+    let marker = owned.path().join("started.txt");
+    #[cfg(not(windows))]
+    let process = Process {
+        executable: "/bin/sh".into(),
+        arguments: vec![
+            "-c".into(),
+            "printf started > \"$1\"; while :; do :; done".into(),
+            "owned-fixture".into(),
+            marker.to_string_lossy().into_owned(),
+        ],
+        ..Process::default()
+    };
+    #[cfg(windows)]
+    let process = {
+        let script = owned.path().join("owned-cancellable-fixture.cmd");
+        std::fs::write(
+            &script,
+            format!(
+                "@echo started>\"{}\"\r\n:ownedloop\r\n@goto ownedloop\r\n",
+                marker.display()
+            ),
+        )
+        .unwrap();
+        Process {
+            executable: "cmd.exe".into(),
+            arguments: vec![
+                "/D".into(),
+                "/C".into(),
+                script.to_string_lossy().into_owned(),
+            ],
+            ..Process::default()
+        }
+    };
+    let cancel = Arc::new(AtomicBool::new(false));
+    let request = cancel.clone();
+    let worker = std::thread::spawn(move || {
+        hydrus_gui_model::external_calls::test_call_cancellable(
+            &ActualCall::Process(process),
+            &Inputs::new(),
+            &request,
+        )
+    });
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(8);
+    while !marker.exists() {
+        assert!(std::time::Instant::now() < deadline);
+        std::thread::sleep(std::time::Duration::from_millis(1));
+    }
+    cancel.store(true, Ordering::Release);
+    assert_eq!(
+        worker.join().unwrap().unwrap_err(),
+        "External call cancelled."
+    );
+}
+
+#[test]
+fn actual_defaults_menu_routes_preserve_prior_selection_and_generate_unique_named_keys() {
+    let oracle = hydrus_testkit::fixture_json("external_calls.json");
+    for case in &oracle["default_routes"].as_array().unwrap()[..2] {
+        let mut prior = Callable::new("prior selection");
+        prior.call = ActualCall::Process(Process {
+            executable: "owned-program".into(),
+            ..Process::default()
+        });
+        let key = prior.key;
+        let mut table = Table::new(Manager { calls: vec![prior] });
+        table.click(0, false, false);
+        let mut calls = hydrus_downloader_exchange::external_calls::defaults(false).unwrap();
+        if case["route"] == "some" {
+            calls = vec![calls[0].clone(), calls[9].clone()];
+        }
+        table.add_selected(calls);
+        assert_eq!(
+            serde_json::to_value(
+                table
+                    .manager
+                    .calls
+                    .iter()
+                    .map(|c| c.name.as_str())
+                    .collect::<Vec<_>>()
+            )
+            .unwrap(),
+            case["names"]
+        );
+        assert_eq!(
+            serde_json::to_value(
+                table
+                    .selected()
+                    .iter()
+                    .map(|c| c.name.as_str())
+                    .collect::<Vec<_>>()
+            )
+            .unwrap(),
+            case["selected"]
+        );
+        assert!(table.selection.is_selected(key));
+        assert_eq!(
+            table
+                .manager
+                .calls
+                .iter()
+                .map(|c| c.key)
+                .collect::<std::collections::BTreeSet<_>>()
+                .len(),
+            table.manager.calls.len()
+        );
+    }
+}
+
+#[test]
+fn duplicate_import_warnings_match_python_repr_and_all_size_boundaries() {
+    let oracle = hydrus_testkit::fixture_json("external_calls.json");
+    for case in oracle["warning_cases"].as_array().unwrap() {
+        let calls =
+            hydrus_downloader_exchange::external_calls::decode_text(&case["call"].to_string())
+                .unwrap();
+        let ActualCall::Process(process) = &calls[0].call else {
+            panic!("recorded process call");
+        };
+        assert_eq!(
+            serde_json::to_value(process.import_warning()).unwrap(),
+            case["warning"]
+        );
+    }
 }

@@ -397,7 +397,8 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
         // The inline namespace RGB list has its own exact namespace_colour_controls replay.
         if matches!(
             option.kind,
-            Kind::RegexFavourites
+            Kind::ExternalCalls
+                | Kind::RegexFavourites
                 | Kind::NamespaceColours
                 | Kind::DeletionReasons
                 | Kind::FrameLocations

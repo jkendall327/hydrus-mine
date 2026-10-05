@@ -2207,3 +2207,28 @@ exposing them does not complete the broader GUI/frame family. Deterministic
 multi-monitor reference cases supply only QApplication screen geometry; the actual
 GetSafePosition decision handler is unchanged. Native OS movement and authored
 Rust regressions remain pending hosted validation.
+
+The registered external-call Options list now implements ordinary deletion,
+warning-aware duplication and both Add Defaults menu routes against executed Qt
+list-panel callbacks. Typed callable/process drafts and supported reference
+clipboard/JSON/PNG exchange are available, with independently owned children and
+parent Apply/Cancel. The broader list/reopen remains Partial: legacy executable
+manager settings are not migrated, opening Options does not regenerate missing
+Default OS launch calls, and reference column-state persistence is absent.
+Supported column sorting itself uses the reference casefolded full-tuple tie
+break and writes the sorted Options draft.
+
+External-call Add/Edit, import/export and nested process/command controls remain
+Partial. Recognized unsupported string-converter steps are preserved in native
+registered definitions but rejected by reference export encoding; mixed valid
+and wrong-class imports are rejected atomically instead of accepting the valid
+prefix, and unusually large imports do not offer the reference override question.
+Per-call PNG batches, drop import, input-rule clipboard controls, complete
+argument keyboard/multiple-row edit interactions and timeout minutes controls
+are not implemented. The native process test runs saved argument vectors with a
+single owner-scoped worker, a fallible thread start and bounded wait, discarding
+stdout/stderr. Cancellation owns/reaps the direct child only; descendant process
+groups, full reference output/error presentation and OS default-launch tests are
+not claimed. Ordinary executable arguments use the process API; batch/shell
+interpreters retain their own quoting semantics. Harmless owned Unicode fixtures
+are authored for hosted CI; no local Rust execution is represented as evidence.

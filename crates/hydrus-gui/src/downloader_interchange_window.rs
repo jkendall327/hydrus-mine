@@ -132,6 +132,57 @@ pub fn open_subscriptions(
     Ok(window)
 }
 
+/// Exchange registered external calls from their detached Options list.
+pub fn open_external_calls(
+    store: &Arc<Store>,
+    slots: &Slots,
+    importing: bool,
+    calls: Vec<hydrus_core::external_calls::Callable>,
+    preview: Preview<hydrus_core::external_calls::Callable>,
+    applied: Apply<hydrus_core::external_calls::Callable>,
+) -> Result<DownloaderExchangeWindow, String> {
+    use hydrus_downloader_exchange::external_calls as codec;
+    let export = if importing {
+        None
+    } else {
+        Some(codec::encode_text(&calls).map_err(|e| e.to_string())?)
+    };
+    let count = calls.len();
+    let w = open_objects(
+        slots,
+        importing,
+        calls,
+        preview,
+        applied,
+        Codec {
+            encode_text: codec::encode_text,
+            decode_text: codec::decode_text,
+            encode_png: codec::encode_png,
+            decode_png: codec::decode_png,
+            processing: false,
+        },
+    )?;
+    w.set_json_enabled(true);
+    w.set_window_title(
+        if importing {
+            "import external calls"
+        } else {
+            "export external calls"
+        }
+        .into(),
+    );
+    w.set_instructions("Registered external calls stay staged until Options is applied. Inspect imported commands and parameters before running them.".into());
+    if let Some(payload) = export {
+        let summary = hydrus_gui_model::png_export::object_payload_description(
+            &payload,
+            "Executable Manager Callable",
+            count,
+        );
+        attach_png(store, slots, &w, payload, summary);
+    }
+    Ok(w)
+}
+
 struct Codec<T> {
     encode_text: fn(&[T]) -> hydrus_downloader_exchange::Result<String>,
     decode_text: fn(&str) -> hydrus_downloader_exchange::Result<Vec<T>>,

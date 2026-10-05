@@ -160,6 +160,7 @@ macro_rules! settings {
 }
 
 settings! {
+    external_calls: hydrus_core::external_calls::Manager,
     advanced: AdvancedMode,
     auto_resolution: AutoResolutionSettings,
     bandwidth: BandwidthSettings,
@@ -277,6 +278,8 @@ pub enum Value {
     DeletionReasons(Vec<String>),
     NamespaceColours(crate::namespace_colours::Colours),
     FrameLocations(std::collections::BTreeMap<String, hydrus_core::windows::FrameLocation>),
+    /// Registered external program calls, staged in the parent Options draft.
+    ExternalCalls(hydrus_core::external_calls::Manager),
     /// Shared favourite tags, staged until the parent options dialog applies.
     FavouriteTags(FavouriteTags),
     MostUsedTags(std::collections::BTreeMap<String, Vec<String>>),
@@ -358,6 +361,8 @@ pub enum Kind {
     FrameLocations,
     /// Importable current file domains, edited in a child selector.
     LocalLocation,
+    /// The detached registered external-call table.
+    ExternalCalls,
     /// A detached tag list editor sharing write autocomplete.
     FavouriteTags,
     MostUsedTags,
@@ -1733,6 +1738,24 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     )],
                 ),
             ],
+        ),
+        page(
+            "external programs",
+            vec![boxed(
+                "external calls",
+                vec![opt(
+                    "This system is under active development. Here we can teach your client about other programs it can call to complete jobs.",
+                    Kind::ExternalCalls,
+                    Rc::new(|s| Value::ExternalCalls(s.external_calls.clone())),
+                    Rc::new(|s, v| match v {
+                        Value::ExternalCalls(calls) => {
+                            s.external_calls = calls.clone();
+                            Ok(())
+                        }
+                        _ => Err(wrong("external calls")),
+                    }),
+                )],
+            )],
         ),
         page(
             "file search",
@@ -4143,6 +4166,32 @@ impl Editor {
             .find(|v| matches!(v, Value::FrameLocations(_)))
         {
             *value = Value::FrameLocations(frames);
+        }
+    }
+
+    /// Registered calls staged by the external programs table.
+    pub fn edited_external_calls(&self) -> hydrus_core::external_calls::Manager {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|v| {
+                if let Value::ExternalCalls(calls) = v {
+                    Some(calls.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| self.before.external_calls.clone())
+    }
+    /// Replace only the external-call draft, regardless of the visible page.
+    pub fn set_external_calls(&mut self, calls: hydrus_core::external_calls::Manager) {
+        if let Some(v) = self
+            .values
+            .iter_mut()
+            .flatten()
+            .find(|v| matches!(v, Value::ExternalCalls(_)))
+        {
+            *v = Value::ExternalCalls(calls);
         }
     }
 
