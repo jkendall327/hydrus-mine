@@ -883,13 +883,15 @@ fn numerical_examples_drag_and_fraction_text_use_the_whole_widget_hit_area() {
             .position(|r| r.cells.row_data(0).unwrap() == "stars")
             .unwrap();
         manage.invoke_row_clicked(i32::try_from(index).unwrap(), false, false);
+        let edit_window_index = windows.count();
         manage.invoke_edit_clicked();
         let edit = slots.edit.borrow().as_ref().unwrap().clone_strong();
-        let last = (0..100)
-            .take_while(|&n| windows.get(n).is_some())
-            .last()
-            .unwrap();
-        let window = windows.get(last).unwrap();
+        assert_eq!(
+            windows.count(),
+            edit_window_index + 1,
+            "opening the owned editor creates exactly its paint target"
+        );
+        let window = windows.get(edit_window_index).unwrap();
         for _ in 0..3 {
             headless::render(&window, 640, 1000);
         }
@@ -906,6 +908,24 @@ fn numerical_examples_drag_and_fraction_text_use_the_whole_widget_hit_area() {
             "hit geometry must follow the most recently painted layout: side={side}, wider={wider_hit_width}, width={width}"
         );
         assert!(width > 200.0 && y > 0.0 && y < 1000.0);
+        assert_eq!(
+            edit.window().size(),
+            slint::PhysicalSize::new(640, 1000),
+            "the rendered adapter is the owned edit window"
+        );
+        // Collapsing the example disables/zeros its public hit geometry; expanding
+        // must expose the same live layout without constructing or aliasing a new panel.
+        edit.set_example_expanded(false);
+        headless::render(&window, 640, 1000);
+        assert_eq!(edit.get_first_preview_width().to_bits(), 0.0f32.to_bits());
+        assert_eq!(edit.get_first_preview_height().to_bits(), 0.0f32.to_bits());
+        edit.set_example_expanded(true);
+        headless::render(&window, 640, 1000);
+        assert_eq!(edit.get_first_preview_width().to_bits(), width.to_bits());
+        assert_eq!(
+            (edit.get_first_preview_y() + edit.get_first_preview_height() / 2.0).to_bits(),
+            y.to_bits()
+        );
         let move_to = |at: f32| {
             edit.window().dispatch_event(WindowEvent::PointerMoved {
                 position: slint::LogicalPosition::new(x + at, y),
