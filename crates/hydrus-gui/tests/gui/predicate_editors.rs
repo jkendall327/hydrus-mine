@@ -1021,7 +1021,10 @@ fn more_suggestions_than_fit_scroll_rather_than_spill_over() {
     // scrolls upward, rather than leaving an off-screen dense selection mask.
     ui.invoke_suggestion_selection_clicked(0, false, false);
     let first_again = differing(&plain, &draw());
-    assert_eq!(ui.get_read_scroll_y(), 0.0);
+    assert!(
+        ui.get_read_scroll_y().abs() < f32::EPSILON,
+        "the first row returns the viewport to its origin"
+    );
     assert!(!first_again.is_empty(), "the first suggestion not restored");
     assert!(first_again.iter().all(|y| (top - 2..bottom).contains(y)));
 }
