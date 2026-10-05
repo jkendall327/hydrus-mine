@@ -17,6 +17,7 @@ hydrus-gui-model.workspace = true
 hydrus-store.workspace = true
 hydrus-parse.workspace = true
 hydrus-net.workspace = true
+hydrus-download.workspace = true
 tokio.workspace = true
 hydrus-downloader-exchange = { path = "../hydrus-downloader-exchange" }
 rusqlite.workspace = true
@@ -44,7 +45,6 @@ slint-build = "1.18"
 hydrus-api.workspace = true
 axum.workspace = true
 tower.workspace = true
-hydrus-download.workspace = true
 hydrus-legacy.workspace = true
 hydrus-testkit.workspace = true
 

@@ -261,6 +261,8 @@ pub enum Command {
     ClearThumbnailCache,
     /// Publish two real cards and grow their text/title at the recorded cadence.
     DebugLongTextPopup,
+    /// Ordinary network-engine GET and captured response save/copy choices.
+    DebugFetchUrl,
     /// Override the current owned live idle decision until toggled or retired.
     DebugForceIdleMode,
     /// Publish the actual delayed message after five seconds.
@@ -1288,6 +1290,13 @@ fn help_menu(facts: &Facts) -> Entry {
                     menu(
                         "memory actions",
                         vec![item("clear thumbnail cache", Command::ClearThumbnailCache)],
+                    ),
+                    menu(
+                        "network actions",
+                        vec![
+                            item("review current network jobs", Command::NetworkData(false)),
+                            item("fetch a url", Command::DebugFetchUrl),
+                        ],
                     ),
                 ],
             ),

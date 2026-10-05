@@ -141,7 +141,25 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                 .unwrap()
                 .clone();
             modes["entries"] = serde_json::json!([force]);
-            entry["entries"] = serde_json::json!([modes, gui, memory]);
+            let network = entry["entries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| e.get("menu").is_some_and(|name| name == "network actions"))
+                .unwrap()
+                .clone();
+            let fetch = network["entries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| *e == "fetch a url")
+                .unwrap()
+                .clone();
+            assert_eq!(
+                network["entries"],
+                serde_json::json!(["review current network jobs", fetch])
+            );
+            entry["entries"] = serde_json::json!([modes, gui, memory, network]);
         }
 
         if let Some(inner) = entry.get("entries").and_then(Value::as_array) {
