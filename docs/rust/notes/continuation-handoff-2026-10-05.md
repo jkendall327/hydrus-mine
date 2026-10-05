@@ -37,6 +37,13 @@ Historical drafts #43–#56 are superseded; do not merge them separately. Origin
 feature branches, authored source objects and immutable `gui-evidence/*` tags are
 retained. No agent merge into `master` has been performed.
 
+The integration worktree is
+`/workspace/parallel/integrate-prefetch-and-selected-records`. The main checkout
+is `/workspace/hydrus-mine`; confirm its branch and fetch the owner's merged
+`master` before starting new work. `/workspace/HANDOFF.md` is a copy of this note
+for the new chat. The PR description records the final source SHA and cheap-check
+results.
+
 ## Honest accounting
 
 Run `python scripts/gui_burndown.py --commit HEAD` in the current integration.
@@ -113,9 +120,11 @@ may still finish; no new expensive runs should be launched. App PR attachment
 returned an unavailable-tool error; ordinary GitHub PR links are usable.
 
 Completed source-only worktrees were removed after clean-state and independently
-fetched remote-tag checks; all branches/tags remain. Local Cargo/native full
-builds were not run during the continuation. Disk was about7GiB free after the
-latest cleanup; check `df -h /workspace` before creating targets/worktrees.
+fetched remote-tag checks; all branches/tags remain. Wrapup uses local strict
+Clippy/type checks and fast core/model tests against the shared cached target,
+with isolated workspace compiler wrappers and the current `HYDRUS_FIXTURE_DIR`.
+Full native GUI compilation and suites remain deferred. Disk was about6GiB free
+at wrapup; check `df -h /workspace` before creating targets/worktrees.
 
 Start the next chat with this file, `AGENTS.md`, `docs/rust/ROADMAP.md` and
 `docs/rust/DIFFERENCES.md`. Resume distinct missing leaves from the map while
