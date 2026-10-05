@@ -1519,8 +1519,16 @@ copying request preferences and custom headers. Results now stream into the nati
 wait/request, and can be reviewed while the run is active.
 Script Run test now uses the recorded runtime domain prompt and remembered
 credentials, preserving old results on either cancellation and clearing them only
-at execution start. Test NetworkJobControl cog/error UI, the script-help button
-and the informational completion popup remain absent; final result is inline. Native copy feedback
+at execution start. The script test now shares the native NetworkJobControl over
+its isolated engine, including request-scoped cog commands and global bandwidth
+rule editors. Explicit owner errors support show/copy/retention; Qt's script
+owner does not infer these errors from failed requests. An owned Information/OK
+notice precedes the final label update and re-enabling Run, including cancelled
+and failed completions. Native notices omit Qt's platform icon/decoration. Help
+opens the existing local Markdown documentation; Qt's missing-HTML online/build
+guide chooser is recorded but remains Partial, with no native web fallback.
+Login script and list parents remain Partial while those documentation and
+broader child-editor boundaries remain incomplete. Native copy feedback
 stays visible until the review closes. Domain-manager confirmed execution now saves/closes the draft then runs the selected
 eligible queue through the shared persisted cookie store. Its progress/cancel
 controls appear when the manager is reopened; it does not share the reference's
@@ -1534,8 +1542,9 @@ script, available example/custom domain, access, description and activation, wit
 the existing credential child. Its final description Cancel keeps the default,
 while owner cancellation discards it. Reference no-op separator/current-script
 choices, duplicate warnings, validity/delay resets and staged Delete are retained.
-Login requests bypass bandwidth
-waiting while using ordinary cookies, custom headers, redirect and retry behavior.
+Login requests bypass request-admission bandwidth waiting while still accounting
+usage and throttling response bodies, using ordinary cookies, custom headers,
+redirect and retry behavior.
 The executor waits the reference two seconds after successful steps and observes
 cancellation during requests and waits. Session-cookie descriptions match the
 reference; persistent-cookie result descriptions currently use raw expiry seconds.

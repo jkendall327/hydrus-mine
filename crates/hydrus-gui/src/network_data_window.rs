@@ -130,6 +130,10 @@ impl std::fmt::Debug for Slots {
     }
 }
 impl Slots {
+    /// Whether this owner retains a review or detached rules draft.
+    pub fn has_open(&self) -> bool {
+        self.bandwidth.borrow().is_some() || self.jobs.borrow().is_some()
+    }
     /// Close both reviews and any detached rules draft.
     pub fn close(&self) {
         let bandwidth = self.bandwidth.borrow().clone();

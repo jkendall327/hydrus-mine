@@ -984,3 +984,80 @@ impl DomainsEditor {
         self.selection.select_only(None);
     }
 }
+
+/// A script test's request-scoped cog, independent of the owning editor widgets.
+/// Errors are explicitly supplied by the owner, as Qt's SetError requires.
+#[derive(Debug, Default)]
+pub struct TestControl {
+    pub retained: crate::network_job_control::Control,
+    reviewed: Option<(String, u64)>,
+    auto_sent: Option<(String, u64, bool)>,
+}
+impl TestControl {
+    pub fn menu(
+        &mut self,
+        review: Option<&crate::network_data::Review>,
+        now: i64,
+    ) -> crate::network_job_control::Cog {
+        let job = review
+            .filter(|review| review.runtime.fresh(now))
+            .and_then(|review| {
+                review.runtime.jobs.first().and_then(|job| {
+                    review
+                        .runtime
+                        .controls
+                        .iter()
+                        .find(|meta| meta.id == job.id)
+                        .map(|meta| (job, meta))
+                })
+            });
+        self.reviewed =
+            job.and_then(|(job, _)| review.map(|review| (review.runtime.epoch.clone(), job.id)));
+        review.map_or_else(
+            || crate::network_job_control::Cog {
+                auto_override: self.retained.auto_override,
+                ..Default::default()
+            },
+            |review| crate::network_job_control::cog(review, job, self.retained.auto_override, now),
+        )
+    }
+    /// A retained menu cannot send a request action to the next step or run.
+    pub fn command(
+        &self,
+        snapshot: &hydrus_store::network_runtime::Snapshot,
+        now: i64,
+        action: hydrus_store::network_runtime::JobAction,
+    ) -> Option<hydrus_store::network_runtime::Command> {
+        let (epoch, id) = self.reviewed.as_ref()?;
+        (snapshot.fresh(now)
+            && snapshot.epoch == *epoch
+            && snapshot.jobs.iter().any(|job| job.id == *id))
+        .then(|| hydrus_store::network_runtime::Command {
+            epoch: epoch.clone(),
+            job: *id,
+            action,
+        })
+    }
+    /// The policy survives cleared jobs and applies separately to each new request.
+    pub fn auto_command(
+        &mut self,
+        snapshot: &hydrus_store::network_runtime::Snapshot,
+        now: i64,
+        owner: u64,
+    ) -> Option<hydrus_store::network_runtime::Command> {
+        let job = snapshot.jobs.first().filter(|_| snapshot.fresh(now))?;
+        let token = (snapshot.epoch.clone(), job.id, self.retained.auto_override);
+        if self.auto_sent.as_ref() == Some(&token) {
+            return None;
+        }
+        self.auto_sent = Some(token);
+        Some(hydrus_store::network_runtime::Command {
+            epoch: snapshot.epoch.clone(),
+            job: job.id,
+            action: hydrus_store::network_runtime::JobAction::AutoOverrideBandwidthFor {
+                owner,
+                enabled: self.retained.auto_override,
+            },
+        })
+    }
+}

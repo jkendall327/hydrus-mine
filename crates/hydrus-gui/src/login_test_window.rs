@@ -94,7 +94,11 @@ pub fn open_result(
     Ok(window)
 }
 struct Running {
+    // Fresh temporary Stores restart their persisted engine epoch and job IDs.
+    // This token scopes GUI commands to one run without changing store coordination.
+    generation: u128,
     job: Arc<Job>,
+    engine: Option<Arc<NetEngine>>,
     _timer: Timer,
 }
 impl Drop for Running {
@@ -119,6 +123,7 @@ pub type Progress = Rc<dyn Fn(String)>;
 /// One completed step delivered while later steps/waits are still running.
 pub type ResultReady = Rc<dyn Fn(TestResult)>;
 enum RunEvent {
+    Engine(Arc<NetEngine>),
     Result(TestResult),
     Complete(Execution),
 }
@@ -179,6 +184,37 @@ impl RunSlot {
     pub fn busy(&self) -> bool {
         self.0.borrow().is_some()
     }
+    /// Review the isolated engine directly; it never publishes into daemon state.
+    pub fn review(&self) -> Option<hydrus_gui_model::network_data::Review> {
+        let running = self.0.borrow();
+        let running = running.as_ref()?;
+        let engine = running.engine.as_ref()?;
+        let mut runtime = engine.runtime_snapshot();
+        runtime.epoch = format!("login-run:{}:{}", running.generation, runtime.epoch);
+        Some(hydrus_gui_model::network_data::Review {
+            settings: engine.bandwidth_settings(),
+            usage: runtime.usage.clone(),
+            runtime,
+            live: true,
+        })
+    }
+    /// The engine atomically checks the reviewed epoch and request identity again.
+    pub fn command(&self, command: &hydrus_store::network_runtime::Command) -> bool {
+        let running = self.0.borrow();
+        let Some(running) = running.as_ref() else {
+            return false;
+        };
+        let Some(engine) = running.engine.as_ref() else {
+            return false;
+        };
+        let epoch = engine.runtime_snapshot().epoch;
+        if command.epoch != format!("login-run:{}:{epoch}", running.generation) {
+            return false;
+        }
+        let mut command = command.clone();
+        command.epoch = epoch;
+        engine.runtime_command(&command)
+    }
     pub fn cancel(&self) {
         if let Some(running) = self.0.borrow().as_ref() {
             running.job.cancel();
@@ -226,9 +262,12 @@ impl RunSlot {
                         store.read(settings::get).map_err(|e| e.to_string())?;
                     let engine = {
                         let _entered = runtime.enter();
-                        NetEngine::new(store.clone(), NetOptions::from_settings(&options))
-                            .map_err(|e| e.to_string())?
+                        Arc::new(
+                            NetEngine::new(store.clone(), NetOptions::from_settings(&options))
+                                .map_err(|e| e.to_string())?,
+                        )
                     };
+                    let _ = send.send(RunEvent::Engine(engine.clone()));
                     let observed = |result: &hydrus_net::login::TestResult| {
                         let _ = send.send(RunEvent::Result(result.clone()));
                     };
@@ -280,6 +319,11 @@ impl RunSlot {
                 };
                 loop {
                     match receive.try_recv() {
+                        Ok(RunEvent::Engine(engine)) => {
+                            if let Some(running) = slot.borrow_mut().as_mut() {
+                                running.engine = Some(engine);
+                            }
+                        }
                         Ok(RunEvent::Result(result)) => result_ready(result),
                         Ok(RunEvent::Complete(execution)) => {
                             slot.borrow_mut().take();
@@ -306,7 +350,12 @@ impl RunSlot {
                 }
             }
         });
-        *self.0.borrow_mut() = Some(Running { job, _timer: timer });
+        *self.0.borrow_mut() = Some(Running {
+            generation: rand::random(),
+            job,
+            engine: None,
+            _timer: timer,
+        });
     }
 }
 

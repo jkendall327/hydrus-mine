@@ -1,4 +1,5 @@
 import { Button, LineEdit } from "std-widgets.slint";
+import { DownloadControl, DownloadLine, JobCogMenu } from "importing.slint";
 import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
 export component LoginScriptsWindow inherits Window {
@@ -51,6 +52,10 @@ export component LoginScriptWindow inherits Window {
     in-out property <string> test-domain;
     in property <string> progress;
     in property <string> final-result;
+    in property <DownloadLine> test-download;
+    in property <JobCogMenu> test-cog;
+    callback test-control-menu();
+    callback test-control-action(int);
     callback result-clicked(int);
     in property <bool> step-selected;
     in property <bool> step-up;
@@ -67,6 +72,14 @@ export component LoginScriptWindow inherits Window {
     callback action(string);
     callback closed();
     VerticalLayout { padding: 12px; spacing: 6px;
+        HorizontalLayout { alignment: end;
+            Text { text: "help for this panel -->"; color: Theme.text; vertical-alignment: center; }
+            help := ContextMenuArea {
+                width: 30px;
+                Menu { MenuItem { title: "open the login scripts help"; activated => { root.action("help"); } } }
+                Button { text: "?"; enabled: !root.child-open; clicked => { help.show({x: 0px, y: self.height}); } }
+            }
+        }
         HorizontalLayout { Text { text: "name: "; color: Theme.text; vertical-alignment: center; } LineEdit { text <=> root.name; enabled: !root.running && !root.child-open && root.question == ""; } }
         Text { text: "credential definitions"; color: Theme.text; font-weight: 700; }
         ListTable { vertical-stretch: 1; columns: [{title: "name", width: 180px}, {title: "input type", width: 140px}, {title: "permitted input", width: 350px, stretch: true}]; rows: root.credentials; row-clicked(i, ctrl, shift) => { if !root.child-open && root.question == "" { root.credential-clicked(i, ctrl, shift); } } row-activated(i) => { if !root.child-open && root.question == "" { root.credential-activated(i); } } }
@@ -81,6 +94,11 @@ export component LoginScriptWindow inherits Window {
         ListTable { vertical-stretch: 1; columns: [{title: "domain", width: 220px}, {title: "access", width: 120px}, {title: "description", width: 400px, stretch: true}]; rows: root.examples; row-clicked(i,c,s) => { root.example-clicked(i,c,s); } row-activated(i) => { root.example-clicked(i,false,false); root.action("edit-example"); } delete-pressed => { root.action("delete-example"); } }
         HorizontalLayout { spacing: 6px; Button { text: "add"; enabled: !root.running && !root.child-open && root.question == ""; clicked => { root.action("add-example"); } } Button { text: "edit"; enabled: root.one-example && !root.running && !root.child-open && root.question == ""; clicked => { root.action("edit-example"); } } Button { text: "delete"; enabled: root.any-example && !root.running && !root.child-open && root.question == ""; clicked => { root.action("delete-example"); } } }
         HorizontalLayout { spacing: 6px; Button { text: "run test"; enabled: !root.running && !root.child-open && root.question == ""; clicked => { root.action("run-test"); } } Button { text: "cancel test"; enabled: root.running; clicked => { root.action("cancel-test"); } } }
+        DownloadControl { line: root.test-download; cog: root.test-cog; advanced: true;
+            open-menu => { root.test-control-menu(); }
+            action(id) => { root.test-control-action(id); }
+            cancel => { root.action("cancel-test"); }
+        }
         if root.progress != "": Text { text: root.progress; color: Theme.text; wrap: word-wrap; }
         ListTable { vertical-stretch: 1; columns: [{title: "name", width: 200px}, {title: "url", width: 350px, stretch: true}, {title: "result", width: 230px}]; rows: root.results; row-clicked(i,c,s) => { root.result-clicked(i); } row-activated(i) => { root.result-clicked(i); root.action("review-result"); } }
         Button { text: "review test result"; enabled: root.result-selected && !root.child-open && root.question == ""; clicked => { root.action("review-result"); } }

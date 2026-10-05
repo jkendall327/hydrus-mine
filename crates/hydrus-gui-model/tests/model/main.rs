@@ -29,6 +29,7 @@ mod import_options_overwrite;
 mod import_options_panel;
 mod importer_menu;
 mod local_import_dialog;
+mod login_script_controls;
 mod login_workflows;
 mod main_menu;
 mod manage_notes;
