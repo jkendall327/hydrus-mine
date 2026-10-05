@@ -6,18 +6,22 @@ pub struct Editor {
     pub weights: Weights,
     pub result: bool,
     pub selected: crate::list_selection::ListSelection<usize>,
+    other_selected: crate::list_selection::ListSelection<usize>,
+    sorting: [(usize, bool); 2],
 }
 pub const RESERVED: &str = "Sorry, you cannot re-add unnamespaced or namespaced!";
 pub const DUPLICATE: &str = "Sorry, that namespace already exists!";
 impl Editor {
     pub fn new(mut weights: Weights) -> Self {
         for rows in [&mut weights.search, &mut weights.result] {
-            rows.sort_by_cached_key(|(slice, weight)| (Self::pretty(slice), *weight));
+            rows.sort_by_cached_key(|row| sort_key(row, 0));
         }
         Self {
             weights,
             result: false,
             selected: crate::list_selection::ListSelection::default(),
+            other_selected: crate::list_selection::ListSelection::default(),
+            sorting: [(0, true); 2],
         }
     }
     pub fn rows(&self) -> &[(String, u16)] {
@@ -35,8 +39,10 @@ impl Editor {
         }
     }
     pub fn choose(&mut self, result: bool) {
-        self.result = result;
-        self.selected = crate::list_selection::ListSelection::default();
+        if self.result != result {
+            std::mem::swap(&mut self.selected, &mut self.other_selected);
+            self.result = result;
+        }
     }
     pub fn click(&mut self, index: usize, ctrl: bool, shift: bool) {
         let order: Vec<_> = (0..self.rows().len()).collect();
@@ -100,14 +106,31 @@ impl Editor {
             _ => format!("'{}' tags", slice.strip_suffix(':').unwrap_or(slice)),
         }
     }
+    pub fn sort_column(&self) -> usize {
+        self.sorting[usize::from(self.result)].0
+    }
+    pub fn ascending(&self) -> bool {
+        self.sorting[usize::from(self.result)].1
+    }
+    pub fn sort_by(&mut self, column: usize, ascending: bool) {
+        self.sorting[usize::from(self.result)] = (column.min(1), ascending);
+        self.sort();
+    }
     pub fn sort(&mut self) {
+        let column = self.sort_column();
+        let ascending = self.ascending();
         let selected: Vec<_> = self
             .selection()
             .into_iter()
             .map(|i| self.rows()[i].0.clone())
             .collect();
-        self.rows_mut()
-            .sort_by_cached_key(|(slice, weight)| (Self::pretty(slice), *weight));
+        if ascending {
+            self.rows_mut()
+                .sort_by_cached_key(|row| sort_key(row, column));
+        } else {
+            self.rows_mut()
+                .sort_by_cached_key(|row| std::cmp::Reverse(sort_key(row, column)));
+        }
         let selected: Vec<_> = self
             .rows()
             .iter()
@@ -116,4 +139,13 @@ impl Editor {
             .collect();
         self.selected.select_many(&selected);
     }
+}
+
+fn sort_key(row: &(String, u16), column: usize) -> (u16, String, u16) {
+    let primary_weight = if column == 1 { row.1 } else { 0 };
+    (
+        primary_weight,
+        hydrus_core::casefold::casefold(&Editor::pretty(&row.0)),
+        row.1,
+    )
 }

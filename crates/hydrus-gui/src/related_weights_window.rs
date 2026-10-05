@@ -61,6 +61,8 @@ pub fn open(
                     .collect::<Vec<_>>(),
             )));
             window.set_result(editor.result);
+            window.set_sort_column(i32::try_from(editor.sort_column()).unwrap_or_default());
+            window.set_ascending(editor.ascending());
             window.set_can_delete(editor.can_delete());
             window.set_can_edit(editor.selection().len() == 1);
             match question.borrow().as_ref() {
@@ -91,6 +93,23 @@ pub fn open(
         move |result| {
             if active.get() && parent.get() && question.borrow().is_none() {
                 editor.borrow_mut().choose(result);
+                refresh();
+            }
+        }
+    });
+    window.on_sort({
+        let active = active.clone();
+        let parent = parent.clone();
+        let editor = editor.clone();
+        let question = question.clone();
+        let refresh = refresh.clone();
+        move |column, ascending| {
+            if active.get()
+                && parent.get()
+                && question.borrow().is_none()
+                && let Ok(column) = usize::try_from(column)
+            {
+                editor.borrow_mut().sort_by(column, ascending);
                 refresh();
             }
         }

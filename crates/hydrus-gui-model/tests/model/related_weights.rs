@@ -334,3 +334,80 @@ fn binary64_result_rounding_and_sibling_contexts_replay_the_actual_db() {
         );
     }
 }
+
+fn selected_weight_rows(editor: &Editor) -> Vec<(String, u16)> {
+    editor
+        .selection()
+        .into_iter()
+        .map(|index| editor.rows()[index].clone())
+        .collect()
+}
+
+#[test]
+fn folded_header_sorts_add_selection_and_independent_tables_match_actual_qt() {
+    let f = hydrus_testkit::fixture_json("related_weight_table.json");
+    let mut editor = Editor::new(Weights {
+        search: serde_json::from_value(f["initial"].clone()).unwrap(),
+        result: serde_json::from_value(f["initial_result"].clone()).unwrap(),
+    });
+    for event in f["events"].as_array().unwrap() {
+        match event["action"].as_str().unwrap() {
+            "initial" => {}
+            "select both" => {
+                let index = editor
+                    .rows()
+                    .iter()
+                    .position(|(slice, _)| slice == "alpha:")
+                    .unwrap();
+                editor.click(index, false, false);
+                editor.choose(true);
+                let index = editor
+                    .rows()
+                    .iter()
+                    .position(|(slice, _)| slice == "Zulu:")
+                    .unwrap();
+                editor.click(index, false, false);
+                editor.choose(false);
+            }
+            "search weight ascending" => editor.sort_by(1, true),
+            "search weight descending" => editor.sort_by(1, false),
+            "add search replaces selection" => editor.add("bravo:".into(), 200),
+            "result slice descending" => {
+                editor.choose(true);
+                editor.sort_by(0, false);
+                editor.choose(false);
+            }
+            "search slice ascending" => editor.sort_by(0, true),
+            "search slice descending" => editor.sort_by(0, false),
+            action => panic!("unhandled recorded action: {action}"),
+        }
+        assert_eq!(
+            serde_json::json!(editor.weights.search),
+            event["search"],
+            "{}",
+            event["action"]
+        );
+        assert_eq!(
+            serde_json::json!(editor.weights.result),
+            event["result"],
+            "{}",
+            event["action"]
+        );
+        assert_eq!(
+            serde_json::json!(selected_weight_rows(&editor)),
+            event["search_selected"]
+        );
+        let search_sort = (editor.sort_column(), editor.ascending());
+        editor.choose(true);
+        assert_eq!(
+            serde_json::json!(selected_weight_rows(&editor)),
+            event["result_selected"]
+        );
+        editor.choose(false);
+        assert_eq!((editor.sort_column(), editor.ascending()), search_sort);
+    }
+    assert_eq!(
+        serde_json::json!([editor.weights.search, editor.weights.result]),
+        f["saved"]
+    );
+}

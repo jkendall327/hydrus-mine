@@ -7,12 +7,15 @@ export component RelatedWeightsWindow inherits Window {
     in property <bool> result;
     in property <bool> can-delete;
     in property <bool> can-edit;
+    in property <int> sort-column;
+    in property <bool> ascending;
     in property <int> phase;
     in property <string> question;
     in-out property <string> namespace;
     in-out property <int> weight:100;
     in property <string> error;
     callback choose(bool);
+    callback sort(int, bool);
     callback clicked(int,bool,bool);
     callback action(string);
     VerticalBox {
@@ -21,7 +24,7 @@ export component RelatedWeightsWindow inherits Window {
             Button {text:"adjust scores by search tags"; primary:!root.result; enabled:root.phase==0; clicked=>{root.choose(false);} }
             Button {text:"adjust scores by suggested tags"; primary:root.result; enabled:root.phase==0; clicked=>{root.choose(true);} }
         }
-        ListTable { columns:[{title:"tag slice",width:400px,stretch:true},{title:"weight",width:100px,stretch:false}]; rows:root.rows; vertical-stretch:1; row-clicked(i,c,s)=>{root.clicked(i,c,s);} row-activated(_)=>{root.action("edit");} }
+        ListTable { columns:[{title:"tag slice",width:400px,stretch:true},{title:"weight",width:100px,stretch:false}]; rows:root.rows; sort-column:root.sort-column; ascending:root.ascending; sort(c,a)=>{root.sort(c,a);} vertical-stretch:1; row-clicked(i,c,s)=>{root.clicked(i,c,s);} row-activated(_)=>{root.action("edit");} }
         HorizontalBox {
             Button {text:"add"; enabled:root.phase==0; clicked=>{root.action("add");}}
             Button {text:"edit"; enabled:root.phase==0 && root.can-edit; clicked=>{root.action("edit");}}
