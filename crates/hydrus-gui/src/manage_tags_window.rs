@@ -176,7 +176,7 @@ pub(crate) fn open(
                         .and_then(|key| pages.borrow().get(key).copied())
                         .unwrap_or(default_side),
                 );
-                *shown.borrow_mut() = key.clone();
+                shown.borrow_mut().clone_from(&key);
             }
             let valid = match w.get_suggested_page() {
                 0 => enabled,

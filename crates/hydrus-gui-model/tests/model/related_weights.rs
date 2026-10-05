@@ -295,8 +295,8 @@ fn binary64_result_rounding_and_sibling_contexts_replay_the_actual_db() {
             local: false,
             display: case["display"].as_bool().unwrap(),
             weights: Weights {
-                search: vec![("".into(), 0), (":".into(), 0), ("round:".into(), 100)],
-                result: vec![("".into(), 0), (":".into(), 0), ("round:".into(), 29)],
+                search: vec![(String::new(), 0), (":".into(), 0), ("round:".into(), 100)],
+                result: vec![(String::new(), 0), (":".into(), 0), ("round:".into(), 29)],
             },
             concurrence_percent: 6,
         };
@@ -319,8 +319,8 @@ fn binary64_result_rounding_and_sibling_contexts_replay_the_actual_db() {
             local: case["local"].as_bool().unwrap(),
             display: case["display"].as_bool().unwrap(),
             weights: Weights {
-                search: vec![("".into(), 0), (":".into(), 0), ("scope:".into(), 100)],
-                result: vec![("".into(), 0), (":".into(), 0), ("scope:".into(), 100)],
+                search: vec![(String::new(), 0), (":".into(), 0), ("scope:".into(), 100)],
+                result: vec![(String::new(), 0), (":".into(), 0), ("scope:".into(), 100)],
             },
             concurrence_percent: 6,
         };
