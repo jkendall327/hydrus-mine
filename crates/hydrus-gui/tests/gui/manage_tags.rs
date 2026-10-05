@@ -5,7 +5,7 @@
 use std::collections::BTreeSet;
 use std::sync::Arc;
 
-use slint::Model as _;
+use slint::{ComponentHandle as _, Model as _};
 
 use hydrus_core::HashId;
 use hydrus_gui::manage_tags::ManageTags;
