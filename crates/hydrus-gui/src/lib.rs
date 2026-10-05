@@ -428,7 +428,7 @@ pub struct Bound {
     pub session_autosave: session_autosave::Monitor,
     /// Automatic maintenance uses this binding's fresh live idle admissions.
     pub maintenance: maintenance_runtime::Control,
-    _maintenance_owner: maintenance_runtime::Owner,
+    _maintenance_owner: Rc<maintenance_runtime::Owner>,
     _header_approval: network_header_approval::Monitor,
 }
 
@@ -4689,7 +4689,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         _gui_colour_actions: gui_colour_actions,
         preview,
         session_autosave,
-        _maintenance_owner: maintenance.owner(),
+        _maintenance_owner: Rc::new(maintenance.owner()),
         maintenance,
         pages,
         current,
