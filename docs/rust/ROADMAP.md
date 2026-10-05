@@ -64,7 +64,7 @@ unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in
 [gui-coverage/README.md](gui-coverage/README.md).
 
-Continuous source work now proposes 123 further original leaf completions over
+Continuous source work now proposes 126 further original leaf completions over
 that validated 240 checkpoint: 53 on `codex/parity-more-controls`, five more
 on the dependent `codex/parity-next-details` branch, and 13 more on
 `codex/parity-preview-and-launching`, plus nine on
@@ -76,7 +76,17 @@ on the dependent `codex/parity-next-details` branch, and 13 more on
 `codex/parity-preview-and-filter-controls`, and three on
 `codex/parity-predicate-and-job-controls`, and four on
 `codex/parity-deletion-and-dialog-controls`, and five on
-`codex/parity-maintenance-and-menu-controls`. These five add the two real
+`codex/parity-maintenance-and-menu-controls`, and three on
+`codex/parity-cache-and-runtime-controls`. The three image-cache controls now
+reach shared pending/full-resolution renderers in preview, viewer, archive/delete
+and duplicate-filter consumers. Budget admission uses the reference RGB estimate;
+loaded footprints update on access, timeout is strict, and cache eviction preserves
+current displayed images and viewing intervals. Live policy, implicit normalization
+merges and owned-child edit guards are independently reviewed. Prefetch, tile,
+video and whole-cache families remain Partial. Runtime force-idle and hidden/native
+minimized toaster freezing are further Partial improvements with zero completion
+credit; missing worker-wake/CPU behavior, Wayland minimized state and other-monitor
+freezing remain explicit. The five preceding proposals add the two real
 normal-time maintenance gates, two owned five-second debug actions (popup and
 new search page), and the default-off Client API cookie/header notification
 control. Automatic workers run outside the UI and retire when the final binding
@@ -149,7 +159,7 @@ and mouse idle tracking remains Partial because it observes application windows.
 Broader external
 call/editor boundaries also remain Partial. Inspect the current branch with
 `python3 scripts/gui_burndown.py --commit HEAD`; do not substitute its proposed
-total of 363 for the validated 240 ledger. The embedded-ICC leaf adds the saved policy with real importer, preview,
+total of 366 for the validated 240 ledger. The embedded-ICC leaf adds the saved policy with real importer, preview,
 viewer and maintenance consumers. The viewer tag-list now opens owned search
 pages and requests main-window activation on supported native platforms; that
 activation remains Partial because Wayland activation is unresolved. Application
