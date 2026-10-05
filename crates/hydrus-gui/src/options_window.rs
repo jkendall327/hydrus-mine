@@ -292,6 +292,9 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                 (Kind::DeletionReasons, Value::DeletionReasons(_)) => {
                     out.kind = 25;
                 }
+                (Kind::OpenExternally, Value::OpenExternally(_)) => {
+                    out.kind = 31;
+                }
                 (Kind::ExternalCalls, Value::ExternalCalls(_)) => {
                     out.kind = 30;
                 }
@@ -343,6 +346,7 @@ pub(crate) fn open(
     banner_slot: &crate::tag_banner_window::Slot,
     suggested_slot: &crate::tag_suggestions_window::Slots,
     external_slots: &crate::external_call_window::Slots,
+    routing_slots: &crate::options_open_externally::Slots,
     applied: Rc<dyn Fn()>,
 ) -> Result<OptionsWindow, String> {
     let settings = store
@@ -385,11 +389,15 @@ pub(crate) fn open(
     let colour_list =
         crate::options_namespace_colours::bind(&window, &editor, &active, colour_slot);
     let frame_table = crate::options_frames::bind(&window, &editor, &active, frame_slot);
+    let routing_table =
+        crate::options_open_externally::bind(&window, &editor, &active, routing_slots);
     let external_table =
         crate::options_external_calls::bind(store, &window, &editor, &active, external_slots);
     // (the rows are made anew only as the page changes: an edit leaves its
     // control as the user left it)
     let show_page = {
+        let show_routing = routing_table.show.clone();
+        let show_external = external_table.show.clone();
         let show_colours = colour_list.show.clone();
         let cog_target = cog_target.clone();
         let session_choices = session_choices.clone();
@@ -399,21 +407,25 @@ pub(crate) fn open(
         move || {
             cog_target.borrow_mut().take();
             let Some(window) = weak.upgrade() else { return };
-            let editor = editor.borrow();
-            let rows: Vec<OptionRow> = editor
+            let state = editor.borrow();
+            let rows: Vec<OptionRow> = state
                 .rows()
                 .iter()
                 .enumerate()
                 .map(|(i, row)| OptionRow {
-                    found: editor.found(i),
+                    found: state.found(i),
                     ..option_row(row, &store, &session_choices)
                 })
                 .collect();
-            window.set_page(int(editor.page() as i64));
+            window.set_page(int(state.page() as i64));
             window.set_rows(ModelRc::new(VecModel::from(rows)));
             show_providers();
+            drop(state);
             show_colours();
-            if let Some(name) = editor.remembered_panel()
+            show_routing();
+            show_external();
+            let state = editor.borrow();
+            if let Some(name) = state.remembered_panel()
                 && let Err(error) = store.write(move |ctx| {
                     let mut preferences: hydrus_store::settings::OptionsPreferences =
                         hydrus_store::settings::get(ctx.conn())?;
@@ -448,6 +460,7 @@ pub(crate) fn open(
         let cancel_colours = colour_list.cancel.clone();
         let cancel_reasons = reason_queue.cancel.clone();
         let cancel_frames = frame_table.cancel.clone();
+        let cancel_routing = routing_table.cancel.clone();
         let cancel_external = external_table.cancel.clone();
         move || {
             if !active.replace(false) {
@@ -464,6 +477,7 @@ pub(crate) fn open(
             cancel_reasons();
             cancel_frames();
             cancel_external();
+            cancel_routing();
             crate::import_options_panel_window::cancel(&import_slot);
             crate::namespace_sorts_window::cancel(&namespace_slot);
             crate::tag_banner_window::cancel(&banner_slot);
@@ -515,7 +529,11 @@ pub(crate) fn open(
         let matches = matches.clone();
         let show_page = show_page.clone();
         let weak = window.as_weak();
+        let routing_open = routing_table.has_open.clone();
         move |i| {
+            if routing_open() {
+                return;
+            }
             let chosen = usize::try_from(i)
                 .ok()
                 .and_then(|i| matches.borrow().get(i).cloned());
@@ -816,7 +834,18 @@ pub(crate) fn open(
     window.on_page_chosen({
         let editor = editor.clone();
         let show_page = show_page.clone();
+        let weak = window.as_weak();
+        let active = active.clone();
+        let routing_open = routing_table.has_open.clone();
         move |i| {
+            if !active.get()
+                || routing_open()
+                || !weak
+                    .upgrade()
+                    .is_some_and(|window| window.window().is_visible())
+            {
+                return;
+            }
             editor.borrow_mut().show_page(at(i));
             show_page();
         }
@@ -828,6 +857,7 @@ pub(crate) fn open(
         let colours_open = colour_list.has_open.clone();
         let reasons_open = reason_queue.has_open.clone();
         let frames_open = frame_table.has_open.clone();
+        let routing_open = routing_table.has_open.clone();
         let external_open = external_table.has_open.clone();
         move |i, checked| {
             if !active.get()
@@ -835,6 +865,7 @@ pub(crate) fn open(
                 || reasons_open()
                 || frames_open()
                 || external_open()
+                || routing_open()
                 || !matches!(
                     editor.borrow().rows().get(at(i)),
                     Some(Row::Opt { enabled: true, .. })
@@ -1205,6 +1236,7 @@ pub(crate) fn open(
         let colours_open = colour_list.has_open.clone();
         let reasons_open = reason_queue.has_open.clone();
         let frames_open = frame_table.has_open.clone();
+        let routing_open = routing_table.has_open.clone();
         let external_open = external_table.has_open.clone();
         let import_slot = import_slot.clone();
         let namespace_slot = namespace_slot.clone();
@@ -1214,12 +1246,17 @@ pub(crate) fn open(
         let editor = editor.clone();
         let store = store.clone();
         let close = close.clone();
+        let weak = window.as_weak();
         move || {
             if !active.get()
+                || !weak
+                    .upgrade()
+                    .is_some_and(|window| window.window().is_visible())
                 || colours_open()
                 || reasons_open()
                 || frames_open()
                 || external_open()
+                || routing_open()
                 || tag_slot.borrow().is_some()
                 || import_slot.borrow().is_some()
                 || namespace_slot.borrow().is_some()
@@ -1243,6 +1280,13 @@ pub(crate) fn open(
                 after.export.default_directory = Some(
                     hydrus_gui_model::export_files::default_directory(&store, &after.export),
                 );
+            }
+            if weak
+                .upgrade()
+                .is_some_and(|window| window.get_routing_prepared())
+                || before.open_externally != hydrus_core::open_externally::Routing::default()
+            {
+                after.open_externally.wash(&mut after.external_calls);
             }
             let saved = store.write_and_refresh(move |ctx| {
                 after.save(ctx.conn(), &before)?;

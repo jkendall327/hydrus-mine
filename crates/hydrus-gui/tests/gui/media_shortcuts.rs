@@ -9,6 +9,7 @@ use hydrus_core::pages::PageCollect;
 use hydrus_gui::{MainWindow, Pages, SearchPage, bind, headless};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
+use slint::ComponentHandle as _;
 
 #[test]
 fn ctrl_r_and_ctrl_e() {
@@ -29,6 +30,7 @@ fn ctrl_r_and_ctrl_e() {
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.show().unwrap();
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
     let page = bound.current.borrow().clone();

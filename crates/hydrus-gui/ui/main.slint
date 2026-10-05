@@ -1,3 +1,4 @@
+export { OpenFileCallsWindow, ExternalRoutingChoiceWindow } from "open_externally.slint";
 export { ExternalCallWindow, ExternalCommandWindow, ExternalRule, ExternalDefaultsWindow } from "external_calls.slint";
 export { LocalTransferWindow } from "local_transfer.slint";
 export { FrameLocationWindow } from "frame_locations.slint";
@@ -765,6 +766,7 @@ export component MainWindow inherits Window {
     callback session-user-activity();
     callback session-mouse-activity();
     callback tab-new-page-requested(string, string);
+    callback retire-external-launches();
     callback close-page();
     callback unclose-page();
     callback archive-delete-filter();

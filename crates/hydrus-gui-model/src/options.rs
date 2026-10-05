@@ -196,6 +196,7 @@ macro_rules! settings {
 
 settings! {
     external_calls: hydrus_core::external_calls::Manager,
+    open_externally: hydrus_core::open_externally::Routing,
     advanced: AdvancedMode,
     auto_resolution: AutoResolutionSettings,
     bandwidth: BandwidthSettings,
@@ -321,6 +322,7 @@ pub enum Value {
     FrameLocations(std::collections::BTreeMap<String, hydrus_core::windows::FrameLocation>),
     /// Registered external program calls, staged in the parent Options draft.
     ExternalCalls(hydrus_core::external_calls::Manager),
+    OpenExternally(hydrus_core::open_externally::Routing),
     /// Shared favourite tags, staged until the parent options dialog applies.
     FavouriteTags(FavouriteTags),
     MostUsedTags(std::collections::BTreeMap<String, Vec<String>>),
@@ -404,6 +406,7 @@ pub enum Kind {
     LocalLocation,
     /// The detached registered external-call table.
     ExternalCalls,
+    OpenExternally,
     /// A detached tag list editor sharing write autocomplete.
     FavouriteTags,
     MostUsedTags,
@@ -1788,6 +1791,24 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     )],
                 ),
             ],
+        ),
+        page(
+            "open externally",
+            vec![boxed(
+                "URL calls and single file calls",
+                vec![opt(
+                    "open externally",
+                    Kind::OpenExternally,
+                    Rc::new(|s| Value::OpenExternally(s.open_externally.clone())),
+                    Rc::new(|s, value| match value {
+                        Value::OpenExternally(routing) => {
+                            s.open_externally = routing.clone();
+                            Ok(())
+                        }
+                        _ => Err(wrong("open externally")),
+                    }),
+                )],
+            )],
         ),
         page(
             "external programs",
@@ -4417,6 +4438,26 @@ impl Editor {
     }
 
     /// Registered calls staged by the external programs table.
+    pub fn edited_open_externally(&self) -> hydrus_core::open_externally::Routing {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| match value {
+                Value::OpenExternally(routing) => Some(routing.clone()),
+                _ => None,
+            })
+            .unwrap_or_else(|| self.before.open_externally.clone())
+    }
+    pub fn set_open_externally(&mut self, routing: hydrus_core::open_externally::Routing) {
+        if let Some(value) = self
+            .values
+            .iter_mut()
+            .flatten()
+            .find(|value| matches!(value, Value::OpenExternally(_)))
+        {
+            *value = Value::OpenExternally(routing);
+        }
+    }
     pub fn edited_external_calls(&self) -> hydrus_core::external_calls::Manager {
         self.values
             .iter()

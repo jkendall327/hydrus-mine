@@ -18,6 +18,7 @@ pub mod mime;
 pub mod network;
 pub mod notes;
 pub mod numbers;
+pub mod open_externally;
 pub mod pages;
 pub mod pybytes;
 pub mod pyhtml;
