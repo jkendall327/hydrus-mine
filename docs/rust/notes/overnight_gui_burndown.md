@@ -1,8 +1,33 @@
-# Overnight GUI parity continuation, 2026-10-04
+# Continuous GUI parity implementation, 2026-10-04–05
 
-The current validated milestone is **189 distinct original reference leaves**: 80 from the prior validated checkpoint plus 109 additional implementations. The initial goal was 40 and the integration target was raised to 80; that milestone was already achieved. Of these, **174 were Missing and 15 were Partial** in the original inventory. Cumulative progress keeps the frozen 1,812-entry denominator and excludes parent groups, aliases, evidence-only reassessments and new native inventory IDs.
+The current validated milestone is **240 distinct original reference leaves**: **222 formerly Missing and 18 formerly Partial**. This adds 51 implementations to the prior 189-item milestone. Counts use the frozen 1,812 original IDs and exclude parents, aliases, evidence-only reassessments and new native IDs. A separate 28 Partial improvement claims earn no additional completions.
 
-| Original reference status | Frozen baseline | Validated current | Change |
+| Original reference status | Frozen baseline | Validated at 240 | Change |
+| --- | ---: | ---: | ---: |
+| Missing | 862 | 581 | -281 |
+| Partial | 378 | 390 | +12 |
+| First Pass | 572 | 841 | +269 |
+| Total original entries | 1,812 | 1,812 | 0 |
+
+Raw status changes also include structural assessments. Partial increases when a previously missing broader feature gains a working slice. The concrete completion ledger remains the measure of implemented original leaves.
+
+## Validated 240-item checkpoint
+
+Source `028fd72f4a3cb747e7588d0987bbb99dd83d53f7` passed all four required jobs in [workflow 37242969868](https://github.com/jkendall327/hydrus-mine/actions/runs/37242969868): Linux formatting, strict Clippy, workspace tests and parity ratchet; macOS and Windows builds/tests; and the separate reference/backend lane. **455 GUI integration tests passed on each operating system.** Unix model/store suites passed 323/171 cases; Windows passed 322/170 because of platform-gated cases. Two store cases remain ignored on each platform. The network/login suite passed 14 cases on each platform. Exact job, step, log-hash and suite evidence is in [the CI record](../gui-coverage/overnight/ci-evidence.json) and [validation summary](../gui-coverage/overnight/validation-summary-028fd72f.json).
+
+The additional 51 completions cover command palette controls (12), filename tagging (2), migration (5), viewing statistics (6), millisecond viewtime (1), Files/Trash (6), OR controls (4), Manage Tags (2), frame flip/reset (4), tag-banner launch/editor controls (6), local-service bulk actions (2), and deleted-record clearing (1). Broad clipboard/Undo, Manage Tags, service-review, frame and banner families retain their Partial boundaries.
+
+The canonical map has **1,733 native entries across all 97 exported Window components**. The source census and anchor checks found no opaque/unassessed windows, catch-all entries or weak First pass rationales. [The offline HTML](../gui-progress.html) embeds the inventories; its completion filter contains exactly 240 original leaves. Root checked its metrics, search/reset, both tabs, keyboard/shared navigation and desktop/mobile layouts, with no page errors, runtime network requests or horizontal overflow. System Chromium blocks `file://` navigation by administrator policy, so this check loaded the exact file contents offline with `set_content`; it does not claim successful file navigation. [Browser evidence](../gui-coverage/overnight/browser-evidence.json) records the checked HTML hash and policy limitation.
+
+Root reviewed eight native PNGs from exact-source [artifact 11319130943](https://github.com/jkendall327/hydrus-mine/actions/runs/37242969868/artifacts/11319130943), covering palette, OR validation, filename rules, deleted-record questions, banner controls/thumbnails, paused migration and viewing statistics. [Visual provenance](../gui-coverage/audit/visual-review-028fd72f-follow-through.json) names those images and findings; this is not an all-window pixel review. Reference recordings and historical renders remain separate evidence. No local Cargo builds, Rust tests or mutation tests were run for publication.
+
+Hosted jobs occupied 113.9 minutes in total and overlapped within 40.7 minutes. With the same observed durations, sequential execution would add about 73.2 minutes. This measures CI overlap, not total authoring time saved. Parallel implementation continued while those jobs ran. The next notebook/viewer/rating and nested-editor changes remain uncounted until their own source review and hosted validation pass.
+
+## Historical 189-item milestone
+
+The prior validated milestone was **189 distinct original reference leaves**: 80 from the prior validated checkpoint plus 109 additional implementations. The initial goal was 40 and the integration target was raised to 80; that milestone was already achieved. Of these, **174 were Missing and 15 were Partial** in the original inventory. Cumulative progress keeps the frozen 1,812-entry denominator and excludes parent groups, aliases, evidence-only reassessments and new native inventory IDs.
+
+| Original reference status | Frozen baseline | Validated at 189 | Change |
 | --- | ---: | ---: | ---: |
 | Missing | 862 | 647 | -215 |
 | Partial | 378 | 375 | -3 |

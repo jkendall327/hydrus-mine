@@ -1,0 +1,57 @@
+{
+  "source_commit": "028fd72f4a3cb747e7588d0987bbb99dd83d53f7",
+  "reviewed_by": "root",
+  "workflow_run": 37242969868,
+  "artifact_id": 11319130943,
+  "artifact_sha256": "64b35436e5ac235f5de6f97849d79368d3f5ad6025655cab92fb0482b5cab5f4",
+  "artifact_png_count": 122,
+  "reviewed_native_pngs": [
+    {
+      "name": "command_palette.png",
+      "sha256": "6a805835e1b4d7dae48e4dfb1a1a9345dbcfa1ac425b39b84f5589884fe5db7f"
+    },
+    {
+      "name": "read-or-advanced.png",
+      "sha256": "cc51926edb91de8dc7a6954364e28209708abfe0e24c6e3a900076a08e29f895"
+    },
+    {
+      "name": "filename_rules.png",
+      "sha256": "759aa2cd9b56d844376b0f04b28ed45709a5d00be0ac8c71514c6cf1166cbd1a"
+    },
+    {
+      "name": "services-clear-deleted-records.png",
+      "sha256": "a12fef4b77516e59ba2fbd33d4441d25e868fd9f5161b8028f5b73bd9efc20f2"
+    },
+    {
+      "name": "tag_banner_editor.png",
+      "sha256": "fa7c1f421ace77635f2a3bff562c9d551ad9efcd99f6932c63cb26786caae2a5"
+    },
+    {
+      "name": "tag_banner_thumbnails.png",
+      "sha256": "d2879dbc434982071cd090c17a7616e5efde0a66ae5f09e1e6300ba1415b2709"
+    },
+    {
+      "name": "tag_migration_progress.png",
+      "sha256": "df7730afe45084797b11d9d6ffa51e6e21102f2a16572265ff851d91fb9c065e"
+    },
+    {
+      "name": "options_viewing_statistics.png",
+      "sha256": "04b7ee936d3a45155e1d14680fa0df5181b5c5830596178ef191a36a1aded59d"
+    }
+  ],
+  "findings": [
+    "Palette provider sections and filename regex examples render real data.",
+    "Invalid advanced OR input shows a diagnostic and retains the previously valid CNF.",
+    "Deleted-record clearing renders the exact second-stage question labels.",
+    "Banner RGBA, namespace and range controls render; low thumbnail alpha is deliberate fixture data.",
+    "Paused migration offers resume/cancel; viewing-statistics settings are readable.",
+    "A passive viewer banner may be occluded by media according to the recorded Qt paint order; the separate raised-hover capture belongs to a later source."
+  ],
+  "scope": "Root reviewed these eight exact-source native images, not every exported window or every artifact image.",
+  "browser_evidence": "docs/rust/gui-coverage/overnight/browser-evidence.json",
+  "browser_layouts_reviewed": [
+    "desktop 1440 px",
+    "mobile 390 px"
+  ],
+  "browser_findings": "Hierarchy and detail panel remain readable without horizontal overflow; automated interactions, metrics, exact completion filter and offline requests check passed."
+}
