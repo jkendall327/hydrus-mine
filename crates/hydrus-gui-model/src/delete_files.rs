@@ -266,8 +266,12 @@ impl Draft {
     /// Apply the frozen choice atomically, preserving each existing reason for Preserve.
     /// Remembered fields merge into the current settings so concurrent option edits survive.
     pub fn apply(&self, store: &Store) -> hydrus_store::Result<()> {
+        self.apply_with_choice(store).map(|_| ())
+    }
+    /// Report only rows whose target-domain membership actually changed in this write.
+    pub fn apply_with_choice(&self, store: &Store) -> hydrus_store::Result<Option<Choice>> {
         let Some(choice) = self.choices.get(self.action).cloned() else {
-            return Ok(());
+            return Ok(None);
         };
         let reason = if self.reason_enabled() {
             self.reasons.get(self.reason).and_then(|r| match &r.reason {
@@ -287,6 +291,7 @@ impl Draft {
                 DeletionAction::Domain(key) => store_service(w.conn(), key)?,
                 DeletionAction::Physical | DeletionAction::ClearRecord => roles.local_file_storage,
             };
+            let reported = choice.clone();
             let mut files = choice.files;
             if matches!(
                 choice.action,
@@ -296,6 +301,7 @@ impl Draft {
                     hydrus_store::delete_lock::locked(w.conn(), roles.local_file_storage, &files)?;
                 files.retain(|file| !locked.contains(file));
             }
+            let before = hydrus_store::media::current_domains(w.conn(), &files)?;
             w.delete_files(domain, &files, reason.as_deref())?;
             if choice.action == DeletionAction::ClearRecord {
                 w.clear_local_delete_records(Some(&files))?;
@@ -313,7 +319,10 @@ impl Draft {
             {
                 prefs.last_reason = (reason != default_reason).then_some(reason);
             }
-            hydrus_store::settings::set(w.conn(), &prefs)
+            hydrus_store::settings::set(w.conn(), &prefs)?;
+            let after = hydrus_store::media::current_domains(w.conn(), &files)?;
+            let files = files.into_iter().filter(|file| before.get(file).is_some_and(|domains| domains.contains(&domain)) && after.get(file).is_none_or(|domains| !domains.contains(&domain))).collect();
+            Ok(Some(Choice {files, ..reported}))
         })
     }
 }

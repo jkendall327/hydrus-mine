@@ -23,6 +23,7 @@ mod embedded_metadata;
 mod existing_tags_filter;
 mod favourites;
 mod file_log;
+mod file_view_removal;
 mod filename_rules;
 mod filename_simple;
 mod folder_manager_lifecycle;

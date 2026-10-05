@@ -17,6 +17,7 @@ mod edit_subscription;
 mod embedded_metadata;
 mod existing_tags_filter;
 mod file_log;
+mod file_view_removal;
 mod filename_rules;
 mod filename_simple;
 mod filename_tagging;

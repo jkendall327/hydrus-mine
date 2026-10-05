@@ -158,6 +158,44 @@ impl ArchiveDeleteFilter {
         self.decided(Decision::Delete)
     }
 
+    pub fn skipped(&self) -> Vec<HashId> {
+        self.decided(Decision::Skip)
+    }
+    /// Read saved policy on acceptance, preserving the independent skipped preference.
+    pub fn removed_from_view(&self) -> Vec<HashId> {
+        let preferences = self
+            .store
+            .read(hydrus_store::settings::get::<hydrus_store::settings::FileViewRemoval>)
+            .unwrap_or_default();
+        if !preferences.filtered {
+            return Vec::new();
+        }
+        self.files
+            .iter()
+            .zip(&self.decisions)
+            .filter_map(|(&file, decision)| {
+                matches!(decision, Some(Decision::Keep | Decision::Delete))
+                    .then_some(file)
+                    .or_else(|| {
+                        (preferences.skipped && *decision == Some(Decision::Skip)).then_some(file)
+                    })
+            })
+            .collect()
+    }
+    pub fn return_file(&self) -> Option<HashId> {
+        let preferences = self
+            .store
+            .read(hydrus_store::settings::get::<hydrus_store::settings::FileViewRemoval>)
+            .unwrap_or_default();
+        if preferences.filtered && !preferences.skipped {
+            self.skipped()
+                .first()
+                .copied()
+                .or_else(|| self.files.first().copied())
+        } else {
+            self.files.first().copied()
+        }
+    }
     /// Whether anything was kept or deleted (so closing asks to commit).
     pub fn has_decisions(&self) -> bool {
         self.decisions
@@ -237,6 +275,11 @@ impl ArchiveDeleteFilter {
     /// deletees, the archived ones go back to the inbox first so they can
     /// be deleted.
     pub fn commit(&self) -> hydrus_store::Result<()> {
+        self.commit_changed().map(|_| ())
+    }
+
+    /// Report only deletees whose domain membership actually changed, for content-event pruning.
+    pub fn commit_changed(&self) -> hydrus_store::Result<Vec<HashId>> {
         let snapshot = self.store.snapshot();
         let (domains, _) = self.deletion_domains(&snapshot.services);
         let deleted = self.deleted();
@@ -247,12 +290,16 @@ impl ArchiveDeleteFilter {
             if lock.archived && lock.reinbox_after_archive_delete {
                 w.inbox(&deleted)?;
             }
+            let mut changed = std::collections::BTreeSet::new();
             for domain in domains {
                 // (only those in it, as the reference deletes them)
                 let current = w.filter_current(domain, &deleted)?;
                 w.delete_files(domain, &current, Some(DELETE_REASON))?;
+                let remaining = w.filter_current(domain, &current)?;
+                changed.extend(current.into_iter().filter(|file| !remaining.contains(file)));
             }
-            w.archive(&kept)
+            w.archive(&kept)?;
+            Ok(changed.into_iter().collect())
         })
     }
 }

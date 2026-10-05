@@ -2902,6 +2902,25 @@ stale metadata after a crash cannot keep the admission lock or cancel a new
 process. Queued manual cancellation preserves the current global login, and
 forced login still executes with existing session cookies.
 
+Files and Trash now stages four independent removal preferences, all defaulting
+to false. Archive/delete filtering removes committed keep/delete rows only when
+enabled; its dependent “even skipped files” checkbox preserves its saved value
+while disabled. With skipped removal off, the first surviving skipped file is
+selected in the source page. Forget/resume leave rows untouched. Filters retire
+predecessors and reject hidden, closed-source or retained retired commits; a tab
+switch preserves their original page rather than removing from the new page.
+
+Trash removal uses actual trash membership after successful thumbnail/viewer
+deletions. Deleting from one of several local domains keeps the row while another
+domain owns it; a one-domain trash view keeps newly trashed rows. Physical
+removal still prunes wholly current local views independently of this option.
+Successful thumbnail strict/merge moves remove only actually transferred rows
+from a view including their source domain, when enabled; copying keeps rows.
+Options Apply affects these live consumers, Cancel discards staged edits, and
+legacy preferences migrate. `files_view_removal.json` and its Qt PNG record real
+controls, filter close signals and media-list content updates. General external
+content-update broadcasting and broader Files and Trash behavior remain Partial.
+
 Files and Trash now saves the confirmation preferences for trash and multi-file
 archive/inbox operations. Thumbnail shortcuts and menu actions read the applied
 preferences; the viewer also skips a simple local deletion question when trash

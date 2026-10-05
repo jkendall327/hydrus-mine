@@ -87,6 +87,16 @@ macro_rules! settings {
             hydrus_store::settings::set($conn,&windows)?;
         }
     };
+    (@save $conn:ident, $after:ident, $before:ident, file_view_removal) => {
+        if $after.file_view_removal != $before.file_view_removal {
+            let mut latest: hydrus_store::settings::FileViewRemoval = hydrus_store::settings::get($conn)?;
+            if $after.file_view_removal.filtered != $before.file_view_removal.filtered { latest.filtered = $after.file_view_removal.filtered; }
+            if $after.file_view_removal.skipped != $before.file_view_removal.skipped { latest.skipped = $after.file_view_removal.skipped; }
+            if $after.file_view_removal.trashed != $before.file_view_removal.trashed { latest.trashed = $after.file_view_removal.trashed; }
+            if $after.file_view_removal.moved != $before.file_view_removal.moved { latest.moved = $after.file_view_removal.moved; }
+            hydrus_store::settings::set($conn, &latest)?;
+        }
+    };
     (@save $conn:ident, $after:ident, $before:ident, local_transfer) => {
         if $after.local_transfer != $before.local_transfer {
             let mut latest: hydrus_store::settings::LocalTransferPreferences = hydrus_store::settings::get($conn)?;
@@ -217,6 +227,7 @@ settings! {
     duplicate_colours: hydrus_store::settings::DuplicateColourSettings,
     export: ExportSettings,
     file_handling: FileHandlingSettings,
+    file_view_removal: hydrus_store::settings::FileViewRemoval,
     file_maintenance: FileMaintenanceSettings,
     file_viewing: FileViewingStatistics,
     folders: FolderSettings,
@@ -2068,6 +2079,29 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         page(
             "files and trash",
             vec![
+                check(
+                    "Remove files from view when they are archive/delete filtered: ",
+                    |s| s.file_view_removal.filtered,
+                    |s, v| s.file_view_removal.filtered = v,
+                ),
+                enabled(
+                    check(
+                        "--even skipped files: ",
+                        |s| s.file_view_removal.skipped,
+                        |s, v| s.file_view_removal.skipped = v,
+                    ),
+                    |s| s.file_view_removal.filtered,
+                ),
+                check(
+                    "Remove files from view when they are sent to the trash: ",
+                    |s| s.file_view_removal.trashed,
+                    |s, v| s.file_view_removal.trashed = v,
+                ),
+                check(
+                    "Remove files from view when they are moved to another local file domain: ",
+                    |s| s.file_view_removal.moved,
+                    |s, v| s.file_view_removal.moved = v,
+                ),
                 check(
                     "When copying file hashes, prefix with booru-friendly hash type: ",
                     |s| s.file_handling.prefix_hash_when_copying,

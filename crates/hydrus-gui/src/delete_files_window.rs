@@ -15,6 +15,7 @@ pub type Slot = Rc<RefCell<Option<DeleteFilesWindow>>>;
 pub type Guard = Rc<dyn Fn() -> bool>;
 /// Refresh the owner after the accepted mutation.
 pub type Applied = Rc<dyn Fn()>;
+pub type AppliedChoice = Rc<dyn Fn(&hydrus_gui_model::delete_files::Choice)>;
 
 /// Discard the owned draft, including callbacks retained by a stale handle.
 pub fn cancel(slot: &Slot) {
@@ -59,6 +60,26 @@ pub fn open(
     guard: Guard,
     applied: Applied,
 ) -> Result<Option<DeleteFilesWindow>, String> {
+    open_with_choice(
+        slot,
+        store,
+        files,
+        suggested,
+        default_reason,
+        guard,
+        Rc::new(move |_| applied()),
+    )
+}
+/// Report the captured actionable choice rather than the original mixed selection.
+pub fn open_with_choice(
+    slot: &Slot,
+    store: &Arc<Store>,
+    files: &[hydrus_core::HashId],
+    suggested: Option<&DeletionAction>,
+    default_reason: &str,
+    guard: Guard,
+    applied: AppliedChoice,
+) -> Result<Option<DeleteFilesWindow>, String> {
     if let Some(window) = slot.borrow().as_ref() {
         return Ok(Some(window.clone_strong()));
     }
@@ -71,8 +92,9 @@ pub fn open(
         .map_err(|e| e.to_string())?;
     if draft.already_resolved(preferences.confirm_trash) {
         if guard() {
-            draft.apply(store).map_err(|e| e.to_string())?;
-            applied();
+            if let Some(choice) = draft.apply_with_choice(store).map_err(|e| e.to_string())? {
+                applied(&choice);
+            }
         }
         return Ok(None);
     }
@@ -152,10 +174,12 @@ pub fn open(
                 return;
             };
             draft.borrow_mut().custom = window.get_custom().to_string();
-            match draft.borrow().apply(&store) {
-                Ok(()) => {
+            match draft.borrow().apply_with_choice(&store) {
+                Ok(choice) => {
                     close();
-                    applied();
+                    if let Some(choice) = choice {
+                        applied(&choice);
+                    }
                 }
                 Err(error) => {
                     window.set_error(error.to_string().into());

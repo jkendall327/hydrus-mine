@@ -37,6 +37,17 @@ fn the_archive_delete_filter_keeps_and_deletes() {
     .unwrap();
     let store: Arc<Store> = Store::open(native.path()).unwrap();
 
+    store
+        .write(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::settings::FileViewRemoval {
+                    trashed: true,
+                    ..Default::default()
+                },
+            )
+        })
+        .unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(
