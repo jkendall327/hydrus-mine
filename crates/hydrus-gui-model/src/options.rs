@@ -4177,6 +4177,7 @@ pub fn applied(
                 "EXPERIMENTAL: Minimum gallery importer update time:"
                     | "EXPERIMENTAL: Minimum watcher importer update time:"
                     | "Application display name: "
+                    | "Start animations this % in:"
             );
             if ((option.get)(settings) != *value || accept_displayed)
                 && let Err(why) = (option.set)(&mut out, value)

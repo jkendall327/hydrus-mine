@@ -2744,6 +2744,8 @@ Media Playback's “Start animations this % in” uses the actual reference0–1
 spinbox and preserves imported raw fractions until Apply. Cancel keeps the raw
 value; reopening shows its truncated/clamped percentage. Its owned Options
 callback rejects hidden or retired input, and saving merges just this preference.
+The accepted integer is divided once: actual typed29 saves0.29 and reopens as28,
+matching the recorded Qt floating-point truncation; it is not truncated again on save.
 Retained old YAML options remain the fallback when no native preference exists.
 Native animated WebP/ugoira readers seek before first publication in the viewer,
 archive-delete and duplicate filters. Fresh/cleared widgets start at zero even at

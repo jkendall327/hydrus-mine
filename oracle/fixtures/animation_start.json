@@ -78,6 +78,46 @@
       "displayed": 100,
       "saved": 1.0,
       "reopened": 100
+    },
+    {
+      "raw": 0,
+      "typed": 29,
+      "apply": true,
+      "displayed": 0,
+      "saved": 0.29,
+      "reopened": 28
+    },
+    {
+      "raw": 0,
+      "typed": 57,
+      "apply": true,
+      "displayed": 0,
+      "saved": 0.57,
+      "reopened": 56
+    },
+    {
+      "raw": 0,
+      "typed": 58,
+      "apply": true,
+      "displayed": 0,
+      "saved": 0.58,
+      "reopened": 57
+    },
+    {
+      "raw": 0.29,
+      "typed": 29,
+      "apply": true,
+      "displayed": 28,
+      "saved": 0.29,
+      "reopened": 28
+    },
+    {
+      "raw": 0.29,
+      "typed": null,
+      "apply": true,
+      "displayed": 28,
+      "saved": 0.28,
+      "reopened": 28
     }
   ],
   "states": [
