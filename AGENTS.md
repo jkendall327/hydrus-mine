@@ -136,6 +136,13 @@ box. Each one is a commit that passes CI on its own.
   measured child geometry with its default zero. Expose measured geometry
   through read-only direct bindings to structurally present items; the source
   compiler alone does not detect this runtime binding failure.
+- **Resizable Slint windows**: use `preferred-width`/`preferred-height` for the
+  opening size. A literal `width` binding can constant-fold descendant viewport
+  measurements even after the native window resizes. Check real narrow/wide
+  measurements when a layout consumer depends on the viewport.
+- **Winit event filters**: `on_winit_window_event` replaces the prior callback.
+  Compose opening observers and existing drop handlers in one owner-local filter;
+  query native geometry there because Slint has not yet updated its resize cache.
 - **Key handling**: the main window's shortcuts are a
   `capture-key-pressed` on the outermost `FocusScope`, so they work
   whatever has focus; a widget's own keys go in its own `FocusScope`.
