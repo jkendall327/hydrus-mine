@@ -166,6 +166,7 @@ settings! {
     page_chooser: hydrus_store::settings::PageChooserSettings,
     page_navigation: hydrus_store::settings::PageNavigationSettings,
     tab_presentation: hydrus_store::settings::TabPresentationSettings,
+    tab_drag: hydrus_store::settings::TabDragSettings,
     options_preferences: OptionsPreferences,
     page_names: PageNameSettings,
     page_settings: PageSettings,
@@ -2158,6 +2159,36 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             "When switching to pages, move keyboard focus to any text input field: ",
                             |s| s.page_navigation.focus_search_on_change,
                             |s, v| s.page_navigation.focus_search_on_change = v,
+                        ),
+                        check(
+                            "Selection chases dropped page after drag and drop: ",
+                            |s| s.tab_drag.chase,
+                            |s, v| s.tab_drag.chase = v,
+                        ),
+                        check(
+                            "  With shift held down?: ",
+                            |s| s.tab_drag.chase_shift,
+                            |s, v| s.tab_drag.chase_shift = v,
+                        ),
+                        check(
+                            "Navigate tabs during drag and drop: ",
+                            |s| s.tab_drag.navigate,
+                            |s, v| s.tab_drag.navigate = v,
+                        ),
+                        check(
+                            "  With shift held down?: ",
+                            |s| s.tab_drag.navigate_shift,
+                            |s, v| s.tab_drag.navigate_shift = v,
+                        ),
+                        check(
+                            "EXPERIMENTAL: Mouse wheel scrolls tab bar, not page selection: ",
+                            |s| s.tab_drag.wheel_scroll,
+                            |s, v| s.tab_drag.wheel_scroll = v,
+                        ),
+                        check(
+                            "BUGFIX: Disable all page tab drag and drop: ",
+                            |s| s.tab_drag.disabled,
+                            |s, v| s.tab_drag.disabled = v,
                         ),
                         choice(
                             "EXPERIMENTAL: Show tab tree view: ",

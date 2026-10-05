@@ -3025,3 +3025,10 @@ that notebook/page. Switching ordinary tabs reveals the active page's ancestors,
 and changes to the session retain the cursor by page key. The hierarchy remains
 available when main navigation tabs are hidden. Options Apply/Cancel, saved
 settings and reopening use the existing staged tab-presentation controls.
+
+GUI Pages navigation now stages the six drag/wheel preference checkboxes with
+independent ordinary/Shift choices. The wheel preference reaches the actual
+notebook bars: default wheel input selects the adjacent tab and clamps at either
+end; enabled scrolling moves the overflowing bar's viewport and preserves page
+selection. This works on horizontal and vertical notebook rows; Apply refreshes
+the live bars and Cancel leaves saved settings unchanged.

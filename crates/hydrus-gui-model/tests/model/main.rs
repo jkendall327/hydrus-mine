@@ -121,6 +121,7 @@ mod incremental_tagging;
 mod tag_banner;
 
 mod page_tree;
+mod tab_drag;
 mod tab_presentation;
 
 mod archive_repair;

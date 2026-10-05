@@ -2077,3 +2077,10 @@ collapse-all-descendants behavior remain unported. The native sidebar uses a fix
 190px width, text toolbar buttons and 26px rows rather than Qt's splitter and
 configurable tree geometry. Broader navigation/tree families remain Partial;
 this slice changes only the original experimental show-tree option proposal.
+
+The tab-wheel option now consumes real wheel input in native notebook bars.
+Scroll increments use native120px steps instead of Qt's scroll-button/tab geometry;
+selection and scroll directions agree with the recording. The additional five
+drag checkboxes are staged/persisted at this checkpoint, but their source/drop
+consumers and reference-specific no-chase selection are still being implemented;
+registration alone is not a completion claim.

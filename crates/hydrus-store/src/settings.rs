@@ -351,6 +351,45 @@ impl TabAlignment {
         }
     }
 }
+/// Live notebook drag decisions, independent from page/session contents.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct TabDragSettings {
+    pub chase: bool,
+    pub chase_shift: bool,
+    pub navigate: bool,
+    pub navigate_shift: bool,
+    pub wheel_scroll: bool,
+    pub disabled: bool,
+}
+impl Default for TabDragSettings {
+    fn default() -> Self {
+        Self {
+            chase: true,
+            chase_shift: false,
+            navigate: true,
+            navigate_shift: true,
+            wheel_scroll: false,
+            disabled: false,
+        }
+    }
+}
+impl Setting for TabDragSettings {
+    const KEY: &'static str = "gui_tab_drag";
+}
+impl TabDragSettings {
+    pub fn chase(self, shift: bool) -> bool {
+        if shift { self.chase_shift } else { self.chase }
+    }
+    pub fn navigate(self, shift: bool) -> bool {
+        if shift {
+            self.navigate_shift
+        } else {
+            self.navigate
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]
 pub struct TabPresentationSettings {

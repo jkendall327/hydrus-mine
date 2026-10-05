@@ -2432,6 +2432,22 @@ impl Pages {
         Ok(())
     }
 
+    /// Qt wheel selection clamps at the ends of the hovered notebook bar.
+    pub fn wheel_tab(&mut self, depth: usize, step: i32) {
+        let Some(pages) = self.notebook_at(depth) else {
+            return;
+        };
+        let Some(&selected) = self.path.get(depth) else {
+            return;
+        };
+        let next = if step < 0 {
+            selected.saturating_sub(1)
+        } else {
+            (selected + 1).min(pages.len().saturating_sub(1))
+        };
+        self.select(depth, next);
+    }
+
     /// Move a clicked tab within its notebook while keeping the selected
     /// leaf, including when moving a containing notebook or an unselected tab.
     pub fn move_tab(&mut self, depth: usize, index: usize, movement: crate::tab_context::Move) {

@@ -511,6 +511,9 @@ export component MainWindow inherits Window {
     in property <int> page-tree-side;
     in property <bool> navigation-tabs-hidden;
     in property <bool> elide-tab-names: true;
+    in property <bool> tab-wheel-scroll;
+    callback tab-wheel(int,int);
+    callback tab-scrolled(int,float);
     out property <length> tab-navigation-x: tab-navigation.absolute-position.x;
     out property <length> tab-navigation-y: tab-navigation.absolute-position.y;
     out property <length> tab-navigation-width: tab-navigation.width;
@@ -963,6 +966,9 @@ export component MainWindow inherits Window {
                     clockwise: root.tab-alignment == 2;
                     reverse-levels: root.tab-alignment == 2 || root.tab-alignment == 3;
                     elide: root.elide-tab-names;
+                    wheel-scroll: root.tab-wheel-scroll;
+                    wheel(level,step) => { root.tab-wheel(level,step); }
+                    scrolled(level,offset) => { root.tab-scrolled(level,offset); }
                     chosen(level,index) => { root.tab-chosen(level,index); }
                     measured(level,needed,available,cap) => { root.tab-measured(level,needed,available,cap); }
                     context-menu(level,index,x,y) => { root.tab-menu-requested(level,index,x,y); }

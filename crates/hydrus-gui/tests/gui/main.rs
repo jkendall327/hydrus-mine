@@ -141,6 +141,7 @@ mod frame_locations;
 mod incremental_tagging;
 
 mod notebook_tree;
+mod tab_drag;
 mod tab_presentation;
 
 mod archive_repair;

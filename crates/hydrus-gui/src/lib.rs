@@ -690,6 +690,17 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             });
         }
     });
+    window.on_tab_wheel({
+        let change_pages = change_pages.clone();
+        move |level, step| {
+            if let Ok(level) = usize::try_from(level) {
+                change_pages(&|pages| {
+                    pages.wheel_tab(level, step);
+                    Ok(())
+                });
+            }
+        }
+    });
     tab_presentation::bind_tree(window, &pages);
     // the page chooser, while open
     let chooser: Rc<RefCell<Option<page_chooser::PageChooser>>> = Rc::default();

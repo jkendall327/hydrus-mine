@@ -49,6 +49,9 @@ pub(crate) fn bind_names(window: &MainWindow) {
 
 pub(crate) fn show(window: &MainWindow, pages: &Pages) {
     let settings: TabPresentationSettings = pages.store().read(settings::get).unwrap_or_default();
+    let drag: hydrus_store::settings::TabDragSettings =
+        pages.store().read(settings::get).unwrap_or_default();
+    window.set_tab_wheel_scroll(drag.wheel_scroll);
     window.set_tab_alignment(settings.alignment.code());
     window.set_page_tree_side(settings.tree_side());
     window.set_navigation_tabs_hidden(settings.tabs_hidden());
