@@ -23,6 +23,7 @@ mod pauses;
 mod physical_deletes;
 mod queues;
 mod subscriptions;
+mod trash_maintenance;
 
 #[derive(Parser)]
 #[command(name = "hydrus", version, about = "A fast, native hydrus client.")]
@@ -529,28 +530,8 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 tokio::time::sleep(Duration::from_secs(3600)).await;
             }
         });
-        // emptying the trash: 30 seconds after starting, then hourly
-        let trash = store.clone();
-        tokio::spawn(async move {
-            tokio::time::sleep(Duration::from_secs(30)).await;
-            loop {
-                let store = trash.clone();
-                match tokio::task::spawn_blocking(move || {
-                    hydrus_store::trash::maintain_trash(&store, 256)
-                })
-                .await
-                {
-                    Ok(Ok(report)) if report.total() > 0 => tracing::info!(
-                        over_size = report.over_size,
-                        over_age = report.over_age,
-                        "deleted files from the trash"
-                    ),
-                    Ok(Err(e)) => tracing::error!(error = %e, "emptying the trash failed"),
-                    _ => {}
-                }
-                tokio::time::sleep(Duration::from_secs(3600)).await;
-            }
-        });
+        // Both automatic workers are normal-time consumers without a GUI monitor.
+        let trash_maintenance = trash_maintenance::Worker::start(store.clone());
         // (what an earlier daemon's queues were doing is over, and so is the
         // work its popups showed)
         if let Err(e) = store.write(|ctx| hydrus_store::live::clear(ctx.conn())) {
@@ -940,6 +921,7 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
         let (stop, stopped) = tokio::sync::watch::channel(false);
         let stopping_subscriptions = state.subscriptions.clone();
         let stopping_physical_deletes = physical_deletes.control();
+        let stopping_trash_maintenance = trash_maintenance.control();
         tokio::spawn(async move {
             if attached {
                 tokio::select! {
@@ -951,6 +933,7 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
             }
             println!("stopping");
             stopping_physical_deletes.cancel();
+            stopping_trash_maintenance.cancel();
             if let Some(subscriptions) = &stopping_subscriptions {
                 subscriptions.shutdown();
             }
@@ -961,6 +944,7 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
         let subscriptions = state.subscriptions.clone();
         let served = client_api_listener::run(state, port, bind, stopped, say).await;
         physical_deletes.shutdown().await;
+        trash_maintenance.shutdown().await;
         if let Some(subscriptions) = &subscriptions {
             subscriptions.shutdown();
             subscriptions.wait_stopped().await;

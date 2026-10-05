@@ -50,6 +50,10 @@ fn normalise_idle_timeout(seconds: Option<u64>) -> Option<u64> {
 }
 
 macro_rules! settings {
+    (@save $conn:ident, $after:ident, $before:ident, maintenance_gates) => {
+        $after.maintenance_gates.save_changed($conn, &$before.maintenance_gates)?;
+    };
+
     (@save $conn:ident, $after:ident, $before:ident, physical_delete) => {
         $after.physical_delete.save_changed($conn, &$before.physical_delete)?;
     };
@@ -343,6 +347,7 @@ settings! {
     thumbnail_preview_selection: hydrus_store::thumbnail_preview_selection::Preferences,
     thumbnail_appearance: hydrus_store::thumbnail_appearance::Preferences => hydrus_store::thumbnail_appearance::load,
     animation_start: hydrus_store::animation_start::Preferences => hydrus_store::animation_start::load,
+    maintenance_gates: hydrus_store::maintenance_gates::Preferences => hydrus_store::maintenance_gates::load,
     physical_delete: hydrus_store::physical_delete::Preferences => hydrus_store::physical_delete::load,
     downloader_update_times: hydrus_store::downloader_update_times::Preferences,
     thumbnail_ratings: ThumbnailRatingSettings,
@@ -2231,6 +2236,16 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     "When physically deleting files or folders, send them to the OS's recycle bin: ",
                     |s| s.folders.delete_to_recycle_bin,
                     |s, v| s.folders.delete_to_recycle_bin = v,
+                ),
+                check(
+                    "Allow trash maintenance during normal time: ",
+                    |s| s.maintenance_gates.trash_normal,
+                    |s, value| s.maintenance_gates.trash_normal = value,
+                ),
+                check(
+                    "Allow deferred file deletes during normal time: ",
+                    |s| s.maintenance_gates.deferred_normal,
+                    |s, value| s.maintenance_gates.deferred_normal = value,
                 ),
                 duration(
                     "When maintenance physically deletes files, wait this long between each delete: ",

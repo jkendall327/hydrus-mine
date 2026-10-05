@@ -43,6 +43,7 @@ mod manage_notes;
 mod merge_options_editor;
 mod merge_summaries;
 mod namespace_colours;
+mod normal_time_maintenance;
 mod notes_preferences;
 mod options_dialog;
 mod page_chooser_options;

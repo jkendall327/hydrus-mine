@@ -1,4 +1,4 @@
-//! One daemon-owned physical-delete worker; shutdown wakes per-pair and idle waits.
+//! One daemon-owned trash worker; shutdown wakes initial/hourly waits.
 use hydrus_store::{Store, maintenance::PurgeControl};
 use std::sync::Arc;
 use std::time::Duration;
@@ -15,27 +15,33 @@ impl Worker {
         let (stop, mut stopped) = tokio::sync::watch::channel(false);
         let owner = control.clone();
         let task = tokio::spawn(async move {
+            tokio::select! {
+                _=stopped.changed()=>return,
+                ()=tokio::time::sleep(Duration::from_secs(30))=>{}
+            }
             while !owner.is_cancelled() {
                 let store = store.clone();
                 let control = owner.clone();
                 match tokio::task::spawn_blocking(move || {
                     let gates = store.read(hydrus_store::maintenance_gates::load)?;
-                    if gates.allows(hydrus_store::maintenance_gates::Worker::Deferred, false) {
-                        hydrus_store::maintenance::purge_deleted_media_with_control(
-                            &store, 1024, &control,
-                        )
+                    if gates.allows(hydrus_store::maintenance_gates::Worker::Trash, false) {
+                        hydrus_store::trash::maintain_trash_with_control(&store, 256, &control)
                     } else {
-                        Ok(hydrus_store::maintenance::PurgeReport::default())
+                        Ok(hydrus_store::trash::TrashReport::default())
                     }
                 })
                 .await
                 {
-                    Ok(Ok(report)) if report.files_deleted > 0 => {
-                        tracing::info!(files = report.files_deleted, "purged deleted files");
+                    Ok(Ok(report)) if report.total() > 0 => {
+                        tracing::info!(
+                            over_size = report.over_size,
+                            over_age = report.over_age,
+                            "deleted files from the trash"
+                        );
                     }
-                    Ok(Err(e)) => tracing::error!(error=%e,"purging deleted files failed"),
+                    Ok(Err(e)) => tracing::error!(error=%e,"emptying the trash failed"),
                     Err(e) => {
-                        tracing::error!(error=%e,"physical-delete worker failed");
+                        tracing::error!(error=%e,"trash worker failed");
                         break;
                     }
                     _ => {}
@@ -45,7 +51,7 @@ impl Worker {
                 }
                 tokio::select! {
                     _=stopped.changed()=>break,
-                    ()=tokio::time::sleep(Duration::from_secs(600))=>{}
+                    ()=tokio::time::sleep(Duration::from_secs(3600))=>{}
                 }
             }
         });
@@ -63,7 +69,7 @@ impl Worker {
         if let Some(task) = self.task.take()
             && let Err(error) = task.await
         {
-            tracing::warn!(%error,"waiting for physical deletes to stop failed");
+            tracing::warn!(%error,"waiting for trash maintenance to stop failed");
         }
     }
     fn cancel(&self) {

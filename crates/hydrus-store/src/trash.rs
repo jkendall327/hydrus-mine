@@ -3,8 +3,9 @@
 //! While the trash holds more than its maximum size, its oldest files are
 //! deleted for good, eight at a time; then every file trashed longer ago
 //! than the maximum age goes. The reference skips the job while the user is
-//! busy unless `maintain_trash_in_normal_time` (default on) is set; without
-//! a GUI there is no busy, so it always runs.
+//! busy unless `maintain_trash_in_normal_time` (default on) is set. Automatic
+//! callers capture that admission using their current GUI idle or normal-time
+//! classification; explicit maintenance calls bypass the automatic gate.
 
 use rusqlite::params;
 
@@ -53,19 +54,35 @@ const CHUNK: usize = 8;
 
 /// Clear the trash down to its limits, `batch` files per write.
 pub fn maintain_trash(store: &Store, batch: usize) -> Result<TrashReport> {
+    maintain_trash_with_control(store, batch, &crate::maintenance::PurgeControl::default())
+}
+
+/// An owned automatic pass can stop before admitting another group/write.
+/// The caller captures its normal-time/idle admission once before this pass.
+pub fn maintain_trash_with_control(
+    store: &Store,
+    batch: usize,
+    control: &crate::maintenance::PurgeControl,
+) -> Result<TrashReport> {
+    if control.is_cancelled() {
+        return Ok(TrashReport::default());
+    }
     let settings: TrashSettings = store.read(crate::settings::get)?;
     let mut report = TrashReport::default();
     if settings.max_age_hours.is_none() && settings.max_size_mb.is_none() {
         return Ok(report);
     }
-    loop {
-        let step = store.write_content(move |w| clear_some(w, settings, batch))?;
-        if step.total() == 0 {
-            return Ok(report);
-        }
+    while !control.is_cancelled() {
+        let cancellation = control.clone();
+        let step = store
+            .write_content(move |w| clear_some_owned(w, settings, batch, Some(&cancellation)))?;
         report.over_size += step.over_size;
         report.over_age += step.over_age;
+        if step.total() == 0 {
+            break;
+        }
     }
+    Ok(report)
 }
 
 /// Delete up to about `batch` trashed files that are over the limits: the
@@ -75,6 +92,19 @@ pub fn clear_some(
     settings: TrashSettings,
     batch: usize,
 ) -> Result<TrashReport> {
+    clear_some_owned(w, settings, batch, None)
+}
+
+fn clear_some_owned(
+    w: &mut ContentWriter<'_>,
+    settings: TrashSettings,
+    batch: usize,
+    control: Option<&crate::maintenance::PurgeControl>,
+) -> Result<TrashReport> {
+    let cancelled = || control.is_some_and(crate::maintenance::PurgeControl::is_cancelled);
+    if cancelled() {
+        return Ok(TrashReport::default());
+    }
     let trash = w.roles().trash;
     let storage = w.roles().local_file_storage;
     // (files the delete lock holds stay, though they count towards the size)
@@ -99,7 +129,7 @@ pub fn clear_some(
             .map(|(id, size, _)| (id, size))
             .collect();
         for chunk in rows.chunks(CHUNK) {
-            if total <= max || report.over_size >= batch {
+            if cancelled() || total <= max || report.over_size >= batch {
                 break;
             }
             let ids: Vec<HashId> = chunk.iter().map(|&(id, _)| id).collect();
@@ -111,6 +141,9 @@ pub fn clear_some(
             // more to do next write, before the age limit
             return Ok(report);
         }
+    }
+    if cancelled() {
+        return Ok(report);
     }
     if let Some(hours) = settings.max_age_hours {
         // (the reference cuts off at a whole second)
@@ -129,9 +162,12 @@ pub fn clear_some(
             rows.collect::<rusqlite::Result<_>>()?
         };
         for chunk in ids.chunks(CHUNK) {
+            if cancelled() {
+                break;
+            }
             w.delete_files(storage, chunk, None)?;
+            report.over_age += chunk.len();
         }
-        report.over_age = ids.len();
     }
     Ok(report)
 }
@@ -320,6 +356,50 @@ mod tests {
         );
         assert_eq!(in_trash(&store), archived);
         assert_eq!(maintain_trash(&store, 256).unwrap().total(), 0);
+    }
+
+    #[test]
+    fn cancelled_writer_admission_leaves_trash_and_physical_queue_untouched() {
+        let (_source, _dir, store, files) = trashed_store();
+        let cancellation = crate::maintenance::PurgeControl::default();
+        cancellation.cancel();
+        let report = store
+            .write_content(move |w| {
+                let queued: i64 = w.conn().query_row(
+                    "SELECT count(*) FROM deferred_physical_deletes",
+                    [],
+                    |r| r.get(0),
+                )?;
+                let report = clear_some_owned(
+                    w,
+                    TrashSettings {
+                        max_age_hours: Some(0),
+                        max_size_mb: Some(0),
+                    },
+                    256,
+                    Some(&cancellation),
+                )?;
+                let after: i64 = w.conn().query_row(
+                    "SELECT count(*) FROM deferred_physical_deletes",
+                    [],
+                    |r| r.get(0),
+                )?;
+                assert_eq!(after, queued);
+                Ok(report)
+            })
+            .unwrap();
+        assert_eq!(report.total(), 0);
+        assert_eq!(in_trash(&store), files);
+        // The same actual writer remains usable by a separately admitted pass.
+        set(
+            &store,
+            TrashSettings {
+                max_age_hours: Some(0),
+                max_size_mb: None,
+            },
+        );
+        assert_eq!(maintain_trash(&store, 256).unwrap().total(), files.len());
+        assert!(in_trash(&store).is_empty());
     }
 
     #[test]

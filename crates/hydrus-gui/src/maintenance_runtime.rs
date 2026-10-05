@@ -1,0 +1,246 @@
+//! GUI-owned automatic maintenance, admitted by the live session idle monitor.
+use crate::{MainWindow, session_autosave::Monitor};
+use hydrus_store::{
+    Store,
+    maintenance::PurgeControl,
+    maintenance_gates::{self, Worker},
+};
+use slint::ComponentHandle as _;
+use std::{
+    cell::{Cell, RefCell},
+    rc::Rc,
+    sync::{Arc, Weak, mpsc},
+    thread::JoinHandle,
+    time::Duration,
+};
+
+/// Observations of completed owned passes; retired replies cannot update these.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct Statistics {
+    pub trash_passes: u64,
+    pub deferred_passes: u64,
+    pub trashed_files_removed: usize,
+    pub physical_files_removed: usize,
+    pub thumbnails_removed: usize,
+    pub last_error: Option<String>,
+}
+#[derive(Debug)]
+enum Completed {
+    Trash(hydrus_store::trash::TrashReport),
+    Deferred(hydrus_store::maintenance::PurgeReport),
+}
+#[derive(Debug)]
+struct Pending {
+    task: JoinHandle<()>,
+    result: mpsc::Receiver<hydrus_store::Result<Completed>>,
+}
+struct Inner {
+    window: slint::Weak<MainWindow>,
+    store: Weak<Store>,
+    monitor: Monitor,
+    active: Rc<Cell<bool>>,
+    live: Cell<bool>,
+    shown: Cell<bool>,
+    started_ms: i64,
+    deadlines: [Cell<i64>; 2],
+    pending: [RefCell<Option<Pending>>; 2],
+    control: PurgeControl,
+    statistics: RefCell<Statistics>,
+    timer: slint::Timer,
+}
+impl Drop for Inner {
+    fn drop(&mut self) {
+        self.control.cancel();
+        self.timer.stop();
+    }
+}
+/// One binding owns at most one pass of each kind, without retaining its window.
+#[derive(Clone)]
+pub struct Control(Rc<Inner>);
+impl std::fmt::Debug for Control {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("MaintenanceControl")
+            .field("live", &self.0.live.get())
+            .field("statistics", &self.0.statistics.borrow())
+            .finish_non_exhaustive()
+    }
+}
+fn index(worker: Worker) -> usize {
+    match worker {
+        Worker::Trash => 0,
+        Worker::Deferred => 1,
+    }
+}
+fn period(worker: Worker) -> i64 {
+    match worker {
+        Worker::Trash => 3_600_000,
+        Worker::Deferred => 600_000,
+    }
+}
+impl Control {
+    pub(crate) fn bind(
+        window: &MainWindow,
+        store: &Arc<Store>,
+        monitor: &Monitor,
+        active: &Rc<Cell<bool>>,
+    ) -> Self {
+        let now = hydrus_core::TimestampMs::now().0;
+        let control = Self(Rc::new(Inner {
+            window: window.as_weak(),
+            store: Arc::downgrade(store),
+            monitor: monitor.clone(),
+            active: active.clone(),
+            live: Cell::new(true),
+            shown: Cell::new(false),
+            started_ms: now,
+            deadlines: std::array::from_fn(|_| Cell::new(now.saturating_add(30_000))),
+            pending: std::array::from_fn(|_| RefCell::new(None)),
+            control: PurgeControl::default(),
+            statistics: RefCell::new(Statistics::default()),
+            timer: slint::Timer::default(),
+        }));
+        control
+            .0
+            .timer
+            .start(slint::TimerMode::Repeated, Duration::from_secs(1), {
+                let weak = Rc::downgrade(&control.0);
+                move || {
+                    if let Some(inner) = weak.upgrade() {
+                        let owner = Self(inner);
+                        if let Err(error) = owner.poll_at(hydrus_core::TimestampMs::now().0) {
+                            eprintln!("automatic maintenance failed: {error}");
+                        }
+                    }
+                }
+            });
+        control
+    }
+    /// Captured owner start time allows deterministic replay of real admissions.
+    pub fn started_ms(&self) -> i64 {
+        self.0.started_ms
+    }
+    /// Next pass boundary for this owner's existing native worker cadence.
+    pub fn deadline(&self, worker: Worker) -> i64 {
+        self.0.deadlines[index(worker)].get()
+    }
+    /// Owned pass reports; a cancelled/rebound owner's late reply is discarded.
+    pub fn statistics(&self) -> Statistics {
+        self.0.statistics.borrow().clone()
+    }
+    /// Whether this binding still has a pass running off the GUI thread.
+    pub fn running(&self, worker: Worker) -> bool {
+        self.0.pending[index(worker)].borrow().is_some()
+    }
+    /// Permanent accepted-exit/rebind retirement, also performed on last-owner drop.
+    pub fn retire(&self) {
+        self.0.live.set(false);
+        self.0.control.cancel();
+        self.0.timer.stop();
+        for pending in &self.0.pending {
+            pending.borrow_mut().take();
+        }
+    }
+    /// Sample current saved settings and live idle state immediately before each
+    /// admission. Already admitted passes retain their policy until completion.
+    /// Only completed threads are joined here; filesystem work/waits stay off UI.
+    pub fn poll_at(&self, now_ms: i64) -> hydrus_store::Result<()> {
+        if !self.0.live.get() || !self.0.active.get() {
+            self.retire();
+            return Ok(());
+        }
+        let Some(window) = self.0.window.upgrade() else {
+            self.retire();
+            return Ok(());
+        };
+        if !self.0.shown.get() {
+            if !window.window().is_visible() {
+                return Ok(());
+            }
+            self.0.shown.set(true);
+        }
+        let Some(store) = self.0.store.upgrade() else {
+            self.retire();
+            return Ok(());
+        };
+        for worker in [Worker::Trash, Worker::Deferred] {
+            let slot = &self.0.pending[index(worker)];
+            if slot
+                .borrow()
+                .as_ref()
+                .is_some_and(|pending| pending.task.is_finished())
+            {
+                let pending = slot.borrow_mut().take().expect("completed owned task");
+                let joined = pending.task.join();
+                let report = pending.result.try_recv().unwrap_or_else(|_| {
+                    Err(hydrus_store::StoreError::Corrupt(
+                        "maintenance worker returned without its result".into(),
+                    ))
+                });
+                let mut stats = self.0.statistics.borrow_mut();
+                match report {
+                    Ok(Completed::Trash(report)) if joined.is_ok() => {
+                        stats.trash_passes += 1;
+                        stats.trashed_files_removed += report.total();
+                    }
+                    Ok(Completed::Deferred(report)) if joined.is_ok() => {
+                        stats.deferred_passes += 1;
+                        stats.physical_files_removed += report.files_deleted;
+                        stats.thumbnails_removed += report.thumbnails_deleted;
+                    }
+                    Err(error) => stats.last_error = Some(error.to_string()),
+                    _ => stats.last_error = Some("maintenance worker panicked".into()),
+                }
+            }
+            if slot.borrow().is_some() || now_ms < self.deadline(worker) {
+                continue;
+            }
+            // Qt checks this only at entry, not between file/thumbnail pairs.
+            let idle = self.0.monitor.idle_at(now_ms);
+            let gates = store.read(maintenance_gates::load)?;
+            self.0.deadlines[index(worker)].set(now_ms.saturating_add(period(worker)));
+            if !gates.allows(worker, idle) {
+                continue;
+            }
+            let store = store.clone();
+            let cancellation = self.0.control.clone();
+            let (result, receiver) = mpsc::sync_channel(1);
+            let task = std::thread::Builder::new()
+                .name(format!("gui-maintenance-{worker:?}"))
+                .spawn(move || {
+                    let report = if cancellation.is_cancelled() {
+                        Ok(match worker {
+                            Worker::Trash => {
+                                Completed::Trash(hydrus_store::trash::TrashReport::default())
+                            }
+                            Worker::Deferred => Completed::Deferred(
+                                hydrus_store::maintenance::PurgeReport::default(),
+                            ),
+                        })
+                    } else {
+                        match worker {
+                            Worker::Trash => hydrus_store::trash::maintain_trash_with_control(
+                                &store,
+                                256,
+                                &cancellation,
+                            )
+                            .map(Completed::Trash),
+                            Worker::Deferred => {
+                                hydrus_store::maintenance::purge_deleted_media_with_control(
+                                    &store,
+                                    1024,
+                                    &cancellation,
+                                )
+                                .map(Completed::Deferred)
+                            }
+                        }
+                    };
+                    let _ = result.send(report);
+                })?;
+            *slot.borrow_mut() = Some(Pending {
+                task,
+                result: receiver,
+            });
+        }
+        Ok(())
+    }
+}

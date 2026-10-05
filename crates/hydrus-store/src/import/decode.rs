@@ -129,6 +129,10 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     let legacy_options = db.legacy_options()?;
     insert_setting(
         &mut input,
+        &crate::maintenance_gates::Preferences::from_legacy(&options),
+    )?;
+    insert_setting(
+        &mut input,
         &crate::physical_delete::Preferences::from_legacy(&options),
     )?;
     insert_setting(

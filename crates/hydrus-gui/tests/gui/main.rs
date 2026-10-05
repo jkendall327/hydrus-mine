@@ -60,6 +60,7 @@ mod menu_bar;
 mod merge_options;
 mod mpv;
 mod namespace_colours;
+mod normal_time_maintenance;
 mod notebook_new_page;
 mod notebook_refresh;
 mod notebook_sessions;
