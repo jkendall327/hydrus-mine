@@ -23,7 +23,6 @@ use hydrus_core::{ContentStatus, ServiceKey, ServiceType, Tag};
 use hydrus_search::{TextContext, predicate_text};
 
 pub mod batch;
-pub mod batch;
 pub mod defaults;
 mod initialise;
 mod special;
