@@ -1,7 +1,7 @@
 //! Owned live colour subscriptions for storage and write tag lists.
 use hydrus_core::tag_presentation::{NamespaceColours, SiblingConnectorColours, TagPresentation};
 use hydrus_store::{Store, settings};
-use std::{cell::Cell, rc::Rc, sync::Arc};
+use std::{rc::Rc, sync::Arc};
 
 pub(crate) fn watch(
     store: &Arc<Store>,
@@ -19,7 +19,6 @@ pub(crate) fn watch(
     };
     let timer = Rc::new(slint::Timer::default());
     let store = store.clone();
-    let revision = Cell::new(store.snapshot().revision);
     let mut previous = read(&store).ok();
     timer.start(
         slint::TimerMode::Repeated,
@@ -28,16 +27,14 @@ pub(crate) fn watch(
             if !valid() {
                 return;
             }
-            let current = store.snapshot().revision;
-            if current == revision.get() {
-                return;
-            }
-            if let Ok(settings) = read(&store) {
-                revision.set(current);
-                if previous.as_ref() != Some(&settings) {
-                    previous = Some(settings);
-                    changed();
-                }
+            // Colour settings can be committed with Store::write, independently
+            // of the services/tag-relations snapshot revision. Read their own
+            // durable values and repaint only when that typed policy changes.
+            if let Ok(settings) = read(&store)
+                && previous.as_ref() != Some(&settings)
+            {
+                previous = Some(settings);
+                changed();
             }
         },
     );

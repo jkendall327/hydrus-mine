@@ -2600,6 +2600,10 @@ The main menu's page-change callback slot now holds a weak reference to its
 title callback: the title callback owns menu hooks which own that same slot.
 Live window callbacks and the menu timer retain the title callback, while the
 weak back-edge permits pages, rows and workers to retire with their owners.
+The refresh callback also refers weakly to the duplicates sidebar, whose
+file/viewer launch callbacks reach that same refresh callback. The window's
+duplicates-action callback owns the sidebar while the window is live; an
+ordinary search window installs these launchers too.
 Native regressions assert release before thread exit and retain the existing
 two-second Store-release deadline. Hosted execution is pending; no local Rust
 build or test was run. This ownership repair adds no original leaf proposal.
@@ -2609,3 +2613,12 @@ row kinds. Their former shared value rendered both unrelated editors on each
 page. Existing native workflows assert the correct page family and keep their
 routing and namespace render captures for hosted review. This integration repair
 adds no original leaf proposal; runtime and rendered verification remain pending.
+
+Default and registered single-file launch dispatch now reads current Store
+file-domain membership explicitly. The lightweight basic metadata reader leaves
+locations unloaded; treating that empty field as authoritative had rejected every
+local file before OS/process dispatch. The corrected boundary still rejects deleted
+files with retained bytes and accepts restored membership after Store reopen.
+Existing exact OS launch vectors and registered process deadlines are unchanged;
+a focused native deletion/restoration/retirement regression is authored for hosted
+CI. No local Cargo/Rust/mutation runs or additional completion credit are claimed.

@@ -3284,8 +3284,9 @@ an explicit empty specific entry uses the OS default. The first URL/file call
 receives typed URL or path/URI/hash/file-id inputs through the existing process
 pipeline. A configured missing or wrong-type call shows an owned Information/OK
 notice instead of silently trying another call. OS defaults use the existing
-native launcher. Dispatch rechecks current local storage membership even when
-file bytes remain. Accepted client close, main-window rebind and viewer close
+native launcher. Dispatch reads live file-domain membership separately from basic
+hash/file metadata, so locally restored files are eligible immediately and deleted
+files remain ineligible even when their bytes remain. Accepted client close, main-window rebind and viewer close
 permanently retire their launchers and notice/completion callbacks;
 submitted external programs retain their own lifetime. Options children reject
 hidden and retired owners. Deeper per-call media/URL menus, routing import,
