@@ -1,0 +1,101 @@
+{
+  "menu_path": [
+    "help",
+    "debug",
+    "gui actions",
+    "close and reload current gui session"
+  ],
+  "before": [
+    {
+      "name": "reload first",
+      "key": "5ec54bfc1fb3e6aff974294b7dd5812fc4a2176613b6324293a9ab539165d5d4",
+      "selected": false,
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ],
+      "selected_hashes": []
+    },
+    {
+      "name": "reload notebook",
+      "key": "73896b4f448fefcd6d125e86ffb3873138f57fe6741c4df72a0b7461556a6dfe",
+      "selected": true,
+      "children": [
+        {
+          "name": "reload inner first",
+          "key": "dac652c57f8cb898b93791d4bba9c400fcceea94f1ef7929fa4731b1612e5a6e",
+          "selected": false,
+          "hashes": [
+            "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+            "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+          ],
+          "selected_hashes": []
+        },
+        {
+          "name": "reload inner selected",
+          "key": "4bfef36dab882cc6f920005ef881ad3f78a49ccd245160d500c0735bd6135c56",
+          "selected": true,
+          "hashes": [
+            "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+            "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+          ],
+          "selected_hashes": [
+            "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+            "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+          ]
+        }
+      ]
+    }
+  ],
+  "after": [
+    {
+      "name": "reload first",
+      "key": "78f03d75b2c11da292f239ad9fad8c97cb3428702020d60a7a4227a16eea08ec",
+      "selected": true,
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ],
+      "selected_hashes": []
+    },
+    {
+      "name": "reload notebook",
+      "key": "60d4d1ee2ec2ac94b058fe539356d735baca9d7539415d1bc7adefd6cb5d0b70",
+      "selected": false,
+      "children": [
+        {
+          "name": "reload inner first",
+          "key": "a765892f94edd676de56617c0a8fc630190b302de45159dce079ae15119c1d8e",
+          "selected": true,
+          "hashes": [
+            "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+            "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+          ],
+          "selected_hashes": []
+        },
+        {
+          "name": "reload inner selected",
+          "key": "8fa094281b79d7046fa6d80eaf211b5692c07abba0393c1c1af1a818e83bbec3",
+          "selected": false,
+          "hashes": [
+            "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+            "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+          ],
+          "selected_hashes": []
+        }
+      ]
+    }
+  ],
+  "shown": "reload first",
+  "questions": [],
+  "elapsed_ms": 1005.281,
+  "visible_at_delivery": false,
+  "temporary_slot_present": false,
+  "closed_added": [
+    "reload inner selected",
+    "reload inner first",
+    "reload notebook",
+    "reload first"
+  ],
+  "clock": "actual wall clock and controller worker/Qt delivery"
+}

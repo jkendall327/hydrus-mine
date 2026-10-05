@@ -36,6 +36,7 @@ pub mod command_palette_window;
 pub mod daemon;
 pub mod debug_fetch;
 pub mod debug_long_popup;
+pub mod debug_session_reload;
 pub mod delete_files_window;
 pub mod domain_mask_entry;
 pub mod downloader_definitions_window;
@@ -337,6 +338,8 @@ pub struct Bound {
     pub quick_export_directory: quick_export_directory::Control,
     pub debug_fetch: debug_fetch::Control,
     _debug_fetch_owner: Rc<debug_fetch::Owner>,
+    pub debug_session_reload: debug_session_reload::Control,
+    _debug_session_reload_owner: Rc<debug_session_reload::Owner>,
     pub debug_long_popup: debug_long_popup::Control,
     _debug_long_popup_owner: Rc<debug_long_popup::Owner>,
     pub options_suggested_tags_slot: tag_suggestions_window::Slots,
@@ -610,6 +613,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         first.borrow().store().clone(),
         binding_active.clone(),
     );
+    let debug_session_reload =
+        debug_session_reload::Control::new(window, &pages, binding_active.clone());
     let debug_fetch = debug_fetch::Control::new(
         window,
         first.borrow().store().clone(),
@@ -670,6 +675,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let maintenance = maintenance.clone();
         let force_idle = force_idle.clone();
         let debug_long_popup = debug_long_popup.clone();
+        let debug_session_reload = debug_session_reload.clone();
         let debug_fetch = debug_fetch.clone();
         let image_cache = image_cache.clone();
         let options = options.clone();
@@ -685,6 +691,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             maintenance.retire();
             force_idle.retire();
             debug_long_popup.retire();
+            debug_session_reload.retire();
             debug_fetch.retire();
             image_cache.retire();
             retire_colours();
@@ -1101,6 +1108,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             window.set_chooser_labels(ModelRc::new(VecModel::from(labels)));
         }
     };
+    debug_session_reload.set_change(Rc::new(change_pages.clone()));
     debug_long_popup.set_new_page(Rc::new({
         let change_pages = change_pages.clone();
         move |location| {
@@ -2396,6 +2404,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         window,
         menu_bar::Hooks {
             debug_long_popup: debug_long_popup.clone(),
+            debug_session_reload: debug_session_reload.clone(),
             debug_fetch: debug_fetch.clone(),
             force_idle: force_idle.clone(),
             quick_export_directory: quick_export_directory.clone(),
@@ -3123,6 +3132,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let maintenance = maintenance.clone();
             let force_idle = force_idle.clone();
             let debug_long_popup = debug_long_popup.clone();
+            let debug_session_reload = debug_session_reload.clone();
             let debug_fetch = debug_fetch.clone();
             let image_cache = image_cache.clone();
             move || {
@@ -3131,6 +3141,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 maintenance.retire();
                 force_idle.retire();
                 debug_long_popup.retire();
+                debug_session_reload.retire();
                 debug_fetch.retire();
                 image_cache.retire();
                 retire_colours();
@@ -4859,6 +4870,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    let debug_session_reload_owner = Rc::new(debug_session_reload.owner());
     let debug_long_popup_owner = Rc::new(debug_long_popup.owner());
     let force_idle_owner = Rc::new(force_idle.owner());
     Bound {
@@ -4902,6 +4914,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         quick_export_directory,
         debug_fetch: debug_fetch.clone(),
         _debug_fetch_owner: Rc::new(debug_fetch.owner()),
+        debug_session_reload,
+        _debug_session_reload_owner: debug_session_reload_owner,
         debug_long_popup,
         _debug_long_popup_owner: debug_long_popup_owner,
         command_palette,

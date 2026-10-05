@@ -1580,6 +1580,60 @@ impl Pages {
             .map_err(|e| e.to_string())
     }
 
+    /// Freeze the current ordered tree/media/importer logs for asynchronous reload.
+    /// Qt session page data omits thumbnail selection; reload clears it as well.
+    pub fn snapshot_for_reload(
+        &mut self,
+    ) -> Result<hydrus_store::session_backups::Snapshot, String> {
+        self.sync(hydrus_core::TimestampMs::now().0 / 1000)
+            .map_err(|error| error.to_string())?;
+        let session = self.session.clone();
+        let mut snapshot = self
+            .store
+            .read(|conn| hydrus_store::session_backups::capture(conn, &session))
+            .map_err(|error| error.to_string())?;
+        for media in &mut snapshot.media {
+            media.selected.clear();
+        }
+        Ok(snapshot)
+    }
+
+    /// Reconstruct a saved reload snapshot, forcibly closing the current pages.
+    /// Old pages remain undoable, with paused original queues, just as Qt's
+    /// repeated CloseCurrentPage(polite=False). Fresh notebooks select first children.
+    pub fn reload_snapshot(
+        &mut self,
+        snapshot: &hydrus_store::session_backups::Snapshot,
+    ) -> Result<(), String> {
+        let snapshot = snapshot.clone();
+        let restored = self
+            .store
+            .write(move |ctx| hydrus_store::session_backups::restore_pages(ctx.conn(), snapshot))
+            .map_err(|error| error.to_string())?;
+        let old_keys: std::collections::HashSet<_> = self
+            .session
+            .all_pages()
+            .iter()
+            .map(|page| page.key)
+            .collect();
+        while old_keys.contains(&self.shown().key) {
+            self.close_shown()?;
+        }
+        self.session.pages = if restored.is_empty() {
+            vec![new_search_page(&self.store)]
+        } else {
+            restored
+        };
+        self.kept_counts = self
+            .store
+            .read(sessions::page_file_counts)
+            .map_err(|error| error.to_string())?;
+        self.path = vec![0];
+        self.select(0, 0);
+        self.synced = Synced::default();
+        Ok(())
+    }
+
     /// Close every page and load the saved session `name` in their place,
     /// its pages at the top (the reference's "clear and load": the pages
     /// closed are gone, not kept to reopen, and their downloads with them).

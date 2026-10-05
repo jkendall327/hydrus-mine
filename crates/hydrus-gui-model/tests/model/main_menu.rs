@@ -110,7 +110,19 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                     .unwrap()
                     < recorded.iter().position(|entry| entry == &delayed).unwrap()
             );
-            gui["entries"] = serde_json::json!([long_text, new_page, delayed]);
+            let reload = recorded
+                .iter()
+                .find(|entry| *entry == "close and reload current gui session")
+                .unwrap()
+                .clone();
+            assert!(
+                recorded.iter().position(|entry| entry == &reload).unwrap()
+                    < recorded
+                        .iter()
+                        .position(|entry| entry == &long_text)
+                        .unwrap()
+            );
+            gui["entries"] = serde_json::json!([reload, long_text, new_page, delayed]);
             let mut memory = entry["entries"]
                 .as_array()
                 .unwrap()
