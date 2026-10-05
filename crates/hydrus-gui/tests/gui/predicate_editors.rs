@@ -8,7 +8,7 @@
 use std::sync::Arc;
 
 use serde_json::Value as Json;
-use slint::{ComponentHandle as _, Model as _};
+use slint::{ComponentHandle as _, Model as _, platform::WindowAdapter as _};
 
 use hydrus_core::search::context::{LocationContext, TagContext};
 use hydrus_core::service::builtin_keys;
@@ -739,7 +739,7 @@ fn native_viewtime_milliseconds_survive_accept_recent_reopen_and_cancel() {
 fn the_editor_window_shows_what_trees_and_buttons_change() {
     let boundaries = hydrus_testkit::fixture_json("predicate_boundaries.json");
     let (_dirs, store) = store();
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
@@ -840,12 +840,22 @@ fn the_editor_window_shows_what_trees_and_buttons_change() {
     window.invoke_pressed(0, 3);
     assert!(
         window
-            .get_error()
+            .get_notice_message()
             .starts_with("Unfortunately, some hashes did not parse correctly."),
         "{}",
-        window.get_error()
+        window.get_notice_message()
     );
-    assert!(window.get_error().contains("\"not a hash\""));
+    assert!(window.get_notice_message().contains("\"not a hash\""));
+    assert!(window.get_notice_open());
+    // Acknowledge the actual owned warning before opening its removal question.
+    windows
+        .get(windows.count() - 1)
+        .unwrap()
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::KeyPressed {
+            text: slint::platform::Key::Return.into(),
+        });
+    assert!(!window.get_notice_open());
     assert_eq!(
         field(&window, 0, 2).text,
         boundaries["hash"][0]["text"].as_str().unwrap()

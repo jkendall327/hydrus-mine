@@ -902,7 +902,19 @@ reference's tree of filetypes by group (a group's tick box ticking all of
 it); "system:hash" reads hashes one to a line as the reference does
 (a type and colon, or "0x", before each allowed), saying which lines
 aren't hashes or that the hash type looks wrong, with its two clean-up
-buttons; "system:rating" has a panel for each rating service (like or
+buttons. The hash editor now presents vertical is/is-not and SHA-256/MD5/SHA-1/
+SHA-512 radio groups around the multiline input, with both cleanup buttons
+stacked underneath. Arrow keys stop at each group's edges, Space selects, and
+Enter accepts using the existing default radio-key convention. Cleanup replaces
+the live typed input even when removing every bad line; normal cleanup preserves
+bad or mixed input and opens an owned Warning/OK notice. That notice blocks
+editing and acceptance until acknowledged, and closes with its parent on Cancel,
+rebind or accepted client exit. Forced cleanup keeps its existing "You sure?"
+yes/no draft question. Typed inclusive/exclusive queries, explicit reconstruction,
+Cancel, saved-default reopening and ownership boundaries have authored regressions
+against `oracle/record_hash_predicate.py` (actual Qt controls, warning PNG, ten
+file queries and twelve cleanup cases); hosted Rust execution and native rendered
+review remain pending. `system:rating` has a panel for each rating service (like or
 dislike, stars, counts) under the all/any/only panel, whose services are
 chosen in place (the reference's specifier button opens a dialog);
 "system:similar files" takes file hashes, or pixel and perceptual hashes

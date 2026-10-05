@@ -225,12 +225,23 @@ search.
   terabytes, which the reference's editor offers
   but can't write out ("error:cannot render this predicate"), is written
   "200TB"; neither parser takes "TB". File-size comparisons now use five
-  radio choices; the other predicates' radio buttons remain drop-downs
+  radio choices; hash has its vertical is/is-not and four-type radio groups;
+  the other predicates' radio buttons remain drop-downs
   (as are the like/dislike and star controls of "system:rating"), and an
   editor's rows don't wrap: a narrow window scrolls sideways. A filetype
   group partly ticked shows unticked (Qt's tree shows it part-ticked).
-  "system:hash"'s forced clean-up doesn't ask "You sure?" first, and what
-  the reference warns of in a dialog is said under the panels.
+  Hash cleanup and acceptance warnings now use an owned Warning/OK notice;
+  other predicates' warnings remain under the panels. Hash forced cleanup already
+  asked "You sure?"; that question remains inline in the owner, with edits and
+  acceptance blocked until answered. Native typed hash sets reconstruct lines in
+  deterministic hash order; Qt can retain the order of an explicitly supplied
+  tuple. Both preserve the selected algorithm, sign and query set. Generic active
+  predicate Edit remains a separate scope; this hash slice exercises explicit
+  values in the model and saved-default reopening through the native editor.
+  The global Enter-on-radio preference remains outside this slice. Native warning
+  styling uses the existing Slint notice rather than Qt's warning icon. Hash
+  source regressions and PNG captures are authored; hosted execution/rendered
+  inspection are pending.
   "Paste image!" takes a file's path from the clipboard, not image data.
   A recent predicate is forgotten with a "forget" button where the
   reference has a trash icon. The star menu now saves/resets typed defaults
