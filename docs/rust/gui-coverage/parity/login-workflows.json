@@ -189,17 +189,21 @@
     {
       "id": "login-step",
       "before": "missing",
-      "proposedStatus": "partial",
-      "exactBehavior": "Script queue add/edit/delete/order, step scheme/method/subdomain/path with cleanup; three independently selectable credential/static/temp request dictionaries with unique/nonblank keys, blank values, rename/cancel/confirmed bulk deletion; editable cookie name/value matchers and complete VARIABLE/VETO content route. Edited arguments/cookie rules consumed by actual synthetic loopback HTTP. Exact sequential Add/Edit key/value prompts and edit defaults; Cancel/accepted blank key aborts, duplicate key warns before opening value prompt, accepted blank value is retained, new/replaced row selected and sorted, owner closure retires descendants. Immediate cookie name then value matcher dialogs with exact titles and existing/default rules; Cancel at either stage preserves the original pair; accepted pairs sorted/selected and duplicate-looking independent matcher objects retained.",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Script queue add/edit/delete/order, step scheme/method/subdomain/path with cleanup; three independently selectable credential/static/temp request dictionaries with unique/nonblank keys, blank values, rename/cancel/confirmed bulk deletion; editable cookie name/value matchers and complete VARIABLE/VETO content route. Edited arguments/cookie rules consumed by actual synthetic loopback HTTP. Exact sequential Add/Edit key/value prompts and edit defaults; Cancel/accepted blank key aborts, duplicate key warns before opening value prompt, accepted blank value is retained, new/replaced row selected and sorted, owner closure retires descendants. Immediate cookie name then value matcher dialogs with exact titles and existing/default rules; Cancel at either stage preserves the original pair; accepted pairs sorted/selected and duplicate-looking independent matcher objects retained. The step now embeds its own sorted cookie matcher list with recorded key/matching columns, direct Add/Edit/Delete, row activation, Delete shortcut and independent extended selection. Confirmed bulk deletion removes only selected rows; declining keeps selection and rows. Matcher text edits retain examples and limits. Owner Cancel discards the draft and closes matcher descendants; retired callbacks cannot modify a reopened step.",
       "limits": [
-        "Cookies use an owned child list; reference embeds its list in the script/step editor. Matcher Add/Edit now follows the exact sequential dialogs. Broad completion proposal stays partial pending owner-list topology and native CI validation/root review."
+        "Hosted native execution and rendered inspection of the embedded cookie-list regression remain pending; proposed parent status requires root integration review after those checks.",
+        "login-step has original child login-step-content and is excluded from concrete leaf completion accounting. This parent improvement earns zero leaf credit and creates no new reference IDs or aliases.",
+        "Existing shared matcher and parser limitations are unchanged. The separately owned global script cookie-list boundary is outside this step claim."
       ],
       "source": [
         "crates/hydrus-gui/src/login_step_window.rs:116",
         "crates/hydrus-gui/ui/login_step.slint:56",
-        "crates/hydrus-gui/src/login_cookies_window.rs:74",
         "crates/hydrus-gui-model/src/login_workflows.rs:191",
-        "crates/hydrus-gui/src/login_test_window.rs:329"
+        "crates/hydrus-gui/src/login_test_window.rs:329",
+        "crates/hydrus-gui/src/login_step_window.rs:149",
+        "crates/hydrus-gui/src/login_step_window.rs:517",
+        "crates/hydrus-gui/ui/login_step.slint:76"
       ],
       "testAnchors": [
         "crates/hydrus-gui-model/tests/model/login_workflows.rs:280",
@@ -208,9 +212,16 @@
         "crates/hydrus-gui/tests/gui/login_workflows.rs:923",
         "crates/hydrus-gui/tests/gui/login_workflows.rs:1083",
         "crates/hydrus-gui/tests/gui/login_workflows.rs:1135",
-        "crates/hydrus-gui/tests/gui/login_workflows.rs:1120"
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:1120",
+        "crates/hydrus-gui-model/tests/model/login_workflows.rs:403",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:969",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:1208"
       ],
-      "referenceRecording": "Executed oracle/record_login_editors.py real Qt step fields/content, StringToStringDictControl rename/duplicate/blank/cancel and all three row models, StringMatchToStringMatchDictControl add/edit/cancel/duplicate-looking objects; login_editors.json step_states/argument_states/cookie_states. Executed live HTTP recorder login_execution.json plus actual native HTTP regression authored for root CI. Re-executed real Qt recorder with actual EditTextPanel.GetValue for all ten argument chains, including blank key, first-stage Cancel, duplicate rename and value-stage Cancel. Re-executed Qt recorder for six cookie Add/Edit chains, capturing exact dialog titles and actual EditStringMatchPanel initial values, name Cancel and value Cancel."
+      "referenceRecording": "Executed oracle/record_login_editors.py real Qt step fields/content, StringToStringDictControl rename/duplicate/blank/cancel and all three row models, StringMatchToStringMatchDictControl add/edit/cancel/duplicate-looking objects; login_editors.json step_states/argument_states/cookie_states. Executed live HTTP recorder login_execution.json plus actual native HTTP regression authored for root CI. Re-executed real Qt recorder with actual EditTextPanel.GetValue for all ten argument chains, including blank key, first-stage Cancel, duplicate rename and value-stage Cancel. Re-executed Qt recorder for six cookie Add/Edit chains, capturing exact dialog titles and actual EditStringMatchPanel initial values, name Cancel and value Cancel. Executed oracle/record_login_step_cookies.py via shared with-oracle on the real Qt client at 2026-10-05 04:32:40 UTC. Nine-state fixture oracle/fixtures/login_step_cookies.json records embedded ancestry/headers/buttons, actual sequential matcher initial tuples, name/value Cancel, independent duplicate-looking keys, sorted selection, declined/confirmed bulk deletion, full step serialization and unchanged original ownership. Native/model regression sources and real HTTP consumer integration are authored for hosted CI; no local Cargo builds, Rust tests or mutation runs.",
+      "changeKind": "parent_improvement",
+      "completionCredit": 0,
+      "implementation_git_head": "6a02b97afd904ec7c3e46ea140138b55e210a898",
+      "supportingEvidencePacket": "docs/rust/gui-coverage/parity/login-step-cookie-list.json"
     },
     {
       "id": "logins",
