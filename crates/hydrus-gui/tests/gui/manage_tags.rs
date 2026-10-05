@@ -35,7 +35,7 @@ fn tags_of(store: &Store, file: HashId, service: &str) -> BTreeSet<String> {
 fn most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers() {
     let (_dirs, store) = crate::subscriptions::store();
     let f = hydrus_testkit::fixture_json("tag_suggestions.json");
-    headless::init();
+    let _headless_windows = headless::init();
     let mut page = SearchPage::new(store.clone());
     page.enter();
     let files = page.results().to_vec();

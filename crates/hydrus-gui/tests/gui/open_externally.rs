@@ -160,7 +160,7 @@ fn add_nested(bound: &Bound, name: &str) {
 }
 #[test]
 fn shortcut_and_routing_children_exclude_each_other_and_cancel_staged_changes() {
-    headless::init();
+    let _headless_windows = headless::init();
     let (_dirs, store) = super::subscriptions::store();
     seed(&store);
     let saved = || {
@@ -488,7 +488,7 @@ fn options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirem
 #[test]
 fn saved_routes_reach_main_and_live_viewer_os_fallback_and_missing_owned_notice() {
     let fixture = hydrus_testkit::fixture_json("open_externally.json");
-    headless::init();
+    let _headless_windows = headless::init();
     let (_dirs, store) = super::subscriptions::store();
     let manager = seed(&store);
     let launched = Rc::new(RefCell::new(Vec::new()));
@@ -713,7 +713,7 @@ fn await_output(path: &std::path::Path, expected: &str) {
 #[test]
 #[cfg(unix)]
 fn saved_registered_vectors_feed_actual_main_live_viewer_and_url_pipeline() {
-    headless::init();
+    let _headless_windows = headless::init();
     let (_dirs, store) = super::subscriptions::store();
     let mut manager = seed(&store);
     let output = tempfile::tempdir().unwrap();

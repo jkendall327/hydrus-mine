@@ -3994,7 +3994,10 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             }),
                             Rc::new(|settings, value| match value {
                                 Value::TagNamespaceOrder(namespaces) => {
-                                    settings.tag_presentation.user_namespaces = namespaces;
+                                    settings
+                                        .tag_presentation
+                                        .user_namespaces
+                                        .clone_from(namespaces);
                                     Ok(())
                                 }
                                 _ => Err(wrong("namespace grouping order")),
