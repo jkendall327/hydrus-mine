@@ -34,7 +34,7 @@ impl State {
     fn saved(&self) -> page_layout::PageLayout {
         self.store.read(page_layout::load).unwrap_or_else(|e| {
             eprintln!("could not load page layout: {e}");
-            Default::default()
+            page_layout::PageLayout::default()
         })
     }
     fn key(&self) -> Option<PageKey> {

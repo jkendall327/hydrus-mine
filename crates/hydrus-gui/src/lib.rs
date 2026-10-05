@@ -525,7 +525,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             binding_active.set(false);
             launcher.cancel();
             rows.retire();
-            let child = options.borrow().as_ref().map(|child| child.clone_strong());
+            let child = options
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
             if let Some(child) = child {
                 child.invoke_cancel();
             }
@@ -2699,7 +2702,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 sidebar_layout.accepted_exit();
                 binding_active.set(false);
                 rows.retire();
-                let child = options.borrow().as_ref().map(|child| child.clone_strong());
+                let child = options
+                    .borrow()
+                    .as_ref()
+                    .map(slint::ComponentHandle::clone_strong);
                 if let Some(child) = child {
                     child.invoke_cancel();
                 }
