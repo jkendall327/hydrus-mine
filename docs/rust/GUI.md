@@ -4028,3 +4028,10 @@ against a disclosed local delayed executable. Store/model/native regressions cov
 staging, concurrent saves, a held process across Apply, subsequent timeout and
 kill/reap, fixed API configuration and weak provider lifetime. Hosted Rust/native
 execution remains pending; no local Rust validation was run.
+The same weak deadline reader also reaches import-review MIME parsing, duplicate
+comparison/auto-resolution image decoding, parser fetched-file detection and
+import-folder sidecar sampling. Standalone no-Store helpers retain their existing
+APIs; GUI owners supply configured tools. Borrowed Store callers can obtain the
+same weak handle without keeping a Store or read connection alive. Authored real
+FIFO transport regressions exercise review metadata and duplicate PSD decoding
+under a preference changed after those consumers were constructed.

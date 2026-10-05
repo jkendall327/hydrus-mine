@@ -60,9 +60,43 @@ pub fn load(conn: &Connection) -> Result<FfmpegPolicy> {
     Ok(FfmpegPolicy::from_legacy(&options))
 }
 
+/// Read the current deadline per call without retaining its Store or connections.
+/// A retired/unreadable Store supplies the ordinary fifteen-second default.
+pub fn reader(
+    store: &crate::Store,
+) -> std::sync::Arc<dyn Fn() -> std::time::Duration + Send + Sync> {
+    let weak = store.downgrade();
+    std::sync::Arc::new(move || {
+        weak.upgrade()
+            .and_then(|store| store.read(load).ok())
+            .unwrap_or_default()
+            .timeout()
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn reader_from_a_borrowed_store_is_live_and_does_not_retain_its_owner() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = crate::Store::open(dir.path()).unwrap();
+        let weak = store.downgrade();
+        let count = std::sync::Arc::strong_count(&store);
+        let reader = reader(&store);
+        assert_eq!(std::sync::Arc::strong_count(&store), count);
+        store
+            .write(|c| settings::set(c.conn(), &FfmpegPolicy { seconds: 1 }))
+            .unwrap();
+        assert_eq!(reader(), std::time::Duration::from_secs(3));
+        store
+            .write(|c| settings::set(c.conn(), &FfmpegPolicy { seconds: 4 }))
+            .unwrap();
+        assert_eq!(reader(), std::time::Duration::from_secs(6));
+        drop(store);
+        assert!(weak.upgrade().is_none());
+        assert_eq!(reader(), std::time::Duration::from_secs(15));
+    }
     #[test]
     fn actual_legacy_saved_policy_backfill_native_override_and_poll_adapter() {
         let fixture = hydrus_testkit::fixture_json("ffmpeg_timeout.json");

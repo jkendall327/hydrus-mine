@@ -98,8 +98,13 @@ impl Default for Review {
 
 impl Review {
     pub fn new() -> Self {
+        Self::with_tools(MediaTools::new())
+    }
+
+    /// Use explicitly configured media tools for a Store-owned GUI review.
+    pub fn with_tools(tools: MediaTools) -> Self {
         Self {
-            tools: MediaTools::new(),
+            tools,
             parsed: Vec::new(),
             unparsed: VecDeque::new(),
             prefixes: HashSet::new(),

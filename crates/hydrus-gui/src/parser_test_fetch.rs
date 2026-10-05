@@ -63,6 +63,8 @@ impl Slot {
                         .map_err(|e| e.to_string())?;
                     let network: NetworkSettings =
                         store.read(settings::get).map_err(|e| e.to_string())?;
+                    let tools = hydrus_media::MediaTools::new()
+                        .with_ffmpeg_timeout_reader(hydrus_store::ffmpeg_policy::reader(&store));
                     let engine = {
                         let _entered = runtime.enter();
                         NetEngine::new(store, NetOptions::from_settings(&network))
@@ -72,9 +74,10 @@ impl Slot {
                     let (document, mime) = match result {
                         Ok(response) => {
                             let text = response.text();
-                            let mime = hydrus_gui_model::parser_test_data::detect_mime(
+                            let mime = hydrus_gui_model::parser_test_data::detect_mime_with_tools(
                                 &text,
                                 &response.body,
+                                &tools,
                             );
                             (FetchedDocument::Text(text), mime)
                         }

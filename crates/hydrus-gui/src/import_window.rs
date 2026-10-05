@@ -63,7 +63,9 @@ pub(crate) fn open(
     import_now: &ImportNow,
 ) -> Result<ReviewImportsWindow, String> {
     let window = ReviewImportsWindow::new().map_err(|e| e.to_string())?;
-    let review = Rc::new(RefCell::new(Review::new()));
+    let tools = hydrus_media::MediaTools::new()
+        .with_ffmpeg_timeout_reader(hydrus_store::ffmpeg_policy::reader(&sidecars.store));
+    let review = Rc::new(RefCell::new(Review::with_tools(tools)));
     review.borrow_mut().add_paths(paths);
     let selection = Rc::new(RefCell::new(Selection::default()));
     let show = {
