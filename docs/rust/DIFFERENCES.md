@@ -2247,8 +2247,8 @@ transparency policy now reach the native duplicate canvas. Saved reference
 zero is retained until Options Apply normalises the displayed value; None is
 preserved. The adjustment follows QColor's 16-bit HSV rounding, including
 black's initial lightness and saturation reduction on overflow. The normal
-base is canvas white or an imported active override background. Arbitrary QSS
-stylesheet palettes and the broader colour Options editor remain Partial, as
+base is canvas white or the saved active override background. Arbitrary QSS
+stylesheet palettes and the QColorDialog topology remain Partial, as
 do other duplicate-filter presentation/actions. This slice does not claim
 those parent rows. Actual Qt recording ran on 2026-10-05; Rust regression
 source was authored but awaits hosted CI (no local Cargo execution).
@@ -2858,3 +2858,5 @@ path. Hidden/rebound/accepted-close owners and resolver-induced hiding reject th
 launch and fallback creation. Broader File/database menu families remain Partial.
 Rust/native render regressions are authored for hosted validation; local checks
 used actual Qt, Python/source invariants, rustfmt and diff inspection only.
+
+The native legacy **colours** controls and Help **darkmode** action affect the thirteen represented painted roles rather than switching the application style or OS theme, matching Qt's legacy override policy. Native RGB picking uses three bounded channels and a swatch with OK/Cancel; Qt QColorDialog additionally offers HSV/HTML, palette history and its platform picker. The structural coloursets family retains this topology boundary and earns no concrete-leaf credit. Generic controls keep the native application palette; Qt QSS support and whole-platform palette editing are separate unfinished style work. Synthetic preview status text remains native status UI, without claiming a Qt canvas text counterpart. Saved role propagation is owner-local and bounded to 250ms; no process-global mutable colour preferences are introduced.

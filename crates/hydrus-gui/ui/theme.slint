@@ -4,6 +4,24 @@
 import { Palette } from "std-widgets.slint";
 
 export global Theme {
+    // The legacy colourset paints explicit roles without changing the style palette.
+    in property <bool> colours-override;
+    in property <[color]> colours;
+    callback colours-changed();
+    callback refresh-colours();
+    callback retire-colours();
+    public pure function colour(role: int, fallback: brush) -> brush {
+        self.colours-override && role >= 0 && role < self.colours.length ? self.colours[role] : fallback
+    }
+    public pure function thumbnail-background(local: bool, selected: bool) -> brush {
+        self.colour((local ? 0 : 2) + (selected ? 1 : 0), self.panel)
+    }
+    public pure function thumbnail-border(local: bool, selected: bool) -> brush {
+        self.colour((local ? 4 : 6) + (selected ? 1 : 0), selected ? self.accent : self.border)
+    }
+    out property <brush> grid-background: self.colour(8, self.window);
+    out property <brush> autocomplete-background: self.colour(9, self.panel);
+    out property <brush> tags-background: self.colour(12, self.panel);
     out property <bool> dark: Palette.color-scheme == ColorScheme.dark;
     // a window's background
     out property <brush> window: Palette.background;

@@ -118,6 +118,7 @@ impl Pause {
 /// What an entry does.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Command {
+    Darkmode,
     /// Resize/show/save the live page sidebar and preview.
     Sidebar(crate::page_layout::Action),
     /// Open tags > siblings or parents.
@@ -312,6 +313,7 @@ pub struct Pending {
 /// What the menus show, as the reference's updaters read it.
 #[derive(Debug, Clone, Default)]
 pub struct Facts {
+    pub darkmode: bool,
     pub advanced: bool,
     pub folders: FolderSettings,
     /// The import and export folders' names.
@@ -390,6 +392,7 @@ impl Facts {
                     .collect()
             });
             Ok(Facts {
+                darkmode: hydrus_store::gui_colours::load(conn)?.current == 1,
                 advanced,
                 folders: settings::get(conn)?,
                 import_folders,
@@ -1240,7 +1243,7 @@ fn help_menu(facts: &Facts) -> Entry {
             SEP,
             todo(dots("add the PTR")),
             SEP,
-            check("darkmode", None, false),
+            check("darkmode", Some(Command::Darkmode), facts.darkmode),
             check("advanced mode", Some(Command::AdvancedMode), facts.advanced),
             SEP,
             menu(

@@ -8,6 +8,7 @@ import { FrameLocationsTable } from "frame_locations.slint";
 // the page's titled boxes. Changes wait for "apply"; "cancel" (or escape)
 // forgets them.
 
+import { GuiColoursets, GuiColourRow } from "gui_coloursets.slint";
 import { NamespaceColourRow, NamespaceColourList } from "namespace_colours.slint";
 import { Button, CheckBox, ComboBox, LineEdit, ListView, ScrollView, SpinBox, StandardListView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
@@ -109,6 +110,15 @@ export component OptionsWindow inherits Window {
     preferred-width: 900px;
     preferred-height: 640px;
     background: Theme.window;
+    in property <[GuiColourRow]> gui-colour-rows;
+    in-out property <int> gui-colour-tab;
+    in property <bool> gui-colour-enabled;
+    in property <bool> gui-colour-child-open;
+    in property <string> gui-colour-error;
+    callback gui-colour-tab-changed();
+    changed gui-colour-tab => { root.gui-colour-tab-changed(); }
+    callback gui-colour-chosen(int,int);
+    callback gui-colour-clipboard(int,int,bool);
     callback noneable-text-geometry(int,length,length,length,length);
 
     in property <[TableRow]> routing-url-rows;
@@ -275,7 +285,7 @@ export component OptionsWindow inherits Window {
                 vertical-stretch: 1;
                 // (as the reference's 28 characters)
                 page-list := StandardListView {
-                    enabled: !root.shortcuts-child-open && !root.routing-child-open && !root.regex-child-open;
+                    enabled: !root.gui-colour-child-open && !root.shortcuts-child-open && !root.routing-child-open && !root.regex-child-open;
                     width: 200px;
                     model: root.pages;
                     current-item <=> root.page;
@@ -424,9 +434,9 @@ export component OptionsWindow inherits Window {
                                 clicked => { root.favourite-tags-clicked(); }
                             }
                             if row.kind == 32: VerticalLayout {
-                                CheckBox{text:"Treat all non-number numpad inputs as \"normal\": ";checked<=>root.shortcuts-merge-numpad;enabled:!root.shortcuts-child-open && !root.routing-child-open && !root.regex-child-open;toggled=>{root.shortcuts-policy(self.checked,root.shortcuts-primary-labels);}}
-                                CheckBox{text:"Replace \"left/right\"-click labels with \"primary/secondary\": ";checked<=>root.shortcuts-primary-labels;enabled:!root.shortcuts-child-open && !root.routing-child-open && !root.regex-child-open;toggled=>{root.shortcuts-policy(root.shortcuts-merge-numpad,self.checked);}}
-                                Button { text:"edit shortcuts";enabled:!root.shortcuts-child-open && !root.routing-child-open && !root.regex-child-open;clicked=>{root.shortcuts-clicked();} }
+                                CheckBox{text:"Treat all non-number numpad inputs as \"normal\": ";checked<=>root.shortcuts-merge-numpad;enabled:!root.gui-colour-child-open && !root.shortcuts-child-open && !root.routing-child-open && !root.regex-child-open;toggled=>{root.shortcuts-policy(self.checked,root.shortcuts-primary-labels);}}
+                                CheckBox{text:"Replace \"left/right\"-click labels with \"primary/secondary\": ";checked<=>root.shortcuts-primary-labels;enabled:!root.gui-colour-child-open && !root.shortcuts-child-open && !root.routing-child-open && !root.regex-child-open;toggled=>{root.shortcuts-policy(root.shortcuts-merge-numpad,self.checked);}}
+                                Button { text:"edit shortcuts";enabled:!root.gui-colour-child-open && !root.shortcuts-child-open && !root.routing-child-open && !root.regex-child-open;clicked=>{root.shortcuts-clicked();} }
                             }
                             if row.kind == 27: Button {
                                 text: row.text;
@@ -572,6 +582,12 @@ export component OptionsWindow inherits Window {
                                 }
                             }
                           }
+                            if row.kind == 36: GuiColoursets {
+                                horizontal-stretch:1;
+                                rows:root.gui-colour-rows;colourset<=>root.gui-colour-tab;enabled:root.gui-colour-enabled && !root.gui-colour-child-open;
+                                chosen(set,role)=>{root.gui-colour-chosen(set,role);}
+                                clipboard-action(set,role,paste)=>{root.gui-colour-clipboard(set,role,paste);}
+                            }
                             if row.kind == 34: OpenExternallyTable {
                                 urls:root.routing-url-rows;files:root.routing-file-rows;url-selected:root.routing-url-selected;file-single:root.routing-file-single;file-delete:root.routing-file-delete;child-open:root.routing-child-open;error:root.routing-error;
                                 url-clicked(i,c,s)=>{root.routing-url-clicked(i,c,s);}url-activated(i)=>{root.routing-url-activated(i);}url-action(a)=>{root.routing-url-action(a);}
@@ -690,7 +706,7 @@ export component OptionsWindow inherits Window {
             }
         }
         search := LineEdit {
-            enabled: !root.shortcuts-child-open && !root.routing-child-open && !root.regex-child-open;
+            enabled: !root.gui-colour-child-open && !root.shortcuts-child-open && !root.routing-child-open && !root.regex-child-open;
             x: 8px;
             y: root.search-at-top ? top-search-slot.y : bottom-search-slot.y;
             width: parent.width - 16px;
@@ -743,4 +759,5 @@ export component OptionsWindow inherits Window {
             }
         }
     }
+    if root.gui-colour-child-open: Rectangle { width:root.width;height:root.height;background:transparent;TouchArea{} }
 }

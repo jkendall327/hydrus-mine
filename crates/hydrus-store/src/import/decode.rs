@@ -800,6 +800,12 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &duplicate_colours)?;
+    let gui_colours = options.as_ref().map_or_else(
+        crate::gui_colours::Settings::default,
+        crate::gui_colours::Settings::from_legacy,
+    );
+    insert_setting(&mut input, &gui_colours)?;
+
     let mut note_preferences = crate::settings::NotePreferences::default();
     if let Some(options) = &options {
         for (key, field) in [

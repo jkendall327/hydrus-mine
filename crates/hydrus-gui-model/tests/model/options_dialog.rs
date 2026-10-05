@@ -443,7 +443,7 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
         let value = displayed.next().expect("one displayed value per option");
         // This reference page embeds the list; native opens the same transaction
         // in a child window, covered by dedicated regex/write-tag/gallery-source/import-options/namespace-queue recordings.
-        // The inline namespace RGB list has its own exact namespace_colour_controls replay.
+        // RGB roles replay all 26 values in gui_coloursets; namespace rows have their own recorder.
         // Shortcut capture/policies replay the actual nested command controls separately.
         // Open-externally queues/MIME rows/washing replay actual Qt lists separately;
         // this generic recorder captures scalar controls rather than these inline lists.
@@ -453,6 +453,7 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
                 | Kind::OpenExternally
                 | Kind::Shortcuts
                 | Kind::RegexFavourites
+                | Kind::GuiColours
                 | Kind::NamespaceColours
                 | Kind::DeletionReasons
                 | Kind::FrameLocations

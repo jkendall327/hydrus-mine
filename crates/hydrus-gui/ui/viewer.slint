@@ -1,3 +1,4 @@
+import { Theme } from "theme.slint";
 import { ViewerEyeMenu, ViewerEyeButton } from "viewer_eye_menu.slint";
 // The media viewer's window: one file, at its default zoom (fitted to the
 // window, by default). Right and left (or down and up, page down and up,
@@ -139,7 +140,7 @@ export component MediaViewerWindow inherits Window {
     callback eye-menu-chosen(int);
     preferred-width: 1000px;
     preferred-height: 750px;
-    background: #202020;
+    background: Theme.colour(10, #202020);
 
     in property <image> media;
     in property <int> transparency-mode;
@@ -898,11 +899,11 @@ export component MediaViewerWindow inherits Window {
             banner-information := VerticalLayout {
                 padding: 0px; spacing: 3px; alignment: start;
                 if root.tag-banner != "": Text {
-                    text: root.tag-banner; color: #f0f0f0; font-size: 14px;
+                    text: root.tag-banner; color: Theme.colour(11, #f0f0f0); font-size: 14px;
                     horizontal-alignment: center; overflow: elide;
                 }
                 if root.info-line != "": Text {
-                    text: root.info-line; color: #f0f0f0; font-size: 14px;
+                    text: root.info-line; color: Theme.colour(11, #f0f0f0); font-size: 14px;
                     horizontal-alignment: center; overflow: elide;
                 }
             }
@@ -922,8 +923,8 @@ export component MediaViewerWindow inherits Window {
                     if root.file-trashed: Image { width: 16px; height: 16px; source: @image-url("../../../static/trash.png"); }
                     if root.file-inbox: Image { width: 16px; height: 16px; source: @image-url("../../../static/inbox.png"); }
                 }
-                for location in root.location-strings: Text { text: location; color: #f0f0f0; horizontal-alignment: right; }
-                for link in root.url-links: Text { text: link.label; color: #f0f0f0; horizontal-alignment: right; overflow: elide; }
+                for location in root.location-strings: Text { text: location; color: Theme.colour(11, #f0f0f0); horizontal-alignment: right; }
+                for link in root.url-links: Text { text: link.label; color: Theme.colour(11, #f0f0f0); horizontal-alignment: right; overflow: elide; }
             }
         }
         Rectangle {
@@ -936,8 +937,8 @@ export component MediaViewerWindow inherits Window {
                 padding: 6px; spacing: 8px; alignment: start;
                 for note in root.notes: VerticalLayout {
                     spacing: 2px;
-                    Text { text: note.name; color: #f0f0f0; font-weight: 700; horizontal-alignment: center; wrap: word-wrap; }
-                    Text { text: note.text; color: #e0e0e0; wrap: word-wrap; }
+                    Text { text: note.name; color: Theme.colour(11, #f0f0f0); font-weight: 700; horizontal-alignment: center; wrap: word-wrap; }
+                    Text { text: note.text; color: Theme.colour(11, #e0e0e0); wrap: word-wrap; }
                 }
             }
         }
@@ -946,7 +947,7 @@ export component MediaViewerWindow inherits Window {
             x: root.width - self.preferred-width - 3px;
             y: root.height - self.preferred-height - 3px;
             text: root.index-background-text;
-            color: #f0f0f0;
+            color: Theme.colour(11, #f0f0f0);
             font-size: 14px;
         }
         if root.transparency-mode > 0: TransparencyBackdrop {

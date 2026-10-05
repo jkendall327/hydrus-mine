@@ -218,8 +218,15 @@ fn refresh_colours(window: &DuplicateFilterWindow, state: &State) {
         return;
     }
     let store = state.model.store();
-    let settings: hydrus_store::settings::DuplicateColourSettings =
+    let mut settings: hydrus_store::settings::DuplicateColourSettings =
         store.read(hydrus_store::settings::get).unwrap_or_default();
+    if let Ok(colours) = store.read(hydrus_store::gui_colours::load) {
+        settings.background = if colours.override_stylesheet {
+            colours.active()[10]
+        } else {
+            hydrus_store::services::Rgb([255; 3])
+        };
+    }
     let native: hydrus_store::settings::ViewerCanvasSettings =
         store.read(hydrus_store::settings::get).unwrap_or_default();
     let pair = state.model.current();
@@ -469,6 +476,14 @@ pub(crate) fn open_filter(
         custom: None,
         merge_options: Rc::default(),
     }));
+    {
+        let state = state.borrow();
+        crate::gui_colours::bind(
+            window.global::<crate::Theme<'_>>(),
+            state.model.store(),
+            state.viewing_stats.active_flag(),
+        );
+    }
 
     // ask for the slow statements of the pair shown, if not yet asked
     let request_slow = {

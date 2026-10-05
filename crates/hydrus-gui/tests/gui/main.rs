@@ -169,6 +169,7 @@ mod archive_repair;
 mod file_history;
 
 mod autocomplete_tabs;
+mod gui_colours;
 mod gui_format;
 mod related_weight_table;
 

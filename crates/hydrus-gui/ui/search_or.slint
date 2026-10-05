@@ -1,3 +1,4 @@
+import { WriteTagLineEdit } from "write_tag_line_edit.slint";
 import { Button, LineEdit, ScrollView } from "std-widgets.slint";
 import { ReadAutocomplete } from "read_autocomplete.slint";
 import { ListText, Theme } from "theme.slint";
@@ -49,14 +50,15 @@ export component SearchOrWindow inherits Window {
                 color: Theme.text;
                 wrap: word-wrap;
             }
-            if !root.advanced: ScrollView {
-                height: 120px;
-                VerticalLayout {
+            if !root.advanced: Rectangle {
+                height:120px;background:Theme.tags-background;
+                ScrollView { VerticalLayout {
                     for predicate[i] in root.predicates: HorizontalLayout {
                         Text { text: predicate; color: Theme.text; horizontal-stretch: 1; wrap: word-wrap; }
                         Button { text: "×"; enabled: !root.blocked; clicked => { root.remove(i); } }
                     }
                 }
+            }
             }
             HorizontalLayout {
                 Text { text: root.advanced ? "Input: " : "search"; color: Theme.text; }
@@ -71,13 +73,21 @@ export component SearchOrWindow inherits Window {
                         }
                         reject
                     }
-                    LineEdit {
+                    if root.advanced: LineEdit {
                         init => { self.focus(); }
                         enabled: !root.blocked;
                         text <=> root.input;
                         edited(text) => { root.edited(text); }
                         accepted => { if root.advanced { root.apply(); } else { root.enter(false); } }
                     }
+                    if !root.advanced: WriteTagLineEdit {
+                        init => { self.focus(); }
+                        enabled: !root.blocked;
+                        text <=> root.input;
+                        edited(text) => { root.edited(text); }
+                        accepted => { root.enter(false); }
+                    }
+
                 }
             }
             if root.advanced: VerticalLayout {

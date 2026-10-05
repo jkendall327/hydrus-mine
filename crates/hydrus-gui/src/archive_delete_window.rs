@@ -45,6 +45,11 @@ pub(crate) fn open(
         model.store().clone(),
         hydrus_core::CanvasType::ArchiveDeleteFilter,
     );
+    crate::gui_colours::bind(
+        window.global::<crate::Theme<'_>>(),
+        model.store(),
+        viewing_stats.active_flag(),
+    );
     let model = Rc::new(RefCell::new(model));
     let playback = playback::Playback::for_store(model.borrow().store().clone());
     let animator = animation::Animator::for_store(model.borrow().store().clone());

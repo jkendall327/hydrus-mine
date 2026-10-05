@@ -321,6 +321,9 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                     out.text =
                         crate::domains::location_label(&store.snapshot().services, location).into();
                 }
+                (Kind::GuiColours, Value::GuiColours(_)) => {
+                    out.kind = 36;
+                }
                 (Kind::NamespaceColours, Value::NamespaceColours(_)) => {
                     out.kind = 31;
                 }
@@ -449,6 +452,7 @@ pub(crate) fn open(
     let import_slot: crate::import_options_panel_window::Slot = Rc::default();
     let namespace_slot: crate::namespace_sorts_window::Slot = Rc::default();
     let active = Rc::new(Cell::new(true));
+    crate::gui_colours::bind(window.global::<crate::Theme<'_>>(), store, active.clone());
     let cog_target: Rc<RefCell<Option<SortCogTarget>>> = Rc::default();
     let names: Vec<StandardListViewItem> = editor
         .borrow()
@@ -459,6 +463,7 @@ pub(crate) fn open(
     window.set_pages(ModelRc::new(VecModel::from(names)));
     let show_providers = crate::options_palette::bind(&window, &editor, &active);
     let reason_queue = crate::options_deletion::bind(&window, &editor, &active, reason_slot);
+    let gui_colour_list = crate::options_gui_colours::bind(&window, &editor, &active);
     let colour_list =
         crate::options_namespace_colours::bind(&window, &editor, &active, colour_slot);
     let frame_table = crate::options_frames::bind(&window, &editor, &active, frame_slot);
@@ -490,6 +495,7 @@ pub(crate) fn open(
     let show_page = {
         let show_routing = routing_table.show.clone();
         let show_external = external_table.show.clone();
+        let show_gui_colours = gui_colour_list.show.clone();
         let show_colours = colour_list.show.clone();
         let cog_target = cog_target.clone();
         let session_choices = session_choices.clone();
@@ -513,6 +519,7 @@ pub(crate) fn open(
             window.set_rows(ModelRc::new(VecModel::from(rows)));
             show_providers();
             drop(state);
+            show_gui_colours();
             show_colours();
             show_routing();
             show_external();
@@ -549,6 +556,7 @@ pub(crate) fn open(
         let location_slot = location_slot.clone();
         let tag_slot = tag_slot.clone();
         let active = active.clone();
+        let cancel_gui_colours = gui_colour_list.cancel.clone();
         let cancel_colours = colour_list.cancel.clone();
         let cancel_reasons = reason_queue.cancel.clone();
         let cancel_frames = frame_table.cancel.clone();
@@ -567,6 +575,7 @@ pub(crate) fn open(
             if let Some(child) = child {
                 child.invoke_cancel();
             }
+            cancel_gui_colours();
             cancel_colours();
             cancel_reasons();
             cancel_frames();
@@ -622,11 +631,13 @@ pub(crate) fn open(
         let matches = matches.clone();
         let show_page = show_page.clone();
         let weak = window.as_weak();
+        let gui_colours_open = gui_colour_list.has_open.clone();
         let routing_open = routing_table.has_open.clone();
         let shortcuts_open = shortcuts.has_open.clone();
         let regex_slot = regex_slot.clone();
         move |i| {
-            if routing_open()
+            if gui_colours_open()
+                || routing_open()
                 || shortcuts_open()
                 || crate::regex_favourites_window::has_open(&regex_slot)
             {
@@ -816,11 +827,13 @@ pub(crate) fn open(
         let active = active.clone();
         let weak = window.as_weak();
         let store = store.clone();
+        let gui_colours_open = gui_colour_list.has_open.clone();
         let routing_open = routing_table.has_open.clone();
         let shortcuts_open = shortcuts.has_open.clone();
         move || {
             if !active.get()
                 || !weak.upgrade().is_some_and(|w| w.window().is_visible())
+                || gui_colours_open()
                 || routing_open()
                 || shortcuts_open()
                 || crate::regex_favourites_window::has_open(&regex_slot)
@@ -975,6 +988,7 @@ pub(crate) fn open(
         let show_page = show_page.clone();
         let weak = window.as_weak();
         let active = active.clone();
+        let gui_colours_open = gui_colour_list.has_open.clone();
         let routing_open = routing_table.has_open.clone();
         let shortcuts_open = shortcuts.has_open.clone();
         let regex_slot = regex_slot.clone();
@@ -986,7 +1000,8 @@ pub(crate) fn open(
             {
                 return;
             }
-            if routing_open()
+            if gui_colours_open()
+                || routing_open()
                 || shortcuts_open()
                 || crate::regex_favourites_window::has_open(&regex_slot)
             {
@@ -1002,12 +1017,14 @@ pub(crate) fn open(
         }
     });
     window.on_check_toggled({
+        let show_gui_colours = gui_colour_list.show.clone();
         let editor = editor.clone();
         let weak = window.as_weak();
         let active = active.clone();
         let colours_open = colour_list.has_open.clone();
         let reasons_open = reason_queue.has_open.clone();
         let frames_open = frame_table.has_open.clone();
+        let gui_colours_open = gui_colour_list.has_open.clone();
         let routing_open = routing_table.has_open.clone();
         let external_open = external_table.has_open.clone();
         let shortcuts_open = shortcuts.has_open.clone();
@@ -1021,6 +1038,7 @@ pub(crate) fn open(
                 || frames_open()
                 || external_open()
                 || shortcuts_open()
+                || gui_colours_open()
                 || routing_open()
                 || !matches!(
                     editor.borrow().rows().get(at(i)),
@@ -1030,6 +1048,7 @@ pub(crate) fn open(
                 return;
             }
             editor.borrow_mut().check(at(i), checked);
+            show_gui_colours();
             if let Some(window) = weak.upgrade() {
                 for (index, row) in editor.borrow().rows().iter().enumerate() {
                     if let Row::Opt { enabled, .. } = row
@@ -1146,10 +1165,13 @@ pub(crate) fn open(
     });
     window.on_choice_chosen({
         let session_choices=session_choices.clone();
+        let active=active.clone();let weak=window.as_weak();let gui_colours_open=gui_colour_list.has_open.clone();
         let editor = editor.clone();
         let store = store.clone();
         let weak=window.as_weak();
         move |i, index| {
+            if !active.get()||gui_colours_open()||!weak.upgrade().is_some_and(|window|window.window().is_visible()){return;}
+
             if matches!(editor.borrow().rows().get(at(i)),Some(Row::Opt{option,..}) if matches!(option.kind,Kind::Bytes)) {
                 editor.borrow_mut().choose(at(i),at(index));refresh_byte_row(&weak,&editor,&store,i);return;
             }
@@ -1408,6 +1430,7 @@ pub(crate) fn open(
         let colours_open = colour_list.has_open.clone();
         let reasons_open = reason_queue.has_open.clone();
         let frames_open = frame_table.has_open.clone();
+        let gui_colours_open = gui_colour_list.has_open.clone();
         let routing_open = routing_table.has_open.clone();
         let external_open = external_table.has_open.clone();
         let shortcuts_open = shortcuts.has_open.clone();
@@ -1430,6 +1453,7 @@ pub(crate) fn open(
                 || frames_open()
                 || external_open()
                 || shortcuts_open()
+                || gui_colours_open()
                 || routing_open()
                 || crate::regex_favourites_window::has_open(&regex_slot)
                 || tag_slot.borrow().is_some()

@@ -29,7 +29,7 @@ export component TagSuggestionPanels inherits Rectangle {
         }
         HorizontalLayout {
             spacing:6px;
-            if root.most-used-enabled && (root.columns || root.selected==0): ListTable {
+            if root.most-used-enabled && (root.columns || root.selected==0): ListTable { background:Theme.tags-background;
                 columns:[{title:"most used",width:root.column-width,stretch:true}]; rows:root.most-used; vertical-stretch:1;
                 row-clicked(i,c,s)=>{root.clicked(0,i,c,s);}
                 row-activated(i)=>{root.activated(0,i);}
@@ -40,9 +40,9 @@ export component TagSuggestionPanels inherits Rectangle {
                 Button {text:"quick"; clicked=>{root.related-search();}}
                 ComboBox {model:["just for my files","all known files"];current-index:root.related-local?0:1;selected(_)=>{root.related-local=self.current-index==0;root.related-search();}}
                 ComboBox {model:["siblings/parents","storage tags"];current-index:root.related-display?0:1;selected(_)=>{root.related-display=self.current-index==0;root.related-search();}}
-                ListTable {columns:[{title:"related",width:root.column-width,stretch:true}];rows:root.related;vertical-stretch:1;row-clicked(i,c,s)=>{root.clicked(2,i,c,s);}row-activated(i)=>{root.activated(2,i);}}
+                ListTable { background:Theme.tags-background;columns:[{title:"related",width:root.column-width,stretch:true}];rows:root.related;vertical-stretch:1;row-clicked(i,c,s)=>{root.clicked(2,i,c,s);}row-activated(i)=>{root.activated(2,i);}}
             }
-            if root.recent-enabled && (root.columns || root.selected==1): ListTable {
+            if root.recent-enabled && (root.columns || root.selected==1): ListTable { background:Theme.tags-background;
                 columns:[{title:"recent",width:root.column-width,stretch:true}]; rows:root.recent; vertical-stretch:1;
                 row-clicked(i,c,s)=>{root.clicked(1,i,c,s);}
                 row-activated(i)=>{root.activated(1,i);}
@@ -65,7 +65,7 @@ export component MostUsedTagsWindow inherits Window {
         padding: 12px; spacing: 8px;
         Text { text: "Add your most used tags for each particular service here, and then you can just double-click to add, rather than typing every time."; wrap: word-wrap; color: Theme.text; }
         HorizontalBox { Text {text:"Tag service: "; color:Theme.text;} ComboBox { model:root.services; current-index:root.service; enabled:!root.child-open; selected(_)=>{root.service-chosen(self.current-index);} } }
-        ListView { vertical-stretch:1; for tag in root.tags: Text { text:tag; color:Theme.text; } }
+        Rectangle { background:Theme.tags-background;vertical-stretch:1; ListView { for tag in root.tags: Text { text:tag; color:Theme.text; } } }
         Button { text:"edit most used tags"; enabled:!root.child-open && root.services.length > 0; clicked=>{root.edit-tags();} }
         HorizontalBox { alignment:end; Button {text:"apply"; enabled:!root.child-open; clicked=>{root.apply();}} Button {text:"cancel"; clicked=>{root.cancel();}} }
     }

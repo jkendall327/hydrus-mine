@@ -124,6 +124,7 @@ fn open_internal(
     let model = Rc::new(RefCell::new(entry));
     let pending: Rc<RefCell<Option<Vec<String>>>> = Rc::default();
     let active = Rc::new(Cell::new(true));
+    crate::gui_colours::bind(window.global::<crate::Theme<'_>>(), store, active.clone());
     let refresh = Rc::new({
         let model = model.clone();
         let store = store.clone();

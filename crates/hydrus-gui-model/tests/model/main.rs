@@ -149,6 +149,7 @@ mod open_externally;
 mod viewer_drag;
 mod window_rescue;
 
+mod gui_colours;
 mod gui_format;
 mod popup_width;
 mod viewer_tag_wheel;

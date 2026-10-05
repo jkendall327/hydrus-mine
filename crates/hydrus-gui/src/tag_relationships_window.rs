@@ -83,6 +83,11 @@ pub(crate) fn open(
         })
         .collect();
     let active = Rc::new(Cell::new(true));
+    crate::gui_colours::bind(
+        window.global::<crate::Theme<'_>>(),
+        model.store(),
+        active.clone(),
+    );
     let binding = Rc::new(RefCell::new(Binding {
         inputs,
         model,

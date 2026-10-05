@@ -21,6 +21,9 @@ impl CanvasTracker {
             active: Rc::new(Cell::new(true)),
         }
     }
+    pub(crate) fn active_flag(&self) -> Rc<Cell<bool>> {
+        self.active.clone()
+    }
     pub(crate) fn active(&self) -> bool {
         self.active.get()
     }

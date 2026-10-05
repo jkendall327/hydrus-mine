@@ -21,6 +21,7 @@ type ShownLines = Rc<RefCell<Vec<(Vec<MenuLine>, ModelRc<MenuLine>)>>>;
 /// What the menu bar works with.
 pub(crate) struct Hooks {
     pub quick_export_directory: crate::quick_export_directory::Control,
+    pub darkmode: Rc<dyn Fn()>,
     pub sidebar_layout: Rc<dyn Fn(hydrus_gui_model::page_layout::Action)>,
     /// Open the siblings or parents editor.
     pub tag_display: Rc<dyn Fn(bool)>,
@@ -826,6 +827,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::ImportFiles => (hooks.import_files)(),
         Command::SearchDomain(choice) => (hooks.search_domain)(choice),
         Command::Favourite(action) => (hooks.favourite)(action),
+        Command::Darkmode => (hooks.darkmode)(),
         Command::About => (hooks.about)(),
         Command::ReviewServices => (hooks.review_services)(),
         Command::ManageServices => (hooks.manage_services)(),

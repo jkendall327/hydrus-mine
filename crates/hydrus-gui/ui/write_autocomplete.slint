@@ -95,7 +95,7 @@ export component WriteTagInput inherits FocusScope {
             visible: root.suggestions.length > 0;
             border-width: 1px;
             border-color: Theme.border;
-            background: Theme.panel;
+            background: Theme.tags-background;
             height: root.suggestions.length > 0 ? min(root.suggestions.length, root.list-height) * 22px + 4px : 0px;
             result-keys := FocusScope {
                 width: parent.width; height: parent.height;
