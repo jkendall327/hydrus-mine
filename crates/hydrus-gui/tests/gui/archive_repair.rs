@@ -137,16 +137,37 @@ fn database_repair_has_owned_scan_population_questions_and_updates_real_media_on
     declined.invoke_chosen(2);
     assert_eq!(times(&store, &ids), vec![None, None]);
     let retired = open();
+    let accepted_index = windows.count();
     let accepted = open();
+    assert_eq!(windows.count(), accepted_index + 1);
     retired.invoke_close_clicked();
     retired.invoke_scan_answered(true);
     assert!(slot.borrow().is_some());
     assert_eq!(accepted.get_phase(), 0);
     accepted.invoke_scan_answered(true);
     wait_phase(&accepted, 2);
-    let index = windows.count() - 1;
-    let pixels = headless::render(&windows.get(index).unwrap(), 680, 480);
-    assert!(pixels.chunks_exact(4).any(|p| p[0] != p[1] || p[1] != p[2]));
+    assert!(accepted.window().is_visible());
+    assert_eq!(
+        accepted
+            .get_choices()
+            .iter()
+            .map(|s| s.to_string())
+            .collect::<Vec<_>>(),
+        ["do legacy times", "do import times", "do both"]
+    );
+    assert_eq!(times(&store, &ids), vec![None, None]);
+    let pixels = headless::render(&windows.get(accepted_index).unwrap(), 680, 480);
+    // The native theme may be monochrome. Require visible paint in the lower
+    // choice-control area rather than a pixel with unequal RGB channels.
+    assert!(
+        pixels
+            .chunks_exact(680 * 4)
+            .skip(320)
+            .take(148)
+            .flat_map(|row| row[12 * 4..668 * 4].chunks_exact(4))
+            .any(|pixel| pixel != &pixels[..4]),
+        "the visible population-choice controls paint against the window background"
+    );
     headless::save_png(
         &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("archive_time_repair.png"),
         &pixels,
