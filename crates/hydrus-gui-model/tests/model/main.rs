@@ -166,3 +166,5 @@ mod page_layout;
 mod or_connector;
 
 mod image_colour;
+
+mod quick_export_directory;

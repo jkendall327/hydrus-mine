@@ -3628,3 +3628,17 @@ frame and playback position. Actual Qt checkbox staging, save/reopen, decoded
 pixels, animation frames, cache notifications and profile-free thumbnail encoding
 are recorded in `image_decoder_policies.json` and its reference PNG. Truncated
 image loading has no native control or completion claim.
+
+
+File > open > quick export directory now opens the saved Default export directory
+through the existing OS opener. Each click reads the current saved preference;
+Options Cancel and one-off manual export destinations leave it unchanged. Portable
+relative paths resolve against the database directory, while literal whitespace
+and empty imported strings retain the reference's path behavior. A configured
+missing path is passed to the opener without creating it. An unset preference
+creates the resolved home's hydrus_export directory; an undetermined home reports
+the reference message, and a conflicting file reports the creation error without
+launching. The action has no picker or confirmation. Hidden, rebound and accepted-
+closed main bindings cannot launch or create a directory. Actual Qt QAction,
+portable/path/error, Options Cancel/Apply/reopen behavior and menu appearance are
+recorded in quick_export_directory.json and its PNG.

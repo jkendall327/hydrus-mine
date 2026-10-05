@@ -306,6 +306,7 @@ pub struct Bound {
     pub options_external_calls: external_call_window::Slots,
     pub options_open_externally: options_open_externally::Slots,
     pub external_launches: open_externally_launch::Launcher,
+    pub quick_export_directory: quick_export_directory::Control,
     pub options_suggested_tags_slot: tag_suggestions_window::Slots,
     /// The Ctrl+P command palette while open.
     pub command_palette: command_palette_window::Slot,
@@ -2111,10 +2112,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let header_approval =
         network_header_approval::Monitor::bind(window, pages.borrow().store().clone());
     let command_palette: command_palette_window::Slot = Rc::default();
+    let quick_export_directory = quick_export_directory::Control::new(
+        window,
+        page().borrow().store().clone(),
+        binding_active.clone(),
+    );
     let palette_dispatcher: command_palette_window::MainDispatcher = Rc::default();
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
+            quick_export_directory: quick_export_directory.clone(),
             sidebar_layout: Rc::new({
                 let layout = sidebar_layout.clone();
                 move |action| layout.action(action)
@@ -4466,6 +4473,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         options_external_calls,
         options_open_externally,
         external_launches,
+        quick_export_directory,
         command_palette,
         about,
         services_review,
@@ -7170,3 +7178,5 @@ pub mod network_job_control;
 pub mod namespace_sorts_window;
 
 mod image_colour_watch;
+
+pub mod quick_export_directory;

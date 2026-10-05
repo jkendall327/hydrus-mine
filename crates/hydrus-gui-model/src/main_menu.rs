@@ -218,6 +218,7 @@ pub enum Command {
     ManageServices,
     OpenInstallDirectory,
     OpenDatabaseDirectory,
+    OpenQuickExportDirectory,
     Exit,
     /// Forget the closed pages, asking first.
     ClearClosedPages,
@@ -584,7 +585,7 @@ fn file_menu(facts: &Facts) -> Entry {
                 vec![
                     item("installation directory", Command::OpenInstallDirectory),
                     item("database directory", Command::OpenDatabaseDirectory),
-                    todo("quick export directory"),
+                    item("quick export directory", Command::OpenQuickExportDirectory),
                 ],
             ),
             SEP,
