@@ -35,6 +35,216 @@ fn choices(node: &SidecarNodeWindow) -> Vec<String> {
 }
 
 #[test]
+fn router_import_replays_permitted_subsets_and_ordered_png_failures() {
+    use hydrus_downloader_exchange::routers as exchange;
+    use hydrus_gui::{Pick, sidecars_window};
+    use hydrus_gui_model::sidecar_editors::Context;
+    use std::{cell::RefCell, rc::Rc};
+
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let reference = hydrus_testkit::fixture_json("router_import.json");
+    for case in reference["cases"].as_array().unwrap() {
+        let slots = sidecars_window::Slots::default();
+        let saved = Rc::new(RefCell::new(Vec::new()));
+        let context = if case["context"] == "import" {
+            Context::Import
+        } else {
+            Context::Export
+        };
+        let queue = sidecars_window::open_routers(
+            &store,
+            context,
+            Vec::new(),
+            &slots,
+            Rc::new({
+                let saved = saved.clone();
+                move |routers| *saved.borrow_mut() = routers
+            }),
+        )
+        .unwrap();
+        *slots.routers.borrow_mut() = Some(queue.clone_strong());
+        queue.invoke_exchange(true);
+        let child = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+        assert!(child.get_router_import());
+        assert!(
+            !child.get_json_enabled(),
+            "Qt's router list does not offer JSON-file import"
+        );
+        if let Some(files) = case["files"].as_array() {
+            let paths = files
+                .iter()
+                .map(|name| {
+                    hydrus_testkit::fixtures_dir()
+                        .join(format!("router_import_{}", name.as_str().unwrap()))
+                })
+                .collect::<Vec<_>>();
+            hydrus_gui::set_picker(move |kind, title| {
+                assert_eq!(kind, Pick::Files);
+                assert_eq!(title, "select the png or pngs with the encoded data");
+                paths.clone()
+            });
+            child.invoke_action("import-pngs".into());
+        } else {
+            child.set_text(case["text"].to_string().into());
+            child.invoke_action("review".into());
+        }
+        let expected = case["added"].as_array().unwrap();
+        let warnings = case["messages"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter_map(|message| match message[0].as_str().unwrap() {
+                "warning" => Some(message[1].as_str().unwrap().to_owned()),
+                "critical" => Some(format!(
+                    "{}\n\n{}",
+                    message[1].as_str().unwrap(),
+                    message[2].as_str().unwrap()
+                )),
+                _ => None,
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(
+            child.get_error().as_str(),
+            warnings.join("\n\n"),
+            "{} {}",
+            case["name"],
+            case["context"]
+        );
+        assert_eq!(child.get_ready(), !expected.is_empty());
+        if case["name"] == "ordered_pngs" {
+            let adapter = windows.get(windows.count() - 1).unwrap();
+            let pixels = headless::render(&adapter, 900, 800);
+            headless::save_png(
+                &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                    .join("router-import-permitted-pngs.png"),
+                &pixels,
+                900,
+                800,
+            )
+            .unwrap();
+            assert!(
+                pixels
+                    .chunks_exact(4)
+                    .any(|pixel| pixel[0] != pixel[1] || pixel[1] != pixel[2])
+            );
+        }
+        assert!(saved.borrow().is_empty());
+        assert_eq!(
+            queue.get_rows().row_count(),
+            0,
+            "review must not mutate the owning draft"
+        );
+        if expected.is_empty() {
+            child.invoke_action("accept".into());
+            assert_eq!(queue.get_rows().row_count(), 0);
+            child.invoke_action("cancel".into());
+            queue.invoke_cancel();
+        } else {
+            child.invoke_action("accept".into());
+            assert_eq!(queue.get_rows().row_count(), expected.len());
+            assert_eq!(
+                (0..expected.len())
+                    .filter(|&i| queue.get_rows().row_data(i).unwrap().selected)
+                    .count(),
+                expected.len()
+            );
+            assert!(
+                saved.borrow().is_empty(),
+                "only queue Apply may hand back routers"
+            );
+            queue.invoke_apply();
+            assert_eq!(
+                saved
+                    .borrow()
+                    .iter()
+                    .map(|r| exchange::tuple(r).unwrap())
+                    .collect::<Vec<_>>(),
+                *expected,
+                "{} {}",
+                case["name"],
+                case["context"]
+            );
+        }
+        assert!(slots.exchange.0.borrow().is_none());
+        assert!(slots.routers.borrow().is_none());
+    }
+}
+
+#[test]
+fn router_import_child_obeys_hidden_cancel_replacement_and_dropped_owner() {
+    use hydrus_gui::sidecars_window;
+    use hydrus_gui_model::sidecar_editors::Context;
+    use std::{cell::RefCell, rc::Rc};
+
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let reference = hydrus_testkit::fixture_json("router_import.json");
+    let slots = sidecars_window::Slots::default();
+    let saved = Rc::new(RefCell::new(Vec::new()));
+    let applied: Rc<dyn Fn(Vec<hydrus_parse::sidecar::Router>)> = Rc::new({
+        let saved = saved.clone();
+        move |routers| *saved.borrow_mut() = routers
+    });
+    let queue =
+        sidecars_window::open_routers(&store, Context::Import, Vec::new(), &slots, applied.clone())
+            .unwrap();
+    *slots.routers.borrow_mut() = Some(queue.clone_strong());
+    queue.invoke_exchange(true);
+    let child = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    child.set_text(reference["cases"][0]["text"].to_string().into());
+    queue.hide().unwrap();
+    child.invoke_action("review".into());
+    assert!(!child.get_ready());
+    queue.show().unwrap();
+    child.hide().unwrap();
+    child.invoke_action("review".into());
+    assert!(!child.get_ready());
+    child.show().unwrap();
+    child.invoke_action("review".into());
+    assert!(child.get_ready());
+    queue.hide().unwrap();
+    child.invoke_action("accept".into());
+    assert_eq!(queue.get_rows().row_count(), 0);
+    queue.show().unwrap();
+    child.invoke_action("accept".into());
+    assert_eq!(queue.get_rows().row_count(), 2);
+    queue.invoke_row_clicked(0, false, false);
+    queue.invoke_exchange(true);
+    let retired = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    retired.set_text(reference["cases"][1]["text"].to_string().into());
+    retired.invoke_action("review".into());
+    queue.invoke_cancel();
+    assert!(saved.borrow().is_empty());
+    assert!(!retired.get_active());
+    let successor =
+        sidecars_window::open_routers(&store, Context::Import, Vec::new(), &slots, applied.clone())
+            .unwrap();
+    *slots.routers.borrow_mut() = Some(successor.clone_strong());
+    retired.show().unwrap();
+    retired.invoke_action("accept".into());
+    retired.invoke_action("cancel".into());
+    assert_eq!(successor.get_rows().row_count(), 0);
+    assert!(slots.routers.borrow().is_some());
+    successor.invoke_exchange(true);
+    let orphan = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    orphan.set_text(reference["cases"][0]["text"].to_string().into());
+    orphan.invoke_action("review".into());
+    assert!(orphan.get_ready());
+    let weak = successor.as_weak();
+    drop(successor);
+    drop(slots);
+    assert!(
+        weak.upgrade().is_none(),
+        "queue callbacks must not retain their own window slot"
+    );
+    orphan.show().unwrap();
+    orphan.invoke_action("accept".into());
+    assert!(saved.borrow().is_empty());
+    orphan.invoke_action("cancel".into());
+}
+
+#[test]
 fn an_import_folders_sidecars_are_edited_and_written() {
     let (_dirs, store) = store();
     let windows = headless::init();
@@ -861,7 +1071,14 @@ fn router_queue_exchange_is_staged_context_checked_and_reaches_manual_export() {
         )
     );
     assert_eq!(window.get_rows().row_count(), 0);
-    import.set_text(reference["queues"][1]["text"].to_string().into());
+    let subset_reference = hydrus_testkit::fixture_json("router_import.json");
+    let mixed = subset_reference["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|case| case["name"] == "mixed" && case["context"] == "export")
+        .unwrap();
+    import.set_text(mixed["text"].to_string().into());
     import.invoke_action("review".into());
     assert!(import.get_ready(), "{}", import.get_error());
     window.invoke_apply();

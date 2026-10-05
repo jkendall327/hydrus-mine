@@ -425,6 +425,13 @@ exports supply up to 25 local files or media results; previews read their
 sidecars or metadata without exporting. Source/formula and router processor
 children inherit the reference's first-example strings. `oracle/record_sidecar_testing.py`
 records seven file/media, empty-input, processing and parse-error states.
+Router queues accept the compatible subset of mixed clipboard packages, with
+the reference's type and direction warnings. "from pngs" reads selected files
+in order and retains successful earlier packages if a later file fails; later
+files are not read. Review and Cancel remain local to the queue draft, and only
+the owning editor's Apply saves the routers. Hidden, cancelled, replaced or
+dropped queue owners reject retained import callbacks. `record_router_import.py`
+records nine actual Qt subset, ordered-PNG, failure and cancelled-picker cases.
 JSON destination object names are an ordered queue with add/edit text children,
 up/down, deletion confirmation and double-click editing. Literal duplicate,
 whitespace and embedded-newline keys survive staged Apply; empty input receives
