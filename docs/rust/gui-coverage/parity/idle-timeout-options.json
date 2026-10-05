@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "agent": "overnight_options",
+  "baseline_git_head": "d474d204a",
+  "frozen_original_inventory": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "claims": [
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-general-browsing-activity-has-occurred-in-the-past",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact staged Noneable minute spinner (1\u20131000) with independent ignore choice, saved seconds, whole-minute floor/clamp display, enabled interlock and Qt hidden1-minute constructor/reopen behavior. Defaults and typed legacy import retain valid original stored seconds and explicit None; missing keys retain reference defaults. Cancel leaves storage/gate untouched. Apply merges only edited fields and is consumed live by the existing running idle-only session autosave monitor, with strict boot/activity boundaries. Persistence and reopen have authored model/native/store regressions. General browsing activity is observed through the existing native event-loop input route across all application windows; the threshold defaults to 30 minutes.",
+      "limits": [
+        "This completes only this editable threshold plus its existing native idle eligibility consumer. It does not claim high-CPU maintenance execution, CPU-busy detection, idle enable/debug/shutdown controls, or the parent options family.",
+        "Native Rust replay and PNG capture are authored, awaiting hosted CI; they were not executed locally."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::Settings::save",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui/ui/options.slint::OptionsWindow",
+        "crates/hydrus-gui-model/src/session_lifecycle.rs::Idle::eligible",
+        "crates/hydrus-gui/src/session_autosave.rs::Monitor::idle_at",
+        "crates/hydrus-gui/src/session_autosave.rs::Monitor::poll_at",
+        "crates/hydrus-store/src/settings.rs::GuiIdleSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui/src/session_autosave.rs::observe_window_event"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/idle_timeout_options.rs::noneable_timeout_controls_replay_qt_defaults_floor_bounds_retention_and_reopen",
+        "crates/hydrus-gui-model/tests/model/idle_timeout_options.rs::edited_idle_thresholds_merge_without_overwriting_live_unrelated_preferences",
+        "crates/hydrus-gui-model/tests/model/idle_timeout_options.rs::saved_timeout_choices_replay_strict_qt_boot_activity_and_ignore_gates",
+        "crates/hydrus-gui/tests/gui/idle_timeout_options.rs::staged_timeouts_change_live_browsing_mouse_api_and_autosave_gates_only_after_apply",
+        "crates/hydrus-store/src/import/decode.rs::tests::idle_timeout_import_preserves_seconds_none_and_missing_defaults",
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::page_problems"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_idle_timeout_options.py",
+        "fixture": "oracle/fixtures/idle_timeout_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-05T02:39:43Z",
+        "finishedAtUtc": "2026-10-05T02:39:46Z",
+        "reference": "Actual MaintenanceAndProcessingPanel NoneableSpinCtrl edits/UpdateOptions and ClientController.CurrentlyIdle with held boot, clock and independent browsing/mouse/API timestamps. Records defaults, enabled interlocks, floor/clamp to 1\u20131000 minutes, ignored-number retention and fresh hidden1-minute reopen, strict 120s boot and isolated activity thresholds."
+      },
+      "implementationCommit": "34391fbfb",
+      "validation": "Actual Qt recording executed; cargo fmt, git diff --check and cached warning-aware Slint source compilation passed. No local Cargo build/test/Clippy or native execution.",
+      "authoredNativeArtifact": "idle-timeout-options.png (hosted test output, not locally produced)"
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-your-mouse-cursor-has-not-been-moved-in-the-past",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "behavior": "Exact staged Noneable minute spinner (1\u20131000) with independent ignore choice, saved seconds, whole-minute floor/clamp display, enabled interlock and Qt hidden1-minute constructor/reopen behavior. Defaults and typed legacy import retain valid original stored seconds and explicit None; missing keys retain reference defaults. Cancel leaves storage/gate untouched. Apply merges only edited fields and is consumed live by the existing running idle-only session autosave monitor, with strict boot/activity boundaries. Persistence and reopen have authored model/native/store regressions. Mouse movement in application windows reaches the independent mouse timestamp; the threshold defaults to 10 minutes. System-wide movement remains unsupported, so this leaf remains Partial and receives no completion credit.",
+      "limits": [
+        "Qt polls the operating-system global cursor position. Native movement outside application windows does not reset the idle mouse gate; no global pointer tracking was introduced.",
+        "This completes only this editable threshold plus its existing native idle eligibility consumer. It does not claim high-CPU maintenance execution, CPU-busy detection, idle enable/debug/shutdown controls, or the parent options family.",
+        "Native Rust replay and PNG capture are authored, awaiting hosted CI; they were not executed locally."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::Settings::save",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui/ui/options.slint::OptionsWindow",
+        "crates/hydrus-gui-model/src/session_lifecycle.rs::Idle::eligible",
+        "crates/hydrus-gui/src/session_autosave.rs::Monitor::idle_at",
+        "crates/hydrus-gui/src/session_autosave.rs::Monitor::poll_at",
+        "crates/hydrus-store/src/settings.rs::GuiIdleSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-gui/src/session_autosave.rs::observe_window_event"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/idle_timeout_options.rs::noneable_timeout_controls_replay_qt_defaults_floor_bounds_retention_and_reopen",
+        "crates/hydrus-gui-model/tests/model/idle_timeout_options.rs::edited_idle_thresholds_merge_without_overwriting_live_unrelated_preferences",
+        "crates/hydrus-gui-model/tests/model/idle_timeout_options.rs::saved_timeout_choices_replay_strict_qt_boot_activity_and_ignore_gates",
+        "crates/hydrus-gui/tests/gui/idle_timeout_options.rs::staged_timeouts_change_live_browsing_mouse_api_and_autosave_gates_only_after_apply",
+        "crates/hydrus-store/src/import/decode.rs::tests::idle_timeout_import_preserves_seconds_none_and_missing_defaults",
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::page_problems"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_idle_timeout_options.py",
+        "fixture": "oracle/fixtures/idle_timeout_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-05T02:39:43Z",
+        "finishedAtUtc": "2026-10-05T02:39:46Z",
+        "reference": "Actual MaintenanceAndProcessingPanel NoneableSpinCtrl edits/UpdateOptions and ClientController.CurrentlyIdle with held boot, clock and independent browsing/mouse/API timestamps. Records defaults, enabled interlocks, floor/clamp to 1\u20131000 minutes, ignored-number retention and fresh hidden1-minute reopen, strict 120s boot and isolated activity thresholds."
+      },
+      "implementationCommit": "34391fbfb",
+      "validation": "Actual Qt recording executed; cargo fmt, git diff --check and cached warning-aware Slint source compilation passed. No local Cargo build/test/Clippy or native execution.",
+      "authoredNativeArtifact": "idle-timeout-options.png (hosted test output, not locally produced)"
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-client-api-requests-in-the-past",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "behavior": "Exact staged Noneable minute spinner (1\u20131000) with independent ignore choice, saved seconds, whole-minute floor/clamp display, enabled interlock and Qt hidden1-minute constructor/reopen behavior. Defaults and typed legacy import retain valid original stored seconds and explicit None; missing keys retain reference defaults. Cancel leaves storage/gate untouched. Apply merges only edited fields and is consumed live by the existing running idle-only session autosave monitor, with strict boot/activity boundaries. Persistence and reopen have authored model/native/store regressions. Client API requests update the existing timestamp-only shared marker independently of browsing/mouse timestamps; the monitor consumes it live without the API database lock. The default ignores API activity.",
+      "limits": [
+        "This completes only this editable threshold plus its existing native idle eligibility consumer. It does not claim high-CPU maintenance execution, CPU-busy detection, idle enable/debug/shutdown controls, or the parent options family.",
+        "Native Rust replay and PNG capture are authored, awaiting hosted CI; they were not executed locally."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/options.rs::Settings::save",
+        "crates/hydrus-gui-model/src/options.rs::pages",
+        "crates/hydrus-gui/ui/options.slint::OptionsWindow",
+        "crates/hydrus-gui-model/src/session_lifecycle.rs::Idle::eligible",
+        "crates/hydrus-gui/src/session_autosave.rs::Monitor::idle_at",
+        "crates/hydrus-gui/src/session_autosave.rs::Monitor::poll_at",
+        "crates/hydrus-store/src/settings.rs::GuiIdleSettings",
+        "crates/hydrus-store/src/import/decode.rs::decode_input",
+        "crates/hydrus-api/src/server.rs::note_activity",
+        "crates/hydrus-store/src/api_activity.rs::touch",
+        "crates/hydrus-store/src/api_activity.rs::latest"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/idle_timeout_options.rs::noneable_timeout_controls_replay_qt_defaults_floor_bounds_retention_and_reopen",
+        "crates/hydrus-gui-model/tests/model/idle_timeout_options.rs::edited_idle_thresholds_merge_without_overwriting_live_unrelated_preferences",
+        "crates/hydrus-gui-model/tests/model/idle_timeout_options.rs::saved_timeout_choices_replay_strict_qt_boot_activity_and_ignore_gates",
+        "crates/hydrus-gui/tests/gui/idle_timeout_options.rs::staged_timeouts_change_live_browsing_mouse_api_and_autosave_gates_only_after_apply",
+        "crates/hydrus-store/src/import/decode.rs::tests::idle_timeout_import_preserves_seconds_none_and_missing_defaults",
+        "crates/hydrus-gui-model/tests/model/options_dialog.rs::page_problems"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_idle_timeout_options.py",
+        "fixture": "oracle/fixtures/idle_timeout_options.json",
+        "executed": true,
+        "executedAtUtc": "2026-10-05T02:39:43Z",
+        "finishedAtUtc": "2026-10-05T02:39:46Z",
+        "reference": "Actual MaintenanceAndProcessingPanel NoneableSpinCtrl edits/UpdateOptions and ClientController.CurrentlyIdle with held boot, clock and independent browsing/mouse/API timestamps. Records defaults, enabled interlocks, floor/clamp to 1\u20131000 minutes, ignored-number retention and fresh hidden1-minute reopen, strict 120s boot and isolated activity thresholds."
+      },
+      "implementationCommit": "34391fbfb",
+      "validation": "Actual Qt recording executed; cargo fmt, git diff --check and cached warning-aware Slint source compilation passed. No local Cargo build/test/Clippy or native execution.",
+      "authoredNativeArtifact": "idle-timeout-options.png (hosted test output, not locally produced)"
+    }
+  ],
+  "counts": {
+    "concrete_first_pass": 2,
+    "concrete_partial": 1,
+    "parent_or_alias": 0
+  },
+  "remainingHierarchy": "Maintenance and processing / when to run high CPU jobs / idle parents retain their prior incomplete status. CPU scheduling, shutdown maintenance, busy detection, force/enable settings and system-wide pointer tracking are outside this slice. Existing session idle-only consumer remains bounded by the system-pointer limitation."
+}
