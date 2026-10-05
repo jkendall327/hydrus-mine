@@ -42,6 +42,7 @@ pub mod popup_width;
 pub mod popups;
 pub mod preview_zoom;
 pub mod queues;
+pub mod radio_return;
 pub mod regex_favourites;
 pub mod related_tags;
 pub mod schema;

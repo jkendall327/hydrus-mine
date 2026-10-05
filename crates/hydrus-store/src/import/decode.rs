@@ -743,6 +743,10 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             &mut input,
             &crate::image_colour::ImageColour::from_legacy(options),
         )?;
+        insert_setting(
+            &mut input,
+            &crate::radio_return::RadioReturn::from_legacy(options),
+        )?;
         insert_setting(&mut input, &manage_tags_sort(options))?;
         insert_setting(&mut input, &sibling_connector_colours(options))?;
         insert_setting(

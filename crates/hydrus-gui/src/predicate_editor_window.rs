@@ -258,6 +258,46 @@ pub(crate) fn open(
         fields: Vec::new(),
         recent: Vec::new(),
     }));
+    window.on_force_radio_ok({
+        let state = state.clone();
+        let valid = valid.clone();
+        let weak = window.as_weak();
+        let store = store.clone();
+        move |panel| {
+            if !valid() {
+                return false;
+            }
+            let Some(window) = weak.upgrade() else {
+                return false;
+            };
+            if !window.window().is_visible()
+                || !window.get_question().is_empty()
+                || window.get_notice_open()
+            {
+                return false;
+            }
+            let Ok(index) = usize::try_from(panel) else {
+                return false;
+            };
+            if !state
+                .borrow()
+                .panels()
+                .get(index)
+                .is_some_and(|panel| matches!(panel.kind, Kind::Size | Kind::Hash))
+            {
+                return false;
+            }
+            // Remember the focused radio panel before an unforced key bubbles.
+            window.set_radio_default_panel(panel);
+            match store.read(hydrus_store::radio_return::load) {
+                Ok(policy) => policy.force_dialog_ok,
+                Err(error) => {
+                    eprintln!("Could not read the radio Return preference: {error}");
+                    false
+                }
+            }
+        }
+    });
     let text = Rc::new(text);
     // show page `page`
     let show_page = {
@@ -278,6 +318,7 @@ pub(crate) fn open(
             if page >= state.editor.pages.len() {
                 return;
             }
+            window.set_radio_default_panel(-1);
             state.page = page;
             let shown = &state.editor.pages[page];
             let labels: Vec<SharedString> = shown

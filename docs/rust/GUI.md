@@ -3820,3 +3820,17 @@ real disposable-file passes and the actual event wake on shutdown.
 Already restored local media only clears a stale deferred queue; it performs no
 physical deletion and consumes no physical-pair wait. The reference clears those
 queues on local re-add before its deletion loop.
+
+## Enter/Return on radio lists
+
+GUI > misc exposes the saved “Force that hitting Enter/Return on radio button
+lists triggers a dialog ok” preference. It defaults to on and is read on each
+key event by the filesize comparison, both hash groups, and advanced deletion's
+action/reason lists. Enabled takes the explicit native OK route; disabled
+lets the event reach the surrounding dialog's default button. In the recorded
+Linux Qt modal dialogs, both settings accept via the default Apply button;
+disabling this preference does not promise that Return will keep a dialog open.
+Changing the saved value reaches already open dialogs. Options changes remain
+staged until Apply; Cancel discards them. Hash multiline text keeps its normal
+newline behavior. Hidden, cancelled or retired child/parent owners cannot apply
+through these key routes. Other widgets and dialog families receive no new claim.

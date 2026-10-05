@@ -3018,3 +3018,22 @@ fixtures, with reference source read-only.
 Already restored local media only clears a stale deferred queue; it performs no
 physical deletion and consumes no physical-pair wait. The reference clears those
 queues on local re-add before its deletion loop.
+
+## Radio Return policy and default-button delegation
+
+The finite GUI/misc checkbox now has a typed saved default, legacy decoding and
+old-imported-store fallback, independent staged saving, and live key consumers
+in every current native radio list: filesize comparison, hash sign/type and
+advanced deletion action/reason. Qt's EnterCatchingRadioButton reads the setting
+on every Return/Enter press. True ignores the key to promote it to the dialog;
+false delegates to QRadioButton's platform behavior. In all forty recorded Linux
+modal cases, both branches ignore the radio event and the actual parent default
+Apply accepts, including changes after opening. Native true uses its explicit OK
+callback; false rejects to the actual parent bubbling/default route. This preserves
+the observed outcomes without inventing suppression when disabled. Advanced
+deletion no longer captures Return before its radio children can read the policy;
+Escape still captures, and the custom reason LineEdit still accepts normally.
+Hash TextEdit consumes newline before the default route. Other Qt/platform widget
+fallback behavior is not asserted, nor are unrelated dialog families promoted.
+Actual reference recording and authored Store/model/native regressions are pinned;
+local Rust execution is prohibited and hosted execution remains pending.
