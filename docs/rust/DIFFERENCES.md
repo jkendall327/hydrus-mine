@@ -2255,3 +2255,12 @@ tag-list selection/context actions and hover panes absent from preview/filter
 canvases remain outside this control slice. A real native wheel/navigation/zoom
 replay and `viewer-tags-wheel.png` capture are authored for hosted CI; they were
 not executed locally. No new broader hover/list/preview claim is proposed.
+
+GUI formatting settings are owned values rather than the reference mutable
+formatter globals. ISO time and byte precision reach existing log, page/status
+and file-info consumers after Apply, with Cancel and reopening preserved.
+Other native size/time display helpers listed in the GUI formatting packet
+still use default formatting, so the two global controls remain Partial and
+add zero completed original leaves. The Qt fixture was recorded in UTC; native
+production ISO formatting follows the system timezone. Integer-locale, radio
+Return force and menu-button wheel preferences are outside this slice.

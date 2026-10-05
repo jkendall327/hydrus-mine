@@ -3169,3 +3169,20 @@ The delayed policy preserves Qt's 0.57-second media grace and direction-change
 gate. Apply refreshes an existing viewer, Cancel preserves its current policy,
 and the imported setting survives reopening. Existing scroll position survives
 a media change when it still fits, and clamps when the new list is shorter.
+
+Options > GUI > misc now stages the ISO-time checkbox and the bytes precision
+spinbox (1–6), imports their exact legacy keys, and preserves Apply/Cancel and
+reopening. File/gallery log rows, page and bandwidth status, and file-info
+hover/status/menu text consume owned formatting settings; timestamps use the
+system timezone and byte rounding preserves the reference half-even behavior.
+`gui_format.json` records eight actual Qt control states, boundary inputs,
+serialization/reopening and formatter/log outputs. Native replay tests include
+retained Cancel owners, real log rows, page totals, selected-file size text and
+an Options PNG capture; their execution awaits hosted CI.
+
+Both formatting controls remain Partial proposals. Network review/job/rule/graph
+bytes, local-import and service list sizes, import/parser/PNG helper labels, and
+about/auto-resolution/subscription/network-session/times-editor relative-time
+labels still use the fixed default formatters. The inspected radio Return flag
+is unclaimed because the reference dialog behaved identically in both states
+on the recorded platform. Broader GUI/misc/menu coverage stays Partial.
