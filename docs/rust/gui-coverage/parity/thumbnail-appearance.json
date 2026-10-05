@@ -1,0 +1,479 @@
+{
+  "schema_version": 1,
+  "agent": "thumbnail-appearance",
+  "baseline_git_head": "d94dcfc97e63f94e6f45b270d832976d636ce6fd",
+  "source_commit": "3f5760cf8815c515aeaffc96a25b526387e85a00",
+  "implementation_commits": [
+    "3f5760cf8815c515aeaffc96a25b526387e85a00"
+  ],
+  "frozen_original_inventory": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "frozen_options_audit": {
+    "path": "docs/rust/gui-coverage/audit/options-patch.json",
+    "baseline_git_head": "5079206dc1d0c2d2614b428632dc9499cb9ad3f8",
+    "sha256": "05fb770dc87d8b03cd0e1a4dbd509de61d48e0dc1c87c7c7032a9aeb4adce20b",
+    "before": {
+      "audit-options-thumbnails-appearance-fade-thumbnails": "missing",
+      "audit-options-thumbnails-appearance-use-blurhash-missing-thumbnail-fallback": "missing",
+      "audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear": "missing",
+      "audit-options-thumbnails-new-rendering-tech-use-the-new-thumbnail-rendering-tech-only-applies-to-new-pages": "missing"
+    }
+  },
+  "eligibility": {
+    "completed_ledger_path": "docs/rust/gui-coverage/overnight/progress.json",
+    "completed_ledger_at_base_sha256": "168d8057e3b023cf822af82b703b4fe018baba266694d06b5c7ae79bf1d20ca6",
+    "listed_ids_already_completed": [],
+    "existing_parity_packets_with_listed_ids": [],
+    "note": "Four exact concrete original Missing IDs independently checked before edits against frozen audit, both completed arrays and all prior parity packets; no aliases or parent credit."
+  },
+  "eligible_concrete_first_pass_count": 2,
+  "parent_promotions": 0,
+  "claims": [
+    {
+      "id": "audit-options-thumbnails-appearance-fade-thumbnails",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Saved fade checkbox stages, imports, cancels and applies independently. Real native visible rows retain full decorated current/previous snapshots, selection/icon/rating/banner paint and owned deterministic clocks. Default policy uses the recorded 13/60-second threshold, no-old-snapshot instant admission and interrupted transitions. Old policy approximates cumulative 60-fps alpha and preserves previously faded cached revisits using per-entry admission and weak owner identity; fresh accepted decodes rearm fade. Hidden/offscreen/recycled/retired state releases whole-cell buffers. Partial/0: software renderer opacity applies to individual primitives, unlike Qt precomposed QPixmap; exact overlap blending and old integer compositing are not implemented.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+        "line": 52,
+        "symbol": "self._fade_thumbnails = QW.QCheckBox",
+        "line_sha256": "2033d5eea408331fa1accc45c44053babb267c5387b62a9e8f3ee149aa064951"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3901,
+          "symbol": "\"Fade thumbnails:",
+          "line_sha256": "17674495714ae7cdeca9d45aada5ca12f48609217a32b64f3e985169020b6760",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/thumbnail_paint.rs",
+          "line": 106,
+          "symbol": "pub fn decorate(",
+          "line_sha256": "1f2656a2129f944f6ab76b1682328830002384d1ee977ab45d75b69565c52bfd",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/thumbnail_paint.rs",
+          "line": 147,
+          "symbol": "pub fn tick(",
+          "line_sha256": "4388b41ae6d2f112f19922e364f921d4f936b0b07659ed72b05aae309af67b7d",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 324,
+          "symbol": "pub fn admit_thumbnail_fade(",
+          "line_sha256": "bdf3ef6afdb7645be6de30976683c858fdc3ae06e805bf8b213bfdee9574ff1f",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/grid.rs",
+          "line": 504,
+          "symbol": "pub fn paint_tick(",
+          "line_sha256": "0db95496a847b5fc630615dd30e75d27d00b20835b16d3dae22d8222b4f9657e",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/thumbnail_appearance.rs",
+          "line": 466,
+          "symbol": "fn real_main_selection_whole_cell_render_midpoint_finish_hide_and_retire(",
+          "line_sha256": "8b0327d7f424067cb0a51296b1e901f0f13c0d25333343e5dbe8a989fa8ffe6c",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/thumbnail_appearance.rs",
+          "line": 545,
+          "symbol": "fn old_page_cached_scroll_revisit_is_instant_and_fresh_decode_rearms_fade(",
+          "line_sha256": "a9a7bcf04759b21271f4c5cc9e44eebbdfe271c6aa3189debb651707d4d8eaa8",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        }
+      ]
+    },
+    {
+      "id": "audit-options-thumbnails-appearance-use-blurhash-missing-thumbnail-fallback",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Default-on typed checkbox and native-wins retained ClientOptions upgrade preserve saved false values. Cancel, Apply, reopen and field-scoped concurrent merge reach the actual owned thumbnail loader. Admitted requests copy geometry and recovery policy; failed stored-thumbnail/regeneration loads decode retained FileInfo.blurhash using the actual reference component/gamma/base83 rules, 32x32 recovery wrapper and reference resizing. Invalid/absent/disabled values publish the bundled default without physical regeneration or metadata writes. Saved toggle invalidates the cache and rejects held old generations before pending/cache mutation; real missing-original/thumbnail native replay keeps valid source metadata before false Apply and asserts different default pixels. Stored encoded-thumbnail ICC independence is preserved.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+        "line": 56,
+        "symbol": "self._allow_blurhash_fallback = QW.QCheckBox",
+        "line_sha256": "cc9de78416fd764fea4f23807bd990c8a06ff003d82868f2dc02fb103fe5740d"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3906,
+          "symbol": "\"Use blurhash missing thumbnail fallback:",
+          "line_sha256": "94a1a263f4d2c6e2d00ed1dfcd8ece87b7fd83f5e2bb8d940cd788762881df85",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-media/src/blurhash.rs",
+          "line": 145,
+          "symbol": "pub fn decode_blurhash(",
+          "line_sha256": "8a493e98eb0ebbdaa01c10b8ab9e91b65a5180b2e82931d5104d8b4ca9f65fc3",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-media/src/blurhash.rs",
+          "line": 220,
+          "symbol": "fn recovery_pixels_and_invalid_inputs_match_actual_reference_decoder(",
+          "line_sha256": "52ae3c77f774b1f02a239c5261cfd170b13ca74e343356b5f8d1d4da224b711c",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/thumbnails.rs",
+          "line": 75,
+          "symbol": "pub fn recovery(",
+          "line_sha256": "3ef9858ecea77fc3fe3fe912174f2b4bcc3136b148daa5928bb033ba85b5032f",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/thumbnails.rs",
+          "line": 297,
+          "symbol": "pub fn request(",
+          "line_sha256": "e2434debbc4d5b431931697929eabba9a93827037d9df9395c83aae3321d3799",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/grid.rs",
+          "line": 763,
+          "symbol": "fn blurhash_apply_rejects_held_result_but_paint_only_changes_preserve_admission(",
+          "line_sha256": "46cb4ba710c712d105e69c7a69926de8a79fce5aeacd74358daf93441b609dce",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/thumbnail_appearance.rs",
+          "line": 164,
+          "symbol": "fn blurhash_real_metadata_default_invalid_disable_and_owned_cache_policy(",
+          "line_sha256": "7edcd0f1f77a6d568938fc813163b4842aa61763c4e898e0a4ff0e8b4e7cdcce",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        }
+      ]
+    },
+    {
+      "id": "audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Actual editable path plus seeded single-file Browse reaches staged draft state. Cancel preserves draft; accepted lexical normalisation, typed-current seed, hidden/retired/superseded dialog refusal and Apply/Cancel/reopen are authored with owned picker effects. Exactly empty path clears; whitespace is literal. Native-wins retained imported path reaches page/layout/background consumers. Path-keyed image is unscaled and bottom-right inside a clipped fixed visible viewport, independent of thumbnail scroll, for both admitted old and default-new pages. Actual Qt inherited new drawBackground is recorded, alongside old viewport rendering. Native nonuniform31x17 extent/corner/neighbour/resize, oversized clipping, scroll, clear and terminal owner regression assert the real consumer.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+        "line": 85,
+        "symbol": "self._media_background_bmp_path = ClientGUIPathWidgets.FilePickerCtrl",
+        "line_sha256": "bc9b7c276e14844a7ca2a4e431fabca10e6fecdd06f1061a52cf0cc4e5f6679c"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3978,
+          "symbol": "\"EXPERIMENTAL: Image path for thumbnail panel background image (set blank to clear):",
+          "line_sha256": "8a366a9ff2f7a427f2e44bd16c0b5bb7ae77350be8309dc8ded7e2d50052a7cc",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/thumbnail_background.rs",
+          "line": 8,
+          "symbol": "pub fn get(",
+          "line_sha256": "495f1091c7ec627f308926840d8c26f4e803a8d43751f90bb874f2fd0124db7e",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/thumbnail_background.rs",
+          "line": 27,
+          "symbol": "pub fn pick(",
+          "line_sha256": "8c09f300bc6d1c128d90c165ad4fb5105e3a8021069ca3552b7ddb5e66a9347e",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/options_window.rs",
+          "line": 1076,
+          "symbol": "window.on_background_path_pick(",
+          "line_sha256": "a62767738aed363e1211dcd4f16550a04ad6d63d3a6a55be5f724352ef08e18d",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/grid.rs",
+          "line": 486,
+          "symbol": "pub fn background(",
+          "line_sha256": "47a0660b1625271a39a4c2e0aa104bffbdff1a60d35b8210cddae5850f6e6473",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/main.slint",
+          "line": 1893,
+          "symbol": "source: root.thumbnail-background;",
+          "line_sha256": "8229322514c3933dcaecda2b9e67b9db6ddd07725bc66c2cf380d42bac0677bc",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/thumbnail_appearance.rs",
+          "line": 396,
+          "symbol": "fn unscaled_background_clips_oversized_pixels_and_stays_fixed_on_scroll_and_clear(",
+          "line_sha256": "672073b3901d6c679c198636c98df9c46c6de6b61f0e27dc89c3634b068b3b92",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/thumbnail_appearance.rs",
+          "line": 650,
+          "symbol": "fn default_new_page_small_nonuniform_background_has_exact_unscaled_extent_on_resize(",
+          "line_sha256": "edbfb30b9459331a3609623a22eb7efa829e5a58594eb4d7ebd7b080a587a81d",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        }
+      ]
+    },
+    {
+      "id": "audit-options-thumbnails-new-rendering-tech-use-the-new-thumbnail-rendering-tech-only-applies-to-new-pages",
+      "before": "missing",
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
+      "behavior": "Typed default-on experimental renderer preference is staged/imported and captured once per newly created page; changing saved policy does not switch an existing page. Admitted page flag selects observed old/new fade admission and deadline policies; both modes consume the real inherited background semantics. Partial/0: native still uses its existing grid/delegate engine; Qt graphics-view layout, QPixmap offscreen composition and complete renderer architecture are not ported. Creation-time policy alone is not full renderer-control completion.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+        "line": 24,
+        "symbol": "self._test_thumbnails_graphics_view = QW.QCheckBox",
+        "line_sha256": "e8c6dbabfaf89759bd6f7c7de1a016dc0cd67c4c1f620dc0018d57dfcc62d7cc"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3845,
+          "symbol": "\"Use the new thumbnail rendering tech (only applies to new pages):",
+          "line_sha256": "82267c760769de5ed59b3376facad4dc9405422e01308186a9205a6826579a8d",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 318,
+          "symbol": "pub fn new_thumbnail_renderer(",
+          "line_sha256": "a8b6c657742e7532e87ef627adf21d06f265c6c87fb83e8fe87dbe43cb896766",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/page.rs",
+          "line": 243,
+          "symbol": "new_thumbnail_renderer: appearance.new_renderer",
+          "line_sha256": "c4b90847d4c9e853a8c60fd7fc9e456af3ee974e30f536d87981d0c1a1c9e4dd",
+          "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+        }
+      ]
+    }
+  ],
+  "shared_source_anchors": [
+    {
+      "relativepath": "crates/hydrus-store/src/thumbnail_appearance.rs",
+      "line": 11,
+      "symbol": "pub struct Preferences",
+      "line_sha256": "373d023fffe3d1204eadbb5fe34e74a9fe3d7451eeb8676b7a53ed040046ce76",
+      "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+    },
+    {
+      "relativepath": "crates/hydrus-store/src/thumbnail_appearance.rs",
+      "line": 77,
+      "symbol": "pub fn load(",
+      "line_sha256": "d4f306aeea39dff3f571f7beaf1ea1ddae58efd8e524f63b9e0b0f63eb189b68",
+      "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+    },
+    {
+      "relativepath": "crates/hydrus-store/src/thumbnail_appearance.rs",
+      "line": 51,
+      "symbol": "pub fn save_changed(",
+      "line_sha256": "08ed04e947dd2fe6b4d42591cd0b34a07f84f83a959a9f71f1220881d8cce709",
+      "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+    },
+    {
+      "relativepath": "crates/hydrus-store/src/thumbnail_appearance.rs",
+      "line": 108,
+      "symbol": "fn retained_actual_options_upgrade_native_override_and_reopen(",
+      "line_sha256": "bcf851eab7371d87ea4ec080c426e330a2af27213943412eb0e6f184367c31dc",
+      "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+    },
+    {
+      "relativepath": "crates/hydrus-store/src/import/decode.rs",
+      "line": 1179,
+      "symbol": "appearance.apply_legacy(",
+      "line_sha256": "224028e4c24170e51ff5954fd79c787abf34f752b4a8d47f203895ff967b106e",
+      "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+    },
+    {
+      "relativepath": "crates/hydrus-gui-model/src/options.rs",
+      "line": 312,
+      "symbol": "thumbnail_appearance: hydrus_store::thumbnail_appearance::Preferences",
+      "line_sha256": "4af2c58f06c51827ba69a07266bd3d5e0f813c6f97221660c677786e2f66cad5",
+      "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+    },
+    {
+      "relativepath": "crates/hydrus-gui-model/tests/model/thumbnail_appearance.rs",
+      "line": 23,
+      "symbol": "fn actual_defaults_cancel_raw_paths_reopen_and_current_field_merge(",
+      "line_sha256": "b256261d57113b45942333dc5b1f4392fd3787b47886bb60cc233baf3efc4c14",
+      "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/thumbnail_appearance.rs",
+      "line": 66,
+      "symbol": "fn staged_browse_cancel_apply_new_page_policy_and_permanent_owner_retirement(",
+      "line_sha256": "a55567956269d67ee2e5b60d13b535ab98f87a70d4b4224bee4ee77aba6a9ff4",
+      "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/thumbnail_appearance.rs",
+      "line": 606,
+      "symbol": "fn browse_uses_typed_draft_seed_and_hidden_appearance_controls_cannot_stage(",
+      "line_sha256": "2b5cdad3fc8d2cbbf6604216873fc3bc426673d037ff02591bfd49b925b26d33",
+      "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/grid.rs",
+      "line": 476,
+      "symbol": "pub fn set_appearance(",
+      "line_sha256": "f23b108e20e77a4165d86f1de914cca1ba94765cc47930b170a423edbab778fd",
+      "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/grid.rs",
+      "line": 224,
+      "symbol": "pub fn retire(",
+      "line_sha256": "43e9c0c65da4777f23d45d4e693d82ef07e9993d423551b9ffd583ca15974d2b",
+      "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/lib.rs",
+      "line": 486,
+      "symbol": "rows.set_paint_palette(",
+      "line_sha256": "0a240eec333ee8b35a4c4cb79573794acab079dd05254c681b6bcb62575d9316",
+      "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+    },
+    {
+      "relativepath": "oracle/record_thumbnail_appearance.py",
+      "line": 13,
+      "symbol": "def record(",
+      "line_sha256": "5d8f3da7e90a56971fc931a2718571d7065d1d7bdacdab73c7cc84b9f660e4bd",
+      "commit": "3f5760cf8815c515aeaffc96a25b526387e85a00"
+    }
+  ],
+  "consumer_reference_anchors": [
+    {
+      "relativepath": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+      "line": 52,
+      "symbol": "self._fade_thumbnails = QW.QCheckBox",
+      "line_sha256": "2033d5eea408331fa1accc45c44053babb267c5387b62a9e8f3ee149aa064951"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+      "line": 56,
+      "symbol": "self._allow_blurhash_fallback = QW.QCheckBox",
+      "line_sha256": "cc9de78416fd764fea4f23807bd990c8a06ff003d82868f2dc02fb103fe5740d"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+      "line": 85,
+      "symbol": "self._media_background_bmp_path = ClientGUIPathWidgets.FilePickerCtrl",
+      "line_sha256": "bc9b7c276e14844a7ca2a4e431fabca10e6fecdd06f1061a52cf0cc4e5f6679c"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+      "line": 24,
+      "symbol": "self._test_thumbnails_graphics_view = QW.QCheckBox",
+      "line_sha256": "e8c6dbabfaf89759bd6f7c7de1a016dc0cd67c4c1f620dc0018d57dfcc62d7cc"
+    },
+    {
+      "relativepath": "hydrus/client/gui/widgets/ClientGUIPathWidgets.py",
+      "line": 79,
+      "symbol": "class FilePickerCtrl(",
+      "line_sha256": "18e3b69bdd51ef25a46b99a34860260b399bedb49ce9d81aec3d02035c15808f"
+    },
+    {
+      "relativepath": "hydrus/client/ClientManagers.py",
+      "line": 229,
+      "symbol": "def GetMediaBackgroundPixmap(",
+      "line_sha256": "f78650235b26e6399218fb93d3a3d994111ba07465dd7ad105ff24c148dacd01"
+    },
+    {
+      "relativepath": "hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py",
+      "line": 4798,
+      "symbol": "def drawBackground(",
+      "line_sha256": "d3ba3d6a440607b330e0a6b31f579a386b1ee26518335bfbdf4d3f223f2f9fab"
+    },
+    {
+      "relativepath": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py",
+      "line": 4444,
+      "symbol": "FADE_DURATION_S = 13/60",
+      "line_sha256": "56009462528b989170d0485a731b427836263301a9c15866222446c1b6b38fdf"
+    },
+    {
+      "relativepath": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py",
+      "line": 80,
+      "symbol": "class ThumbnailWaitingToBeDrawnAnimated(",
+      "line_sha256": "460c08c7ce3addfd2686526328e92d9aabbecc553b74acf352d261861f464884"
+    },
+    {
+      "relativepath": "hydrus/client/caches/ClientCaches.py",
+      "line": 404,
+      "symbol": "def _GetBestRecoveryThumbnailHydrusBitmap(",
+      "line_sha256": "e7ef636df37f389982604d1ee62fb05f02ed6f17c481b91f0fa263c206ad38f3"
+    },
+    {
+      "relativepath": "hydrus/client/caches/ClientCaches.py",
+      "line": 1184,
+      "symbol": "def _GetBestRecoveryThumbnailNumpyUnsized(",
+      "line_sha256": "c7afafacb2889079dbc3ff575bf36cc82c0c36965fcfd8db080f2d942ccac32b"
+    },
+    {
+      "relativepath": "hydrus/core/files/images/HydrusBlurhash.py",
+      "line": 202,
+      "symbol": "def GetNumpyFromBlurhash(",
+      "line_sha256": "5aee3c7626272fa20ff43a943ebda2f0ad8adb80e4b5318e6e8db65689870364"
+    }
+  ],
+  "actual_qt_recording": {
+    "recorder": "oracle/record_thumbnail_appearance.py",
+    "fixture": "oracle/fixtures/thumbnail_appearance.json",
+    "fixture_sha256": "70b25f7310367aac0a4c0866fee05dd6036ee9f0ef0ccb12227044050011c1cd",
+    "run_utc": "2026-10-05T10:11:07Z",
+    "command": "/workspace/parallel/with-oracle python oracle/record_thumbnail_appearance.py",
+    "result": "Actual Qt staged defaults/Cancel/raw path Apply/reopen; actual FilePicker browse cancel/current seed/normpath; default-new versus old creation-time panel types; whole decorated cell content and precise old/new fade samples; actual blurhash recovery/helper byte pixels and disabled/invalid defaults; path-keyed bitmap identity; actual old viewport and new inherited drawBackground with 31x17 authored bitmap, painter geometry and equal scrolled canvas hashes. Three actual Qt PNGs inspected.",
+    "environment_notes": "Private copied basic fixture; reference read-only. Sandbox API listener refusal and ordinary offscreen messages only. At final recording shutdown, the driver unregisters recorded animation windows and stops/disconnects the real GUI animation timer before requesting normal shutdown; this housekeeping does not modify recorded paint behavior."
+  },
+  "actual_qt_artifacts": [
+    {
+      "path": "oracle/fixtures/thumbnail_appearance_qt.png",
+      "sha256": "699efdf029dc171f511c0327b02aaa1fa59e5f2dc1464b03728adc70fd2af552"
+    },
+    {
+      "path": "oracle/fixtures/thumbnail_background_qt.png",
+      "sha256": "c3353853c5d989b68879ab99c64b5b2b0a81af43d669bf43e96d980a14c61696"
+    },
+    {
+      "path": "oracle/fixtures/thumbnail_background_new_qt.png",
+      "sha256": "8cfd425c99bb243cc601544af9bde4f7e16ed2d71cf12ec82b8e0caa3c6e5855"
+    }
+  ],
+  "authored_native_artifacts": [
+    "thumbnail-appearance-options.png",
+    "thumbnail-background-native.png",
+    "thumbnail-whole-cell-fade-native.png"
+  ],
+  "authored_native_artifact_count": 3,
+  "validation": {
+    "source_checks": "Direct rustfmt --check across17 changed/new Rust files, Python recorder py_compile, git diff --check and cached Slint compilation passed; no Cargo/local Rust/mutation execution.",
+    "independent_review": "repair_child_literal_context and repair_namespace_contract independently accepted immutable source 3f5760cf8815c515aeaffc96a25b526387e85a00 and final packet. Verified50 distinct source/reference line hashes and symbols (54 occurrences), fixture/three Qt PNG/frozen audit/base ledger hashes, exact four original eligible IDs, exactly two conditional blurhash/background FirstPass claims, Fade/renderer Partial0 and zero parents/aliases. Options staging/retained-legacy, both inherited background paths, owned loader/cache/ICC boundaries and discriminating native consumer assertions accepted by source. Hosted execution/render and mandatory semantic-colour post-merge composition remain pending.",
+    "rust_tests": "Meaningful Store retained-upgrade/native override/corrupt setting, model concurrent merge/raw empty, media exact byte decoder and native real loader/picker/viewport/clock/lifetime regressions authored only; exact hosted CI pending.",
+    "render": "Three actual Qt PNGs inspected. Three native images authored but unexecuted/uninspected; conditional completion proposals require exact hosted validation and render review."
+  },
+  "integration_requirements": [
+    "Root must compose the separately authored colourset seam: eight semantic local/remote selected/unselected fill/border brushes, actual current physical local membership, viewport grid brush and clearing current/previous paint snapshots on semantic palette change. Current standalone source preserves base common-theme palette; no colour-control credit is claimed here.",
+    "Preserve existing accepted-close/rebind retirement callback composition, generation guards and immutable ICC policy admission. Background and fallback must not trigger stored encoded-thumbnail ICC regeneration."
+  ],
+  "limits": [
+    "Exactly two conditional finite original FirstPass proposals; Fade and experimental renderer are Partial/0. No canonical status/ledger changes, parents, aliases or other appearance/renderer/cache family promotions.",
+    "Native whole-cell primitive opacity does not reproduce Qt precomposed-pixmap overlap blending. Old cumulative effective alpha approximates integer compositor rounding. Native grid architecture/layout is retained.",
+    "Background bitmap decoding uses existing native Image::load_from_path; unsupported formats/errors yield blank just as failed path admission cannot supply a pixmap. Path cache is main-incarnation owned rather than process-global.",
+    "Authored Rust/native assertions and rendered acceptance remain hosted pending; no local Cargo/Rust/mutation tests, push, canonical writes or reference-source edits."
+  ]
+}
