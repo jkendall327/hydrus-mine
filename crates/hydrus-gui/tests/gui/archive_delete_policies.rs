@@ -127,7 +127,8 @@ fn actual_multiple_choices_refuse_early_commit_then_delete_only_selected_domain(
     let adapter = windows.get(windows.count() - 1).unwrap();
     let pixels = headless::render(&adapter, 900, 700);
     headless::save_png(
-        &hydrus_testkit::artifacts_dir().join("archive-delete-multiple-delayed.png"),
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("archive-delete-multiple-delayed.png"),
         &pixels,
         900,
         700,
@@ -216,7 +217,7 @@ fn saved_all_domains_single_choice_and_forget_question_are_owned_across_rebind()
     let adapter = windows.get(windows.count() - 1).unwrap();
     let pixels = headless::render(&adapter, 900, 700);
     headless::save_png(
-        &hydrus_testkit::artifacts_dir().join("archive-delete-all-domains.png"),
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("archive-delete-all-domains.png"),
         &pixels,
         900,
         700,
