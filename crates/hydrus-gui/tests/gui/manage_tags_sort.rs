@@ -402,7 +402,17 @@ fn hidden_main_cannot_launch_or_reshow_child_but_visible_viewer_keeps_its_own_ro
         bound.manage_tags.borrow().is_none(),
         "hidden main cannot create its selection dialog"
     );
+    assert!(
+        bound.current.borrow().borrow().selected_files().is_empty(),
+        "hidden main cannot dispatch its selection action either"
+    );
     ui.show().unwrap();
+    ui.invoke_select_all();
+    assert_eq!(
+        bound.current.borrow().borrow().selected_files().len(),
+        bound.current.borrow().borrow().results().len(),
+        "visible main selects the actual files before opening its child"
+    );
     ui.invoke_manage_tags_selected();
     let child = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
     child.invoke_sort_chosen(0, 1);

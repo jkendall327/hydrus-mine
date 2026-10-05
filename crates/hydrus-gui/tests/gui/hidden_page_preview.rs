@@ -35,6 +35,20 @@ fn query(ui: &MainWindow) {
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
 }
+// The headless adapter starts unmeasured. An owned visible preview requires
+// an actual sidebar/preview viewport before its first SetMedia or sash reveal.
+fn settle_viewport(ui: &MainWindow, bound: &hydrus_gui::Bound, windows: &headless::Windows) {
+    assert!(ui.window().is_visible());
+    let native = windows.get(0).unwrap();
+    for _ in 0..3 {
+        headless::render(&native, 1400, 1000);
+    }
+    bound.preview.refresh();
+    assert!(ui.get_layout_available_width() > 0.0);
+    assert!(ui.get_sidebar_actual_width() > 0.0);
+    assert!(ui.get_preview_actual_height() > 0.0);
+    assert!(!ui.get_preview_splitter_hidden());
+}
 fn select(ui: &MainWindow, bound: &hydrus_gui::Bound, file: HashId) {
     let index = bound
         .current
@@ -103,6 +117,7 @@ fn actual_qt_owned_hide_roundtrip_preserves_both_page_intervals_and_normal_resto
     );
     let now = Rc::new(Cell::new(1000));
     clock(&bound, &now);
+    settle_viewport(&ui, &bound, &windows);
     // Render distinct synthetic frame sizes while the real selected files own
     // identity, admission and persisted statistics.
     bound.preview.set_decoder(Arc::new(move |_, file| {
@@ -150,6 +165,7 @@ fn actual_qt_owned_hide_roundtrip_preserves_both_page_intervals_and_normal_resto
     // New page's initial layout was globally hidden. Re-show through the actual
     // Pages menu consumer rather than changing the preview property directly.
     super::sidebar_layout::restore(&ui);
+    settle_viewport(&ui, &bound, &windows);
     ui.invoke_select_none();
     select(&ui, &bound, second);
     wait(&ui, &bound);
@@ -193,6 +209,7 @@ fn actual_qt_owned_hide_roundtrip_preserves_both_page_intervals_and_normal_resto
     );
     assert_eq!(totals(&store, first), (0, 0));
     super::sidebar_layout::restore(&ui);
+    settle_viewport(&ui, &bound, &windows);
     bound.preview.refresh();
     assert_eq!(
         bound.preview.displayed_file(),
@@ -246,7 +263,7 @@ fn actual_qt_owned_hide_roundtrip_preserves_both_page_intervals_and_normal_resto
 fn snapshot_eviction_redecodes_owned_identity_without_restarting_hidden_intervals() {
     let (_dirs, store) = setup();
     let [first, second] = files(&store);
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(
@@ -255,6 +272,7 @@ fn snapshot_eviction_redecodes_owned_identity_without_restarting_hidden_interval
     );
     let now = Rc::new(Cell::new(1000));
     clock(&bound, &now);
+    settle_viewport(&ui, &bound, &windows);
     let calls = Arc::new(std::sync::atomic::AtomicUsize::new(0));
     bound.preview.set_decoder(Arc::new({
         let calls = calls.clone();
@@ -276,6 +294,7 @@ fn snapshot_eviction_redecodes_owned_identity_without_restarting_hidden_interval
     query(&ui);
     preferences(&store, false);
     super::sidebar_layout::restore(&ui);
+    settle_viewport(&ui, &bound, &windows);
     select(&ui, &bound, second);
     wait(&ui, &bound);
     preferences(&store, true);
@@ -325,7 +344,7 @@ fn snapshot_eviction_redecodes_owned_identity_without_restarting_hidden_interval
 fn pending_hidden_decode_is_page_owned_and_same_key_successor_retires_snapshots_and_replies() {
     let (_dirs, store) = setup();
     let [first, second] = files(&store);
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(
@@ -334,6 +353,7 @@ fn pending_hidden_decode_is_page_owned_and_same_key_successor_retires_snapshots_
     );
     let now = Rc::new(Cell::new(1000));
     clock(&bound, &now);
+    settle_viewport(&ui, &bound, &windows);
     let (entered, entries) = crossbeam_channel::bounded(2);
     let (release, released) = crossbeam_channel::bounded(2);
     let (finished, finishes) = crossbeam_channel::bounded(2);
@@ -372,6 +392,7 @@ fn pending_hidden_decode_is_page_owned_and_same_key_successor_retires_snapshots_
     preferences(&store, false);
     tab(&ui, &bound, 1);
     super::sidebar_layout::restore(&ui);
+    settle_viewport(&ui, &bound, &windows);
     query(&ui);
     select(&ui, &bound, second);
     entries.recv_timeout(Duration::from_secs(5)).unwrap();
@@ -394,6 +415,7 @@ fn pending_hidden_decode_is_page_owned_and_same_key_successor_retires_snapshots_
     assert_eq!(retired.resident_snapshot_bytes(), 0);
     preferences(&store, false);
     super::sidebar_layout::restore(&ui);
+    settle_viewport(&ui, &successor, &windows);
     query(&ui);
     successor.preview.set_decoder(Arc::new(move |_, _| {
         Some(hydrus_media::Raster::new(5, 4, 3, vec![130; 60]).unwrap())
@@ -421,7 +443,7 @@ fn pending_hidden_decode_is_page_owned_and_same_key_successor_retires_snapshots_
 fn normal_pending_page_return_retries_with_return_time_and_rejects_obsolete_reply() {
     let (_dirs, store) = setup();
     let [first, _] = files(&store);
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(
@@ -430,6 +452,7 @@ fn normal_pending_page_return_retries_with_return_time_and_rejects_obsolete_repl
     );
     let now = Rc::new(Cell::new(1000));
     clock(&bound, &now);
+    settle_viewport(&ui, &bound, &windows);
     let (entered, entries) = crossbeam_channel::bounded(2);
     let (release, released) = crossbeam_channel::bounded(2);
     bound.preview.set_decoder(Arc::new(move |_, _| {
@@ -466,7 +489,7 @@ fn normal_pending_page_return_retries_with_return_time_and_rejects_obsolete_repl
 fn displaced_global_hide_request_retries_original_time_with_two_workers_and_one_queue() {
     let (_dirs, store) = setup();
     let [first, second] = files(&store);
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(
@@ -475,6 +498,7 @@ fn displaced_global_hide_request_retries_original_time_with_two_workers_and_one_
     );
     let now = Rc::new(Cell::new(1000));
     clock(&bound, &now);
+    settle_viewport(&ui, &bound, &windows);
     let (entered, entries) = crossbeam_channel::bounded(4);
     let (finished, finishes) = crossbeam_channel::bounded(4);
     let (release, released) = crossbeam_channel::bounded(2);
@@ -516,6 +540,7 @@ fn displaced_global_hide_request_retries_original_time_with_two_workers_and_one_
     query(&ui);
     preferences(&store, false);
     super::sidebar_layout::restore(&ui);
+    settle_viewport(&ui, &bound, &windows);
     select(&ui, &bound, second);
     assert!(ui.get_preview_loading());
     // D displaces C while both workers remain held. Returning to C must retry
@@ -553,7 +578,7 @@ fn displaced_global_hide_request_retries_original_time_with_two_workers_and_one_
 fn closed_live_canvas_survives_unclose_but_forget_retires_even_retained_search_owner() {
     let (_dirs, store) = setup();
     let [first, second] = files(&store);
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(
@@ -562,6 +587,7 @@ fn closed_live_canvas_survives_unclose_but_forget_retires_even_retained_search_o
     );
     let now = Rc::new(Cell::new(1000));
     clock(&bound, &now);
+    settle_viewport(&ui, &bound, &windows);
     bound.preview.set_decoder(Arc::new(|_, _| {
         Some(hydrus_media::Raster::new(2, 2, 3, vec![110; 12]).unwrap())
     }));
@@ -575,6 +601,7 @@ fn closed_live_canvas_survives_unclose_but_forget_retires_even_retained_search_o
     query(&ui);
     preferences(&store, false);
     super::sidebar_layout::restore(&ui);
+    settle_viewport(&ui, &bound, &windows);
     select(&ui, &bound, second);
     wait(&ui, &bound);
     let retained = bound.current.borrow().clone();
@@ -616,7 +643,7 @@ fn closed_live_canvas_survives_unclose_but_forget_retires_even_retained_search_o
 fn same_monitor_persisted_same_keys_fresh_pages_drop_frames_and_reject_late_old_generation() {
     let (_dirs, store) = setup();
     let [first, second] = files(&store);
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(
@@ -625,6 +652,7 @@ fn same_monitor_persisted_same_keys_fresh_pages_drop_frames_and_reject_late_old_
     );
     let now = Rc::new(Cell::new(1000));
     clock(&bound, &now);
+    settle_viewport(&ui, &bound, &windows);
     bound.preview.set_decoder(Arc::new(|_, _| {
         Some(hydrus_media::Raster::new(2, 2, 3, vec![120; 12]).unwrap())
     }));
@@ -639,6 +667,7 @@ fn same_monitor_persisted_same_keys_fresh_pages_drop_frames_and_reject_late_old_
     query(&ui);
     preferences(&store, false);
     super::sidebar_layout::restore(&ui);
+    settle_viewport(&ui, &bound, &windows);
     let (entered, entries) = crossbeam_channel::bounded(1);
     let (release, released) = crossbeam_channel::bounded(1);
     let (published, publications) = crossbeam_channel::bounded(1);
@@ -672,6 +701,7 @@ fn same_monitor_persisted_same_keys_fresh_pages_drop_frames_and_reject_late_old_
     );
     preferences(&store, false);
     super::sidebar_layout::restore(&ui);
+    settle_viewport(&ui, &bound, &windows);
     query(&ui);
     bound.preview.set_decoder(Arc::new(|_, _| {
         Some(hydrus_media::Raster::new(5, 4, 3, vec![140; 60]).unwrap())

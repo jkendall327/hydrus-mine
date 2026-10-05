@@ -27,7 +27,7 @@ pub fn fixture_path(relative: impl AsRef<Path>) -> PathBuf {
     fixtures_dir().join(relative)
 }
 
-/// Parse a JSON fixture under `oracle/fixtures`.
+/// Parse a JSON fixture under `oracle/fixtures`, preserving recorded float values.
 pub fn fixture_json(relative: impl AsRef<Path>) -> serde_json::Value {
     let path = fixture_path(relative);
     let text = std::fs::read_to_string(&path)
