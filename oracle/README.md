@@ -45,6 +45,7 @@ export QT_QPA_PLATFORM=offscreen
 | `record_tag_migration.py` | `fixtures/tag_migration.json`: real Qt migration controls/questions and reference mapping/pair destination changes |
 | `record_downloader_interchange.py` | `fixtures/downloader_interchange.json` and `.png`: reference definition formats, recent version upgrades and Rust JSON/PNG exports loaded by Python |
 | `record_subscription_add.py` | `fixtures/subscription_add.json`: real Qt separate gallery chooser and subscription editor acceptance/cancellation chain |
+| `record_metadata_file_jobs.py` | `fixtures/metadata_file_jobs.json`: real accepted/rejected Qt metadata dialogs, actual temporary-file timestamp/extension workers, stepped prefix/cancellation, delayed/immediate popup publication and copy-fallback cleanup scheduling |
 | `dump_metadata_flags.py` | `fixtures/metadata_flags.json`: the XMP, IPTC and software/source flags of the corpus and of `fixtures/metadata/` (images carrying those) |
 | `dump_delete_lock.py` | `fixtures/delete_lock.json`: Client API deletes, duplicate deletes and trash emptying with the archived-file delete lock on, and each file's inbox state and domains after each |
 | `dump_tag_rendering.py` | `fixtures/tag_rendering.json`: awkward tags as `RenderTag` shows them to the user under several presentation options |

@@ -1160,7 +1160,12 @@ copies all the times, or one kind, as the reference's serialised
 timestamp data, and "paste" sets the times it names. "apply" writes the
 times changed (asking first if more than 100 changes), a stepped time
 file by file, and a changed file modified time to the files on disk too
-(as the warning under it says).
+(as the warning under it says). Disk updates run in an owned background worker
+on the accepted ordered targets, with cancellation between files. Its
+"setting file modified dates" popup appears only after three seconds have
+passed; cancellation retains the database updates and completed disk prefix.
+Closing or replacing the date child cancels its draft, and retired dialog
+callbacks cannot apply it or clear a successor.
 
 Manage → "force filetype" (the selected files'; in the viewer the file
 shown's) opens the reference's "force filetypes" dialog
@@ -1173,7 +1178,16 @@ them all to, in the reference's order ("remove all forced filetypes"
 first when some are forced; a single filetype isn't offered itself).
 "apply" forces them (a file forced to the type it was detected as isn't
 forced) and renames each file on disk to its new extension; hydrus-rs
-then shows and searches it as that type, as the reference does.
+then shows and searches it as that type, as the reference does. The accepted
+operation runs in a background worker, committing and moving in blocks of 64.
+Above 64 files, the existing popup shows "forcing filetypes" and allows
+cancellation before the next block. Rename failure preserves a copied file's
+mtime and queues duplicate-extension cleanup one hour later. Imported shared
+media remains copy-only. The accepted file targets are frozen, so changing the
+current selection cannot redirect the work. `oracle/record_metadata_file_jobs.py`
+records these bounded filesystem/popup paths and both rejected dialogs; the
+two original worker leaves remain Partial for the platform and lifecycle
+limits documented in DIFFERENCES.
 
 Urls → "manage" (the selected files'; in the viewer, the file shown's;
 always the urls menu's first entry, as the reference has it) opens the

@@ -2302,3 +2302,31 @@ physical tooltip placement, executable picker/PATH and complete command-dialog
 geometry remain outside these two control leaves; the broad command parent stays
 Partial. Native real key/owner/store regressions and the command PNG are authored
 for hosted CI, without local Rust execution or mutation testing.
+
+
+
+## Metadata filesystem workers
+
+Manage Times and Force Filetype now dispatch finite, GUI-owned asynchronous
+work on captured targets. The actual Qt recording in
+`oracle/fixtures/metadata_file_jobs.json` covers nine worker inputs plus two
+rejected dialogs, real temporary files, strict delayed timestamp popup
+publication, file/64-file cancellation boundaries, normal finish/dismiss and
+copy-fallback cleanup scheduling. Authored native regressions retain actual
+DB/filesystem consumers while waiting for asynchronous completion, and protect
+retired parent/date-child callbacks, successor slots and changed selections.
+The store replay compares recorded durable prefixes and popup publication,
+uses real persisted popup cancellation, preserves timestamp DB updates after
+disk cancellation, and checks cleanup queue eligibility at +3600/+3601.
+
+`audit-media-times-disk` and `audit-media-force-rename` remain Partial, with
+zero completion promotions. Windows locked files, hardlink/same-file
+destinations, cross-device/read-only overwrite, metadata/permission recovery,
+full prefix-lock/concurrent storage-relocation behavior and reference exception
+presentation need further evidence. Native per-hash media claims and copy-only
+shared imports protect existing ownership rules. Copy fallback uses the existing
+DeleteNeighbourDupes backend, but the new tests do not execute its maintenance
+runner or prove unavailable-file retries. Native errors finish the active job
+and publish an error popup; fallible worker-spawn errors currently reach the
+caller/log. Broad metadata and generic job/shutdown lifecycle families remain
+Partial. Rust regressions are authored for hosted CI and were not run locally.

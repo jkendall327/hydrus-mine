@@ -1,0 +1,159 @@
+{
+  "schema_version": 1,
+  "task": "Owned cancellable metadata filesystem work and copied-extension cleanup scheduling",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "source_commit": "3f9ab1e34b20fea6c0f6dadf671d495174705f80",
+  "implementation_commits": [
+    "5f3565876",
+    "3f9ab1e34"
+  ],
+  "validation": {
+    "reference": "Actual Qt recording executed successfully on owned temporary files",
+    "source_checks": "Formatter, git diff --check, Python syntax and cached warning-aware Slint source compiler passed",
+    "rust_tests": "Authored store/native regressions await root hosted CI; no local Cargo"
+  },
+  "eligible_concrete_first_pass_count": 0,
+  "parent_promotions": 0,
+  "entries": [
+    {
+      "reference_id": "audit-media-times-disk",
+      "previous_status": "partial",
+      "before": "partial",
+      "proposed_status": "partial",
+      "proposedStatus": "partial",
+      "behavior": "Apply first commits every database timestamp update, then starts a captured ordered modified-time worker. Each file preserves atime and gets milliseconds plus its accepted step; missing files are skipped and permission failures are reported. Cancellation stops between files without rolling back database updates or the durable disk prefix. Exact title/gauge and strict delayed popup publication use the existing real popup consumer. Parent Apply cannot bypass an open date child; Cancel and retired child/parent callbacks cannot launch work or affect a successor.",
+      "exactBehavior": "Apply first commits every database timestamp update, then starts a captured ordered modified-time worker. Each file preserves atime and gets milliseconds plus its accepted step; missing files are skipped and permission failures are reported. Cancellation stops between files without rolling back database updates or the durable disk prefix. Exact title/gauge and strict delayed popup publication use the existing real popup consumer. Parent Apply cannot bypass an open date child; Cancel and retired child/parent callbacks cannot launch work or affect a successor.",
+      "reference_source": {
+        "path": "hydrus/client/gui/media/ClientGUIMediaModalActions.py",
+        "line": 436,
+        "line_sha256": "db62993a68abf59cda6f5a9f693daaee520674730185752d55aab3c59fd95d74"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/metadata_jobs.rs",
+          "line": 245,
+          "symbol": "pub fn run(",
+          "commit": "3f9ab1e34b20fea6c0f6dadf671d495174705f80"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/metadata_jobs.rs",
+          "line": 184,
+          "symbol": "fn step(",
+          "commit": "3f9ab1e34b20fea6c0f6dadf671d495174705f80"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/metadata_file_jobs.rs",
+          "line": 38,
+          "symbol": "pub(crate) fn start(",
+          "commit": "3f9ab1e34b20fea6c0f6dadf671d495174705f80"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/manage_times_window.rs",
+          "line": 198,
+          "symbol": "pub(crate) fn open(",
+          "commit": "3f9ab1e34b20fea6c0f6dadf671d495174705f80"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/tests/metadata_jobs.rs",
+          "line": 127,
+          "symbol": "fn actual_qt_worker_inputs",
+          "commit": "3f9ab1e34b20fea6c0f6dadf671d495174705f80"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/manage_times.rs",
+          "line": 77,
+          "symbol": "fn times_are_edited",
+          "commit": "3f9ab1e34b20fea6c0f6dadf671d495174705f80"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_metadata_file_jobs.py",
+        "fixture": "oracle/fixtures/metadata_file_jobs.json",
+        "commit": "3f9ab1e34b20fea6c0f6dadf671d495174705f80",
+        "executed": true,
+        "executed_at": "2026-10-05 02:56:30\u201302:56:33 UTC",
+        "result": "Successful actual Qt v688 recording through serialized with-oracle on a fresh copied basic client; clean shutdown. Real EditFileTimestampsPanel and EditFilesForcedFiletypePanel are accepted or rejected through scripted modal return values. Accepted callbacks dispatch their unchanged real worker bodies; real UpdateFileModifiedTimestampMS and ChangeFileExt run on owned temporary files. Nine cases cover stepped millisecond updates, early and partial cancellation, strict >3-second popup delay, zero/one/65-file force operations, cancellation inside first or final 64-file block, and injected MergeFile PermissionError causing real MirrorFile plus cleanup command at now+3600. Actual JobStatus records titles, text, gauges, publication, cancellation, completion and dismissal. Two real rejected dialogs enqueue no worker and issue no writes. Only dispatch/clock/job cancellation/pauser/database command capture and one rename failure are supplied; DB command capture does not claim actual Python DB writes. The sandbox denied unrelated local API socket startup; Qt and filesystem recording succeeded."
+      },
+      "limits": [
+        "Both original Partial leaves and broader Manage Times/Force Filetype parents remain Partial; zero eligible completion promotions and no aliases/menu/parent credit.",
+        "Native finite workers use owned thread cancellation and existing persisted popups. Retired dialogs/children cannot apply or clear successor slots; accepted workers outlive their closed editor. UI completion is collected by GUI-owned weak timer callbacks. Native and store regressions are authored for hosted CI, not run locally.",
+        "Windows file-lock/path-is-free behavior, same-file/hardlink destinations, cross-device/read-only overwrite and extended metadata/permission recovery are not reference-recorded here. Native shared imported media is copy-only and per-hash media claims protect each file, but the full Python prefix-lock manager and concurrent storage-relocation lifecycle are not claimed.",
+        "Normal popup publication/cancellation/completion paths are recorded; reference exception presentation and global thread/shutdown/controller lifecycle remain unproven. Native errors finish the current popup and publish an owned error popup; spawn failure is fallible and currently reported to the caller/log. No full generic worker-family promotion.",
+        "Copy fallback schedules the existing DeleteNeighbourDupes backend at now+3600; the new regression checks strict queue eligibility at +3600/+3601 and bytes/mtime preservation. It does not execute the maintenance runner or prove unavailable-file retry behavior. Existing runner implements neighbour removal; cleanup lifecycle remains part of the Partial limit.",
+        "No local Cargo builds/tests, mutation tests, pushes, installed-reference writes, remote services or IPFS. Formatter, git diff --check, Python syntax and cached warning-aware Slint compilation passed."
+      ]
+    },
+    {
+      "reference_id": "audit-media-force-rename",
+      "previous_status": "partial",
+      "before": "partial",
+      "proposed_status": "partial",
+      "proposedStatus": "partial",
+      "behavior": "Apply starts a captured finite force-type worker. Each 64-file database block commits before disk extension moves; cancellation is checked before the next block, with an immediate popup only above 64 files. Failed rename copies bytes and preserves metadata, scheduling copied hashes in the existing DeleteNeighbourDupes queue at now+3600. A frozen target survives changed current selection; rejected/retired dialogs launch no work and cannot clear a successor. Shared imported media is protected by copy-only handling.",
+      "exactBehavior": "Apply starts a captured finite force-type worker. Each 64-file database block commits before disk extension moves; cancellation is checked before the next block, with an immediate popup only above 64 files. Failed rename copies bytes and preserves metadata, scheduling copied hashes in the existing DeleteNeighbourDupes queue at now+3600. A frozen target survives changed current selection; rejected/retired dialogs launch no work and cannot clear a successor. Shared imported media is protected by copy-only handling.",
+      "reference_source": {
+        "path": "hydrus/client/gui/media/ClientGUIMediaModalActions.py",
+        "line": 1206,
+        "line_sha256": "b57d3996424b8cfc852198d921c2ecc4a2f867947a1d0fdda13da6dfb472d124"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/metadata_jobs.rs",
+          "line": 245,
+          "symbol": "pub fn run(",
+          "commit": "3f9ab1e34b20fea6c0f6dadf671d495174705f80"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/metadata_jobs.rs",
+          "line": 184,
+          "symbol": "fn step(",
+          "commit": "3f9ab1e34b20fea6c0f6dadf671d495174705f80"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/metadata_file_jobs.rs",
+          "line": 38,
+          "symbol": "pub(crate) fn start(",
+          "commit": "3f9ab1e34b20fea6c0f6dadf671d495174705f80"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/force_filetype_window.rs",
+          "line": 23,
+          "symbol": "pub(crate) fn open(",
+          "commit": "3f9ab1e34b20fea6c0f6dadf671d495174705f80"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/tests/metadata_jobs.rs",
+          "line": 127,
+          "symbol": "fn actual_qt_worker_inputs",
+          "commit": "3f9ab1e34b20fea6c0f6dadf671d495174705f80"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/force_filetype.rs",
+          "line": 62,
+          "symbol": "fn a_file_is_forced",
+          "commit": "3f9ab1e34b20fea6c0f6dadf671d495174705f80"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_metadata_file_jobs.py",
+        "fixture": "oracle/fixtures/metadata_file_jobs.json",
+        "commit": "3f9ab1e34b20fea6c0f6dadf671d495174705f80",
+        "executed": true,
+        "executed_at": "2026-10-05 02:56:30\u201302:56:33 UTC",
+        "result": "Successful actual Qt v688 recording through serialized with-oracle on a fresh copied basic client; clean shutdown. Real EditFileTimestampsPanel and EditFilesForcedFiletypePanel are accepted or rejected through scripted modal return values. Accepted callbacks dispatch their unchanged real worker bodies; real UpdateFileModifiedTimestampMS and ChangeFileExt run on owned temporary files. Nine cases cover stepped millisecond updates, early and partial cancellation, strict >3-second popup delay, zero/one/65-file force operations, cancellation inside first or final 64-file block, and injected MergeFile PermissionError causing real MirrorFile plus cleanup command at now+3600. Actual JobStatus records titles, text, gauges, publication, cancellation, completion and dismissal. Two real rejected dialogs enqueue no worker and issue no writes. Only dispatch/clock/job cancellation/pauser/database command capture and one rename failure are supplied; DB command capture does not claim actual Python DB writes. The sandbox denied unrelated local API socket startup; Qt and filesystem recording succeeded."
+      },
+      "limits": [
+        "Both original Partial leaves and broader Manage Times/Force Filetype parents remain Partial; zero eligible completion promotions and no aliases/menu/parent credit.",
+        "Native finite workers use owned thread cancellation and existing persisted popups. Retired dialogs/children cannot apply or clear successor slots; accepted workers outlive their closed editor. UI completion is collected by GUI-owned weak timer callbacks. Native and store regressions are authored for hosted CI, not run locally.",
+        "Windows file-lock/path-is-free behavior, same-file/hardlink destinations, cross-device/read-only overwrite and extended metadata/permission recovery are not reference-recorded here. Native shared imported media is copy-only and per-hash media claims protect each file, but the full Python prefix-lock manager and concurrent storage-relocation lifecycle are not claimed.",
+        "Normal popup publication/cancellation/completion paths are recorded; reference exception presentation and global thread/shutdown/controller lifecycle remain unproven. Native errors finish the current popup and publish an owned error popup; spawn failure is fallible and currently reported to the caller/log. No full generic worker-family promotion.",
+        "Copy fallback schedules the existing DeleteNeighbourDupes backend at now+3600; the new regression checks strict queue eligibility at +3600/+3601 and bytes/mtime preservation. It does not execute the maintenance runner or prove unavailable-file retry behavior. Existing runner implements neighbour removal; cleanup lifecycle remains part of the Partial limit.",
+        "No local Cargo builds/tests, mutation tests, pushes, installed-reference writes, remote services or IPFS. Formatter, git diff --check, Python syntax and cached warning-aware Slint compilation passed."
+      ]
+    }
+  ]
+}
