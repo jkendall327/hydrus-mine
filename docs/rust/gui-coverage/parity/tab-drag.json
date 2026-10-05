@@ -5,7 +5,8 @@
   "base_checkout": "dde121f153f7c9eeabb12980441ad798a72fc5d1",
   "implementationCommits": [
     "05d0cad18c52ef0ed80153457a03b1a53660e297",
-    "96a301e327920347aaff87097d85318e02b1ef1a"
+    "96a301e327920347aaff87097d85318e02b1ef1a",
+    "d5913c15d9870a5e4ddcfe92906f7e58c405279d"
   ],
   "claims": [
     {
@@ -14,13 +15,14 @@
       "proposedStatus": "first_pass",
       "countAsCompletedLeaf": true,
       "change_kind": "implementation",
-      "implementationCommit": "96a301e327920347aaff87097d85318e02b1ef1a",
+      "implementationCommit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
       "exactBehavior": "Options > gui pages stages all six exact checkboxes, imports existing booleans, validates checkbox routing, saves on Apply and preserves saved values on Cancel/reopen. The normal chase preference independently controls actual in-window same-notebook reorder and nested transfers. Chase selects the original moved page; no-chase follows the recorded source-index rule while preserving the child selected by hover when appropriate.",
       "limits": [
         "Only the six original preference IDs are proposed: four eligible First Pass leaves and two navigation Partial leaves. Broader GUI Pages/navigation/drag/drop/tree families remain Partial; alignment/elision/hide/tree claims are unchanged.",
         "Native capture is an owner-local persistent TouchArea outside repeaters, with stable source key/parent and live destination geometry. It supports in-window page-tab reorder/nested transfer, not OS QDrag, pixmaps/cursors, crossing windows, tree drag/drop, media/external-file drags or empty-notebook content-body drops.",
         "Wheel increments use native 120px steps rather than Qt scroll-button/tab geometry. No platform flags or preview claims.",
-        "Native replay and transfer PNG are authored/pending hosted CI; no local Cargo builds/tests or mutations were run."
+        "Native replay and transfer PNG are authored/pending hosted CI; no local Cargo builds/tests or mutations were run.",
+        "Follow-up real-event checks retain capture across Slint pointer-event(Move) then moved(), preserve unpressed tooltip hover and reject clipped/offviewport targets. Raw Qt tabAt lookup can still find offviewport tabs; no native OS dispatch equivalence is asserted."
       ],
       "sourceAnchors": [
         {
@@ -85,6 +87,20 @@
           "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
           "kind": "source",
           "symbol": "tab_drag::bind"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+          "line": 250,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "source",
+          "symbol": "// Slint calls pointer-event(move)"
+        },
+        {
+          "path": "crates/hydrus-gui/src/tab_drag.rs",
+          "line": 38,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "source",
+          "symbol": "fn viewport_contains"
         }
       ],
       "testAnchors": [
@@ -122,31 +138,52 @@
           "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
           "kind": "gui_consumer_regression",
           "symbol": "fn real_pointer_drag"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 327,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_pointer_drag"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 56,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_wheel_replays"
         }
       ],
       "referenceRecording": {
         "recorder": {
           "path": "oracle/record_tab_drag.py",
           "line": 14,
-          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "reference_recorder",
           "symbol": "def record("
         },
         "fixture": {
           "path": "oracle/fixtures/tab_drag.json",
           "line": 2,
-          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "reference_fixture",
           "symbol": "\"keys\""
         },
         "executed": true,
-        "executedAt": "2026-10-05T00:28:06Z–2026-10-05T00:28:09Z",
+        "executedAt": "2026-10-05T00:52:50Z–2026-10-05T00:52:53Z",
         "driver": "with-oracle; hydrus_driver.run_client(basic); actual Qt GUIPagesPanel, frame/nested notebooks, wheel/dragMove/drop event consumers; unchanged reference source",
         "eventSeams": [
           "Synthetic QDropEvent overrides source() only to provide the real TabBar normally attached by Qt QDrag execution. No drop/navigation decision handler is replaced.",
           "Source-start recording intercepts only QDrag.exec_ to record offered MIME and return IgnoreAction; real widget mouseMoveEvent/disable check runs.",
           "This evidence does not execute a native OS/platform drag loop."
-        ]
+        ],
+        "additionalProbe": {
+          "path": "oracle/fixtures/tab_drag.json",
+          "line": 581,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "reference_fixture",
+          "symbol": "\"clipped_hit\""
+        }
       }
     },
     {
@@ -155,13 +192,14 @@
       "proposedStatus": "first_pass",
       "countAsCompletedLeaf": true,
       "change_kind": "implementation",
-      "implementationCommit": "96a301e327920347aaff87097d85318e02b1ef1a",
+      "implementationCommit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
       "exactBehavior": "Options > gui pages stages all six exact checkboxes, imports existing booleans, validates checkbox routing, saves on Apply and preserves saved values on Cancel/reopen. The independent Shift chase checkbox is staged/imported/persisted and consumed from real Shift-modified pointer releases. The same original page object is reordered/transferred; both chase answers replay exact Qt ordering and shown-page decisions.",
       "limits": [
         "Only the six original preference IDs are proposed: four eligible First Pass leaves and two navigation Partial leaves. Broader GUI Pages/navigation/drag/drop/tree families remain Partial; alignment/elision/hide/tree claims are unchanged.",
         "Native capture is an owner-local persistent TouchArea outside repeaters, with stable source key/parent and live destination geometry. It supports in-window page-tab reorder/nested transfer, not OS QDrag, pixmaps/cursors, crossing windows, tree drag/drop, media/external-file drags or empty-notebook content-body drops.",
         "Wheel increments use native 120px steps rather than Qt scroll-button/tab geometry. No platform flags or preview claims.",
-        "Native replay and transfer PNG are authored/pending hosted CI; no local Cargo builds/tests or mutations were run."
+        "Native replay and transfer PNG are authored/pending hosted CI; no local Cargo builds/tests or mutations were run.",
+        "Follow-up real-event checks retain capture across Slint pointer-event(Move) then moved(), preserve unpressed tooltip hover and reject clipped/offviewport targets. Raw Qt tabAt lookup can still find offviewport tabs; no native OS dispatch equivalence is asserted."
       ],
       "sourceAnchors": [
         {
@@ -226,6 +264,20 @@
           "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
           "kind": "source",
           "symbol": "tab_drag::bind"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+          "line": 250,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "source",
+          "symbol": "// Slint calls pointer-event(move)"
+        },
+        {
+          "path": "crates/hydrus-gui/src/tab_drag.rs",
+          "line": 38,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "source",
+          "symbol": "fn viewport_contains"
         }
       ],
       "testAnchors": [
@@ -263,31 +315,52 @@
           "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
           "kind": "gui_consumer_regression",
           "symbol": "fn real_pointer_drag"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 327,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_pointer_drag"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 56,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_wheel_replays"
         }
       ],
       "referenceRecording": {
         "recorder": {
           "path": "oracle/record_tab_drag.py",
           "line": 14,
-          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "reference_recorder",
           "symbol": "def record("
         },
         "fixture": {
           "path": "oracle/fixtures/tab_drag.json",
           "line": 2,
-          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "reference_fixture",
           "symbol": "\"keys\""
         },
         "executed": true,
-        "executedAt": "2026-10-05T00:28:06Z–2026-10-05T00:28:09Z",
+        "executedAt": "2026-10-05T00:52:50Z–2026-10-05T00:52:53Z",
         "driver": "with-oracle; hydrus_driver.run_client(basic); actual Qt GUIPagesPanel, frame/nested notebooks, wheel/dragMove/drop event consumers; unchanged reference source",
         "eventSeams": [
           "Synthetic QDropEvent overrides source() only to provide the real TabBar normally attached by Qt QDrag execution. No drop/navigation decision handler is replaced.",
           "Source-start recording intercepts only QDrag.exec_ to record offered MIME and return IgnoreAction; real widget mouseMoveEvent/disable check runs.",
           "This evidence does not execute a native OS/platform drag loop."
-        ]
+        ],
+        "additionalProbe": {
+          "path": "oracle/fixtures/tab_drag.json",
+          "line": 581,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "reference_fixture",
+          "symbol": "\"clipped_hit\""
+        }
       }
     },
     {
@@ -296,13 +369,14 @@
       "proposedStatus": "partial",
       "countAsCompletedLeaf": false,
       "change_kind": "implementation",
-      "implementationCommit": "96a301e327920347aaff87097d85318e02b1ef1a",
+      "implementationCommit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
       "exactBehavior": "Options > gui pages stages all six exact checkboxes, imports existing booleans, validates checkbox routing, saves on Apply and preserves saved values on Cancel/reopen. The normal navigation setting drives real timed page-tab gestures. Hover navigation exposes a nested notebook while the persistent capture stays alive; subsequent moves/releases use live child geometry. Media/external drag consumers remain absent.",
       "limits": [
         "Only the six original preference IDs are proposed: four eligible First Pass leaves and two navigation Partial leaves. Broader GUI Pages/navigation/drag/drop/tree families remain Partial; alignment/elision/hide/tree claims are unchanged.",
         "Native capture is an owner-local persistent TouchArea outside repeaters, with stable source key/parent and live destination geometry. It supports in-window page-tab reorder/nested transfer, not OS QDrag, pixmaps/cursors, crossing windows, tree drag/drop, media/external-file drags or empty-notebook content-body drops.",
         "Wheel increments use native 120px steps rather than Qt scroll-button/tab geometry. No platform flags or preview claims.",
-        "Native replay and transfer PNG are authored/pending hosted CI; no local Cargo builds/tests or mutations were run."
+        "Native replay and transfer PNG are authored/pending hosted CI; no local Cargo builds/tests or mutations were run.",
+        "Follow-up real-event checks retain capture across Slint pointer-event(Move) then moved(), preserve unpressed tooltip hover and reject clipped/offviewport targets. Raw Qt tabAt lookup can still find offviewport tabs; no native OS dispatch equivalence is asserted."
       ],
       "sourceAnchors": [
         {
@@ -367,6 +441,20 @@
           "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
           "kind": "source",
           "symbol": "tab_drag::bind"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+          "line": 250,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "source",
+          "symbol": "// Slint calls pointer-event(move)"
+        },
+        {
+          "path": "crates/hydrus-gui/src/tab_drag.rs",
+          "line": 38,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "source",
+          "symbol": "fn viewport_contains"
         }
       ],
       "testAnchors": [
@@ -404,31 +492,52 @@
           "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
           "kind": "gui_consumer_regression",
           "symbol": "fn real_pointer_drag"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 327,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_pointer_drag"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 56,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_wheel_replays"
         }
       ],
       "referenceRecording": {
         "recorder": {
           "path": "oracle/record_tab_drag.py",
           "line": 14,
-          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "reference_recorder",
           "symbol": "def record("
         },
         "fixture": {
           "path": "oracle/fixtures/tab_drag.json",
           "line": 2,
-          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "reference_fixture",
           "symbol": "\"keys\""
         },
         "executed": true,
-        "executedAt": "2026-10-05T00:28:06Z–2026-10-05T00:28:09Z",
+        "executedAt": "2026-10-05T00:52:50Z–2026-10-05T00:52:53Z",
         "driver": "with-oracle; hydrus_driver.run_client(basic); actual Qt GUIPagesPanel, frame/nested notebooks, wheel/dragMove/drop event consumers; unchanged reference source",
         "eventSeams": [
           "Synthetic QDropEvent overrides source() only to provide the real TabBar normally attached by Qt QDrag execution. No drop/navigation decision handler is replaced.",
           "Source-start recording intercepts only QDrag.exec_ to record offered MIME and return IgnoreAction; real widget mouseMoveEvent/disable check runs.",
           "This evidence does not execute a native OS/platform drag loop."
-        ]
+        ],
+        "additionalProbe": {
+          "path": "oracle/fixtures/tab_drag.json",
+          "line": 581,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "reference_fixture",
+          "symbol": "\"clipped_hit\""
+        }
       }
     },
     {
@@ -437,13 +546,14 @@
       "proposedStatus": "partial",
       "countAsCompletedLeaf": false,
       "change_kind": "implementation",
-      "implementationCommit": "96a301e327920347aaff87097d85318e02b1ef1a",
+      "implementationCommit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
       "exactBehavior": "Options > gui pages stages all six exact checkboxes, imports existing booleans, validates checkbox routing, saves on Apply and preserves saved values on Cancel/reopen. The Shift navigation checkbox is independent of the normal checkbox; actual Shift and pointer input replays both answers and Escape cancellation without reordering session content. Media/external drag consumers remain absent.",
       "limits": [
         "Only the six original preference IDs are proposed: four eligible First Pass leaves and two navigation Partial leaves. Broader GUI Pages/navigation/drag/drop/tree families remain Partial; alignment/elision/hide/tree claims are unchanged.",
         "Native capture is an owner-local persistent TouchArea outside repeaters, with stable source key/parent and live destination geometry. It supports in-window page-tab reorder/nested transfer, not OS QDrag, pixmaps/cursors, crossing windows, tree drag/drop, media/external-file drags or empty-notebook content-body drops.",
         "Wheel increments use native 120px steps rather than Qt scroll-button/tab geometry. No platform flags or preview claims.",
-        "Native replay and transfer PNG are authored/pending hosted CI; no local Cargo builds/tests or mutations were run."
+        "Native replay and transfer PNG are authored/pending hosted CI; no local Cargo builds/tests or mutations were run.",
+        "Follow-up real-event checks retain capture across Slint pointer-event(Move) then moved(), preserve unpressed tooltip hover and reject clipped/offviewport targets. Raw Qt tabAt lookup can still find offviewport tabs; no native OS dispatch equivalence is asserted."
       ],
       "sourceAnchors": [
         {
@@ -508,6 +618,20 @@
           "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
           "kind": "source",
           "symbol": "tab_drag::bind"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+          "line": 250,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "source",
+          "symbol": "// Slint calls pointer-event(move)"
+        },
+        {
+          "path": "crates/hydrus-gui/src/tab_drag.rs",
+          "line": 38,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "source",
+          "symbol": "fn viewport_contains"
         }
       ],
       "testAnchors": [
@@ -545,31 +669,52 @@
           "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
           "kind": "gui_consumer_regression",
           "symbol": "fn real_pointer_drag"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 327,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_pointer_drag"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 56,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_wheel_replays"
         }
       ],
       "referenceRecording": {
         "recorder": {
           "path": "oracle/record_tab_drag.py",
           "line": 14,
-          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "reference_recorder",
           "symbol": "def record("
         },
         "fixture": {
           "path": "oracle/fixtures/tab_drag.json",
           "line": 2,
-          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "reference_fixture",
           "symbol": "\"keys\""
         },
         "executed": true,
-        "executedAt": "2026-10-05T00:28:06Z–2026-10-05T00:28:09Z",
+        "executedAt": "2026-10-05T00:52:50Z–2026-10-05T00:52:53Z",
         "driver": "with-oracle; hydrus_driver.run_client(basic); actual Qt GUIPagesPanel, frame/nested notebooks, wheel/dragMove/drop event consumers; unchanged reference source",
         "eventSeams": [
           "Synthetic QDropEvent overrides source() only to provide the real TabBar normally attached by Qt QDrag execution. No drop/navigation decision handler is replaced.",
           "Source-start recording intercepts only QDrag.exec_ to record offered MIME and return IgnoreAction; real widget mouseMoveEvent/disable check runs.",
           "This evidence does not execute a native OS/platform drag loop."
-        ]
+        ],
+        "additionalProbe": {
+          "path": "oracle/fixtures/tab_drag.json",
+          "line": 581,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "reference_fixture",
+          "symbol": "\"clipped_hit\""
+        }
       }
     },
     {
@@ -578,13 +723,14 @@
       "proposedStatus": "first_pass",
       "countAsCompletedLeaf": true,
       "change_kind": "implementation",
-      "implementationCommit": "96a301e327920347aaff87097d85318e02b1ef1a",
+      "implementationCommit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
       "exactBehavior": "Options > gui pages stages all six exact checkboxes, imports existing booleans, validates checkbox routing, saves on Apply and preserves saved values on Cancel/reopen. The saved disable checkbox prevents page-tab gesture capture/start and drops in the actual main-window consumer, and cancels a pending owner-local gesture when observed. Normal tab selection remains available; the Qt recording verifies disabled/enabled native source-drag offers.",
       "limits": [
         "Only the six original preference IDs are proposed: four eligible First Pass leaves and two navigation Partial leaves. Broader GUI Pages/navigation/drag/drop/tree families remain Partial; alignment/elision/hide/tree claims are unchanged.",
         "Native capture is an owner-local persistent TouchArea outside repeaters, with stable source key/parent and live destination geometry. It supports in-window page-tab reorder/nested transfer, not OS QDrag, pixmaps/cursors, crossing windows, tree drag/drop, media/external-file drags or empty-notebook content-body drops.",
         "Wheel increments use native 120px steps rather than Qt scroll-button/tab geometry. No platform flags or preview claims.",
-        "Native replay and transfer PNG are authored/pending hosted CI; no local Cargo builds/tests or mutations were run."
+        "Native replay and transfer PNG are authored/pending hosted CI; no local Cargo builds/tests or mutations were run.",
+        "Follow-up real-event checks retain capture across Slint pointer-event(Move) then moved(), preserve unpressed tooltip hover and reject clipped/offviewport targets. Raw Qt tabAt lookup can still find offviewport tabs; no native OS dispatch equivalence is asserted."
       ],
       "sourceAnchors": [
         {
@@ -649,6 +795,20 @@
           "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
           "kind": "source",
           "symbol": "tab_drag::bind"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+          "line": 250,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "source",
+          "symbol": "// Slint calls pointer-event(move)"
+        },
+        {
+          "path": "crates/hydrus-gui/src/tab_drag.rs",
+          "line": 38,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "source",
+          "symbol": "fn viewport_contains"
         }
       ],
       "testAnchors": [
@@ -686,31 +846,52 @@
           "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
           "kind": "gui_consumer_regression",
           "symbol": "fn real_pointer_drag"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 327,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_pointer_drag"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 56,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_wheel_replays"
         }
       ],
       "referenceRecording": {
         "recorder": {
           "path": "oracle/record_tab_drag.py",
           "line": 14,
-          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "reference_recorder",
           "symbol": "def record("
         },
         "fixture": {
           "path": "oracle/fixtures/tab_drag.json",
           "line": 2,
-          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "reference_fixture",
           "symbol": "\"keys\""
         },
         "executed": true,
-        "executedAt": "2026-10-05T00:28:06Z–2026-10-05T00:28:09Z",
+        "executedAt": "2026-10-05T00:52:50Z–2026-10-05T00:52:53Z",
         "driver": "with-oracle; hydrus_driver.run_client(basic); actual Qt GUIPagesPanel, frame/nested notebooks, wheel/dragMove/drop event consumers; unchanged reference source",
         "eventSeams": [
           "Synthetic QDropEvent overrides source() only to provide the real TabBar normally attached by Qt QDrag execution. No drop/navigation decision handler is replaced.",
           "Source-start recording intercepts only QDrag.exec_ to record offered MIME and return IgnoreAction; real widget mouseMoveEvent/disable check runs.",
           "This evidence does not execute a native OS/platform drag loop."
-        ]
+        ],
+        "additionalProbe": {
+          "path": "oracle/fixtures/tab_drag.json",
+          "line": 581,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "reference_fixture",
+          "symbol": "\"clipped_hit\""
+        }
       }
     },
     {
@@ -719,13 +900,14 @@
       "proposedStatus": "first_pass",
       "countAsCompletedLeaf": true,
       "change_kind": "implementation",
-      "implementationCommit": "96a301e327920347aaff87097d85318e02b1ef1a",
+      "implementationCommit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
       "exactBehavior": "Options > gui pages stages all six exact checkboxes, imports existing booleans, validates checkbox routing, saves on Apply and preserves saved values on Cancel/reopen. The saved wheel checkbox reaches actual native wheel input. Off selects the adjacent notebook page with end clamping; on moves the overflowing bar viewport in either direction and retains the selected page and session. Horizontal and vertical bars use the same setting.",
       "limits": [
         "Only the six original preference IDs are proposed: four eligible First Pass leaves and two navigation Partial leaves. Broader GUI Pages/navigation/drag/drop/tree families remain Partial; alignment/elision/hide/tree claims are unchanged.",
         "Native capture is an owner-local persistent TouchArea outside repeaters, with stable source key/parent and live destination geometry. It supports in-window page-tab reorder/nested transfer, not OS QDrag, pixmaps/cursors, crossing windows, tree drag/drop, media/external-file drags or empty-notebook content-body drops.",
         "Wheel increments use native 120px steps rather than Qt scroll-button/tab geometry. No platform flags or preview claims.",
-        "Native replay and transfer PNG are authored/pending hosted CI; no local Cargo builds/tests or mutations were run."
+        "Native replay and transfer PNG are authored/pending hosted CI; no local Cargo builds/tests or mutations were run.",
+        "Follow-up real-event checks retain capture across Slint pointer-event(Move) then moved(), preserve unpressed tooltip hover and reject clipped/offviewport targets. Raw Qt tabAt lookup can still find offviewport tabs; no native OS dispatch equivalence is asserted."
       ],
       "sourceAnchors": [
         {
@@ -769,6 +951,20 @@
           "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
           "kind": "source",
           "symbol": "on_tab_wheel"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/notebook_tabs.slint",
+          "line": 250,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "source",
+          "symbol": "// Slint calls pointer-event(move)"
+        },
+        {
+          "path": "crates/hydrus-gui/src/tab_drag.rs",
+          "line": 38,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "source",
+          "symbol": "fn viewport_contains"
         }
       ],
       "testAnchors": [
@@ -785,31 +981,52 @@
           "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
           "kind": "gui_consumer_regression",
           "symbol": "fn real_wheel_replays_qt_selection_and_staged_scroll_overflow_without_changing_session() {"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 327,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_pointer_drag"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 56,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_wheel_replays"
         }
       ],
       "referenceRecording": {
         "recorder": {
           "path": "oracle/record_tab_drag.py",
           "line": 14,
-          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "reference_recorder",
           "symbol": "def record("
         },
         "fixture": {
           "path": "oracle/fixtures/tab_drag.json",
           "line": 2,
-          "commit": "96a301e327920347aaff87097d85318e02b1ef1a",
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
           "kind": "reference_fixture",
           "symbol": "\"keys\""
         },
         "executed": true,
-        "executedAt": "2026-10-05T00:28:06Z–2026-10-05T00:28:09Z",
+        "executedAt": "2026-10-05T00:52:50Z–2026-10-05T00:52:53Z",
         "driver": "with-oracle; hydrus_driver.run_client(basic); actual Qt GUIPagesPanel, frame/nested notebooks, wheel/dragMove/drop event consumers; unchanged reference source",
         "eventSeams": [
           "Synthetic QDropEvent overrides source() only to provide the real TabBar normally attached by Qt QDrag execution. No drop/navigation decision handler is replaced.",
           "Source-start recording intercepts only QDrag.exec_ to record offered MIME and return IgnoreAction; real widget mouseMoveEvent/disable check runs.",
           "This evidence does not execute a native OS/platform drag loop."
-        ]
+        ],
+        "additionalProbe": {
+          "path": "oracle/fixtures/tab_drag.json",
+          "line": 581,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "reference_fixture",
+          "symbol": "\"clipped_hit\""
+        }
       }
     }
   ],
@@ -853,6 +1070,20 @@
           "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
           "kind": "gui_consumer_regression",
           "symbol": "fn real_wheel_replays_qt_selection_and_staged_scroll_overflow_without_changing_session() {"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 327,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_pointer_drag"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 56,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_wheel_replays"
         }
       ]
     },
@@ -893,6 +1124,20 @@
           "commit": "05d0cad18c52ef0ed80153457a03b1a53660e297",
           "kind": "gui_consumer_regression",
           "symbol": "fn real_wheel_replays_qt_selection_and_staged_scroll_overflow_without_changing_session() {"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 327,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_pointer_drag"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/tab_drag.rs",
+          "line": 56,
+          "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_wheel_replays"
         }
       ]
     }
@@ -915,7 +1160,7 @@
   },
   "validation": {
     "executed": [
-      "actual Qt recorder 2026-10-05T00:28:06Z–00:28:09Z",
+      "actual Qt recorder rerun2026-10-05T00:52:50Z–00:52:53Z, including raw clipped-hit probe",
       "cargo fmt --all",
       "git diff --check",
       "Python py_compile",
@@ -926,8 +1171,17 @@
       "native real pointer/Shift/Escape nested capture/media-order/selected-hash/cancel/reopen replay",
       "native wheel viewport/selection consumer replay",
       "tab-drag-transfer.png capture and visual review",
-      "strict Clippy and all-platform compilation"
+      "strict Clippy and all-platform compilation",
+      "real Slint pointer-event(Move)/moved ordering, unpressed hover and captured clipped/offviewport Move/Up regressions"
     ],
     "localCargoBuildsOrTests": false
-  }
+  },
+  "repairNotes": [
+    {
+      "commit": "d5913c15d9870a5e4ddcfe92906f7e58c405279d",
+      "exactBehavior": "Handle only Down/Up/Cancel as press/release/cancel. Slint pointer-event(Move) runs before moved(); left-pressed Move retains the grab for moved(), while unpressed Move still routes ordinary hover/tooltips. Live cached targets now intersect the matching notebook viewport/parent/depth and reserved40px arrow area. Captured offviewport Move/Up cannot navigate or reorder clipped pages.",
+      "referenceBoundary": "The actual Qt overflow probe returns raw tabAt7 at[300,12] outside a250×26 viewport, with selected0 unchanged. This lookup does not establish OS drop dispatch there. Native viewport rejection is an explicit capture boundary; no platform-routing claim is added.",
+      "recordedAt": "2026-10-05T00:52:50Z–2026-10-05T00:52:53Z"
+    }
+  ]
 }
