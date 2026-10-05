@@ -2183,3 +2183,12 @@ selection, scroll, Options and rate decision handlers remain unchanged; preview
 playback is not recorded. Native real pointer/key/wheel replays and the
 `thumbnail-navigation.png` capture are authored for hosted CI. No local Cargo
 builds/tests or mutation runs were performed.
+
+GUI formatting settings are owned values rather than the reference mutable
+formatter globals. ISO time and byte precision reach existing log, page/status
+and file-info consumers after Apply, with Cancel and reopening preserved.
+Other native size/time display helpers listed in the GUI formatting packet
+still use default formatting, so the two global controls remain Partial and
+add zero completed original leaves. The Qt fixture was recorded in UTC; native
+production ISO formatting follows the system timezone. Integer-locale, radio
+Return force and menu-button wheel preferences are outside this slice.
