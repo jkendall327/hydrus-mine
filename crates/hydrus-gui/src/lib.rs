@@ -555,7 +555,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let child = manage_tags
                 .borrow()
                 .as_ref()
-                .map(|child| child.clone_strong());
+                .map(slint::ComponentHandle::clone_strong);
             if let Some(child) = child {
                 child.invoke_cancel();
             }
@@ -1712,7 +1712,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 files,
                 applied,
                 hydrus_store::manage_tags_sort::Context::MediaViewer,
-            )
+            );
         }
     };
     // a thumbnail's or the viewer's "manage > notes"
@@ -2834,7 +2834,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let child = manage_tags
                     .borrow()
                     .as_ref()
-                    .map(|child| child.clone_strong());
+                    .map(slint::ComponentHandle::clone_strong);
                 if let Some(child) = child {
                     child.invoke_cancel();
                 }
