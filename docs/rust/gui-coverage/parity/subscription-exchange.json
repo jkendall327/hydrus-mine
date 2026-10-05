@@ -13,13 +13,16 @@
     "9cfd9a7a787f909c6f450cb0674e521379101cdf",
     "9de71fac5f077c27861c1071b17b8642198aa865",
     "ca65203f51e891216b6f3d1413c7d5e7b5b2ac2c",
-    "1de97b7033f68063effe18db0cd0b73e76b84cff"
+    "1de97b7033f68063effe18db0cd0b73e76b84cff",
+    "a8d38be601ee32fcdaa67bc8a943ce8aaf4f5ae8"
   ],
   "validation": {
     "reference_recording": "Passed actual Qt recordings under shared with-oracle lock: modern clipboard/JSON/PNG/list-menu/file-overwrite/missing-history flow, plus all twelve legacy container/query-version cases through real list import/export and acceptance of normalized native current exports. Synthetic domains only; original Qt editor screenshot inspected. Latest modern recorder rerun also drives actual list Reset/RetryFailed/RetryIgnored and selected exports, recording cleared hash metadata and exact auxiliary cache updates.",
     "formatting": "rustfmt --edition 2024, git diff --check and Python recorder syntax passed.",
     "slint_source_check": "Passed cached Slint compiler with no Cargo builds.",
-    "rust_tests": "Root reported earlier integrated3d3b5108 hosted parity-models success and Linux GUI396 tests passing. Newer missing-history/menu/legacy/reset-cache tests await hosted checkpointdc95767f; newest source checks passed. No local Cargo or mutation tests. No first-pass completion claimed."
+    "rust_tests": "Root reported earlier integrated3d3b5108 hosted parity-models success and Linux GUI396 tests passing. Newer missing-history/menu/legacy/reset-cache tests await hosted checkpointdc95767f; newest source checks passed. No local Cargo or mutation tests. No first-pass completion claimed.",
+    "historical_seed_cache_recording": "Actual v688 offscreen Qt direct conversion and real subscription-list imports/exports recorded 2026-10-05 03:56:30\u201303:56:32 UTC through serialized with-oracle on a fresh basic fixture; clean shutdown. Seven versions, ordered URL/HDD histories, first-occurrence duplicate removal, source-time reset/preservation, v1 Python primitive note spelling, generic URL space/fragment normalization, exact cached counts/examples, duplicate-preserving later caches, old spelling rewrite and seven missing-note failures. Clock and random example choice held; no business upgrade/list handlers replaced. Unrelated local API startup was denied by the sandbox; Qt recording succeeded.",
+    "historical_seed_cache_native": "Authored whole-payload codec JSON/PNG/current-log regressions and staged native counts plus Store restore/reopen consumers await exact hosted CI; no local Cargo, tests or mutations. Rustfmt, Python syntax and git diff --check passed."
   },
   "native_navigation": [
     {
@@ -42,16 +45,17 @@
       "before": "missing",
       "proposed_status": "partial",
       "proposedStatus": "partial",
-      "behavior": "Manage subscriptions exposes serialized import/export of modern reference container90 objects through an owned child. Settings, complete query states, cached velocity/example-seed headers and both file/gallery histories survive JSON/PNG exchange, staged import and Apply/reopen. Casefold name collisions use (1) suffixes and every imported query gets a fresh history identity. JSON file export asks the original existing-path overwrite question; rejecting or closing the owner preserves the existing file. Format-specific multi-file JSON/PNG imports validate before staging, cancellation leaves the saved store unchanged, and stale callbacks cannot append or overwrite. Export reads current native queues plus draft reset/retry commands and preserves copied header metadata. Incomplete objects now ask the exact reference missing query log data title, message and import/back-out choices before they enter the draft; accepting persists empty logs and rejecting or cancelling continues remaining objects in list order. Apply is blocked while the question remains unanswered. Modern clipboard/JSON/PNG menu choices now dispatch their actual transport action. Legacy subscription type3 versions1\u201310 and legacy query1\u20133 import with full embedded histories, historical checker/limit defaults and fresh identity handling; obsolete gallery identifiers become the original paused unknown downloader. Actual Qt direct conversion and list exports constrain full upgraded payloads, apart from generated random identities. Fresh history names invalidate velocity/status according to SetQueryLogContainerName while retaining example/cached-count fields. Actual Reset/RetryFailed/RetryIgnored exports now refresh file-count/example caches without changing velocity or gallery examples. Retried files lose hashes exactly as SetStatus(UNKNOWN) does, in both detached exports and the real Apply transaction; reopening exports those persisted caches.",
-      "exactBehavior": "Manage subscriptions exposes serialized import/export of modern reference container90 objects through an owned child. Settings, complete query states, cached velocity/example-seed headers and both file/gallery histories survive JSON/PNG exchange, staged import and Apply/reopen. Casefold name collisions use (1) suffixes and every imported query gets a fresh history identity. JSON file export asks the original existing-path overwrite question; rejecting or closing the owner preserves the existing file. Format-specific multi-file JSON/PNG imports validate before staging, cancellation leaves the saved store unchanged, and stale callbacks cannot append or overwrite. Export reads current native queues plus draft reset/retry commands and preserves copied header metadata. Incomplete objects now ask the exact reference missing query log data title, message and import/back-out choices before they enter the draft; accepting persists empty logs and rejecting or cancelling continues remaining objects in list order. Apply is blocked while the question remains unanswered. Modern clipboard/JSON/PNG menu choices now dispatch their actual transport action. Legacy subscription type3 versions1\u201310 and legacy query1\u20133 import with full embedded histories, historical checker/limit defaults and fresh identity handling; obsolete gallery identifiers become the original paused unknown downloader. Actual Qt direct conversion and list exports constrain full upgraded payloads, apart from generated random identities. Fresh history names invalidate velocity/status according to SetQueryLogContainerName while retaining example/cached-count fields. Actual Reset/RetryFailed/RetryIgnored exports now refresh file-count/example caches without changing velocity or gallery examples. Retried files lose hashes exactly as SetStatus(UNKNOWN) does, in both detached exports and the real Apply transaction; reopening exports those persisted caches.",
+      "behavior": "Manage subscriptions exposes serialized import/export of modern reference container90 objects through an owned child. Settings, complete query states, cached velocity/example-seed headers and both file/gallery histories survive JSON/PNG exchange, staged import and Apply/reopen. Casefold name collisions use (1) suffixes and every imported query gets a fresh history identity. JSON file export asks the original existing-path overwrite question; rejecting or closing the owner preserves the existing file. Format-specific multi-file JSON/PNG imports validate before staging, cancellation leaves the saved store unchanged, and stale callbacks cannot append or overwrite. Export reads current native queues plus draft reset/retry commands and preserves copied header metadata. Incomplete objects now ask the exact reference missing query log data title, message and import/back-out choices before they enter the draft; accepting persists empty logs and rejecting or cancelling continues remaining objects in list order. Apply is blocked while the question remains unanswered. Modern clipboard/JSON/PNG menu choices now dispatch their actual transport action. Legacy subscription type3 versions1\u201310 and legacy query1\u20133 import with full embedded histories, historical checker/limit defaults and fresh identity handling; obsolete gallery identifiers become the original paused unknown downloader. Actual Qt direct conversion and list exports constrain full upgraded payloads, apart from generated random identities. Fresh history names invalidate velocity/status according to SetQueryLogContainerName while retaining example/cached-count fields. Actual Reset/RetryFailed/RetryIgnored exports now refresh file-count/example caches without changing velocity or gallery examples. Retried files lose hashes exactly as SetStatus(UNKNOWN) does, in both detached exports and the real Apply transaction; reopening exports those persisted caches. Historical file seed-cache type8 versions1\u20137 now upgrade at the exchange boundary: versions1\u20134 retain only the first raw seed text, versions1\u20135 reset source timestamps, versions1\u20136 rewrite the old Tumblr spelling, and URL/path construction uses generic URL normalization. Primitive version1 note representations use Python spelling. Actual Qt payloads constrain ordered histories and derived count/example headers; modern containers embedding old caches also decode. Later duplicate identities that native queues cannot retain and complex/float Python note representations fail explicitly before staging rather than silently reduce history. Authored native count and persisted restore/reopen checks consume the recorded histories.",
+      "exactBehavior": "Manage subscriptions exposes serialized import/export of modern reference container90 objects through an owned child. Settings, complete query states, cached velocity/example-seed headers and both file/gallery histories survive JSON/PNG exchange, staged import and Apply/reopen. Casefold name collisions use (1) suffixes and every imported query gets a fresh history identity. JSON file export asks the original existing-path overwrite question; rejecting or closing the owner preserves the existing file. Format-specific multi-file JSON/PNG imports validate before staging, cancellation leaves the saved store unchanged, and stale callbacks cannot append or overwrite. Export reads current native queues plus draft reset/retry commands and preserves copied header metadata. Incomplete objects now ask the exact reference missing query log data title, message and import/back-out choices before they enter the draft; accepting persists empty logs and rejecting or cancelling continues remaining objects in list order. Apply is blocked while the question remains unanswered. Modern clipboard/JSON/PNG menu choices now dispatch their actual transport action. Legacy subscription type3 versions1\u201310 and legacy query1\u20133 import with full embedded histories, historical checker/limit defaults and fresh identity handling; obsolete gallery identifiers become the original paused unknown downloader. Actual Qt direct conversion and list exports constrain full upgraded payloads, apart from generated random identities. Fresh history names invalidate velocity/status according to SetQueryLogContainerName while retaining example/cached-count fields. Actual Reset/RetryFailed/RetryIgnored exports now refresh file-count/example caches without changing velocity or gallery examples. Retried files lose hashes exactly as SetStatus(UNKNOWN) does, in both detached exports and the real Apply transaction; reopening exports those persisted caches. Historical file seed-cache type8 versions1\u20137 now upgrade at the exchange boundary: versions1\u20134 retain only the first raw seed text, versions1\u20135 reset source timestamps, versions1\u20136 rewrite the old Tumblr spelling, and URL/path construction uses generic URL normalization. Primitive version1 note representations use Python spelling. Actual Qt payloads constrain ordered histories and derived count/example headers; modern containers embedding old caches also decode. Later duplicate identities that native queues cannot retain and complex/float Python note representations fail explicitly before staging rather than silently reduce history. Authored native count and persisted restore/reopen checks consume the recorded histories.",
       "limits": [
-        "Historical file seed-cache type8 versions1\u20137 remain unsupported and fail explicitly; current cache8 with seed versions handled by the legacy decoder is supported.",
+        "Historical cache versions1\u20137 are supported for histories representable by native queues; duplicate identities in later caches and version1 complex/float notes fail explicitly. Generic URL normalization lacks the client's custom URL-class context. The read-only database importer's cache decoder remains version8 only.",
         "Clipboard PNG-image precedence and PNG drag/drop remain absent; PNG files and the original transport popup choices are supported.",
         "Native package/file selection review rejects an entire invalid selection atomically; the reference can retain earlier valid objects and show type warnings. Imports open an additional reviewed child before staging.",
         "Native initialises accepted missing logs directly during Apply instead of requiring a reopen.",
         "Fresh native queries now export file counts/examples, but gallery/velocity caches without a retained reference header remain unsynchronised.",
         "Newest native model/GUI/store/codec regressions and screenshot capture await root hosted CI. No completion is claimed for this Partial step.",
-        "subscriptions-merge and subscription-options are not changed or claimed; import-options clipboard is not counted again."
+        "subscriptions-merge and subscription-options are not changed or claimed; import-options clipboard is not counted again.",
+        "This bounded historical-cache compatibility step retains the existing Partial proposal and receives zero completion credit. Frozen original baseline4356918f assessed subscriptions-exchange Missing; that original before is preserved. No GUI/list/model implementation files changed in this step."
       ],
       "reference_source": {
         "relativepath": "hydrus/client/gui/ClientGUISubscriptions.py",
@@ -166,6 +170,18 @@
           "line": 271,
           "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
           "symbol": "fn change_log("
+        },
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/src/subscription_seed_cache.rs",
+          "line": 113,
+          "commit": "a8d38be601ee32fcdaa67bc8a943ce8aaf4f5ae8",
+          "symbol": "pub(crate) fn log("
+        },
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/src/subscriptions.rs",
+          "line": 14,
+          "commit": "a8d38be601ee32fcdaa67bc8a943ce8aaf4f5ae8",
+          "symbol": "pub fn decode_log("
         }
       ],
       "test_anchors": [
@@ -246,6 +262,24 @@
           "line": 1390,
           "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
           "symbol": "fn subscription_reset_and_retries_refresh_persisted_export_caches_and_forget_file_hashes("
+        },
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/tests/seed_caches.rs",
+          "line": 6,
+          "commit": "a8d38be601ee32fcdaa67bc8a943ce8aaf4f5ae8",
+          "symbol": "fn historical_cache_versions_replay_exact_qt_history_headers_and_list_exports("
+        },
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/tests/seed_caches.rs",
+          "line": 67,
+          "commit": "a8d38be601ee32fcdaa67bc8a943ce8aaf4f5ae8",
+          "symbol": "fn unsafe_or_malformed_history_fails_explicitly_without_truncating_a_package("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/legacy_seed_caches.rs",
+          "line": 7,
+          "commit": "a8d38be601ee32fcdaa67bc8a943ce8aaf4f5ae8",
+          "symbol": "fn upgraded_historical_histories_reach_native_counts_restore_and_reopen_intact("
         }
       ],
       "reference_recording": [
@@ -282,8 +316,22 @@
           "line": 3,
           "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
           "symbol": "\"cases\": ["
+        },
+        {
+          "relativepath": "oracle/record_legacy_seed_caches.py",
+          "line": 19,
+          "commit": "a8d38be601ee32fcdaa67bc8a943ce8aaf4f5ae8",
+          "symbol": "def record(session):"
+        },
+        {
+          "relativepath": "oracle/fixtures/legacy_seed_caches.json",
+          "line": 3,
+          "commit": "a8d38be601ee32fcdaa67bc8a943ce8aaf4f5ae8",
+          "symbol": "\"cases\": ["
         }
       ]
     }
-  ]
+  ],
+  "eligible_concrete_first_pass_count": 0,
+  "parent_promotions": 0
 }
