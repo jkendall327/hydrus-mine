@@ -37,7 +37,7 @@ impl Native {
                     MouseButton::Back => Some(7),
                     MouseButton::Forward => Some(8),
                     MouseButton::Other(5 | 10 | 0x117) => Some(9),
-                    _ => None,
+                    MouseButton::Other(_) => None,
                 };
                 let mut press = u8::from(*state == ElementState::Released);
                 if *state == ElementState::Pressed {
@@ -60,7 +60,7 @@ impl Native {
                 self.wheel = Some(match delta {
                     MouseScrollDelta::LineDelta(_, y) => y * 120.0,
                     MouseScrollDelta::PixelDelta(p) => p.y as f32,
-                })
+                });
             }
             WindowEvent::Focused(false) => {
                 self.click = None;

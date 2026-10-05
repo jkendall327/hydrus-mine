@@ -138,7 +138,7 @@ impl State {
         }
         self.requested.set(None);
         self.track(None);
-        window.set_preview_media(Default::default());
+        window.set_preview_media(slint::Image::default());
         window.set_preview_has_media(false);
         window.set_preview_loading(false);
     }
@@ -276,7 +276,7 @@ impl State {
             eprintln!("could not save preview viewing statistics: {error}");
         }
         if let Some(window) = self.window.upgrade() {
-            window.set_preview_media(Default::default());
+            window.set_preview_media(slint::Image::default());
             window.set_preview_has_media(false);
             window.set_preview_loading(false);
         }

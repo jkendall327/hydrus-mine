@@ -14,7 +14,7 @@ impl Input {
     pub fn observe(&mut self, event: &WindowEvent) {
         match event {
             WindowEvent::ModifiersChanged(modifiers) => {
-                self.bits = modifier_bits(modifiers.state()) | (self.bits & 16)
+                self.bits = modifier_bits(modifiers.state()) | (self.bits & 16);
             }
             WindowEvent::KeyboardInput { event, .. } => {
                 if event.logical_key == Key::Named(NamedKey::AltGraph) {

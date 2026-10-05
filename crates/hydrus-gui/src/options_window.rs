@@ -307,7 +307,8 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                     out.text =
                         crate::domains::location_label(&store.snapshot().services, location).into();
                 }
-                (Kind::NamespaceColours, Value::NamespaceColours(_)) => {
+                (Kind::NamespaceColours, Value::NamespaceColours(_))
+                | (Kind::OpenExternally, Value::OpenExternally(_)) => {
                     out.kind = 31;
                 }
                 (Kind::FavouriteTags, Value::FavouriteTags(_)) => {
@@ -350,9 +351,6 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                 }
                 (Kind::DeletionReasons, Value::DeletionReasons(_)) => {
                     out.kind = 25;
-                }
-                (Kind::OpenExternally, Value::OpenExternally(_)) => {
-                    out.kind = 31;
                 }
                 (Kind::ExternalCalls, Value::ExternalCalls(_)) => {
                     out.kind = 30;
