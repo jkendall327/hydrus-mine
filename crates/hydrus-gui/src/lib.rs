@@ -480,6 +480,8 @@ fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store, rows: &T
 /// Show `pages` in `window`, and let the window change them.
 pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     about_window::note_boot();
+    // Retire the old canvas before successor splitter setup can publish a change.
+    window.invoke_preview_retired();
     window.invoke_retire_external_launches();
     let external_launches = open_externally_launch::Launcher::new(Rc::new({
         let weak = window.as_weak();
