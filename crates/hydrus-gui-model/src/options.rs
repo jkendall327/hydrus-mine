@@ -206,6 +206,7 @@ settings! {
     slideshow: SlideshowSettings,
     sorts: SortSettings,
     tag_presentation: TagPresentation,
+    sibling_connector_colours: hydrus_core::tag_presentation::SiblingConnectorColours,
     tag_summaries: hydrus_core::tag_summary::TagSummaries,
     thumbnails: ThumbnailSettings,
     thumbnail_layout: ThumbnailLayout,
@@ -915,6 +916,15 @@ fn noneable_text(
     get: fn(&Settings) -> Option<String>,
     set: fn(&mut Settings, Option<String>),
 ) -> Item {
+    noneable_text_default(label, none_phrase, "", get, set)
+}
+fn noneable_text_default(
+    label: &'static str,
+    none_phrase: &'static str,
+    default_text: &'static str,
+    get: fn(&Settings) -> Option<String>,
+    set: fn(&mut Settings, Option<String>),
+) -> Item {
     opt(
         label,
         Kind::NoneableText { none_phrase },
@@ -922,7 +932,7 @@ fn noneable_text(
             let value = get(s);
             Value::NoneableText {
                 none: value.is_none(),
-                text: value.unwrap_or_default(),
+                text: value.unwrap_or_else(|| default_text.to_owned()),
             }
         }),
         Rc::new(move |s, v| match v {
@@ -3146,6 +3156,21 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                 t.clone_into(&mut s.tag_presentation.sibling_connector);
                                 Ok(())
                             },
+                        ),
+                        check(
+                            "Fade the colour of the sibling connector string on Qt6: ",
+                            |s| s.sibling_connector_colours.fade,
+                            |s, value| s.sibling_connector_colours.fade = value,
+                        ),
+                        enabled(
+                            noneable_text_default(
+                                "Namespace for the colour of the sibling connecting string: ",
+                                "use ideal tag colour",
+                                "system",
+                                |s| s.sibling_connector_colours.namespace.clone(),
+                                |s, value| s.sibling_connector_colours.namespace = value,
+                            ),
+                            |s| !s.sibling_connector_colours.fade,
                         ),
                         check(
                             "EXPERIMENTAL: Replace all underscores with spaces: ",

@@ -123,6 +123,7 @@ pub mod tag_filter_window;
 pub mod tag_migration_window;
 pub(crate) mod tag_relationships_window;
 pub mod tag_suggestions_window;
+mod tag_text;
 pub mod thumbnail_menu;
 mod thumbnail_navigation;
 mod thumbnails;
@@ -6014,7 +6015,32 @@ pub(crate) fn list_text(text: &str, [r, g, b]: [u8; 3]) -> ListText {
     ListText {
         text: text.into(),
         colour: slint::Color::from_rgb_u8(r, g, b),
+        parts: ModelRc::default(),
     }
+}
+
+pub(crate) fn styled_list_text(
+    text: &str,
+    colour: [u8; 3],
+    parts: &[hydrus_core::tag_presentation::TagText],
+) -> ListText {
+    let mut row = list_text(text, colour);
+    row.parts = ModelRc::new(VecModel::from(
+        parts
+            .iter()
+            .map(|part| TagTextRun {
+                text: part.text.as_str().into(),
+                colour: slint::Color::from_rgb_u8(part.colour[0], part.colour[1], part.colour[2]),
+                previous_colour: slint::Color::from_rgb_u8(
+                    part.previous_colour[0],
+                    part.previous_colour[1],
+                    part.previous_colour[2],
+                ),
+                fade: part.fade,
+            })
+            .collect::<Vec<_>>(),
+    ));
+    row
 }
 
 /// Show the page's search: the box's text and suggestions, the predicates,

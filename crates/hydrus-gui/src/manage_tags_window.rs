@@ -6,7 +6,7 @@ use std::rc::Rc;
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 
 use crate::manage_tags::ManageTags;
-use crate::{ListText, ManageTagsWindow, list_text};
+use crate::{ListText, ManageTagsWindow};
 
 /// Open the window on `model`; it forgets itself from `slot` when closed,
 /// and calls `applied` once changes are written.
@@ -67,7 +67,9 @@ pub(crate) fn open(
             let tags: Vec<ListText> = model
                 .display_rows()
                 .iter()
-                .map(|row| list_text(&row.label, colours.tag(&row.colour_tag)))
+                .map(|row| {
+                    crate::styled_list_text(&row.label, colours.tag(&row.colour_tag), &row.parts)
+                })
                 .collect();
             window.set_tags(ModelRc::new(VecModel::from(tags)));
             window
@@ -75,7 +77,7 @@ pub(crate) fn open(
             let suggestions: Vec<ListText> = model
                 .suggestion_rows()
                 .iter()
-                .map(|r| list_text(&r.label, colours.tag(&r.colour_tag)))
+                .map(|r| crate::styled_list_text(&r.label, colours.tag(&r.colour_tag), &r.parts))
                 .collect();
             window.set_suggestions(ModelRc::new(VecModel::from(suggestions)));
             window.set_suggestion_selected(ModelRc::new(VecModel::from(
@@ -445,6 +447,31 @@ pub(crate) fn open(
             refresh();
         }
     });
+    let colour_updates = crate::tag_text::watch(
+        model.borrow().store(),
+        Rc::new({
+            let weak = window.as_weak();
+            let active = active.clone();
+            let incremental_open = incremental_open.clone();
+            let tag_menu = tag_menu.clone();
+            move || {
+                active.get()
+                    && !incremental_open.get()
+                    && !tag_menu.busy()
+                    && weak.upgrade().is_some_and(|window| {
+                        window.window().is_visible() && window.get_question().is_empty()
+                    })
+            }
+        }),
+        Rc::new({
+            let model = model.clone();
+            let refresh = refresh.clone();
+            move || {
+                model.borrow_mut().fetch();
+                refresh();
+            }
+        }),
+    );
     let preference_timer = Rc::new(slint::Timer::default());
     let close = {
         let incremental_slot = incremental_slot.clone();
@@ -455,6 +482,7 @@ pub(crate) fn open(
         let pending_paste = pending_paste.clone();
         let tag_menu = tag_menu.clone();
         let preference_timer = preference_timer.clone();
+        let colour_updates = colour_updates.clone();
         let side_timer = side_timer.clone();
         let related_worker = related_worker.clone();
         move || {
@@ -464,6 +492,7 @@ pub(crate) fn open(
             incremental_open.set(false);
             crate::incremental_tagging_window::cancel(&incremental_slot);
             preference_timer.stop();
+            colour_updates.stop();
             side_timer.stop();
             if let Some(worker) = &related_worker {
                 worker.close();

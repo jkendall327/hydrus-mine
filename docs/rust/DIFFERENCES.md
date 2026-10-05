@@ -2183,3 +2183,5 @@ selection, scroll, Options and rate decision handlers remain unchanged; preview
 playback is not recorded. Native real pointer/key/wheel replays and the
 `thumbnail-navigation.png` capture are authored for hosted CI. No local Cargo
 builds/tests or mutation runs were performed.
+
+The sibling connector fade and custom-namespace preferences now have typed import/persistence, staged Options controls and segmented painting in every existing native sibling-annotation consumer. As in Qt, storage-list terms do not permit fades, while write-autocomplete predicate terms do. The broader Tag Presentation and tag-list families remain Partial: this slice does not add sibling decorations to native surfaces that never had them, expand OR rows, or complete list menus/navigation. Native fonts, palettes and clipping follow the existing Slint lists; the reference and hosted native PNGs expose the rendered solid/gradient states.

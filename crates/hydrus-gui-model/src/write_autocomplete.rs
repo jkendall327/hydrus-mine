@@ -16,6 +16,7 @@ use hydrus_store::{
 pub struct Suggestion {
     pub tag: String,
     pub label: String,
+    pub parts: Vec<hydrus_core::tag_presentation::TagText>,
     pub colour_tag: String,
     pub counted: bool,
     pub count: CountRange,
@@ -637,6 +638,10 @@ impl WriteAutocomplete {
         }
         let presentation: hydrus_core::tag_presentation::TagPresentation =
             self.store.read(settings::get).unwrap_or_default();
+        let colours: hydrus_core::tag_presentation::NamespaceColours =
+            self.store.read(settings::get).unwrap_or_default();
+        let style: hydrus_core::tag_presentation::SiblingConnectorColours =
+            self.store.read(settings::get).unwrap_or_default();
         let prefs = self.options();
         let mut rows = Vec::new();
         for m in matches {
@@ -644,6 +649,7 @@ impl WriteAutocomplete {
                 rows.push(Suggestion {
                     colour_tag: m.tag.clone(),
                     label: presentation.render(&m.tag),
+                    parts: Vec::new(),
                     tag: m.tag,
                     counted: false,
                     count: CountRange::default(),
@@ -679,11 +685,11 @@ impl WriteAutocomplete {
                 label.push(' ');
                 label.push_str(&count);
             }
-            if prefs.autocomplete_show_siblings
-                && let Some(ideal) = ideal
-            {
+            let prefix = label.clone();
+            let shown_ideal = ideal.filter(|_| prefs.autocomplete_show_siblings);
+            if let Some(ideal) = &shown_ideal {
                 label.push_str(&presentation.sibling_connector);
-                label.push_str(&presentation.render(&ideal));
+                label.push_str(&presentation.render(ideal));
             }
             if !parents.is_empty()
                 && !prefs.autocomplete_expand_parents
@@ -691,10 +697,29 @@ impl WriteAutocomplete {
             {
                 label.push_str(&format!(" ({} parents)", parents.len()));
             }
+            let parts = shown_ideal.as_ref().map_or_else(Vec::new, |ideal| {
+                let ideal_text = presentation.render(ideal);
+                let suffix = label
+                    .strip_prefix(&format!(
+                        "{prefix}{}{ideal_text}",
+                        presentation.sibling_connector
+                    ))
+                    .unwrap_or_default()
+                    .to_owned();
+                style.runs(
+                    (&m.tag, prefix),
+                    &presentation.sibling_connector,
+                    (ideal, ideal_text),
+                    suffix,
+                    &colours,
+                    true,
+                )
+            });
             rows.push(Suggestion {
                 tag: m.tag.clone(),
                 colour_tag: m.tag.clone(),
                 label,
+                parts,
                 counted: m.count.max_current > 0 || m.count.max_pending > 0,
                 count: m.count,
                 parents: parents.clone(),
@@ -705,6 +730,7 @@ impl WriteAutocomplete {
                 rows.extend(parents.into_iter().map(|parent| Suggestion {
                     tag: m.tag.clone(),
                     label: format!("    {}", presentation.render(&parent)),
+                    parts: Vec::new(),
                     colour_tag: parent,
                     counted: m.count.max_current > 0 || m.count.max_pending > 0,
                     count: m.count,

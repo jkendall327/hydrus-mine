@@ -1,3 +1,4 @@
+import { PaintedTagText } from "tag_text.slint";
 // One write-tag input for editors. State, fetching and paste decisions live in Rust.
 import { Button, ComboBox, ScrollView, ListView } from "std-widgets.slint";
 import { WriteTagLineEdit } from "write_tag_line_edit.slint";
@@ -113,14 +114,7 @@ export component WriteTagInput inherits FocusScope {
                             for suggestion[i] in root.suggestions: Rectangle {
                                 height: 22px;
                                 background: root.selected[i] ? Theme.highlight : transparent;
-                                Text {
-                                    x: 4px;
-                                    text: suggestion.text;
-                                    color: root.selected[i] ? Theme.highlight-text : suggestion.colour;
-                                    vertical-alignment: center;
-                                    overflow: elide;
-                                    width: parent.width - 8px;
-                                }
+                                PaintedTagText { x:4px;item:suggestion;selected:root.selected[i];width:parent.width - 8px;height:parent.height; }
                             }
                         }
                         // Stay alive when a selection refresh replaces the repeated rows.

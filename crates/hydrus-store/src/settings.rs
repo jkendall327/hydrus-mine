@@ -1298,3 +1298,7 @@ impl Setting for NotePreferences {
 impl Setting for hydrus_core::external_calls::Manager {
     const KEY: &'static str = "external_calls";
 }
+
+impl Setting for hydrus_core::tag_presentation::SiblingConnectorColours {
+    const KEY: &'static str = "sibling_connector_colours";
+}
