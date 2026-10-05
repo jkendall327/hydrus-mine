@@ -546,6 +546,9 @@ pub(crate) fn open(
         let location = Rc::downgrade(&location_slot);
         let regex = Rc::downgrade(&regex_slot);
         let banner = Rc::downgrade(banner_slot);
+        let suggested = Rc::downgrade(&suggested_slot.editor);
+        let suggested_tags = Rc::downgrade(&suggested_slot.tags);
+        let suggested_weights = Rc::downgrade(&suggested_slot.weights);
         move || {
             !active.get()
                 || !weak
@@ -579,6 +582,15 @@ pub(crate) fn open(
                     .upgrade()
                     .is_some_and(|slot| crate::regex_favourites_window::has_open(&slot))
                 || banner.upgrade().is_some_and(|slot| slot.borrow().is_some())
+                || suggested
+                    .upgrade()
+                    .is_some_and(|slot| slot.borrow().is_some())
+                || suggested_tags
+                    .upgrade()
+                    .is_some_and(|slot| slot.borrow().is_some())
+                || suggested_weights
+                    .upgrade()
+                    .is_some_and(|slot| slot.borrow().is_some())
         }
     });
     // (the rows are made anew only as the page changes: an edit leaves its
