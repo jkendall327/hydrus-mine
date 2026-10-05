@@ -335,6 +335,7 @@ fn selected_export_tag_sidebar_copies_launches_native_pages_persists_favourites_
     let (_dirs, store) = crate::subscriptions::store();
     let windows = headless::init();
     let main = MainWindow::new().unwrap();
+    main.show().unwrap();
     let bound = bind(&main, Pages::open(store.clone()).unwrap());
     let slots = Slots::default();
     let window = export_files_window::open(

@@ -969,6 +969,7 @@ fn batch_context_menu_copies_and_launches_real_and_or_each_and_duplicate_pages()
         .key
         .clone();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     let slot = hydrus_gui::write_tag_window::Slot::default();
     let child = hydrus_gui::write_tag_window::open(

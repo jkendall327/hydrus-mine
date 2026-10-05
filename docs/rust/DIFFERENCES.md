@@ -1634,7 +1634,10 @@ its first page, as Qt does. Windows/macOS/X11 use Winit's real focus/raise reque
 and active-window check; Wayland `focus_window` is unsupported by Winit, so this
 control remains Partial with zero completion credit. Native multi-tag selection,
 OR/multi-page viewer menus and activation from child manage/write tag lists are
-also outside this slice. Headless request counters do not prove an OS focus grant.
+also outside this slice. The new tag producer blocks the viewer's question,
+warning, slideshow-period input and owned advanced-delete child; this does not
+establish a general native modal policy for other detached dialogs. Headless
+request counters do not prove an OS focus grant.
 
 Application display name remains an existing Partial refinement, with zero new
 credit: unchanged Apply now normalizes raw empty imported names, Cancel preserves

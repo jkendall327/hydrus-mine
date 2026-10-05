@@ -5357,6 +5357,7 @@ fn open_viewer(
         model.clone(),
         viewing_stats.clone(),
         owner_valid.clone(),
+        viewer_delete.clone(),
         tag_search,
     );
     viewer_eye_menu::bind(
