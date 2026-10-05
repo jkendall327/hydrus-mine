@@ -2,19 +2,21 @@
   "schema_version": 1,
   "task": "Registered external-call Options and owned process/command children",
   "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
-  "source_commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+  "source_commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
   "implementation_commits": [
     "159b75911db952753351d9886ba2f3e2289d950d",
-    "0e9e877cbb8883aecb186da8497b7987e2bb0072"
+    "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+    "992c47d02ea0b11249ce8c61ffbeab31bfb7ec99",
+    "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608"
   ],
-  "eligible_concrete_first_pass_count": 3,
+  "eligible_concrete_first_pass_count": 5,
   "parent_promotions": 0,
   "validation": {
-    "reference": "Executed actual Qt recorder/list actions/owned local process; PNG inspected",
+    "reference": "Executed prior actual Qt external-call list and new command queue/clipboard recorder; both PNGs inspected",
     "formatting": "rustfmt --edition2024, Python py_compile and git diff --check passed",
     "slint_source_check": "cached warning-aware Slint compiler passed; no Cargo",
-    "rust_tests": "Authored model/native/store regressions and PNG; hosted CI pending",
-    "independent_review": "follow_migration final clean source0e9e877cb accepts exact defaults/duplicate-prefix/selection/warnings/deletion and owned worker lifecycle; no Cargo."
+    "rust_tests": "Prior external-call regressions plus authored exact queue/clipboard/model/native/store/substitution replays; hosted CI pending, no local Cargo",
+    "independent_review": "Prior three list actions independently accepted by follow_migration at0e9; new two command-control proposals awaiting bounded independent review/hosted CI"
   },
   "entries": [
     {
@@ -958,11 +960,11 @@
     {
       "reference_id": "audit-options-nested-external-call-command-arguments",
       "before": "missing",
-      "previous_status": "missing",
-      "proposedStatus": "partial",
-      "proposed_status": "partial",
-      "exactBehavior": "Argument queue accepts reference-cleaned text and captured-count delete questions; Up/Down use original selected indices.",
-      "behavior": "Argument queue accepts reference-cleaned text and captured-count delete questions; Up/Down use original selected indices.",
+      "previous_status": "partial",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "Parameter Add leaves the new row unselected; Edit edits the top selected row even with several selected, using the exact Enter parameter message/default/placeholder and reference first-line whitespace cleaning. Delete captures indices and asks Remove N selected?, with decline/close unchanged. Up/Down iterate original selected indices including selected neighbours at boundaries, preserving Qt current focus and Shift origin. Focused list extended selection, arrows/Home/End, Ctrl+A/C/Insert/Space and Delete (macOS Backspace too) reach the real queue. Selected-text copy preserves selectedItems insertion order; the command example uses cleaned values. Child/parent Cancel and retired callbacks discard drafts; accepted values persist/reopen and feed saved Process.command token substitution.",
+      "behavior": "Parameter Add leaves the new row unselected; Edit edits the top selected row even with several selected, using the exact Enter parameter message/default/placeholder and reference first-line whitespace cleaning. Delete captures indices and asks Remove N selected?, with decline/close unchanged. Up/Down iterate original selected indices including selected neighbours at boundaries, preserving Qt current focus and Shift origin. Focused list extended selection, arrows/Home/End, Ctrl+A/C/Insert/Space and Delete (macOS Backspace too) reach the real queue. Selected-text copy preserves selectedItems insertion order; the command example uses cleaned values. Child/parent Cancel and retired callbacks discard drafts; accepted values persist/reopen and feed saved Process.command token substitution.",
       "reference_source": {
         "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
         "line": 449,
@@ -970,73 +972,85 @@
       },
       "source_anchors": [
         {
-          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
-          "line": 180,
-          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
-          "symbol": "pub(crate) fn bind("
-        },
-        {
-          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
-          "line": 15,
-          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
-          "symbol": "pub struct Table"
-        },
-        {
-          "relativepath": "crates/hydrus-store/src/settings.rs",
-          "line": 1277,
-          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
-          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+          "relativepath": "crates/hydrus-gui-model/src/external_command.rs",
+          "line": 7,
+          "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+          "symbol": "pub struct Queue"
         },
         {
           "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
-          "line": 654,
-          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
-          "symbol": "pub fn open("
-        },
-        {
-          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
-          "line": 390,
-          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "line": 370,
+          "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
           "symbol": "fn command_open("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 240,
+          "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+          "symbol": "fn command_action("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/list_selection.rs",
+          "line": 26,
+          "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+          "symbol": "pub fn click("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 159,
+          "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+          "symbol": "fn text_child("
         }
       ],
       "test_anchors": [
         {
           "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
-          "line": 75,
-          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
-          "symbol": "fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner()"
+          "line": 669,
+          "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+          "symbol": "fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 863,
+          "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+          "symbol": "fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement()"
         },
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
-          "line": 7,
-          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
-          "symbol": "fn actual_reference_substitution_validation_and_argument_cleaning()"
+          "line": 365,
+          "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+          "symbol": "fn command_parameter_queue_selection_reorder_and_keyboard_match_actual_qt()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+          "line": 331,
+          "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+          "symbol": "fn command_clipboard_review_and_cleaned_example_match_actual_qt()"
         }
       ],
       "reference_recording": {
-        "script": "oracle/record_external_calls.py",
-        "fixture": "oracle/fixtures/external_calls.json",
-        "screenshot": "oracle/fixtures/external_calls.png",
-        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
-        "executed_at": "2026-10-05 01:57:33–01:57:35 UTC",
-        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+        "script": "oracle/record_external_command.py",
+        "fixture": "oracle/fixtures/external_command.json",
+        "screenshot": "oracle/fixtures/external_command.png",
+        "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+        "executed_at": "2026-10-05 02:51:52–02:51:54 UTC",
+        "result": "Actual v688 Qt temporary basic client, real parameter queue button/list key handlers: boundary selected-neighbour rotations, multi-selected first-row edit, Unicode/newline cleaning, Add/Edit/Delete cancellation, clicked current/Shift anchor after reorder, selectedItems copy insertion order and Ctrl+Insert/Delete. Ten clipboard texts accepted and declined cover zero/one/many arguments, literal quotes, repeated spaces, tab/newline, Unicode/C0 whitespace and truncated summaries. Missing clipboard text records actual Error message. Only dialog responses/clipboard transport are scripted; no external program/network/OS launcher executed. Actual Qt PNG inspected."
       },
       "limitations": [
-        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
-        "Legacy executable-manager import, missing OS-launch constructor regeneration and per-file-type production launch routing are absent. These actions apply to the registered typed calls displayed by this owner.",
-        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
-        "Complete Qt queue CRUD/reordering recorder/native regression, keyboard and multi-selected edit parity are not claimed."
+        "Broader external-program/list/reopen and command/process parents remain Partial; executable picker/PATH/availability breadth, OS launch routing and full process output are not claimed. No new windows or parent/alias promotions.",
+        "These controls edit displayed typed process calls; legacy executable-manager migration and missing OS-launch constructor regeneration remain absent.",
+        "Physical tooltip placement, Qt list PageUp/PageDown/type-ahead/scroll-to-current and complete command dialog geometry are outside these two explicit control leaves.",
+        "Authored native keyboard/owner/store regressions and native command PNG await hosted CI; no local Cargo/tests or mutation testing were run."
       ]
     },
     {
       "reference_id": "audit-options-nested-external-call-command-copy",
       "before": "missing",
-      "previous_status": "missing",
-      "proposedStatus": "partial",
-      "proposed_status": "partial",
-      "exactBehavior": "Template copy and split-space paste confirmation stage command values in the child.",
-      "behavior": "Template copy and split-space paste confirmation stage command values in the child.",
+      "previous_status": "partial",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "Full-template Copy uses cleaned parameters and publishes exact unescaped text. Paste strips Python whitespace then splits literal spaces, retaining raw rows and quote fragments; the exact unsorted count/summary review handles zero, one, blank/repeated, Unicode/C0, tab/newline and truncated many-argument cases. No/close keep the draft; Yes updates executable/raw rows and cleaned example. Copy/accepted paste show Copied!/Pasted! feedback. Missing clipboard text opens owned Error/ok with No text on the clipboard!; access failures do not mutate the draft. Child Apply cleans arguments; parent Apply persists them, with reopened saved Process.command preserving literals/Unicode and substituting tokens. Parent Cancel and retired reviews cannot publish.",
+      "behavior": "Full-template Copy uses cleaned parameters and publishes exact unescaped text. Paste strips Python whitespace then splits literal spaces, retaining raw rows and quote fragments; the exact unsorted count/summary review handles zero, one, blank/repeated, Unicode/C0, tab/newline and truncated many-argument cases. No/close keep the draft; Yes updates executable/raw rows and cleaned example. Copy/accepted paste show Copied!/Pasted! feedback. Missing clipboard text opens owned Error/ok with No text on the clipboard!; access failures do not mutate the draft. Child Apply cleans arguments; parent Apply persists them, with reopened saved Process.command preserving literals/Unicode and substituting tokens. Parent Cancel and retired reviews cannot publish.",
       "reference_source": {
         "relativepath": "hydrus/client/gui/panels/options/ExternalProgramsPanel.py",
         "line": 385,
@@ -1044,57 +1058,81 @@
       },
       "source_anchors": [
         {
-          "relativepath": "crates/hydrus-gui/src/options_external_calls.rs",
-          "line": 180,
-          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
-          "symbol": "pub(crate) fn bind("
-        },
-        {
-          "relativepath": "crates/hydrus-gui-model/src/external_calls.rs",
-          "line": 15,
-          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
-          "symbol": "pub struct Table"
-        },
-        {
-          "relativepath": "crates/hydrus-store/src/settings.rs",
-          "line": 1277,
-          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
-          "symbol": "impl Setting for hydrus_core::external_calls::Manager"
+          "relativepath": "crates/hydrus-gui-model/src/external_command.rs",
+          "line": 7,
+          "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+          "symbol": "pub struct Queue"
         },
         {
           "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
-          "line": 654,
-          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
-          "symbol": "pub fn open("
-        },
-        {
-          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
-          "line": 390,
-          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
+          "line": 370,
+          "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
           "symbol": "fn command_open("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/external_call_window.rs",
+          "line": 240,
+          "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+          "symbol": "fn command_action("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/list_selection.rs",
+          "line": 26,
+          "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+          "symbol": "pub fn click("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/external_command.rs",
+          "line": 135,
+          "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+          "symbol": "pub struct Paste"
+        },
+        {
+          "relativepath": "crates/hydrus-core/src/external_calls.rs",
+          "line": 175,
+          "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+          "symbol": "pub fn clean_arguments("
         }
       ],
       "test_anchors": [
         {
           "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
-          "line": 75,
-          "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
-          "symbol": "fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner()"
+          "line": 669,
+          "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+          "symbol": "fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/external_calls.rs",
+          "line": 863,
+          "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+          "symbol": "fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+          "line": 365,
+          "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+          "symbol": "fn command_parameter_queue_selection_reorder_and_keyboard_match_actual_qt()"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/external_calls.rs",
+          "line": 331,
+          "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+          "symbol": "fn command_clipboard_review_and_cleaned_example_match_actual_qt()"
         }
       ],
       "reference_recording": {
-        "script": "oracle/record_external_calls.py",
-        "fixture": "oracle/fixtures/external_calls.json",
-        "screenshot": "oracle/fixtures/external_calls.png",
-        "commit": "0e9e877cbb8883aecb186da8497b7987e2bb0072",
-        "executed_at": "2026-10-05 01:57:33–01:57:35 UTC",
-        "result": "Actual v688 Qt temporary basic client: callable key/edit staging and manager serialization; clean/substitute/preview and harmless owned Python process test; six casefold/tie sorts; real Duplicate with prior selection; mixed valid/unusual/tail duplicates accepted or declined with ordered prefix/selection/fresh keys; OS file/URL simple delete accepted/declined; both Add Defaults callbacks and platform-only all with exact choices; five size-warning boundaries including Unicode/quotes/Python repr; full factory/platform tuples. Qt child PNG executed and inspected. No reference source edits or network/OS launcher execution."
+        "script": "oracle/record_external_command.py",
+        "fixture": "oracle/fixtures/external_command.json",
+        "screenshot": "oracle/fixtures/external_command.png",
+        "commit": "c385f8c42bf715be5fa6a5c8ff500f35f8bc0608",
+        "executed_at": "2026-10-05 02:51:52–02:51:54 UTC",
+        "result": "Actual v688 Qt temporary basic client, real parameter queue button/list key handlers: boundary selected-neighbour rotations, multi-selected first-row edit, Unicode/newline cleaning, Add/Edit/Delete cancellation, clicked current/Shift anchor after reorder, selectedItems copy insertion order and Ctrl+Insert/Delete. Ten clipboard texts accepted and declined cover zero/one/many arguments, literal quotes, repeated spaces, tab/newline, Unicode/C0 whitespace and truncated summaries. Missing clipboard text records actual Error message. Only dialog responses/clipboard transport are scripted; no external program/network/OS launcher executed. Actual Qt PNG inspected."
       },
       "limitations": [
-        "Broad external-program/list/reopen, import/export and nested call/process families remain Partial. No parent completion, aliases or unsupported call types counted.",
-        "Legacy executable-manager import, missing OS-launch constructor regeneration and per-file-type production launch routing are absent. These actions apply to the registered typed calls displayed by this owner.",
-        "No local Cargo builds/tests or mutations were run. Authored model/native/store consumers and native PNG await hosted CI.",
-        "Full reference prompt and exact user-route recorder/regressions are incomplete."
+        "Broader external-program/list/reopen and command/process parents remain Partial; executable picker/PATH/availability breadth, OS launch routing and full process output are not claimed. No new windows or parent/alias promotions.",
+        "These controls edit displayed typed process calls; legacy executable-manager migration and missing OS-launch constructor regeneration remain absent.",
+        "Physical tooltip placement, Qt list PageUp/PageDown/type-ahead/scroll-to-current and complete command dialog geometry are outside these two explicit control leaves.",
+        "Authored native keyboard/owner/store regressions and native command PNG await hosted CI; no local Cargo/tests or mutation testing were run."
       ]
     },
     {
@@ -1407,10 +1445,14 @@
       "OptionsWindow -> SessionDialog (Delete/Duplicate/platform question)",
       "ExternalCallWindow -> ExternalCommandWindow (edit command and parameters)",
       "ExternalCallWindow -> StringProcessorWindow (input rule processor)",
-      "ExternalCommandWindow -> SessionDialog (parameter/confirmation)",
+      "ExternalCommandWindow -> SessionDialog (parameter, captured delete/paste review, clipboard Error/ok)",
       "OptionsWindow -> DownloaderExchangeWindow (typed external-call exchange)",
       "DownloaderExchangeWindow -> PngExportWindow (frozen export payload)"
     ],
-    "native_png": "external_callable.png (authored CARGO_TARGET_TMPDIR; hosted CI pending)"
+    "native_png": "external_callable.png (authored CARGO_TARGET_TMPDIR; hosted CI pending)",
+    "native_pngs": [
+      "external_callable.png",
+      "external-command-parameters.png"
+    ]
   }
 }
