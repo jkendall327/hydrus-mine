@@ -63,6 +63,7 @@ pub trait Effects {
 }
 
 /// Normal local filesystem effects and the current wall clock.
+#[derive(Debug)]
 pub struct Local {
     next_pause: Cell<Instant>,
 }
