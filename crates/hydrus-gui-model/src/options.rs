@@ -2258,16 +2258,6 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     |s| s.folders.delete_to_recycle_bin,
                     |s, v| s.folders.delete_to_recycle_bin = v,
                 ),
-                check(
-                    "Allow trash maintenance during normal time: ",
-                    |s| s.maintenance_gates.trash_normal,
-                    |s, value| s.maintenance_gates.trash_normal = value,
-                ),
-                check(
-                    "Allow deferred file deletes during normal time: ",
-                    |s| s.maintenance_gates.deferred_normal,
-                    |s, value| s.maintenance_gates.deferred_normal = value,
-                ),
                 duration(
                     "When maintenance physically deletes files, wait this long between each delete: ",
                     time(&[Unit::Seconds, Unit::Milliseconds], 0.02),
@@ -2318,6 +2308,16 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     none("no size limit", 2048, (0, 20480), None),
                     |s| signed(s.trash.max_size_mb),
                     |s, v| s.trash.max_size_mb = unsigned(v),
+                ),
+                check(
+                    "Allow trash maintenance during normal time: ",
+                    |s| s.maintenance_gates.trash_normal,
+                    |s, value| s.maintenance_gates.trash_normal = value,
+                ),
+                check(
+                    "Allow deferred file deletes during normal time: ",
+                    |s| s.maintenance_gates.deferred_normal,
+                    |s, value| s.maintenance_gates.deferred_normal = value,
                 ),
                 check(
                     "TEST: Import local files directly from source, do not copy to temp dir beforehand.",
@@ -3056,6 +3056,22 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         ),
                     ],
                 ),
+                boxed(
+                    "system",
+                    vec![
+                        int(
+                            "FFMPEG call timeout:",
+                            (1, 600),
+                            |settings| settings.ffmpeg_policy.seconds.clamp(1, 600),
+                            |settings, value| settings.ffmpeg_policy.seconds = value,
+                        ),
+                        check(
+                            "Apply image ICC Profile colour adjustments:",
+                            |settings| settings.image_colour.normalise_icc,
+                            |settings, value| settings.image_colour.normalise_icc = value,
+                        ),
+                    ],
+                ),
             ],
         ),
         page(
@@ -3175,22 +3191,6 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             none("do not use", 50, (1, 500), Some("%")),
                             |s| s.slideshow.long_overspill_percentage,
                             |s, v| s.slideshow.long_overspill_percentage = v,
-                        ),
-                    ],
-                ),
-                boxed(
-                    "system",
-                    vec![
-                        int(
-                            "FFMPEG call timeout:",
-                            (1, 600),
-                            |settings| settings.ffmpeg_policy.seconds.clamp(1, 600),
-                            |settings, value| settings.ffmpeg_policy.seconds = value,
-                        ),
-                        check(
-                            "Apply image ICC Profile colour adjustments:",
-                            |settings| settings.image_colour.normalise_icc,
-                            |settings, value| settings.image_colour.normalise_icc = value,
                         ),
                     ],
                 ),
@@ -4099,14 +4099,6 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             "thumbnails",
             vec![
                 boxed(
-                    "New Rendering Tech",
-                    vec![check(
-                        "Use the new thumbnail rendering tech (only applies to new pages): ",
-                        |s| s.thumbnail_appearance.new_renderer,
-                        |s, v| s.thumbnail_appearance.new_renderer = v,
-                    )],
-                ),
-                boxed(
                     "appearance",
                     vec![
                         int(
@@ -4253,6 +4245,14 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                 Err(wrong("image path"))
                             }
                         }),
+                    )],
+                ),
+                boxed(
+                    "New Rendering Tech",
+                    vec![check(
+                        "Use the new thumbnail rendering tech (only applies to new pages): ",
+                        |s| s.thumbnail_appearance.new_renderer,
+                        |s, v| s.thumbnail_appearance.new_renderer = v,
                     )],
                 ),
             ],
