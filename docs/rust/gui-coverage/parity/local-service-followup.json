@@ -191,6 +191,17 @@
           "executed_at": "2026-10-04 22:30:01–22:30:02 UTC",
           "result": "Passed actual Qt numerical example press, held move, outside move/press, release, ordinary hover, fraction text click and right click for all three opening fraction sides. Whole-widget x/width/icon dimensions and exact rating/state/fractions captured; original service dictionary unchanged, other sample unrated, example persistence contribution empty. Real mouse events dispatched through Qt, no handlers/conversion/paint patched. Populated drag PNG inspected."
         }
+      ],
+      "native_geometry_repairs": [
+        {
+          "commit": "cb35c4a38",
+          "source": "crates/hydrus-gui/ui/services_editor.slint",
+          "symbol": "EditServiceWindow preferred-width/preferred-height",
+          "test": "crates/hydrus-gui/tests/gui/services_editor.rs::numerical_examples_drag_and_fraction_text_use_the_whole_widget_hit_area",
+          "diagnosis": "Hosted c263 replay exposed equal 389px hit widths after 680px and 640px paints. Cached generated source proved the literal initial Window.width had constant-folded the scroll viewport to 616px; native Resize correctly updated the root item but not that fixed descendant.",
+          "repair": "Initial dimensions use preferred-width/height so the generated scroll viewport binds actual WindowItem width/height. Persistent read-only hit geometry remains intact; real-pointer/fraction/collapse assertions are preserved and actual window dimensions/full 40px hit-area growth are asserted.",
+          "verification": "cargo fmt --all and git diff --check passed; cached Slint compiler generated live WindowItem.width-24 viewport binding without warnings. No local Rust/native execution; hosted replay pending. This evidence update changes no eligible count or broader preview status."
+        }
       ]
     }
   ],
