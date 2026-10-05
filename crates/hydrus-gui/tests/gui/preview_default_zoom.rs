@@ -216,7 +216,8 @@ fn real_options_cancel_reopen_six_modes_paint_clipped_geometry_and_preserve_curr
         "overflowing raster is clipped to the real preview pane"
     );
     headless::save_png(
-        &hydrus_testkit::artifacts_dir().join("preview-default-zoom-fill-native.png"),
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("preview-default-zoom-fill-native.png"),
         &fill_pixels,
         1400,
         1000,
@@ -260,7 +261,7 @@ fn real_options_cancel_reopen_six_modes_paint_clipped_geometry_and_preserve_curr
         "accepted raster is actually painted"
     );
     headless::save_png(
-        &hydrus_testkit::artifacts_dir().join("preview-default-zoom-native.png"),
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("preview-default-zoom-native.png"),
         &pixels,
         1400,
         1000,

@@ -135,7 +135,8 @@ fn actual_existing_size_cancel_unchanged_and_edit_reach_reference_query_counts()
     let adapter = windows.get(windows.count() - 1).unwrap();
     let pixels = headless::render(&adapter, 900, 480);
     headless::save_png(
-        &hydrus_testkit::artifacts_dir().join("active-predicate-existing-size.png"),
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("active-predicate-existing-size.png"),
         &pixels,
         900,
         480,
