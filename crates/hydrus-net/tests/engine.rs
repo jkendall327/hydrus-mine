@@ -18,6 +18,34 @@ use hydrus_store::Store;
 use hydrus_store::network::{self, Approval, NetworkContext};
 
 #[tokio::test]
+async fn saved_byte_precision_reaches_both_real_overlength_errors_after_reload() {
+    let fixture = hydrus_testkit::fixture_json("gui_format_backend.json");
+    let s = setup(|_| Vec::new()).await;
+    for event in fixture["events"].as_array().unwrap() {
+        let formatting: hydrus_store::settings::GuiFormatting =
+            serde_json::from_value(event["saved"].clone()).unwrap();
+        s.store
+            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &formatting))
+            .unwrap();
+        s.engine.reload_settings().unwrap();
+        for kind in ["whole", "range"] {
+            let job = Job::new();
+            let error = s
+                .engine
+                .fetch(&Request::get(format!("{}/overlength/{kind}", s.base)), &job)
+                .await
+                .unwrap_err();
+            assert!(
+                matches!(&error, NetError::Network(text) if text == event["consumers"]["network"][kind].as_str().unwrap()),
+                "{error}"
+            );
+            assert_eq!(job.state().bytes_read, fixture["read"].as_u64().unwrap());
+            assert!(job.state().done && job.state().error);
+        }
+    }
+}
+
+#[tokio::test]
 async fn runtime_registry_cancellation_ipc_and_dropped_fetch() {
     use hydrus_store::{
         network_runtime::{self, Command, JobAction, Snapshot, WaitReason},
@@ -342,6 +370,19 @@ async fn ranged(State(s): State<Arc<Server>>, headers: HeaderMap) -> Response {
         .unwrap()
 }
 
+async fn overlength(Path(kind): Path<String>) -> Response {
+    let range = if kind == "whole" {
+        "bytes 0-243200/243200"
+    } else {
+        "bytes 0-243199/188213746"
+    };
+    Response::builder()
+        .status(StatusCode::PARTIAL_CONTENT)
+        .header(header::CONTENT_RANGE, range)
+        .body(Body::from(vec![0; 243201]))
+        .unwrap()
+}
+
 async fn redirect_loop(Path(n): Path<u32>) -> Response {
     Response::builder()
         .status(StatusCode::FOUND)
@@ -398,6 +439,7 @@ async fn setup(make_classes: impl FnOnce(&str) -> Vec<UrlClass>) -> Setup {
         .route("/slow", get(slow))
         .route("/progressive", get(progressive))
         .route("/uri", get(whole_uri))
+        .route("/overlength/{kind}", get(overlength))
         .with_state(Arc::clone(&server));
     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
     let base = format!("http://{}", listener.local_addr().unwrap());

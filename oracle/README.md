@@ -7,6 +7,12 @@ Nothing in the Rust test suite runs Python: the outputs of these scripts are
 committed under `oracle/fixtures/` and `oracle/recordings/`. Re-running a
 script and committing a changed fixture is a deliberate, reviewable act.
 
+`record_gui_format_backend.py` records actual backend bandwidth/gallery waits,
+import size rejection, whole/range over-length responses and critical-drive
+diagnostics while staging, saving, reopening and cancelling the two GUI
+formatting controls. Time, wait decisions, response data and free space are
+scripted inputs; the reference business handlers run unchanged.
+
 ## Setup
 
 ```sh
