@@ -57,7 +57,7 @@ fn seed(store: &Store, case: &Value) -> Vec<HashId> {
                 source,
                 &captured
                     .iter()
-                    .map(|&f| (f, Some(1234567890000)))
+                    .map(|&f| (f, Some(1_234_567_890_000)))
                     .collect::<Vec<_>>(),
             )?;
             writer.clear_local_delete_records(Some(&captured))?;
@@ -245,7 +245,7 @@ fn native_transfer_yes_no_cancel_and_stale_window_cannot_write() {
             .iter_mut()
             .zip(expected.as_array_mut().unwrap())
         {
-            if expected["imports"]["my files"] == json!(1700000000000_i64) {
+            if expected["imports"]["my files"] == json!(1_700_000_000_000_i64) {
                 assert!(
                     (started..=ended).contains(&actual["imports"]["my files"].as_i64().unwrap())
                 );
@@ -321,7 +321,7 @@ fn menu_snapshot(menu: &hydrus_gui::ThumbnailMenu) -> Value {
     }
     json!(groups)
 }
-fn find(rows: slint::ModelRc<hydrus_gui::MenuRow>, prefix: &str) -> i32 {
+fn find(rows: &slint::ModelRc<hydrus_gui::MenuRow>, prefix: &str) -> i32 {
     rows.iter()
         .find(|r| r.label.starts_with(prefix))
         .unwrap()
@@ -344,7 +344,7 @@ fn actual_thumbnail_transfer_menu_captures_selection_and_checks_parent_identity(
     owner.borrow_mut().select_files(&ids[..1]);
     ui.invoke_thumbnail_menu_requested(-1);
     let menu = ui.get_thumbnail_menu();
-    ui.invoke_menu_chosen(find(menu.locations_copy, "my files"));
+    ui.invoke_menu_chosen(find(&menu.locations_copy, "my files"));
     let child = bound
         .local_transfer
         .borrow()
@@ -363,7 +363,7 @@ fn actual_thumbnail_transfer_menu_captures_selection_and_checks_parent_identity(
     ui.invoke_thumbnail_menu_requested(-1);
     let menu = ui.get_thumbnail_menu();
     assert_eq!(menu_snapshot(&menu), fixture["menu"]);
-    ui.invoke_menu_chosen(find(menu.locations_move, "from art to my files"));
+    ui.invoke_menu_chosen(find(&menu.locations_move, "from art to my files"));
     let strict = bound
         .local_transfer
         .borrow()
@@ -374,7 +374,7 @@ fn actual_thumbnail_transfer_menu_captures_selection_and_checks_parent_identity(
     strict.invoke_answer(false);
     ui.invoke_thumbnail_menu_requested(-1);
     let menu = ui.get_thumbnail_menu();
-    ui.invoke_menu_chosen(find(menu.locations_merge, "from art to my files"));
+    ui.invoke_menu_chosen(find(&menu.locations_merge, "from art to my files"));
     let merge = bound
         .local_transfer
         .borrow()
@@ -386,10 +386,10 @@ fn actual_thumbnail_transfer_menu_captures_selection_and_checks_parent_identity(
         "Move-merge 2 files from art to my files?"
     );
     // A page successor cannot inherit the old question or the old menu target.
-    ui.invoke_menu_chosen(find(menu.open_a, "in a new page"));
+    ui.invoke_menu_chosen(find(&menu.open_a, "in a new page"));
     assert!(!Rc::ptr_eq(&owner, &bound.current.borrow()));
     assert!(bound.local_transfer.borrow().is_none());
-    ui.invoke_menu_chosen(find(menu.locations_move, "from art to my files"));
+    ui.invoke_menu_chosen(find(&menu.locations_move, "from art to my files"));
     assert!(bound.local_transfer.borrow().is_none());
     ui.invoke_tab_chosen(0, 0);
     assert!(Rc::ptr_eq(&owner, &bound.current.borrow()));
@@ -411,7 +411,7 @@ fn actual_thumbnail_transfer_menu_captures_selection_and_checks_parent_identity(
     let successor = bound.current.borrow().clone();
     successor.borrow_mut().select_files(&ids[..1]);
     ui.invoke_thumbnail_menu_requested(-1);
-    ui.invoke_menu_chosen(find(ui.get_thumbnail_menu().locations_copy, "my files"));
+    ui.invoke_menu_chosen(find(&ui.get_thumbnail_menu().locations_copy, "my files"));
     assert!(bound.local_transfer.borrow().is_none());
     assert_eq!(
         state(&store, &ids)[0]["domains"],

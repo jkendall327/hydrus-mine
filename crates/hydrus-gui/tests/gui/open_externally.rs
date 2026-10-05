@@ -522,7 +522,7 @@ fn saved_routes_reach_main_and_live_viewer_os_fallback_and_missing_owned_notice(
         .pop()
         .unwrap();
     ui.invoke_open_externally();
-    assert_eq!(launched.borrow().as_slice(), [path.clone()]);
+    assert_eq!(launched.borrow().as_slice(), std::slice::from_ref(&path));
     ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
     let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
     viewer.invoke_open_externally();
