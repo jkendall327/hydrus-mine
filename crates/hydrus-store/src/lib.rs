@@ -40,6 +40,7 @@ pub mod paths;
 pub mod pending;
 pub mod physical_delete;
 pub mod popup_actions;
+pub mod popup_freeze;
 pub mod popup_width;
 pub mod popups;
 pub mod preview_zoom;

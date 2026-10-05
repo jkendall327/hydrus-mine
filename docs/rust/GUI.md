@@ -3961,3 +3961,19 @@ the consumer live; accepted exit and rebind retire its GUI incarnation.
 authenticated resource-handler requests, including late-error partial header
 acceptance and exact messages. Store, model, API-router and native toaster/render
 regressions are authored; Rust execution and native PNG inspection await hosted CI.
+
+Options → popup notifications now stages the default-off “Freeze the popup
+toaster when the main gui is minimised” control. Saved changes reach the current
+owned toaster on its existing 250 ms tick. When enabled and the native main
+window reports minimized, existing cards, their widths, summary and pending-card
+admission remain unchanged. Background jobs still update, finish and expire;
+restore reconciles those changes and admits queued jobs. Hidden main windows
+always freeze this UI, including with the checkbox off; show resumes it. Hiding
+is temporary and does not retire jobs or the binding. Retained hidden/minimized
+input is refused; rebind and accepted close permanently retire the old UI owner.
+Options Cancel/reopen and unrelated concurrent popup settings retain their usual
+transactions. This supported-platform control remains Partial with zero credit:
+Winit cannot read minimized state on Wayland, and the separate other-display
+freeze option is absent. Focus loss is not used as a freeze signal. Actual Qt
+recording covers twelve queue/window states and five Options states; authored
+Rust/native regressions and native rendered review await hosted execution.

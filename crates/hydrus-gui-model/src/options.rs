@@ -322,6 +322,7 @@ settings! {
     page_settings: PageSettings,
     page_layout: hydrus_store::page_layout::PageLayout => hydrus_store::page_layout::load,
     popup_width: hydrus_store::popup_width::PopupWidth,
+    popup_freeze: hydrus_store::popup_freeze::Preferences => hydrus_store::popup_freeze::load,
     api_update_toasts: hydrus_store::api_update_toasts::Preferences => hydrus_store::api_update_toasts::load,
     regex_favourites: RegexFavourites => hydrus_store::regex_favourites::load,
     session_backups: SessionBackupSettings,

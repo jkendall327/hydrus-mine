@@ -3166,3 +3166,37 @@ refresh regression advances persisted deadlines to verify live removal without
 waiting on wall time. Broader toaster freeze/monitor/position and network backend
 families remain Partial. Hosted exact-source Rust/Clippy/native execution and
 three authored PNG inspections are pending; no local Rust validation was run.
+
+## Popup toaster minimized freeze (Partial)
+
+The one original minimized-toaster control is implemented for genuine available
+window-state signals, with typed-native precedence over retained ClientOptions,
+legacy import, staged Apply/Cancel/reopen and field-scoped saves. Its live UI gate
+preserves cached rows, summary, construction-time widths and pending admission;
+Store producers and strict dismissal deadlines continue while frozen. Hidden UI
+freezing is a required consumer correction with zero additional credit. The
+existing GUI-incarnation retirement and shared binding ownership remain; no new
+background timer or process-global state is introduced. Legacy dismiss/pause/
+cancel/show-files/traceback actions now share weak visible/minimized/active input
+guards, and keyed job actions retain their exact GUI owner checks.
+
+Windows/macOS/X11 Winit reports actual minimized state. Wayland returns None;
+that unavailable signal is retained explicitly and does not fabricate focus,
+occlusion or minimized status. Headless regressions drive the genuine Slint
+software-window minimized property, not an OS event attestation. Other-display
+freezing still needs a global cursor-monitor signal unavailable through the
+current backend and remains Missing. The broad hide/freeze family is unclaimed.
+Exactly one original concrete Missing→Partial improvement, zero completions or
+parents, is proposed.
+
+Actual Qt 2026-10-05 14:26:46–48 drives unchanged private PopupMessageManager
+AddMessage/REPEATINGUpdate under genuine Qt show/hide/minimized states, including
+an actually unfocused window that still updates. Constructor background timers
+are captured for manual ticks; held integer time and an explicitly due private
+job regular checker expose strict expiry without changing the global floating
+scheduler clock. Two Qt PNGs were individually inspected. Native retains its
+existing bulk expired-row reconciliation rather than Qt's one-card-per-tick
+removal cadence. Three historical setup show() calls were added to the existing
+popup replay and session-warning owners; every assertion/deadline is unchanged.
+All new Rust/native regressions and the restored-toaster native PNG are authored
+only, with hosted physical/platform/runtime/render verification pending.

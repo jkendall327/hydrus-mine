@@ -110,6 +110,7 @@ pub mod parser_editors_window;
 mod parser_test_fetch;
 mod playback;
 pub mod png_export_window;
+mod popup_freeze;
 mod popup_job_actions;
 mod popup_menu;
 mod popups;

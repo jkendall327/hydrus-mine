@@ -25,7 +25,9 @@ pub(crate) fn bind(
         move |source| {
             key(source) == Some(gui_owner)
                 && active.get()
-                && weak.upgrade().is_some_and(|w| w.window().is_visible())
+                && weak
+                    .upgrade()
+                    .is_some_and(|w| crate::popup_freeze::accepts_input(w.window()))
         }
     });
     window.on_popup_copy_payload({
