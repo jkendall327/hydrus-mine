@@ -58,6 +58,7 @@ const WIDGETS: &[&str] = &[
     "MediaCollectControl",
     "TagSortControl",
     "DirPickerCtrl",
+    "FilePickerCtrl",
     "BetterCheckBoxList",
     "NoneableTimeDeltaWidget",
 ];
@@ -241,6 +242,10 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
             || theirs["items"][0]["text"] != *path
             || theirs["items"][1]["button"] != "browse")
             .then(|| format!("directory {path:?}")),
+        (Kind::FilePath, Value::Text(path)) => (theirs["widget"] != "FilePickerCtrl"
+            || theirs["items"][0]["text"] != *path
+            || theirs["items"][1]["button"] != "browse")
+            .then(|| format!("file path {path:?}")),
         (Kind::Text, Value::PlainNoneableText(text)) => {
             let shown = text.as_deref().unwrap_or_default();
             (theirs["text"] != shown).then(|| format!("text {shown:?}"))
