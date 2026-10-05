@@ -581,7 +581,9 @@ tag service; display connector/underscore substitutions never become predicates.
 Enabled activation requests use native focus/raise on Windows, macOS and X11,
 skipping already-active native windows. Closed/re-shown viewers, stale file
 payloads, hidden owners and retired main bindings refuse searches; a declined
-main close leaves the producer live. Wayland activation and multi-tag/child-list
+main close leaves the producer live. Pending questions, warnings, slideshow-period
+input and the viewer's advanced-delete child block retained tag-search callbacks.
+Wayland activation and multi-tag/child-list
 activation remain unfinished. Exit and the window close button ask the recorded
 yes/no question when enabled, automatically accepting after 15 seconds; declining
 keeps the client open. Exit callbacks and their timeout require the current visible

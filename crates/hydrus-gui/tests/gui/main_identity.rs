@@ -203,6 +203,52 @@ fn stale_file_hidden_closed_reshown_and_rebound_viewers_cannot_launch() {
     let file = viewer.get_tag_file();
     let tag = slint::SharedString::from("owner:shared tag");
     let before = count(&old);
+    viewer.invoke_context_menu_requested();
+    let menu = viewer.get_context_menu();
+    let period = [
+        &menu.slideshow.g1,
+        &menu.slideshow.g2,
+        &menu.slideshow.g3,
+        &menu.slideshow.g4,
+    ]
+    .into_iter()
+    .find_map(|rows| {
+        rows.iter()
+            .find(|row| row.label == "custom interval")
+            .map(|row| row.id)
+    })
+    .unwrap();
+    viewer.invoke_menu_chosen(period);
+    assert!(viewer.get_period_asked());
+    request(&viewer, &file, &tag);
+    assert_eq!(
+        count(&old),
+        before,
+        "pending slideshow period blocks retained tag dispatch"
+    );
+    viewer.invoke_period_answered(false, "".into());
+    store
+        .write(|ctx| {
+            let mut preferences: settings::DeletionPreferences = settings::get(ctx.conn())?;
+            preferences.advanced = true;
+            settings::set(ctx.conn(), &preferences)
+        })
+        .unwrap();
+    viewer.invoke_delete();
+    let deletion = old
+        .viewer_deletion
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    request(&viewer, &file, &tag);
+    assert_eq!(
+        count(&old),
+        before,
+        "the owned advanced-delete child blocks tag searches"
+    );
+    deletion.invoke_cancel();
+    assert!(old.viewer_deletion.borrow().is_none());
     request(&viewer, &file, "absent:invented");
     viewer.invoke_next();
     assert_ne!(viewer.get_tag_file(), file);

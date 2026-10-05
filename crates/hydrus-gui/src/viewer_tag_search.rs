@@ -28,17 +28,21 @@ pub(crate) fn bind(
     model: Rc<RefCell<MediaViewer>>,
     tracker: CanvasTracker,
     owner: Rc<dyn Fn() -> bool>,
+    deletion: crate::delete_files_window::Slot,
     launch: Launch,
 ) {
     let weak = window.as_weak();
     window.on_tag_search_requested(move |file, tag| {
-        if !tracker.active() || !owner() {
+        if !tracker.active() || !owner() || deletion.borrow().is_some() {
             return;
         }
         let Some(window) = weak.upgrade() else {
             return;
         };
-        if !window.get_question().is_empty() || !window.get_warning().is_empty() {
+        if !window.get_question().is_empty()
+            || !window.get_warning().is_empty()
+            || window.get_period_asked()
+        {
             return;
         }
         let model = model.borrow();
