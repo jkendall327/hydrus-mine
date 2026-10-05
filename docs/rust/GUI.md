@@ -3139,6 +3139,8 @@ select the moved page or retain the reference's source-notebook selection.
 Escape cancels, and disabling page-tab drag/drop prevents the gesture. Pointer
 capture survives navigation that replaces the visible nested tab rows; release
 uses live geometry and stable page keys, preserving media order and selection.
+Rebuilt tab rows publish each initial laid-out rectangle with its page identity,
+so repeated pointer drags continue to hit the moved page after a reorder.
 The wheel preference reaches the actual
 notebook bars: default wheel input selects the adjacent tab and clamps at either
 end; enabled scrolling moves the overflowing bar's viewport and preserves page
@@ -3291,7 +3293,7 @@ radio Return flag is unclaimed because the reference dialog behaved identically
 in both states on the recorded platform. Broader GUI/misc/menu stays Partial.
 Tag Presentation offers the sibling connector colour controls. Fading disables the optional namespace choice and uses the ideal tag’s colour; turning fading off allows a named, missing, empty, or ideal-tag namespace choice. Apply saves the staged preferences and Cancel discards them. Manage Tags paints raw/count, connector and ideal-tag runs separately with solid colours; shared write-autocomplete rows can fade between namespace colours, including selected backgrounds. Detached tag editors and both relationship inputs share those runs, and open, visible editors refresh after another owner changes the preferences without replacing the input or selected tags.
 
-Selected sibling rows paint solid namespace runs through the remaining row, then overlay each fading run only within its fixed text block. A collapsed-parent suffix can fade to the unnamespaced colour while the preceding ideal tag’s solid colour remains beyond the suffix, including when the viewport widens.
+Selected sibling rows paint solid namespace runs from each run’s left edge through the remaining row, then overlay each fading run only within its fixed text block. Explicit background positions keep later solid runs from covering an earlier connector fade. A collapsed-parent suffix can fade to the unnamespaced colour while the preceding ideal tag’s solid colour remains beyond the suffix, including when the viewport widens.
 
 
 Options > maintenance and processing includes separate browsing, mouse movement

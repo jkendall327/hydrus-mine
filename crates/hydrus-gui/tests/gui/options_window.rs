@@ -245,6 +245,7 @@ fn the_options_window_applies_its_changes() {
             "downloading",
             "duplicates",
             "exporting",
+            "external programs",
             "file search",
             "file sort/collect",
             "file viewing statistics",

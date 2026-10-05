@@ -160,10 +160,9 @@ fn staged_controls_reopen_and_reach_real_log_rows_and_page_size_status() {
             .unwrap()["text"]
             .as_str()
             .unwrap();
-        assert!(
-            ui.get_status().ends_with(&format!("totalling {expected}")),
-            "{}",
-            ui.get_status()
+        assert_eq!(
+            ui.get_status(),
+            format!("1 apng - totalling {expected}, 600 milliseconds")
         );
         ui.invoke_select_all();
         assert!(

@@ -18,10 +18,14 @@ export component PaintedTagText inherits Rectangle {
             // Qt paints each solid run through the remaining row, then overlays
             // fading runs only within their fixed text/background block.
             Rectangle {
+                // Wider children otherwise centre on the text run and cover
+                // the preceding connector's gradient.
+                x:0px;y:0px;
                 width:max(0px,root.width - parent.x);height:parent.height;
                 background:root.selected && !part.fade ? part.colour : transparent;
             }
             Rectangle {
+                x:0px;y:0px;
                 width:label.preferred-width + 2px;height:parent.height;
                 background:root.selected && part.fade ? @linear-gradient(90deg,part.previous-colour,part.colour) : transparent;
             }

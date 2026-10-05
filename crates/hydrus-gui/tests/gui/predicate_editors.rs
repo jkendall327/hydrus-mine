@@ -1000,11 +1000,30 @@ fn more_suggestions_than_fit_scroll_rather_than_spill_over() {
     assert!(selected[all.len() - 1]);
     assert!(selected[..all.len() - 1].iter().all(|selected| !selected));
     let scrolled = differing(&everything, &draw());
+    let scroll_y = ui.get_read_scroll_y();
+    let view_height = ui.get_read_view_height();
+    let content_height = ui.get_read_content_height();
+    let last_top = last as f32 * 22.0;
+    let last_bottom = last_top + 22.0;
+    assert!(scroll_y < 0.0, "last row did not move the scroll viewport");
+    assert!(view_height > 0.0);
+    assert!(content_height >= last_bottom);
+    assert!(scroll_y >= view_height - content_height - 1.0);
+    assert!(last_top + scroll_y >= -1.0);
+    assert!(last_bottom + scroll_y <= view_height + 1.0);
     assert!(!scrolled.is_empty(), "the last suggestion not shown");
     assert!(
         scrolled.iter().all(|y| (top - 2..bottom).contains(y)),
         "{scrolled:?} outside {top}..{bottom}"
     );
+
+    // Moving back to the first row uses the same real selection callback and
+    // scrolls upward, rather than leaving an off-screen dense selection mask.
+    ui.invoke_suggestion_selection_clicked(0, false, false);
+    let first_again = differing(&plain, &draw());
+    assert_eq!(ui.get_read_scroll_y(), 0.0);
+    assert!(!first_again.is_empty(), "the first suggestion not restored");
+    assert!(first_again.iter().all(|y| (top - 2..bottom).contains(y)));
 }
 
 #[test]

@@ -13,10 +13,24 @@ export global TabNames {
 
 component NotebookTab inherits Rectangle {
     in property <string> key;
+    in property <string> parent-key;
+    in property <int> tab-index;
     in property <bool> geometry-enabled;
-    callback geometry(length,length,length,length);
-    property <{key:string,on:bool,x:length,y:length,w:length,h:length}> frame: {key:root.key,on:root.geometry-enabled,x:root.absolute-position.x,y:root.absolute-position.y,w:root.width,h:root.height};
-    changed frame => { if root.frame.on { root.geometry(root.frame.x,root.frame.y,root.frame.w,root.frame.h); } }
+    callback geometry(string,string,int,length,length,length,length);
+    property <{key:string,parent:string,index:int,on:bool,x:length,y:length,w:length,h:length}> frame: {key:root.key,parent:root.parent-key,index:root.tab-index,on:root.geometry-enabled,x:root.absolute-position.x,y:root.absolute-position.y,w:root.width,h:root.height};
+    // A rebuilt repeater can begin with its final frame, without a changed
+    // notification. Publish its initial frame too, after layout has settled,
+    // and keep the identity in the same snapshot as the measured rectangle.
+    property <bool> geometry-pending: true;
+    changed frame => { root.geometry-pending = true; }
+    Timer {
+        interval: 1ms;
+        running: root.geometry-enabled && root.geometry-pending;
+        triggered => {
+            root.geometry-pending = false;
+            root.geometry(root.frame.key,root.frame.parent,root.frame.index,root.frame.x,root.frame.y,root.frame.w,root.frame.h);
+        }
+    }
     in property <string> text;
     in property <string> full-name;
     in property <bool> pointer-hover;
@@ -85,7 +99,16 @@ component NotebookStrip inherits Rectangle {
     in property <bool> geometry-enabled;
     callback geometry(string,string,int,length,length,length,length);
     property <{parent:string,on:bool,x:length,y:length,w:length,h:length}> frame: {parent:root.data.parent,on:root.geometry-enabled,x:root.absolute-position.x,y:root.absolute-position.y,w:root.width,h:root.height};
-    changed frame => { if root.frame.on { root.geometry("",root.frame.parent,-1,root.frame.x,root.frame.y,root.frame.w,root.frame.h); } }
+    property <bool> geometry-pending: true;
+    changed frame => { root.geometry-pending = true; }
+    Timer {
+        interval: 1ms;
+        running: root.geometry-enabled && root.geometry-pending;
+        triggered => {
+            root.geometry-pending = false;
+            root.geometry("",root.frame.parent,-1,root.frame.x,root.frame.y,root.frame.w,root.frame.h);
+        }
+    }
     in property <bool> vertical;
     in property <bool> clockwise;
     in property <bool> elide;
@@ -127,8 +150,9 @@ component NotebookStrip inherits Rectangle {
             padding-left: 4px; padding-top: 2px; spacing: 2px;
             for name[index] in root.data.names: NotebookTab {
                 pointer-hover: root.data.keys[index] == root.hover-key;
-                key: root.data.keys[index]; geometry-enabled: root.geometry-enabled && !root.vertical;
-                geometry(x,y,w,h) => { root.geometry(root.data.keys[index],root.data.parent,index,x,y,w,h); }
+                key: root.data.keys[index]; parent-key: root.data.parent; tab-index: index;
+                geometry-enabled: root.geometry-enabled && !root.vertical;
+                geometry(key,parent,index,x,y,w,h) => { root.geometry(key,parent,index,x,y,w,h); }
                 text: name; full-name: root.data.full-names[index]; selected: index == root.data.selected;
                 cap: root.cap;
                 wheel(step) => { root.scroll-wheel(step); }
@@ -157,8 +181,9 @@ component NotebookStrip inherits Rectangle {
             padding-top: 4px; padding-left: 2px; spacing: 2px;
             for name[index] in root.data.names: NotebookTab {
                 pointer-hover: root.data.keys[index] == root.hover-key;
-                key: root.data.keys[index]; geometry-enabled: root.geometry-enabled && root.vertical;
-                geometry(x,y,w,h) => { root.geometry(root.data.keys[index],root.data.parent,index,x,y,w,h); }
+                key: root.data.keys[index]; parent-key: root.data.parent; tab-index: index;
+                geometry-enabled: root.geometry-enabled && root.vertical;
+                geometry(key,parent,index,x,y,w,h) => { root.geometry(key,parent,index,x,y,w,h); }
                 text: name; full-name: root.data.full-names[index]; selected: index == root.data.selected;
                 vertical: true; clockwise: root.clockwise; cap: root.cap;
                 wheel(step) => { root.scroll-wheel(step); }

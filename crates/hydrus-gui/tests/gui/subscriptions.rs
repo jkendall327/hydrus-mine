@@ -551,7 +551,7 @@ fn merge_store_state(store: &Store) -> serde_json::Value {
 
 /// Load the recorded input with independent native queues for overlapping texts.
 fn seed_merge_case(store: &Store, case: &serde_json::Value, now: i64) {
-    let before = case["before"].as_array().unwrap().to_vec();
+    let before = case["before"].as_array().unwrap().clone();
     store
         .write(move |tx| {
             let conn = tx.conn();

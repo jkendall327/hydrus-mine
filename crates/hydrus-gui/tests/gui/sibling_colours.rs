@@ -191,7 +191,22 @@ fn options_cancel_retired_apply_reopen_and_all_segmented_native_consumers() {
                 .position(|row| row.text.starts_with("creator:parity alias"))
                 .unwrap();
             child.invoke_selection_clicked(i32::try_from(alias).unwrap(), false, false);
+            assert_eq!(
+                child.get_selected().iter().collect::<Vec<_>>(),
+                (0..child.get_suggestions().row_count())
+                    .map(|row| row == alias)
+                    .collect::<Vec<_>>(),
+                "the actual selected alias owns its segmented paint"
+            );
             let pixels = headless::render(&native, 760, 650);
+            headless::save_png(
+                &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                    .join(format!("sibling-colours-{case_index}-selected.png")),
+                &pixels,
+                760,
+                650,
+            )
+            .expect("save the sibling colour evidence before checking its pixels");
             let gradient_colours: std::collections::BTreeSet<_> = pixels
                 .chunks_exact(4)
                 .filter(|pixel| {
@@ -213,14 +228,6 @@ fn options_cancel_retired_apply_reopen_and_all_segmented_native_consumers() {
                     "custom namespace is solid when fade is off"
                 );
             }
-            headless::save_png(
-                &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
-                    .join(format!("sibling-colours-{case_index}-selected.png")),
-                &pixels,
-                760,
-                650,
-            )
-            .expect("save the sibling colour evidence");
         }
         child.invoke_cancel();
         child.invoke_chosen(0);

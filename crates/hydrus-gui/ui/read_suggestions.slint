@@ -20,13 +20,24 @@ export component ReadSuggestions inherits Rectangle {
     out property <bool> has-focus: keys.has-focus;
     out property <length> results-x: touch.absolute-position.x;
     out property <length> results-y: touch.absolute-position.y;
+    callback scroll-geometry(length,length,length);
     property <bool> shift-activation;
     property <int> kept-in-view: root.highlighted;
-    changed kept-in-view => {
-        if self.kept-in-view >= 0 {
-            if self.kept-in-view * 22px < -scroll.content-y { scroll.content-y = -self.kept-in-view * 22px; }
-            else if (self.kept-in-view + 1) * 22px > scroll.visible-height - scroll.content-y { scroll.content-y = scroll.visible-height - (self.kept-in-view + 1) * 22px; }
+    property <int> shown-count: root.suggestions.length;
+    property <length> shown-height: scroll.visible-height;
+    property <length> shown-y: scroll.content-y;
+    changed shown-y => { root.scroll-geometry(scroll.content-y, scroll.visible-height, scroll.content-height); }
+    changed kept-in-view => { root.reveal-highlighted(); }
+    changed shown-count => { root.reveal-highlighted(); }
+    changed shown-height => { root.reveal-highlighted(); }
+    function reveal-highlighted() {
+        if root.highlighted >= 0 && root.highlighted < root.suggestions.length {
+            let top = root.highlighted * 22px;
+            let bottom = top + 22px;
+            if top < -scroll.content-y { scroll.content-y = min(0px, top * -1); }
+            else if bottom > scroll.visible-height - scroll.content-y { scroll.content-y = max(scroll.visible-height - scroll.content-height, min(0px, scroll.visible-height - bottom)); }
         }
+        root.scroll-geometry(scroll.content-y, scroll.visible-height, scroll.content-height);
     }
     keys := FocusScope {
         width: parent.width; height: parent.height;
@@ -41,8 +52,11 @@ export component ReadSuggestions inherits Rectangle {
         scroll := ScrollView {
             x: 2px; y: 2px;
             width: parent.width - 4px; height: parent.height - 4px;
+            // A model replacement must update the scroll bounds before reveal,
+            // independently of the repeater's previous layout minimum.
+            content-height: max(root.suggestions.length * 22px, self.visible-height);
             Rectangle {
-                min-height: root.suggestions.length * 22px;
+                height: root.suggestions.length * 22px;
                 VerticalLayout {
                     alignment: start;
                     for suggestion[i] in root.suggestions: Rectangle {

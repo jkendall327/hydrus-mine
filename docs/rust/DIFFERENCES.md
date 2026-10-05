@@ -1432,6 +1432,12 @@ existing pages retain the values captured at construction, as in the reference.
 Native list rows use the desktop client's 22-pixel text-row spacing rather than
 Qt's platform font-metric size hint. Floating results share their highlighting,
 scrolling and selection behavior with embedded results.
+Read-list scroll bounds derive directly from the current model's row count;
+highlight reveal is reapplied after row-count and viewport-height changes, so a
+replaced list cannot retain the previous list's scroll extent. Native regression
+source checks the dense selected mask, viewport bounds and rendered first/last
+rows through the real selection callbacks. Literal-parent Qt replays show their
+native owners before activation and separately assert hidden-owner rejection.
 
 Subscription import-option clipboard commands preserve the reference custom-paste
 callback, which replaces directly; the favourites custom-overwrite chooser and
@@ -2174,6 +2180,10 @@ settings and the disable-page-tab-drag flag. The persistent capture surface
 survives nested-row changes, and rejects stale source parents, invalid targets
 and moves into a page's descendants. Reordering/transfers preserve original page
 keys and ordered media/selection rather than cloning pages.
+Tab geometry publication includes the initial frame of rebuilt row items and
+keeps key, parent and index together with the measured rectangle. The existing
+real-pointer fixture replay also checks live row geometry and pressed identity
+after repeated reorders; hosted CI validation remains required.
 
 This consumer does not implement an OS QDrag loop, drag pixmaps/cursors, crossing
 windows, tree drag/drop, media/external-file drags, or dropping into an empty
@@ -2333,7 +2343,7 @@ does. Applying Options therefore reaches earlier visible viewers; drafts and
 Cancel do not. Closing an earlier viewer retires only its own handlers, leaves
 the successor active, and retained/re-shown closed handles cannot act. The
 focused two-owner native replay is authored for hosted CI, not locally executed.
-The sibling connector fade and custom-namespace preferences now have typed import/persistence, staged Options controls and segmented painting in every existing native sibling-annotation consumer. As in Qt, storage-list terms do not permit fades, while write-autocomplete predicate terms do. The broader Tag Presentation and tag-list families remain Partial: this slice does not add sibling decorations to native surfaces that never had them, expand OR rows, or complete list menus/navigation. Native fonts, palettes and clipping follow the existing Slint lists; the reference and hosted native PNGs expose the rendered solid/gradient states.
+The sibling connector fade and custom-namespace preferences now have typed import/persistence, staged Options controls and segmented painting in every existing native sibling-annotation consumer. As in Qt, storage-list terms do not permit fades, while write-autocomplete predicate terms do. The broader Tag Presentation and tag-list families remain Partial: this slice does not add sibling decorations to native surfaces that never had them, expand OR rows, or complete list menus/navigation. Native fonts, palettes and clipping follow the existing Slint lists; the reference and hosted native PNGs expose the rendered solid/gradient states. Solid backgrounds start at each run’s left edge; Slint’s default child centering would otherwise extend a later solid run over the connector gradient. The selected PNG is saved before its unchanged gradient assertion so a hosted failure retains paint evidence.
 
 Sibling colour replays also capture a selected collapsed-parent suffix with a different namespace colour. Qt and native extent checks keep its gradient fixed while the viewport grows and preserve the earlier solid ideal colour in the trailing area; native font/padding differences remain bounded.
 
