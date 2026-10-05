@@ -2974,3 +2974,7 @@ This finite delay-control proposal requires exact hosted Rust/native validation
 and inspection of its authored Options artifact; local Cargo/Rust execution was
 not performed. All physical mutation evidence uses disposable authored/copied
 fixtures, with reference source read-only.
+
+Already restored local media only clears a stale deferred queue; it performs no
+physical deletion and consumes no physical-pair wait. The reference clears those
+queues on local re-add before its deletion loop.
