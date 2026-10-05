@@ -727,7 +727,7 @@ fn one_star_rating_preview_replays_four_samples_and_preserves_saved_normalizatio
     use hydrus_store::services::{self, ServiceKind};
     let fixture = hydrus_testkit::fixture_json("rating_preview_one_star.json");
     let (_dirs, store) = crate::subscriptions::store();
-    headless::init();
+    let _headless_windows = headless::init();
     let service = store
         .snapshot()
         .services

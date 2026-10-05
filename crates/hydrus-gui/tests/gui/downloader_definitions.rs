@@ -321,7 +321,7 @@ fn lifecycle_string_descendants_cancel_without_orphaning_definition_drafts() {
     store
         .write_and_refresh(move |ctx| settings::set(ctx.conn(), &settings))
         .unwrap();
-    headless::init();
+    let _headless_windows = headless::init();
     let slots = Slots::default();
 
     for wm_close in [false, true] {

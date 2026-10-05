@@ -564,7 +564,7 @@ fn replacing_review_cancels_pending_deleted_clear_and_retained_owner_cannot_writ
     use hydrus_core::{ServiceType, Sha256};
     let fixture = hydrus_testkit::fixture_json("service_deleted.json");
     let (_dirs, store) = crate::subscriptions::store();
-    headless::init();
+    let _headless_windows = headless::init();
     let registry = store.snapshot().services.clone();
     let domain = registry
         .of_type(ServiceType::CombinedLocalFileDomains)
