@@ -1,0 +1,347 @@
+{
+  "schema": 1,
+  "agent": "overnight_tag_filters",
+  "baseline": "c4282d3b80d7c97f1873443620733a4cf6416fe9",
+  "implementation_commits": [
+    "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+  ],
+  "completed_original_leaves_proposed": 2,
+  "claims": [
+    {
+      "reference_id": "audit-options-tag-presentation-other-rendering-fade-the-colour-of-the-sibling-connector-string-on-qt6",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exactBehavior": "The exact checkbox stages and persists fade independently of the remembered namespace. Fading disables the custom namespace choice and uses the ideal tag colour. Actual Qt CanFadeColours=false storage rows remain solid; write predicate rows fade across differing namespace text colours and selected backgrounds. Real existing consumers retain raw/count/connector/ideal segments rather than colouring the whole concatenated label. Cancel and retained old Apply do not persist the draft; reopen restores the setting; live valid owners refresh without replacing input or selection.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-core/src/tag_presentation.rs",
+          "line": 368,
+          "symbol": "pub struct SiblingConnectorColours",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-core/src/tag_presentation.rs",
+          "line": 390,
+          "symbol": "pub fn runs(",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3161,
+          "symbol": "Fade the colour of the sibling connector string",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3167,
+          "symbol": "Namespace for the colour of the sibling connecting string",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 2388,
+          "symbol": "fn sibling_connector_colours(",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/manage_tags.rs",
+          "line": 439,
+          "symbol": "let parts = shown_ideal",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
+          "line": 700,
+          "symbol": "let parts = shown_ideal",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_text.rs",
+          "line": 6,
+          "symbol": "pub(crate) fn watch(",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/tag_text.slint",
+          "line": 2,
+          "symbol": "export component PaintedTagText",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 6022,
+          "symbol": "pub(crate) fn styled_list_text(",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 4426,
+          "symbol": "fn sibling_connector_colours_import_retains",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/sibling_colours.rs",
+          "line": 83,
+          "symbol": "fn qt_sibling_colours_stage",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sibling_colours.rs",
+          "line": 94,
+          "symbol": "fn options_cancel_retired_apply",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_sibling_colours.py",
+        "fixture": "oracle/fixtures/sibling_colours.json",
+        "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2",
+        "executed_at": "2026-10-05 02:38:47 UTC",
+        "result": "Executed the real TagPresentationPanel, ManageTagsPanel asynchronous decorator publisher and actual WriteFetch predicate rows on a copied basic fixture with synthetic cross-namespace local mappings/sibling relation. Captured exact labels, staged Cancel/UpdateOptions/reopen, fade/custom-namespace interlock, None/explicit-empty/named/missing/raw-spaced choices, real text/RGB segments and CanFadeColours. Actual storage terms disallow fades while write predicates allow them. Saved and inspected actual Qt selected/unselected PNGs at /tmp/sibling-colours-qt-selected.png and /tmp/sibling-colours-qt-unselected.png; the real write list is detached for paint capture without altering its class/data/options. Reference source files and non-fixture data untouched. Expected sandbox local API warnings are unrelated to direct Qt/DB capture."
+      },
+      "limitations": [
+        "Only two original finite preference leaves are proposed; Tag Presentation and tag-list/autocomplete parent families remain Partial.",
+        "All existing native sibling-annotation consumers use the shared runs: ManageTags storage rows and shared WriteAutocomplete in ManageTags, detached import/tag editors and both sides of sibling/parent dialogs. This slice does not add sibling annotations to native surfaces that never had them.",
+        "Native fonts/palettes/list clipping follow existing Slint presentation; expanded OR header/child topology, broader tag-list menus and keyboard navigation remain outside the slice.",
+        "Live native notification refreshes valid visible owners on a 100 ms owned subscription; pending menu/questions defer revision consumption, close stops the subscription.",
+        "Store/model/native regressions and native PNGs authored for hosted CI; no local Cargo tests/builds, mutation testing, pushes, canonical inventory or reference source changes."
+      ]
+    },
+    {
+      "reference_id": "audit-options-tag-presentation-other-rendering-namespace-for-the-colour-of-the-sibling-connecting-string",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exactBehavior": "The exact noneable namespace control uses use ideal tag colour, remains disabled while fade is checked, and preserves None, explicit empty, named/missing and raw whitespace values. None resolves the ideal namespace; empty resolves unnamespaced colour; missing/raw-spaced names resolve fallback. Fresh None controls retain disabled system text as Qt does. The typed legacy import and staged Options Apply/Cancel/reopen feed the real segmented ManageTags/write/relationship consumers, preserving logical tag mappings and drafts.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-core/src/tag_presentation.rs",
+          "line": 368,
+          "symbol": "pub struct SiblingConnectorColours",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-core/src/tag_presentation.rs",
+          "line": 390,
+          "symbol": "pub fn runs(",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3161,
+          "symbol": "Fade the colour of the sibling connector string",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3167,
+          "symbol": "Namespace for the colour of the sibling connecting string",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 2388,
+          "symbol": "fn sibling_connector_colours(",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/manage_tags.rs",
+          "line": 439,
+          "symbol": "let parts = shown_ideal",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
+          "line": 700,
+          "symbol": "let parts = shown_ideal",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_text.rs",
+          "line": 6,
+          "symbol": "pub(crate) fn watch(",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/tag_text.slint",
+          "line": 2,
+          "symbol": "export component PaintedTagText",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 6022,
+          "symbol": "pub(crate) fn styled_list_text(",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 4426,
+          "symbol": "fn sibling_connector_colours_import_retains",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/sibling_colours.rs",
+          "line": 83,
+          "symbol": "fn qt_sibling_colours_stage",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sibling_colours.rs",
+          "line": 94,
+          "symbol": "fn options_cancel_retired_apply",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_sibling_colours.py",
+        "fixture": "oracle/fixtures/sibling_colours.json",
+        "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2",
+        "executed_at": "2026-10-05 02:38:47 UTC",
+        "result": "Executed the real TagPresentationPanel, ManageTagsPanel asynchronous decorator publisher and actual WriteFetch predicate rows on a copied basic fixture with synthetic cross-namespace local mappings/sibling relation. Captured exact labels, staged Cancel/UpdateOptions/reopen, fade/custom-namespace interlock, None/explicit-empty/named/missing/raw-spaced choices, real text/RGB segments and CanFadeColours. Actual storage terms disallow fades while write predicates allow them. Saved and inspected actual Qt selected/unselected PNGs at /tmp/sibling-colours-qt-selected.png and /tmp/sibling-colours-qt-unselected.png; the real write list is detached for paint capture without altering its class/data/options. Reference source files and non-fixture data untouched. Expected sandbox local API warnings are unrelated to direct Qt/DB capture."
+      },
+      "limitations": [
+        "Only two original finite preference leaves are proposed; Tag Presentation and tag-list/autocomplete parent families remain Partial.",
+        "All existing native sibling-annotation consumers use the shared runs: ManageTags storage rows and shared WriteAutocomplete in ManageTags, detached import/tag editors and both sides of sibling/parent dialogs. This slice does not add sibling annotations to native surfaces that never had them.",
+        "Native fonts/palettes/list clipping follow existing Slint presentation; expanded OR header/child topology, broader tag-list menus and keyboard navigation remain outside the slice.",
+        "Live native notification refreshes valid visible owners on a 100 ms owned subscription; pending menu/questions defer revision consumption, close stops the subscription.",
+        "Store/model/native regressions and native PNGs authored for hosted CI; no local Cargo tests/builds, mutation testing, pushes, canonical inventory or reference source changes."
+      ]
+    }
+  ],
+  "executed_checks": [
+    "Actual Qt recorder via shared with-oracle lock",
+    "Inspected actual Qt selected/unselected PNGs",
+    "Warning-aware cached Slint source compiler",
+    "cargo fmt --all (formatting only)",
+    "git diff --check",
+    "Python recorder syntax"
+  ],
+  "screenshots_authored": [
+    "CARGO_TARGET_TMPDIR/sibling-colours-0-unselected.png",
+    "CARGO_TARGET_TMPDIR/sibling-colours-0-selected.png",
+    "CARGO_TARGET_TMPDIR/sibling-colours-2-unselected.png",
+    "CARGO_TARGET_TMPDIR/sibling-colours-2-selected.png"
+  ],
+  "nativeComponents": [
+    {
+      "component": "PaintedTagText",
+      "source": "crates/hydrus-gui/ui/tag_text.slint",
+      "native_parents": [
+        "OptionsWindow > tag presentation > other rendering",
+        "ManageTagsWindow > storage tag list / write autocomplete",
+        "WriteTagsWindow > shared autocomplete",
+        "TagRelationshipsWindow > both sibling/parent autocomplete inputs"
+      ],
+      "status": "partial",
+      "groups": [
+        "Raw tag/count run; connector namespace run; ideal tag run; collapsed parent suffix",
+        "Solid custom/ideal/fallback colours; write-predicate text/selected-background gradients",
+        "Staged fade checkbox + disabled noneable namespace choice; Apply/Cancel/reopen",
+        "Owned live settings subscription with visible/active/menu/question guards"
+      ],
+      "reference_ids": [
+        "audit-options-tag-presentation-other-rendering-fade-the-colour-of-the-sibling-connector-string-on-qt6",
+        "audit-options-tag-presentation-other-rendering-namespace-for-the-colour-of-the-sibling-connecting-string"
+      ],
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-core/src/tag_presentation.rs",
+          "line": 368,
+          "symbol": "pub struct SiblingConnectorColours",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-core/src/tag_presentation.rs",
+          "line": 390,
+          "symbol": "pub fn runs(",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3161,
+          "symbol": "Fade the colour of the sibling connector string",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3167,
+          "symbol": "Namespace for the colour of the sibling connecting string",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 2388,
+          "symbol": "fn sibling_connector_colours(",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/manage_tags.rs",
+          "line": 439,
+          "symbol": "let parts = shown_ideal",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/write_autocomplete.rs",
+          "line": 700,
+          "symbol": "let parts = shown_ideal",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_text.rs",
+          "line": 6,
+          "symbol": "pub(crate) fn watch(",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/tag_text.slint",
+          "line": 2,
+          "symbol": "export component PaintedTagText",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 6022,
+          "symbol": "pub(crate) fn styled_list_text(",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 4426,
+          "symbol": "fn sibling_connector_colours_import_retains",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/sibling_colours.rs",
+          "line": 83,
+          "symbol": "fn qt_sibling_colours_stage",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sibling_colours.rs",
+          "line": 94,
+          "symbol": "fn options_cancel_retired_apply",
+          "commit": "613338d1409dc4b09ea414f0f91eca49daaa24e2"
+        }
+      ],
+      "remaining": [
+        "Only two original finite preference leaves are proposed; Tag Presentation and tag-list/autocomplete parent families remain Partial.",
+        "All existing native sibling-annotation consumers use the shared runs: ManageTags storage rows and shared WriteAutocomplete in ManageTags, detached import/tag editors and both sides of sibling/parent dialogs. This slice does not add sibling annotations to native surfaces that never had them.",
+        "Native fonts/palettes/list clipping follow existing Slint presentation; expanded OR header/child topology, broader tag-list menus and keyboard navigation remain outside the slice.",
+        "Live native notification refreshes valid visible owners on a 100 ms owned subscription; pending menu/questions defer revision consumption, close stops the subscription.",
+        "Store/model/native regressions and native PNGs authored for hosted CI; no local Cargo tests/builds, mutation testing, pushes, canonical inventory or reference source changes."
+      ]
+    }
+  ]
+}
