@@ -57,14 +57,10 @@ impl Plan {
                     .find(|result| result.hash_id == *id)?
                     .info
                     .as_ref()?;
+                // Static-image capabilities admit the native raster action;
+                // unsupported MPV/Qt-player choices fall back to external in Qt.
                 if info.mime.general_class() != Some(Mime::GeneralImage)
-                    || !matches!(
-                        settings.view(info.mime).media_show_action,
-                        ShowAction::Native
-                            | ShowAction::Mpv
-                            | ShowAction::QtMediaPlayer
-                            | ShowAction::QtMediaPlayerVideoWidget
-                    )
+                    || settings.view(info.mime).media_show_action != ShowAction::Native
                 {
                     return None;
                 }
@@ -564,6 +560,42 @@ mod tests {
             seen.recv_timeout(Duration::from_secs(5)).is_err(),
             "no third admission after terminal owner retirement"
         );
+    }
+    #[test]
+    fn actual_static_image_display_capabilities_filter_each_recorded_candidate_action() {
+        use hydrus_import::{FileImportOptions, FileImporter};
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::open(dir.path()).unwrap();
+        let imported = FileImporter::new(store.clone(), hydrus_media::MediaTools::new())
+            .import_path(
+                &hydrus_testkit::fixture_path("image_cache/a.png"),
+                &FileImportOptions::default(),
+            )
+            .unwrap();
+        let id = store
+            .read(|conn| hydrus_store::master::hash_id(conn, &imported.hash.unwrap()))
+            .unwrap()
+            .unwrap();
+        let preferences = store.read(hydrus_store::viewer_prefetch::load).unwrap();
+        let fixture = hydrus_testkit::fixture_json("viewer_prefetch.json");
+        for case in fixture["candidates"].as_array().unwrap() {
+            let action = ShowAction::from_code(case["action"].as_i64().unwrap()).unwrap();
+            store
+                .write(move |ctx| {
+                    let mut saved = hydrus_store::settings::get::<MediaViewerSettings>(ctx.conn())?;
+                    let mut view = saved.view(Mime::ImagePng);
+                    view.media_show_action = action;
+                    saved.media_view.insert(Mime::ImagePng.code(), view);
+                    hydrus_store::settings::set(ctx.conn(), &saved)
+                })
+                .unwrap();
+            let plan = Plan::capture(&store, &[id], preferences).unwrap();
+            assert_eq!(
+                !plan.candidates.is_empty(),
+                case["expected"].as_bool().unwrap(),
+                "{case}"
+            );
+        }
     }
     #[test]
     fn a_saved_candidate_display_action_change_invalidates_the_captured_pass() {
