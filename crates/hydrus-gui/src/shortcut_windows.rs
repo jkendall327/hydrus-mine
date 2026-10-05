@@ -101,9 +101,7 @@ pub(crate) fn bind(
             {
                 return;
             }
-            if let Ok(window) =
-                open_sets(editor.clone(), active.clone(), slots.clone(), weak.clone())
-            {
+            if let Ok(window) = open_sets(editor.clone(), &active, &slots, &weak) {
                 *slots.set.borrow_mut() = Some(window);
                 if let Some(parent) = weak.upgrade() {
                     parent.set_shortcuts_child_open(true);
@@ -162,9 +160,9 @@ fn command_name(scope: &str, action: i32) -> String {
 }
 fn open_sets(
     editor: Rc<RefCell<Editor>>,
-    parent_live: Rc<Cell<bool>>,
-    slots: Rc<Slots>,
-    parent: slint::Weak<OptionsWindow>,
+    parent_live: &Rc<Cell<bool>>,
+    slots: &Rc<Slots>,
+    parent: &slint::Weak<OptionsWindow>,
 ) -> Result<Owned<ShortcutSetWindow>, slint::PlatformError> {
     let window = ShortcutSetWindow::new()?;
     let live = Rc::new(Cell::new(true));
@@ -180,7 +178,7 @@ fn open_sets(
     window.set_set_index(0);
     show_set(&window, &draft.borrow());
     let close: Rc<dyn Fn()> = Rc::new({
-        let slots = Rc::downgrade(&slots);
+        let slots = Rc::downgrade(slots);
         let live = live.clone();
         let weak = window.as_weak();
         let parent = parent.clone();
@@ -276,7 +274,7 @@ fn open_sets(
                 draft.borrow().primary_labels,
                 parent_live.clone(),
                 live.clone(),
-                slots.clone(),
+                &slots,
                 Rc::new({
                     let weak = weak.clone();
                     let draft = draft.clone();
@@ -369,7 +367,7 @@ fn open_command(
     primary: bool,
     parent: Rc<Cell<bool>>,
     set_live: Rc<Cell<bool>>,
-    slots: Rc<Slots>,
+    slots: &Rc<Slots>,
     applied: Rc<dyn Fn(Command)>,
 ) -> Result<Owned<ShortcutCommandWindow>, slint::PlatformError> {
     let window = ShortcutCommandWindow::new()?;
@@ -494,7 +492,7 @@ fn open_command(
         if !inside{return EventResult::Propagate;}
         match event {
             WindowEvent::MouseInput{state,button,..}=>{
-                let key=match button {MouseButton::Left=>0,MouseButton::Right=>1,MouseButton::Middle=>2,MouseButton::Back=>7,MouseButton::Forward=>8,MouseButton::Other(5 | 10 | 0x117)=>9,_=>return EventResult::PreventDefault};
+                let key=match button {MouseButton::Left=>0,MouseButton::Right=>1,MouseButton::Middle=>2,MouseButton::Back=>7,MouseButton::Forward=>8,MouseButton::Other(5 | 10 | 0x117)=>9,MouseButton::Other(_)=>return EventResult::PreventDefault};
                 let mut press=u8::from(*state==ElementState::Released);
                 if *state==ElementState::Pressed {let now=Instant::now();if previous.as_ref().is_some_and(|(old,time,position)|old==button && now.duration_since(*time)<=Duration::from_millis(400) && (position.0-cursor.0).abs()+(position.1-cursor.1).abs()<=5.0){press=2;previous=None;}else{previous=Some((*button,now,cursor));}}
                 window.invoke_mouse_capture(key,i32::from(press),i32::from(input.bits));EventResult::PreventDefault
@@ -504,7 +502,7 @@ fn open_command(
         }
     }});
     let close: Rc<dyn Fn()> = Rc::new({
-        let slots = Rc::downgrade(&slots);
+        let slots = Rc::downgrade(slots);
         let weak = window.as_weak();
         let live = live.clone();
         move || {

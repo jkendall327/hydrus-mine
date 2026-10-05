@@ -4976,6 +4976,8 @@ fn open_viewer(
     slot: &Rc<RefCell<Option<MediaViewerWindow>>>,
     hooks: ViewerHooks,
 ) -> Result<MediaViewerWindow, slint::PlatformError> {
+    use slint::winit_030::WinitWindowAccessor as _;
+
     let ViewerHooks {
         deletion: viewer_delete,
         closing_owner,
@@ -6234,7 +6236,6 @@ fn open_viewer(
         shortcuts.observer(),
     );
     window.show()?;
-    use slint::winit_030::WinitWindowAccessor as _;
     window.set_shortcut_native_pointer(window.window().has_winit_window());
     native_focus.watch_native();
     native_cursor.watch_native();

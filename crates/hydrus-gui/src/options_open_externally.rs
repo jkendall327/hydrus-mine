@@ -579,10 +579,10 @@ impl State {
             return;
         }
         if action == "edit" {
-            if let Some(mime) = self.model.borrow().selection.one() {
-                if let Err(error) = self.open_files(mime, false) {
-                    self.error(error);
-                }
+            if let Some(mime) = self.model.borrow().selection.one()
+                && let Err(error) = self.open_files(mime, false)
+            {
+                self.error(error);
             }
             return;
         }
