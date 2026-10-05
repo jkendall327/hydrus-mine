@@ -2603,3 +2603,9 @@ weak back-edge permits pages, rows and workers to retire with their owners.
 Native regressions assert release before thread exit and retain the existing
 two-second Store-release deadline. Hosted execution is pending; no local Rust
 build or test was run. This ownership repair adds no original leaf proposal.
+
+Open Externally routing and namespace colours now have distinct native Options
+row kinds. Their former shared value rendered both unrelated editors on each
+page. Existing native workflows assert the correct page family and keep their
+routing and namespace render captures for hosted review. This integration repair
+adds no original leaf proposal; runtime and rendered verification remain pending.
