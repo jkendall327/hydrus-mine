@@ -301,3 +301,55 @@ fn hidden_launch_exit_cancel_rebind_bound_drop_and_main_destruction_have_distinc
     assert!(!final_owner.debug_long_popup.timer_running());
     assert_eq!(jobs(&store), snapshot);
 }
+
+#[test]
+fn cloned_bound_keeps_deadlines_until_the_final_bound_owner_drops() {
+    let (_dirs, store) = super::subscriptions::store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let now = clock(&bound.debug_long_popup);
+    let retained = bound.debug_long_popup.clone();
+    let clone = bound.clone();
+    launch(&ui);
+    assert_eq!(retained.pending_updates(), 124);
+    assert!(retained.timer_running());
+    let initial = jobs(&store);
+    assert_eq!(initial.len(), 2);
+    drop(bound);
+    assert_eq!(
+        retained.pending_updates(),
+        124,
+        "the first Bound drop does not retire the shared owner"
+    );
+    assert!(retained.timer_running());
+    now.set(Duration::from_millis(200));
+    retained.tick();
+    let advanced = jobs(&store);
+    assert_eq!(advanced.len(), 2);
+    assert_eq!(advanced[0].key, initial[0].key);
+    assert_ne!(
+        advanced[0].status_text_1, initial[0].status_text_1,
+        "a real queued update publishes after the first owner drop"
+    );
+    assert_eq!(retained.pending_updates(), 123);
+    assert_cards(&ui, &advanced);
+    drop(clone);
+    assert_eq!(
+        retained.pending_updates(),
+        0,
+        "the final Bound drop permanently retires queued updates"
+    );
+    assert!(!retained.timer_running());
+    now.set(Duration::from_secs(30));
+    retained.tick();
+    retained.start();
+    assert_eq!(
+        jobs(&store),
+        advanced,
+        "retained Control cannot publish or relaunch after the final owner drop"
+    );
+    assert_eq!(retained.pending_updates(), 0);
+    assert!(!retained.timer_running());
+}
