@@ -3834,3 +3834,5 @@ Changing the saved value reaches already open dialogs. Options changes remain
 staged until Apply; Cancel discards them. Hash multiline text keeps its normal
 newline behavior. Hidden, cancelled or retired child/parent owners cannot apply
 through these key routes. Other widgets and dialog families receive no new claim.
+
+Popup cards now measure their body at the resolved card width before the outer stack allocates their height. The narrow long-question regression checks all five actual action-button bounds, the rendered lower stop border and a pointer delivered near that lower edge; the fixed-width and width-cap checks remain. This is a layout repair with no new coverage claim. Native execution is pending hosted CI.

@@ -3037,3 +3037,5 @@ Hash TextEdit consumes newline before the default route. Other Qt/platform widge
 fallback behavior is not asserted, nor are unrelated dialog families promoted.
 Actual reference recording and authored Store/model/native regressions are pinned;
 local Rust execution is prohibited and hosted execution remains pending.
+
+The popup question label continues to wrap in the native client. Actual Qt `PopupMessage._text_yes_no` remains a single-line label at the same narrow/fixed width settings; the new `popup_question_layout.json`/PNG records that distinction and verifies every Qt action control fits within its card. The native layout repair preserves its existing wrapping while preventing the lower stop button from crossing the clipped card boundary. No Options or popup family completion status changes.
