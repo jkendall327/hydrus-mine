@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "agent": "subscription-merge",
+  "baseline_git_head": "f1437b183d1d53e0f2538d1b4000c43035b54744",
+  "implementation_git_head": "456dd7162a5b58b4cadaede4d717a1968b7c00c4",
+  "implementation_commits": [
+    "456dd7162a5b58b4cadaede4d717a1968b7c00c4"
+  ],
+  "validation": {
+    "referenceRecording": "oracle/record_subscription_merge.py executed actual Qt EditSubscriptionsPanel.Merge, Subscription.GetMergeable/Merge and EditSubscriptionsPanel.GetValue on the real basic client. Nine fresh cases; final execution 2026-10-05 03:59:03 UTC. Scripted user-answer/presentation seams only; hydrus reference sources unchanged.",
+    "reference_assertions": "List identities remain unchanged during every question. Confirmation/first-primary/later-primary cancellation, name cancellation followed by primary cancellation, both names cancelled, later absorbed name reuse, new-name casefold collision, own old-name reservation and no-compatible-group information are recorded. Every distinct log name, full header state and file/gallery history survives; original source objects and primary paused/source/limit settings remain unchanged.",
+    "fixture_integrity": "Executed Python checks confirm nine cases, unchanged per-log state/history, no lost/duplicated log identity, retained-log union, no deleted histories, source object ownership and primary settings; frozen original subscriptions-merge status is partial.",
+    "cargo_fmt": "rustfmt --check passed on all four changed Rust files.",
+    "diff_check": "git diff --check passed.",
+    "slint_syntax": "Cached Slint source compiler passed without warnings; no Cargo build.",
+    "rust_tests": "Meaningful model and GUI/store regressions authored. No local Cargo builds, Rust tests or mutation runs under the owner's instruction. Hosted CI execution pending.",
+    "rendered_artifacts": "The scoped native regression will save subscription_merge_later_primary.png and subscription_merge_completed.png under CARGO_TARGET_TMPDIR when CI executes. Native rendered review remains pending.",
+    "canonical_status": "Proposed packet only. No canonical inventory, frozen ledger or validated completion total changed."
+  },
+  "claims": [
+    {
+      "id": "subscriptions-merge",
+      "before": "partial",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "The actual manage-subscriptions Merge button retains the exact initial warning, name-sorted primary choices, name prompt and no-compatible-group information. Each group's primary/name decision is held without changing any draft rows until every group has answered. Cancelling any primary discards the entire pending merge operation; cancelling a name keeps that primary's original name and continues. Completing the last group commits all query moves to the existing draft together. Every absorbed owner is removed before casefolded name allocation; surviving original names and earlier new names remain reserved, including the primary's old name on a case-only rename. Compatibility uses downloader names even when keys differ, as actual Qt does. Primary identity/settings persist, overlapping query texts retain separate queue IDs, full state, file/gallery seed IDs and metadata, and pending log edits. The existing bulk store transaction moves queues before deleting absorbed subscriptions and commits only on list Apply. Parent Cancel drops pending and completed drafts; closed callbacks cannot affect a newly opened owner or its subsequent draft edits.",
+      "implementation_delta": "Replaced immediate per-group mutation with accepted decisions carried through MergePrimary/MergeName callbacks and one final Subscriptions::merge_many application. Added batch-wide name allocation after absorption and old-primary-name reservation. This is concrete behavior repair of the frozen multi-group cancellation limitation, rather than evidence-only reassessment.",
+      "limits": [
+        "Hosted native execution and rendered inspection remain pending; proposed first-pass status is for root integration review after those checks.",
+        "Qt's no-eaten warning branch is unreachable for stable groups produced by its unchanged GetMergeable: both methods compare the same downloader name. No artificial source mutation or forced warning claim is made.",
+        "Native subscription-manager pause-for-editing, bandwidth-wait display, broader import/export, additional-tag editor and other subscription boundaries remain as separately documented. This leaf does not promote the subscriptions parent or aliases.",
+        "Qt's modal dialogs are represented by the existing native inline question panel; this change preserves that presentation boundary.",
+        "Existing daemon/store concurrency policy remains unchanged. Merge preserves queue identity and writes only edited states/settings; it does not introduce a manager-wide editing lock."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/subscriptions_dialog.rs:292",
+        "crates/hydrus-gui-model/src/subscriptions_dialog.rs:934",
+        "crates/hydrus-gui/src/subscriptions_window.rs:389",
+        "crates/hydrus-gui/src/subscriptions_window.rs:1214",
+        "crates/hydrus-gui/src/subscriptions_window.rs:1306",
+        "crates/hydrus-gui/src/subscriptions_window.rs:198",
+        "crates/hydrus-gui/src/subscriptions_window.rs:307",
+        "crates/hydrus-gui/src/subscriptions_window.rs:1373",
+        "crates/hydrus-gui/ui/subscriptions.slint:308"
+      ],
+      "testAnchors": [
+        "crates/hydrus-gui-model/tests/model/subscriptions_buttons.rs:22",
+        "crates/hydrus-gui/tests/gui/subscriptions.rs:635",
+        "crates/hydrus-gui/tests/gui/subscriptions.rs:816"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_subscription_merge.py",
+        "fixture": "oracle/fixtures/subscription_merge.json",
+        "referenceSources": [
+          "hydrus/client/gui/ClientGUISubscriptions.py:3360",
+          "hydrus/client/gui/ClientGUISubscriptions.py:3316",
+          "hydrus/client/importing/ClientImportSubscriptions.py:1494",
+          "hydrus/client/importing/ClientImportSubscriptions.py:1565"
+        ]
+      }
+    }
+  ],
+  "nativeControls": [
+    {
+      "id": "audit.network.subs.merge",
+      "component": "SubscriptionsWindow",
+      "kind": "button and owned inline primary/name questions",
+      "label": "merge",
+      "inputs": [
+        "selected subscriptions sharing downloader names",
+        "confirmation, primary per group, optional name per group"
+      ],
+      "source": [
+        "crates/hydrus-gui/ui/subscriptions.slint:308",
+        "crates/hydrus-gui/src/subscriptions_window.rs:1373"
+      ],
+      "tests": [
+        "crates/hydrus-gui/tests/gui/subscriptions.rs:635",
+        "crates/hydrus-gui/tests/gui/subscriptions.rs:816"
+      ],
+      "sharededitor_refs": []
+    }
+  ],
+  "parent_status": "Only the frozen original subscriptions-merge leaf is proposed. All parent/alias assessments and the validated 240 checkpoint remain unchanged."
+}
