@@ -129,7 +129,10 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     let legacy_options = db.legacy_options()?;
     insert_setting(
         &mut input,
-        &crate::physical_delete::Preferences::from_legacy(&options),
+        &options.as_ref().map_or_else(
+            crate::physical_delete::Preferences::default,
+            crate::physical_delete::Preferences::from_legacy,
+        ),
     )?;
     insert_setting(
         &mut input,
@@ -3397,6 +3400,52 @@ mod tests {
             [dump.into_bytes()],
         )
         .unwrap();
+    }
+
+    #[test]
+    fn physical_delete_import_preserves_present_delay_and_defaults_without_client_options() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "ms_to_wait_between_physical_file_deletes"], [0, 600]]"#,
+                r#"[[0, "ms_to_wait_between_physical_file_deletes"], [0, 1234]]"#,
+            )],
+        );
+        let db = LegacyDb::open(source.path()).unwrap();
+        assert_eq!(
+            db.client_options().unwrap().unwrap().integers["ms_to_wait_between_physical_file_deletes"],
+            1234
+        );
+        let input = decode_input(&db).unwrap();
+        let present: crate::physical_delete::Preferences = serde_json::from_value(
+            input.settings[crate::physical_delete::Preferences::KEY].clone(),
+        )
+        .unwrap();
+        assert_eq!(
+            present.wait_ms, 1234,
+            "import must preserve the present raw preference"
+        );
+        drop(db);
+        let conn = rusqlite::Connection::open(source.path().join("client.db")).unwrap();
+        assert_eq!(
+            conn.execute("DELETE FROM json_dumps WHERE dump_type = 22", [])
+                .unwrap(),
+            1
+        );
+        drop(conn);
+        let db = LegacyDb::open(source.path()).unwrap();
+        assert!(db.client_options().unwrap().is_none());
+        let input = decode_input(&db).unwrap();
+        let absent: crate::physical_delete::Preferences = serde_json::from_value(
+            input.settings[crate::physical_delete::Preferences::KEY].clone(),
+        )
+        .unwrap();
+        assert_eq!(absent, crate::physical_delete::Preferences::default());
+        assert_eq!(
+            absent.wait_ms, 600,
+            "missing legacy options keep the actual default"
+        );
     }
 
     #[test]
