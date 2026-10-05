@@ -232,6 +232,7 @@ fn router_import_child_obeys_hidden_cancel_replacement_and_dropped_owner() {
     orphan.invoke_action("review".into());
     assert!(orphan.get_ready());
     let weak = successor.as_weak();
+    successor.hide().unwrap();
     drop(successor);
     drop(slots);
     assert!(
