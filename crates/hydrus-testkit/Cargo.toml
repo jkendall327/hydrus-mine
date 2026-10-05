@@ -9,7 +9,8 @@ publish = false
 
 [dependencies]
 flate2.workspace = true
-serde_json.workspace = true
+# Reference JSON float deadlines must retain their recorded IEEE-754 values.
+serde_json = { workspace = true, features = ["float_roundtrip"] }
 tar.workspace = true
 tempfile.workspace = true
 

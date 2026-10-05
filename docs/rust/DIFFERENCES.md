@@ -2726,6 +2726,9 @@ gallery/watcher list status and sorting. This throttles presentation reads rathe
 than importer/network work. The reference formula samples displayed items before
 refresh, uses `max(minimum_ms / 1000, items / denominator)`, falls back to one second
 for a zero denominator, and updates only after the pending deadline has passed.
+Reference JSON fixtures use round-trip float parsing: the default decimal parser
+could shift a recorded deadline by one ULP. The deadline formula and exact replay
+assertions are unchanged.
 Saved changes affect the next period without resetting that deadline; explicit
 refresh resets it to zero. The native uses the existing current-page identity,
 a weak window and permanent binding retirement instead of Qt sidebar objects;

@@ -3578,7 +3578,8 @@ the list waits. Hidden windows pause list reads, while rebinding or accepted clo
 permanently retires the old scheduler. The actual Qt controls, save/reopen and
 strict/forced gallery/watcher deadlines are recorded in `downloader_update_times.json`
 and its reference PNG. Native/model/store regressions and three native snapshots
-are authored for hosted validation.
+are authored for hosted validation. Fixture JSON parsing preserves the recorded
+floating-point deadlines exactly, including strict equality boundaries.
 
 Tag Presentation > other rendering now includes “OR connecting string (on one
 line)”. Apply saves its raw text; Cancel discards the draft. Blank, whitespace,
