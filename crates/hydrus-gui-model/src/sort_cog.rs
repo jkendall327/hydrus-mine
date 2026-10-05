@@ -53,6 +53,12 @@ pub fn entries(store: &Store, sort: &PageSort, group: usize) -> Vec<Entry> {
             })
             .collect();
     }
+    services(store, &sort.tag_context)
+}
+
+/// The same service groups used by a sort or collect control, preserving its
+/// independent tag context's other fields when the service changes.
+pub fn services(store: &Store, context: &hydrus_core::search::context::TagContext) -> Vec<Entry> {
     let snapshot = store.snapshot();
     let mut out = Vec::new();
     for kind in [
@@ -71,7 +77,7 @@ pub fn entries(store: &Store, sort: &PageSort, group: usize) -> Vec<Entry> {
         }
         out.extend(services.into_iter().map(|service| Entry {
             label: service.name.clone(),
-            checked: service.key == sort.tag_context.service,
+            checked: service.key == context.service,
             action: Some(Action::Service(service.key.clone())),
         }));
     }

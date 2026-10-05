@@ -106,6 +106,7 @@ pub mod services_review_window;
 pub mod session_autosave;
 mod session_dialog;
 pub mod session_startup;
+mod sidebar_context_cog;
 pub mod sidecars_window;
 pub mod simple_formulae_window;
 pub mod slideshow;
@@ -498,6 +499,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         move || current.borrow().clone()
     };
     duplicates_sidebar::bind(window, &duplicates, page.clone());
+    sidebar_context_cog::bind(window, page.clone(), shown.clone());
     // change the pages, then show whichever page is now shown; a change
     // that can't be made says why
     // (the menu bar's titles, shown again after a change)
@@ -6369,6 +6371,7 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
     window.set_error(page.error().unwrap_or_default().into());
     window.set_status(page.status().into());
     let sort = page.sort();
+    window.set_sort_cog_visible(!hydrus_gui_model::sort_cog::groups(sort).is_empty());
     let choices = sort::page_choices(page.store(), &sort.by);
     let names: Vec<SharedString> = choices.iter().map(|c| c.name.as_str().into()).collect();
     window.set_sort_names(ModelRc::new(VecModel::from(names)));

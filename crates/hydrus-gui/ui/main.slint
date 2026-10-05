@@ -35,6 +35,8 @@ export { MediaViewerWindow, NoteRow, RatingRow, RatingShape, ViewerUrlRow } from
 export { ArchiveDeleteWindow } from "archive_delete.slint";
 export { BandwidthWindow, EditBandwidthRulesWindow, NetworkJobsWindow, MonthlyBandwidthBar } from "network_data.slint";
 export { TagDisplayWindow } from "tag_display.slint";
+import { SortCollectCog, ContextCogServices, ContextCogItem } from "sort_collect_cog.slint";
+export { ContextCogServices, ContextCogItem } from "sort_collect_cog.slint";
 export { TagRelationshipsWindow } from "tag_relationships.slint";
 export { TagMigrationWindow, TagMigrationProgressWindow } from "tag_migration.slint";
 export { WriteTagsWindow } from "write_autocomplete.slint";
@@ -565,6 +567,13 @@ export component MainWindow inherits Window {
     in property <DuplicatesData> duplicates;
     in property <[TableRow]> duplicates-rules;
     callback duplicates-action(string, int, bool, bool);
+    in property <bool> sort-cog-visible;
+    in property <ContextCogServices> sort-cog-services;
+    in property <ContextCogServices> collect-cog-services;
+    in property <[ContextCogItem]> sort-cog-extra;
+    in property <[ContextCogItem]> collect-cog-extra;
+    callback context-cog-opened(bool);
+    callback context-cog-chosen(bool, int);
     in property <[string]> sort-names;
     in property <int> sort-index;
     in property <[string]> order-names;
@@ -1314,6 +1323,11 @@ export component MainWindow inherits Window {
                             current-index: root.order-index;
                             selected => { root.order-chosen(self.current-index); }
                         }
+                        if root.sort-cog-visible: SortCollectCog {
+                            services: root.sort-cog-services; extra: root.sort-cog-extra;
+                            opened => { root.context-cog-opened(false); }
+                            chosen(id) => { root.context-cog-chosen(false, id); }
+                        }
                     }
                     // and the collect control under it: the choices open
                     // from the label, and stay open while checked, as the
@@ -1326,30 +1340,11 @@ export component MainWindow inherits Window {
                             checkable: true;
                             checked <=> root.collect-open;
                         }
-                        collect-cog := ContextMenuArea {
-                            width: 30px;
-                            Menu {
-                                Menu {
-                                    title: "unmatched files";
-                                    MenuItem {
-                                        title: "collect into one group";
-                                        checkable: true;
-                                        checked <=> root.collect-unmatched;
-                                        activated => { root.collect-unmatched-chosen(true); }
-                                    }
-                                    MenuItem {
-                                        title: "leave separate";
-                                        checkable: true;
-                                        checked <=> root.collect-separate;
-                                        activated => { root.collect-unmatched-chosen(false); }
-                                    }
-                                }
-                            }
-                            Button {
-                                width: 30px;
-                                text: "⚙";
-                                clicked => { collect-cog.show({ x: 0px, y: self.height }); }
-                            }
+                        SortCollectCog {
+                            collect: true;
+                            services: root.collect-cog-services; extra: root.collect-cog-extra;
+                            opened => { root.context-cog-opened(true); }
+                            chosen(id) => { root.context-cog-chosen(true, id); }
                         }
                     }
                     if root.collect-open: Rectangle {

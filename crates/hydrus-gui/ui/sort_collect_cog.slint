@@ -1,0 +1,48 @@
+// Actual grouped tag-service and namespace-display/unmatched cog actions.
+import { Button } from "std-widgets.slint";
+export struct ContextCogItem { label: string, checked: bool, id: int }
+export struct ContextCogServices {
+    local: [ContextCogItem],
+    repositories: [ContextCogItem],
+    combined: [ContextCogItem],
+}
+export component SortCollectCog inherits Rectangle {
+    width: 30px; height: 28px;
+    in property <ContextCogServices> services;
+    in property <[ContextCogItem]> extra;
+    in property <bool> collect;
+    callback opened();
+    callback chosen(int);
+    cog := ContextMenuArea {
+        // Qt's CogIconButton only opens through normal button activation.
+        // Every supported opening refreshes checks and captures its owner.
+        enabled: false;
+        Menu {
+            Menu {
+                title: "tag service";
+                for entry in root.services.local: MenuItem {
+                    title: entry.label; checkable: true; checked: entry.checked;
+                    activated => { root.chosen(entry.id); }
+                }
+                if root.services.local.length > 0 && root.services.repositories.length > 0: MenuSeparator {}
+                for entry in root.services.repositories: MenuItem {
+                    title: entry.label; checkable: true; checked: entry.checked;
+                    activated => { root.chosen(entry.id); }
+                }
+                if (root.services.local.length > 0 || root.services.repositories.length > 0) && root.services.combined.length > 0: MenuSeparator {}
+                for entry in root.services.combined: MenuItem {
+                    title: entry.label; checkable: true; checked: entry.checked;
+                    activated => { root.chosen(entry.id); }
+                }
+            }
+            if root.extra.length > 0: Menu {
+                title: root.collect ? "unmatched files" : "ADVANCED: tag display type";
+                for entry in root.extra: MenuItem {
+                    title: entry.label; checkable: true; checked: entry.checked;
+                    activated => { root.chosen(entry.id); }
+                }
+            }
+        }
+        Button {text: "⚙"; clicked => { root.opened(); cog.show({x: 0px, y: self.height}); }}
+    }
+}
