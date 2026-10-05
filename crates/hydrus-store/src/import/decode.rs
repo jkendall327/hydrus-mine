@@ -136,6 +136,10 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     )?;
     insert_setting(
         &mut input,
+        &crate::api_update_toasts::Preferences::from_legacy(&options),
+    )?;
+    insert_setting(
+        &mut input,
         &options.as_ref().map_or_else(
             crate::physical_delete::Preferences::default,
             crate::physical_delete::Preferences::from_legacy,
