@@ -33,6 +33,7 @@ fn real_incremental_child_replays_cancel_apply_memory_and_blocks_parent_mutation
             files.clone(),
         )),
     );
+    ui.show().unwrap();
     for case in recorded["incremental"].as_array().unwrap() {
         ui.invoke_select_all();
         ui.invoke_manage_tags_selected();

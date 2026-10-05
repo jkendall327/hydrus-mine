@@ -443,6 +443,13 @@ fn live_hide_setting_keeps_accepted_preview_refuses_replacements_and_collapse_re
     hide(&w, false);
     w.invoke_apply();
     sidebar(&ui, RESTORE);
+    // Qt revealing the splitter leaves an empty canvas. Observe that transition
+    // before the next selection, rather than folding both into one refresh.
+    render(&native);
+    bound.preview.refresh();
+    assert!(!ui.get_preview_splitter_hidden());
+    assert!(bound.current.borrow().borrow().focused().is_none());
+    assert!(!ui.get_preview_has_media());
     ui.invoke_thumbnail_clicked(index as i32, false, false);
     let started = std::time::Instant::now();
     while ui.get_preview_loading() {

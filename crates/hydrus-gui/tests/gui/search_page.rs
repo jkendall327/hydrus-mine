@@ -238,6 +238,7 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     let ui = MainWindow::new().unwrap();
     let main_window = windows.get(0).unwrap();
     let bound = bind(&ui, Pages::single(super::common::all_local_page(store)));
+    ui.show().unwrap();
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
     // newest first (a new page sorts by the options' default, file size)
