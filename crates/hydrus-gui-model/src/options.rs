@@ -243,6 +243,8 @@ pub enum Value {
     SavedSession(Option<String>),
     GallerySource(Option<crate::gallery_source::KeyAndName>),
     Text(String),
+    /// A plain LineEdit that distinguishes untouched legacy None from edited empty text.
+    PlainNoneableText(Option<String>),
     /// Text, or none (the reference's `NoneableTextCtrl`); the text is
     /// kept while none, as its text box keeps it.
     NoneableText {
@@ -3167,13 +3169,19 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                 Ok(())
                             },
                         ),
-                        text(
+                        opt(
                             "Namespace for the OR top row: ",
-                            |s| s.namespace_colours.or_connector.clone().unwrap_or_default(),
-                            |s, text| {
-                                s.namespace_colours.or_connector = Some(text.to_owned());
-                                Ok(())
-                            },
+                            Kind::Text,
+                            Rc::new(|s| {
+                                Value::PlainNoneableText(s.namespace_colours.or_connector.clone())
+                            }),
+                            Rc::new(|s, value| match value {
+                                Value::PlainNoneableText(text) => {
+                                    s.namespace_colours.or_connector.clone_from(text);
+                                    Ok(())
+                                }
+                                _ => Err(wrong("OR row namespace")),
+                            }),
                         ),
                         check(
                             "EXPERIMENTAL: Replace all underscores with spaces: ",
@@ -3877,6 +3885,9 @@ impl Editor {
         let value = &mut self.values[self.page][i];
         *value = match (self.pages[self.page].options()[i].kind.clone(), &*value) {
             (Kind::Float { .. }, _) => Value::Float(text.to_owned()),
+            (Kind::Text, Value::PlainNoneableText(_)) => {
+                Value::PlainNoneableText(Some(text.to_owned()))
+            }
             (Kind::NoneableText { .. }, Value::NoneableText { none, .. }) => Value::NoneableText {
                 none: *none,
                 text: text.to_owned(),

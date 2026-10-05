@@ -82,6 +82,11 @@ fn qt_namespace_add_normalization_protected_mixed_delete_and_options_cancel_reop
         .position(|name| *name == "tag presentation")
         .unwrap();
     options.show_page(page);
+    assert_eq!(
+        options.applied().0.namespace_colours,
+        before.namespace_colours,
+        "untouched legacy None is not an edited empty string"
+    );
     let mut accepted = namespace_colours::Editor::new(options.edited_namespace_colours());
     accepted.add(" Parity Artists::: ", [12, 34, 56]).unwrap();
     options.set_namespace_colours(accepted.values());

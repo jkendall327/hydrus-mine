@@ -132,6 +132,10 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                     out.kind = 20;
                     out.text = text.as_str().into();
                 }
+                (Kind::Text, Value::PlainNoneableText(text)) => {
+                    out.kind = 6;
+                    out.text = text.as_deref().unwrap_or_default().into();
+                }
                 (Kind::Text, Value::Text(text)) => {
                     out.kind = 6;
                     out.text = text.as_str().into();

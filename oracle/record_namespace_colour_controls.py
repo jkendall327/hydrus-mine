@@ -59,7 +59,9 @@ def record(session):
             reopened=Module.TagPresentationPanel(c.gui,draft);reopened_rows=rows(reopened)
             predicate=P.Predicate(P.PREDICATE_TYPE_OR_CONTAINER,[P.Predicate(P.PREDICATE_TYPE_TAG,'parity artists:alpha'),P.Predicate(P.PREDICATE_TYPE_TAG,'series:beta')])
             colour_cases=[]
-            for namespace in ['character','missing namespace','','parity artists']:
+            # Distinguish the untouched legacy None from an explicit empty field.
+            draft.SetNoneableString('or_connector_custom_namespace_colour',None)
+            for namespace in ['','character','missing namespace','','parity artists']:
                 reopened._or_connector_custom_namespace_colour.setText(namespace);reopened.UpdateOptions()
                 ac=AC.AutoCompleteDropdownTagsRead(c.gui,b'parity namespace colours',F.FileSearchContext(location_context=ClientLocation.LocationContext.STATICCreateSimple(CC.LOCAL_FILE_SERVICE_KEY)),synchronised=False)
                 actual=ac._favourites_list._GetRowsOfTextsAndColours(Data.ListBoxItemPredicate(predicate))
