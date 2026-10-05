@@ -131,6 +131,11 @@ box. Each one is a commit that passes CI on its own.
   A `Window`'s `title` can't be set from Rust; give the window its own
   `window-title` property. `StandardTableView` selects one row only; use
   `ListTable`.
+- **Slint geometry**: a child-to-parent two-way link keeps the parent's
+  existing binding or value. An unbound parent output can therefore replace
+  measured child geometry with its default zero. Expose measured geometry
+  through read-only direct bindings to structurally present items; the source
+  compiler alone does not detect this runtime binding failure.
 - **Key handling**: the main window's shortcuts are a
   `capture-key-pressed` on the outermost `FocusScope`, so they work
   whatever has focus; a widget's own keys go in its own `FocusScope`.
