@@ -56,9 +56,65 @@ pub fn remember_service(conn: &Connection, service: &ServiceKey) -> crate::Resul
     Ok(())
 }
 
+/// Live Manage Tags display and remembered Incremental Tagging text fields.
+/// Kept separate from staged Options defaults so an older open Options draft
+/// cannot overwrite a display toggle or child-editor text remembered later.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct ManageTagsSettings {
+    pub show_deleted: bool,
+    pub incremental_namespace: String,
+    pub incremental_prefix: String,
+    pub incremental_suffix: String,
+}
+
+impl Default for ManageTagsSettings {
+    fn default() -> Self {
+        Self {
+            show_deleted: false,
+            incremental_namespace: "page".to_owned(),
+            incremental_prefix: String::new(),
+            incremental_suffix: String::new(),
+        }
+    }
+}
+
+impl crate::settings::Setting for ManageTagsSettings {
+    const KEY: &'static str = "manage_tags";
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn manage_tags_preferences_are_backward_compatible_and_independent() {
+        let old: ManageTagsSettings = serde_json::from_value(serde_json::json!({})).unwrap();
+        assert_eq!(old, ManageTagsSettings::default());
+        let dir = tempfile::tempdir().unwrap();
+        let store = crate::Store::open(dir.path()).unwrap();
+        let saved = ManageTagsSettings {
+            show_deleted: true,
+            incremental_namespace: "sequence".into(),
+            incremental_prefix: "v".into(),
+            incremental_suffix: "x".into(),
+        };
+        let expected = saved.clone();
+        store
+            .write(move |ctx| crate::settings::set(ctx.conn(), &saved))
+            .unwrap();
+        let key = ServiceKey::new(b"another actual service key".to_vec());
+        store
+            .write(move |ctx| remember_service(ctx.conn(), &key))
+            .unwrap();
+        let reopened = crate::Store::open(dir.path()).unwrap();
+        assert_eq!(
+            reopened
+                .read::<ManageTagsSettings>(crate::settings::get)
+                .unwrap(),
+            expected
+        );
+    }
 
     #[test]
     fn older_preferences_get_write_defaults_and_tab_memory_preserves_them() {

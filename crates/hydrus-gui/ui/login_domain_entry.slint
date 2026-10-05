@@ -1,0 +1,38 @@
+import { Button, LineEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { ListTable, TableRow } from "list_table.slint";
+export component LoginDomainEntryWindow inherits Window {
+    in property <string> window-title;
+    title: root.window-title;
+    preferred-width: 650px; preferred-height: 350px;
+    background: Theme.window;
+    in property <bool> choosing;
+    in property <bool> activating;
+    in property <string> message;
+    in property <string> placeholder;
+    in property <[TableRow]> rows;
+    in-out property <int> selected-index: -1;
+    in-out property <string> text;
+    in property <bool> child-open;
+    in property <string> error;
+    callback selected(int);
+    callback action(string);
+    callback closed();
+    VerticalLayout {
+        padding: 12px; spacing: 8px;
+        if root.message != "": Text { text: root.message; color: Theme.text; wrap: word-wrap; }
+        if root.choosing: ListTable {
+            vertical-stretch: 1; columns: [{title: "",width: 600px,stretch: true}]; rows: root.rows;
+            row-clicked(i,c,s) => { if !root.child-open { root.selected(i); } }
+            row-activated(i) => { if !root.child-open { root.selected(i);root.action("accept"); } }
+        }
+        if !root.choosing && !root.activating: LineEdit { text <=> root.text; placeholder-text: root.placeholder; enabled: !root.child-open; accepted => { root.action("accept"); } }
+        if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+        Rectangle { vertical-stretch: 1; }
+        HorizontalLayout {
+            alignment: end; spacing: 6px;
+            Button { text: root.activating ? "yes" : "ok"; enabled: !root.child-open && (root.activating || (root.choosing ? root.selected-index >= 0 : root.text != "")); clicked => { root.action("accept"); } }
+            Button { text: root.activating ? "no" : "cancel"; enabled: !root.child-open; clicked => { root.action("cancel"); } }
+        }
+    }
+}

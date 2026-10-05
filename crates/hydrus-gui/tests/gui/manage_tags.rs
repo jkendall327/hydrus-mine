@@ -69,7 +69,10 @@ fn tags_are_added_and_removed_as_the_reference_does() {
     assert!(listed(&manage).contains(&"brand new".to_owned()));
     manage.enter("brand new").unwrap();
     assert!(!listed(&manage).contains(&"brand new".to_owned()));
-    assert!(!manage.has_changes());
+    assert!(
+        manage.has_changes(),
+        "adding then removing creates a deleted mapping, as the reference does"
+    );
     // an existing tag is removed
     manage.enter(&its_tag).unwrap();
     assert!(!listed(&manage).contains(&its_tag));
@@ -113,7 +116,7 @@ fn tags_are_added_and_removed_as_the_reference_does() {
         .into_iter()
         .find(|(t, _)| t == "brand new")
         .unwrap();
-    assert!(!row.1.ends_with(')'), "{row:?}");
+    assert!(row.1.ends_with(" (2)"), "{row:?}");
     both.apply().unwrap();
     assert!(tags_of(&store, other, "my tags").contains("brand new"));
     assert!(tags_of(&store, tagged, "my tags").contains("brand new"));
@@ -141,6 +144,10 @@ fn tags_are_added_and_removed_as_the_reference_does() {
         .as_ref()
         .map(slint::ComponentHandle::clone_strong)
         .expect("manage tags opened");
+    assert_eq!(window.get_window_title(), "manage tags");
+    ui.invoke_select_all();
+    ui.invoke_manage_tags_selected();
+    assert_eq!(window.get_window_title(), "manage tags");
     let services = window.get_service_names();
     let mine = (0..services.row_count())
         .position(|i| services.row_data(i).unwrap() == "my tags")
@@ -151,7 +158,7 @@ fn tags_are_added_and_removed_as_the_reference_does() {
     let rows: Vec<String> = (0..window.get_tags().row_count())
         .map(|i| window.get_tags().row_data(i).unwrap().text.to_string())
         .collect();
-    assert!(rows.contains(&"from the window".to_owned()), "{rows:?}");
+    assert!(rows.contains(&"from the window (1)".to_owned()), "{rows:?}");
     assert!(!tags_of(&store, tagged, "my tags").contains("from the window"));
     window.invoke_text_edited("".into());
     window.invoke_entered();

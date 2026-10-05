@@ -1,0 +1,164 @@
+// Keep TextInput's native cursor, selection and IME. Its undo engine splits
+// replacement deletion/insertion and merges a paste with subsequent typing;
+// the input owns snapshot history so Qt's paste/typing actions stay atomic.
+// Qt also retains raw newlines from normal paste. Permit those for the paste
+// operation, then resume one-line input.
+import { Theme } from "theme.slint";
+
+export struct TagTextState { text: string, anchor: int, cursor: int }
+export struct TagTextEdit { before: TagTextState, after: TagTextState, kind: int, group: int }
+export struct TagTextHistoryState { undos: [TagTextEdit], redos: [TagTextEdit], state: TagTextState }
+// Pure transformations only. All mutable state belongs to the input below.
+export global TagTextHistory {
+    callback record(TagTextHistoryState,TagTextState,TagTextState,int,int) -> TagTextHistoryState;
+    callback undo(TagTextHistoryState) -> TagTextHistoryState;
+    callback redo(TagTextHistoryState) -> TagTextHistoryState;
+}
+
+export component WriteTagLineEdit inherits Rectangle {
+    in-out property <string> text;
+    in property <string> placeholder-text;
+    in property <bool> enabled: true;
+    callback edited(string);
+    callback accepted(string);
+    out property <bool> has-focus: editor.has-focus;
+    out property <bool> has-selected-text: editor.anchor-position-byte-offset != editor.cursor-position-byte-offset;
+    property <bool> pasting;
+    property <length> scroll-x;
+    property <TagTextHistoryState> history;
+    property <TagTextState> before-edit;
+    // 0: paste/cut, 1: typing, 2: Backspace, 3: Delete.
+    property <int> edit-kind: 1;
+    property <int> typing-group;
+    property <bool> replaying-history;
+    public function snapshot() -> TagTextState {
+        {text: root.text,anchor: editor.anchor-position-byte-offset,cursor: editor.cursor-position-byte-offset}
+    }
+    function ensure-history() {
+        if root.text != root.history.state.text {
+            root.history = {undos: [],redos: [],state: root.snapshot()};
+        }
+    }
+    public function set-selection-offsets(anchor: int, cursor: int) {
+        root.ensure-history();
+        root.typing-group += 1;
+        editor.set-selection-offsets(anchor,cursor);
+        root.before-edit = root.snapshot();
+    }
+    public function paste() {
+        root.ensure-history();
+        root.before-edit = root.snapshot();
+        root.pasting = true;
+        editor.paste();
+        root.pasting = false;
+        root.history = TagTextHistory.record(root.history,root.before-edit,root.snapshot(),0,root.typing-group);
+        root.before-edit = root.snapshot();
+    }
+    function restore-history() {
+        root.replaying-history = true;
+        root.text = root.history.state.text;
+        editor.set-selection-offsets(root.history.state.anchor,root.history.state.cursor);
+        root.before-edit = root.snapshot();
+        root.edited(root.text);
+        root.replaying-history = false;
+    }
+    public function undo() {
+        root.typing-group += 1;
+        root.ensure-history();
+        root.history = TagTextHistory.undo(root.history);
+        root.restore-history();
+    }
+    public function redo() {
+        root.typing-group += 1;
+        root.ensure-history();
+        root.history = TagTextHistory.redo(root.history);
+        root.restore-history();
+    }
+    min-height: 32px;
+    max-height: 32px;
+    horizontal-stretch: 1;
+    border-width: 1px;
+    border-radius: 4px;
+    border-color: Theme.border;
+    background: Theme.panel;
+    clip: true;
+    forward-focus: keys;
+    accessible-role: text-input;
+    accessible-value <=> root.text;
+    accessible-enabled: root.enabled;
+    accessible-placeholder-text: root.placeholder-text;
+    accessible-action-set-value(value) => { root.text=value; root.edited(value); }
+    accessible-action-set-selection-offsets(anchor,cursor) => { editor.set-selection-offsets(anchor,cursor); }
+    if root.text == "": Text {
+        x: 6px;
+        width: parent.width - 12px;
+        height: parent.height;
+        vertical-alignment: center;
+        color: Theme.muted;
+        text: root.placeholder-text;
+        accessible-role: none;
+    }
+    keys := FocusScope {
+        width: parent.width;
+        height: parent.height;
+        forward-focus: editor;
+        capture-key-pressed(event) => {
+            if event.modifiers.control && (event.text == "z" || event.text == "Z") {
+                if event.modifiers.shift { root.redo(); } else { root.undo(); }
+                return accept;
+            }
+            if event.modifiers.control && (event.text == "y" || event.text == "Y") {
+                root.redo(); return accept;
+            }
+            root.ensure-history();
+            root.before-edit = root.snapshot();
+            root.edit-kind = event.modifiers.control ? 0 : event.text == Key.Backspace ? 2 : event.text == Key.Delete ? 3 : 1;
+            reject
+        }
+        ContextMenuArea {
+            Menu {
+                MenuItem { title: "Undo"; enabled: root.enabled; activated => { root.undo(); } }
+                MenuItem { title: "Redo"; enabled: root.enabled; activated => { root.redo(); } }
+                MenuSeparator {}
+                MenuItem { title: "Cut"; enabled: root.enabled; activated => { root.ensure-history(); root.before-edit=root.snapshot(); root.edit-kind=0; editor.cut(); } }
+                MenuItem { title: "Copy"; enabled: root.enabled; activated => { editor.copy(); } }
+                MenuItem { title: "Paste"; enabled: root.enabled; activated => { root.paste(); } }
+                MenuSeparator {}
+                MenuItem { title: "Select All"; enabled: root.enabled; activated => { editor.select-all(); } }
+            }
+            editor := TextInput {
+                text <=> root.text;
+                enabled: root.enabled;
+                single-line: !root.pasting;
+                x: 6px + min(0px,max(root.width - 12px - self.width - self.text-cursor-width,root.scroll-x));
+                width: max(root.width - 12px - self.text-cursor-width,self.preferred-width);
+                height: parent.height;
+                vertical-alignment: center;
+                color: Theme.text;
+                selection-background-color: Theme.highlight;
+                selection-foreground-color: Theme.highlight-text;
+                accessible-role: none;
+                cursor-position-changed(position) => {
+                    if !root.pasting && !root.replaying-history && root.text == root.before-edit.text {
+                        if editor.cursor-position-byte-offset != root.before-edit.cursor || editor.anchor-position-byte-offset != root.before-edit.anchor {
+                            root.typing-group += 1;
+                        }
+                        root.before-edit=root.snapshot();
+                    }
+                    if position.x + root.scroll-x < 0px { root.scroll-x = -position.x; }
+                    else if position.x + root.scroll-x > root.width - 12px - self.text-cursor-width {
+                        root.scroll-x = root.width - 12px - position.x - self.text-cursor-width;
+                    }
+                }
+                edited => {
+                    if !root.pasting && !root.replaying-history {
+                        root.history=TagTextHistory.record(root.history,root.before-edit,root.snapshot(),root.edit-kind,root.typing-group);
+                        root.before-edit=root.snapshot();
+                    }
+                    root.edited(self.text);
+                }
+                accepted => { root.accepted(self.text); }
+            }
+        }
+    }
+}

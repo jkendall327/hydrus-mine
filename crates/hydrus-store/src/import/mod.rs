@@ -1675,7 +1675,7 @@ pub(crate) mod tests {
         // recorded, counting the media viewer and the Client API
         assert_eq!(
             input.settings["file_viewing_statistics"],
-            serde_json::json!({"active": true, "interesting_canvases": [0, 4]})
+            serde_json::json!({"active": true, "archive_delete":true, "duplicates":false, "media_min_ms":2000,"media_max_ms":600_000, "menu_display":"combined", "interesting_canvases": [0, 4]})
         );
     }
 
@@ -2922,4 +2922,30 @@ mod network_tests {
             }
         }
     }
+}
+
+/// Restore complete subscription history using the database importer's seed
+/// conversions. Validate every seed before writing either history.
+pub fn restore_subscription_log(
+    conn: &Connection,
+    queue: i64,
+    log: &hydrus_legacy::objects::subscriptions::QueryLog,
+) -> Result<()> {
+    let mut warnings = Vec::new();
+    let files = log
+        .file_seeds
+        .iter()
+        .filter_map(|s| decode::file_seed(s, None, &mut warnings))
+        .collect::<Vec<_>>();
+    let galleries = log
+        .gallery_seeds
+        .iter()
+        .map(|s| decode::gallery_seed(s, &mut warnings))
+        .collect::<Vec<_>>();
+    if !warnings.is_empty() {
+        return Err(StoreError::Invalid(warnings.join("; ")));
+    }
+    queues::restore_file_seeds(conn, queue, &files)?;
+    queues::restore_gallery_seeds(conn, queue, &galleries)?;
+    Ok(())
 }

@@ -219,6 +219,13 @@ pub enum Command {
     Exit,
     /// Forget the closed pages, asking first.
     ClearClosedPages,
+    /// Toggle one historical predicate on the currently visible media page.
+    UndoSearch {
+        kind: crate::predicate_history::Kind,
+        predicate: hydrus_core::search::predicate::Predicate,
+    },
+    /// Clear both search histories after the reference confirmation.
+    ClearSearchHistory,
     /// Reopen a closed page (by its place among them, oldest first).
     Unclose(usize),
     /// Show a page from the history.
@@ -302,6 +309,9 @@ pub struct Facts {
     pub export_folders: Vec<String>,
     /// The closed pages' names for menus, oldest first.
     pub closed_pages: Vec<String>,
+    /// Canonical history entries with labels in the current display context.
+    pub search_added: Vec<(hydrus_core::search::predicate::Predicate, String)>,
+    pub search_removed: Vec<(hydrus_core::search::predicate::Predicate, String)>,
     /// The pages open, and their weight (files, and twenty a download).
     pub page_count: usize,
     pub session_weight: u64,
@@ -576,11 +586,13 @@ fn file_menu(facts: &Facts) -> Entry {
     )
 }
 
-/// `_InitialiseMenuInfoUndo`, as its updater fills it: with nothing to
-/// undo (hydrus-rs has no undo manager or search history yet), only the
-/// closed pages, the latest first.
+/// `_InitialiseMenuInfoUndo`: closed pages and the independent search
+/// additions/removals, newest first. Content undo remains unavailable.
 fn undo_menu(facts: &Facts) -> Entry {
-    if facts.closed_pages.is_empty() {
+    if facts.closed_pages.is_empty()
+        && facts.search_added.is_empty()
+        && facts.search_removed.is_empty()
+    {
         // (as hydrus leaves it: disabled, never filled)
         return Entry::Menu {
             label: "&undo".into(),
@@ -602,11 +614,52 @@ fn undo_menu(facts: &Facts) -> Entry {
             enabled: false,
         };
     }
-    let mut closed = vec![item(dots("clear all"), Command::ClearClosedPages), SEP];
-    for (index, name) in facts.closed_pages.iter().enumerate().rev() {
-        closed.push(item(name.clone(), Command::Unclose(index)));
+    let mut entries = Vec::new();
+    if !facts.closed_pages.is_empty() {
+        let mut closed = vec![item(dots("clear all"), Command::ClearClosedPages), SEP];
+        for (index, name) in facts.closed_pages.iter().enumerate().rev() {
+            closed.push(item(name.clone(), Command::Unclose(index)));
+        }
+        entries.push(menu("closed pages", closed));
     }
-    menu("&undo", vec![menu("closed pages", closed)])
+    if !facts.search_added.is_empty() || !facts.search_removed.is_empty() {
+        let mut searches = Vec::new();
+        for (name, kind, history) in [
+            (
+                "addition",
+                crate::predicate_history::Kind::Addition,
+                &facts.search_added,
+            ),
+            (
+                "removal",
+                crate::predicate_history::Kind::Removal,
+                &facts.search_removed,
+            ),
+        ] {
+            if !history.is_empty() {
+                searches.push(menu(
+                    name,
+                    history
+                        .iter()
+                        .rev()
+                        .map(|(predicate, label)| {
+                            item(
+                                label.clone(),
+                                Command::UndoSearch {
+                                    kind,
+                                    predicate: predicate.clone(),
+                                },
+                            )
+                        })
+                        .collect(),
+                ));
+            }
+        }
+        searches.push(item(dots("clear history"), Command::ClearSearchHistory));
+        searches.push(SEP);
+        entries.push(menu("searching", searches));
+    }
+    menu("&undo", entries)
 }
 
 /// `_InitialiseMenuInfoPages`, as its updaters and `aboutToShow` fill it.

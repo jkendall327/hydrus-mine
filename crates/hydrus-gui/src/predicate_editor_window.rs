@@ -14,7 +14,10 @@ use hydrus_search::{Predicate, SystemPredicate, TextContext, predicate_text};
 use hydrus_store::Store;
 
 pub use crate::predicate_editors::button_label;
-use crate::predicate_editors::{Context, Editor, Field, Panel, Pressed};
+use crate::predicate_editors::{
+    Context, Editor, Field, Panel, Pressed,
+    defaults::{CustomDefaults, CustomDefaultsExt},
+};
 use crate::{EditorField, EditorPanel, EditorTreeRow, PredicateEditorWindow};
 
 /// A field as the window shows it.
@@ -193,16 +196,28 @@ fn change_recent(store: &Store, change: impl FnOnce(&mut RecentPredicates)) {
 /// open is replaced.
 pub(crate) fn open(
     slot: &Rc<RefCell<Option<PredicateEditorWindow>>>,
-    store: Arc<Store>,
-    editor: Editor,
+    store: &Arc<Store>,
+    mut editor: Editor,
     context: Context,
     text: TextContext,
     chosen: Rc<dyn Fn(Vec<Predicate>)>,
+    owner: Option<Rc<dyn Fn() -> bool>>,
 ) -> Result<(), String> {
-    if let Some(old) = slot.borrow_mut().take() {
-        let _ = old.hide();
+    let old = slot.borrow_mut().take();
+    if let Some(old) = old {
+        old.invoke_cancel();
     }
+    let defaults = store
+        .read(hydrus_store::settings::get::<CustomDefaults>)
+        .map_err(|e| e.to_string())?;
+    editor.apply_defaults(&defaults, &context);
     let window = PredicateEditorWindow::new().map_err(|e| e.to_string())?;
+    let closed = Rc::new(Cell::new(false));
+    let valid: Rc<dyn Fn() -> bool> = Rc::new({
+        let closed = closed.clone();
+        let owner = owner.clone();
+        move || !closed.get() && owner.as_ref().is_none_or(|owner| owner())
+    });
     window.set_note(editor.note.clone().unwrap_or_default().into());
     let names: Vec<SharedString> = if editor.pages.len() > 1 {
         editor
@@ -226,11 +241,15 @@ pub(crate) fn open(
     let text = Rc::new(text);
     // show page `page`
     let show_page = {
+        let valid = valid.clone();
         let weak = window.as_weak();
         let state = state.clone();
         let text = text.clone();
-        let store = store.clone();
+        let store = Arc::clone(store);
         move |page: usize| {
+            if !valid() {
+                return;
+            }
             let Some(window) = weak.upgrade() else { return };
             if !window.get_question().is_empty() {
                 return;
@@ -277,20 +296,32 @@ pub(crate) fn open(
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
+        let closed = closed.clone();
         move || {
-            if let Some(window) = weak.upgrade() {
+            if closed.replace(true) {
+                return;
+            }
+            let window = weak.upgrade();
+            if let Some(window) = &window {
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
+            if let Some(window) = window {
+                window.invoke_closed();
+            }
         }
     };
     let done = Rc::new(Cell::new(false));
     let finish = {
+        let valid = valid.clone();
         let close = close.clone();
         let done = done.clone();
-        let store = store.clone();
+        let store = Arc::clone(store);
         let weak = window.as_weak();
         move |predicates: Vec<Predicate>| {
+            if !valid() {
+                return;
+            }
             if weak.upgrade().is_none_or(|window| {
                 !window.window().is_visible() || !window.get_question().is_empty()
             }) {
@@ -307,6 +338,9 @@ pub(crate) fn open(
                     _ => None,
                 })
                 .collect();
+            if owner.as_ref().is_some_and(|owner| !owner()) {
+                return;
+            }
             change_recent(&store, |recent| recent.push(&system));
             chosen(predicates);
         }
@@ -324,14 +358,18 @@ pub(crate) fn open(
         }
     });
     window.on_recent_forgotten({
+        let valid = valid.clone();
+        let store = Arc::clone(store);
         let state = state.clone();
         let show_page = show_page.clone();
         let weak = window.as_weak();
         move |i| {
-            if weak
-                .upgrade()
-                .is_none_or(|window| !window.get_question().is_empty())
-            {
+            if !valid() {
+                return;
+            }
+            if weak.upgrade().is_none_or(|window| {
+                !window.window().is_visible() || !window.get_question().is_empty()
+            }) {
                 return;
             }
             let forgotten = usize::try_from(i)
@@ -369,9 +407,13 @@ pub(crate) fn open(
     // a field set (or, with none, a button pressed): change the panel, and
     // show what that changes; what a button says to the user
     let edit = {
+        let valid = valid.clone();
         let state = state.clone();
         let weak = window.as_weak();
         move |p: i32, set: Option<i32>, change: &dyn Fn(&mut Panel) -> Option<String>| {
+            if !valid() {
+                return;
+            }
             if weak.upgrade().is_none_or(|window| {
                 !window.window().is_visible() || !window.get_question().is_empty()
             }) {
@@ -472,9 +514,13 @@ pub(crate) fn open(
         }
     });
     window.on_answer({
+        let valid = valid.clone();
         let edit = edit.clone();
         let weak = window.as_weak();
         move |accepted| {
+            if !valid() {
+                return;
+            }
             let Some(window) = weak.upgrade() else { return };
             if !window.window().is_visible() {
                 return;
@@ -491,11 +537,90 @@ pub(crate) fn open(
             }
         }
     });
+    window.on_defaults_menu({
+        let valid = valid.clone();
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = Arc::clone(store);
+        move |p| {
+            if !valid() {
+                return;
+            }
+            let Some(window) = weak.upgrade() else { return };
+            if !window.window().is_visible() || !window.get_question().is_empty() {
+                return;
+            }
+            let state = state.borrow();
+            let Some(panel) = state.panels().get(index(p)) else {
+                return;
+            };
+            let defaults = match store.read(hydrus_store::settings::get::<CustomDefaults>) {
+                Ok(defaults) => defaults,
+                Err(e) => {
+                    window.set_error(e.to_string().into());
+                    return;
+                }
+            };
+            let mut actions = vec![SharedString::from("set this as new default")];
+            if defaults.uses(panel.kind) {
+                actions.push("reset to original default".into());
+            }
+            window.set_defaults_actions(ModelRc::new(VecModel::from(actions)));
+        }
+    });
+    window.on_defaults_action({
+        let valid = valid.clone();
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = Arc::clone(store);
+        move |p, action| {
+            if !valid() {
+                return;
+            }
+            let Some(window) = weak.upgrade() else { return };
+            if !window.window().is_visible() || !window.get_question().is_empty() {
+                return;
+            }
+            let state = state.borrow();
+            let Some(panel) = state.panels().get(index(p)) else {
+                return;
+            };
+            let made = match action.as_str() {
+                "set this as new default" => match panel.predicates_for_default(&state.context) {
+                    Ok(predicates) => Some(predicates),
+                    Err(e) => {
+                        window.set_error(e.into());
+                        return;
+                    }
+                },
+                "reset to original default" => None,
+                _ => return,
+            };
+            let kind = panel.kind;
+            let result = store.write(move |writer| {
+                let mut defaults = hydrus_store::settings::get::<CustomDefaults>(writer.conn())?;
+                if let Some(predicates) = made {
+                    defaults.save(predicates);
+                } else {
+                    defaults.reset(kind);
+                }
+                hydrus_store::settings::set(writer.conn(), &defaults)
+            });
+            match result {
+                Ok(()) => window.set_error(SharedString::new()),
+                Err(e) => window.set_error(e.to_string().into()),
+            }
+        }
+    });
     window.on_ok({
+        let valid = valid.clone();
         let weak = window.as_weak();
         let state = state.clone();
         let finish = finish.clone();
         move |p| {
+            if !valid() {
+                return;
+            }
             if weak.upgrade().is_none_or(|window| {
                 !window.window().is_visible() || !window.get_question().is_empty()
             }) {
@@ -522,12 +647,9 @@ pub(crate) fn open(
         let close = close.clone();
         move || close()
     });
-    window.window().on_close_requested({
-        let slot = slot.clone();
-        move || {
-            slot.borrow_mut().take();
-            slint::CloseRequestResponse::HideWindow
-        }
+    window.window().on_close_requested(move || {
+        close();
+        slint::CloseRequestResponse::HideWindow
     });
     window.show().map_err(|e| e.to_string())?;
     *slot.borrow_mut() = Some(window);

@@ -580,8 +580,9 @@ impl LoginSite {
                     }
                     let request = String::from_utf8_lossy(&bytes[..count]).into_owned();
                     let post = request.starts_with("POST ");
+                    let login_get = request.starts_with("GET /login ");
                     requests.lock().unwrap().push(request);
-                    let (body, cookie) = if post {
+                    let (body, cookie) = if post || login_get {
                         ("login response", "session=ok; Path=/")
                     } else {
                         (
@@ -648,7 +649,7 @@ fn script_editor_runs_real_http_with_fresh_cookies_and_reviews_without_saving() 
             )
         })
         .unwrap();
-    headless::init();
+    let _rendered = headless::init();
     let slots = Slots::default();
     let list = windows::open_scripts(&store, &slots).unwrap();
     list.invoke_row_clicked(0, false, false);
@@ -656,6 +657,14 @@ fn script_editor_runs_real_http_with_fresh_cookies_and_reviews_without_saving() 
     let window = slots.script.borrow().as_ref().unwrap().clone_strong();
     window.set_test_domain(site.domain.clone().into());
     window.invoke_action("run-test".into());
+    let prompt = slots
+        .test_domain
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong);
+    if let Some(prompt) = prompt {
+        prompt.invoke_name_entered(window.get_test_domain());
+    }
     assert!(window.get_child_open());
     let credentials = slots.credentials.borrow().as_ref().unwrap().clone_strong();
     for i in 0..credentials.get_rows().row_count() {
@@ -675,6 +684,21 @@ fn script_editor_runs_real_http_with_fresh_cookies_and_reviews_without_saving() 
         window.get_error(),
         "Currently testing! Please cancel it first!"
     );
+    until_login(|| window.get_results().row_count() == 1);
+    assert!(window.get_running());
+    assert!(window.get_final_result().is_empty());
+    assert_eq!(
+        site.requests.lock().unwrap().len(),
+        usize::try_from(fixture[0]["stream"][0]["request_count"].as_u64().unwrap()).unwrap()
+    );
+    window.invoke_result_clicked(0);
+    window.invoke_action("review-result".into());
+    let first_review = slots.result.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(
+        first_review.get_data(),
+        fixture[0]["reviews"][0]["data"].as_str().unwrap()
+    );
+    first_review.invoke_action("close".into());
     until_login(|| !window.get_running());
     assert_eq!(
         window.get_final_result(),
@@ -707,6 +731,14 @@ fn script_editor_runs_real_http_with_fresh_cookies_and_reviews_without_saving() 
     );
     review.invoke_action("close".into());
     window.invoke_action("run-test".into());
+    let prompt = slots
+        .test_domain
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong);
+    if let Some(prompt) = prompt {
+        prompt.invoke_name_entered(window.get_test_domain());
+    }
     let credentials = slots.credentials.borrow().as_ref().unwrap().clone_strong();
     credentials.invoke_action("apply".into());
     until_login(|| site.requests.lock().unwrap().len() == 3);
@@ -716,6 +748,14 @@ fn script_editor_runs_real_http_with_fresh_cookies_and_reviews_without_saving() 
     assert!(slots.result.borrow().is_none());
     assert!(!review.window().is_visible());
     window.invoke_action("run-test".into());
+    let prompt = slots
+        .test_domain
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong);
+    if let Some(prompt) = prompt {
+        prompt.invoke_name_entered(window.get_test_domain());
+    }
     review.invoke_action("copy".into());
     assert!(slots.credentials.borrow().is_none());
     for _ in 0..20 {
@@ -819,6 +859,14 @@ fn domain_login_confirmation_saves_then_real_http_persists_session_and_outcome()
     slots.cancel();
 }
 
+fn answer_argument(slots: &hydrus_gui::login_step_window::Slots, answer: Option<&str>) {
+    let prompt = slots.argument.borrow().as_ref().unwrap().clone_strong();
+    if let Some(answer) = answer {
+        prompt.invoke_name_entered(answer.into());
+    } else {
+        prompt.invoke_cancelled();
+    }
+}
 #[test]
 fn step_argument_draft_rejects_duplicates_stages_cancel_and_reaches_actual_http() {
     let fixture = hydrus_testkit::fixture_json("login_execution.json");
@@ -841,7 +889,7 @@ fn step_argument_draft_rejects_duplicates_stages_cancel_and_reaches_actual_http(
             )
         })
         .unwrap();
-    headless::init();
+    let _rendered = headless::init();
     let slots = hydrus_gui::login_step_window::Slots::default();
     let accepted = Rc::new(RefCell::new(None));
     let callback: hydrus_gui::login_step_window::Applied = Rc::new({
@@ -854,18 +902,14 @@ fn step_argument_draft_rejects_duplicates_stages_cancel_and_reaches_actual_http(
     let window =
         hydrus_gui::login_step_window::open(&store, &script.steps[0], &slots, callback.clone())
             .unwrap();
-    window.invoke_action("add-variable".into());
-    window.set_variable_kind(1);
-    window.set_variable_key("lang".into());
-    window.set_variable_value("bad".into());
-    window.invoke_action("save-variable".into());
-    assert!(window.get_variable_editing());
+    window.invoke_action("add-static".into());
+    answer_argument(&slots, Some("lang"));
+    assert!(slots.argument.borrow().is_none());
+    assert!(!window.get_child_open());
     assert_eq!(window.get_error(), "That parameter name already exists!");
-    window.invoke_action("cancel-variable".into());
-    window.invoke_action("add-variable".into());
-    window.set_variable_key("discarded".into());
-    window.set_variable_value("".into());
-    window.invoke_action("save-variable".into());
+    window.invoke_action("add-static".into());
+    answer_argument(&slots, Some("discarded"));
+    answer_argument(&slots, Some(""));
     window.invoke_action("cancel".into());
     assert!(accepted.borrow().is_none());
     let window =
@@ -873,10 +917,11 @@ fn step_argument_draft_rejects_duplicates_stages_cancel_and_reaches_actual_http(
     assert_eq!(window.get_variables().row_count(), 1);
     window.invoke_variable_clicked(0);
     assert!(window.get_variables().row_data(0).unwrap().selected);
-    window.invoke_action("edit-variable".into());
-    window.set_variable_key("probe".into());
-    window.set_variable_value("changed".into());
-    window.invoke_action("save-variable".into());
+    window.invoke_action("edit-static".into());
+    assert_eq!(slots.argument.borrow().as_ref().unwrap().get_text(), "lang");
+    answer_argument(&slots, Some("probe"));
+    assert_eq!(slots.argument.borrow().as_ref().unwrap().get_text(), "en");
+    answer_argument(&slots, Some("changed"));
     window.invoke_variable_clicked(0);
     window.invoke_action("delete-variable".into());
     assert!(window.get_deleting());
@@ -923,7 +968,7 @@ fn fixed_cookie_matcher(slots: &hydrus_gui::login_cookies_window::Slots, text: &
 #[test]
 fn shared_cookie_list_owns_matchers_and_stages_both_script_and_step_consumers() {
     let (_dir, store, original) = store();
-    headless::init();
+    let _rendered = headless::init();
     let slots = Slots::default();
     let list = windows::open_scripts(&store, &slots).unwrap();
     list.invoke_row_clicked(0, false, false);
@@ -939,12 +984,9 @@ fn shared_cookie_list_owns_matchers_and_stages_both_script_and_step_consumers() 
         .clone_strong();
     assert!(script.get_child_open());
     cookies.invoke_action("add".into());
-    cookies.invoke_action("name-match".into());
     assert!(cookies.get_child_open());
     fixed_cookie_matcher(&slots.cookies, "probe");
-    cookies.invoke_action("value-match".into());
     fixed_cookie_matcher(&slots.cookies, "ready");
-    cookies.invoke_action("save-row".into());
     assert_eq!(cookies.get_rows().row_count(), 2);
     cookies.invoke_action("apply".into());
     assert!(!script.get_child_open());
@@ -964,9 +1006,17 @@ fn shared_cookie_list_owns_matchers_and_stages_both_script_and_step_consumers() 
         .clone_strong();
     child.invoke_row_clicked(0, false, false);
     child.invoke_action("edit".into());
-    child.invoke_action("value-match".into());
+    let name_match = slots
+        .step
+        .cookies
+        .strings
+        .step
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    name_match.invoke_apply();
     fixed_cookie_matcher(&slots.step.cookies, "updated");
-    child.invoke_action("save-row".into());
     child.invoke_action("apply".into());
     step.invoke_action("apply".into());
     script.invoke_action("apply".into());
@@ -1050,7 +1100,6 @@ fn shared_cookie_list_owns_matchers_and_stages_both_script_and_step_consumers() 
     cookies.invoke_action("confirm-delete".into());
     assert_eq!(cookies.get_rows().row_count(), 0);
     cookies.invoke_action("add".into());
-    cookies.invoke_action("name-match".into());
     let matcher = slots
         .cookies
         .strings
@@ -1068,6 +1117,86 @@ fn shared_cookie_list_owns_matchers_and_stages_both_script_and_step_consumers() 
     assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
 }
 
+#[test]
+fn sequential_cookie_matchers_replay_reference_titles_defaults_cancel_and_distinct_rows() {
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    let (_dir, store, original) = store();
+    let _rendered = headless::init();
+    let slots = hydrus_gui::login_cookies_window::Slots::default();
+    let accepted = Rc::new(RefCell::new(None));
+    let window = hydrus_gui::login_cookies_window::open(
+        &store,
+        &original.scripts[0].required_cookies,
+        &slots,
+        Rc::new({
+            let accepted = accepted.clone();
+            move |rows| {
+                *accepted.borrow_mut() = Some(rows);
+                Ok(())
+            }
+        }),
+    )
+    .unwrap();
+    for state in &fixture["cookie_states"].as_array().unwrap()[1..] {
+        if state["action"] == "edit" {
+            let last = i32::try_from(window.get_rows().row_count() - 1).unwrap();
+            window.invoke_row_clicked(last, false, false);
+        }
+        window.invoke_action(state["action"].as_str().unwrap().into());
+        for (index, title) in state["dialogs"].as_array().unwrap().iter().enumerate() {
+            let child = slots.strings.step.borrow().as_ref().unwrap().clone_strong();
+            assert_eq!(child.get_window_title(), title.as_str().unwrap());
+            let initial = &state["initial"][index][2];
+            assert_eq!(child.get_match_type(), i32::from(initial[0] != 3));
+            assert_eq!(child.get_fixed(), initial[1].as_str().unwrap());
+            assert_eq!(child.get_match_example(), initial[4].as_str().unwrap());
+            assert!(window.get_child_open());
+            window.invoke_action("apply".into());
+            assert!(accepted.borrow().is_none());
+            if let Some(text) = state["answers"][index].as_str() {
+                fixed_cookie_matcher(&slots, text);
+            } else {
+                child.invoke_cancel();
+            }
+        }
+        assert!(!window.get_child_open());
+        assert!(slots.strings.step.borrow().is_none());
+        assert_eq!(string_table(&window.get_rows()), state["state"]["rows"]);
+    }
+    assert_eq!(
+        window.get_rows().row_count(),
+        3,
+        "distinct reference matcher objects with equal descriptions survive"
+    );
+    window.invoke_action("apply".into());
+    let rows = accepted.borrow_mut().take().unwrap();
+    assert_eq!(rows.len(), 3);
+    assert_eq!(rows[1].name, rows[2].name);
+    assert_eq!(rows[1].value, rows[2].value);
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), original);
+    let window = hydrus_gui::login_cookies_window::open(
+        &store,
+        &rows,
+        &slots,
+        Rc::new({
+            let accepted = accepted.clone();
+            move |rows| {
+                *accepted.borrow_mut() = Some(rows);
+                Ok(())
+            }
+        }),
+    )
+    .unwrap();
+    window.invoke_action("add".into());
+    fixed_cookie_matcher(&slots, "retired");
+    let retired = slots.strings.step.borrow().as_ref().unwrap().clone_strong();
+    slots.cancel();
+    assert!(!retired.window().is_visible());
+    retired.invoke_apply();
+    window.invoke_action("apply".into());
+    assert!(accepted.borrow().is_none());
+}
+
 fn string_table(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> serde_json::Value {
     serde_json::json!(
         (0..rows.row_count())
@@ -1080,6 +1209,92 @@ fn string_table(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> serde_json::Valu
             .collect::<Vec<_>>()
     )
 }
+#[test]
+fn step_argument_prompts_replay_reference_questions_defaults_cancel_and_stale_owner() {
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    let states = fixture["argument_states"].as_array().unwrap();
+    let step = legacy::login_step(
+        &SerialisableObject::from_tuple_str(&states[0]["state"].to_string()).unwrap(),
+    )
+    .unwrap();
+    let (_dir, store, original) = store();
+    let _rendered = headless::init();
+    let slots = hydrus_gui::login_step_window::Slots::default();
+    let accepted = Rc::new(RefCell::new(None));
+    let window = hydrus_gui::login_step_window::open(
+        &store,
+        &step,
+        &slots,
+        Rc::new({
+            let accepted = accepted.clone();
+            move |step| {
+                *accepted.borrow_mut() = Some(step);
+                Ok(())
+            }
+        }),
+    )
+    .unwrap();
+    for state in &states[1..] {
+        let kind = state["kind"].as_str().unwrap();
+        let index = match kind {
+            "credential" => 0,
+            "temporary" => 2,
+            _ => 1,
+        };
+        if state["action"] == "edit" {
+            window.invoke_argument_clicked(index, 0, false, false);
+        }
+        window.invoke_action(format!("{}-{kind}", state["action"].as_str().unwrap()).into());
+        let mut answers = state["answers"].as_array().unwrap().iter();
+        for prompt in state["prompts"].as_array().unwrap() {
+            if let Some(warning) = prompt["warning"].as_str() {
+                assert_eq!(window.get_error(), warning);
+                assert!(
+                    slots.argument.borrow().is_none(),
+                    "duplicate names never open the value question"
+                );
+                continue;
+            }
+            let child = slots.argument.borrow().as_ref().unwrap().clone_strong();
+            assert_eq!(child.get_message(), prompt["message"].as_str().unwrap());
+            assert_eq!(
+                child.get_text(),
+                prompt["options"]["default"].as_str().unwrap_or_default()
+            );
+            assert_eq!(child.get_name_ok_label(), "ok");
+            assert!(window.get_child_open());
+            window.invoke_action("apply".into());
+            assert!(accepted.borrow().is_none());
+            answer_argument(&slots, answers.next().unwrap().as_str());
+        }
+        assert!(!window.get_child_open());
+        assert!(slots.argument.borrow().is_none());
+        assert_eq!(
+            string_table(&window.get_credential_variables()),
+            state["rows"]["credential"]
+        );
+        assert_eq!(
+            string_table(&window.get_static_variables()),
+            state["rows"]["static"]
+        );
+        assert_eq!(
+            string_table(&window.get_temporary_variables()),
+            state["rows"]["temporary"]
+        );
+    }
+    window.invoke_action("add-static".into());
+    answer_argument(&slots, Some("retired"));
+    let retired = slots.argument.borrow().as_ref().unwrap().clone_strong();
+    window.invoke_action("cancel".into());
+    assert!(slots.argument.borrow().is_none());
+    retired.invoke_name_entered("stale".into());
+    retired.invoke_cancelled();
+    window.invoke_action("apply".into());
+    assert!(accepted.borrow().is_none());
+    let persisted = store.read(hydrus_store::logins::load).unwrap();
+    assert_eq!(persisted, original);
+}
+
 #[test]
 fn step_shows_three_reference_argument_lists_with_independent_selection_and_pinned_footer() {
     let fixture = hydrus_testkit::fixture_json("login_editors.json");
@@ -1152,7 +1367,7 @@ fn step_shows_three_reference_argument_lists_with_independent_selection_and_pinn
     );
     window.invoke_action("add-credential".into());
     assert_eq!(window.get_variable_kind(), 0);
-    window.invoke_action("cancel-variable".into());
+    answer_argument(&slots, None);
     let pixels = headless::render(&rendered.get(0).unwrap(), 880, 680);
     assert!(window.get_footer_y() > 0.0);
     assert!(window.get_footer_y() + window.get_footer_height() <= 680.0);
@@ -1277,4 +1492,791 @@ fn example_domain_stages_match_reference_final_cancel_and_preserve_parent_transa
     child.invoke_action("keep-description".into());
     list.invoke_action("cancel".into());
     assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
+}
+
+#[test]
+fn domain_cookie_reset_is_confirmed_immediate_and_survives_parent_cancel() {
+    let rendered = headless::init();
+    let (dir, store, mut original) = store();
+    let fixture = hydrus_testkit::fixture_json("login_sessions.json");
+    let script = legacy::login_script(
+        &SerialisableObject::from_tuple_str(&fixture["script"].to_string()).unwrap(),
+    )
+    .unwrap();
+    original.scripts = vec![script.clone()];
+    let login = original.domains.get_mut("login.example").unwrap();
+    login.script_key.clone_from(&script.key);
+    login.script_name.clone_from(&script.name);
+    login.active = true;
+    login.validity = hydrus_parse::login::Validity::Untested;
+    login.no_work_until = 0;
+    login.delay_reason.clear();
+    let initial = original.clone();
+    store
+        .write_and_refresh(move |ctx| {
+            hydrus_store::logins::save(ctx.conn(), &initial)?;
+            for (domain, names) in [
+                ("login.example", vec!["session", "token"]),
+                ("other.example.net", vec!["keep"]),
+            ] {
+                for name in names {
+                    hydrus_store::network::set_cookie(
+                        ctx.conn(),
+                        &hydrus_store::network::session_for(
+                            ctx.conn(),
+                            &hydrus_store::network::NetworkContext::domain(domain),
+                        )?,
+                        &hydrus_store::network::Cookie {
+                            name: name.into(),
+                            value: Some(if name == "token" { "ready" } else { "ok" }.into()),
+                            domain: domain.into(),
+                            path: "/".into(),
+                            expires: None,
+                            secure: false,
+                            rest: Vec::new(),
+                        },
+                    )?;
+                }
+            }
+            Ok(())
+        })
+        .unwrap();
+    let slots = hydrus_gui::login_domains_window::Slots::default();
+    let window = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
+    window.invoke_row_clicked(0, false, false);
+    assert_eq!(
+        window
+            .get_rows()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(4)
+            .unwrap(),
+        "yes - session"
+    );
+    assert!(!window.get_can_do_login());
+    window.invoke_action("reset-login".into());
+    assert_eq!(
+        window.get_question(),
+        fixture["states"][4]["questions"][0].as_str().unwrap()
+    );
+    window.invoke_action("back-reset".into());
+    assert!(hydrus_net::login::logged_in(&store, &script, "login.example").unwrap());
+    window.invoke_action("reset-login".into());
+    window.invoke_action("confirm-reset".into());
+    assert_eq!(
+        window
+            .get_rows()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(4)
+            .unwrap(),
+        "no"
+    );
+    assert!(window.get_can_do_login());
+    window.invoke_action("flip-active".into());
+    assert!(!window.get_can_do_login());
+    window.invoke_action("cancel".into());
+    window.invoke_action("confirm-reset".into());
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), original);
+    assert!(!hydrus_net::login::logged_in(&store, &script, "login.example").unwrap());
+    let reopened = Store::open(dir.path()).unwrap();
+    assert!(!hydrus_net::login::logged_in(&reopened, &script, "login.example").unwrap());
+    assert_eq!(
+        reopened
+            .read(|conn| hydrus_store::network::cookies(
+                conn,
+                &hydrus_store::network::session_for(
+                    conn,
+                    &hydrus_store::network::NetworkContext::domain("other.example.net")
+                )?
+            ))
+            .unwrap()
+            .len(),
+        1
+    );
+    let again = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
+    assert_eq!(
+        again
+            .get_rows()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(4)
+            .unwrap(),
+        "no"
+    );
+    store
+        .write_and_refresh(move |ctx| {
+            for (name, value) in [("session", "ok"), ("token", "ready")] {
+                hydrus_store::network::set_cookie(
+                    ctx.conn(),
+                    &hydrus_store::network::session_for(
+                        ctx.conn(),
+                        &hydrus_store::network::NetworkContext::domain("login.example"),
+                    )?,
+                    &hydrus_store::network::Cookie {
+                        name: name.into(),
+                        value: Some(value.into()),
+                        domain: "login.example".into(),
+                        path: "/".into(),
+                        expires: None,
+                        secure: false,
+                        rest: Vec::new(),
+                    },
+                )?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    until_login(|| {
+        again
+            .get_rows()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(4)
+            .unwrap()
+            == "yes - session"
+    });
+    assert!(!again.get_can_do_login());
+    window.invoke_action("reset-login".into());
+    window.invoke_action("confirm-reset".into());
+    assert!(hydrus_net::login::logged_in(&store, &script, "login.example").unwrap());
+    again.invoke_action("cancel".into());
+    assert!(rendered.count() >= 2);
+}
+
+fn domain_reference_manager(
+    fixture: &serde_json::Value,
+    domains: &serde_json::Value,
+) -> LoginManager {
+    use hydrus_parse::login::{Access, DomainLogin, Validity};
+    LoginManager {
+        scripts: fixture["scripts"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|row| {
+                legacy::login_script(&SerialisableObject::from_tuple_str(&row.to_string()).unwrap())
+                    .unwrap()
+            })
+            .collect(),
+        domains: domains
+            .as_object()
+            .unwrap()
+            .iter()
+            .map(|(name, row)| {
+                (
+                    name.clone(),
+                    DomainLogin {
+                        script_key: row[0][0].as_str().unwrap().into(),
+                        script_name: row[0][1].as_str().unwrap().into(),
+                        credentials: serde_json::from_value(row[1].clone()).unwrap(),
+                        access: Access::from_code(row[2].as_i64().unwrap()).unwrap(),
+                        description: row[3].as_str().unwrap().into(),
+                        active: row[4].as_bool().unwrap(),
+                        validity: Validity::from_code(row[5].as_i64().unwrap()).unwrap(),
+                        validity_error: row[6].as_str().unwrap().into(),
+                        no_work_until: row[7].as_i64().unwrap(),
+                        delay_reason: row[8].as_str().unwrap().into(),
+                    },
+                )
+            })
+            .collect(),
+    }
+}
+#[test]
+fn native_domain_prompts_replay_reference_add_change_delete_and_apply_consumers() {
+    let rendered = headless::init();
+    let fixture = hydrus_testkit::fixture_json("login_domains.json");
+    for case in fixture["cases"].as_array().unwrap() {
+        let (dir, store, _) = store();
+        let mut original = domain_reference_manager(&fixture, &case["before"]);
+        if case["name"] == "no-scripts" {
+            original.scripts.clear();
+        }
+        let expected = domain_reference_manager(&fixture, &case["after"]);
+        let initial = original.clone();
+        store
+            .write_and_refresh(move |ctx| hydrus_store::logins::save(ctx.conn(), &initial))
+            .unwrap();
+        let slots = hydrus_gui::login_domains_window::Slots::default();
+        let window = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
+        window.invoke_row_clicked(0, false, false);
+        let action = case["action"].as_str().unwrap();
+        window.invoke_action(
+            if action.starts_with("change") {
+                "change-script"
+            } else {
+                action
+            }
+            .into(),
+        );
+        let child = slots
+            .entry
+            .window
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong);
+        for prompt in case["prompts"].as_array().unwrap() {
+            let answer = &prompt["answer"];
+            if action == "delete" {
+                assert_eq!(window.get_question(), prompt["message"].as_str().unwrap());
+                window.invoke_action(
+                    if answer.as_bool().unwrap() {
+                        "confirm-delete"
+                    } else {
+                        "back-delete"
+                    }
+                    .into(),
+                );
+                continue;
+            }
+            let child = child.as_ref().unwrap();
+            match prompt["kind"].as_str().unwrap() {
+                "select" => {
+                    assert_eq!(child.get_window_title(), prompt["title"].as_str().unwrap());
+                    assert_eq!(
+                        serde_json::json!(
+                            (0..child.get_rows().row_count())
+                                .map(|i| child
+                                    .get_rows()
+                                    .row_data(i)
+                                    .unwrap()
+                                    .cells
+                                    .row_data(0)
+                                    .unwrap()
+                                    .to_string())
+                                .collect::<Vec<_>>()
+                        ),
+                        prompt["choices"]
+                    );
+                    if let Some(index) = answer.as_i64() {
+                        child.invoke_selected(i32::try_from(index).unwrap());
+                        child.invoke_action("accept".into());
+                    } else {
+                        child.invoke_action("cancel".into());
+                    }
+                }
+                "text" => {
+                    assert_eq!(child.get_message(), prompt["message"].as_str().unwrap());
+                    assert_eq!(child.get_text(), prompt["default"].as_str().unwrap());
+                    assert_eq!(
+                        child.get_placeholder(),
+                        prompt["placeholder"].as_str().unwrap_or_default()
+                    );
+                    if let Some(text) = answer.as_str() {
+                        child.set_text(text.into());
+                        child.invoke_action("accept".into());
+                    } else {
+                        child.invoke_action("cancel".into());
+                    }
+                }
+                "question" => {
+                    assert_eq!(child.get_message(), prompt["message"].as_str().unwrap());
+                    child.invoke_action(
+                        if answer.as_bool().unwrap() {
+                            "accept"
+                        } else {
+                            "cancel"
+                        }
+                        .into(),
+                    );
+                }
+                "credentials" => {
+                    let credentials = slots
+                        .entry
+                        .credentials
+                        .borrow()
+                        .as_ref()
+                        .unwrap()
+                        .clone_strong();
+                    if let Some(values) = answer.as_object() {
+                        for i in 0..credentials.get_rows().row_count() {
+                            let row = credentials.get_rows().row_data(i).unwrap();
+                            credentials.invoke_edited(
+                                i32::try_from(i).unwrap(),
+                                values[row.name.as_str()].as_str().unwrap().into(),
+                            );
+                        }
+                        credentials.invoke_action("apply".into());
+                        if !credentials.get_question().is_empty() {
+                            credentials.invoke_action("confirm".into());
+                        }
+                    } else {
+                        credentials.invoke_action("cancel".into());
+                    }
+                }
+                _ => panic!("unknown prompt"),
+            }
+        }
+        assert!(slots.entry.window.borrow().is_none(), "{}", case["name"]);
+        assert!(!window.get_child_open(), "{}", case["name"]);
+        if let Some(warning) = case["warnings"].as_array().unwrap().first() {
+            assert_eq!(window.get_error(), warning.as_str().unwrap());
+        }
+        assert_eq!(store.read(hydrus_store::logins::load).unwrap(), original);
+        window.invoke_action("apply".into());
+        let saved = store.read(hydrus_store::logins::load).unwrap();
+        assert_eq!(saved.domains, expected.domains, "{}", case["name"]);
+        assert_eq!(saved.scripts, original.scripts);
+        assert_eq!(
+            Store::open(dir.path())
+                .unwrap()
+                .read(hydrus_store::logins::load)
+                .unwrap(),
+            saved
+        );
+        if let Some(child) = child {
+            child.invoke_action("accept".into());
+        }
+        assert_eq!(store.read(hydrus_store::logins::load).unwrap(), saved);
+        if case["name"] == "change-invalid-credentials" {
+            let login = &saved.domains["login.example"];
+            let script = saved.script(login).unwrap();
+            let request = hydrus_net::login::plan(
+                &script.steps[0],
+                "login.example",
+                &login.credentials,
+                &BTreeMap::new(),
+                None,
+            )
+            .unwrap();
+            assert_eq!(request.request.url, "http://login.example/?user=bad");
+        }
+    }
+    assert!(rendered.count() > 10);
+}
+
+#[test]
+fn parent_cancel_discards_pending_domain_description_credentials_and_delete() {
+    let _rendered = headless::init();
+    let fixture = hydrus_testkit::fixture_json("login_domains.json");
+    let (dir, store, _) = store();
+    let original = domain_reference_manager(&fixture, &fixture["cases"][1]["before"]);
+    let initial = original.clone();
+    store
+        .write_and_refresh(move |ctx| hydrus_store::logins::save(ctx.conn(), &initial))
+        .unwrap();
+    let slots = hydrus_gui::login_domains_window::Slots::default();
+    let parent = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
+    parent.invoke_action("add".into());
+    let child = slots.entry.window.borrow().as_ref().unwrap().clone_strong();
+    child.invoke_selected(3);
+    child.invoke_action("accept".into());
+    child.set_text("cancel.example".into());
+    child.invoke_action("accept".into());
+    child.invoke_selected(0);
+    child.invoke_action("accept".into());
+    assert_eq!(
+        child.get_message(),
+        "Edit the access description, if needed."
+    );
+    parent.invoke_action("cancel".into());
+    child.invoke_action("cancel".into());
+    child.invoke_action("accept".into());
+    assert!(slots.entry.window.borrow().is_none());
+    assert!(slots.entry.credentials.borrow().is_none());
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), original);
+    let parent = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
+    parent.invoke_action("add".into());
+    let child = slots.entry.window.borrow().as_ref().unwrap().clone_strong();
+    child.invoke_selected(3);
+    child.invoke_action("accept".into());
+    child.set_text("cancel.example".into());
+    child.invoke_action("accept".into());
+    child.invoke_selected(0);
+    child.invoke_action("accept".into());
+    child.invoke_action("cancel".into());
+    let credentials = slots
+        .entry
+        .credentials
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    parent.invoke_action("cancel".into());
+    credentials.invoke_edited(0, "alice".into());
+    credentials.invoke_action("apply".into());
+    assert!(slots.entry.credentials.borrow().is_none());
+    assert!(!credentials.window().is_visible());
+    let parent = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
+    parent.invoke_row_clicked(0, false, false);
+    parent.invoke_action("delete".into());
+    parent.invoke_action("confirm-delete".into());
+    parent.invoke_action("cancel".into());
+    assert_eq!(
+        Store::open(dir.path())
+            .unwrap()
+            .read(hydrus_store::logins::load)
+            .unwrap(),
+        original
+    );
+}
+
+#[test]
+fn script_test_domain_prompt_replays_memory_cancel_clear_timing_and_real_http() {
+    let _rendered = headless::init();
+    let first = LoginSite::start();
+    let second = LoginSite::start();
+    let (_dir, store, original) = store();
+    store
+        .write_and_refresh(move |ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::network::NetworkSettings {
+                    detect_sleep: false,
+                    network_timeout: 2,
+                    max_connection_attempts: 1,
+                    max_get_attempts: 1,
+                    ..Default::default()
+                },
+            )
+        })
+        .unwrap();
+    let fixture = hydrus_testkit::fixture_json("login_test_prompts.json");
+    let script = legacy::login_script(
+        &SerialisableObject::from_tuple_str(&fixture["script"].to_string()).unwrap(),
+    )
+    .unwrap();
+    let slots = Slots::default();
+    let window = windows::open_script(&store, &script, &slots, Rc::new(|_| Ok(()))).unwrap();
+    let domain = |text: &str| match text {
+        "runtime.example" => first.domain.clone(),
+        "next.example" => second.domain.clone(),
+        _ => text.into(),
+    };
+    for step in fixture["states"].as_array().unwrap() {
+        let previous = string_table(&window.get_results());
+        window.invoke_action("run-test".into());
+        assert!(window.get_child_open());
+        assert!(!slots.run.busy());
+        let prompt = slots.test_domain.borrow().as_ref().unwrap().clone_strong();
+        let recorded = &step["prompts"][0];
+        assert_eq!(prompt.get_message(), recorded["message"].as_str().unwrap());
+        assert_eq!(
+            prompt.get_text().to_string(),
+            domain(recorded["default"].as_str().unwrap())
+        );
+        assert_eq!(prompt.get_name_ok_label(), "ok");
+        if let Some(text) = recorded["answer"].as_str() {
+            prompt.invoke_name_entered(domain(text).into());
+        } else {
+            prompt.invoke_cancelled();
+        }
+        assert!(slots.test_domain.borrow().is_none());
+        if let Some(recorded) = step["prompts"].as_array().unwrap().get(1) {
+            let credentials = slots.credentials.borrow().as_ref().unwrap().clone_strong();
+            assert_eq!(
+                credentials.get_rows().row_data(0).unwrap().value,
+                recorded["initial"]["username"].as_str().unwrap()
+            );
+            if let Some(values) = recorded["answer"].as_object() {
+                credentials.invoke_edited(0, values["username"].as_str().unwrap().into());
+                credentials.invoke_action("apply".into());
+            } else {
+                credentials.invoke_action("cancel".into());
+            }
+        }
+        assert_eq!(
+            window.get_test_domain().to_string(),
+            domain(step["after"]["domain"].as_str().unwrap())
+        );
+        let started = step["after"]["running"].as_bool().unwrap();
+        assert_eq!(window.get_running(), started);
+        if started {
+            assert_eq!(window.get_results().row_count(), 0);
+            until_login(|| !window.get_running());
+            assert_eq!(window.get_results().row_count(), 1);
+        } else {
+            assert_eq!(string_table(&window.get_results()), previous);
+            assert!(!slots.run.busy());
+        }
+        prompt.invoke_name_entered("stale.example".into());
+        assert!(slots.test_domain.borrow().is_none());
+    }
+    assert_eq!(first.requests.lock().unwrap().len(), 1);
+    assert!(first.requests.lock().unwrap()[0].starts_with("GET /?user=alice "));
+    assert_eq!(second.requests.lock().unwrap().len(), 1);
+    assert!(second.requests.lock().unwrap()[0].starts_with("GET /?user=bob "));
+    window.invoke_action("run-test".into());
+    let prompt = slots.test_domain.borrow().as_ref().unwrap().clone_strong();
+    window.invoke_action("cancel".into());
+    prompt.invoke_name_entered(first.domain.clone().into());
+    prompt.invoke_cancelled();
+    assert!(slots.test_domain.borrow().is_none());
+    assert!(slots.credentials.borrow().is_none());
+    assert!(!slots.run.busy());
+    assert_eq!(first.requests.lock().unwrap().len(), 1);
+    assert_eq!(store.read(hydrus_store::logins::load).unwrap(), original);
+    assert!(
+        store
+            .read(hydrus_store::network::sessions)
+            .unwrap()
+            .is_empty()
+    );
+}
+
+#[test]
+fn reopened_domain_manager_monitors_and_cancels_actual_engine_owned_demand_process() {
+    let fixture = hydrus_testkit::fixture_json("login_demand.json");
+    let case = &fixture["cancelled_process"];
+    let (_dir, store, mut manager) = store();
+    let site = LoginSite::start();
+    manager.scripts = vec![
+        legacy::login_script(
+            &SerialisableObject::from_tuple_str(&case["script"].to_string()).unwrap(),
+        )
+        .unwrap(),
+    ];
+    let mut login = manager.domains.remove("login.example").unwrap();
+    login.script_key.clone_from(&manager.scripts[0].key);
+    login.script_name.clone_from(&manager.scripts[0].name);
+    login.active = true;
+    login.validity = hydrus_parse::login::Validity::Untested;
+    login.validity_error.clear();
+    login.no_work_until = 0;
+    login.delay_reason.clear();
+    login.credentials.clear();
+    manager.domains.clear();
+    manager.domains.insert(site.domain.clone(), login);
+    store
+        .write_and_refresh(move |ctx| hydrus_store::logins::save(ctx.conn(), &manager))
+        .unwrap();
+    let _rendered = headless::init();
+    let trigger = hydrus_net::Job::new();
+    let (send, receive) = std::sync::mpsc::channel();
+    let thread = std::thread::spawn({
+        let store = store.clone();
+        let trigger = trigger.clone();
+        let domain = site.domain.clone();
+        move || {
+            tokio::runtime::Builder::new_current_thread()
+                .enable_all()
+                .build()
+                .unwrap()
+                .block_on(async move {
+                    let engine = Arc::new(
+                        hydrus_net::NetEngine::new(
+                            store,
+                            hydrus_net::NetOptions {
+                                obey_bandwidth: false,
+                                detect_sleep: false,
+                                max_jobs: 1,
+                                max_jobs_per_domain: 1,
+                                network_timeout: 2,
+                                max_get_attempts: 1,
+                                max_connection_attempts: 1,
+                                ..Default::default()
+                            },
+                        )
+                        .unwrap(),
+                    );
+                    send.send(engine.clone()).unwrap();
+                    let request = hydrus_net::Request::get(format!("http://{domain}/data"));
+                    engine.fetch(&request, &trigger).await
+                })
+        }
+    });
+    let engine = receive.recv_timeout(Duration::from_secs(5)).unwrap();
+    until_login(|| {
+        engine.runtime_snapshot().login.is_some() && !site.requests.lock().unwrap().is_empty()
+    });
+    let monitor_store = Store::open(store.dir()).unwrap();
+    let slots = hydrus_gui::login_domains_window::Slots::default();
+    let first = hydrus_gui::login_domains_window::open(&monitor_store, &slots).unwrap();
+    assert!(first.get_running());
+    assert!(
+        first
+            .get_status()
+            .starts_with(&format!("Logging in {}", site.domain))
+    );
+    first.invoke_action("cancel".into());
+    assert!(
+        engine.runtime_snapshot().login.is_some(),
+        "closing the monitor preserves the engine-owned login"
+    );
+    let window = hydrus_gui::login_domains_window::open(&monitor_store, &slots).unwrap();
+    assert!(window.get_running());
+    let before = store.read(hydrus_store::logins::load).unwrap();
+    window.invoke_action("delete".into());
+    assert!(window.get_question().is_empty());
+    window.invoke_action("cancel-login".into());
+    until_login(|| !window.get_running());
+    assert!(
+        trigger
+            .state()
+            .status
+            .contains("User cancelled the login process.")
+    );
+    trigger.cancel();
+    assert_eq!(
+        thread.join().unwrap().unwrap_err(),
+        hydrus_net::NetError::Cancelled
+    );
+    assert_eq!(
+        trigger.cancelled_note(),
+        case["queued_error"].as_str().unwrap()
+    );
+    let saved = store.read(hydrus_store::logins::load).unwrap();
+    assert_eq!(
+        saved.domains[&site.domain].delay_reason,
+        "User cancelled the login process."
+    );
+    assert!(saved.domains[&site.domain].no_work_until > jiff::Timestamp::now().as_second());
+    assert_eq!(saved.scripts, before.scripts);
+    let requests = site.requests.lock().unwrap();
+    assert_eq!(requests.len(), 1);
+    assert!(requests[0].starts_with("GET /login "));
+    drop(requests);
+    window.invoke_action("cancel".into());
+    window.invoke_action("cancel-login".into());
+    assert!(
+        store
+            .write(|ctx| hydrus_store::network_runtime::take_commands(ctx.conn()))
+            .unwrap()
+            .is_empty()
+    );
+    let reopened = hydrus_gui::login_domains_window::open(&monitor_store, &slots).unwrap();
+    assert!(!reopened.get_running());
+    assert!(
+        reopened
+            .get_rows()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(6)
+            .unwrap()
+            .contains("User cancelled the login process.")
+    );
+    reopened.invoke_action("cancel".into());
+}
+
+#[test]
+fn delayed_manual_completion_cannot_overwrite_a_successor_login_outcome() {
+    let demand = hydrus_testkit::fixture_json("login_demand.json");
+    let (_dir, store, mut manager) = store();
+    let site = LoginSite::start();
+    let script = legacy::login_script(
+        &SerialisableObject::from_tuple_str(&demand["script"].to_string()).unwrap(),
+    )
+    .unwrap();
+    let mut login = manager.domains.remove("login.example").unwrap();
+    login.script_key.clone_from(&script.key);
+    login.script_name.clone_from(&script.name);
+    login.credentials.clear();
+    login.active = true;
+    login.validity = hydrus_parse::login::Validity::Untested;
+    login.validity_error.clear();
+    login.no_work_until = 0;
+    login.delay_reason.clear();
+    manager.scripts = vec![script.clone()];
+    manager.domains.clear();
+    manager.domains.insert(site.domain.clone(), login);
+    store
+        .write_and_refresh(move |ctx| {
+            hydrus_store::logins::save(ctx.conn(), &manager)?;
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::network::NetworkSettings {
+                    detect_sleep: false,
+                    network_timeout: 2,
+                    max_connection_attempts: 1,
+                    max_get_attempts: 1,
+                    ..Default::default()
+                },
+            )
+        })
+        .unwrap();
+    let _rendered = headless::init();
+    let slots = hydrus_gui::login_domains_window::Slots::default();
+    let window = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
+    window.invoke_row_clicked(0, false, false);
+    window.invoke_action("do-login".into());
+    window.invoke_action("confirm-login".into());
+    assert!(slots.run.busy());
+    // Deliberately do not drain Slint timers: the actual worker must finish and
+    // release admission before its old completion callback reaches the GUI.
+    let started = Instant::now();
+    loop {
+        let saved = store.read(hydrus_store::logins::load).unwrap();
+        if saved.domains[&site.domain].validity == hydrus_parse::login::Validity::Valid
+            && hydrus_store::login_runtime::current(&store)
+                .unwrap()
+                .is_none()
+        {
+            break;
+        }
+        assert!(
+            started.elapsed() < Duration::from_secs(16),
+            "owned manual process did not commit"
+        );
+        std::thread::sleep(Duration::from_millis(10));
+    }
+    assert!(
+        slots.run.busy(),
+        "the old completion is still queued for the GUI"
+    );
+    let cases = hydrus_testkit::fixture_json("login_execution.json");
+    let case = cases
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|case| case["name"] == "final_cookie")
+        .unwrap();
+    let mut successor = script;
+    successor.required_cookies = legacy::login_script(
+        &SerialisableObject::from_tuple_str(&case["script"].to_string()).unwrap(),
+    )
+    .unwrap()
+    .required_cookies;
+    let runtime = tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .unwrap();
+    let execution = runtime.block_on(async {
+        let engine = hydrus_net::NetEngine::new(
+            Store::open(store.dir()).unwrap(),
+            hydrus_net::NetOptions {
+                obey_bandwidth: false,
+                detect_sleep: false,
+                max_connection_attempts: 1,
+                max_get_attempts: 1,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        engine
+            .run_login_with_results(
+                &successor,
+                &site.domain,
+                &std::collections::BTreeMap::default(),
+                &hydrus_net::Job::new(),
+                |_| {},
+            )
+            .await
+            .unwrap()
+    });
+    assert_eq!(execution.outcome.text(), case["outcome"].as_str().unwrap());
+    let newer = store.read(hydrus_store::logins::load).unwrap();
+    assert_eq!(
+        newer.domains[&site.domain].validity,
+        hydrus_parse::login::Validity::Invalid
+    );
+    assert!(
+        hydrus_store::login_runtime::current(&store)
+            .unwrap()
+            .is_none()
+    );
+    assert!(slots.run.busy());
+    until_login(|| !slots.run.busy());
+    assert_eq!(
+        store.read(hydrus_store::logins::load).unwrap(),
+        newer,
+        "an old GUI callback must not reapply success over the successor's recorded failure"
+    );
+    assert_eq!(site.requests.lock().unwrap().len(), 2);
+    slots.cancel();
 }

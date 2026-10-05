@@ -410,21 +410,40 @@ fn system_expr(env: &Env<'_>, predicate: &SystemPredicate) -> Result<Expr> {
             op,
             value,
         } => {
+            // The reference treats '< 1' as zero before converting viewtime
+            // seconds to milliseconds. A fractional 1.001 remains a normal
+            // comparison even when its DB threshold truncates to 1000 ms.
+            let only_zero = *op == Comparison::Less
+                && *value
+                    == match stat {
+                        ViewingStat::Views | ViewingStat::ViewTime => 1,
+                        ViewingStat::ViewTimeMilliseconds => 1000,
+                    };
             let canvases = match canvases {
                 ViewCanvases::Default => env.viewing.interesting_canvases.clone(),
                 ViewCanvases::Specific(set) => set.iter().map(|c| c.canvas_type()).collect(),
             };
-            let viewtime = *stat == ViewingStat::ViewTime;
-            let value = if viewtime {
-                value.saturating_mul(1000)
-            } else {
-                *value
+            let viewtime = *stat != ViewingStat::Views;
+            let value = match stat {
+                ViewingStat::Views => *value,
+                ViewingStat::ViewTime => value.saturating_mul(1000),
+                ViewingStat::ViewTimeMilliseconds => {
+                    // Qt composes integer seconds plus milliseconds / 1000;
+                    // the DB then truncates seconds * 1000. Preserve that
+                    // floating-point boundary (e.g. 1.001 becomes 1000 ms).
+                    let seconds = (value / 1000) as f64 + (value % 1000) as f64 / 1000.0;
+                    (seconds * 1000.0) as u64
+                }
             };
             Expr::Leaf(Leaf::Count {
                 source: CountSource::Views { canvases, viewtime },
-                accept: Counts::from_comparison(*op, value, |v| {
-                    Counts::range((0.8 * v as f64) as u64, (1.2 * v as f64) as u64)
-                }),
+                accept: if only_zero {
+                    Counts::exactly(0)
+                } else {
+                    Counts::from_comparison(*op, value, |v| {
+                        Counts::range((0.8 * v as f64) as u64, (1.2 * v as f64) as u64)
+                    })
+                },
             })
         }
         S::KnownUrl { rule, has } => url_expr(env, rule)?.negate_if(!has),

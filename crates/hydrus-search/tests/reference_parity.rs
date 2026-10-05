@@ -465,7 +465,12 @@ fn system_json(registry: &Registry, pred: &SystemPredicate) -> Result<Value, Str
             };
             let view_type = match stat {
                 ViewingStat::Views => "views",
-                ViewingStat::ViewTime => "viewtime",
+                ViewingStat::ViewTime | ViewingStat::ViewTimeMilliseconds => "viewtime",
+            };
+            let value = if *stat == ViewingStat::ViewTimeMilliseconds {
+                json!((value / 1000) as f64 + (value % 1000) as f64 / 1000.0)
+            } else {
+                json!(value)
             };
             predicate_type(
                 "system_file_viewing_stats",

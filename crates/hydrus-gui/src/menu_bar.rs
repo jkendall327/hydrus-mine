@@ -76,7 +76,7 @@ pub(crate) struct Hooks {
 }
 
 /// What the menus show now: the store's facts and the pages'.
-fn facts(pages: &RefCell<Pages>, weigh: bool) -> Facts {
+pub(crate) fn facts(pages: &RefCell<Pages>, weigh: bool) -> Facts {
     let mut pages = pages.borrow_mut();
     let mut facts = match Facts::from_store(pages.store()) {
         Ok(facts) => facts,
@@ -92,12 +92,31 @@ fn facts(pages: &RefCell<Pages>, weigh: bool) -> Facts {
     }
     facts.history = Some(pages.history().to_vec());
     facts.closed_pages = pages.closed_names();
+    let history = pages.predicate_history();
+    let mut context = pages.current().borrow().text_context();
+    // FrameGUI uses Predicate.ToString() without render_for_user.
+    context.presentation = None;
+    let labelled = |predicates: Vec<hydrus_search::Predicate>| {
+        predicates
+            .into_iter()
+            .map(|predicate| {
+                let label = hydrus_search::predicate_text(&predicate, &context);
+                (predicate, label)
+            })
+            .collect()
+    };
+    facts.search_added = labelled(history.added);
+    facts.search_removed = labelled(history.removed);
     facts
 }
 
 /// Bind the menu bar; returns what shows its titles again (as what they
 /// say changes: the undo menu with pages to reopen, the pending menu).
-pub(crate) fn bind(window: &MainWindow, hooks: Hooks) -> Rc<dyn Fn()> {
+pub(crate) fn bind(
+    window: &MainWindow,
+    hooks: Hooks,
+    palette_dispatcher: &crate::command_palette_window::MainDispatcher,
+) -> Rc<dyn Fn()> {
     let hooks = Rc::new(hooks);
     let open: Rc<RefCell<OpenMenus>> = Rc::default();
     // where the bar's titles are, for menus opened by key
@@ -224,6 +243,14 @@ pub(crate) fn bind(window: &MainWindow, hooks: Hooks) -> Rc<dyn Fn()> {
             }
         }
     };
+    *palette_dispatcher.borrow_mut() = Some(Rc::new({
+        let chosen = chosen.clone();
+        let open = open.clone();
+        move |command| {
+            open.borrow_mut().close();
+            chosen(Some(command));
+        }
+    }));
     window.on_menu_title_pressed({
         let open = open.clone();
         let open_menu = open_menu.clone();
@@ -609,6 +636,21 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             (hooks.ask)(
                 format!("Clear the {} closed pages?", human_int(count as u64)),
                 Rc::new(move || pages.borrow_mut().forget_closed()),
+            );
+        }
+        Command::UndoSearch { kind, predicate } => change_pages(&|pages| {
+            pages.undo_search_predicate(kind, &predicate);
+            Ok(())
+        }),
+        Command::ClearSearchHistory => {
+            let pages = hooks.pages.clone();
+            let reshow = hooks.reshow.clone();
+            (hooks.ask)(
+                "Clear the entire search predicate history? This cannot be undone.".into(),
+                Rc::new(move || {
+                    pages.borrow_mut().clear_predicate_history();
+                    reshow();
+                }),
             );
         }
         Command::Unclose(index) => change_pages(&|pages| {

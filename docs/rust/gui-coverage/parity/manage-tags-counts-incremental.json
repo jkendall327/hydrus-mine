@@ -1,0 +1,446 @@
+{
+  "schema_version": 1,
+  "agent": "follow-manage-tags",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "base_checkout": "d7ed4e32",
+  "implementationCommits": [
+    "d9769c36",
+    "1e0604546c2a533eca3d050d5138e4c500022543",
+    "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+    "6303f615",
+    "ad269bf9"
+  ],
+  "claims": [
+    {
+      "reference_id": "audit-media-tags-missing-deleted",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "change_kind": "implementation",
+      "implementationCommit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+      "exactBehavior": "Load actual storage deleted mappings for each local tag service in the ordered selection. Count tag-file mappings, hide the count/toggle at zero, and combine current (n) with deleted (Xn) rows when shown, including current counts when all selected files have the tag. Staged per-file Delete increases counts and re-add clears its deleted mappings before outer Apply. The global immediate show/hide setting survives parent Cancel, reaches other open owners and imports/reopens independently from staged Options defaults. Parent Apply commits the private draft; Cancel and closed-owner callbacks cannot change it. A fresh add/remove cycle retains the actual Qt deleted mapping instead of becoming an unchanged draft.",
+      "limits": [
+        "The existing Manage Tags service list contains local tag services. Repository panels and repository pend/petition action selection remain an inherited parent gap; no repository mapping is incorrectly added by this slice.",
+        "Multiple stored-tag selection/full context menus, parent uncommitted-change confirmation and suggested-tag side panels remain independently assessed. These features do not complete audit-media-manage-tags.",
+        "Rust store/model/GUI tests are authored for root hosted CI; only real Qt recordings, cargo fmt, git diff --check and cached Slint source compilation were executed locally.",
+        "The native labelled button substitutes for the Qt eye icon. Other native owners observe a global toggle within 200 ms, while Qt publishes a queued notification."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/manage_tags.rs",
+          "line": 156,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "source",
+          "symbol": "pub fn show_deleted"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/manage_tags.rs",
+          "line": 186,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "source",
+          "symbol": "pub fn deleted_count("
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/manage_tags.rs",
+          "line": 170,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "source",
+          "symbol": "fn deleted_tags"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/manage_tags.rs",
+          "line": 231,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "source",
+          "symbol": "ManageTags::current_tags"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/manage_tags.rs",
+          "line": 323,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "source",
+          "symbol": "fn plain_rows"
+        },
+        {
+          "path": "crates/hydrus-gui/src/manage_tags_window.rs",
+          "line": 327,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "source",
+          "symbol": "window.on_flip_show_deleted"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/manage_tags.slint",
+          "line": 120,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "source",
+          "symbol": "if root.deleted-count-visible"
+        },
+        {
+          "path": "crates/hydrus-store/src/tag_editing.rs",
+          "line": 64,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "source",
+          "symbol": "pub struct ManageTagsSettings"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 278,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "source",
+          "symbol": "let mut manage_tags ="
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 1478,
+          "commit": "ad269bf9",
+          "kind": "source",
+          "symbol": "window.on_manage_tags_selected"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/manage_tag_counts.rs",
+          "line": 7,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "reference_replay",
+          "symbol": "fn deleted_counts"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/manage_tag_counts.rs",
+          "line": 37,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn thumbnail_dialog"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/incremental_tagging.rs",
+          "line": 100,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "reference_replay",
+          "symbol": "fn add_then_remove"
+        },
+        {
+          "path": "crates/hydrus-store/src/tag_editing.rs",
+          "line": 91,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "store_regression",
+          "symbol": "fn manage_tags_preferences"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 3109,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "legacy_import_regression",
+          "symbol": "fn manage_tags_live"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_manage_tag_counts_incremental.py",
+          "line": 13,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "reference_recorder",
+          "symbol": "def record"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/manage_tag_counts_incremental.json",
+          "line": 1,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "reference_fixture",
+          "symbol": "{"
+        },
+        "command": "/workspace/parallel/with-oracle python oracle/record_manage_tag_counts_incremental.py",
+        "executedAt": "2026-10-04T20:48:26Z",
+        "environment": "hydrus v688, actual Qt offscreen private basic legacy DB, shared with-oracle lock, activated pyenv Python; synthetic checkpoint tags and folder-log.example-style domains only, no remote requests",
+        "observed": "Two real local-service panels with nonzero deleted counts, zero-count panel visibility, global toggle across already open owners, mixed current/deleted rows, staged deletion/re-add, parent Cancel/Apply and DB reopening; fresh add/remove retains deleted mappings."
+      }
+    },
+    {
+      "reference_id": "audit-media-tags-missing-incremental",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "change_kind": "implementation",
+      "implementationCommit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+      "exactBehavior": "The actual multi-file Manage Tags ± launcher opens an owned IncrementalTaggingWindow. Namespace defaults to saved page; prefix/suffix are remembered literally on every edit even after child or parent Cancel. Start infers the first decimal subtag in the first file after the actual reference ASCII-run/Unicode-decimal sorting, skips negative/nondecimal subtags, and clamps its numeric control, step defaults 1; start bounds -10000000..10000000 and step -10000..10000 include zero and negative steps. Reverse numbers the original ordered file selection backwards. The exact Qt summary describes tag order and existing namespace conflicts. Child Apply atomically validates/cleans pairs and stages one additive tag per original file on the frozen service, without spreading numbered tags to all files or removing other namespace tags. Parent Apply persists per-file mappings; child/parent Cancel and closure discard them, invalidate retained handles, and preserve live preference edits. Parent service/tag edits and Apply are blocked while the child owns its draft; one-file selections cannot launch it.",
+      "limits": [
+        "The existing Manage Tags service list contains local tag services. Repository panels and repository pend/petition action selection remain an inherited parent gap; no repository mapping is incorrectly added by this slice.",
+        "Multiple stored-tag selection/full context menus, parent uncommitted-change confirmation and suggested-tag side panels remain independently assessed. These features do not complete audit-media-manage-tags.",
+        "Rust store/model/GUI tests are authored for root hosted CI; only real Qt recordings, cargo fmt, git diff --check and cached Slint source compilation were executed locally.",
+        "Native invalid callback values retain the accepted preview rather than allowing out-of-range state.",
+        "The native child retains reference fields, labels and ranges but uses Slint controls/geometry and an Apply caption instead of the Qt framework OK caption.",
+        "Actual Qt fails panel construction when an initial decimal integer exceeds signed 32-bit range (OverflowError), and its configured Python 4300-digit limit rejects larger raw synthetic previews (ValueError). Native deliberately keeps a usable initial value by arbitrary-precision decimal parsing and clamping; long leading-zero values preserve their small integer. Stored tags remain limited to1024 characters; longer recorder inputs are injected into real media tag-manager previews without DB writes."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/incremental_tagging.rs",
+          "line": 10,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "source",
+          "symbol": "pub struct IncrementalTagging"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/incremental_tagging.rs",
+          "line": 62,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "source",
+          "symbol": "pub fn set_text"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/incremental_tagging.rs",
+          "line": 84,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "source",
+          "symbol": "pub fn set_numbers"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/incremental_tagging.rs",
+          "line": 93,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "source",
+          "symbol": "pub fn pairs"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/incremental_tagging.rs",
+          "line": 114,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "source",
+          "symbol": "pub fn cleaned_pairs"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/incremental_tagging.rs",
+          "line": 124,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "source",
+          "symbol": "pub fn summary"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/manage_tags.rs",
+          "line": 284,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "source",
+          "symbol": "pub fn apply_incremental"
+        },
+        {
+          "path": "crates/hydrus-gui/src/manage_tags_window.rs",
+          "line": 201,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "source",
+          "symbol": "window.on_incremental_tags"
+        },
+        {
+          "path": "crates/hydrus-gui/src/incremental_tagging_window.rs",
+          "line": 21,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "source",
+          "symbol": "pub fn open("
+        },
+        {
+          "path": "crates/hydrus-gui/ui/incremental_tagging.slint",
+          "line": 3,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "source",
+          "symbol": "export component"
+        },
+        {
+          "path": "crates/hydrus-core/src/tag_presentation.rs",
+          "line": 165,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "shared_source",
+          "symbol": "pub fn decimal_digit"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 1478,
+          "commit": "ad269bf9",
+          "kind": "source",
+          "symbol": "window.on_manage_tags_selected"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/incremental_tagging.rs",
+          "line": 12,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "reference_replay",
+          "symbol": "fn actual_child_defaults"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/incremental_tagging.rs",
+          "line": 17,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_incremental_child"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/incremental_tagging.rs",
+          "line": 133,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "reference_replay",
+          "symbol": "fn initial_start_uses"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/incremental_tagging.rs",
+          "line": 204,
+          "commit": "8c85e60a98f308c098f697e565c5d40e7223ce11",
+          "kind": "reference_replay",
+          "symbol": "fn actual_qt_initial_clamps_and_long_decimal_previews_preserve_safe_native_inference"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_manage_tag_counts_incremental.py",
+          "line": 13,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "reference_recorder",
+          "symbol": "def record"
+        },
+        "fixture": {
+          "path": "oracle/fixtures/manage_tag_counts_incremental.json",
+          "line": 1,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "reference_fixture",
+          "symbol": "{"
+        },
+        "command": "/workspace/parallel/with-oracle python oracle/record_manage_tag_counts_incremental.py",
+        "executedAt": "2026-10-04T20:48:26Z",
+        "environment": "hydrus v688, actual Qt offscreen private basic legacy DB, shared with-oracle lock, activated pyenv Python; synthetic checkpoint tags and folder-log.example-style domains only, no remote requests",
+        "observed": "Three actual DialogEdit/IncrementalTaggingPanel sequences: child Cancel; child Apply then parent Cancel; child Apply then parent Apply. Real text and numeric controls, negative start/step, reverse mapping order, initial numeric inference, exact namespace conflict summaries, remembered reopening and complete DB current tags per file. Eleven actual Qt initial-start and zero-step cases: Arabic-Indic, fullwidth, mixed-script, ASCII-vs-Unicode precedence, negative-only/mixed subtags, nondecimal superscript, zero, clamped start and Unicode15.1 Kawi/Nag Mundari digits. Complete68-block Python decimal table recorded."
+      },
+      "additionalReferenceRecordings": [
+        {
+          "recorder": {
+            "path": "oracle/record_incremental_number_boundaries.py",
+            "line": 30,
+            "commit": "8c85e60a98f308c098f697e565c5d40e7223ce11",
+            "kind": "reference_recorder",
+            "symbol": "def record"
+          },
+          "fixture": {
+            "path": "oracle/fixtures/incremental_number_boundaries.json",
+            "line": 1,
+            "commit": "8c85e60a98f308c098f697e565c5d40e7223ce11",
+            "kind": "reference_fixture",
+            "symbol": "{"
+          },
+          "command": "/workspace/parallel/with-oracle python oracle/record_incremental_number_boundaries.py",
+          "executedAt": "2026-10-04T21:00:55Z",
+          "environment": "Actual Hydrus v688/Qt offscreen on a fresh private basic DB through the serialized with-oracle helper; literal decimal previews injected into real MediaResult tags, no remote requests.",
+          "observed": "Eleven actual panel construction inputs: zero, initial-control clamp below/at/above bounds, signed-int maximum and overflow,512-digit ASCII/Arabic-Indic values,1024 leading ASCII/Arabic-Indic zero digits plus7, and5001 digits beyond the Python conversion limit. Seven successful panels replay four real Qt start/step control edits including both clamp bounds. Four construction failures are explicitly retained as intentional safe-native differences."
+        }
+      ]
+    }
+  ],
+  "nativeComponents": [
+    {
+      "name": "ManageTagsWindow",
+      "existingNativeId": "dialog.manage-tags",
+      "file": "crates/hydrus-gui/ui/manage_tags.slint",
+      "newExportedWindows": 0,
+      "title": "manage tags for selected files",
+      "controls": [
+        "per-service storage tag list with combined current/deleted counts",
+        "zero-hidden deleted mapping count and global show/hide button",
+        "multi-file-only ± Incremental Tagging child launcher"
+      ],
+      "referenceRoots": [
+        "audit-media-tags-missing-deleted",
+        "audit-media-tags-missing-incremental"
+      ],
+      "source": {
+        "path": "crates/hydrus-gui/ui/manage_tags.slint",
+        "line": 14,
+        "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+        "kind": "source",
+        "symbol": "export component ManageTagsWindow"
+      },
+      "tests": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/manage_tag_counts.rs",
+          "line": 7,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "reference_replay",
+          "symbol": "fn deleted_counts"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/manage_tag_counts.rs",
+          "line": 37,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn thumbnail_dialog"
+        }
+      ]
+    },
+    {
+      "name": "IncrementalTaggingWindow",
+      "file": "crates/hydrus-gui/ui/incremental_tagging.slint",
+      "newExportedWindows": 1,
+      "title": "Incremental Tagging",
+      "controls": [
+        "namespace/start/step/prefix/suffix/reverse controls",
+        "ordered tag/conflict summary",
+        "owned Apply/Cancel/window-close lifetime"
+      ],
+      "referenceRoots": [
+        "audit-media-tags-missing-incremental"
+      ],
+      "source": {
+        "path": "crates/hydrus-gui/ui/incremental_tagging.slint",
+        "line": 3,
+        "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+        "kind": "source",
+        "symbol": "export component"
+      },
+      "tests": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/incremental_tagging.rs",
+          "line": 12,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "reference_replay",
+          "symbol": "fn actual_child_defaults"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/incremental_tagging.rs",
+          "line": 17,
+          "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_incremental_child"
+        }
+      ]
+    }
+  ],
+  "hierarchySupplement": {
+    "parentReferenceId": "audit-media-manage-tags",
+    "originalFeatureIds": [
+      "audit-media-tags-missing-deleted",
+      "audit-media-tags-missing-incremental"
+    ],
+    "nativeOwnedChild": "IncrementalTaggingWindow",
+    "children": [
+      "namespace",
+      "start",
+      "step",
+      "prefix",
+      "suffix",
+      "tag in reverse",
+      "summary",
+      "Apply",
+      "Cancel"
+    ],
+    "counting": "Only the two frozen original feature IDs are proposed. Native controls and owned child hierarchy add no invented reference leaves; parent stays independently incomplete."
+  },
+  "validation": {
+    "executed": [
+      "actual Python/Qt recorder at 2026-10-04T20:48:26Z",
+      "cargo fmt --all",
+      "git diff --check",
+      "cached Slint source compiler passed, no Cargo build",
+      "source-only comparison: native decimal table exactly equals all68 recorded Python3.13 Unicode15.1 decimal zero blocks",
+      "independent review actual Qt IncrementalTaggingPanel recorder at 2026-10-04T21:00:55Z; original workflow fixture unchanged; frozen-selection caption repaired and source-checked against both actual page/viewer reference launchers"
+    ],
+    "notExecuted": [
+      "local Cargo builds/tests or mutation tests"
+    ],
+    "hostedCI": "Root runs tests on Linux/macOS/Windows asynchronously; no completion promotion implied before validation."
+  }
+}

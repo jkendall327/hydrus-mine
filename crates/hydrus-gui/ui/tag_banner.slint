@@ -1,0 +1,59 @@
+import {Button, CheckBox, LineEdit, SpinBox, TextEdit} from "std-widgets.slint";
+import {Theme} from "theme.slint";
+import {ListTable, TableRow} from "list_table.slint";
+export component TagBannerWindow inherits Window {
+    in property <string> window-title:"edit tag summary";
+    title:root.window-title; preferred-width:780px; preferred-height:670px; background:Theme.window;
+    in-out property <bool> showing;
+    in-out property <string> separator;
+    in-out property <string> examples;
+    in property <[int]> background-channels;
+    in property <[int]> text-channels;
+    in property <color> background-colour;
+    in property <color> text-colour;
+    in property <string> preview;
+    in property <[TableRow]> rows;
+    in property <bool> selected;
+    in property <bool> asking;
+    in property <bool> confirming;
+    in property <string> message;
+    in-out property <string> prompt-text;
+    callback changed(); callback colour-edited(bool,int,int);
+    callback row-clicked(int,bool,bool); callback action(string);
+    callback prompt-accepted(); callback prompt-cancelled(); callback answer(bool);
+    FocusScope {
+        key-pressed(event)=>{if event.text==Key.Escape {if root.asking {root.prompt-cancelled();} else if root.confirming {root.answer(false);} else {root.action("cancel");} return accept;} reject}
+        VerticalLayout {
+            padding:12px; spacing:8px;
+            Text {text:"shows";color:Theme.text;font-weight:700;}
+            CheckBox {text:"currently shows (turn off to hide): "; checked<=>root.showing; enabled:!root.asking && !root.confirming; toggled=>{root.changed();}}
+            Text {text:"edit";color:Theme.text;font-weight:700;}
+            Text {text:"The colours only work for the thumbnails right now!";color:Theme.text;}
+            HorizontalLayout {spacing:6px;Text {text:"background colour: ";color:Theme.text;vertical-alignment:center;}
+                for channel[i] in root.background-channels: SpinBox {value:channel;minimum:0;maximum:255;enabled:!root.asking && !root.confirming;edited(value)=>{root.colour-edited(false,i,value);}}
+                Rectangle {width:28px;background:root.background-colour;border-width:1px;border-color:Theme.text;}
+            }
+            HorizontalLayout {spacing:6px;Text {text:"text colour: ";color:Theme.text;vertical-alignment:center;}
+                for channel[i] in root.text-channels: SpinBox {value:channel;minimum:0;maximum:255;enabled:!root.asking && !root.confirming;edited(value)=>{root.colour-edited(true,i,value);}}
+                Rectangle {width:28px;background:root.text-colour;border-width:1px;border-color:Theme.text;}
+            }
+            Text {text:"RGBA channels (red, green, blue, alpha)";color:Theme.muted;}
+            ListTable {columns:[{title:"namespace | prefix | separator",width:680px,stretch:true}];rows:root.rows;vertical-stretch:1;row-clicked(i,ctrl,shift)=>{if !root.asking && !root.confirming {root.row-clicked(i,ctrl,shift);}}row-activated(i)=>{if !root.asking && !root.confirming {root.row-clicked(i,false,false);root.action("edit");}}}
+            HorizontalLayout {spacing:6px;
+                Button {text:"add";enabled:!root.asking && !root.confirming;clicked=>{root.action("add");}}
+                Button {text:"edit";enabled:root.selected && !root.asking && !root.confirming;clicked=>{root.action("edit");}}
+                Button {text:"↑";enabled:root.selected && !root.asking && !root.confirming;clicked=>{root.action("up");}}
+                Button {text:"↓";enabled:root.selected && !root.asking && !root.confirming;clicked=>{root.action("down");}}
+                Button {text:"X";enabled:root.selected && !root.asking && !root.confirming;clicked=>{root.action("delete");}}
+            }
+            HorizontalLayout {Text {text:"separator";color:Theme.text;vertical-alignment:center;}LineEdit {text<=>root.separator;enabled:!root.asking && !root.confirming;horizontal-stretch:1;edited=>{root.changed();}}}
+            if root.asking: VerticalLayout {Text {text:root.message;color:Theme.text;}LineEdit {text<=>root.prompt-text;accepted=>{root.prompt-accepted();}}HorizontalLayout {Button {text:"ok";clicked=>{root.prompt-accepted();}}Button {text:"cancel";clicked=>{root.prompt-cancelled();}}}}
+            if root.confirming: HorizontalLayout {Text {text:root.message;color:Theme.text;}Button {text:"yes";clicked=>{root.answer(true);}}Button {text:"no";clicked=>{root.answer(false);}}}
+            Text {text:"example";color:Theme.text;font-weight:700;}
+            Text {text:"Enter some newline-separated tags here to see what your current object would generate.";color:Theme.text;wrap:word-wrap;}
+            TextEdit {text<=>root.examples;enabled:!root.asking && !root.confirming;vertical-stretch:1;edited=>{root.changed();}}
+            LineEdit {text:root.preview;read-only:true;}
+            HorizontalLayout {alignment:end;spacing:6px;Button {text:"apply";enabled:!root.asking && !root.confirming;clicked=>{root.action("apply");}}Button {text:"cancel";clicked=>{root.action("cancel");}}}
+        }
+    }
+}

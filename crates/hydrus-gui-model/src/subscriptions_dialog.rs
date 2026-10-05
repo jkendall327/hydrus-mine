@@ -32,6 +32,8 @@ pub struct DialogQuery {
     /// For a query not in the store yet, the queue whose file log it
     /// starts with a copy of (a duplicated subscription's).
     pub copy_of: Option<i64>,
+    /// Imported full history remains detached until the owner applies.
+    pub exchange: Option<hydrus_downloader_exchange::subscriptions::Query>,
 }
 
 impl DialogQuery {
@@ -45,6 +47,7 @@ impl DialogQuery {
             ignored_notes: Vec::new(),
             log_changes: Vec::new(),
             copy_of: None,
+            exchange: None,
         }
     }
 
@@ -531,10 +534,18 @@ impl Subscriptions {
             let queries = original
                 .queries
                 .into_iter()
-                .map(|q| DialogQuery {
-                    queue: None,
-                    copy_of: q.queue.or(q.copy_of),
-                    ..q
+                .map(|mut q| {
+                    if let Some(query) = &mut q.exchange {
+                        hydrus_downloader_exchange::subscriptions::rename_history(
+                            query,
+                            hydrus_core::pages::PageKey::random().to_hex(),
+                        );
+                    }
+                    DialogQuery {
+                        queue: None,
+                        copy_of: q.queue.or(q.copy_of),
+                        ..q
+                    }
                 })
                 .collect();
             let name = self.non_dupe_name(&original.name, None);

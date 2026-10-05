@@ -8,6 +8,9 @@ import { TagServicePanels } from "tag_service_panels.slint";
 export component TagRelationshipsWindow inherits Window {
     in property <[MenuPane]> tag-menu-panes;
     in property <string> tag-menu-question;
+    in property <string> tag-menu-question-title;
+    in property <string> tag-menu-yes-label: "yes";
+    in property <string> tag-menu-no-label: "no";
     callback tag-menu-hovered(int,int,length,length,length);
     callback tag-menu-clicked(int,int,length,length,length);
     callback tag-menu-placed(int,length,length,length);
@@ -32,6 +35,8 @@ export component TagRelationshipsWindow inherits Window {
     in property <int> right-tab;
     in property <int> left-highlighted: -1;
     in property <int> right-highlighted: -1;
+    in property <[bool]> left-selected;
+    in property <[bool]> right-selected;
     in property <int> autocomplete-height: 11;
     in-out property <string> left-input;
     in-out property <string> right-input;
@@ -50,6 +55,8 @@ export component TagRelationshipsWindow inherits Window {
     in property <string> no-label;
     in property <bool> ask-reason;
     in-out property <string> reason;
+    public function normal-paste(right: bool) { if right { right-entry.normal-paste(); } else { left-entry.normal-paste(); } }
+    public function select-input(right: bool, anchor: int, cursor: int) { if right { right-entry.select-input(anchor,cursor); } else { left-entry.select-input(anchor,cursor); } }
     callback service-chosen(int);
     callback enter-tags(bool, string);
     callback autocomplete-edited(bool, string);
@@ -62,7 +69,10 @@ export component TagRelationshipsWindow inherits Window {
     in property <string> left-tag-label;
     in property <string> right-tag-label;
     callback autocomplete-move(bool, int);
+    callback autocomplete-navigate(bool,int,bool,bool);
+    callback autocomplete-results-action(bool,int) -> bool;
     callback autocomplete-chosen(bool, int);
+    callback autocomplete-clicked(bool,int,bool,bool);
     callback autocomplete-paste(bool, bool) -> bool;
     callback remove-input(bool, int);
     callback filters-changed();
@@ -80,7 +90,7 @@ export component TagRelationshipsWindow inherits Window {
     FocusScope {
         capture-key-pressed(event) => {
             if event.text == Key.Escape {
-                if root.question != "" { root.answered(false); } else { root.cancel(); }
+                if root.question != "" { root.answered(false); } else if !left-entry.escape-results() && !right-entry.escape-results() { root.cancel(); }
                 return accept;
             }
             if root.question != "" { return accept; }
@@ -148,11 +158,12 @@ export component TagRelationshipsWindow inherits Window {
                                 }
                             }
                         }
-                        WriteTagInput {
+                        left-entry := WriteTagInput {
                             enabled: root.question == "";
                             text <=> root.left-input;
                             suggestions: root.left-suggestions;
                             highlighted: root.left-highlighted;
+                            selected: root.left-selected;
                             tab-index: root.left-tab;
                             tab-chosen(i) => { root.autocomplete-tab(false, i); }
                             list-height: root.autocomplete-height;
@@ -160,7 +171,10 @@ export component TagRelationshipsWindow inherits Window {
                             entered => { root.enter-tags(false, self.text); }
                             fetch => { root.autocomplete-fetch(false); }
                             move-highlight(by) => { root.autocomplete-move(false, by); }
+                            navigate(d,ctrl,shift) => { root.autocomplete-navigate(false,d,ctrl,shift); }
+                            results-action(a) => { root.autocomplete-results-action(false,a) }
                             chosen(i) => { root.autocomplete-chosen(false, i); }
+                            selection-clicked(i,ctrl,shift) => { root.autocomplete-clicked(false,i,ctrl,shift); }
                         context-menu(i,x,y) => { root.context-menu(false,i,x,y); }
                         file-label:root.left-file-label;tag-label:root.left-tag-label;
                         domain-menu(tags,x,y)=>{root.domain-menu(false,tags,x,y);}
@@ -179,11 +193,12 @@ export component TagRelationshipsWindow inherits Window {
                                 }
                             }
                         }
-                        WriteTagInput {
+                        right-entry := WriteTagInput {
                             enabled: root.question == "";
                             text <=> root.right-input;
                             suggestions: root.right-suggestions;
                             highlighted: root.right-highlighted;
+                            selected: root.right-selected;
                             tab-index: root.right-tab;
                             tab-chosen(i) => { root.autocomplete-tab(true, i); }
                             list-height: root.autocomplete-height;
@@ -191,7 +206,10 @@ export component TagRelationshipsWindow inherits Window {
                             entered => { root.enter-tags(true, self.text); }
                             fetch => { root.autocomplete-fetch(true); }
                             move-highlight(by) => { root.autocomplete-move(true, by); }
+                            navigate(d,ctrl,shift) => { root.autocomplete-navigate(true,d,ctrl,shift); }
+                            results-action(a) => { root.autocomplete-results-action(true,a) }
                             chosen(i) => { root.autocomplete-chosen(true, i); }
+                            selection-clicked(i,ctrl,shift) => { root.autocomplete-clicked(true,i,ctrl,shift); }
                         context-menu(i,x,y) => { root.context-menu(true,i,x,y); }
                         file-label:root.right-file-label;tag-label:root.right-tag-label;
                         domain-menu(tags,x,y)=>{root.domain-menu(true,tags,x,y);}
@@ -230,6 +248,7 @@ export component TagRelationshipsWindow inherits Window {
         if root.tag-menu-panes.length > 0 || root.tag-menu-question != "": TagMenuOverlay {
             width: root.width; height: root.height;
             panes: root.tag-menu-panes; question: root.tag-menu-question;
+            question-title: root.tag-menu-question-title; yes-label: root.tag-menu-yes-label; no-label: root.tag-menu-no-label;
             hovered(p,l,r,t,x) => { root.tag-menu-hovered(p,l,r,t,x); }
             clicked(p,l,r,t,x) => { root.tag-menu-clicked(p,l,r,t,x); }
             placed(p,x,y,w) => { root.tag-menu-placed(p,x,y,w); }

@@ -331,9 +331,9 @@ fn decode(
         }
         29 => {
             let [view_type, canvases, op, value] = tuple::<4>(KIND, value, "viewing stats")?;
-            let stat = match string(KIND, view_type, "view type")?.as_str() {
-                "views" => ViewingStat::Views,
-                "viewtime" => ViewingStat::ViewTime,
+            let (stat, value) = match string(KIND, view_type, "view type")?.as_str() {
+                "views" => (ViewingStat::Views, count_value(value, "view count")?),
+                "viewtime" => viewtime_value(value)?,
                 other => return Err(malformed(KIND, format!("unknown view type {other:?}"))),
             };
             let canvases = list(KIND, canvases, "canvases")?
@@ -349,12 +349,7 @@ fn decode(
                 stat,
                 canvases: ViewCanvases::Specific(canvases),
                 op: comparison(op)?,
-                value: match stat {
-                    ViewingStat::Views => count_value(value, "view count")?,
-                    // (seconds, which the reference's editor stores to the
-                    // millisecond: kept to the nearest second)
-                    ViewingStat::ViewTime => seconds_value(value, "viewing time")?,
-                },
+                value,
             })
         }
         30 => {
@@ -482,19 +477,27 @@ fn count_value(value: &PyJson, what: &str) -> DecodeResult<u64> {
     Ok(n as u64)
 }
 
-/// A non-negative number of seconds, to the nearest second.
-fn seconds_value(value: &PyJson, what: &str) -> DecodeResult<u64> {
+/// A non-negative viewing time; the editor stores fractional seconds to ms.
+#[allow(clippy::float_cmp)] // whole values retain the previous serialized unit
+fn viewtime_value(value: &PyJson) -> DecodeResult<(ViewingStat, u64)> {
     let n = match value {
         PyJson::Int(n) => *n as f64,
-        other => float(KIND, other, what)?,
+        other => float(KIND, other, "viewing time")?,
     };
+    if n.fract() == 0.0 {
+        return Ok((ViewingStat::ViewTime, count_value(value, "viewing time")?));
+    }
     if !(0.0..=u64::MAX as f64).contains(&n) {
         return Err(malformed(
             KIND,
-            format!("{what} {n} is not a whole number we can hold"),
+            format!("viewing time {n} is not a non-negative number we can hold"),
         ));
     }
-    Ok(n.round() as u64)
+    let milliseconds = (n * 1000.0).round();
+    if milliseconds > u64::MAX as f64 {
+        return Err(malformed(KIND, "viewing time does not fit in milliseconds"));
+    }
+    Ok(ViewingStat::from_viewtime_milliseconds(milliseconds as u64))
 }
 
 /// A stored rating test: `"rated"` or `"not rated"`, a count (an int), or

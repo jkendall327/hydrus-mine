@@ -116,6 +116,12 @@ impl std::fmt::Debug for RunSlot {
 pub type Completed = Rc<dyn Fn(Execution)>;
 /// Current HTTP job status shown by the native editor.
 pub type Progress = Rc<dyn Fn(String)>;
+/// One completed step delivered while later steps/waits are still running.
+pub type ResultReady = Rc<dyn Fn(TestResult)>;
+enum RunEvent {
+    Result(TestResult),
+    Complete(Execution),
+}
 fn isolated(source: &Store) -> Result<(tempfile::TempDir, Arc<Store>), String> {
     let (options, classes, headers) = source
         .read(|conn| {
@@ -184,6 +190,16 @@ impl RunSlot {
     /// Test runs use a fresh cookie store while retaining request preferences and
     /// custom headers; real domain runs share the existing persisted sessions.
     pub fn start(&self, input: Input, progress: Progress, completed: Completed) {
+        self.start_with_results(input, progress, Rc::new(|_| {}), completed);
+    }
+    /// Stream each finished step on the GUI thread before the final completion.
+    pub fn start_with_results(
+        &self,
+        input: Input,
+        progress: Progress,
+        result_ready: ResultReady,
+        completed: Completed,
+    ) {
         let Input {
             source,
             script,
@@ -193,7 +209,7 @@ impl RunSlot {
         } = input;
         self.stop();
         let job = Job::new();
-        let (send, receive) = crossbeam_channel::bounded(1);
+        let (send, receive) = crossbeam_channel::unbounded();
         std::thread::spawn({
             let job = job.clone();
             move || {
@@ -213,14 +229,36 @@ impl RunSlot {
                         NetEngine::new(store.clone(), NetOptions::from_settings(&options))
                             .map_err(|e| e.to_string())?
                     };
-                    let execution = runtime.block_on(hydrus_net::login::execute(
-                        &engine,
-                        &store,
-                        &script,
-                        &domain,
-                        &credentials,
-                        &job,
-                    ));
+                    let observed = |result: &hydrus_net::login::TestResult| {
+                        let _ = send.send(RunEvent::Result(result.clone()));
+                    };
+                    let execution = if test {
+                        runtime.block_on(hydrus_net::login::execute_with_results(
+                            &engine,
+                            &store,
+                            &script,
+                            &domain,
+                            &credentials,
+                            &job,
+                            observed,
+                        ))
+                    } else {
+                        match runtime.block_on(engine.run_login_with_results(
+                            &script,
+                            &domain,
+                            &credentials,
+                            &job,
+                            observed,
+                        )) {
+                            Ok(execution) => execution,
+                            Err(hydrus_net::NetError::Cancelled) => Execution {
+                                results: Vec::new(),
+                                variables: BTreeMap::new(),
+                                outcome: Outcome::Cancelled,
+                            },
+                            Err(error) => return Err(error.to_string()),
+                        }
+                    };
                     engine.save_bandwidth().map_err(|e| e.to_string())?;
                     Ok(execution)
                 };
@@ -229,7 +267,7 @@ impl RunSlot {
                     variables: BTreeMap::new(),
                     outcome: Outcome::Unusual(error),
                 });
-                let _ = send.send(execution);
+                let _ = send.send(RunEvent::Complete(execution));
             }
         });
         let timer = Timer::default();
@@ -240,28 +278,123 @@ impl RunSlot {
                 let Some(slot) = slot.upgrade() else {
                     return;
                 };
-                match receive.try_recv() {
-                    Ok(execution) => {
-                        slot.borrow_mut().take();
-                        completed(execution);
-                    }
-                    Err(crossbeam_channel::TryRecvError::Empty) => {
-                        let state = job.state();
-                        progress(format!("{} — {} bytes", state.status, state.bytes_read));
-                    }
-                    Err(crossbeam_channel::TryRecvError::Disconnected) => {
-                        slot.borrow_mut().take();
-                        completed(Execution {
-                            results: Vec::new(),
-                            variables: BTreeMap::new(),
-                            outcome: Outcome::Unusual(
-                                "Login worker stopped before returning a result.".into(),
-                            ),
-                        });
+                loop {
+                    match receive.try_recv() {
+                        Ok(RunEvent::Result(result)) => result_ready(result),
+                        Ok(RunEvent::Complete(execution)) => {
+                            slot.borrow_mut().take();
+                            completed(execution);
+                            break;
+                        }
+                        Err(crossbeam_channel::TryRecvError::Empty) => {
+                            let state = job.state();
+                            progress(format!("{} — {} bytes", state.status, state.bytes_read));
+                            break;
+                        }
+                        Err(crossbeam_channel::TryRecvError::Disconnected) => {
+                            slot.borrow_mut().take();
+                            completed(Execution {
+                                results: Vec::new(),
+                                variables: BTreeMap::new(),
+                                outcome: Outcome::Unusual(
+                                    "Login worker stopped before returning a result.".into(),
+                                ),
+                            });
+                            break;
+                        }
                     }
                 }
             }
         });
         *self.0.borrow_mut() = Some(Running { job, _timer: timer });
     }
+}
+
+/// Parent-owned reference runtime domain text prompt.
+pub type DomainSlot = Rc<RefCell<Option<crate::SessionDialog>>>;
+/// Accepted text or prompt cancellation, delivered only while the prompt is owned.
+pub type DomainAccepted = Rc<dyn Fn(Option<String>)>;
+/// Parent closure discards the prompt without starting the next credential/request stage.
+pub fn cancel_domain(slot: &DomainSlot) {
+    let window = slot
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong);
+    if let Some(window) = window {
+        window.invoke_force_close();
+    }
+}
+/// Ask the remembered test domain; unlike example-description prompts, Cancel aborts.
+pub fn open_domain(
+    initial: &str,
+    slot: &DomainSlot,
+    accepted: DomainAccepted,
+) -> Result<crate::SessionDialog, slint::PlatformError> {
+    open_text("Edit the domain.", initial, false, slot, accepted)
+}
+/// Parent-owned EnterText prompt with the reference's explicit blank-value policy.
+pub fn open_text(
+    message: &str,
+    initial: &str,
+    allow_blank: bool,
+    slot: &DomainSlot,
+    accepted: DomainAccepted,
+) -> Result<crate::SessionDialog, slint::PlatformError> {
+    if let Some(window) = slot.borrow().as_ref() {
+        return Ok(window.clone_strong());
+    }
+    let window = crate::SessionDialog::new()?;
+    window.set_window_title("Enter Text".into());
+    window.set_message(message.into());
+    window.set_name_ok_label("ok".into());
+    window.set_asking_name(true);
+    window.set_text(initial.into());
+    let active = Rc::new(Cell::new(true));
+    let close: Rc<dyn Fn()> = Rc::new({
+        let weak = window.as_weak();
+        let slot = Rc::downgrade(slot);
+        let active = active.clone();
+        move || {
+            if !active.replace(false) {
+                return;
+            }
+            if let Some(window) = weak.upgrade() {
+                let _ = window.hide();
+            }
+            if let Some(slot) = slot.upgrade() {
+                slot.borrow_mut().take();
+            }
+        }
+    });
+    let finish: DomainAccepted = Rc::new({
+        let active = active.clone();
+        let close = close.clone();
+        move |value| {
+            if !active.get() {
+                return;
+            }
+            close();
+            accepted(value);
+        }
+    });
+    window.on_name_entered({
+        let finish = finish.clone();
+        move |value| {
+            finish((allow_blank || !value.is_empty()).then(|| value.to_string()));
+        }
+    });
+    window.on_cancelled({
+        let finish = finish.clone();
+        move || finish(None)
+    });
+    window.on_force_close(move || {
+        close();
+    });
+    window.window().on_close_requested(move || {
+        finish(None);
+        slint::CloseRequestResponse::HideWindow
+    });
+    window.show()?;
+    *slot.borrow_mut() = Some(window.clone_strong());
+    Ok(window)
 }

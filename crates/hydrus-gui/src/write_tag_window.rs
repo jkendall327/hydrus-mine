@@ -36,6 +36,28 @@ pub fn open(
         initial,
         title,
         slot,
+        Rc::new(move |tags, _| applied(tags)),
+        closed,
+    )
+}
+
+/// Additive filename-tagging choices, with explicit additions for a per-file
+/// owner. An unchanged selected union must not spread existing tags to all files.
+pub fn open_additions(
+    store: &Arc<Store>,
+    service: ServiceKey,
+    initial: &[String],
+    title: &str,
+    slot: &Slot,
+    applied: Rc<dyn Fn(Vec<String>, Vec<String>)>,
+    closed: Rc<dyn Fn()>,
+) -> Result<WriteTagsWindow, slint::PlatformError> {
+    open_internal(
+        store,
+        (service, true),
+        initial,
+        title,
+        slot,
         applied,
         closed,
     )
@@ -57,7 +79,7 @@ pub fn open_favourites(
         initial,
         "edit favourite tags",
         slot,
-        applied,
+        Rc::new(move |tags, _| applied(tags)),
         Rc::new(|| {}),
     )
 }
@@ -68,7 +90,7 @@ fn open_internal(
     initial: &[String],
     title: &str,
     slot: &Slot,
-    applied: Rc<dyn Fn(Vec<String>)>,
+    applied: Rc<dyn Fn(Vec<String>, Vec<String>)>,
     closed: Rc<dyn Fn()>,
 ) -> Result<WriteTagsWindow, slint::PlatformError> {
     if let Some(existing) = slot.borrow().as_ref() {
@@ -76,6 +98,15 @@ fn open_internal(
         return Ok(existing.clone_strong());
     }
     let window = WriteTagsWindow::new()?;
+    window
+        .global::<crate::TagTextHistory<'_>>()
+        .on_record(crate::write_tag_history::record);
+    window
+        .global::<crate::TagTextHistory<'_>>()
+        .on_undo(crate::write_tag_history::undo);
+    window
+        .global::<crate::TagTextHistory<'_>>()
+        .on_redo(crate::write_tag_history::redo);
     window.set_window_title(title.into());
     let location = store
         .read(hydrus_store::settings::get::<hydrus_store::settings::SearchDefaults>)
@@ -122,6 +153,7 @@ fn open_internal(
                     .map(|r| crate::list_text(&r.label, colours.tag(&r.colour_tag)))
                     .collect::<Vec<_>>(),
             )));
+            w.set_selected(ModelRc::new(VecModel::from(m.input.selection_mask())));
             w.set_tab_index(i32::try_from(m.input.tab().index()).unwrap_or(0));
             w.set_highlighted(
                 m.input
@@ -185,9 +217,19 @@ fn open_internal(
     window.on_context_menu({
         let tag_menu = tag_menu.clone();
         let model = model.clone();
+        let refresh = refresh.clone();
+        let editable = editable.clone();
         move |i, x, y| {
+            if !editable() || tag_menu.busy() {
+                return;
+            }
             if let Ok(i) = usize::try_from(i) {
-                let entries = model.borrow().input.menu(i);
+                let entries = {
+                    let mut model = model.borrow_mut();
+                    model.input.click(i, false, false);
+                    model.input.menu(i)
+                };
+                refresh();
                 tag_menu.open(&entries, x, y);
             }
         }
@@ -274,6 +316,46 @@ fn open_internal(
             }
             model.borrow_mut().input.move_highlight(by as isize);
             refresh();
+        }
+    });
+    window.on_navigate({
+        let model = model.clone();
+        let refresh = refresh.clone();
+        let editable = editable.clone();
+        move |direction, ctrl, shift| {
+            if !editable() {
+                return;
+            }
+            model.borrow_mut().input.navigate(direction, ctrl, shift);
+            refresh();
+        }
+    });
+    window.on_results_action({
+        let model = model.clone();
+        let refresh = refresh.clone();
+        let editable = editable.clone();
+        move |action| {
+            if !editable() {
+                return false;
+            }
+            let handled =
+                crate::write_tag_menu::results_action(&mut model.borrow_mut().input, action);
+            refresh();
+            handled
+        }
+    });
+    window.on_selection_clicked({
+        let model = model.clone();
+        let refresh = refresh.clone();
+        let editable = editable.clone();
+        move |i, ctrl, shift| {
+            if !editable() {
+                return;
+            }
+            if let Ok(i) = usize::try_from(i) {
+                model.borrow_mut().input.click(i, ctrl, shift);
+                refresh();
+            }
         }
     });
     window.on_entered({
@@ -374,6 +456,8 @@ fn open_internal(
             }
             if yes {
                 model.borrow_mut().paste(&tags);
+            } else if let Some(w) = weak.upgrade() {
+                w.invoke_normal_paste();
             }
             refresh();
         }
@@ -386,7 +470,8 @@ fn open_internal(
             if !editable() {
                 return;
             }
-            applied(model.borrow().tags());
+            let model = model.borrow();
+            applied(model.tags(), model.additions());
             close();
         }
     });

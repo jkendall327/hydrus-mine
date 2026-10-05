@@ -1,0 +1,1529 @@
+{
+  "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b"
+  ],
+  "corpus": [
+    {
+      "tag": "parity:multi alpha",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+      ]
+    },
+    {
+      "tag": "parity:multi beta",
+      "hashes": [
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ]
+    },
+    {
+      "tag": "parity:multi gamma",
+      "hashes": [
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+      ]
+    },
+    {
+      "tag": "parity:multi alpha old",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ]
+    }
+  ],
+  "siblings": [
+    [
+      "parity:multi alpha old",
+      "parity:multi alpha"
+    ]
+  ],
+  "parents": [
+    [
+      "parity:multi alpha",
+      "category:multi parent"
+    ]
+  ],
+  "tags": [
+    "parity:multi",
+    "parity:multi alpha",
+    "parity:multi alpha old",
+    "parity:multi beta",
+    "parity:multi gamma"
+  ],
+  "rows": [
+    {
+      "tag": "parity:multi",
+      "text": "parity:multi"
+    },
+    {
+      "tag": "parity:multi alpha",
+      "text": "parity:multi alpha (3)"
+    },
+    {
+      "tag": "parity:multi alpha",
+      "text": "    category:multi parent"
+    },
+    {
+      "tag": "parity:multi alpha old",
+      "text": "parity:multi alpha old (1) \u2192 parity:multi alpha"
+    },
+    {
+      "tag": "parity:multi alpha old",
+      "text": "    category:multi parent"
+    },
+    {
+      "tag": "parity:multi beta",
+      "text": "parity:multi beta (1)"
+    },
+    {
+      "tag": "parity:multi gamma",
+      "text": "parity:multi gamma (1)"
+    }
+  ],
+  "steps": [
+    {
+      "action": "initial",
+      "selected": [
+        "parity:multi"
+      ],
+      "last_hit": 0
+    },
+    {
+      "action": "click",
+      "selected": [
+        "parity:multi"
+      ],
+      "last_hit": 0,
+      "tag": "parity:multi",
+      "ctrl": false,
+      "shift": false
+    },
+    {
+      "action": "click",
+      "selected": [
+        "parity:multi",
+        "parity:multi alpha"
+      ],
+      "last_hit": 1,
+      "tag": "parity:multi alpha",
+      "ctrl": true,
+      "shift": false
+    },
+    {
+      "action": "click",
+      "selected": [
+        "parity:multi",
+        "parity:multi alpha",
+        "parity:multi beta"
+      ],
+      "last_hit": 3,
+      "tag": "parity:multi beta",
+      "ctrl": true,
+      "shift": false
+    },
+    {
+      "action": "click",
+      "selected": [
+        "parity:multi",
+        "parity:multi alpha",
+        "parity:multi beta"
+      ],
+      "last_hit": 1,
+      "tag": "parity:multi alpha",
+      "ctrl": false,
+      "shift": false
+    },
+    {
+      "action": "click",
+      "selected": [
+        "parity:multi",
+        "parity:multi beta"
+      ],
+      "last_hit": 1,
+      "tag": "parity:multi alpha",
+      "ctrl": true,
+      "shift": false
+    },
+    {
+      "action": "click",
+      "selected": [
+        "parity:multi",
+        "parity:multi alpha",
+        "parity:multi alpha old",
+        "parity:multi beta",
+        "parity:multi gamma"
+      ],
+      "last_hit": 4,
+      "tag": "parity:multi gamma",
+      "ctrl": false,
+      "shift": true
+    },
+    {
+      "action": "click",
+      "selected": [
+        "parity:multi",
+        "parity:multi alpha",
+        "parity:multi alpha old",
+        "parity:multi beta"
+      ],
+      "last_hit": 3,
+      "tag": "parity:multi beta",
+      "ctrl": false,
+      "shift": true
+    },
+    {
+      "action": "click",
+      "selected": [],
+      "last_hit": 0,
+      "tag": "parity:multi",
+      "ctrl": true,
+      "shift": true
+    },
+    {
+      "action": "click",
+      "selected": [
+        "parity:multi gamma"
+      ],
+      "last_hit": 4,
+      "tag": "parity:multi gamma",
+      "ctrl": false,
+      "shift": false
+    },
+    {
+      "action": "click",
+      "selected": [
+        "parity:multi beta",
+        "parity:multi gamma"
+      ],
+      "last_hit": 3,
+      "tag": "parity:multi beta",
+      "ctrl": true,
+      "shift": false
+    },
+    {
+      "action": "parent_click",
+      "selected": [
+        "parity:multi alpha",
+        "parity:multi beta",
+        "parity:multi gamma"
+      ],
+      "last_hit": 1,
+      "tag": "parity:multi alpha",
+      "physical": 2,
+      "ctrl": true,
+      "shift": false
+    },
+    {
+      "action": "activate",
+      "activated": true,
+      "entered": [
+        [
+          "parity:multi alpha",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ]
+      ],
+      "text": ""
+    }
+  ],
+  "menus": [
+    {
+      "action": "open",
+      "paths": [
+        [
+          "collapse parent rows"
+        ],
+        [
+          "hide parent decorators"
+        ],
+        [
+          "hide sibling decorators"
+        ],
+        [
+          "copy",
+          "3 selected"
+        ],
+        [
+          "copy",
+          "3 selected subtags"
+        ],
+        [
+          "copy",
+          "3 selected subtags with underscores"
+        ],
+        [
+          "copy",
+          "3 selected with counts"
+        ],
+        [
+          "copy",
+          "3 selected subtags with counts"
+        ],
+        [
+          "copy",
+          "3 selected and 1 parents"
+        ],
+        [
+          "copy",
+          "all tags"
+        ],
+        [
+          "copy",
+          "all subtags"
+        ],
+        [
+          "copy",
+          "all tags with counts"
+        ],
+        [
+          "copy",
+          "all subtags with counts"
+        ],
+        [
+          "siblings",
+          "add siblings to selection"
+        ],
+        [
+          "parents",
+          "add parents to selection"
+        ],
+        [
+          "open",
+          "open a new search page for 3 selected and 1 parents"
+        ],
+        [
+          "open",
+          "open a new OR search page for 3 selected and 1 parents"
+        ],
+        [
+          "open",
+          "open new search pages for each in selection"
+        ],
+        [
+          "open",
+          "open a new duplicate filter page for 3 selected and 1 parents"
+        ],
+        [
+          "maintenance",
+          "regenerate tag display"
+        ]
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "3 selected",
+      "copied": [
+        "parity:multi alpha\nparity:multi beta\nparity:multi gamma"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "3 selected subtags",
+      "copied": [
+        "multi alpha\nmulti beta\nmulti gamma"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "3 selected subtags with underscores",
+      "copied": [
+        "multi_alpha\nmulti_beta\nmulti_gamma"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "3 selected with counts",
+      "copied": [
+        "parity:multi alpha (3)\nparity:multi beta (1)\nparity:multi gamma (1)"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "3 selected subtags with counts",
+      "copied": [
+        "multi alpha (3)\nmulti beta (1)\nmulti gamma (1)"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "3 selected and 1 parents",
+      "copied": [
+        "parity:multi alpha\ncategory:multi parent\nparity:multi beta\nparity:multi gamma"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "all tags",
+      "copied": [
+        "parity:multi\nparity:multi alpha\nparity:multi alpha old\nparity:multi beta\nparity:multi gamma"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "all subtags",
+      "copied": [
+        "multi\nmulti alpha\nmulti alpha old\nmulti beta\nmulti gamma"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "all tags with counts",
+      "copied": [
+        "parity:multi\nparity:multi alpha (3)\nparity:multi alpha old (1)\nparity:multi beta (1)\nparity:multi gamma (1)"
+      ]
+    },
+    {
+      "action": "copy",
+      "label": "all subtags with counts",
+      "copied": [
+        "multi\nmulti alpha (3)\nmulti alpha old (1)\nmulti beta (1)\nmulti gamma (1)"
+      ]
+    },
+    {
+      "action": "launch",
+      "label": "open a new search page for 3 selected and 1 parents",
+      "launched": [
+        {
+          "topic": "new_page_query",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": [],
+          "predicates": [
+            "parity:multi gamma",
+            "parity:multi beta",
+            "parity:multi alpha"
+          ]
+        }
+      ]
+    },
+    {
+      "action": "launch",
+      "label": "open a new OR search page for 3 selected and 1 parents",
+      "launched": [
+        {
+          "topic": "new_page_query",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": [],
+          "predicates": [
+            "parity:multi alpha (3) OR parity:multi beta (1) OR parity:multi gamma (1)"
+          ]
+        }
+      ]
+    },
+    {
+      "action": "launch",
+      "label": "open new search pages for each in selection",
+      "launched": [
+        {
+          "topic": "new_page_query",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": [],
+          "predicates": [
+            "parity:multi gamma"
+          ]
+        },
+        {
+          "topic": "new_page_query",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": [],
+          "predicates": [
+            "parity:multi beta"
+          ]
+        },
+        {
+          "topic": "new_page_query",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": [],
+          "predicates": [
+            "parity:multi alpha"
+          ]
+        }
+      ]
+    },
+    {
+      "action": "launch",
+      "label": "open a new duplicate filter page for 3 selected and 1 parents",
+      "launched": [
+        {
+          "topic": "new_page_duplicates",
+          "current": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "deleted": [],
+          "predicates": [
+            "parity:multi gamma",
+            "parity:multi beta",
+            "parity:multi alpha"
+          ]
+        }
+      ]
+    },
+    {
+      "action": "regenerate",
+      "answer": false,
+      "asked": [
+        {
+          "message": "!!WARNING EXPERIMENTAL!!\n\nThis will delete and then regenerate all the display calculations for the selected tags and their siblings and parents, with the intention of fixing bad autocomplete counts or sibling/parent presentation. It is functionally similar to the 'tag storage mappings cache' regeneration job, but just for these tags.\n\nIt might take a while to run, perhaps many minutes for a heavily-siblinged/-parented/-mapped tag, during which the database will be locked. Doing it on a thousand tags is going to completely gonk you. Also, any sibling or parent rules will be reset, and they will have to be recalculated, which will probably occur in a few seconds in the background after the regeneration job completes.",
+          "title": "Regen tags?",
+          "yes_label": "let's go",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": []
+    },
+    {
+      "action": "regenerate",
+      "answer": true,
+      "asked": [
+        {
+          "message": "!!WARNING EXPERIMENTAL!!\n\nThis will delete and then regenerate all the display calculations for the selected tags and their siblings and parents, with the intention of fixing bad autocomplete counts or sibling/parent presentation. It is functionally similar to the 'tag storage mappings cache' regeneration job, but just for these tags.\n\nIt might take a while to run, perhaps many minutes for a heavily-siblinged/-parented/-mapped tag, during which the database will be locked. Doing it on a thousand tags is going to completely gonk you. Also, any sibling or parent rules will be reset, and they will have to be recalculated, which will probably occur in a few seconds in the background after the regeneration job completes.",
+          "title": "Regen tags?",
+          "yes_label": "let's go",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [
+        {
+          "name": "regenerate_tag_mappings_tags",
+          "tags": [
+            "parity:multi alpha",
+            "parity:multi beta",
+            "parity:multi gamma"
+          ]
+        }
+      ]
+    }
+  ],
+  "normal_paste": [
+    {
+      "text": "draft content",
+      "anchor": 5,
+      "length": 0,
+      "pasted": "parity:paste one\nparity:paste two",
+      "answer": false,
+      "asked": [
+        {
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:paste one\nparity:paste two",
+          "title": "Want to paste everything?"
+        }
+      ],
+      "after": "draftparity:paste one\nparity:paste two content",
+      "undo": "draft content",
+      "redo": "draftparity:paste one\nparity:paste two content",
+      "entered": [],
+      "pasted_tags": []
+    },
+    {
+      "text": "draft content",
+      "anchor": 0,
+      "length": 5,
+      "pasted": "parity:paste one\nparity:paste two",
+      "answer": false,
+      "asked": [
+        {
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:paste one\nparity:paste two",
+          "title": "Want to paste everything?"
+        }
+      ],
+      "after": "parity:paste one\nparity:paste two content",
+      "undo": "draft content",
+      "redo": "parity:paste one\nparity:paste two content",
+      "entered": [],
+      "pasted_tags": []
+    },
+    {
+      "text": "draft content",
+      "anchor": 5,
+      "length": 0,
+      "pasted": "parity:single",
+      "answer": false,
+      "asked": [],
+      "after": "draftparity:single content",
+      "undo": "draft content",
+      "redo": "draftparity:single content",
+      "entered": [],
+      "pasted_tags": []
+    },
+    {
+      "text": "draft content",
+      "anchor": 0,
+      "length": 5,
+      "pasted": "parity:paste one\nparity:paste two",
+      "answer": true,
+      "asked": [
+        {
+          "message": "You have pasted multiple lines of content. Want to enter them all as separate tags? You entered:\n\nparity:paste one\nparity:paste two",
+          "title": "Want to paste everything?"
+        }
+      ],
+      "after": "draft content",
+      "undo": "draft content",
+      "redo": "draft content",
+      "entered": [],
+      "pasted_tags": [
+        [
+          "parity:paste one",
+          "parity:paste two"
+        ]
+      ]
+    }
+  ],
+  "keyboard": {
+    "page_rows": 3,
+    "steps": [
+      {
+        "action": "initial",
+        "selected": [
+          "parity:multi"
+        ],
+        "last_hit": 0
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi gamma"
+        ],
+        "last_hit": 4,
+        "key": "Up",
+        "ctrl": false,
+        "shift": false,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi"
+        ],
+        "last_hit": 0,
+        "key": "Down",
+        "ctrl": false,
+        "shift": false,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi",
+          "parity:multi alpha"
+        ],
+        "last_hit": 1,
+        "key": "Down",
+        "ctrl": false,
+        "shift": true,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi",
+          "parity:multi alpha",
+          "parity:multi alpha old"
+        ],
+        "last_hit": 2,
+        "key": "Down",
+        "ctrl": false,
+        "shift": true,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi",
+          "parity:multi alpha"
+        ],
+        "last_hit": 1,
+        "key": "Up",
+        "ctrl": false,
+        "shift": true,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi"
+        ],
+        "last_hit": 4,
+        "key": "End",
+        "ctrl": true,
+        "shift": true,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi",
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 0,
+        "key": "Home",
+        "ctrl": false,
+        "shift": true,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 0,
+        "key": "Home",
+        "ctrl": true,
+        "shift": false,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 4,
+        "key": "End",
+        "ctrl": false,
+        "shift": false,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 2,
+        "key": "PageUp",
+        "ctrl": false,
+        "shift": false,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 4,
+        "key": "PageDown",
+        "ctrl": false,
+        "shift": false,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi",
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 4,
+        "key": "A",
+        "ctrl": true,
+        "shift": false,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi",
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 4,
+        "key": "C",
+        "ctrl": true,
+        "shift": false,
+        "copied": [
+          "parity:multi\nparity:multi alpha\nparity:multi alpha old\nparity:multi beta\nparity:multi gamma"
+        ]
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi",
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 4,
+        "key": "C",
+        "ctrl": true,
+        "shift": true,
+        "copied": [
+          "parity:multi\nparity:multi alpha\ncategory:multi parent\nparity:multi alpha old\nparity:multi beta\nparity:multi gamma"
+        ]
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi",
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 3,
+        "key": "P",
+        "ctrl": true,
+        "shift": false,
+        "copied": []
+      },
+      {
+        "action": "key",
+        "selected": [
+          "parity:multi",
+          "parity:multi alpha",
+          "parity:multi alpha old",
+          "parity:multi beta",
+          "parity:multi gamma"
+        ],
+        "last_hit": 4,
+        "key": "N",
+        "ctrl": true,
+        "shift": false,
+        "copied": []
+      }
+    ]
+  },
+  "escape": [
+    {
+      "action": "initial",
+      "selected": [
+        "parity:multi",
+        "parity:multi alpha",
+        "parity:multi alpha old",
+        "parity:multi beta",
+        "parity:multi gamma"
+      ],
+      "last_hit": 4,
+      "focused": true
+    },
+    {
+      "action": "escape",
+      "selected": [],
+      "last_hit": 4,
+      "accepted": true,
+      "focused": true
+    },
+    {
+      "action": "escape",
+      "selected": [],
+      "last_hit": 4,
+      "accepted": false,
+      "focused": true
+    }
+  ],
+  "drag": [
+    {
+      "action": "initial",
+      "selected": [
+        "parity:multi"
+      ],
+      "last_hit": 0
+    },
+    {
+      "action": "press",
+      "selected": [
+        "parity:multi"
+      ],
+      "last_hit": 0,
+      "physical": 0,
+      "ctrl": false,
+      "deselection": null
+    },
+    {
+      "action": "drag",
+      "selected": [
+        "parity:multi",
+        "parity:multi alpha",
+        "parity:multi alpha old",
+        "parity:multi beta",
+        "parity:multi gamma"
+      ],
+      "last_hit": 4,
+      "physical": 6,
+      "ctrl": false,
+      "deselection": false
+    },
+    {
+      "action": "drag",
+      "selected": [
+        "parity:multi",
+        "parity:multi alpha"
+      ],
+      "last_hit": 1,
+      "physical": 2,
+      "ctrl": false,
+      "deselection": false
+    },
+    {
+      "action": "release",
+      "selected": [
+        "parity:multi",
+        "parity:multi alpha"
+      ],
+      "last_hit": 1,
+      "physical": 2,
+      "ctrl": false,
+      "deselection": null
+    },
+    {
+      "action": "select_all",
+      "selected": [
+        "parity:multi",
+        "parity:multi alpha",
+        "parity:multi alpha old",
+        "parity:multi beta",
+        "parity:multi gamma"
+      ],
+      "last_hit": 1
+    },
+    {
+      "action": "press",
+      "selected": [
+        "parity:multi",
+        "parity:multi alpha old",
+        "parity:multi beta",
+        "parity:multi gamma"
+      ],
+      "last_hit": 1,
+      "physical": 1,
+      "ctrl": true,
+      "deselection": null
+    },
+    {
+      "action": "drag",
+      "selected": [
+        "parity:multi"
+      ],
+      "last_hit": 4,
+      "physical": 6,
+      "ctrl": false,
+      "deselection": true
+    },
+    {
+      "action": "drag",
+      "selected": [
+        "parity:multi",
+        "parity:multi beta",
+        "parity:multi gamma"
+      ],
+      "last_hit": 2,
+      "physical": 3,
+      "ctrl": false,
+      "deselection": true
+    },
+    {
+      "action": "release",
+      "selected": [
+        "parity:multi",
+        "parity:multi beta",
+        "parity:multi gamma"
+      ],
+      "last_hit": 2,
+      "physical": 3,
+      "ctrl": false,
+      "deselection": null
+    }
+  ],
+  "manage_clipboard": {
+    "text": "draft content",
+    "rows": [
+      {
+        "tag": "parity:paste one",
+        "label": "parity:paste one (1)"
+      },
+      {
+        "tag": "parity:paste two",
+        "label": "parity:paste two (1)"
+      }
+    ]
+  },
+  "normal_paste_history": [
+    {
+      "name": "successive_replacements",
+      "initial": "draft content",
+      "steps": [
+        {
+          "action": [
+            "paste",
+            "first replacement",
+            0,
+            5
+          ],
+          "text": "first replacement content",
+          "cursor": 17,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "paste",
+            "second replacement",
+            6,
+            11
+          ],
+          "text": "first second replacement content",
+          "cursor": 24,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "first replacement content",
+          "cursor": 17,
+          "selection_start": 6,
+          "selected": "replacement"
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "draft content",
+          "cursor": 5,
+          "selection_start": 0,
+          "selected": "draft"
+        },
+        {
+          "action": [
+            "redo"
+          ],
+          "text": "first replacement content",
+          "cursor": 17,
+          "selection_start": 6,
+          "selected": "replacement"
+        },
+        {
+          "action": [
+            "redo"
+          ],
+          "text": "first second replacement content",
+          "cursor": 24,
+          "selection_start": -1,
+          "selected": ""
+        }
+      ]
+    },
+    {
+      "name": "typing_invalidates_redo",
+      "initial": "draft content",
+      "steps": [
+        {
+          "action": [
+            "paste",
+            "first replacement",
+            0,
+            5
+          ],
+          "text": "first replacement content",
+          "cursor": 17,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "paste",
+            "second replacement",
+            6,
+            11
+          ],
+          "text": "first second replacement content",
+          "cursor": 24,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "first replacement content",
+          "cursor": 17,
+          "selection_start": 6,
+          "selected": "replacement"
+        },
+        {
+          "action": [
+            "type",
+            "x"
+          ],
+          "text": "first x content",
+          "cursor": 7,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "redo"
+          ],
+          "text": "first x content",
+          "cursor": 7,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "first replacement content",
+          "cursor": 17,
+          "selection_start": 6,
+          "selected": "replacement"
+        }
+      ]
+    },
+    {
+      "name": "typing_after_replacement",
+      "initial": "draft content",
+      "steps": [
+        {
+          "action": [
+            "paste",
+            "first replacement",
+            0,
+            5
+          ],
+          "text": "first replacement content",
+          "cursor": 17,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "type",
+            "x"
+          ],
+          "text": "first replacementx content",
+          "cursor": 18,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "first replacement content",
+          "cursor": 17,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "draft content",
+          "cursor": 5,
+          "selection_start": 0,
+          "selected": "draft"
+        },
+        {
+          "action": [
+            "redo"
+          ],
+          "text": "first replacement content",
+          "cursor": 18,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "redo"
+          ],
+          "text": "first replacementx content",
+          "cursor": 18,
+          "selection_start": -1,
+          "selected": ""
+        }
+      ]
+    },
+    {
+      "name": "replace_suffix",
+      "initial": "draft content",
+      "steps": [
+        {
+          "action": [
+            "paste",
+            "suffix",
+            6,
+            7
+          ],
+          "text": "draft suffix",
+          "cursor": 12,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "draft content",
+          "cursor": 13,
+          "selection_start": 6,
+          "selected": "content"
+        },
+        {
+          "action": [
+            "redo"
+          ],
+          "text": "draft suffix",
+          "cursor": 12,
+          "selection_start": -1,
+          "selected": ""
+        }
+      ]
+    },
+    {
+      "name": "adjacent_typing",
+      "initial": "abc",
+      "steps": [
+        {
+          "action": [
+            "select",
+            3,
+            0
+          ],
+          "text": "abc",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "type",
+            "x"
+          ],
+          "text": "abcx",
+          "cursor": 4,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "type",
+            "y"
+          ],
+          "text": "abcxy",
+          "cursor": 5,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "abc",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        }
+      ]
+    },
+    {
+      "name": "cursor_movement_splits_typing",
+      "initial": "abc",
+      "steps": [
+        {
+          "action": [
+            "select",
+            3,
+            0
+          ],
+          "text": "abc",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "type",
+            "x"
+          ],
+          "text": "abcx",
+          "cursor": 4,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "key",
+            "Left"
+          ],
+          "text": "abcx",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "key",
+            "Right"
+          ],
+          "text": "abcx",
+          "cursor": 4,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "type",
+            "y"
+          ],
+          "text": "abcxy",
+          "cursor": 5,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "abcx",
+          "cursor": 4,
+          "selection_start": -1,
+          "selected": ""
+        }
+      ]
+    },
+    {
+      "name": "typing_after_undo_is_new_command",
+      "initial": "abc",
+      "steps": [
+        {
+          "action": [
+            "select",
+            3,
+            0
+          ],
+          "text": "abc",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "type",
+            "x"
+          ],
+          "text": "abcx",
+          "cursor": 4,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "paste",
+            "paste",
+            4,
+            0
+          ],
+          "text": "abcxpaste",
+          "cursor": 9,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "abcx",
+          "cursor": 4,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "type",
+            "y"
+          ],
+          "text": "abcxy",
+          "cursor": 5,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "abcx",
+          "cursor": 4,
+          "selection_start": -1,
+          "selected": ""
+        }
+      ]
+    },
+    {
+      "name": "delete_direction_splits_commands",
+      "initial": "abcdef",
+      "steps": [
+        {
+          "action": [
+            "select",
+            3,
+            0
+          ],
+          "text": "abcdef",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "key",
+            "Delete"
+          ],
+          "text": "abcef",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "key",
+            "Backspace"
+          ],
+          "text": "abef",
+          "cursor": 2,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "abcef",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        }
+      ]
+    },
+    {
+      "name": "same_direction_deletes_merge",
+      "initial": "abcdef",
+      "steps": [
+        {
+          "action": [
+            "select",
+            3,
+            0
+          ],
+          "text": "abcdef",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "key",
+            "Delete"
+          ],
+          "text": "abcef",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "key",
+            "Delete"
+          ],
+          "text": "abcf",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "abcdef",
+          "cursor": 3,
+          "selection_start": -1,
+          "selected": ""
+        }
+      ]
+    },
+    {
+      "name": "unicode_restored_selection",
+      "initial": "\u00e9\u6f22\ud83d\ude00 draft",
+      "steps": [
+        {
+          "action": [
+            "paste",
+            "replacement",
+            1,
+            3
+          ],
+          "text": "\u00e9replacement draft",
+          "cursor": 12,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "\u00e9\u6f22\ud83d\ude00 draft",
+          "cursor": 4,
+          "selection_start": 1,
+          "selected": "\u6f22\ud83d\ude00"
+        },
+        {
+          "action": [
+            "type",
+            "x"
+          ],
+          "text": "\u00e9x draft",
+          "cursor": 2,
+          "selection_start": -1,
+          "selected": ""
+        },
+        {
+          "action": [
+            "undo"
+          ],
+          "text": "\u00e9\u6f22\ud83d\ude00 draft",
+          "cursor": 4,
+          "selection_start": 1,
+          "selected": "\u6f22\ud83d\ude00"
+        },
+        {
+          "action": [
+            "redo"
+          ],
+          "text": "\u00e9x draft",
+          "cursor": 2,
+          "selection_start": -1,
+          "selected": ""
+        }
+      ]
+    }
+  ]
+}

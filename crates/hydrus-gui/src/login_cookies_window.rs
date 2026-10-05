@@ -59,6 +59,95 @@ fn show(window: &LoginCookiesWindow, editor: &CookiesEditor) {
     window.set_one_selected(selected.len() == 1);
     window.set_any_selected(!selected.is_empty());
 }
+fn edit_pair(
+    window: &LoginCookiesWindow,
+    store: &Arc<Store>,
+    editor: &Rc<RefCell<CookiesEditor>>,
+    active: &Rc<Cell<bool>>,
+    strings: &crate::string_processor_window::Slots,
+    index: Option<usize>,
+) {
+    let cookie = index
+        .and_then(|i| editor.borrow().rows.get(i).cloned())
+        .unwrap_or_else(|| CookieRequirement {
+            name: StringMatch::any(),
+            value: StringMatch::any(),
+            reference_auxiliary: None,
+        });
+    window.set_child_open(true);
+    crate::string_processor_window::open_match(
+        store,
+        &cookie.name,
+        strings,
+        Rc::new({
+            let weak = window.as_weak();
+            let active = active.clone();
+            let editor = editor.clone();
+            let store = store.clone();
+            let strings = strings.clone();
+            let value = cookie.value;
+            move |name| {
+                if !active.get() {
+                    return;
+                }
+                let Some(window) = weak.upgrade() else {
+                    return;
+                };
+                window.set_child_open(true);
+                crate::string_processor_window::open_match(
+                    &store,
+                    &value,
+                    &strings,
+                    Rc::new({
+                        let weak = weak.clone();
+                        let active = active.clone();
+                        let editor = editor.clone();
+                        move |value| {
+                            if !active.get() {
+                                return;
+                            }
+                            editor.borrow_mut().put(
+                                index,
+                                CookieRequirement {
+                                    name: name.clone(),
+                                    value,
+                                    reference_auxiliary: None,
+                                },
+                            );
+                            if let Some(window) = weak.upgrade() {
+                                show(&window, &editor.borrow());
+                            }
+                        }
+                    }),
+                );
+                own_matcher(&window, &strings, "edit match");
+            }
+        }),
+    );
+    own_matcher(window, strings, "edit cookie name");
+}
+fn own_matcher(
+    window: &LoginCookiesWindow,
+    strings: &crate::string_processor_window::Slots,
+    title: &str,
+) {
+    let child = strings
+        .step
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong);
+    if let Some(child) = child {
+        child.set_window_title(title.into());
+        let weak = window.as_weak();
+        child.on_closed(move || {
+            if let Some(window) = weak.upgrade() {
+                window.set_child_open(false);
+            }
+        });
+    } else {
+        window.set_child_open(false);
+    }
+}
 /// Edit complete cookie requirements with the shared permitted-input matcher.
 pub fn open(
     store: &Arc<Store>,
@@ -71,8 +160,6 @@ pub fn open(
     }
     let window = LoginCookiesWindow::new()?;
     let editor = Rc::new(RefCell::new(CookiesEditor::new(rows)));
-    let pair = Rc::new(RefCell::new(None::<CookieRequirement>));
-    let editing = Rc::new(Cell::new(None::<usize>));
     let active = Rc::new(Cell::new(true));
     show(&window, &editor.borrow());
     let close: Rc<dyn Fn()> = Rc::new({
@@ -107,7 +194,7 @@ pub fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_editing() || window.get_deleting() || window.get_child_open() {
+            if window.get_deleting() || window.get_child_open() {
                 return;
             }
             if let Ok(index) = usize::try_from(index) {
@@ -123,8 +210,6 @@ pub fn open(
         let active = active.clone();
         let close = close.clone();
         let editor = editor.clone();
-        let pair = pair.clone();
-        let editing = editing.clone();
         let strings = slots.strings.clone();
         let store = store.clone();
         move |action| {
@@ -144,14 +229,6 @@ pub fn open(
             if window.get_deleting() && !matches!(action.as_str(), "confirm-delete" | "back") {
                 return;
             }
-            if window.get_editing()
-                && !matches!(
-                    action.as_str(),
-                    "name-match" | "value-match" | "save-row" | "cancel-row"
-                )
-            {
-                return;
-            }
             match action.as_str() {
                 "add" | "edit" => {
                     let index = if action == "edit" {
@@ -162,82 +239,7 @@ pub fn open(
                     if action == "edit" && index.is_none() {
                         return;
                     }
-                    let cookie = index
-                        .and_then(|i| editor.borrow().rows.get(i).cloned())
-                        .unwrap_or_else(|| CookieRequirement {
-                            name: StringMatch::any(),
-                            value: StringMatch::any(),
-                            reference_auxiliary: None,
-                        });
-                    window.set_name_match(cookie.name.describe(false, false).into());
-                    window.set_value_match(cookie.value.describe(false, false).into());
-                    *pair.borrow_mut() = Some(cookie);
-                    editing.set(index);
-                    window.set_editing(true);
-                }
-                "name-match" | "value-match" => {
-                    let is_name = action == "name-match";
-                    let value = pair.borrow().as_ref().map(|p| {
-                        if is_name {
-                            p.name.clone()
-                        } else {
-                            p.value.clone()
-                        }
-                    });
-                    let Some(value) = value else {
-                        return;
-                    };
-                    crate::string_processor_window::open_match(
-                        &store,
-                        &value,
-                        &strings,
-                        Rc::new({
-                            let weak = weak.clone();
-                            let active = active.clone();
-                            let pair = pair.clone();
-                            move |value| {
-                                if !active.get() {
-                                    return;
-                                }
-                                if let Some(pair) = pair.borrow_mut().as_mut() {
-                                    pair.reference_auxiliary = None;
-                                    if is_name {
-                                        pair.name = value;
-                                    } else {
-                                        pair.value = value;
-                                    }
-                                    if let Some(window) = weak.upgrade() {
-                                        window.set_name_match(
-                                            pair.name.describe(false, false).into(),
-                                        );
-                                        window.set_value_match(
-                                            pair.value.describe(false, false).into(),
-                                        );
-                                    }
-                                }
-                            }
-                        }),
-                    );
-                    if let Some(child) = strings.step.borrow().as_ref() {
-                        window.set_child_open(true);
-                        let weak = weak.clone();
-                        child.on_closed(move || {
-                            if let Some(window) = weak.upgrade() {
-                                window.set_child_open(false);
-                            }
-                        });
-                    }
-                }
-                "save-row" => {
-                    if let Some(pair) = pair.borrow_mut().take() {
-                        editor.borrow_mut().put(editing.get(), pair);
-                        window.set_editing(false);
-                        show(&window, &editor.borrow());
-                    }
-                }
-                "cancel-row" => {
-                    pair.borrow_mut().take();
-                    window.set_editing(false);
+                    edit_pair(&window, &store, &editor, &active, &strings, index);
                 }
                 "delete" => {
                     if !editor.borrow().selection.is_empty() {

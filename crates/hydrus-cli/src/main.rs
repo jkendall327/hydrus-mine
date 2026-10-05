@@ -16,6 +16,7 @@ use hydrus_store::transfer::{TransferMode, transfer_media};
 mod api_keys;
 mod client_api_listener;
 mod duplicates;
+mod folder_wait;
 mod folders;
 mod gallery;
 mod pauses;
@@ -714,6 +715,10 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
             tokio::spawn(async move {
                 let mut schedule = hydrus_download::folders::ImportFolderSchedule::new();
                 loop {
+                    let before_work = folder_wait::capture(
+                        downloads.downloader().store(),
+                        hydrus_store::folder_activity::Kind::Import,
+                    );
                     let downloader = std::sync::Arc::clone(downloads.downloader());
                     let done = tokio::task::spawn_blocking(move || {
                         let result = hydrus_download::folders::work_due_import_folders(
@@ -740,7 +745,12 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                             1800
                         }
                     };
-                    tokio::time::sleep(Duration::from_secs(wait.unsigned_abs())).await;
+                    folder_wait::wait(
+                        downloads.downloader().store(),
+                        hydrus_store::folder_activity::Kind::Import,
+                        before_work,
+                        Duration::from_secs(wait.unsigned_abs()),
+                    ).await;
                 }
             });
         }
@@ -749,6 +759,10 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
         tokio::spawn(async move {
             tokio::time::sleep(Duration::from_secs(5)).await;
             loop {
+                let before_work = folder_wait::capture(
+                    &exporter,
+                    hydrus_store::folder_activity::Kind::Export,
+                );
                 let store = exporter.clone();
                 let done = tokio::task::spawn_blocking(move || {
                     hydrus_download::export::work_export_folders(&store)
@@ -772,7 +786,12 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                     Ok(Err(e)) => tracing::error!(error = %e, "export folders failed"),
                     Err(_) => {}
                 }
-                tokio::time::sleep(Duration::from_secs(180)).await;
+                folder_wait::wait(
+                    &exporter,
+                    hydrus_store::folder_activity::Kind::Export,
+                    before_work,
+                    Duration::from_secs(180),
+                ).await;
             }
         });
         // queues another process (the desktop client) made or changed, as

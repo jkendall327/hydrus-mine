@@ -122,6 +122,8 @@ fn exact_rows_counts_domains_decorations_and_first_selection_match_reference() {
                 settings::set(ctx.conn(), &widgets)
             })
             .unwrap();
+        // The oracle fetch explicitly clears SetPredicates before each option case.
+        input.clear();
         input.set_text(query["text"].as_str().unwrap());
         let mut actual: Vec<Value> = Vec::new();
         for row in input.rows() {
@@ -616,6 +618,9 @@ fn tag_menu_copy_decorations_favourites_and_launch_replay_real_qt_actions() {
                     assert_eq!(json!([text]), event["copied"]);
                 }
             }
+            Action::Regenerate { .. } => {
+                panic!("the recorded single-tag menu replay has no maintenance dispatch");
+            }
             Action::Domain(..) | Action::Locations(..) => {
                 panic!("unexpected domain action in tag menu replay");
             }
@@ -1030,4 +1035,549 @@ fn favourite_options_replay_add_only_choices_and_parent_transaction() {
         Editor::new(reopened.clone()).edited_favourite_tags(),
         reopened.favourite_tags
     );
+}
+
+#[test]
+fn recorded_logical_selection_ranges_parent_hits_and_batch_activation() {
+    let fixture = hydrus_testkit::fixture_json("write_tag_selection.json");
+    let (_dir, store) = seeded(&fixture);
+    let snapshot = store.snapshot();
+    let service = snapshot.services.by_name("my tags").unwrap();
+    for (kind, field) in [
+        (RelationKind::Siblings, "siblings"),
+        (RelationKind::Parents, "parents"),
+    ] {
+        tag_relations::apply(
+            &store,
+            kind,
+            fixture[field]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|pair| RelationUpdate {
+                    service: service.id,
+                    left: Tag::new(pair[0].as_str().unwrap()).unwrap(),
+                    right: Tag::new(pair[1].as_str().unwrap()).unwrap(),
+                    action: RelationAction::Add,
+                })
+                .collect(),
+        )
+        .unwrap();
+    }
+    let key = service.key.clone();
+    store
+        .write(move |ctx| {
+            let mut prefs: TagEditingSettings = settings::get(ctx.conn())?;
+            prefs.select_first_with_count = false;
+            prefs.autocomplete_list_height = 3;
+            prefs.autocomplete_show_parents = true;
+            prefs.autocomplete_expand_parents = true;
+            prefs.autocomplete_show_siblings = true;
+            settings::set(ctx.conn(), &prefs)?;
+            let mut widgets: hydrus_store::tag_display_config::AutocompleteWidgetSettings =
+                settings::get(ctx.conn())?;
+            let mut options = widgets.options(&key);
+            options.write_tag_service = key.clone();
+            widgets.services.insert(key.to_hex(), options);
+            settings::set(ctx.conn(), &widgets)
+        })
+        .unwrap();
+    let mut entry = hydrus_gui_model::write_autocomplete::TagEntry::new(
+        WriteAutocomplete::new(
+            store,
+            service.key.clone(),
+            LocationContext::single(hydrus_core::ServiceKey::new(
+                hydrus_core::service::builtin_keys::MY_FILES,
+            )),
+        ),
+        &[],
+    );
+    entry.input.set_text("parity:multi");
+    let rows: Vec<_> = entry
+        .input
+        .rows()
+        .iter()
+        .map(|row| json!({"tag":row.tag,"text":row.label}))
+        .collect();
+    assert_eq!(json!(rows), fixture["rows"]);
+    check_recorded_keyboard(&mut entry.input, &fixture);
+    entry.input.clear();
+    entry.input.set_text("parity:multi");
+    for step in fixture["steps"].as_array().unwrap() {
+        match step["action"].as_str().unwrap() {
+            "initial" => {}
+            "click" | "parent_click" => {
+                let index = step["physical"].as_u64().map_or_else(
+                    || {
+                        entry
+                            .input
+                            .rows()
+                            .iter()
+                            .position(|row| {
+                                row.tag == step["tag"].as_str().unwrap() && !row.parent_row
+                            })
+                            .unwrap()
+                    },
+                    |i| usize::try_from(i).unwrap(),
+                );
+                entry.input.click(
+                    index,
+                    step["ctrl"].as_bool().unwrap(),
+                    step["shift"].as_bool().unwrap(),
+                );
+            }
+            "activate" => {
+                check_recorded_batch_menu(&entry.input, &fixture);
+                let mask = entry.input.selection_mask();
+                assert!(mask[1] && mask[2]); // Primary and inherited row share logical selection.
+                entry.input.fetch(); // Repeating a result must preserve the batch.
+                entry.input.decorate(
+                    entry.input.tab(),
+                    hydrus_gui_model::write_tag_menu::Decoration::Expanded,
+                    false,
+                );
+                assert_eq!(json!(entry.input.selected_tags()), step["entered"][0]);
+                entry.enter(None);
+                assert_eq!(json!(entry.tags()), step["entered"][0]);
+                assert_eq!(entry.input.text(), step["text"].as_str().unwrap());
+                continue;
+            }
+            action => panic!("unexpected recorded action {action}"),
+        }
+        assert_eq!(
+            json!(entry.input.selected_tags()),
+            step["selected"],
+            "{step}"
+        );
+        let physical = entry.input.highlighted().unwrap();
+        let logical = entry.input.rows()[..=physical]
+            .iter()
+            .filter(|row| !row.parent_row)
+            .count()
+            - 1;
+        assert_eq!(json!(logical), step["last_hit"]);
+    }
+    // A wholly deselected result must not secretly enter the typed manual tag.
+    entry.input.set_text("parity:multi beta");
+    for index in (0..entry.input.rows().len()).collect::<Vec<_>>() {
+        if entry.input.selection_mask()[index] {
+            entry.input.click(index, true, false);
+        }
+    }
+    let before = entry.tags();
+    entry.enter(None);
+    assert_eq!(entry.tags(), before);
+}
+
+fn check_recorded_batch_menu(input: &WriteAutocomplete, fixture: &Value) {
+    use hydrus_core::search::predicate::Predicate;
+    use hydrus_gui_model::write_tag_menu::{Action, Entry};
+    fn leaves(entries: &[Entry], prefix: &[String], out: &mut Vec<(Vec<String>, Action)>) {
+        for entry in entries {
+            match entry {
+                Entry::Item(label, action) | Entry::Check(label, action, _) => {
+                    let mut path = prefix.to_vec();
+                    path.push(label.clone());
+                    out.push((path, action.clone()));
+                }
+                Entry::Menu(label, entries) => {
+                    let mut path = prefix.to_vec();
+                    path.push(label.clone());
+                    leaves(entries, &path, out);
+                }
+                Entry::Separator => {}
+            }
+        }
+    }
+    let selected = input.selected_tags();
+    let index = input
+        .rows()
+        .iter()
+        .position(|row| row.tag == selected[0])
+        .unwrap();
+    let mut actual = Vec::new();
+    leaves(&input.menu(index), &[], &mut actual);
+    let expected_paths: Vec<Vec<String>> =
+        serde_json::from_value(fixture["menus"][0]["paths"].clone()).unwrap();
+    assert_eq!(
+        actual
+            .iter()
+            .map(|(path, _)| path.clone())
+            .collect::<Vec<_>>(),
+        expected_paths
+    );
+    let predicates: Vec<_> = selected
+        .iter()
+        .map(|tag| Predicate::Tag {
+            tag: Tag::new(tag).unwrap(),
+            inclusive: true,
+        })
+        .collect();
+    for event in fixture["menus"].as_array().unwrap().iter().skip(1) {
+        if event["action"] == "regenerate" {
+            let action = &actual
+                .iter()
+                .find(|(path, _)| {
+                    path == &[
+                        "maintenance".to_owned(),
+                        "regenerate tag display".to_owned(),
+                    ]
+                })
+                .unwrap()
+                .1;
+            assert_eq!(
+                action.question().unwrap(),
+                event["asked"][0]["message"].as_str().unwrap()
+            );
+            let Action::Regenerate { tags } = action else {
+                panic!("regeneration action")
+            };
+            assert_eq!(*tags, selected);
+            if event["answer"].as_bool().unwrap() {
+                assert_eq!(json!(tags), event["writes"][0]["tags"]);
+            } else {
+                assert!(event["writes"].as_array().unwrap().is_empty());
+            }
+            continue;
+        }
+        let action = &actual
+            .iter()
+            .find(|(path, _)| path.last().unwrap() == event["label"].as_str().unwrap())
+            .unwrap()
+            .1;
+        match action {
+            Action::Copy(text) => assert_eq!(json!([text]), event["copied"]),
+            Action::Launch {
+                location,
+                predicates: actual,
+                duplicate,
+                ..
+            } => {
+                let expected = if event["label"].as_str().unwrap().contains(" OR ") {
+                    vec![Predicate::Or(predicates.clone())]
+                } else {
+                    predicates.clone()
+                };
+                assert_eq!(*actual, expected);
+                assert_eq!(
+                    *duplicate,
+                    event["launched"][0]["topic"] == "new_page_duplicates"
+                );
+                assert_eq!(
+                    json!(
+                        location
+                            .current()
+                            .iter()
+                            .map(hydrus_core::ServiceKey::to_hex)
+                            .collect::<Vec<_>>()
+                    ),
+                    event["launched"][0]["current"]
+                );
+                assert_eq!(
+                    json!(
+                        location
+                            .deleted()
+                            .iter()
+                            .map(hydrus_core::ServiceKey::to_hex)
+                            .collect::<Vec<_>>()
+                    ),
+                    event["launched"][0]["deleted"]
+                );
+            }
+            Action::LaunchMany { pages, .. } => {
+                assert_eq!(
+                    *pages,
+                    predicates
+                        .iter()
+                        .cloned()
+                        .map(|predicate| vec![predicate])
+                        .collect::<Vec<_>>()
+                );
+                let mut native: Vec<_> = pages
+                    .iter()
+                    .map(|page| match &page[0] {
+                        Predicate::Tag { tag, .. } => tag.as_str().to_owned(),
+                        _ => panic!("tag page"),
+                    })
+                    .collect();
+                let mut recorded: Vec<_> = event["launched"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|page| page["predicates"][0].as_str().unwrap().to_owned())
+                    .collect();
+                // Qt iterates a set for page launch; copy and selection retain list order.
+                native.sort();
+                recorded.sort();
+                assert_eq!(native, recorded);
+            }
+            action => panic!("unexpected batch action {action:?}"),
+        }
+    }
+    for (_, action) in actual {
+        if let Action::Relationship { kind, tags } = action {
+            let model = hydrus_gui_model::tag_relationships::Relationships::new_with_tags(
+                input.store().clone(),
+                kind,
+                &tags,
+            )
+            .unwrap();
+            assert_eq!(model.inputs().0, selected);
+            assert!(model.inputs().1.is_empty());
+        }
+    }
+}
+
+#[test]
+fn clipboard_additions_keep_existing_text_and_result_selection() {
+    use hydrus_gui_model::write_autocomplete::TagEntry;
+    let fixture = hydrus_testkit::fixture_json("write_tag_selection.json");
+    let (_dir, store) = seeded(&fixture);
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let case = fixture["normal_paste"].as_array().unwrap().last().unwrap();
+    let tags: Vec<String> = serde_json::from_value(case["pasted_tags"][0].clone()).unwrap();
+    let mut entry = TagEntry::new(
+        WriteAutocomplete::new(store.clone(), key, LocationContext::default()),
+        &[],
+    );
+    entry.input.set_text(case["text"].as_str().unwrap());
+    let selected = entry.input.selected_tags();
+    let rows = entry.input.rows().to_vec();
+    entry.paste(&tags);
+    assert_eq!(entry.input.text(), case["after"].as_str().unwrap());
+    assert_eq!(entry.input.selected_tags(), selected);
+    assert_eq!(entry.input.rows(), rows);
+    assert_eq!(entry.tags(), tags);
+    let file = store
+        .read(|conn| {
+            Ok(
+                conn.query_row("SELECT hash_id FROM files LIMIT 1", [], |row| {
+                    row.get::<_, hydrus_core::HashId>(0)
+                })?,
+            )
+        })
+        .unwrap();
+    let mut manage = ManageTags::new(store.clone(), vec![file]).unwrap();
+    manage.set_text(case["text"].as_str().unwrap());
+    manage.paste_tags(&tags).unwrap();
+    assert_eq!(manage.text(), case["after"].as_str().unwrap());
+    manage.paste_tags(&tags).unwrap();
+    assert_eq!(
+        manage.text(),
+        fixture["manage_clipboard"]["text"].as_str().unwrap()
+    );
+    let recorded_rows = fixture["manage_clipboard"]["rows"].as_array().unwrap();
+    assert_eq!(recorded_rows.len(), tags.len());
+    for pasted_tag in tags {
+        let recorded = recorded_rows
+            .iter()
+            .find(|row| row["tag"].as_str().unwrap() == pasted_tag)
+            .unwrap();
+        assert!(
+            manage
+                .rows()
+                .iter()
+                .any(|(tag, label)| tag == &pasted_tag
+                    && label == recorded["label"].as_str().unwrap())
+        );
+    }
+    drop(manage);
+    let reopened = ManageTags::new(store, vec![file]).unwrap();
+    assert!(
+        !reopened
+            .rows()
+            .iter()
+            .any(|(tag, _)| tag == "parity:paste one")
+    );
+}
+
+fn check_recorded_keyboard(input: &mut WriteAutocomplete, fixture: &Value) {
+    for step in fixture["keyboard"]["steps"].as_array().unwrap() {
+        if step["action"] == "key" {
+            let ctrl = step["ctrl"].as_bool().unwrap();
+            let shift = step["shift"].as_bool().unwrap();
+            match step["key"].as_str().unwrap() {
+                "A" => input.select_all(),
+                "C" => assert_eq!(
+                    json!([input.copy_selection(shift).unwrap()]),
+                    step["copied"]
+                ),
+                key => {
+                    let direction = match key {
+                        "Up" | "P" => 0,
+                        "Down" | "N" => 1,
+                        "Home" => 2,
+                        "End" => 3,
+                        "PageUp" => 4,
+                        "PageDown" => 5,
+                        _ => panic!("unrecorded navigation {key}"),
+                    };
+                    input.navigate(direction, ctrl && key != "P" && key != "N", shift);
+                }
+            }
+        }
+        assert_eq!(json!(input.selected_tags()), step["selected"], "{step}");
+        let physical = input.highlighted().unwrap();
+        let logical = input.rows()[..=physical]
+            .iter()
+            .filter(|row| !row.parent_row)
+            .count()
+            - 1;
+        assert_eq!(json!(logical), step["last_hit"], "{step}");
+        assert_eq!(input.text(), "parity:multi");
+    }
+    for step in fixture["escape"].as_array().unwrap() {
+        if step["action"] == "escape" {
+            assert_eq!(input.deselect(), step["accepted"].as_bool().unwrap());
+        }
+        assert_eq!(json!(input.selected_tags()), step["selected"]);
+    }
+    input.clear();
+    input.set_text("parity:multi");
+    for step in fixture["drag"].as_array().unwrap() {
+        let action = step["action"].as_str().unwrap();
+        if action == "select_all" {
+            input.select_all();
+        } else if action == "press" || action == "drag" {
+            input.click(
+                usize::try_from(step["physical"].as_u64().unwrap()).unwrap(),
+                if action == "drag" {
+                    step["deselection"].as_bool().unwrap()
+                } else {
+                    step["ctrl"].as_bool().unwrap()
+                },
+                action == "drag",
+            );
+        }
+        assert_eq!(json!(input.selected_tags()), step["selected"], "{step}");
+        let physical = input.highlighted().unwrap();
+        let logical = input.rows()[..=physical]
+            .iter()
+            .filter(|row| !row.parent_row)
+            .count()
+            - 1;
+        assert_eq!(json!(logical), step["last_hit"], "{step}");
+    }
+    input.select_all();
+    let all = input.copy_selection(false).unwrap();
+    assert!(input.deselect());
+    assert_eq!(input.copy_selection(false).unwrap(), all);
+    assert!(input.chosen_tags(None).is_empty());
+    input.clear();
+    assert_eq!(input.copy_selection(false), None);
+}
+
+#[test]
+fn read_favourite_and_children_tabs_replay_real_qt_lists_and_context_changes() {
+    use hydrus_gui_model::write_autocomplete::Tab;
+    let fixture = hydrus_testkit::fixture_json("read_tag_tabs.json");
+    let (_dir, store) = seeded(&fixture);
+    let snapshot = store.snapshot();
+    let service = snapshot.services.by_name("my tags").unwrap();
+    for (kind, field) in [
+        (RelationKind::Siblings, "siblings"),
+        (RelationKind::Parents, "parents"),
+    ] {
+        tag_relations::apply(
+            &store,
+            kind,
+            fixture[field]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|pair| RelationUpdate {
+                    service: service.id,
+                    left: Tag::new(pair[0].as_str().unwrap()).unwrap(),
+                    right: Tag::new(pair[1].as_str().unwrap()).unwrap(),
+                    action: RelationAction::Add,
+                })
+                .collect(),
+        )
+        .unwrap();
+    }
+    let favourites: Vec<String> =
+        serde_json::from_value(fixture["events"][0]["favourites"].clone()).unwrap();
+    store
+        .write(move |ctx| settings::set(ctx.conn(), &settings::FavouriteTags(favourites)))
+        .unwrap();
+    let location = LocationContext::single(hydrus_core::ServiceKey::new(
+        hydrus_core::service::builtin_keys::MY_FILES,
+    ));
+    let mut context =
+        hydrus_core::search::context::TagContext::new(service.key.clone(), true, true);
+    let mut input = hydrus_gui_model::autocomplete::Autocomplete::new(store.clone());
+    input.set_context(&location, &context);
+    for event in fixture["events"].as_array().unwrap() {
+        match event["action"].as_str().unwrap() {
+            "favourites" => {
+                input.set_tab(Tab::Favourites);
+            }
+            "favourites_with_text" => {
+                input.set_text("draft content");
+                input.set_tab(Tab::Favourites);
+            }
+            "choose_favourite" => {
+                input.set_context_tags(["parity:tabs root".into()]);
+                input.clear();
+            }
+            "children" => {
+                let limit: Option<usize> = serde_json::from_value(event["limit"].clone()).unwrap();
+                store
+                    .write(move |ctx| {
+                        let mut settings: settings::TagAutocompleteTabs =
+                            settings::get(ctx.conn())?;
+                        settings.children_limit = limit;
+                        settings::set(ctx.conn(), &settings)
+                    })
+                    .unwrap();
+                input.set_tab(Tab::Children);
+            }
+            "choose_child" => {
+                input.set_context_tags(["parity:tabs root".into(), "parity:tabs alpha".into()]);
+                input.clear();
+            }
+            "remove_child" => {
+                input.set_context_tags(["parity:tabs root".into()]);
+            }
+            "type_returns_to_search" => {
+                input.set_text("parity:tabs");
+            }
+            "children_without_search_tag_flags" => {
+                input.clear();
+                input.set_tab(Tab::Children);
+                context.include_current = false;
+                context.include_pending = false;
+                input.set_context(&location, &context);
+            }
+            "all_known_children" => {
+                context.service =
+                    hydrus_core::ServiceKey::new(hydrus_core::service::builtin_keys::COMBINED_TAG);
+                input.set_context(&location, &context);
+            }
+            action => panic!("unrecorded read-tab action {action}"),
+        }
+        assert_eq!(json!(input.tab().index()), event["tab"]);
+        assert_eq!(input.text(), event["text"].as_str().unwrap());
+        if event["action"] != "type_returns_to_search" {
+            let rows: Vec<_> = input
+                .suggestions()
+                .iter()
+                .map(|s| json!({"tag":s.predicate,"rows":[s.label]}))
+                .collect();
+            assert_eq!(json!(rows), event["rows"], "{event}");
+            assert!(input.suggestions().iter().all(|s| s.editor.is_none()));
+        }
+    }
+    input.set_context_tags(Vec::new());
+    assert!(input.suggestions().is_empty());
+    input.set_tab(Tab::Favourites);
+    assert_eq!(input.suggestions().len(), 3);
+    input.set_text("unknown typed draft");
+    assert_eq!(input.tab(), Tab::Tags);
 }

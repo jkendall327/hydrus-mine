@@ -1,0 +1,265 @@
+{
+  "schema": 1,
+  "agent": "overnight_tag_filters",
+  "baseline": "961dcbcd8f1efe8282d857e1f2f7e8d23245b429",
+  "implementation_commits": [
+    "711c574c4cb0df219a549d78ef84a394f284805b"
+  ],
+  "claims": [
+    {
+      "reference_id": "audit-media-services-missing-trash",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "Trash exposes clear trash and undelete all; both disable when empty. Exact confirmations capture the selected service/action, lock selection and other maintenance until answered, and retire on owner close. Decline/Escape/cancel preserves data; acceptance uses normal transactional physical deletion with archived-file lock/deferred queue, or restores all former local domains with original import times. Counts refresh and reopen.",
+      "behavior": "Trash exposes clear trash and undelete all; both disable when empty. Exact confirmations capture the selected service/action, lock selection and other maintenance until answered, and retire on owner close. Decline/Escape/cancel preserves data; acceptance uses normal transactional physical deletion with archived-file lock/deferred queue, or restores all former local domains with original import times. Counts refresh and reopen.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/services_review.rs",
+          "line": 12,
+          "symbol": "pub enum Action",
+          "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/services_review_window.rs",
+          "line": 175,
+          "symbol": "window.on_maintenance(",
+          "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/services_review_window.rs",
+          "line": 204,
+          "symbol": "window.on_answer(",
+          "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/content/files.rs",
+          "line": 344,
+          "symbol": "pub fn clear_trash",
+          "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/services_review.rs",
+          "line": 31,
+          "symbol": "fn local_bulk_actions_match_recorded_confirmations_and_reject_wrong_service",
+          "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/services_review.rs",
+          "line": 107,
+          "symbol": "fn local_bulk_review_replays_confirmations_store_changes_and_reopens",
+          "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/content/tests.rs",
+          "line": 755,
+          "symbol": "fn service_bulk_trash_respects_lock_and_restores_all_former_domains",
+          "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_service_bulk.py",
+        "fixture": "oracle/fixtures/service_bulk.json",
+        "screenshots": [
+          "oracle/fixtures/service_bulk-trash.png",
+          "oracle/fixtures/service_bulk-rating.png"
+        ],
+        "commit": "711c574c4cb0df219a549d78ef84a394f284805b",
+        "executed_at": "2026-10-04 21:15:08 UTC",
+        "result": "Passed actual Qt22 decisions: four trash and eighteen rating cases on an unpacked temporary basic fixture. Real accepted content updates, service info counts and newly constructed panels; async thread/write scheduling made synchronous. No remote service or non-fixture data touched.",
+        "boundary": "Reference cached media rating values are explicitly recorded separately: advanced clear suppresses media publication. Database-backed review counts are authoritative; all three rating kinds yield 3/2/0 rated rows after deleted/non-local/all selection."
+      },
+      "limitations": [
+        "Service review parent remains partial: native service dropdown replaces Qt local/remote/type notebook; descriptions, deleted-file-record clear and remote service/account/IPFS controls excluded.",
+        "Native bulk menu and confirmation use inline controls; exact reference question, yes/no labels and actions preserved.",
+        "Physical unlinking runs through the existing deferred-delete worker; queued lifecycle and lock behavior are covered by authored store regressions, not a new worker.",
+        "Rust model/store/native regressions authored; root hosted CI remains pending. No local Cargo build, test or mutation test executed."
+      ]
+    },
+    {
+      "reference_id": "audit-media-services-missing-ratings",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "Like/dislike, numerical and inc/dec review exposes for deleted files / for all non-local files / for all files. Exact do it / forget it questions and warnings apply captured service only; owned cancel/replacement/retired callbacks cannot write. Deleted uses physical-storage deleted records; non-local uses absence from physical storage, so trash remains local. Content transaction clears the correct ratings table and preserves other services; counts survive store/UI reopen.",
+      "behavior": "Like/dislike, numerical and inc/dec review exposes for deleted files / for all non-local files / for all files. Exact do it / forget it questions and warnings apply captured service only; owned cancel/replacement/retired callbacks cannot write. Deleted uses physical-storage deleted records; non-local uses absence from physical storage, so trash remains local. Content transaction clears the correct ratings table and preserves other services; counts survive store/UI reopen.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/services_review.rs",
+          "line": 12,
+          "symbol": "pub enum Action",
+          "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/services_review_window.rs",
+          "line": 175,
+          "symbol": "window.on_maintenance(",
+          "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/services_review_window.rs",
+          "line": 204,
+          "symbol": "window.on_answer(",
+          "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/content/metadata.rs",
+          "line": 146,
+          "symbol": "pub fn clear_ratings",
+          "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/services_review.rs",
+          "line": 31,
+          "symbol": "fn local_bulk_actions_match_recorded_confirmations_and_reject_wrong_service",
+          "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/services_review.rs",
+          "line": 107,
+          "symbol": "fn local_bulk_review_replays_confirmations_store_changes_and_reopens",
+          "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/content/tests.rs",
+          "line": 673,
+          "symbol": "fn service_bulk_rating_scopes_keep_trash_and_other_services",
+          "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_service_bulk.py",
+        "fixture": "oracle/fixtures/service_bulk.json",
+        "screenshots": [
+          "oracle/fixtures/service_bulk-trash.png",
+          "oracle/fixtures/service_bulk-rating.png"
+        ],
+        "commit": "711c574c4cb0df219a549d78ef84a394f284805b",
+        "executed_at": "2026-10-04 21:15:08 UTC",
+        "result": "Passed actual Qt22 decisions: four trash and eighteen rating cases on an unpacked temporary basic fixture. Real accepted content updates, service info counts and newly constructed panels; async thread/write scheduling made synchronous. No remote service or non-fixture data touched.",
+        "boundary": "Reference cached media rating values are explicitly recorded separately: advanced clear suppresses media publication. Database-backed review counts are authoritative; all three rating kinds yield 3/2/0 rated rows after deleted/non-local/all selection."
+      },
+      "limitations": [
+        "Service review parent remains partial: native service dropdown replaces Qt local/remote/type notebook; descriptions, deleted-file-record clear and remote service/account/IPFS controls excluded.",
+        "Native bulk menu and confirmation use inline controls; exact reference question, yes/no labels and actions preserved.",
+        "Physical unlinking runs through the existing deferred-delete worker; queued lifecycle and lock behavior are covered by authored store regressions, not a new worker.",
+        "Rust model/store/native regressions authored; root hosted CI remains pending. No local Cargo build, test or mutation test executed."
+      ]
+    }
+  ],
+  "implementation_leaf_count": 2,
+  "parent_promotions": 0,
+  "validation": {
+    "reference_recording": "executed and passed; actual Qt screenshots inspected",
+    "source_checks": "cargo fmt --all, git diff --check, Python syntax and warning-aware cached Slint source compiler passed",
+    "rust_execution": "authored; root hosted CI pending"
+  },
+  "native_hierarchy": {
+    "existing_component": "ServicesReviewWindow",
+    "existing_native_id": "dialog.services-review",
+    "parent_reference_id": "service-review-local",
+    "parent_status": "partial",
+    "source_anchors": [
+      {
+        "relativepath": "crates/hydrus-gui/src/services_review_window.rs",
+        "line": 175,
+        "symbol": "window.on_maintenance(",
+        "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+      },
+      {
+        "relativepath": "crates/hydrus-gui/src/services_review_window.rs",
+        "line": 204,
+        "symbol": "window.on_answer(",
+        "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+      }
+    ],
+    "test_anchors": [
+      {
+        "relativepath": "crates/hydrus-gui/tests/gui/services_review.rs",
+        "line": 107,
+        "symbol": "fn local_bulk_review_replays_confirmations_store_changes_and_reopens",
+        "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+      }
+    ],
+    "children": [
+      {
+        "label": "Trash clear / undelete",
+        "reference_id": "audit-media-services-missing-trash",
+        "controls": [
+          "undelete all",
+          "clear trash",
+          "owned confirmation"
+        ],
+        "source_anchors": [
+          {
+            "relativepath": "crates/hydrus-gui-model/src/services_review.rs",
+            "line": 12,
+            "symbol": "pub enum Action",
+            "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/services_review_window.rs",
+            "line": 175,
+            "symbol": "window.on_maintenance(",
+            "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/services_review_window.rs",
+            "line": 204,
+            "symbol": "window.on_answer(",
+            "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+          },
+          {
+            "relativepath": "crates/hydrus-store/src/content/files.rs",
+            "line": 344,
+            "symbol": "pub fn clear_trash",
+            "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+          }
+        ]
+      },
+      {
+        "label": "Local rating bulk clear",
+        "reference_id": "audit-media-services-missing-ratings",
+        "controls": [
+          "clear ratings",
+          "for deleted files",
+          "for all non-local files",
+          "for all files",
+          "owned confirmation"
+        ],
+        "source_anchors": [
+          {
+            "relativepath": "crates/hydrus-gui-model/src/services_review.rs",
+            "line": 12,
+            "symbol": "pub enum Action",
+            "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/services_review_window.rs",
+            "line": 175,
+            "symbol": "window.on_maintenance(",
+            "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+          },
+          {
+            "relativepath": "crates/hydrus-gui/src/services_review_window.rs",
+            "line": 204,
+            "symbol": "window.on_answer(",
+            "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+          },
+          {
+            "relativepath": "crates/hydrus-store/src/content/metadata.rs",
+            "line": 146,
+            "symbol": "pub fn clear_ratings",
+            "commit": "711c574c4cb0df219a549d78ef84a394f284805b"
+          }
+        ]
+      }
+    ]
+  }
+}

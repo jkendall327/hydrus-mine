@@ -1,0 +1,8725 @@
+{
+  "initial": {
+    "active": true,
+    "archive_delete": true,
+    "duplicates": false,
+    "menu_display": 2,
+    "menu_choices": [
+      "show a combined value, and stack the separate values a submenu",
+      "stack the separate values"
+    ],
+    "canvases": [
+      0,
+      4
+    ],
+    "canvas_labels": [
+      "media views",
+      "preview views",
+      "client api views"
+    ]
+  },
+  "durations": {
+    "media_min_time": {
+      "initial": 2.0,
+      "minimum": 0.05,
+      "none_phrase": "count every view",
+      "units": {
+        "minutes": [
+          0,
+          59
+        ],
+        "seconds": [
+          0,
+          59
+        ],
+        "milliseconds": [
+          0,
+          999
+        ]
+      }
+    },
+    "media_max_time": {
+      "initial": 600.0,
+      "minimum": 1,
+      "none_phrase": "no limit",
+      "units": {
+        "hours": [
+          0,
+          23
+        ],
+        "minutes": [
+          0,
+          59
+        ],
+        "seconds": [
+          0,
+          59
+        ],
+        "milliseconds": [
+          0,
+          999
+        ]
+      }
+    },
+    "preview_min_time": {
+      "initial": 5.0,
+      "minimum": 0.05,
+      "none_phrase": "count every view",
+      "units": {
+        "minutes": [
+          0,
+          59
+        ],
+        "seconds": [
+          0,
+          59
+        ],
+        "milliseconds": [
+          0,
+          999
+        ]
+      }
+    },
+    "preview_max_time": {
+      "initial": 60.0,
+      "minimum": 1,
+      "none_phrase": "no limit",
+      "units": {
+        "hours": [
+          0,
+          23
+        ],
+        "minutes": [
+          0,
+          59
+        ],
+        "seconds": [
+          0,
+          59
+        ],
+        "milliseconds": [
+          0,
+          999
+        ]
+      }
+    }
+  },
+  "duration_events": [
+    {
+      "control": "media_min_time",
+      "requested": null,
+      "value": null,
+      "fields": [
+        0,
+        2,
+        0
+      ],
+      "persisted_ms": null
+    },
+    {
+      "control": "media_min_time",
+      "requested": 0,
+      "value": 0.05,
+      "fields": [
+        0,
+        0,
+        50
+      ],
+      "persisted_ms": 50
+    },
+    {
+      "control": "media_min_time",
+      "requested": 0.049,
+      "value": 0.05,
+      "fields": [
+        0,
+        0,
+        50
+      ],
+      "persisted_ms": 50
+    },
+    {
+      "control": "media_min_time",
+      "requested": 0.05,
+      "value": 0.05,
+      "fields": [
+        0,
+        0,
+        50
+      ],
+      "persisted_ms": 50
+    },
+    {
+      "control": "media_min_time",
+      "requested": 0.999,
+      "value": 0.999,
+      "fields": [
+        0,
+        0,
+        999
+      ],
+      "persisted_ms": 999
+    },
+    {
+      "control": "media_min_time",
+      "requested": 1,
+      "value": 1.0,
+      "fields": [
+        0,
+        1,
+        0
+      ],
+      "persisted_ms": 1000
+    },
+    {
+      "control": "media_min_time",
+      "requested": 1.001,
+      "value": 1.0,
+      "fields": [
+        0,
+        1,
+        0
+      ],
+      "persisted_ms": 1000
+    },
+    {
+      "control": "media_min_time",
+      "requested": 1.999,
+      "value": 1.999,
+      "fields": [
+        0,
+        1,
+        999
+      ],
+      "persisted_ms": 1999
+    },
+    {
+      "control": "media_min_time",
+      "requested": 600.125,
+      "value": 600.125,
+      "fields": [
+        10,
+        0,
+        125
+      ],
+      "persisted_ms": 600125
+    },
+    {
+      "control": "media_max_time",
+      "requested": null,
+      "value": null,
+      "fields": [
+        0,
+        10,
+        0,
+        0
+      ],
+      "persisted_ms": null
+    },
+    {
+      "control": "media_max_time",
+      "requested": 0,
+      "value": 1.0,
+      "fields": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "persisted_ms": 1000
+    },
+    {
+      "control": "media_max_time",
+      "requested": 0.049,
+      "value": 1.0,
+      "fields": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "persisted_ms": 1000
+    },
+    {
+      "control": "media_max_time",
+      "requested": 0.05,
+      "value": 1.0,
+      "fields": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "persisted_ms": 1000
+    },
+    {
+      "control": "media_max_time",
+      "requested": 0.999,
+      "value": 1.0,
+      "fields": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "persisted_ms": 1000
+    },
+    {
+      "control": "media_max_time",
+      "requested": 1,
+      "value": 1.0,
+      "fields": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "persisted_ms": 1000
+    },
+    {
+      "control": "media_max_time",
+      "requested": 1.001,
+      "value": 1.0,
+      "fields": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "persisted_ms": 1000
+    },
+    {
+      "control": "media_max_time",
+      "requested": 1.999,
+      "value": 1.999,
+      "fields": [
+        0,
+        0,
+        1,
+        999
+      ],
+      "persisted_ms": 1999
+    },
+    {
+      "control": "media_max_time",
+      "requested": 600.125,
+      "value": 600.125,
+      "fields": [
+        0,
+        10,
+        0,
+        125
+      ],
+      "persisted_ms": 600125
+    }
+  ],
+  "menu_events": [
+    {
+      "canvases": [],
+      "style": 2,
+      "menu": []
+    },
+    {
+      "canvases": [],
+      "style": 3,
+      "menu": []
+    },
+    {
+      "canvases": [
+        4
+      ],
+      "style": 2,
+      "menu": [
+        {
+          "label": "viewed 4 times in client api viewer, totalling 28 seconds, last 30 seconds ago"
+        }
+      ]
+    },
+    {
+      "canvases": [
+        4
+      ],
+      "style": 3,
+      "menu": [
+        {
+          "label": "viewed 4 times in client api viewer, totalling 28 seconds, last 30 seconds ago"
+        }
+      ]
+    },
+    {
+      "canvases": [
+        1
+      ],
+      "style": 2,
+      "menu": [
+        {
+          "label": "viewed 3 times in preview viewer, totalling 9 seconds, last 20 seconds ago"
+        }
+      ]
+    },
+    {
+      "canvases": [
+        1
+      ],
+      "style": 3,
+      "menu": [
+        {
+          "label": "viewed 3 times in preview viewer, totalling 9 seconds, last 20 seconds ago"
+        }
+      ]
+    },
+    {
+      "canvases": [
+        1,
+        4
+      ],
+      "style": 2,
+      "menu": [
+        {
+          "label": "viewed 7 times, totalling 37 seconds, last 20 seconds ago",
+          "children": [
+            {
+              "label": "viewed 3 times in preview viewer, totalling 9 seconds, last 20 seconds ago"
+            },
+            {
+              "label": "viewed 4 times in client api viewer, totalling 28 seconds, last 30 seconds ago"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "canvases": [
+        1,
+        4
+      ],
+      "style": 3,
+      "menu": [
+        {
+          "label": "viewed 3 times in preview viewer, totalling 9 seconds, last 20 seconds ago"
+        },
+        {
+          "label": "viewed 4 times in client api viewer, totalling 28 seconds, last 30 seconds ago"
+        }
+      ]
+    },
+    {
+      "canvases": [
+        0
+      ],
+      "style": 2,
+      "menu": [
+        {
+          "label": "viewed 2 times in media viewer, totalling 12 seconds, last 10 seconds ago"
+        }
+      ]
+    },
+    {
+      "canvases": [
+        0
+      ],
+      "style": 3,
+      "menu": [
+        {
+          "label": "viewed 2 times in media viewer, totalling 12 seconds, last 10 seconds ago"
+        }
+      ]
+    },
+    {
+      "canvases": [
+        0,
+        4
+      ],
+      "style": 2,
+      "menu": [
+        {
+          "label": "viewed 6 times, totalling 40 seconds, last 10 seconds ago",
+          "children": [
+            {
+              "label": "viewed 2 times in media viewer, totalling 12 seconds, last 10 seconds ago"
+            },
+            {
+              "label": "viewed 4 times in client api viewer, totalling 28 seconds, last 30 seconds ago"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "canvases": [
+        0,
+        4
+      ],
+      "style": 3,
+      "menu": [
+        {
+          "label": "viewed 2 times in media viewer, totalling 12 seconds, last 10 seconds ago"
+        },
+        {
+          "label": "viewed 4 times in client api viewer, totalling 28 seconds, last 30 seconds ago"
+        }
+      ]
+    },
+    {
+      "canvases": [
+        0,
+        1
+      ],
+      "style": 2,
+      "menu": [
+        {
+          "label": "viewed 5 times, totalling 21 seconds, last 10 seconds ago",
+          "children": [
+            {
+              "label": "viewed 2 times in media viewer, totalling 12 seconds, last 10 seconds ago"
+            },
+            {
+              "label": "viewed 3 times in preview viewer, totalling 9 seconds, last 20 seconds ago"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "canvases": [
+        0,
+        1
+      ],
+      "style": 3,
+      "menu": [
+        {
+          "label": "viewed 2 times in media viewer, totalling 12 seconds, last 10 seconds ago"
+        },
+        {
+          "label": "viewed 3 times in preview viewer, totalling 9 seconds, last 20 seconds ago"
+        }
+      ]
+    },
+    {
+      "canvases": [
+        0,
+        1,
+        4
+      ],
+      "style": 2,
+      "menu": [
+        {
+          "label": "viewed 9 times, totalling 49 seconds, last 10 seconds ago",
+          "children": [
+            {
+              "label": "viewed 2 times in media viewer, totalling 12 seconds, last 10 seconds ago"
+            },
+            {
+              "label": "viewed 3 times in preview viewer, totalling 9 seconds, last 20 seconds ago"
+            },
+            {
+              "label": "viewed 4 times in client api viewer, totalling 28 seconds, last 30 seconds ago"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "canvases": [
+        0,
+        1,
+        4
+      ],
+      "style": 3,
+      "menu": [
+        {
+          "label": "viewed 2 times in media viewer, totalling 12 seconds, last 10 seconds ago"
+        },
+        {
+          "label": "viewed 3 times in preview viewer, totalling 9 seconds, last 20 seconds ago"
+        },
+        {
+          "label": "viewed 4 times in client api viewer, totalling 28 seconds, last 30 seconds ago"
+        }
+      ]
+    }
+  ],
+  "timing_events": [
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          49
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600001
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          49
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600001
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          1000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          1000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          5000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          5000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          49
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600001
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          49
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600001
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          49
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600001
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          49
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600001
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          1000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          1000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          1000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          1000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          5000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          5000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          5000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          5000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600000
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": false,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          49
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600001
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          49
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600001
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          49
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600001
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          49
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600001
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          1000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          1000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          1000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          1000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          5000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          5000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          5000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          5000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": false,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          49
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600001
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          49
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600001
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          49
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600001
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          49
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600001
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          49
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600001
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          49
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": null,
+      "maximum_ms": null,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600001
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          1000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          1000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          1000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          1000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          1000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          1000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          5000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          5000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          50
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 50,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          5000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          5000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          5000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 1000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          5000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": null,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 0,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 2,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 0,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 49,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 50,
+      "row": [
+        0,
+        [
+          123000,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 2000,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          2000
+        ]
+      ]
+    },
+    {
+      "archive_delete": true,
+      "duplicates": true,
+      "minimum_ms": 2000,
+      "maximum_ms": 600000,
+      "duration_ms": 1000,
+      "canvas": 3,
+      "elapsed_ms": 600001,
+      "row": [
+        0,
+        [
+          123000,
+          1,
+          600000
+        ]
+      ]
+    }
+  ],
+  "canvas_events": [
+    {
+      "active": false,
+      "rows": []
+    },
+    {
+      "active": true,
+      "rows": [
+        [
+          0,
+          [
+            123000,
+            1,
+            1000
+          ]
+        ]
+      ]
+    }
+  ],
+  "now": 1800000000,
+  "file": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+}

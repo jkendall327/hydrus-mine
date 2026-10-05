@@ -31,9 +31,10 @@ pub struct ManageTags {
     service: usize,
     /// Each service's current tags, by file count, as stored.
     stored: Vec<BTreeMap<String, BTreeSet<HashId>>>,
+    deleted: Vec<BTreeMap<String, BTreeSet<HashId>>>,
     /// Each service's changes waiting to be applied: a tag added (`true`)
     /// to the files lacking it, or removed from them all.
-    staged: Vec<BTreeMap<String, bool>>,
+    staged: Vec<BTreeMap<String, BTreeMap<HashId, bool>>>,
     input: WriteAutocomplete,
     dialog_preferences: hydrus_store::tag_editing::TagEditingSettings,
 }
@@ -79,6 +80,17 @@ impl ManageTags {
             .iter()
             .map(|(service, _)| current_tags(&store, *service, &files))
             .collect();
+        let deleted = services
+            .iter()
+            .map(|(service, _)| {
+                status_tags(
+                    &store,
+                    *service,
+                    &files,
+                    hydrus_core::ContentStatus::Deleted,
+                )
+            })
+            .collect();
         let location = hydrus_core::search::context::LocationContext::default();
         let mut input = WriteAutocomplete::new(
             store.clone(),
@@ -94,6 +106,7 @@ impl ManageTags {
             services,
             service,
             stored,
+            deleted,
             input,
             dialog_preferences: preference,
         })
@@ -121,11 +134,63 @@ impl ManageTags {
     }
     /// Refresh committed tags while preserving this editor's staged changes.
     pub fn refresh_stored(&mut self) {
+        self.deleted = self
+            .services
+            .iter()
+            .map(|(id, _)| {
+                status_tags(
+                    &self.store,
+                    *id,
+                    &self.files,
+                    hydrus_core::ContentStatus::Deleted,
+                )
+            })
+            .collect();
         self.stored = self
             .services
             .iter()
             .map(|(id, _)| current_tags(&self.store, *id, &self.files))
             .collect();
+    }
+    /// The toggle is a live global preference, independent of staged mappings.
+    pub fn show_deleted(&self) -> bool {
+        self.store
+            .read(hydrus_store::settings::get::<hydrus_store::tag_editing::ManageTagsSettings>)
+            .unwrap_or_default()
+            .show_deleted
+    }
+    pub fn flip_show_deleted(&self) -> hydrus_store::Result<()> {
+        self.store.write(|ctx| {
+            let mut settings: hydrus_store::tag_editing::ManageTagsSettings =
+                hydrus_store::settings::get(ctx.conn())?;
+            settings.show_deleted = !settings.show_deleted;
+            hydrus_store::settings::set(ctx.conn(), &settings)
+        })
+    }
+    fn deleted_tags(&self) -> BTreeMap<String, BTreeSet<HashId>> {
+        let mut out = self.deleted[self.service].clone();
+        for (tag, changes) in &self.staged[self.service] {
+            for (file, add) in changes {
+                if *add {
+                    if let Some(files) = out.get_mut(tag) {
+                        files.remove(file);
+                    }
+                } else {
+                    out.entry(tag.clone()).or_default().insert(*file);
+                }
+            }
+        }
+        out.retain(|_, files| !files.is_empty());
+        out
+    }
+    pub fn deleted_count(&self) -> usize {
+        self.deleted_tags().values().map(BTreeSet::len).sum()
+    }
+    pub fn deleted_count_label(&self) -> String {
+        format!(
+            "{} deleted mappings",
+            hydrus_core::numbers::human_int(self.deleted_count() as u64)
+        )
     }
     pub fn store(&self) -> &Arc<Store> {
         &self.store
@@ -163,33 +228,114 @@ impl ManageTags {
 
     /// The files having each tag on the service chosen, its waiting
     /// changes made.
-    fn tags(&self) -> BTreeMap<String, usize> {
-        let all = self.files.len();
-        let mut out: BTreeMap<String, usize> = self.stored[self.service]
-            .iter()
-            .map(|(tag, files)| (tag.clone(), files.len()))
-            .collect();
-        for (tag, &add) in &self.staged[self.service] {
-            if add {
-                out.insert(tag.clone(), all);
-            } else {
-                out.remove(tag);
+    fn current_tags(&self) -> BTreeMap<String, BTreeSet<HashId>> {
+        let mut out = self.stored[self.service].clone();
+        for (tag, changes) in &self.staged[self.service] {
+            for (file, add) in changes {
+                if *add {
+                    out.entry(tag.clone()).or_default().insert(*file);
+                } else if let Some(files) = out.get_mut(tag) {
+                    files.remove(file);
+                }
             }
         }
+        out.retain(|_, files| !files.is_empty());
         out
     }
-
-    /// The tag list's rows: each tag as shown, with how many of the files
-    /// have it when not all do (`tag (2)`), sorted as the media viewer's
-    /// list is; each as (tag, row).
+    fn tags(&self) -> BTreeMap<String, usize> {
+        self.current_tags()
+            .into_iter()
+            .map(|(tag, files)| (tag, files.len()))
+            .collect()
+    }
+    /// The child is bound to this ordered selection and active service's preview.
+    pub fn incremental(&self) -> Option<crate::incremental_tagging::IncrementalTagging> {
+        if self.files.len() < 2 {
+            return None;
+        }
+        let mut current: BTreeMap<HashId, BTreeSet<String>> = self
+            .files
+            .iter()
+            .map(|file| (*file, BTreeSet::new()))
+            .collect();
+        for (tag, files) in self.current_tags() {
+            for file in files {
+                current.entry(file).or_default().insert(tag.clone());
+            }
+        }
+        let pending = status_tags(
+            &self.store,
+            self.services[self.service].0,
+            &self.files,
+            hydrus_core::ContentStatus::Pending,
+        );
+        for (tag, files) in pending {
+            for file in files {
+                current.entry(file).or_default().insert(tag.clone());
+            }
+        }
+        Some(crate::incremental_tagging::IncrementalTagging::new(
+            self.store.clone(),
+            self.files.clone(),
+            current,
+        ))
+    }
+    /// Add one numbered tag to each original file, preserving all other tags.
+    pub fn apply_incremental(
+        &mut self,
+        service: usize,
+        pairs: Vec<(HashId, Tag)>,
+    ) -> Result<(), String> {
+        if service != self.service
+            || pairs.len() != self.files.len()
+            || pairs
+                .iter()
+                .zip(&self.files)
+                .any(|((file, _), expected)| file != expected)
+        {
+            return Err("The incremental selection or tag service changed.".into());
+        }
+        for (file, tag) in pairs {
+            self.stage_mapping(tag.as_str(), file, true);
+        }
+        self.input.set_context_tags(self.tags().into_keys());
+        Ok(())
+    }
+    fn stage_mapping(&mut self, tag: &str, file: HashId, add: bool) {
+        let already = self.stored[self.service]
+            .get(tag)
+            .is_some_and(|files| files.contains(&file));
+        let deleted = self.deleted[self.service]
+            .get(tag)
+            .is_some_and(|files| files.contains(&file));
+        let changes = self.staged[self.service].entry(tag.to_owned()).or_default();
+        if (add && already) || (!add && deleted) {
+            changes.remove(&file);
+        } else {
+            changes.insert(file, add);
+        }
+        if changes.is_empty() {
+            self.staged[self.service].remove(tag);
+        }
+    }
+    /// Storage rows include current counts and, when shown, deleted counts,
+    /// sorted as the media viewer's list is; each as (logical tag, row).
     fn plain_rows(&self) -> Vec<(String, String)> {
         use hydrus_core::tag_sort::sort_tags;
         let presentation: hydrus_core::tag_presentation::TagPresentation = self
             .store
             .read(hydrus_store::settings::get)
             .unwrap_or_default();
-        let all = self.files.len();
-        let mut rows: Vec<(String, usize)> = self.tags().into_iter().collect();
+        let deleted = if self.show_deleted() {
+            self.deleted_tags()
+        } else {
+            BTreeMap::new()
+        };
+        let mut tags = self.tags();
+        for tag in deleted.keys() {
+            tags.entry(tag.clone()).or_default();
+        }
+        let mut rows: Vec<(String, usize)> = tags.into_iter().collect();
         sort_tags(
             &presentation.media_viewer_sort,
             &mut rows,
@@ -200,8 +346,14 @@ impl ManageTags {
         rows.into_iter()
             .map(|(tag, n)| {
                 let mut row = presentation.render(&tag);
-                if n < all {
+                if n > 0 {
                     row.push_str(&format!(" ({})", hydrus_core::numbers::human_int(n as u64)));
+                }
+                if let Some(files) = deleted.get(&tag) {
+                    row.push_str(&format!(
+                        " (X{})",
+                        hydrus_core::numbers::human_int(files.len() as u64)
+                    ));
                 }
                 (tag, row)
             })
@@ -295,25 +447,18 @@ impl ManageTags {
     /// Enter a tag, as typed: added to the files that lack it, or, if
     /// they all have it, removed from them all. Errs on what isn't a tag.
     pub fn enter(&mut self, typed: &str) -> Result<(), String> {
+        self.stage_tag(typed)?;
+        self.input.clear();
+        Ok(())
+    }
+    fn stage_tag(&mut self, typed: &str) -> Result<(), String> {
         let tag = Tag::new(typed).ok_or_else(|| format!("\"{typed}\" is not a valid tag"))?;
         let tag = tag.as_str().to_owned();
         let everyone = self.tags().get(&tag) == Some(&self.files.len());
-        let stored = self.stored[self.service].get(&tag).map_or(0, BTreeSet::len);
-        let staged = &mut self.staged[self.service];
-        if everyone {
-            // (undoing an add, if it was one)
-            if stored == 0 {
-                staged.remove(&tag);
-            } else {
-                staged.insert(tag, false);
-            }
-        } else if stored == self.files.len() {
-            staged.remove(&tag);
-        } else {
-            staged.insert(tag, true);
+        for file in self.files.clone() {
+            self.stage_mapping(&tag, file, !everyone);
         }
         self.input.set_context_tags(self.tags().into_keys());
-        self.input.clear();
         Ok(())
     }
 
@@ -334,15 +479,16 @@ impl ManageTags {
         let mut changes: Vec<(ServiceId, String, bool, Vec<HashId>)> = Vec::new();
         for (i, staged) in self.staged.iter().enumerate() {
             let service = self.services[i].0;
-            for (tag, &add) in staged {
-                let have = self.stored[i].get(tag);
-                let files: Vec<HashId> = self
-                    .files
-                    .iter()
-                    .copied()
-                    .filter(|f| have.is_some_and(|h| h.contains(f)) != add)
-                    .collect();
-                changes.push((service, tag.clone(), add, files));
+            for (tag, edits) in staged {
+                for add in [true, false] {
+                    let files: Vec<_> = edits
+                        .iter()
+                        .filter_map(|(file, value)| (*value == add).then_some(*file))
+                        .collect();
+                    if !files.is_empty() {
+                        changes.push((service, tag.clone(), add, files));
+                    }
+                }
             }
         }
         self.store.write_content(move |w| {
@@ -376,13 +522,13 @@ impl ManageTags {
         self.input.move_highlight(by);
     }
     pub fn enter_input(&mut self) -> Result<(), String> {
-        if let Some(tag) = self.input.chosen(None) {
+        for tag in self.input.chosen_tags(None) {
             self.enter(&tag)?;
         }
         Ok(())
     }
     pub fn choose_suggestion(&mut self, index: usize) -> Result<(), String> {
-        if let Some((tag, _)) = self.suggestions().get(index).cloned() {
+        for tag in self.input.chosen_tags(Some(index)) {
             self.enter(&tag)?;
         }
         Ok(())
@@ -417,11 +563,10 @@ impl ManageTags {
             .collect::<Result<_, _>>()?;
         for tag in cleaned {
             if self.tags().get(tag.as_str()) != Some(&self.files.len()) {
-                self.enter(tag.as_str())?;
+                self.stage_tag(tag.as_str())?;
             }
         }
         self.input.set_context_tags(self.tags().into_keys());
-        self.input.clear();
         Ok(())
     }
 }
@@ -433,6 +578,15 @@ fn current_tags(
     service: ServiceId,
     files: &[HashId],
 ) -> BTreeMap<String, BTreeSet<HashId>> {
+    status_tags(store, service, files, hydrus_core::ContentStatus::Current)
+}
+
+fn status_tags(
+    store: &Store,
+    service: ServiceId,
+    files: &[HashId],
+    status: hydrus_core::ContentStatus,
+) -> BTreeMap<String, BTreeSet<HashId>> {
     let snapshot = store.snapshot();
     let Ok(batch) = store.read(|c| hydrus_store::media::load(c, &snapshot.services, None, files))
     else {
@@ -443,12 +597,7 @@ fn current_tags(
         let Some(tags) = m.tags.get(&service) else {
             continue;
         };
-        for id in tags
-            .by_status
-            .get(&hydrus_core::ContentStatus::Current)
-            .into_iter()
-            .flatten()
-        {
+        for id in tags.by_status.get(&status).into_iter().flatten() {
             if let Some(tag) = batch.tags.get(id) {
                 out.entry(tag.to_string()).or_default().insert(m.hash_id);
             }

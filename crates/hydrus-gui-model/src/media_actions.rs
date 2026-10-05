@@ -84,6 +84,60 @@ pub fn deletion(store: &Store, location: &LocationContext, files: &[HashId]) -> 
         .then_some(Deletion::Physically)
 }
 
+/// Whether the reference asks before archiving or inboxing this actionable selection.
+pub fn confirm_archive(store: &Store, count: usize) -> bool {
+    count > 1
+        && store
+            .read(hydrus_store::settings::get::<hydrus_store::settings::DeletionPreferences>)
+            .unwrap_or_default()
+            .confirm_archive
+}
+
+/// Simple local deletion bypasses its question only when exactly one local domain
+/// is actionable. Physical deletion and ambiguous domain choices always ask.
+pub fn confirm_deletion(store: &Store, files: &[HashId], deletion: &Deletion) -> bool {
+    if matches!(deletion, Deletion::Physically) {
+        return true;
+    }
+    let preferences = store
+        .read(hydrus_store::settings::get::<hydrus_store::settings::DeletionPreferences>)
+        .unwrap_or_default();
+    if preferences.confirm_trash {
+        return true;
+    }
+    let snapshot = store.snapshot();
+    let Ok(roles) = DomainRoles::new(&snapshot.services) else {
+        return true;
+    };
+    let Some(current) = domains_of(store, files) else {
+        return true;
+    };
+    roles
+        .local
+        .iter()
+        .filter(|domain| current.contains(domain))
+        .count()
+        != 1
+}
+
+/// Translate a simple menu action to the advanced dialog's suggested action.
+pub fn suggested_action(
+    store: &Store,
+    deletion: &Deletion,
+) -> Option<hydrus_store::settings::DeletionAction> {
+    use hydrus_store::settings::DeletionAction;
+    let snapshot = store.snapshot();
+    match deletion {
+        Deletion::FromDomain { domain, .. } => snapshot
+            .services
+            .get(*domain)
+            .ok()
+            .map(|s| DeletionAction::Domain(s.key.clone())),
+        Deletion::ToTrash => None,
+        Deletion::Physically => Some(DeletionAction::Physical),
+    }
+}
+
 /// Archive files in the inbox.
 pub fn archive(store: &Store, files: &[HashId]) -> hydrus_store::Result<()> {
     let files = files.to_vec();

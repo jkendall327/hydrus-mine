@@ -1,0 +1,95 @@
+{
+  "schema": 1,
+  "agent": "overnight_tag_filters",
+  "baseline": "d92abea9",
+  "implementation_commits": [
+    "be626af1a79553028d8ba9ec1f685670e07019bf"
+  ],
+  "claims": [
+    {
+      "reference_id": "audit-media-services-missing-deleted",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "Physical-storage service review exposes clear deleted files record with exact two-stage questions and distinct yes/no labels. First yes only advances; either decline or owner close preserves records. Final yes clears non-trash local deletion records and reasons through the existing content writer, preserves trash history/import timestamps and queued physical deletions, refreshes review counts and survives reopen. The import-status consumer sees permanently deleted become unknown while trash remains deleted. Selection and alternate requests cannot replace a live captured service/action; retired callbacks do not write.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/services_review.rs",
+          "line": 15,
+          "symbol": "ClearDeletedRecords,",
+          "commit": "be626af1a79553028d8ba9ec1f685670e07019bf"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/services_review_window.rs",
+          "line": 222,
+          "symbol": "let Some((key, action, second))",
+          "commit": "be626af1a79553028d8ba9ec1f685670e07019bf"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/content/files.rs",
+          "line": 407,
+          "symbol": "pub fn clear_local_delete_records",
+          "commit": "be626af1a79553028d8ba9ec1f685670e07019bf"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/services_review.rs",
+          "line": 75,
+          "symbol": "fn deleted_record_double_confirmation",
+          "commit": "be626af1a79553028d8ba9ec1f685670e07019bf"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/services_review.rs",
+          "line": 412,
+          "symbol": "fn deleted_record_review_needs_both",
+          "commit": "be626af1a79553028d8ba9ec1f685670e07019bf"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/content/tests.rs",
+          "line": 812,
+          "symbol": "fn service_deleted_record_clear",
+          "commit": "be626af1a79553028d8ba9ec1f685670e07019bf"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_service_deleted.py",
+        "fixture": "oracle/fixtures/service_deleted.json",
+        "screenshot": "oracle/fixtures/service_deleted.png",
+        "commit": "be626af1a79553028d8ba9ec1f685670e07019bf",
+        "executed_at": "2026-10-04 21:43:09 UTC",
+        "result": "Passed actual Qt first decline / second decline / both accepted. Live content-update writes, local domain counts and file import hash status captured on a freshly unpacked temporary basic fixture. Async scheduling made synchronous; exact GetYesNo messages/labels/decisions recorded. Reference panel PNG inspected."
+      },
+      "limitations": [
+        "Service review parent remains partial; native dropdown and inline staged questions replace Qt notebook/two modal dialogs.",
+        "The existing physical-delete worker is unchanged; clearing records neither unlinks bytes nor cancels queued deletes.",
+        "No remote/IPFS/listener/account scope; no additional aliases or parent promotions.",
+        "Rust regressions authored for root hosted CI; no local Cargo build, test or mutation test."
+      ]
+    }
+  ],
+  "implementation_leaf_count": 1,
+  "parent_promotions": 0,
+  "validation": {
+    "reference": "executed actual Qt; PNG inspected",
+    "source": "fmt/diff/Python/cached Slint passed",
+    "rust": "root hosted CI pending"
+  },
+  "native_hierarchy": {
+    "existing_component": "ServicesReviewWindow",
+    "existing_native_id": "dialog.services-review",
+    "parent_status": "partial",
+    "children": [
+      {
+        "label": "Clear deleted files record",
+        "reference_id": "audit-media-services-missing-deleted",
+        "controls": [
+          "first confirmation",
+          "final confirmation"
+        ],
+        "owner": "Captured physical-storage service/action; pending question retires with review owner"
+      }
+    ]
+  }
+}

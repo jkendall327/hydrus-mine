@@ -78,6 +78,7 @@ fn the_options_window_applies_its_changes() {
         page_names(&window),
         [
             "audio",
+            "command palette",
             "connection",
             "downloading",
             "duplicates",
@@ -4143,4 +4144,1221 @@ fn default_export_directory_browse_apply_cancel_and_manual_open_use_shared_prefe
             .unwrap();
     assert_eq!(export.get_destination(), fallback);
     export.invoke_dismissed();
+}
+
+#[test]
+fn command_palette_options_stage_queue_changes_and_persist_only_on_apply() {
+    use hydrus_store::command_palette::{CommandPaletteSettings, Provider};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let saved = || {
+        store
+            .read(hydrus_store::settings::get::<CommandPaletteSettings>)
+            .unwrap()
+    };
+    let oracle = hydrus_testkit::fixture_json("command_palette.json");
+    let before = saved();
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "command palette");
+    let provider_names = |window: &OptionsWindow| {
+        let rows = window.get_provider_rows();
+        (0..rows.row_count())
+            .map(|i| {
+                rows.row_data(i)
+                    .unwrap()
+                    .cells
+                    .row_data(0)
+                    .unwrap()
+                    .to_string()
+            })
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(
+        provider_names(&options),
+        before
+            .provider_order
+            .iter()
+            .map(|p| p.name().to_owned())
+            .collect::<Vec<_>>()
+    );
+    let (threshold, control) = row(
+        &options,
+        "Start searching when this many characters have been typed:",
+    );
+    assert_eq!([control.minimum, control.maximum], [1, 64]);
+    options.invoke_number_edited(threshold, 4);
+    for label in [
+        "Initially show all page results:",
+        "Initially show page history results:",
+        "Initially show favourite search results:",
+        "Include \"page of pages\" page results:",
+        "Open favourite searches in a new page:",
+        "ADVANCED: Search main menubar:",
+        "ADVANCED: Search media menu:",
+    ] {
+        let (index, control) = row(&options, label);
+        options.invoke_check_toggled(index, !control.checked);
+    }
+    for label in [
+        "Max page results to show:",
+        "Max page history to show:",
+        "Max favourite searches to show:",
+    ] {
+        let (index, control) = row(&options, label);
+        assert_eq!([control.minimum, control.maximum], [1, 1_000_000]);
+        options.invoke_none_toggled(index, false);
+        options.invoke_number_edited(index, 2);
+    }
+    options.invoke_provider_clicked(0, false, false);
+    options.invoke_provider_action("down".into());
+    options.invoke_provider_action("delete".into());
+    assert_eq!(
+        options.get_provider_message().as_str(),
+        oracle["questions"][0].as_str().unwrap()
+    );
+    options.invoke_provider_answer(false);
+    assert_eq!(provider_names(&options)[1], "calculator");
+    options.invoke_provider_action("delete".into());
+    options.invoke_provider_answer(true);
+    assert!(!provider_names(&options).contains(&"calculator".to_owned()));
+    options.invoke_provider_action("add".into());
+    assert_eq!(options.get_provider_message(), "Select a provider to add:");
+    assert_eq!(
+        options.get_provider_missing().row_data(0).unwrap(),
+        "calculator"
+    );
+    options.invoke_provider_action("cancel".into());
+    assert_eq!(options.get_provider_mode(), 0);
+    assert_eq!(
+        saved(),
+        before,
+        "all controls and queue edits belong to the parent draft"
+    );
+    options.invoke_provider_action("add".into());
+    options.invoke_provider_chosen(0);
+    assert_eq!(provider_names(&options).last().unwrap(), "calculator");
+    options.invoke_apply();
+    assert!(bound.options.borrow().is_none());
+    let after = saved();
+    assert_eq!(after.threshold, 4);
+    assert_eq!(after.page_limit, Some(2));
+    assert_eq!(after.history_limit, Some(2));
+    assert_eq!(after.favourite_limit, Some(2));
+    assert!(
+        !after.initially_show_pages
+            && !after.initially_show_history
+            && after.initially_show_favourites
+    );
+    assert!(after.show_notebooks && after.show_main_menu && after.show_media_menu);
+    assert!(!after.favourites_new_page);
+    assert_eq!(
+        after.provider_order,
+        [
+            Provider::MainMenu,
+            Provider::MediaMenu,
+            Provider::History,
+            Provider::Pages,
+            Provider::Favourites,
+            Provider::Calculator
+        ]
+    );
+    open(&ui);
+    let reopened = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&reopened, "command palette");
+    assert_eq!(
+        row(
+            &reopened,
+            "Start searching when this many characters have been typed:"
+        )
+        .1
+        .number,
+        4
+    );
+    assert_eq!(provider_names(&reopened), provider_names(&options));
+    reopened.invoke_provider_clicked(0, false, false);
+    reopened.invoke_provider_action("delete".into());
+    reopened.invoke_provider_answer(true);
+    reopened.invoke_cancel();
+    assert_eq!(saved(), after);
+    reopened.invoke_provider_action("add".into());
+    reopened.invoke_provider_chosen(0);
+    reopened.invoke_provider_answer(true);
+    assert_eq!(
+        saved(),
+        after,
+        "callbacks from a cancelled owner cannot save preferences"
+    );
+    open(&ui);
+    let successor = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&successor, "command palette");
+    assert_eq!(
+        provider_names(&successor),
+        after
+            .provider_order
+            .iter()
+            .map(|p| p.name().to_owned())
+            .collect::<Vec<_>>()
+    );
+    successor.invoke_cancel();
+}
+
+#[test]
+fn viewing_menu_preferences_apply_to_real_menu_lines_and_cancel_preserves_them() {
+    use hydrus_core::CanvasType;
+    use hydrus_gui::thumbnail_menu::{Entry, info_menu};
+    use hydrus_store::settings::{FileViewingStatistics, ViewingStatsMenuDisplay};
+    fn recorded(entry: &Entry) -> serde_json::Value {
+        match entry {
+            Entry::Menu(label, children) => {
+                serde_json::json!({"label":label,"children":children.iter().map(recorded).collect::<Vec<_>>()})
+            }
+            Entry::Label(label) => serde_json::json!({"label":label}),
+            _ => panic!("viewing statistics are passive labels"),
+        }
+    }
+    let (_dirs, store) = store();
+    let oracle = hydrus_testkit::fixture_json("viewing_statistics_options.json");
+    let hash = oracle["file"].as_str().unwrap().parse().unwrap();
+    let file = store
+        .read(|c| hydrus_store::master::hash_id(c, &hash))
+        .unwrap()
+        .unwrap();
+    let now = oracle["now"].as_i64().unwrap() * 1000;
+    store
+        .write_content(move |w| {
+            for (canvas, ago, views, ms) in [
+                (CanvasType::MediaViewer, 10, 2, 12_000),
+                (CanvasType::Preview, 20, 3, 9000),
+                (CanvasType::ClientApi, 30, 4, 28_000),
+            ] {
+                w.set_views(file, canvas, Some(now - ago * 1000), views, ms)?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    for event in oracle["menu_events"].as_array().unwrap() {
+        let before = store
+            .read(hydrus_store::settings::get::<FileViewingStatistics>)
+            .unwrap();
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "file viewing statistics");
+        let (menu, control) = row(&options, "Show viewing stats on media right-click menus?:");
+        assert_eq!(control.kind, 5);
+        options.invoke_choice_chosen(menu, i32::from(event["style"] == 3));
+        let (ticks, control) = row(&options, "Which views to show?:");
+        assert_eq!(control.kind, 23);
+        assert_eq!(control.items.row_count(), 3);
+        for (index, code) in [0, 1, 4].iter().enumerate() {
+            options.invoke_canvas_toggled(
+                ticks,
+                i32::try_from(index).unwrap(),
+                event["canvases"]
+                    .as_array()
+                    .unwrap()
+                    .contains(&serde_json::json!(code)),
+            );
+        }
+        assert_eq!(
+            store
+                .read(hydrus_store::settings::get::<FileViewingStatistics>)
+                .unwrap(),
+            before,
+            "changes remain staged until parent Apply"
+        );
+        options.invoke_apply();
+        assert!(bound.options.borrow().is_none());
+        let saved = store
+            .read(hydrus_store::settings::get::<FileViewingStatistics>)
+            .unwrap();
+        assert_eq!(
+            saved.menu_display,
+            if event["style"] == 3 {
+                ViewingStatsMenuDisplay::Stacked
+            } else {
+                ViewingStatsMenuDisplay::Combined
+            }
+        );
+        let entry = info_menu(
+            &store,
+            Some(file),
+            (&[file], hydrus_gui::status::Items::files(1)),
+            &hydrus_core::media_viewer::InfoLineSettings::default(),
+            now,
+        )
+        .unwrap();
+        let Entry::Menu(_, lines) = entry else {
+            panic!("media info submenu")
+        };
+        let view_lines: Vec<_> = lines.iter().filter(|line| matches!(line,Entry::Label(label)|Entry::Menu(label,_) if label.starts_with("viewed ") || label.starts_with("no view record"))).map(recorded).collect();
+        assert_eq!(serde_json::json!(view_lines), event["menu"], "{event}");
+        open(&ui);
+        let reopened = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&reopened, "file viewing statistics");
+        assert_eq!(
+            row(&reopened, "Show viewing stats on media right-click menus?:")
+                .1
+                .index,
+            i32::from(saved.menu_display == ViewingStatsMenuDisplay::Stacked)
+        );
+        reopened.invoke_canvas_toggled(
+            ticks,
+            0,
+            !saved
+                .interesting_canvases
+                .contains(&CanvasType::MediaViewer),
+        );
+        reopened.invoke_cancel();
+        reopened.invoke_canvas_toggled(ticks, 1, true);
+        assert_eq!(
+            store
+                .read(hydrus_store::settings::get::<FileViewingStatistics>)
+                .unwrap(),
+            saved
+        );
+    }
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let current = bound.current.borrow().clone();
+    let other = current
+        .borrow()
+        .results()
+        .iter()
+        .copied()
+        .find(|id| *id != file)
+        .expect("second imported file");
+    let sorted_files = current.borrow().results().to_vec();
+    store
+        .write_content(move |w| {
+            // The basic fixture contains other media-view counts (up to six).
+            // Isolate this pair's ranking while keeping the real page result
+            // set, persisted options and sort consumer under test.
+            for id in sorted_files {
+                for canvas in [CanvasType::MediaViewer, CanvasType::Preview] {
+                    w.set_views(id, canvas, Some(now), 0, 0)?;
+                }
+            }
+            w.set_views(file, CanvasType::MediaViewer, Some(now), 2, 12_000)?;
+            w.set_views(file, CanvasType::Preview, Some(now), 3, 9000)?;
+            w.set_views(other, CanvasType::MediaViewer, Some(now), 1, 1000)?;
+            w.set_views(other, CanvasType::Preview, Some(now), 10, 1000)
+        })
+        .unwrap();
+    for (wanted, index) in [(file, 0), (other, 1)] {
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "file viewing statistics");
+        let ticks = row(&options, "Which views to show?:").0;
+        for canvas in 0..3 {
+            options.invoke_canvas_toggled(ticks, canvas, canvas == index);
+        }
+        options.invoke_apply();
+        current
+            .borrow_mut()
+            .set_sort_by(hydrus_search::exec::SortBy::MediaViews);
+        current
+            .borrow_mut()
+            .set_sort_order(hydrus_search::exec::SortOrder::Descending);
+        assert_eq!(
+            current.borrow().results().first(),
+            Some(&wanted),
+            "new canvas ticks reach the actual page views sort"
+        );
+    }
+}
+
+#[test]
+fn viewing_timing_options_reach_real_viewer_and_archive_filter_lifetimes() {
+    use hydrus_core::{CanvasType, HashId};
+    use hydrus_store::settings::{self, FileViewingStatistics};
+    let (_dirs, store) = store();
+    let oracle = hydrus_testkit::fixture_json("viewing_statistics_options.json");
+    let file = store
+        .read(|conn| {
+            hydrus_store::master::hash_id(conn, &oracle["file"].as_str().unwrap().parse().unwrap())
+        })
+        .unwrap()
+        .unwrap();
+    store
+        .write_content(move |w| w.set_views(file, CanvasType::MediaViewer, None, 0, 0))
+        .unwrap();
+    let stats = |file: HashId| {
+        store
+            .read(|conn| hydrus_store::media::viewing_stats(conn, &[file]))
+            .unwrap()
+            .into_iter()
+            .find(|s| s.canvas == CanvasType::MediaViewer)
+            .unwrap()
+    };
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let index = i32::try_from(
+        bound
+            .current
+            .borrow()
+            .borrow()
+            .results()
+            .iter()
+            .position(|id| *id == file)
+            .unwrap(),
+    )
+    .unwrap();
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "file viewing statistics");
+    let minimum = row(
+        &options,
+        "Min time to view on media viewer to count as a view:",
+    )
+    .0;
+    let maximum = row(
+        &options,
+        "Cap any view on the media viewer to this maximum time:",
+    )
+    .0;
+    let archive = row(
+        &options,
+        "Enable file viewing statistics tracking in the archive/delete filter?:",
+    )
+    .0;
+    let duplicates = row(
+        &options,
+        "Enable file viewing statistics tracking in the duplicate filter?:",
+    )
+    .0;
+    assert_eq!(
+        row(
+            &options,
+            "Min time to view on media viewer to count as a view:"
+        )
+        .1
+        .kind,
+        24
+    );
+    options.invoke_none_toggled(minimum, true);
+    // Hours/minutes/seconds/milliseconds: an entered 0 is clamped to the 1s cap.
+    for field in 0..4 {
+        options.invoke_field_edited(maximum, field, 0);
+    }
+    options.invoke_check_toggled(archive, false);
+    options.invoke_check_toggled(duplicates, true);
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 900, 640);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("options_viewing_statistics.png"),
+        &pixels,
+        900,
+        640,
+    )
+    .unwrap();
+    options.invoke_apply();
+    let saved = store.read(settings::get::<FileViewingStatistics>).unwrap();
+    assert_eq!(saved.media_min_ms, None);
+    assert_eq!(saved.media_max_ms, Some(1000));
+    assert!(!saved.archive_delete);
+    assert!(saved.duplicates);
+    ui.invoke_thumbnail_activated(index);
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    std::thread::sleep(std::time::Duration::from_millis(1050));
+    // Presentation refresh is the same file and must retain this one interval.
+    viewer.invoke_presentation_settings_changed();
+    viewer.invoke_close_requested();
+    let recorded = stats(file);
+    assert_eq!((recorded.views, recorded.viewtime_ms), (1, 1000));
+    viewer.invoke_close_requested();
+    viewer.invoke_next();
+    assert_eq!(
+        stats(file),
+        recorded,
+        "a closed owner cannot add another interval"
+    );
+    open(&ui);
+    let reopened = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&reopened, "file viewing statistics");
+    assert!(
+        row(
+            &reopened,
+            "Min time to view on media viewer to count as a view:"
+        )
+        .1
+        .is_none
+    );
+    assert_eq!(
+        row(
+            &reopened,
+            "Cap any view on the media viewer to this maximum time:"
+        )
+        .1
+        .fields
+        .row_data(2)
+        .unwrap()
+        .value,
+        1
+    );
+    reopened.invoke_none_toggled(minimum, false);
+    reopened.invoke_check_toggled(archive, true);
+    reopened.invoke_cancel();
+    reopened.invoke_apply();
+    assert_eq!(
+        store.read(settings::get::<FileViewingStatistics>).unwrap(),
+        saved,
+        "Cancel and stale Apply preserve saved timing"
+    );
+    ui.invoke_thumbnail_clicked(index, false, false);
+    ui.invoke_archive_delete_filter();
+    let filter = bound
+        .archive_delete
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    filter.invoke_close_requested();
+    assert_eq!(
+        stats(file),
+        recorded,
+        "disabled archive filter adds no viewing record"
+    );
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "file viewing statistics");
+    options.invoke_check_toggled(archive, true);
+    options.invoke_none_toggled(maximum, true);
+    options.invoke_apply();
+    ui.invoke_archive_delete_filter();
+    let filter = bound
+        .archive_delete
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    filter.invoke_keep();
+    assert!(!filter.get_question().is_empty());
+    filter.invoke_forget();
+    assert!(bound.archive_delete.borrow().is_none());
+    assert_eq!(
+        stats(file).views,
+        2,
+        "forgetting archive decisions still records actual viewing"
+    );
+    filter.invoke_commit();
+    filter.invoke_keep();
+    assert_eq!(
+        stats(file).views,
+        2,
+        "closed filter callbacks cannot write or restart tracking"
+    );
+    // Two owner windows may overlap. Closing an old one flushes only its own
+    // interval and cannot discard or navigate the replacement owner.
+    ui.invoke_thumbnail_activated(index);
+    let stale = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    ui.invoke_thumbnail_activated(index);
+    let live = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    stale.invoke_close_requested();
+    let once = stats(file).views;
+    stale.invoke_next();
+    stale.invoke_close_requested();
+    assert_eq!(stats(file).views, once);
+    assert!(std::ptr::eq(
+        bound.viewer.borrow().as_ref().unwrap().window(),
+        live.window()
+    ));
+    live.invoke_close_requested();
+    assert_eq!(stats(file).views, once + 1);
+}
+
+#[test]
+fn files_trash_confirmations_are_staged_reopened_and_consumed() {
+    use hydrus_gui::media_actions;
+    use hydrus_store::settings::DeletionPreferences;
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    let preferences = || {
+        store
+            .read(hydrus_store::settings::get::<DeletionPreferences>)
+            .unwrap()
+    };
+    let change = |value| {
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "files and trash");
+        for label in [
+            "Confirm sending files to trash: ",
+            "Confirm sending more than one file to archive or inbox: ",
+        ] {
+            let (index, _) = row(&window, label);
+            window.invoke_check_toggled(index, value);
+        }
+        window
+    };
+    let before = preferences();
+    let window = change(false);
+    assert_eq!(preferences(), before);
+    window.invoke_cancel();
+    assert_eq!(preferences(), before);
+    let window = change(false);
+    window.invoke_apply();
+    assert!(!preferences().confirm_archive);
+    assert!(!preferences().confirm_trash);
+    open(&ui);
+    let reopened = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&reopened, "files and trash");
+    assert!(!row(&reopened, "Confirm sending files to trash: ").1.checked);
+    assert!(
+        !row(
+            &reopened,
+            "Confirm sending more than one file to archive or inbox: "
+        )
+        .1
+        .checked
+    );
+    reopened.invoke_cancel();
+
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let page = bound.current.borrow().clone();
+    let results = page.borrow().results().to_vec();
+    let (inbox, _) = media_actions::by_inbox(&store, &results);
+    let files = &inbox[..2];
+    page.borrow_mut().select_files(files);
+    ui.invoke_archive_selected();
+    assert_eq!(ui.get_question(), "");
+    assert!(media_actions::by_inbox(&store, files).0.is_empty());
+    ui.invoke_inbox_selected();
+    assert_eq!(media_actions::by_inbox(&store, files).0, files);
+    change(true).invoke_apply();
+    ui.invoke_archive_selected();
+    assert_eq!(ui.get_question(), "Archive 2 files?");
+    ui.invoke_answer(false);
+    assert_eq!(media_actions::by_inbox(&store, files).0, files);
+    ui.invoke_archive_selected();
+    ui.invoke_answer(true);
+    assert!(media_actions::by_inbox(&store, files).0.is_empty());
+
+    change(false).invoke_apply();
+    let single_domain = results
+        .iter()
+        .copied()
+        .find(|file| {
+            let snapshot = store.snapshot();
+            let roles = hydrus_store::content::DomainRoles::new(&snapshot.services).unwrap();
+            let batch = store
+                .read(|c| hydrus_store::media::load(c, &snapshot.services, None, &[*file]))
+                .unwrap();
+            batch.results[0]
+                .current
+                .iter()
+                .filter(|current| roles.local.contains(&current.service))
+                .count()
+                == 1
+        })
+        .unwrap();
+    let index = page
+        .borrow()
+        .results()
+        .iter()
+        .position(|file| *file == single_domain)
+        .unwrap();
+    ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let before = page.borrow().results().len();
+    viewer.invoke_delete();
+    assert_eq!(viewer.get_question(), "");
+    assert_eq!(page.borrow().results().len(), before - 1);
+    assert!(!page.borrow().results().contains(&single_domain));
+    viewer.invoke_close_requested();
+    assert!(windows.get(0).is_some());
+}
+
+#[test]
+fn advanced_deletion_queue_stages_custom_reason_cancel_and_real_consumer() {
+    use hydrus_store::settings::DeletionPreferences;
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    let preferences = || {
+        store
+            .read(hydrus_store::settings::get::<DeletionPreferences>)
+            .unwrap()
+    };
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "files and trash");
+    assert!(!row(&options, "Remember the last reason: ").1.enabled);
+    let (advanced, _) = row(&options, "Use the advanced file deletion dialog: ");
+    options.invoke_check_toggled(advanced, true);
+    assert!(row(&options, "Remember the last reason: ").1.enabled);
+    options.invoke_reason_action("add".into());
+    let child = bound
+        .options_reason_child
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(child.get_message(), "Enter the reason");
+    assert_eq!(child.get_text(), "I do not like the file.");
+    child.invoke_name_entered("synthetic staged reason 日本".into());
+    assert!(
+        !preferences()
+            .reasons
+            .contains(&"synthetic staged reason 日本".into())
+    );
+    options.invoke_reason_clicked(0, false, false);
+    options.invoke_reason_action("edit".into());
+    let stale = bound
+        .options_reason_child
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    options.invoke_apply();
+    assert!(
+        bound.options.borrow().is_some(),
+        "child blocks parent Apply"
+    );
+    options.invoke_cancel();
+    assert!(bound.options_reason_child.borrow().is_none());
+    assert!(!stale.window().is_visible());
+    stale.invoke_name_entered("stale replacement".into());
+    options.invoke_apply();
+    assert!(!preferences().advanced);
+    assert!(
+        !preferences()
+            .reasons
+            .contains(&"synthetic staged reason 日本".into())
+    );
+
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "files and trash");
+    let (advanced, _) = row(&options, "Use the advanced file deletion dialog: ");
+    options.invoke_check_toggled(advanced, true);
+    options.invoke_reason_action("add".into());
+    let child = bound
+        .options_reason_child
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    child.invoke_name_entered("synthetic applied reason 日本".into());
+    assert!(bound.options_reason_child.borrow().is_none());
+    let (remember, _) = row(&options, "Remember the last action: ");
+    options.invoke_check_toggled(remember, true);
+    options.invoke_reason_clicked(0, false, false);
+    let original_rows = options.get_reason_rows();
+    let original = (0..original_rows.row_count())
+        .map(|i| {
+            original_rows
+                .row_data(i)
+                .unwrap()
+                .cells
+                .row_data(0)
+                .unwrap()
+        })
+        .collect::<Vec<_>>();
+    options.invoke_reason_action("down".into());
+    assert_eq!(
+        options
+            .get_reason_rows()
+            .row_data(1)
+            .unwrap()
+            .cells
+            .row_data(0)
+            .unwrap(),
+        original[0]
+    );
+    options.invoke_reason_action("up".into());
+    options.invoke_reason_action("delete".into());
+    let question = bound
+        .options_reason_child
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(question.get_message(), "Remove 1 selected?");
+    question.invoke_answered(false);
+    assert_eq!(options.get_reason_rows().row_count(), original.len());
+    options.invoke_apply();
+    assert!(preferences().advanced);
+    assert!(preferences().remember_action);
+    assert_eq!(
+        preferences().reasons.last().map(String::as_str),
+        Some("synthetic applied reason 日本")
+    );
+    open(&ui);
+    let reopened = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&reopened, "files and trash");
+    assert_eq!(
+        reopened
+            .get_reason_rows()
+            .row_data(reopened.get_reason_rows().row_count() - 1)
+            .unwrap()
+            .cells
+            .row_data(0)
+            .unwrap(),
+        "synthetic applied reason 日本"
+    );
+    reopened.invoke_cancel();
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let recording = hydrus_testkit::fixture_json("files_trash.json");
+    let hash: hydrus_core::Sha256 = recording["advanced"][0]["hash"]
+        .as_str()
+        .unwrap()
+        .parse()
+        .unwrap();
+    let file = store
+        .read(|c| hydrus_store::master::hash_id(c, &hash))
+        .unwrap()
+        .unwrap();
+    let page = bound.current.borrow().clone();
+    page.borrow_mut().select_files(&[file]);
+    let original_reason = store
+        .read(|c| hydrus_store::media::load(c, &store.snapshot().services, None, &[file]))
+        .unwrap()
+        .results[0]
+        .deletion_reason
+        .clone()
+        .unwrap();
+    ui.invoke_delete_selected();
+    let deletion = bound.delete_files.borrow().as_ref().unwrap().clone_strong();
+    let reasons = deletion.get_reasons();
+    let authored = (0..reasons.row_count())
+        .find(|&i| reasons.row_data(i).unwrap() == "synthetic applied reason 日本")
+        .unwrap();
+    let custom = (0..reasons.row_count())
+        .find(|&i| reasons.row_data(i).unwrap() == "custom")
+        .unwrap();
+    assert!(authored < custom);
+    // The reference appends an unlisted existing reason after its custom row.
+    assert_eq!(
+        reasons.row_data(reasons.row_count() - 1).unwrap().as_str(),
+        format!("keep existing reason: {original_reason}")
+    );
+    assert_eq!(
+        deletion.get_selected_reason(),
+        i32::try_from(reasons.row_count() - 1).unwrap()
+    );
+    let before = preferences();
+    deletion.invoke_cancel();
+    deletion.invoke_accept_deletion();
+    assert_eq!(preferences(), before);
+    assert!(page.borrow().results().contains(&file));
+    ui.invoke_delete_selected();
+    let deletion = bound.delete_files.borrow().as_ref().unwrap().clone_strong();
+    let index = (0..deletion.get_reasons().row_count())
+        .find(|&i| deletion.get_reasons().row_data(i).unwrap() == "synthetic applied reason 日本")
+        .unwrap();
+    deletion.invoke_reason_selected(i32::try_from(index).unwrap());
+    deletion.invoke_accept_deletion();
+    assert!(!page.borrow().results().contains(&file));
+    let batch = store
+        .read(|c| hydrus_store::media::load(c, &store.snapshot().services, None, &[file]))
+        .unwrap();
+    assert_eq!(
+        batch.results[0].deletion_reason.as_deref(),
+        Some("synthetic applied reason 日本")
+    );
+    assert_eq!(
+        preferences().last_reason.as_deref(),
+        Some("synthetic applied reason 日本")
+    );
+    assert!(preferences().last_action.is_some());
+}
+
+fn banner_questions(window: &hydrus_gui::TagBannerWindow, answers: [&str; 3]) {
+    for (message, answer) in ["Edit namespace.", "Edit prefix.", "Edit separator."]
+        .into_iter()
+        .zip(answers)
+    {
+        assert!(window.get_asking());
+        assert_eq!(window.get_message(), message);
+        window.set_prompt_text(answer.into());
+        window.invoke_prompt_accepted();
+    }
+    assert!(!window.get_asking());
+}
+
+fn replay_banner_events(window: &hydrus_gui::TagBannerWindow, events: &[serde_json::Value]) {
+    for event in events {
+        match event["action"].as_str().unwrap() {
+            "appearance/examples" => {
+                for (channel, value) in [12, 34, 56, 78].into_iter().enumerate() {
+                    window.invoke_colour_edited(false, channel as i32, value);
+                }
+                for (channel, value) in [210, 180, 140, 120].into_iter().enumerate() {
+                    window.invoke_colour_edited(true, channel as i32, value);
+                }
+                window.set_separator(" / ".into());
+                window.set_examples(" CREATOR:Alpha \ncreator:alpha\ntitle:Beta\npage:10\npage:2\npage:3\npage:alpha\n blue_eyes \n".into());
+                window.invoke_changed();
+            }
+            "hide" | "show" => {
+                window.set_showing(event["action"] == "show");
+                window.invoke_changed();
+            }
+            "add namespace" => {
+                window.invoke_action("add".into());
+                banner_questions(window, ["page", "p=", ".."]);
+                let last = window.get_rows().row_count() - 1;
+                window.invoke_row_clicked(last as i32, false, false);
+            }
+            "move up" => window.invoke_action("up".into()),
+            "move down" => window.invoke_action("down".into()),
+            "edit namespace" => {
+                window.invoke_action("edit".into());
+                banner_questions(window, ["", "plain=", " + "]);
+            }
+            "cancel namespace" => {
+                window.invoke_action("edit".into());
+                window.set_prompt_text("discard this namespace".into());
+                window.invoke_prompt_accepted();
+                window.invoke_prompt_cancelled();
+            }
+            "cancel delete" | "delete" => {
+                window.invoke_action("delete".into());
+                assert_eq!(window.get_message(), "Remove 1 selected?");
+                window.invoke_answer(event["action"] == "delete");
+            }
+            other => panic!("{other}"),
+        }
+        assert_eq!(
+            window.get_preview(),
+            event["preview"].as_str().unwrap(),
+            "{event}"
+        );
+        let value: hydrus_core::tag_summary::TagSummaryGenerator =
+            serde_json::from_value(event["value"].clone()).unwrap();
+        assert_eq!(window.get_showing(), value.show);
+        assert_eq!(window.get_separator(), value.separator);
+        let rows = window.get_rows();
+        assert_eq!(rows.row_count(), value.namespace_info.len());
+        for (i, info) in value.namespace_info.into_iter().enumerate() {
+            let expected = hydrus_gui_model::tag_banner::Row {
+                id: 0,
+                info,
+                selected: false,
+            }
+            .label();
+            assert_eq!(
+                rows.row_data(i).unwrap().cells.row_data(0).unwrap(),
+                expected
+            );
+        }
+        for (channels, expected) in [
+            (window.get_background_channels(), value.background),
+            (window.get_text_channels(), value.text),
+        ] {
+            assert_eq!(
+                (0..channels.row_count())
+                    .map(|i| channels.row_data(i).unwrap())
+                    .collect::<Vec<_>>(),
+                expected.map(i32::from)
+            );
+        }
+    }
+}
+
+#[test]
+fn banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer() {
+    use hydrus_core::{ContentStatus, ServiceKey, Tag, tag_summary::TagSummaries};
+    use hydrus_store::{content::MappingAction, settings};
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("tag_banner_editors.json");
+    let file = store
+        .read(|conn| {
+            hydrus_store::master::hash_id(
+                conn,
+                &fixture["consumers"]["file"]
+                    .as_str()
+                    .unwrap()
+                    .parse()
+                    .unwrap(),
+            )
+        })
+        .unwrap()
+        .unwrap();
+    let snapshot = store.snapshot();
+    let existing = store
+        .read(|conn| hydrus_store::media::load(conn, &snapshot.services, None, &[file]))
+        .unwrap()
+        .results
+        .remove(0)
+        .tags;
+    let service = snapshot
+        .services
+        .by_key(&ServiceKey::new(
+            hydrus_core::service::builtin_keys::MY_TAGS.to_vec(),
+        ))
+        .unwrap()
+        .id;
+    let tags: Vec<Tag> = fixture["consumers"]["tags"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|tag| Tag::new(tag.as_str().unwrap()).unwrap())
+        .collect();
+    store
+        .write_content(move |writer| {
+            for (service, tags) in existing {
+                for (status, ids) in tags.by_status {
+                    let action = match status {
+                        ContentStatus::Current => MappingAction::Delete,
+                        ContentStatus::Pending => MappingAction::RescindPend,
+                        _ => continue,
+                    };
+                    for tag in ids {
+                        writer.update_mappings(service, &action, tag, &[file])?;
+                    }
+                }
+            }
+            for tag in tags {
+                let id = hydrus_store::master::intern_tag(writer.conn(), &tag)?;
+                let action = if tag.as_str() == "title:pending" {
+                    MappingAction::Pend
+                } else {
+                    MappingAction::Add
+                };
+                writer.update_mappings(service, &action, id, &[file])?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let index = bound
+        .current
+        .borrow()
+        .borrow()
+        .results()
+        .iter()
+        .position(|id| *id == file)
+        .unwrap();
+    let thumbnail = || {
+        (0..bound.rows.row_count())
+            .find_map(|row| {
+                let data = bound.rows.row_data(row).unwrap();
+                let first = usize::try_from(data.first).unwrap();
+                (index >= first && index < first + data.thumbnails.row_count())
+                    .then(|| data.thumbnails.row_data(index - first).unwrap())
+            })
+            .unwrap()
+    };
+    let cached_before = thumbnail();
+    ui.invoke_thumbnail_activated(index as i32);
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let title_before = viewer.get_tag_banner();
+    let viewer_adapter = windows.get(windows.count() - 1).unwrap();
+    let before: TagSummaries = store.read(settings::get).unwrap();
+    open(&ui);
+    let mut options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "tag presentation");
+    let events = fixture["events"].as_array().unwrap();
+    let mut old_children = Vec::new();
+    for (index, route) in fixture["routes"].as_array().unwrap().iter().enumerate() {
+        let label = match route["key"].as_str().unwrap() {
+            "thumbnail_top" => "On thumbnail top:",
+            "thumbnail_bottom_right" => "On thumbnail bottom-right:",
+            "media_viewer_top" => "On media viewer top:",
+            other => panic!("{other}"),
+        };
+        let (at, button) = row(&options, label);
+        assert_eq!(button.kind, 27);
+        options.invoke_banner_clicked(at);
+        let child = bound
+            .options_banner_child
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        replay_banner_events(&child, &events[index * 10..(index + 1) * 10]);
+        options.invoke_apply();
+        assert!(options.window().is_visible(), "parent waits for its child");
+        assert_eq!(store.read(settings::get::<TagSummaries>).unwrap(), before);
+        if index == 0 {
+            child.invoke_action("cancel".into());
+            assert_eq!(row(&options, label).1.text, button.text);
+        } else {
+            child.invoke_action("apply".into());
+            assert_eq!(
+                row(&options, label).1.text,
+                route["label"].as_str().unwrap()
+            );
+            if index == 1 {
+                // Accepted child changes are still discarded by parent Cancel.
+                options.invoke_cancel();
+                assert_eq!(store.read(settings::get::<TagSummaries>).unwrap(), before);
+                open(&ui);
+                options = bound.options.borrow().as_ref().unwrap().clone_strong();
+                show_page(&options, "tag presentation");
+                options.invoke_banner_clicked(row(&options, label).0);
+                let again = bound
+                    .options_banner_child
+                    .borrow()
+                    .as_ref()
+                    .unwrap()
+                    .clone_strong();
+                replay_banner_events(&again, &events[10..20]);
+                again.invoke_action("apply".into());
+                old_children.push(again);
+            }
+        }
+        assert!(!child.window().is_visible());
+        assert!(bound.options_banner_child.borrow().is_none());
+        old_children.push(child);
+    }
+    assert_eq!(
+        thumbnail().top,
+        cached_before.top,
+        "staging retains cached banner"
+    );
+    assert_eq!(
+        viewer.get_tag_banner(),
+        title_before,
+        "staging retains live viewer title"
+    );
+    options.invoke_apply();
+    let saved: TagSummaries = serde_json::from_value(fixture["saved"].clone()).unwrap();
+    assert_eq!(store.read(settings::get::<TagSummaries>).unwrap(), saved);
+    let refreshed = thumbnail();
+    assert_eq!(
+        refreshed.top,
+        fixture["consumers"]["thumbnail_top"].as_str().unwrap()
+    );
+    assert_eq!(
+        refreshed.bottom,
+        fixture["consumers"]["thumbnail_bottom_right"]
+            .as_str()
+            .unwrap()
+    );
+    assert_ne!(refreshed.top, cached_before.top);
+    assert_eq!(
+        viewer.get_tag_banner(),
+        fixture["consumers"]["viewer_title"].as_str().unwrap()
+    );
+    assert_ne!(viewer.get_tag_banner(), title_before);
+    assert_eq!(
+        ui.get_banner_top_background(),
+        slint::Color::from_argb_u8(78, 12, 34, 56)
+    );
+    assert_eq!(
+        ui.get_banner_bottom_text(),
+        slint::Color::from_argb_u8(120, 210, 180, 140)
+    );
+    let viewer_pixels = headless::render(&viewer_adapter, 900, 640);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("tag_banner_viewer.png"),
+        &viewer_pixels,
+        900,
+        640,
+    )
+    .unwrap();
+    let main_pixels = headless::render(&windows.get(0).unwrap(), 900, 640);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("tag_banner_thumbnails.png"),
+        &main_pixels,
+        900,
+        640,
+    )
+    .unwrap();
+    open(&ui);
+    let reopened = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&reopened, "tag presentation");
+    reopened.invoke_banner_clicked(row(&reopened, "On media viewer top:").0);
+    let reopened_child = bound
+        .options_banner_child
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(
+        reopened_child.get_preview(),
+        events[39]["preview"].as_str().unwrap()
+    );
+    let adapter = windows.get(windows.count() - 1).unwrap();
+    let pixels = headless::render(&adapter, 780, 670);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("tag_banner_editor.png"),
+        &pixels,
+        780,
+        670,
+    )
+    .unwrap();
+    for child in old_children {
+        child.set_showing(false);
+        child.invoke_changed();
+        child.invoke_action("apply".into());
+        child.invoke_row_clicked(0, false, false);
+        child.invoke_action("delete".into());
+        child.invoke_answer(true);
+    }
+    assert!(
+        reopened_child.window().is_visible(),
+        "stale children cannot clear a fresh owner slot"
+    );
+    assert!(std::ptr::eq(
+        bound
+            .options_banner_child
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .window(),
+        reopened_child.window()
+    ));
+    reopened_child.set_showing(false);
+    reopened_child.invoke_changed();
+    assert_eq!(reopened_child.get_preview(), "not showing");
+    reopened.invoke_cancel();
+    assert!(!reopened_child.window().is_visible());
+    assert!(bound.options_banner_child.borrow().is_none());
+    reopened_child.invoke_action("apply".into());
+    assert_eq!(store.read(settings::get::<TagSummaries>).unwrap(), saved);
+    assert_eq!(
+        viewer.get_tag_banner(),
+        fixture["consumers"]["viewer_title"].as_str().unwrap()
+    );
+    // Enabled state reaches both already-open consumers on the next parent Apply.
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "tag presentation");
+    for label in ["On thumbnail top:", "On media viewer top:"] {
+        options.invoke_banner_clicked(row(&options, label).0);
+        let child = bound
+            .options_banner_child
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        child.set_showing(false);
+        child.invoke_changed();
+        child.invoke_action("apply".into());
+    }
+    options.invoke_apply();
+    assert!(thumbnail().top.is_empty());
+    assert!(viewer.get_tag_banner().is_empty());
 }

@@ -21,6 +21,7 @@ fn paste_confirmation_skip_and_list_height_are_consumed_by_manage_tags() {
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
     ui.invoke_select_all();
+    let selected_count = bound.current.borrow().borrow().selected_files().len();
     ui.invoke_manage_tags_selected();
     let w = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
     assert_eq!(w.get_autocomplete_height(), 11);
@@ -34,18 +35,34 @@ fn paste_confirmation_skip_and_list_height_are_consumed_by_manage_tags() {
     assert!(bound.manage_tags.borrow().is_some());
     w.invoke_paste_answered(false);
     assert_eq!(w.get_text(), "caller draft");
-    assert!(!w.get_tags().iter().any(|r| r.text == "parity:new"));
+    assert!(
+        !w.get_tags()
+            .iter()
+            .any(|r| r.text.starts_with("parity:new ("))
+    );
     assert!(w.invoke_paste_requested(false));
     w.invoke_paste_answered(true);
     assert!(w.get_question().is_empty());
-    assert!(w.get_tags().iter().any(|r| r.text == "parity:new"));
+    assert!(
+        w.get_tags()
+            .iter()
+            .any(|r| r.text == format!("parity:new ({selected_count})"))
+    );
     // Repeating a paste must retain a tag, rather than toggle it off.
     assert!(w.invoke_paste_requested(true));
-    assert!(w.get_tags().iter().any(|r| r.text == "parity:new"));
+    assert!(
+        w.get_tags()
+            .iter()
+            .any(|r| r.text == format!("parity:new ({selected_count})"))
+    );
     w.invoke_cancel();
     ui.invoke_manage_tags_selected();
     let w = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
-    assert!(!w.get_tags().iter().any(|r| r.text == "parity:new"));
+    assert!(
+        !w.get_tags()
+            .iter()
+            .any(|r| r.text.starts_with("parity:new ("))
+    );
     store
         .write(|ctx| {
             let mut options: TagEditingSettings = settings::get(ctx.conn())?;
@@ -58,7 +75,11 @@ fn paste_confirmation_skip_and_list_height_are_consumed_by_manage_tags() {
     assert!(w.invoke_paste_requested(false));
     assert!(w.get_question().is_empty());
     assert_eq!(w.get_autocomplete_height(), 3);
-    assert!(w.get_tags().iter().any(|r| r.text == "parity:skip a"));
+    assert!(
+        w.get_tags()
+            .iter()
+            .any(|r| r.text == format!("parity:skip a ({selected_count})"))
+    );
     // Closing a pending paste invalidates its answer and all stale write callbacks.
     store
         .write(|ctx| {
@@ -351,11 +372,12 @@ fn favourite_children_tabs_and_applied_cap_feed_manage_tags_and_import_tag_child
         w.get_suggestions().row_data(0).unwrap().text,
         "parity:gui favourite"
     );
+    let selected_count = bound.current.borrow().borrow().selected_files().len();
     w.invoke_suggestion_chosen(0);
     assert!(
         w.get_tags()
             .iter()
-            .any(|row| row.text == "parity:gui favourite")
+            .any(|row| row.text == format!("parity:gui favourite ({selected_count})"))
     );
     w.invoke_tab_chosen(2);
     assert_eq!(w.get_suggestions().row_count(), 3);
@@ -783,4 +805,974 @@ fn write_domain_buttons_query_counts_and_own_cancelled_location_child() {
     assert!(slot.borrow().is_none());
     assert_eq!(applied.get(), 0);
     assert!(hydrus_gui::locations_window::last_opened().is_none());
+}
+
+#[test]
+fn selected_batches_stage_in_shared_dialogs_and_closed_owners_ignore_callbacks() {
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let tags = vec![
+        "parity:multi alpha".to_owned(),
+        "parity:multi beta".to_owned(),
+        "parity:multi gamma".to_owned(),
+    ];
+    let saved = tags.clone();
+    store
+        .write(move |ctx| settings::set(ctx.conn(), &settings::FavouriteTags(saved)))
+        .unwrap();
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let slot = hydrus_gui::write_tag_window::Slot::default();
+    let applied = Rc::new(RefCell::new(Vec::<String>::new()));
+    let open = || {
+        hydrus_gui::write_tag_window::open(
+            &store,
+            key.clone(),
+            &[],
+            "batch tags",
+            &slot,
+            Rc::new({
+                let applied = applied.clone();
+                move |tags| *applied.borrow_mut() = tags
+            }),
+            Rc::new(|| {}),
+        )
+        .unwrap()
+    };
+    let child = open();
+    child.invoke_tab_chosen(1);
+    child.invoke_selection_clicked(2, true, false);
+    assert_eq!(
+        child.get_selected().iter().collect::<Vec<_>>(),
+        vec![true, false, true]
+    );
+    assert_eq!(child.get_tags().row_count(), 0);
+    child.invoke_entered();
+    assert_eq!(
+        child
+            .get_tags()
+            .iter()
+            .map(|row| row.text.to_string())
+            .collect::<Vec<_>>(),
+        vec![tags[0].clone(), tags[2].clone()]
+    );
+    child.invoke_cancel();
+    child.invoke_selection_clicked(1, true, false);
+    child.invoke_chosen(1);
+    child.invoke_apply();
+    assert!(applied.borrow().is_empty());
+    let child = open();
+    assert_eq!(child.get_tags().row_count(), 0);
+    child.invoke_tab_chosen(1);
+    child.invoke_selection_clicked(2, false, true);
+    child.invoke_chosen(1); // Double-click an already selected row activates the batch.
+    child.invoke_apply();
+    assert_eq!(*applied.borrow(), tags);
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    ui.invoke_select_all();
+    ui.invoke_manage_tags_selected();
+    let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    manage.invoke_tab_chosen(1);
+    manage.invoke_selection_clicked(2, false, true);
+    manage.invoke_entered(); // Empty favourites text must enter choices, not apply the dialog.
+    assert!(bound.manage_tags.borrow().is_some());
+    for tag in &tags {
+        assert!(
+            manage
+                .get_tags()
+                .iter()
+                .any(|row| row.text.starts_with(tag.as_str()))
+        );
+    }
+    manage.invoke_cancel();
+    manage.invoke_selection_clicked(0, false, false);
+    manage.invoke_entered();
+    manage.invoke_apply();
+    ui.invoke_manage_tags_selected();
+    let reopened = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    for tag in &tags {
+        assert!(
+            !reopened
+                .get_tags()
+                .iter()
+                .any(|row| row.text.starts_with(tag.as_str()))
+        );
+    }
+    reopened.invoke_cancel();
+    // The separate relationships consumer accepts both sides as staged batches.
+    let top = ui
+        .get_menu_titles()
+        .iter()
+        .position(|row| row.label == "tags")
+        .unwrap();
+    ui.invoke_menu_title_pressed(i32::try_from(top).unwrap(), 0.0, 22.0);
+    let pane = ui.get_menu_panes().row_data(0).unwrap();
+    let at = pane
+        .lines
+        .iter()
+        .position(|row| row.label.starts_with("parents"))
+        .unwrap();
+    ui.invoke_menu_line_clicked(0, i32::try_from(at).unwrap(), 0.0, 0.0, 0.0);
+    let relation = bound
+        .tag_relationships
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    relation.invoke_autocomplete_tab(false, 1);
+    relation.invoke_autocomplete_clicked(false, 2, true, false);
+    relation.invoke_enter_tags(false, "".into());
+    assert_eq!(relation.get_left_tags().row_count(), 2);
+    relation.invoke_autocomplete_tab(true, 1);
+    relation.invoke_autocomplete_clicked(true, 2, false, true);
+    relation.invoke_autocomplete_chosen(true, 1);
+    assert_eq!(relation.get_right_tags().row_count(), 3);
+    relation.invoke_cancel();
+    relation.invoke_autocomplete_clicked(false, 1, true, false);
+    relation.invoke_autocomplete_chosen(false, 1);
+    relation.invoke_add();
+    relation.invoke_apply();
+    assert!(bound.tag_relationships.borrow().is_none());
+}
+
+#[test]
+fn batch_context_menu_copies_and_launches_real_and_or_each_and_duplicate_pages() {
+    use hydrus_core::{Tag, pages::PageContent, search::predicate::Predicate};
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let fixture = hydrus_testkit::fixture_json("write_tag_selection.json");
+    let tags: Vec<String> = serde_json::from_value(
+        fixture["steps"].as_array().unwrap().last().unwrap()["entered"][0].clone(),
+    )
+    .unwrap();
+    let saved = tags.clone();
+    store
+        .write(move |ctx| settings::set(ctx.conn(), &settings::FavouriteTags(saved)))
+        .unwrap();
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let slot = hydrus_gui::write_tag_window::Slot::default();
+    let child = hydrus_gui::write_tag_window::open(
+        &store,
+        key,
+        &[],
+        "batch menus",
+        &slot,
+        Rc::new(|_| {}),
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    child.invoke_tab_chosen(1);
+    child.invoke_selection_clicked(2, false, true);
+    let copied = Rc::new(RefCell::new(String::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| {
+            if let hydrus_gui::Clip::Text(text) = clip {
+                text.clone_into(&mut copied.borrow_mut());
+            }
+        }
+    });
+    child.invoke_context_menu(1, 10.0, 10.0);
+    choose_write_tag_menu(&child, &["copy", "3 selected"]);
+    assert_eq!(
+        *copied.borrow(),
+        fixture["menus"][1]["copied"][0].as_str().unwrap()
+    );
+    assert_eq!(child.get_tags().row_count(), 0);
+    let predicates: Vec<_> = tags
+        .iter()
+        .map(|tag| Predicate::Tag {
+            tag: Tag::new(tag).unwrap(),
+            inclusive: true,
+        })
+        .collect();
+    for (label, expected, duplicate) in [
+        (
+            "open a new search page for 3 selected",
+            vec![predicates.clone()],
+            false,
+        ),
+        (
+            "open a new OR search page for 3 selected",
+            vec![vec![Predicate::Or(predicates.clone())]],
+            false,
+        ),
+        (
+            "open new search pages for each in selection",
+            predicates
+                .iter()
+                .cloned()
+                .map(|predicate| vec![predicate])
+                .collect(),
+            false,
+        ),
+        (
+            "open a new duplicate filter page for 3 selected",
+            vec![predicates.clone()],
+            true,
+        ),
+    ] {
+        let before = bound.pages.borrow().session().pages.len();
+        child.invoke_context_menu(1, 10.0, 10.0);
+        choose_write_tag_menu(&child, &["open", label]);
+        let pages = bound.pages.borrow();
+        assert_eq!(pages.session().pages.len(), before + expected.len());
+        for (page, wanted) in pages.session().pages[before..].iter().zip(expected) {
+            match &page.content {
+                PageContent::Search { search, .. } => {
+                    assert!(!duplicate);
+                    assert_eq!(search.predicates, wanted);
+                }
+                PageContent::Duplicates { duplicates, .. } => {
+                    assert!(duplicate);
+                    assert_eq!(duplicates.search.search_1.predicates, wanted);
+                    assert_eq!(duplicates.search.search_1, duplicates.search.search_2);
+                }
+                content => panic!("unexpected launched content {content:?}"),
+            }
+        }
+    }
+    let before = bound.pages.borrow().session().pages.len();
+    child.invoke_context_menu(1, 10.0, 10.0);
+    child.invoke_cancel();
+    child.invoke_tag_menu_clicked(0, 0, 10.0, 10.0, 10.0);
+    child.invoke_context_menu(1, 10.0, 10.0);
+    assert_eq!(child.get_tag_menu_panes().row_count(), 0);
+    assert_eq!(bound.pages.borrow().session().pages.len(), before);
+    hydrus_gui::set_clipper(|_| {});
+}
+
+#[test]
+fn regeneration_question_repairs_counts_only_on_yes_and_invalidates_on_cancel() {
+    use hydrus_core::{HashId, Tag};
+    use hydrus_store::{content::MappingAction, schema::MappingTables};
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let snapshot = store.snapshot();
+    let service = snapshot.services.by_name("my tags").unwrap();
+    let key = service.key.clone();
+    let service_id = service.id;
+    let domain = snapshot
+        .services
+        .of_type(hydrus_core::ServiceType::CombinedFile)
+        .next()
+        .unwrap()
+        .id;
+    let tag = store
+        .write_content(move |writer| {
+            let tag = hydrus_store::master::intern_tag(
+                writer.conn(),
+                &Tag::new("parity:regen one").unwrap(),
+            )?;
+            let file: HashId =
+                writer
+                    .conn()
+                    .query_row("SELECT hash_id FROM files LIMIT 1", [], |row| row.get(0))?;
+            writer.update_mappings(service_id, &MappingAction::Add, tag, &[file])?;
+            Ok(tag)
+        })
+        .unwrap();
+    store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &settings::FavouriteTags(vec!["parity:regen one".into()]),
+            )
+        })
+        .unwrap();
+    let corrupt = |value| {
+        store
+            .write(move |ctx| {
+                let tables = MappingTables::new(service_id);
+                for table in [tables.counts, tables.display_counts] {
+                    ctx.conn().execute(
+                        &format!("UPDATE {table} SET current=?1 WHERE tag_id=?2 AND domain_id=?3"),
+                        rusqlite::params![value, tag, domain],
+                    )?;
+                }
+                Ok(())
+            })
+            .unwrap();
+    };
+    let count = || {
+        store
+            .read(|conn| hydrus_store::counts::count(conn, service_id, domain, tag, false))
+            .unwrap()
+            .current
+    };
+    corrupt(77_i64);
+    let slot = hydrus_gui::write_tag_window::Slot::default();
+    let child = hydrus_gui::write_tag_window::open(
+        &store,
+        key,
+        &[],
+        "repair tags",
+        &slot,
+        Rc::new(|_| {}),
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    child.invoke_tab_chosen(1);
+    let fixture = hydrus_testkit::fixture_json("write_tag_selection.json");
+    let asked = &fixture["menus"].as_array().unwrap().last().unwrap()["asked"][0];
+    child.invoke_context_menu(0, 10.0, 10.0);
+    choose_write_tag_menu(&child, &["maintenance", "regenerate tag display"]);
+    assert_eq!(
+        child.get_tag_menu_question(),
+        asked["message"].as_str().unwrap()
+    );
+    assert_eq!(
+        child.get_tag_menu_question_title(),
+        asked["title"].as_str().unwrap()
+    );
+    assert_eq!(
+        child.get_tag_menu_yes_label(),
+        asked["yes_label"].as_str().unwrap()
+    );
+    assert_eq!(
+        child.get_tag_menu_no_label(),
+        asked["no_label"].as_str().unwrap()
+    );
+    child.invoke_apply();
+    assert!(slot.borrow().is_some());
+    child.invoke_selection_clicked(0, true, false);
+    assert_eq!(child.get_selected().iter().collect::<Vec<_>>(), vec![true]);
+    child.invoke_tag_menu_answered(false);
+    assert_eq!(count(), 77);
+    child.invoke_context_menu(0, 10.0, 10.0);
+    choose_write_tag_menu(&child, &["maintenance", "regenerate tag display"]);
+    child.invoke_tag_menu_answered(true);
+    assert_eq!(count(), 1);
+    assert_eq!(child.get_tags().row_count(), 0); // Maintenance does not enter suggestions.
+    assert!(child.get_error().is_empty());
+    corrupt(99_i64);
+    child.invoke_context_menu(0, 10.0, 10.0);
+    choose_write_tag_menu(&child, &["maintenance", "regenerate tag display"]);
+    child.invoke_cancel();
+    child.invoke_tag_menu_answered(true);
+    assert_eq!(count(), 99);
+    assert!(slot.borrow().is_none());
+}
+
+#[test]
+fn normal_paste_replays_cursor_selection_and_accepted_tags_preserve_the_draft() {
+    use hydrus_core::Tag;
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let fixture = hydrus_testkit::fixture_json("write_tag_selection.json");
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    for case in fixture["normal_paste"].as_array().unwrap() {
+        let slot = hydrus_gui::write_tag_window::Slot::default();
+        let applied = Rc::new(RefCell::new(Vec::new()));
+        let child = hydrus_gui::write_tag_window::open(
+            &store,
+            key.clone(),
+            &[],
+            "normal paste",
+            &slot,
+            Rc::new({
+                let applied = applied.clone();
+                move |tags| *applied.borrow_mut() = tags
+            }),
+            Rc::new(|| {}),
+        )
+        .unwrap();
+        child.invoke_edited(case["text"].as_str().unwrap().into());
+        let anchor = i32::try_from(case["anchor"].as_i64().unwrap()).unwrap();
+        let cursor = anchor + i32::try_from(case["length"].as_i64().unwrap()).unwrap();
+        child.invoke_select_input(anchor, cursor);
+        let pasted = case["pasted"].as_str().unwrap().to_owned();
+        headless::set_clipboard_text(&pasted);
+        hydrus_gui::set_paster(move || pasted.clone());
+        if child.invoke_paste(false) {
+            let question = child.get_question();
+            let (prefix, tags) = question.split_once("\n\n").unwrap();
+            let (expected_prefix, expected_tags) = case["asked"][0]["message"]
+                .as_str()
+                .unwrap()
+                .split_once("\n\n")
+                .unwrap();
+            assert_eq!(prefix, expected_prefix);
+            // Qt joins CleanTags' set without sorting, so row order varies by process.
+            let mut tags = tags.lines().collect::<Vec<_>>();
+            let mut expected_tags = expected_tags.lines().collect::<Vec<_>>();
+            tags.sort_unstable();
+            expected_tags.sort_unstable();
+            assert_eq!(tags, expected_tags);
+            child.invoke_answered(case["answer"].as_bool().unwrap());
+        } else {
+            assert!(case["asked"].as_array().unwrap().is_empty());
+            child.invoke_normal_paste(); // The native key handler propagates the unconsumed event.
+        }
+        let recorded = case["after"].as_str().unwrap();
+        // Both the raw draft and its cleaned eventual tag must match Qt.
+        assert_eq!(child.get_text(), recorded);
+        assert_eq!(Tag::new(&child.get_text()), Tag::new(recorded));
+        if case["asked"].as_array().unwrap().is_empty() || !case["answer"].as_bool().unwrap() {
+            child.invoke_undo_input();
+            assert_eq!(child.get_text(), case["undo"].as_str().unwrap());
+            child.invoke_redo_input();
+            assert_eq!(child.get_text(), case["redo"].as_str().unwrap());
+        }
+        let expected: Vec<String> = case["pasted_tags"]
+            .as_array()
+            .unwrap()
+            .first()
+            .map(|tags| serde_json::from_value(tags.clone()).unwrap())
+            .unwrap_or_default();
+        assert_eq!(
+            child
+                .get_tags()
+                .iter()
+                .map(|row| row.text.to_string())
+                .collect::<Vec<_>>(),
+            expected
+        );
+        child.invoke_cancel();
+        child.invoke_answered(true);
+        child.invoke_apply();
+        assert!(applied.borrow().is_empty());
+    }
+    // The real Manage Tags consumer also retains accepted text while staging mappings.
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    ui.invoke_select_all();
+    ui.invoke_manage_tags_selected();
+    let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    manage.invoke_text_edited("caller draft".into());
+    headless::set_clipboard_text("parity:paste one\nparity:paste two");
+    hydrus_gui::set_paster(|| "parity:paste one\nparity:paste two".into());
+    assert!(manage.invoke_paste_requested(false));
+    manage.invoke_paste_answered(true);
+    assert_eq!(manage.get_text(), "caller draft");
+    assert!(
+        manage
+            .get_tags()
+            .iter()
+            .any(|row| row.text.starts_with("parity:paste one"))
+    );
+    // Replace the complete caller prefix, including its separating space.
+    manage.invoke_select_input(0, 7);
+    assert!(manage.invoke_paste_requested(false));
+    manage.invoke_paste_answered(false);
+    assert_eq!(manage.get_text(), "parity:paste one\nparity:paste twodraft");
+    manage.invoke_cancel();
+    ui.invoke_manage_tags_selected();
+    let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    assert!(
+        !manage
+            .get_tags()
+            .iter()
+            .any(|row| row.text.starts_with("parity:paste one"))
+    );
+    manage.invoke_cancel();
+    let top = ui
+        .get_menu_titles()
+        .iter()
+        .position(|row| row.label == "tags")
+        .unwrap();
+    ui.invoke_menu_title_pressed(i32::try_from(top).unwrap(), 0.0, 22.0);
+    let pane = ui.get_menu_panes().row_data(0).unwrap();
+    let at = pane
+        .lines
+        .iter()
+        .position(|row| row.label.starts_with("parents"))
+        .unwrap();
+    ui.invoke_menu_line_clicked(0, i32::try_from(at).unwrap(), 0.0, 0.0, 0.0);
+    let relation = bound
+        .tag_relationships
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    relation.invoke_autocomplete_edited(false, "left draft".into());
+    relation.invoke_select_input(false, 0, 4);
+    assert!(relation.invoke_autocomplete_paste(false, false));
+    relation.invoke_answered(false);
+    assert_eq!(
+        relation.get_left_input(),
+        "parity:paste one\nparity:paste two draft"
+    );
+    assert_eq!(relation.get_left_tags().row_count(), 0);
+    relation.invoke_autocomplete_edited(true, "right draft".into());
+    assert!(relation.invoke_autocomplete_paste(true, false));
+    relation.invoke_answered(true);
+    assert_eq!(relation.get_right_input(), "right draft");
+    assert_eq!(relation.get_right_tags().row_count(), 2);
+    relation.invoke_autocomplete_edited(true, "cancelled draft".into());
+    assert!(relation.invoke_autocomplete_paste(true, false));
+    relation.invoke_cancel();
+    relation.invoke_answered(false);
+    assert_eq!(relation.get_right_input(), "cancelled draft");
+    assert!(bound.tag_relationships.borrow().is_none());
+}
+
+#[test]
+fn keyboard_result_selection_copy_and_native_text_copy_use_their_own_focus() {
+    use hydrus_core::{Sha256, Tag};
+    use hydrus_store::{
+        content::tag_relations::{self, RelationAction, RelationUpdate},
+        display::RelationKind,
+    };
+    use serde_json::json;
+    use slint::platform::{Key, WindowEvent};
+
+    let fixture = hydrus_testkit::fixture_json("write_tag_selection.json");
+    let (_dirs, store) = crate::subscriptions::store();
+    let windows = headless::init();
+    let snapshot = store.snapshot();
+    let service = snapshot.services.by_name("my tags").unwrap();
+    let id = service.id;
+    let key = service.key.clone();
+    let corpus = fixture["corpus"].clone();
+    store
+        .write_content(move |w| {
+            for row in corpus.as_array().unwrap() {
+                let tag = hydrus_store::master::intern_tag(
+                    w.conn(),
+                    &Tag::new(row["tag"].as_str().unwrap()).unwrap(),
+                )?;
+                let hashes = row["hashes"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|hash| {
+                        let hash: Sha256 = hash.as_str().unwrap().parse().unwrap();
+                        hydrus_store::master::hash_id(w.conn(), &hash).map(Option::unwrap)
+                    })
+                    .collect::<hydrus_store::Result<Vec<_>>>()?;
+                w.update_mappings(id, &hydrus_store::content::MappingAction::Add, tag, &hashes)?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    for (kind, field) in [
+        (RelationKind::Siblings, "siblings"),
+        (RelationKind::Parents, "parents"),
+    ] {
+        tag_relations::apply(
+            &store,
+            kind,
+            fixture[field]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|pair| RelationUpdate {
+                    service: id,
+                    left: Tag::new(pair[0].as_str().unwrap()).unwrap(),
+                    right: Tag::new(pair[1].as_str().unwrap()).unwrap(),
+                    action: RelationAction::Add,
+                })
+                .collect(),
+        )
+        .unwrap();
+    }
+    let saved_key = key.clone();
+    store
+        .write(move |ctx| {
+            let mut prefs: TagEditingSettings = settings::get(ctx.conn())?;
+            prefs.select_first_with_count = false;
+            prefs.autocomplete_show_parents = true;
+            prefs.autocomplete_expand_parents = true;
+            prefs.autocomplete_show_siblings = true;
+            prefs.autocomplete_list_height = 3;
+            settings::set(ctx.conn(), &prefs)?;
+            let mut defaults: settings::SearchDefaults = settings::get(ctx.conn())?;
+            defaults.local_location = hydrus_core::search::context::LocationContext::single(
+                hydrus_core::ServiceKey::new(hydrus_core::service::builtin_keys::MY_FILES),
+            );
+            settings::set(ctx.conn(), &defaults)?;
+            let mut widgets: hydrus_store::tag_display_config::AutocompleteWidgetSettings =
+                settings::get(ctx.conn())?;
+            let mut options = widgets.options(&saved_key);
+            options.write_tag_service = saved_key.clone();
+            widgets.services.insert(saved_key.to_hex(), options);
+            settings::set(ctx.conn(), &widgets)
+        })
+        .unwrap();
+    let slot = hydrus_gui::write_tag_window::Slot::default();
+    let applied = Rc::new(RefCell::new(Vec::<String>::new()));
+    let child = hydrus_gui::write_tag_window::open(
+        &store,
+        key,
+        &[],
+        "keyboard tags",
+        &slot,
+        Rc::new({
+            let applied = applied.clone();
+            move |tags| *applied.borrow_mut() = tags
+        }),
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    child.invoke_edited("parity:multi".into());
+    assert_eq!(
+        json!(
+            child
+                .get_suggestions()
+                .iter()
+                .map(|row| row.text.to_string())
+                .collect::<Vec<_>>()
+        ),
+        json!(
+            fixture["rows"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|row| row["text"].as_str().unwrap())
+                .collect::<Vec<_>>()
+        )
+    );
+    let native = windows.get(0).unwrap();
+    headless::render(&native, 460, 600);
+    let copies = Rc::new(RefCell::new(Vec::<String>::new()));
+    hydrus_gui::set_clipper({
+        let copies = copies.clone();
+        move |clip| {
+            if let hydrus_gui::Clip::Text(text) = clip {
+                copies.borrow_mut().push(text.clone());
+            }
+        }
+    });
+    // Selected editor text retains native Ctrl+C; the tag-list handler must not steal it.
+    child.invoke_select_input(0, 6);
+    headless::set_clipboard_text("before native text copy");
+    native.dispatch_event(WindowEvent::KeyPressed {
+        text: Key::Control.into(),
+    });
+    native.dispatch_event(WindowEvent::KeyPressed { text: "c".into() });
+    native.dispatch_event(WindowEvent::KeyReleased { text: "c".into() });
+    native.dispatch_event(WindowEvent::KeyReleased {
+        text: Key::Control.into(),
+    });
+    assert_eq!(headless::clipboard_text().as_deref(), Some("parity"));
+    assert!(copies.borrow().is_empty());
+    child.invoke_focus_results();
+    for step in fixture["keyboard"]["steps"].as_array().unwrap() {
+        copies.borrow_mut().clear();
+        if step["action"] == "key" {
+            let ctrl = step["ctrl"].as_bool().unwrap();
+            let shift = step["shift"].as_bool().unwrap();
+            if ctrl {
+                native.dispatch_event(WindowEvent::KeyPressed {
+                    text: Key::Control.into(),
+                });
+            }
+            if shift {
+                native.dispatch_event(WindowEvent::KeyPressed {
+                    text: Key::Shift.into(),
+                });
+            }
+            let key: slint::SharedString = match step["key"].as_str().unwrap() {
+                "Up" => Key::UpArrow.into(),
+                "Down" => Key::DownArrow.into(),
+                "Home" => Key::Home.into(),
+                "End" => Key::End.into(),
+                "PageUp" => Key::PageUp.into(),
+                "PageDown" => Key::PageDown.into(),
+                key => key.to_lowercase().into(),
+            };
+            native.dispatch_event(WindowEvent::KeyPressed { text: key.clone() });
+            native.dispatch_event(WindowEvent::KeyReleased { text: key });
+            if shift {
+                native.dispatch_event(WindowEvent::KeyReleased {
+                    text: Key::Shift.into(),
+                });
+            }
+            if ctrl {
+                native.dispatch_event(WindowEvent::KeyReleased {
+                    text: Key::Control.into(),
+                });
+            }
+            assert_eq!(json!(*copies.borrow()), step["copied"], "{step}");
+        }
+        let mut selected = Vec::new();
+        for (i, row) in fixture["rows"].as_array().unwrap().iter().enumerate() {
+            if child.get_selected().row_data(i).unwrap() {
+                let tag = row["tag"].as_str().unwrap();
+                if !selected.contains(&tag) {
+                    selected.push(tag);
+                }
+            }
+        }
+        assert_eq!(json!(selected), step["selected"], "{step}");
+        assert_eq!(child.get_text(), "parity:multi");
+        assert_eq!(child.get_tags().row_count(), 0);
+    }
+    // First Escape consumes selection; it must not cancel its owner or alter the draft.
+    native.dispatch_event(WindowEvent::KeyPressed {
+        text: Key::Escape.into(),
+    });
+    native.dispatch_event(WindowEvent::KeyReleased {
+        text: Key::Escape.into(),
+    });
+    assert!(slot.borrow().is_some());
+    assert!(child.get_selected().iter().all(|selected| !selected));
+    assert_eq!(child.get_text(), "parity:multi");
+    // Show all physical rows for the recorded mouse path, independent of page-key sizing.
+    store
+        .write(|ctx| {
+            let mut prefs: TagEditingSettings = settings::get(ctx.conn())?;
+            prefs.autocomplete_list_height = 11;
+            settings::set(ctx.conn(), &prefs)
+        })
+        .unwrap();
+    child.invoke_edited("".into());
+    child.invoke_edited("parity:multi".into());
+    headless::render(&native, 460, 600);
+    for step in fixture["drag"].as_array().unwrap() {
+        let action = step["action"].as_str().unwrap();
+        if action == "select_all" {
+            native.dispatch_event(WindowEvent::KeyPressed {
+                text: Key::Control.into(),
+            });
+            native.dispatch_event(WindowEvent::KeyPressed { text: "a".into() });
+            native.dispatch_event(WindowEvent::KeyReleased { text: "a".into() });
+            native.dispatch_event(WindowEvent::KeyReleased {
+                text: Key::Control.into(),
+            });
+        } else if action != "initial" {
+            let physical = step["physical"].as_u64().unwrap();
+            let position = slint::LogicalPosition::new(
+                child.get_results_x() + 10.0,
+                child.get_results_y() + 2.0 + physical as f32 * 22.0 + 11.0,
+            );
+            let ctrl = step["ctrl"].as_bool().unwrap();
+            if ctrl {
+                native.dispatch_event(WindowEvent::KeyPressed {
+                    text: Key::Control.into(),
+                });
+            }
+            let event = match action {
+                "press" => WindowEvent::PointerPressed {
+                    position,
+                    button: slint::platform::PointerEventButton::Left,
+                },
+                "release" => WindowEvent::PointerReleased {
+                    position,
+                    button: slint::platform::PointerEventButton::Left,
+                },
+                "drag" => WindowEvent::PointerMoved { position },
+                _ => panic!("unrecorded mouse action {action}"),
+            };
+            native.dispatch_event(event);
+            if ctrl {
+                native.dispatch_event(WindowEvent::KeyReleased {
+                    text: Key::Control.into(),
+                });
+            }
+            headless::render(&native, 460, 600);
+        }
+        let mut selected = Vec::new();
+        for (i, row) in fixture["rows"].as_array().unwrap().iter().enumerate() {
+            if child.get_selected().row_data(i).unwrap() {
+                let tag = row["tag"].as_str().unwrap();
+                if !selected.contains(&tag) {
+                    selected.push(tag);
+                }
+            }
+        }
+        assert_eq!(json!(selected), step["selected"], "{step}");
+        assert_eq!(child.get_text(), "parity:multi");
+        assert_eq!(child.get_tags().row_count(), 0);
+    }
+    let before = copies.borrow().clone();
+    native.dispatch_event(WindowEvent::KeyPressed {
+        text: Key::Escape.into(),
+    });
+    native.dispatch_event(WindowEvent::KeyReleased {
+        text: Key::Escape.into(),
+    });
+    assert!(slot.borrow().is_some());
+    assert!(child.get_selected().iter().all(|selected| !selected));
+    native.dispatch_event(WindowEvent::KeyPressed {
+        text: Key::Escape.into(),
+    });
+    native.dispatch_event(WindowEvent::KeyReleased {
+        text: Key::Escape.into(),
+    });
+    child.invoke_navigate(0, false, false);
+    assert!(!child.invoke_results_action(1));
+    child.invoke_entered();
+    child.invoke_apply();
+    assert_eq!(*copies.borrow(), before);
+    assert!(applied.borrow().is_empty());
+    assert!(slot.borrow().is_none());
+    hydrus_gui::set_clipper(|_| {});
+}
+
+#[test]
+fn replacement_history_replays_real_keys_typing_undo_redo_and_independent_owners() {
+    use slint::platform::{Key, WindowEvent};
+
+    fn key(window: &slint::Window, text: &str, control: bool, shift: bool) {
+        if control {
+            window.dispatch_event(WindowEvent::KeyPressed {
+                text: Key::Control.into(),
+            });
+        }
+        if shift {
+            window.dispatch_event(WindowEvent::KeyPressed {
+                text: Key::Shift.into(),
+            });
+        }
+        window.dispatch_event(WindowEvent::KeyPressed { text: text.into() });
+        window.dispatch_event(WindowEvent::KeyReleased { text: text.into() });
+        if shift {
+            window.dispatch_event(WindowEvent::KeyReleased {
+                text: Key::Shift.into(),
+            });
+        }
+        if control {
+            window.dispatch_event(WindowEvent::KeyReleased {
+                text: Key::Control.into(),
+            });
+        }
+    }
+
+    fn qt_offset(text: &str, units: i64) -> i32 {
+        let mut remaining = usize::try_from(units).unwrap();
+        for (offset, character) in text.char_indices() {
+            if remaining == 0 {
+                return i32::try_from(offset).unwrap();
+            }
+            remaining = remaining
+                .checked_sub(character.len_utf16())
+                .expect("Qt offset must lie on a Unicode character boundary");
+        }
+        assert_eq!(remaining, 0);
+        i32::try_from(text.len()).unwrap()
+    }
+
+    let (_dirs, store) = crate::subscriptions::store();
+    let windows = headless::init();
+    let fixture = hydrus_testkit::fixture_json("write_tag_selection.json");
+    let service = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let other_slot = hydrus_gui::write_tag_window::Slot::default();
+    let other = hydrus_gui::write_tag_window::open(
+        &store,
+        service.clone(),
+        &[],
+        "independent draft",
+        &other_slot,
+        Rc::new(|_| panic!("Cancelled independent draft must not apply")),
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    other.invoke_edited("untouched draft".into());
+    for case in fixture["normal_paste_history"].as_array().unwrap() {
+        let slot = hydrus_gui::write_tag_window::Slot::default();
+        let child = hydrus_gui::write_tag_window::open(
+            &store,
+            service.clone(),
+            &[],
+            "replacement history",
+            &slot,
+            Rc::new(|_| panic!("Cancelled replay must not apply")),
+            Rc::new(|| {}),
+        )
+        .unwrap();
+        child.invoke_edited(case["initial"].as_str().unwrap().into());
+        let native = windows.get(windows.count() - 1).unwrap();
+        headless::render(&native, 460, 600);
+        child
+            .window()
+            .dispatch_event(WindowEvent::WindowActiveChanged(true));
+        child.invoke_focus_input();
+        assert!(
+            child.get_input_focused(),
+            "live native editor is the target of the recorded Qt editor keys"
+        );
+        for step in case["steps"].as_array().unwrap() {
+            let action = step["action"].as_array().unwrap();
+            match action[0].as_str().unwrap() {
+                "paste" => {
+                    let text = child.get_text();
+                    let units = action[2].as_i64().unwrap();
+                    let anchor = qt_offset(&text, units);
+                    let cursor = qt_offset(&text, units + action[3].as_i64().unwrap());
+                    child.invoke_select_input(anchor, cursor);
+                    let pasted = action[1].as_str().unwrap().to_owned();
+                    headless::set_clipboard_text(&pasted);
+                    hydrus_gui::set_paster(move || pasted.clone());
+                    key(child.window(), "v", true, false);
+                    assert!(child.get_question().is_empty());
+                }
+                "select" => {
+                    let text = child.get_text();
+                    let units = action[1].as_i64().unwrap();
+                    child.invoke_select_input(
+                        qt_offset(&text, units),
+                        qt_offset(&text, units + action[2].as_i64().unwrap()),
+                    );
+                }
+                "key" => {
+                    let text: slint::SharedString = match action[1].as_str().unwrap() {
+                        "Left" => Key::LeftArrow.into(),
+                        "Right" => Key::RightArrow.into(),
+                        "Delete" => Key::Delete.into(),
+                        "Backspace" => Key::Backspace.into(),
+                        name => panic!("Unknown recorded native key {name}"),
+                    };
+                    key(child.window(), &text, false, false);
+                }
+                "type" => key(child.window(), action[1].as_str().unwrap(), false, false),
+                "undo" => key(child.window(), "z", true, false),
+                "redo" => key(child.window(), "z", true, true),
+                action => panic!("Unknown recorded history action {action}"),
+            }
+            assert_eq!(
+                child.get_text(),
+                step["text"].as_str().unwrap(),
+                "{case} {step}"
+            );
+            // Undo must also restore the original selection. Copy through the
+            // native editor proves subsequent typing replaces that exact range.
+            if action[0] == "undo" && !step["selected"].as_str().unwrap().is_empty() {
+                headless::set_clipboard_text("not yet copied");
+                key(child.window(), "c", true, false);
+                assert_eq!(
+                    headless::clipboard_text().as_deref(),
+                    step["selected"].as_str()
+                );
+            }
+            assert_eq!(other.get_text(), "untouched draft");
+        }
+        child.invoke_cancel();
+        child.invoke_apply();
+        assert!(slot.borrow().is_none());
+    }
+    other.invoke_undo_input();
+    assert_eq!(other.get_text(), "untouched draft");
+    other.invoke_cancel();
 }

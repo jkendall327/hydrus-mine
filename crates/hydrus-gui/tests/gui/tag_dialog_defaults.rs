@@ -34,6 +34,7 @@ fn remembered_tag_service_survives_native_cancel_without_saving_staged_tags() {
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
     ui.invoke_select_all();
+    let selected_count = bound.current.borrow().borrow().selected_files().len();
     ui.invoke_manage_tags_selected();
     let w = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
     assert_eq!(
@@ -52,7 +53,7 @@ fn remembered_tag_service_survives_native_cancel_without_saving_staged_tags() {
     assert!(
         w.get_tags()
             .iter()
-            .any(|r| r.text == "cancelled default preference")
+            .any(|r| r.text == format!("cancelled default preference ({selected_count})"))
     );
     w.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
@@ -75,7 +76,7 @@ fn remembered_tag_service_survives_native_cancel_without_saving_staged_tags() {
     assert!(
         !w.get_tags()
             .iter()
-            .any(|r| r.text == "cancelled default preference")
+            .any(|r| r.text.starts_with("cancelled default preference ("))
     );
     // Applying the option while this consumer is open must stop preference memory.
     store

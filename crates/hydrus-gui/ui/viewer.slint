@@ -175,6 +175,7 @@ export component MediaViewerWindow inherits Window {
     // the file's info line, for the top hover frame, which shows with the
     // pointer over it or near it, in the window's middle three fifths
     in property <string> info-line;
+    in property <string> tag-banner;
     out property <bool> info-showing: (root.hover-focus-good || (!root.another-window-active && root.info-raised)) && (top-frame.has-hover || (pointer.has-hover
         && pointer.mouse-y <= top-box.preferred-height + 20px
         && pointer.mouse-x >= root.width * 0.2 && pointer.mouse-x <= root.width * 0.8));
@@ -851,11 +852,21 @@ export component MediaViewerWindow inherits Window {
                 for tag in root.tags: Text { text: tag.text; color: tag.colour; overflow: elide; }
             }
         }
-        Text {
+        Rectangle {
             x: root.width * 0.2; width: root.width * 0.6; y: 3px;
+            height: banner-information.preferred-height;
             visible: root.draw-information-background;
-            text: root.info-line; color: #f0f0f0; font-size: 14px;
-            horizontal-alignment: center; overflow: elide;
+            banner-information := VerticalLayout {
+                padding: 0px; spacing: 3px; alignment: start;
+                if root.tag-banner != "": Text {
+                    text: root.tag-banner; color: #f0f0f0; font-size: 14px;
+                    horizontal-alignment: center; overflow: elide;
+                }
+                if root.info-line != "": Text {
+                    text: root.info-line; color: #f0f0f0; font-size: 14px;
+                    horizontal-alignment: center; overflow: elide;
+                }
+            }
         }
         passive-ratings := Rectangle {
             x: root.width * 0.65; y: 0; width: root.width * 0.35;
@@ -1256,6 +1267,12 @@ export component MediaViewerWindow inherits Window {
                                 clicked => { root.close-requested(); }
                             }
                         }
+                    }
+                    if root.tag-banner != "": Text {
+                        text: root.tag-banner;
+                        color: #f0f0f0;
+                        horizontal-alignment: center;
+                        overflow: elide;
                     }
                     if root.info-line != "": Text {
                         text: root.info-line;

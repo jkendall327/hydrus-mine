@@ -62,6 +62,11 @@ impl ServiceTagging {
     /// Tags entered for the selected files.
     pub fn add_single(&mut self, selected: &[usize], tags: &[String]) {
         let tags: Vec<String> = tags.iter().filter_map(|t| clean_tag_checked(t)).collect();
+        // SimplePanel.EnterTagsSingle does not touch per-path storage when
+        // there are no tags. An unchanged owned child must preserve that too.
+        if tags.is_empty() {
+            return;
+        }
         for &i in selected {
             self.single
                 .entry(i)
@@ -79,6 +84,30 @@ impl ServiceTagging {
             .flatten()
             .collect();
         tags.into_iter().cloned().collect()
+    }
+
+    /// Apply an owned additive editor to a frozen file selection. Untouched
+    /// union tags remain attached to their original files; explicit entry of
+    /// an existing union tag spreads it to every selected file, as Qt does.
+    pub fn apply_selected(
+        &mut self,
+        selected: &[usize],
+        before: &[String],
+        after: &[String],
+        additions: &[String],
+    ) {
+        let removed: Vec<_> = before
+            .iter()
+            .filter(|tag| !after.contains(tag))
+            .cloned()
+            .collect();
+        self.remove_single(selected, &removed);
+        let added: Vec<_> = additions
+            .iter()
+            .filter(|tag| after.contains(tag))
+            .cloned()
+            .collect();
+        self.add_single(selected, &added);
     }
 
     /// Tags taken out of the selected files' box: none of them keeps them.

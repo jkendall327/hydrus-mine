@@ -22,6 +22,29 @@ pub fn clear_search_launcher() {
     SEARCH_LAUNCHER.with(|slot| slot.borrow_mut().take());
 }
 
+/// Shared list keyboard actions, called only after the owning editor's guard.
+pub(crate) fn results_action(
+    input: &mut hydrus_gui_model::write_autocomplete::WriteAutocomplete,
+    action: i32,
+) -> bool {
+    match action {
+        0 => {
+            input.select_all();
+            true
+        }
+        1 | 2 => {
+            if let Some(text) = input.copy_selection(action == 2) {
+                crate::copy_to_clipboard(&text);
+                true
+            } else {
+                false
+            }
+        }
+        3 => input.deselect(),
+        _ => false,
+    }
+}
+
 pub(crate) struct TagMenu {
     pub popup: Rc<Popup<Action>>,
     pending: RefCell<Option<Action>>,
@@ -212,9 +235,9 @@ impl TagMenu {
                     }
                 }
             }
-            Action::Favourite { .. } => {
+            Action::Favourite { .. } | Action::Regenerate { .. } => {
                 if let Err(e) = action.persist(&self.store) {
-                    (self.error)(&format!("could not update favourite tags: {e}"));
+                    (self.error)(&format!("could not complete tag action: {e}"));
                 }
             }
         }
@@ -236,8 +259,26 @@ macro_rules! bind {
         });
         $window.on_tag_menu_clicked({
             let menu = menu.clone();
+            let weak = $window.as_weak();
             move |p, l, r, t, x| {
                 let chosen = menu.popup.click(p, l, r, t, x);
+                let regeneration = matches!(
+                    &chosen,
+                    Some($crate::popup_menu::Chosen::Action(
+                        hydrus_gui_model::write_tag_menu::Action::Regenerate { .. }
+                    ))
+                );
+                if let Some(window) = weak.upgrade() {
+                    window.set_tag_menu_question_title(
+                        if regeneration { "Regen tags?" } else { "" }.into(),
+                    );
+                    window.set_tag_menu_yes_label(
+                        if regeneration { "let's go" } else { "yes" }.into(),
+                    );
+                    window.set_tag_menu_no_label(
+                        if regeneration { "forget it" } else { "no" }.into(),
+                    );
+                }
                 menu.choose(chosen);
             }
         });

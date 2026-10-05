@@ -106,8 +106,18 @@ as Qt's do; a press anywhere else closes them. What works so far:
   running an export folder now, opening the installation and database
   directories, the options, and exit;
 - undo: the pages closed in the last hour, latest first, to reopen any of
-  them, or forget them all (asking first); with none, the menu is greyed
-  out, as hydrus's is;
+  them, or forget them all (asking first); searching additions and removals,
+  latest first, to toggle a historical predicate on the visible media page,
+  and “clear history…” with the reference confirmation. These are two shared,
+  transient frame histories, independent of each page's saved predicates.
+  Opening/restoring a page and cancelling an editor add no history; committing
+  an OR adds one typed entry. Undo can enter a locked page's hidden query; an
+  empty notebook retains the history entry. A populated locked page retains
+  its badge and files even with synchronization enabled; hiding tag namespaces
+  does not change the raw predicate names in the Undo menus. With neither closed pages nor
+  search history, the menu is greyed out. Actual Qt inputs and menus are in
+  `oracle/fixtures/search_predicate_undo.json`; authored model/native replay
+  tests await hosted CI;
 - pages: how many pages are open and the session's weight (files, and
   twenty for each download's item or search); the history of pages shown,
   latest first, to show one again; refresh; appending a saved session,
@@ -141,6 +151,23 @@ as Qt's do; a press anywhere else closes them. What works so far:
   first);
 - help: the help, links and changelog in the browser, and advanced mode
   (which adds hydrus's advanced entries).
+
+The subscription exchange codec reads and writes complete modern reference
+containers, and imports legacy type3 versions1–10 with embedded histories and old
+import options converted through the reference rules. Historical single-query
+subscriptions acquire checker settings; obsolete gallery identifiers become a
+paused unknown downloader, with the original version-specific limit defaults. Fresh history identities
+invalidate cached velocity exactly as the reference does. Modern containers retain
+settings, query headers, cached example/velocity data and both URL histories. `oracle/record_subscription_exchange.py` records the actual Qt list
+clipboard flow and reference PNG. Manage subscriptions now exposes the original clipboard/JSON/PNG transport
+menus, dispatching to an owned import/export child: clipboard/JSON text or JSON/PNG files are reviewed, imported
+subscriptions remain staged; JSON export asks before overwriting an existing file,
+and multiple JSON or PNG files can be imported as one reviewed selection. Apply
+persists both URL histories and retained header examples. Reset/retry updates
+file-count and example caches in both staged exports and saved settings; retries
+forget the old file hashes, preserving gallery examples and velocity. Missing query histories ask the original named confirmation
+before that object enters the draft; rejecting leaves it out and accepting
+initialises empty histories on Apply. Cancel invalidates the child and its callbacks.
 
 Network > "subscriptions…" opens the manage subscriptions dialog
 (`src/subscriptions_window.rs`, `hydrus-gui-model/src/subscriptions_dialog.rs`),
@@ -192,6 +219,17 @@ to the list, renamed " (1)" if its name is taken; the list's "apply"
 writes it, with new queries, deleted queries and the file logs' resets
 and retries. Its workings are as `oracle/record_edit_subscription.py`
 recorded the reference's.
+
+Folder managers temporarily pause their workers before reading a draft. If a
+worker is still finishing, the existing manager window shows “Waiting for import
+folders to finish.” or “Waiting for export folders to finish.”; Cancel or closing
+the window abandons that wait. The draft opens after the worker commits, and its
+lease lasts through Apply/Cancel and all owned children. Workers stop at the next
+seed/query/copy boundary, and daemon schedules wake when management closes.
+User pause preferences stay intact, including changes from another live client.
+The lifecycle is recorded by `oracle/record_folder_manager_lifecycle.py` and
+replayed in `tests/gui/folder_manager_lifecycle.rs`; worker exclusion also runs
+through the real import/export-folder regressions.
 
 A downloader page's "imports" box (a URL downloader's, a local import's,
 and the highlighted search's or watcher's) has a "file log" button, which
@@ -288,6 +326,23 @@ search (or check) logs (with one selected, each log's whole menu in a
 submenu), retrying a watcher's failed and ignored files, removing, and
 pausing or playing. As `oracle/record_importer_menus.py` recorded the
 reference's.
+
+The filename-tagging advanced tab now has actual quick-namespace and regex
+lists in both manual-import and import-folder modes. Quick namespaces use
+Add/Edit children with separate namespace and regex fields, retain literal
+colons and whitespace, sort either column while preserving selection, and
+ask before deleting the selected rows. Empty namespaces and uncompiled regexes
+keep the child open without changing accepted rules. Enter adds a raw regex;
+double-click returns the single selected regex to its input for correction,
+including duplicates. Child cancellation, owner cancellation and callbacks on
+closed owners cannot leak changes. Accepted rules reach local-import seed tags
+and survive saving and reopening an import folder. The real Qt handlers and
+filename results are recorded in `oracle/record_filename_rules.py`. Both regex
+inputs also expose the exact help URLs, component clipboard phrases and shared
+favourites manager. Clipboard choices preserve input text. Favourites Apply is
+immediate and survives cancellation of the filename-tagging draft; cancelling
+the manager preserves its stored list. Nested favourites block owner edits and
+close with their owner.
 
 File > import/export folders > "manage import folders…" and "manage
 export folders…" open the folders dialogs (`src/folders_window.rs`,
@@ -634,6 +689,22 @@ series:metroid`, "2 notes: ...", "1 URL: ...", "archived time: ..."), as
 import folders below). "apply" imports the files with their tags, as
 `oracle/record_filename_tagging.py` recorded the reference's dialog
 giving them, and the import reads each file's sidecars as it goes in.
+The simple panel's tag lists open the shared write-tag editor on that real
+service and have direct paste buttons. Entry adds existing tags rather than
+toggling them; selected-file edits preserve each file's untouched tags and
+spread explicitly re-entered tags across the frozen selection. Autocomplete
+paste skips tags already in the selected union, while direct paste applies
+all pasted tags to each selected file. Child Apply updates the filename draft;
+child Cancel and owner closure discard it. The same all-files list edits and
+reopens in import-folder options (`oracle/record_filename_simple.py`).
+
+The import folder's cached-path log is an owned copy, including for a new
+folder with an empty cache. Its Apply accepts complete ordered seed records
+into the folder-manager draft; log Cancel discards them. Accepted cache edits
+survive cancelling an existing folder's fields editor, as Qt's setter acts on
+that manager-owned folder. Manager Apply writes the cache with the folder's
+settings in one transaction; manager Cancel and closure reject it. Immediate
+importer logs retain their live behavior (`oracle/record_import_folder_log.py`).
 
 An import folder's dialog lists the tag services it tags files for by
 their paths, with "edit" and "delete" for each and "add" for another
@@ -786,8 +857,22 @@ one added again moved to the front. Each page shows its types' recent
 predicates over its buttons (the dimensions page its heights, widths,
 ratios and numbers of pixels; "system:time"'s import page its import
 times...), less any a button of the page adds, each adding itself again
-or, with "forget", forgotten. Yours come across from hydrus. Not yet:
-setting a panel's values as its default (the star).
+or, with "forget", forgotten. Yours come across from hydrus. Each panel's star
+opens "set this as new default", with "reset to original default" when its
+comparable family has a saved value. Saving stores canonical typed predicates
+immediately and affects future editors; closing or cancelling the current owner
+keeps that change. As in the reference, star Save bypasses the regex panel's
+acceptance validation; an invalid saved regex initializes future fields but OK
+rejects it until corrected. Reset also commits immediately and leaves current fields
+untouched. Explicit compatible typed input takes precedence. Date/relative time,
+views/viewtime and the four URL-rule types have independent defaults. Rating
+comparability spans service keys, as the reference does; per-service rating
+panels expose save/reset but retain their built-in initial values, while advanced
+rating uses saved defaults. A number-of-tags shortcut that emits a namespace is
+saved without becoming a number-of-tags default. All 40 panel families and 1,600
+comparability pairs are recorded by `oracle/record_predicate_custom_defaults.py`.
+Imported defaults use the same typed store setting, including actual numerical
+rating service scales. Reset remains durable when the store is reopened.
 Typing in the search box lists
 the matching tags with their counts (display tags, in the page's file domains
 and tag service; the exact match first, then the most used), up and down move the
@@ -1556,7 +1641,7 @@ autocomplete options, sessions, shortcut sets, recent tags.
 - Slint is to be tried first (DECISIONS.md); the first milestone, a search
   page with a thumbnail grid over a real library, is where that is judged.
 
-Services → review opens the service registry with each local and built-in service's name, type, database id, service key copying and refresh. File-domain sizes and deleted counts, tag mapping/tag/file counts, and rated-file counts come from a consistent native store read and match `oracle/record_services.py`. Refresh retains the selected key. Bulk maintenance and remote administration actions show an explicit unavailable explanation.
+Services → review opens the service registry with each local and built-in service's name, type, database id, service key copying and refresh. File-domain sizes and deleted counts, tag mapping/tag/file counts, and rated-file counts come from a consistent native store read and match `oracle/record_services.py`. Refresh retains the selected key. Local trash review now offers confirmed clear/undelete actions and local rating review offers confirmed deleted/non-local/all-file clearing; unavailable remote administration actions retain an explicit explanation.
 
 Services → edit opens the manage services list (`services_editor`, `services_editor_window`, `services_editor.slint`). Add local file, local tag, like/dislike, numerical and inc/dec rating services; edit their names and rating display colours, shapes/SVG names, thumbnail flags, stars, zero, padding and fraction placement. Names acquire casefolded duplicate suffixes. Child editors and the list hold changes until their apply buttons; either cancel forgets its changes. Deletion asks before staging and again before Apply, rejects nonempty local file domains and the last local file/tag domain, and rechecks inside the atomic write. Apply republishes the registry/graphs, reconciles deleted-domain membership, rebuilds tag counts and invalidates visible thumbnails. It refreshes the current selection's tags even on a locked page and refreshes an open viewer's tags when deletion changes sibling or parent display. Concurrent service changes reject the stale editor without partial writes.
 
@@ -1780,7 +1865,7 @@ cover draft cancellation, owner closure, invalid values, Apply/reopen and local
 commands, and render the review, rules and current-jobs windows.
 
 
-## Service-to-service tag migration
+## Tag migration
 
 Tags > migrate, service review's local/repository tag pages and Manage Tags' selected files open
 "migrate tags…". The global entry uses the configured or remembered default
@@ -1791,15 +1876,37 @@ for repositories); and the actions available for the destination. Local services
 support add/delete, plus clear deletion records for mappings. Repository actions
 pend/petition local proposals, with an editable petition reason. Mapping scopes
 use selected files or the existing multiple/current/deleted file-domain selector.
-Mappings and each side of pairs use the reusable tag-filter editor.
+Mappings and each side of pairs use the reusable tag-filter editor. Sources and
+destinations also offer Hydrus Tag Archive (mappings) or Hydrus Tag Pair Archive
+(siblings/parents), with native file pickers and read-only path/type inspection.
+Existing destinations keep their hash/pair type and merge additions; new mapping
+archives offer SHA256, MD5, SHA1 and SHA512. Known alternate hashes convert through
+the stored digests; unavailable conversions are skipped. Selected-file and
+current/deleted domain scopes apply through SHA256 even between alternate archives.
+Pair filters can require real current or pending mappings on the left, right or
+either side in a chosen tag service. For siblings, the right test follows its
+chain to the terminal ideal; either-side mode disables the individual tests.
 
 The window shows the reference summary and its second confirmation outside
 advanced mode. Migration runs on a worker in bounded atomic batches, with live
-progress and cancellation. Cancelling retains committed batches; closing a
-running job requests cancellation and waits for its final committed progress.
+progress in an independently retained popup, with the reference preparation,
+rows/s, cleanup and done text. Closing settings leaves its published job running.
+Pausing displays "paused" and waits after the current committed batch; cancellation
+wakes paused work, removes its controls immediately, and retains committed batches.
+A running popup cannot be dismissed; cancelling permits dismissal while cleanup
+finishes. Completed popups disappear after the reference three-second integer
+deadline or can be dismissed manually.
 Services are resolved by key again on every batch. Graph/count publication occurs atomically per batch; displayed tags and review
 counts refresh after completion or cancellation. Reference controls, questions and actual DB mapping
 and pair destinations are recorded in `oracle/fixtures/tag_migration.json`.
+`oracle/fixtures/tag_archives.json` records actual Qt archive inspectors and
+confirmations, 32 all-known/selected hash-conversion combinations and eight
+current/deleted domain cases, current/pending count
+gates, and real Python → native SQLite archive codec → Python readback for all
+four mapping kinds and both pair kinds. Pause/resume/cancel uses the real Qt popup
+and MigrationJob in `oracle/fixtures/tag_migration_pause.json`. The actual Qt
+popup lifecycle, closing settings independently, exact phases/speed and cancel/
+dismissal states are recorded in `oracle/fixtures/tag_migration_progress.json`.
 
 ## Downloader definition interchange
 
@@ -2054,8 +2161,19 @@ labels and advisory invalid/blank confirmation. Accepted values reset delays and
 validity, deactivate invalid credentials and ask before activating a valid inactive
 domain. Domain Apply saves its draft while preserving concurrent script edits;
 Cancel closes credential children and ignores stale handles. Flip active, scrub
-delays and scrub invalidity work on extended selection. Adding domains, changing
-scripts and logged-in cookie status/reset are still absent. Do login now filters
+delays and scrub invalidity work on extended selection. The logged-in column reads
+required cookies from the shared session store, showing session lifetime or the
+earliest required-cookie expiry; delays use the reference relative expiry text.
+Reset login asks the recorded irreversible-delete question, then clears the
+selected domains’ resolved sessions immediately, even if the manager is later
+canceled. Other sessions remain intact and existing HTTP engines see the reset
+on their next request. Cookie rows and action eligibility refresh while open.
+Add offers available example domains or the recorded custom-domain/access/description
+chain, then credential entry and optional activation. Change login script groups
+matching examples first with a selectable no-op separator/current-script entry,
+preserves credentials and valid activation, and resets invalidity/delays. The final
+description Cancel retains its default; parent Cancel discards unfinished children.
+Delete confirms “Remove all selected?” and stages removal until Apply. Do login now filters
 selected active, non-invalid, existing-script domains whose required cookies are
 missing, asks the recorded confirmation, saves the domain draft and closes the
 manager before attempting its sorted queue. Attempts use the existing cookie store;
@@ -2124,7 +2242,14 @@ new variables/cookies and status. `oracle/record_login_execution.py` actually ru
 the reference HTTP jobs on a loopback-only dummy site and records success, missing
 cookies/variables, veto, final mismatch, HTTP 401 and cancellation. Native scoped
 HTTP regressions replay those results, inspect wire requests, reopen session cookies
-and cancel an active request. The native GUI test/run consumer is being connected.
+and cancel an active request. Script tests use an isolated cookie store while real
+domain runs share persisted sessions. Completed step rows stream into the owning
+script window before the next wait/request and can be reviewed while it is running.
+Cancel retains completed results and stops later work; owner closure invalidates
+queued result callbacks. Run test first asks “Edit the domain.” with the first
+sorted example or remembered domain, followed by remembered credentials. Domain
+Cancel/blank or credential Cancel launches no request and retains existing results;
+only starting an accepted run clears them. Closing the script retires its prompt.
 
 Import-option editors now have the reference favourites/profiles star menu:
 load, custom load, copy, edit/add and confirmed deletion. Favourite editors
@@ -2240,8 +2365,9 @@ bundled Open Sans fallback with its Apache 2.0 licence and copyright notice.
 
 Login step request arguments use three independent lists for credentials, static
 variables and temporary variables. Each has extended selection and add/edit/delete
-controls. Editing stages its key/value pair; keys are
-nonblank and unique within that dictionary, while values can be blank. Rename,
+controls. Add/Edit asks the key and then the value in owned text dialogs,
+using the reference prompts and defaults. Cancel or a blank key aborts; a
+duplicate key warns before any value dialog opens, while values can be blank. Rename,
 confirmed bulk deletion within that dictionary, row Cancel and parent Cancel
 preserve the expected draft boundaries. The body scrolls and the footer stays visible. The loopback consumer regression edits a static query argument through
 the native step window and observes it on the actual HTTP request.
@@ -2518,3 +2644,259 @@ tags, repositories and all known tags, retaining independent check states.
 Namespace sorts also offer display, multiple-media and single-media tag views.
 These choices remain in the Options draft until Apply; Cancel preserves saved
 settings, and reopening retains the chosen context and view.
+
+Shared write-tag result lists now support logical multi-selection in Manage Tags,
+both sibling/parent inputs and detached additional-tag/favourite editors. A click
+selects without changing tags; Ctrl toggles, Shift adds a reversible range and
+Ctrl+Shift removes a reversible range. Expanded parent rows share their child's
+selection. Enter or double-click activates the selected batch; unchanged fetches
+and decoration changes retain it. The reference steps are recorded in
+`oracle/fixtures/write_tag_selection.json`. Staged tags still wait for Apply,
+and cancelled owners ignore later selection and activation callbacks.
+
+The command-palette provider model now matches the recorded Qt page-tree,
+newest-first history, favourite name/folder and menu-leaf filtering rules. Its
+provider queue supports extended selection, movement, confirmed removal and
+cancelled re-addition. Workers use immutable snapshots and query identities so
+late results cannot revive a closed palette or replace a newer query. Options
+now exposes the reference boolean controls, typed-query threshold, noneable
+limits and inline provider queue. Queue movement, confirmation, re-addition and
+all other preference edits remain in the parent draft until Apply; Cancel and
+stale callbacks preserve saved preferences. Ctrl+P opens an owned frameless
+palette. Page and history results focus actual pages; favourites restore their
+full domain, predicate, sync, sort and collect context; menu/media results invoke
+existing native dispatchers. Queries run on one worker per palette and stale
+results/callbacks cannot affect a reopened owner. Arrow/Page/Home/End navigation,
+mouse activation, Escape and native focus loss are wired. The calculator
+evaluates the reference's closed arithmetic language on the worker, including
+Python power precedence, signed floor division and modulo, large integer results
+and its named math functions. Invalid expressions show no row. Selecting a
+calculator result keeps the palette open; the calculator bypasses the page/menu
+character threshold.
+
+System viewing-time predicates retain the millisecond field, including when
+importing stored Python predicates or reopening recent entries. The labels and
+actual matching file hashes are recorded from the real editor and database in
+`oracle/fixtures/viewtime_milliseconds.json`: 96 combinations of thresholds,
+comparisons and canvas selections. Whole-second predicates keep their existing
+stored representation. Queries reproduce the reference's conversion back to
+integer milliseconds, including its 1.001-second floating-point boundary.
+The reference's separate `< 1 second` shortcut selects only zero viewing time;
+`< 1.001 seconds` uses its truncated millisecond threshold instead.
+
+A shared write autocomplete selection can now copy tags, subtags, underscore
+variants, counts and deduplicated parents together. Its context menu opens the
+selection as an AND or OR search, one search page per tag, or a duplicate-filter
+page, and seeds sibling/parent editors with the whole selection. All-tag copy
+actions appear when other results remain. Multi-tag menus omit single-tag
+favourite actions and relationship lookups, matching the recorded Qt menu.
+
+The write-tag context menu also offers “maintenance > regenerate tag display”.
+It asks the recorded experimental warning with “let's go” and “forget it”, then
+repairs the selected tags and their connected sibling/parent chains across tag
+services and file domains from primary mappings. Cancel changes nothing. Repair
+retains primary mappings and relations and leaves unrelated counts alone; it
+does not enter tags into the editor's draft. Closing the owner invalidates a
+pending repair answer. Native display graphs and repaired counts publish together.
+
+Accepted clipboard tags now preserve the text already being drafted in shared
+write inputs. Declining the multiline-tag question resumes the native line
+editor's normal paste at its cursor/selection, rather than discarding the
+paste. Both sibling/parent sides, Manage Tags and detached editors share this
+behavior; cancellation invalidates a pending answer. Qt key events, selected
+text replacement and accepted clipboard signals are recorded in
+`write_tag_selection.json`. Each input now owns Undo/Redo history: replacement
+paste is one action, later typing is separate, and fresh editing invalidates
+redo. Undo restores the replaced selection without changing another open
+editor's draft. Cursor movement, an intervening Undo/Redo and switching
+between Delete and Backspace separate typing commands; consecutive edits in
+one direction still undo together. A recorded Unicode replacement restores
+the original non-ASCII selection, including a supplementary character.
+
+Login required-cookie Add/Edit now opens the name matcher followed by the value
+matcher, using the reference titles and initial rules. Cancel at either stage
+leaves the pair intact; accepted pairs are sorted and selected. Independent
+matcher objects with identical descriptions remain separate entries.
+
+Write autocomplete keyboard selection now follows the result list: arrows wrap,
+Shift and Ctrl+Shift extend or reverse a selection, Home/End select endpoints,
+and Page Up/Down include expanded parent rows in the visible page distance.
+Ctrl+P/N navigate the results. A focused result list supports Ctrl+A and ordered
+Ctrl+C, with deduplicated parents on Ctrl+Shift+C; selected text in the editor
+keeps native text copying. Keyboard movement scrolls its last hit into view,
+without entering tags or changing the draft. The real Qt keyboard sequence and
+clipboard payloads are recorded in `write_tag_selection.json`.
+
+A focused write-autocomplete result list consumes the first Escape to clear its
+selection, retaining its draft and owner; a second Escape reaches the editor's
+Cancel. Mouse dragging adds a reversible range, or removes one when its initial
+Ctrl-click deselected the starting tag. Expanded parent rows share their tag's
+range position. The drag surface survives suggestion refreshes, and both Escape
+and actual mouse handlers are recorded in `write_tag_selection.json`.
+
+File viewing statistics Options now exposes the two reference media-menu display
+styles and the media/preview/Client API canvas ticks. The selected canvases reach
+view-count and viewtime searches/sorts and actual thumbnail context-menu lines;
+combined style sums multiple viewed canvases in a submenu, while stacked style
+keeps separate labels. Empty selection removes viewing labels. Changes wait for
+Apply, and Cancel/reopen preserve saved values.
+
+File viewing statistics also exposes the reference archive/delete and duplicate
+filter switches and media-viewer minimum/cap duration fields, including “count
+every view” and “no limit”. Applying changes reaches the actual media viewer and
+both filtering windows. Navigation and final close save one interval; same-file
+redraws retain the original start, and cancelling filtering decisions still counts
+the time viewed. Tracking reads the live policy when an interval finishes, caps
+the time before checking its minimum, permits up to five times a file's duration,
+and records both filters as media views. Closed or replaced window callbacks
+cannot restart an interval or clear the successor's owner. The real Qt recording
+covers480 manager outputs,18 duration widget states and actual displayed canvas
+intervals; native integration renders the Options page and covers Apply,
+Cancel/reopen, real timed viewer caps, filter navigation and stale callbacks.
+
+Search-page autocomplete now shares results, favourites and children tabs in
+both its embedded and floating layouts. Favourites show the full saved list;
+children show count-ranked descendants of top-level search tags, exclude tags
+already in that context, retain zero-count descendants, and honor the shared
+finite or unlimited cap without printing counts. Selecting a favourite or child
+enters its predicate in the actual search; removing a predicate updates children.
+Typing returns to results, while choosing a tab preserves the draft. Options
+Cancel/Apply and restored-page consumers are covered against
+`oracle/fixtures/read_tag_tabs.json`. Empty tabs retain the tab selector.
+
+Downloader HTTP requests now perform domain login admission before acquiring a
+connection slot. Active most-specific login domains use current credentials and
+shared cookies; inactive/already logged-in domains proceed directly. One
+store-owned file lease serves queued requests across independently opened GUI and
+daemon engines and real manual/forced login attempts. Login-step requests bypass this admission. Cancelling
+a triggering download preserves the login for other requests. The reopened domain
+manager monitors the persisted live login owner directly, without needing daemon
+snapshot publication, and can cancel that process by its reviewed owner identifier; this cancellation persists the reference login delay.
+Ordinary jobs show invalid/delayed-login status and wait; subscription jobs cancel
+with the reference explanatory note.
+
+Login admission uses the existing crash-safe store file-lock mechanism. Owned
+engine clones retain their current control, while owner epochs and cancellation
+are persisted per store. Dropped/unpolled processes retire only their owner;
+stale metadata after a crash cannot keep the admission lock or cancel a new
+process. Queued manual cancellation preserves the current global login, and
+forced login still executes with existing session cookies.
+
+Files and Trash now saves the confirmation preferences for trash and multi-file
+archive/inbox operations. Thumbnail shortcuts and menu actions read the applied
+preferences; the viewer also skips a simple local deletion question when trash
+confirmation is disabled. Multiple actionable local domains and physical deletion
+continue to ask. Cancelling Options leaves these preferences unchanged.
+The real Qt inputs and questions are recorded in `files_trash.json`.
+
+The advanced Files and Trash deletion dialog now lists actionable local domains,
+all-local trashing, unlocked physical deletion and physical deletion with cleared
+records. Its reason radio rows preserve existing reasons, offer the ordered
+custom suggestions and accept custom text. Accepted action/reason preferences
+are recalled when applicable. Options embeds the ordered reason queue with
+Add/Edit text children, movement and confirmed removal; all queue edits remain
+staged until Options Apply. Closing the owning viewer discards its open deletion
+draft and invalidates retained callbacks. `files_trash.json` records the Qt flow.
+
+Read autocomplete now constructs an OR with Shift+Enter without changing the
+active search. Its sorted, deduplicated draft appears first in results; ordinary
+activation of another term commits the completed OR, while choosing a one-term
+draft commits that term alone. Rewind and empty-input Escape remove the final
+sorted term, then cancel the remaining draft. Cancel clears the input and leaves
+the active search alone. Committed OR predicates query real files and survive
+favourite-search persistence; draft state is never saved with a search. The
+actual Qt state and query count are recorded in `read_or.json`.
+
+The read autocomplete OR button opens an empty staged search editor in the
+caller's file/tag context. It uses the same results/favourites/children lists,
+system-predicate child opener and nested OR construction. Accepting zero terms
+clears the caller input, one term unwraps it, and multiple terms become an OR.
+Advanced mode exposes the advanced input dialog with a live result preview. It
+accepts not/and/or/implies/xor/xnor/nand/nor and their symbolic forms, parentheses
+and escaped tag text, distributing clauses into AND-of-OR search predicates.
+Invalid input stays open with the recorded validation message. Both children
+leave caller text and predicates intact on Cancel; a closed caller, cancelled
+ancestor or retained old child cannot apply its staged search. Their recorded
+Qt dialogs, parser outputs and actual query counts are in `read_or_editors.json`.
+
+System predicate editors opened from the main read input or basic OR child
+retain the selecting Shift key: accepted values extend an OR draft with Shift, or merge and commit
+it with normal activation. Cancelling the system editor leaves the draft and
+active search alone. `oracle/fixtures/system_or_activation.json` records 18
+actual Qt cases in the main read input and basic OR child, including accepted
+system recents surviving outer Cancel. Both callers use the original activation intent. Authored model replay and
+the native 18-case consumer replay await hosted CI; no native render is claimed.
+
+Manage Tags now reads deleted mappings separately for each selected local tag
+service. The count measures tag–file mappings, hides at zero, and follows staged
+deletions and re-additions. Show/hide is an immediately saved global preference
+that survives Cancel and reaches other open owners. Rows combine current `(n)`
+and deleted `(Xn)` counts, including current counts when every selected file has
+the tag. Apply commits the private mapping draft; Cancel and callbacks retained
+after closure cannot change it. The real Qt recording
+`manage_tag_counts_incremental.json` covers two local services and reopening.
+
+Manage Tags' ± Incremental Tagging button now opens an owned child for multi-file
+selections. Namespace, prefix and suffix remember each edit immediately, including
+Cancel; start defaults to the first file's first decimal subtag in the reference's numeric ordering,
+step defaults to one, and reverse numbers the original selection backwards.
+The preview reports the exact tag sequence and existing namespace conflicts.
+Child Apply adds one tag per original file to the selected service's private
+Manage Tags draft, preserving other namespace tags. Parent Apply commits it;
+child/parent Cancel and window closure discard pending mappings and invalidate
+retained callbacks. While the child is open, service changes, tag entry and
+parent Apply are blocked. Reopening an existing Manage Tags owner preserves its
+original selection and file-count title. Actual Qt recorded child/parent cancellation, negative
+steps, reverse order, remembered reopening and persisted per-file mappings.
+Additional Qt recordings cover initial-value and numeric-control clamp boundaries,
+long ASCII and Unicode leading-zero inputs, and reference initialization failures.
+Native safely clamps large initial values and accepts long decimal previews.
+
+
+Options > GUI now shows the reference's complete frame-locations table, including
+imported unknown frame names. Its edit child stages remember-size/position,
+optional size/coordinates, default gravity/position and maximised/fullscreen.
+Batch flip/reset and sorting retain selection. Child Apply changes the Options
+draft; Options Cancel discards it and closes/inactivates the child. Main-window
+and media-viewer remembered geometry/state use their existing placement consumers;
+the Options window also places itself from its `manage_options_dialog` frame.
+Its explicit frame-table edits persist on Apply; Cancel/X preserve the previous
+geometry. An accepted reset of its own size/position remains unset, matching the
+actual reference dialog's save-before-frame-table-commit order. Live main/viewer
+geometry saves merge inside a writer transaction, preserving other frame keys.
+
+Local service review bulk maintenance uses the exact questions and “do it” /
+“forget it” decisions from `oracle/fixtures/service_bulk.json`. Trash controls
+disable when empty. Undelete restores every former local domain and its import
+time; clear uses the normal physical-deletion queue and honours archived-file
+delete locks. Like/dislike, numerical and inc/dec rating services offer “for
+deleted files”, “for all non-local files”, and “for all files”. The first two
+use physical storage membership, so a file still in trash remains local.
+Counts refresh on acceptance and survive reopening. Each question captures its
+service/action, blocks replacement and selection, and retires with its owner.
+
+
+Options > tag presentation now opens a detached editor for each thumbnail and
+media-viewer tag banner. It edits enabled state, RGBA colours, separators, ordered
+namespace prefixes and separators, and cleaned example tags with live preview.
+Child Apply stages the generator; parent Apply saves all three and refreshes
+thumbnail banners and the title of an already-open viewer. Cancelling either
+owner discards its draft and invalidates retained child callbacks. The Qt oracle
+drives all three reference buttons, namespace CRUD/movement and live preview.
+
+The banner editor child is held explicitly by the main window's Options owner.
+Its slot clears on child or parent close; retained stale callbacks cannot clear
+a replacement slot or commit an old draft. No test-only global window registry
+is used for banner editing.
+
+Physical-storage service review offers “clear deleted files record” with both
+reference confirmations and their distinct yes/no labels. The first acceptance
+only opens the second question; either decline or owner close leaves the store
+unchanged. Final acceptance uses the existing transactional record-clear path:
+files still in trash retain their history/reasons, other local deletion records
+are forgotten, and pending physical deletes remain queued. Reopened review counts
+and the import-status consumer reflect the change. The actual Qt decisions and
+status transition from deleted to unknown are in `service_deleted.json`.
+Opening another service review cancels the previous owner's pending question;
+retained callbacks from that retired owner cannot clear records or close the
+replacement review.

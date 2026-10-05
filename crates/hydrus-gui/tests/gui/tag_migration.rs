@@ -162,7 +162,7 @@ fn manage_tags_launches_selected_scope_and_refreshes_after_background_delete() {
 }
 
 #[test]
-fn closing_a_running_job_refreshes_committed_state_before_hiding() {
+fn closing_settings_retains_the_published_job_until_completion() {
     let (_dirs, store) = crate::subscriptions::store();
     let _windows = headless::init();
     let key = store
@@ -185,17 +185,39 @@ fn closing_a_running_job_refreshes_committed_state_before_hiding() {
     window.invoke_answer(true);
     window.invoke_answer(true);
     assert!(window.get_running());
+    let recording = hydrus_testkit::fixture_json("tag_migration_progress.json");
+    let job = tag_migration_window::last_progress().unwrap();
+    job.invoke_pause_job();
+    assert!(job.get_paused());
+    assert_eq!(
+        job.get_status_text(),
+        recording[0]["paused"]["text"].as_str().unwrap()
+    );
+    job.invoke_dismiss();
+    assert!(job.window().is_visible());
     window.invoke_close_clicked();
-    assert!(window.window().is_visible());
+    assert!(!window.window().is_visible());
+    assert!(slot.borrow().is_none());
+    assert!(job.window().is_visible());
+    assert!(job.get_paused());
+    job.invoke_pause_job();
+    assert!(!job.get_paused());
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(15);
-    while window.window().is_visible() && std::time::Instant::now() < deadline {
+    while job.get_running() && std::time::Instant::now() < deadline {
         std::thread::sleep(std::time::Duration::from_millis(100));
         slint::platform::update_timers_and_animations();
     }
-    assert!(!window.window().is_visible());
-    assert!(!window.get_running());
+    assert!(!job.get_running());
+    assert!(!job.get_can_control());
+    assert!(!job.get_paused());
+    assert!(job.get_error().is_empty(), "{}", job.get_error());
+    assert_eq!(
+        job.get_status_text(),
+        recording[0]["text"].as_str().unwrap()
+    );
     assert!(changed.get() > 0);
-    assert!(slot.borrow().is_none());
+    job.invoke_dismiss();
+    assert!(!job.window().is_visible());
 }
 
 #[test]
@@ -273,4 +295,243 @@ fn an_open_filter_child_cannot_broaden_a_confirmed_delete() {
         .unwrap();
     assert_eq!(tags, vec!["creator:retain"]);
     window.invoke_close_clicked();
+}
+
+#[test]
+fn archive_controls_inspect_reject_wrong_pair_types_and_freeze_confirmed_paths() {
+    let dir = tempfile::tempdir().unwrap();
+    let store = hydrus_store::Store::open(dir.path()).unwrap();
+    let _windows = headless::init();
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let slot = tag_migration_window::Slot::default();
+    let window =
+        tag_migration_window::open(&store, &key, vec![], &slot, std::rc::Rc::new(|| {})).unwrap();
+    let recording = hydrus_testkit::fixture_json("tag_archives.json");
+    for case in recording["qt"].as_array().unwrap() {
+        // Each reference inspector case starts from a fresh content draft.
+        window.set_content(i32::from(case["kind"] != "siblings"));
+        window.invoke_choices_changed();
+        window.set_content(match case["kind"].as_str().unwrap() {
+            "sha256" | "md5" => 0,
+            "siblings" => 1,
+            _ => 2,
+        });
+        window.invoke_choices_changed();
+        let archive = i32::try_from(window.get_services().row_count() - 1).unwrap();
+        window.set_source(archive);
+        window.set_destination(archive);
+        window.invoke_choices_changed();
+        assert!(window.get_source_archive());
+        assert!(window.get_destination_archive());
+        window.invoke_go();
+        assert!(window.get_error().contains("Please set a path"));
+        assert!(window.get_question().is_empty());
+        let path = hydrus_testkit::fixture_path(case["source"].as_str().unwrap());
+        window.invoke_archive_path_chosen(true, path.to_string_lossy().as_ref().into());
+        let destination = dir
+            .path()
+            .join(format!("{}.db", case["kind"].as_str().unwrap()));
+        window.invoke_archive_path_chosen(false, destination.to_string_lossy().as_ref().into());
+        assert!(window.get_error().is_empty(), "{}", window.get_error());
+        assert_eq!(window.get_source_path(), case["source"].as_str().unwrap());
+        if window.get_content() == 0 {
+            assert_eq!(
+                window.get_source_hash(),
+                case["source_hash"].as_str().unwrap()
+            );
+        }
+        window.invoke_archive_path_chosen(true, "".into());
+        assert_eq!(window.get_source_path(), case["source"].as_str().unwrap());
+        window.invoke_go();
+        let confirmed = window.get_question();
+        assert!(confirmed.contains(case["source"].as_str().unwrap()));
+        window.invoke_archive_path_chosen(
+            false,
+            dir.path()
+                .join("stale.db")
+                .to_string_lossy()
+                .as_ref()
+                .into(),
+        );
+        assert_eq!(window.get_question(), confirmed);
+        window.invoke_answer(false);
+        assert!(
+            !destination.exists(),
+            "declining confirmation creates no archive"
+        );
+        if window.get_content() != 0 {
+            window.invoke_go();
+            window.invoke_answer(true);
+            window.invoke_answer(true);
+            let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+            while window.get_running() && std::time::Instant::now() < deadline {
+                std::thread::sleep(std::time::Duration::from_millis(50));
+                slint::platform::update_timers_and_animations();
+            }
+            assert!(!window.get_running());
+            assert!(window.get_error().is_empty(), "{}", window.get_error());
+            let conn = rusqlite::Connection::open(&destination).unwrap();
+            let pairs=conn.prepare("SELECT a.tag,b.tag FROM pairs p JOIN tags a ON p.tag_id_1=a.tag_id JOIN tags b ON p.tag_id_2=b.tag_id ORDER BY a.tag,b.tag").unwrap().query_map([],|r|Ok([r.get::<_,String>(0)?,r.get::<_,String>(1)?])).unwrap().collect::<rusqlite::Result<Vec<_>>>().unwrap();
+            let expected = recording["archives"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|row| row["kind"] == case["kind"])
+                .unwrap();
+            assert_eq!(serde_json::json!(pairs), expected["pairs"]);
+        }
+    }
+    window.invoke_archive_path_chosen(
+        true,
+        hydrus_testkit::fixture_path("tag_archive_siblings.db")
+            .to_string_lossy()
+            .as_ref()
+            .into(),
+    );
+    assert_eq!(
+        window.get_error(),
+        recording["qt_warnings"][0].as_str().unwrap()
+    );
+    assert_eq!(window.get_source_path(), "tag_archive_parents.db");
+    window.set_count_either(true);
+    window.invoke_choices_changed();
+    window.invoke_go();
+    assert!(
+        window
+            .get_question()
+            .contains("where the child or parent tag of each pair has count on")
+    );
+    window.invoke_answer(false);
+    window.invoke_close_clicked();
+}
+
+#[test]
+fn cancellation_allows_immediate_popup_dismissal_then_publishes_cleanup() {
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let recording = hydrus_testkit::fixture_json("tag_migration_progress.json");
+    let expected = &recording[1]["cancel_state"];
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let changed = std::rc::Rc::new(std::cell::Cell::new(0));
+    let slot = tag_migration_window::Slot::default();
+    let window = tag_migration_window::open(
+        &store,
+        &key,
+        vec![],
+        &slot,
+        std::rc::Rc::new({
+            let changed = changed.clone();
+            move || changed.set(changed.get() + 1)
+        }),
+    )
+    .unwrap();
+    window.invoke_go();
+    window.invoke_answer(true);
+    window.invoke_answer(true);
+    let job = tag_migration_window::last_progress().unwrap();
+    job.invoke_pause_job();
+    assert!(job.get_paused());
+    job.invoke_cancel_job();
+    assert_eq!(
+        job.get_can_control(),
+        expected["cancellable"].as_bool().unwrap()
+    );
+    assert_eq!(job.get_paused(), expected["paused"].as_bool().unwrap());
+    assert!(job.get_running());
+    job.invoke_pause_job();
+    assert!(!job.get_paused());
+    job.invoke_dismiss();
+    assert_eq!(
+        !job.window().is_visible(),
+        expected["dismissed"].as_bool().unwrap()
+    );
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(15);
+    while job.get_running() && std::time::Instant::now() < deadline {
+        std::thread::sleep(std::time::Duration::from_millis(100));
+        slint::platform::update_timers_and_animations();
+    }
+    assert!(!job.get_running());
+    assert_eq!(job.get_status_text(), "done!");
+    assert!(job.get_error().is_empty(), "{}", job.get_error());
+    assert_eq!(changed.get(), 1);
+    window.invoke_close_clicked();
+}
+
+#[test]
+fn completed_popup_remains_visible_until_past_its_three_second_deadline() {
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let key = store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    let slot = tag_migration_window::Slot::default();
+    let window =
+        tag_migration_window::open(&store, &key, vec![], &slot, std::rc::Rc::new(|| {})).unwrap();
+    window.invoke_go();
+    window.invoke_answer(true);
+    window.invoke_answer(true);
+    let job = tag_migration_window::last_progress().unwrap();
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(15);
+    while job.get_running() && std::time::Instant::now() < deadline {
+        std::thread::sleep(std::time::Duration::from_millis(50));
+        slint::platform::update_timers_and_animations();
+    }
+    assert!(!job.get_running());
+    assert_eq!(job.get_status_text(), "done!");
+    assert!(job.window().is_visible());
+    let started = std::time::Instant::now();
+    while job.window().is_visible() && started.elapsed() < std::time::Duration::from_secs(5) {
+        std::thread::sleep(std::time::Duration::from_millis(50));
+        slint::platform::update_timers_and_animations();
+    }
+    assert!(!job.window().is_visible());
+    assert!(started.elapsed() >= std::time::Duration::from_secs(3));
+    window.invoke_close_clicked();
+}
+
+#[test]
+fn progress_popup_renders_the_recorded_paused_state() {
+    let windows = headless::init();
+    let recording = hydrus_testkit::fixture_json("tag_migration_progress.json");
+    let popup = hydrus_gui::TagMigrationProgressWindow::new().unwrap();
+    popup.set_job_title(recording[0]["paused"]["title"].as_str().unwrap().into());
+    popup.set_progress(
+        recording[0]["speed_inputs"][0]["text"]
+            .as_str()
+            .unwrap()
+            .into(),
+    );
+    popup.set_running(true);
+    popup.set_can_control(true);
+    popup.set_paused(true);
+    popup.show().unwrap();
+    assert_eq!(
+        popup.get_status_text(),
+        recording[0]["paused"]["text"].as_str().unwrap()
+    );
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 500, 190);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("tag_migration_progress.png"),
+        &pixels,
+        500,
+        190,
+    )
+    .unwrap();
+    popup.hide().unwrap();
 }

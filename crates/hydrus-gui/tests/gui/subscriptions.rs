@@ -870,3 +870,615 @@ fn add_uses_a_separate_gallery_list_then_the_editor() {
     warning.invoke_accept_clicked();
     assert!(bound.edit_subscription.borrow().is_none());
 }
+
+#[test]
+fn full_subscription_exchange_is_staged_cancellable_and_reopens_with_complete_histories() {
+    use hydrus_downloader_exchange::subscriptions as exchange;
+    let reference = hydrus_testkit::fixture_json("subscription_exchange.json");
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_exchange(true);
+    let child = bound
+        .subscription_exchange
+        .0
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert!(dialog.get_exchange_open());
+    dialog.invoke_add();
+    dialog.invoke_edit();
+    assert!(bound.subscription_gallery.borrow().is_none());
+    assert!(bound.edit_subscription.borrow().is_none());
+    child.set_text("not JSON".into());
+    child.invoke_action("review".into());
+    assert!(!child.get_error().is_empty());
+    assert!(rows(&dialog).is_empty());
+    child.set_text(reference["single"].to_string().into());
+    child.invoke_action("review".into());
+    assert!(child.get_error().is_empty(), "{}", child.get_error());
+    dialog.invoke_apply();
+    assert!(
+        bound.subscriptions.borrow().is_some(),
+        "Apply is blocked while a descendant owns its draft"
+    );
+    child.invoke_action("accept".into());
+    assert_eq!(rows(&dialog)[0].0[0], "Artist");
+    assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    dialog.invoke_cancel();
+    child.invoke_action("accept".into());
+    assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    // Parent cancellation also invalidates an unaccepted exchange child.
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_exchange(true);
+    let stale = bound
+        .subscription_exchange
+        .0
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    stale.set_text(reference["single"].to_string().into());
+    stale.invoke_action("review".into());
+    dialog.invoke_cancel();
+    stale.invoke_action("accept".into());
+    assert!(!bound.subscription_exchange.has_open());
+    assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_exchange(true);
+    let child = bound
+        .subscription_exchange
+        .0
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let path = tempfile::Builder::new().suffix(".json").tempfile().unwrap();
+    std::fs::write(path.path(), reference["single"].to_string()).unwrap();
+    child.set_path(path.path().to_string_lossy().as_ref().into());
+    child.invoke_action("open".into());
+    assert!(child.get_error().is_empty(), "{}", child.get_error());
+    child.invoke_action("accept".into());
+    dialog.invoke_apply();
+    let saved = store.read(subscriptions::subscriptions).unwrap();
+    assert_eq!(saved.len(), 1);
+    let id = saved[0].id;
+    let queries = store
+        .read(move |conn| subscriptions::queries(conn, id))
+        .unwrap();
+    let queue = queries[0].queue_id;
+    let seeds = store
+        .read(move |conn| queues::file_seeds(conn, queue))
+        .unwrap();
+    assert_eq!(seeds[0].note, "ignored\nrecorded reason");
+    assert_eq!(
+        seeds[0].meta.notes,
+        [("note".into(), "first\n\nsecond".into())]
+    );
+    let galleries = store
+        .read(move |conn| queues::gallery_seeds(conn, queue))
+        .unwrap();
+    assert_eq!(galleries[0].note, "gallery failure");
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_row_clicked(0, false, false);
+    dialog.invoke_exchange(false);
+    let child = bound
+        .subscription_exchange
+        .0
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let exported = exchange::decode_text(child.get_text().as_str()).unwrap();
+    assert_eq!(exported[0].settings, saved[0].settings);
+    assert_eq!(exported[0].queries[0].state, queries[0].state);
+    assert_eq!(
+        exported[0].queries[0]
+            .log
+            .as_ref()
+            .unwrap()
+            .file_seeds
+            .len(),
+        1
+    );
+    assert_eq!(
+        exported[0].queries[0]
+            .log
+            .as_ref()
+            .unwrap()
+            .gallery_seeds
+            .len(),
+        1
+    );
+    assert_eq!(
+        exported[0].queries[0].reference_header.as_ref().unwrap()[2][15],
+        reference["single"][2][0][3][1][0][2][15]
+    );
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 880, 610);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("subscription-exchange-export.png"),
+        &pixels,
+        880,
+        610,
+    )
+    .unwrap();
+    let exports = tempfile::tempdir().unwrap();
+    let path = exports.path().join("subscriptions.json");
+    child.set_path(path.to_string_lossy().as_ref().into());
+    child.invoke_action("save-json".into());
+    assert!(child.get_error().is_empty(), "{}", child.get_error());
+    assert_eq!(
+        exchange::decode_text(&std::fs::read_to_string(&path).unwrap()).unwrap(),
+        exported
+    );
+    std::fs::write(&path, "previous file").unwrap();
+    child.invoke_action("save-json".into());
+    let question = reference["json_files"]["overwrite"][0]["question"]
+        .as_str()
+        .unwrap()
+        .replace("{path}", path.to_string_lossy().as_ref());
+    assert_eq!(child.get_overwrite_question().as_str(), question);
+    child.invoke_action("no-json".into());
+    assert_eq!(std::fs::read_to_string(&path).unwrap(), "previous file");
+    child.invoke_action("save-json".into());
+    child.invoke_action("yes-json".into());
+    assert_eq!(
+        exchange::decode_text(&std::fs::read_to_string(&path).unwrap()).unwrap(),
+        exported
+    );
+    std::fs::write(&path, "previous file").unwrap();
+    child.invoke_action("save-json".into());
+    dialog.invoke_cancel();
+    child.invoke_action("yes-json".into());
+    assert_eq!(std::fs::read_to_string(&path).unwrap(), "previous file");
+}
+
+#[test]
+fn subscription_exchange_file_menus_load_selected_packages_and_cancel_invalid_batches() {
+    let reference = hydrus_testkit::fixture_json("subscription_exchange.json");
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let path = tempfile::Builder::new().suffix(".json").tempfile().unwrap();
+    std::fs::write(path.path(), reference["json_files"]["exported"].to_string()).unwrap();
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_exchange(true);
+    let child = bound
+        .subscription_exchange
+        .0
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let chosen = path.path().to_path_buf();
+    let caption = reference["json_files"]["dialogs"][1]["title"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    hydrus_gui::set_picker(move |kind, title| {
+        assert_eq!(kind, hydrus_gui::Pick::Files);
+        assert_eq!(title, caption);
+        vec![chosen.clone()]
+    });
+    child.invoke_action("import-jsons".into());
+    assert!(child.get_ready());
+    assert!(rows(&dialog).is_empty());
+    child.invoke_action("accept".into());
+    assert_eq!(
+        serde_json::json!(
+            rows(&dialog)
+                .iter()
+                .map(|(row, _)| row[0].clone())
+                .collect::<Vec<_>>()
+        ),
+        reference["json_files"]["imported_names"]
+    );
+    assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    dialog.invoke_cancel();
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_exchange(true);
+    let child = bound
+        .subscription_exchange
+        .0
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    hydrus_gui::set_picker(|_, _| Vec::new());
+    child.invoke_action("import-jsons".into());
+    assert!(!child.get_ready());
+    assert!(rows(&dialog).is_empty());
+    let chosen = hydrus_testkit::fixtures_dir().join("subscription_exchange.png");
+    hydrus_gui::set_picker(move |kind, title| {
+        assert_eq!(kind, hydrus_gui::Pick::Files);
+        assert_eq!(title, "select the png or pngs with the encoded data");
+        vec![chosen.clone()]
+    });
+    child.invoke_action("import-pngs".into());
+    assert!(child.get_ready(), "{}", child.get_error());
+    child.invoke_action("back".into());
+    let good = path.path().to_path_buf();
+    let bad = tempfile::Builder::new().suffix(".json").tempfile().unwrap();
+    std::fs::write(bad.path(), "invalid JSON").unwrap();
+    let bad_path = bad.path().to_path_buf();
+    hydrus_gui::set_picker(move |_, _| vec![good.clone(), bad_path.clone()]);
+    child.invoke_action("import-jsons".into());
+    assert!(!child.get_error().is_empty());
+    assert!(!child.get_ready());
+    child.invoke_action("accept".into());
+    assert!(rows(&dialog).is_empty());
+    assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    dialog.invoke_cancel();
+    hydrus_gui::set_picker(|_, _| Vec::new());
+}
+
+#[test]
+fn subscription_missing_history_asks_original_question_before_staging_or_persisting() {
+    let reference = hydrus_testkit::fixture_json("subscription_exchange.json");
+    let mut missing = reference["single"].clone();
+    missing[2][1] = serde_json::json!([26, 3, []]);
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    for accepted in [false, true] {
+        let dialog = open_dialog(&ui, &bound);
+        dialog.invoke_exchange(true);
+        let child = bound
+            .subscription_exchange
+            .0
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        child.set_text(missing.to_string().into());
+        child.invoke_action("review".into());
+        child.invoke_action("accept".into());
+        let question = asked(&dialog);
+        let recorded = &reference["questions"][0];
+        assert_eq!(question.0, recorded["title"].as_str().unwrap());
+        assert_eq!(question.1, recorded["message"].as_str().unwrap());
+        assert_eq!(
+            question.2,
+            [
+                recorded["yes"].as_str().unwrap(),
+                recorded["no"].as_str().unwrap()
+            ]
+        );
+        assert!(rows(&dialog).is_empty());
+        dialog.invoke_apply();
+        assert!(bound.subscriptions.borrow().is_some());
+        dialog.invoke_chosen(i32::from(!accepted));
+        assert_eq!(rows(&dialog).len(), usize::from(accepted));
+        assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+        if accepted {
+            dialog.invoke_apply();
+        } else {
+            dialog.invoke_cancel();
+        }
+    }
+    let saved = store.read(subscriptions::subscriptions).unwrap();
+    assert_eq!(saved.len(), 1);
+    let id = saved[0].id;
+    let queries = store
+        .read(move |conn| subscriptions::queries(conn, id))
+        .unwrap();
+    assert_eq!(queries.len(), 1);
+    let queue = queries[0].queue_id;
+    assert!(
+        store
+            .read(move |conn| queues::file_seeds(conn, queue))
+            .unwrap()
+            .is_empty()
+    );
+    assert!(
+        store
+            .read(move |conn| queues::gallery_seeds(conn, queue))
+            .unwrap()
+            .is_empty()
+    );
+    let dialog = open_dialog(&ui, &bound);
+    assert_eq!(rows(&dialog).len(), 1);
+    dialog.invoke_cancel();
+}
+
+#[test]
+fn legacy_subscription_clipboard_import_reaches_saved_query_settings_and_full_histories() {
+    use hydrus_downloader_exchange::subscriptions as exchange;
+    let reference = hydrus_testkit::fixture_json("subscription_legacy_exchange.json");
+    let _windows = headless::init();
+    for case_index in [2, 5] {
+        let case = &reference["cases"][case_index];
+        let expected = exchange::decode_text(&case["normalised"].to_string())
+            .unwrap()
+            .remove(0);
+        let (_dirs, store) = store();
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        let dialog = open_dialog(&ui, &bound);
+        dialog.invoke_exchange(true);
+        let child = bound
+            .subscription_exchange
+            .0
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        let text = case["source"].to_string();
+        hydrus_gui::set_paster(move || text.clone());
+        child.invoke_action("paste".into());
+        child.invoke_action("review".into());
+        assert!(child.get_error().is_empty(), "{}", child.get_error());
+        child.invoke_action("accept".into());
+        assert_eq!(rows(&dialog)[0].0[0], "Legacy artist");
+        assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+        dialog.invoke_apply();
+        let saved = store.read(subscriptions::subscriptions).unwrap();
+        let mut saved_settings = saved[0].settings.clone();
+        if case_index == 5 {
+            assert_eq!(saved_settings.gug_name, "unknown downloader");
+            assert!(saved_settings.paused);
+            assert_eq!(saved_settings.initial_file_limit, Some(1000));
+            assert_eq!(saved_settings.periodic_file_limit, Some(1000));
+            assert_eq!(saved_settings.gug_key.len(), 64);
+            assert!(!saved_settings.gug_key.is_empty());
+            saved_settings
+                .gug_key
+                .clone_from(&expected.settings.gug_key);
+        }
+        assert_eq!(saved_settings, expected.settings);
+        let id = saved[0].id;
+        let queries = store
+            .read(move |conn| subscriptions::queries(conn, id))
+            .unwrap();
+        assert_eq!(queries[0].state, expected.queries[0].state);
+        let queue = queries[0].queue_id;
+        let file = store
+            .read(move |conn| queues::file_seeds(conn, queue))
+            .unwrap();
+        assert_eq!(file[0].meta.hashes, [("sha256".into(), "33".repeat(32))]);
+        let gallery = store
+            .read(move |conn| queues::gallery_seeds(conn, queue))
+            .unwrap();
+        if case_index == 5 {
+            assert!(gallery.is_empty());
+        } else {
+            assert_eq!(gallery[0].note, "gallery failure");
+        }
+        let dialog = open_dialog(&ui, &bound);
+        dialog.invoke_row_clicked(0, false, false);
+        dialog.invoke_exchange(false);
+        let child = bound
+            .subscription_exchange
+            .0
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        let exported = exchange::decode_text(child.get_text().as_str()).unwrap();
+        let mut exported_settings = exported[0].settings.clone();
+        if case_index == 5 {
+            exported_settings
+                .gug_key
+                .clone_from(&expected.settings.gug_key);
+        }
+        assert_eq!(exported_settings, expected.settings);
+        assert_eq!(exported[0].queries[0].state, expected.queries[0].state);
+        assert_eq!(
+            exported[0].queries[0].log.as_ref().unwrap().file_seeds,
+            expected.queries[0].log.as_ref().unwrap().file_seeds
+        );
+        assert_eq!(
+            exported[0].queries[0].log.as_ref().unwrap().gallery_seeds,
+            expected.queries[0].log.as_ref().unwrap().gallery_seeds
+        );
+        dialog.invoke_cancel();
+    }
+}
+
+#[test]
+fn actual_subscription_list_transport_choices_dispatch_frozen_packages_and_guard_owners() {
+    use hydrus_downloader_exchange::subscriptions as exchange;
+    use std::{cell::RefCell, rc::Rc};
+    fn child(bound: &Bound) -> hydrus_gui::DownloaderExchangeWindow {
+        bound
+            .subscription_exchange
+            .0
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong()
+    }
+    let reference = hydrus_testkit::fixture_json("subscription_exchange.json");
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let dialog = open_dialog(&ui, &bound);
+    for (actual, expected) in [
+        (
+            dialog.get_exchange_export_labels(),
+            &reference["menus"]["export"],
+        ),
+        (
+            dialog.get_exchange_import_labels(),
+            &reference["menus"]["import"],
+        ),
+    ] {
+        assert_eq!(
+            actual.iter().map(|s| s.to_string()).collect::<Vec<_>>(),
+            expected
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|s| s.as_str().unwrap().to_owned())
+                .collect::<Vec<_>>()
+        );
+    }
+    let text = reference["single"].to_string();
+    hydrus_gui::set_paster(move || text.clone());
+    dialog.invoke_exchange_mode(3);
+    assert!(child(&bound).get_ready());
+    assert!(rows(&dialog).is_empty());
+    child(&bound).invoke_action("accept".into());
+    assert_eq!(rows(&dialog)[0].0[0], "Artist");
+    let copies = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::set_clipper({
+        let copies = copies.clone();
+        move |clip| copies.borrow_mut().push(clip.clone())
+    });
+    dialog.invoke_exchange_mode(0);
+    assert!(!bound.subscription_exchange.has_open());
+    let exported = match &copies.borrow()[0] {
+        hydrus_gui::Clip::Text(text) => exchange::decode_text(text).unwrap(),
+        hydrus_gui::Clip::Files(_) => panic!("selected subscriptions must export serialized text"),
+    };
+    assert_eq!(exported[0].name, "Artist");
+    assert_eq!(
+        exported[0].queries[0].log.as_ref().unwrap().file_seeds[0].note,
+        "ignored\nrecorded reason"
+    );
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("selected.json");
+    let picked = path.clone();
+    hydrus_gui::set_picker(move |_, title| {
+        assert_eq!(title, "select where to save the json file");
+        vec![picked.clone()]
+    });
+    dialog.invoke_exchange_mode(1);
+    assert_eq!(
+        exchange::decode_text(&std::fs::read_to_string(&path).unwrap()).unwrap(),
+        exported
+    );
+    child(&bound).invoke_action("cancel".into());
+    let picked = path.clone();
+    hydrus_gui::set_picker(move |_, title| {
+        assert_eq!(title, "select the json or jsons with the serialised data");
+        vec![picked.clone()]
+    });
+    dialog.invoke_exchange_mode(4);
+    assert!(child(&bound).get_ready());
+    child(&bound).invoke_action("accept".into());
+    assert_eq!(rows(&dialog).len(), 2);
+    dialog.invoke_exchange_mode(2);
+    let png = hydrus_gui::png_export_window::last().unwrap();
+    assert!(child(&bound).get_png_child());
+    let stale_path = dir.path().join("closed.png");
+    png.set_path(stale_path.to_string_lossy().as_ref().into());
+    png.set_png_title("closed subscription package".into());
+    dialog.invoke_cancel();
+    assert!(!bound.subscription_exchange.has_open());
+    assert!(!bound.subscription_exchange.1.has_open());
+    let before = copies.borrow().len();
+    dialog.invoke_exchange_mode(0);
+    dialog.invoke_exchange_mode(3);
+    png.invoke_action("export".into());
+    assert!(!stale_path.exists());
+    assert_eq!(copies.borrow().len(), before);
+    assert!(!bound.subscription_exchange.has_open());
+    assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    hydrus_gui::set_picker(|_, _| Vec::new());
+    hydrus_gui::set_clipper(|_| {});
+    drop(windows);
+}
+
+#[test]
+fn subscription_reset_and_retries_refresh_persisted_export_caches_and_forget_file_hashes() {
+    use hydrus_downloader_exchange::subscriptions as exchange;
+    use hydrus_gui_model::subscription_exchange::Headers;
+    fn child(bound: &Bound) -> hydrus_gui::DownloaderExchangeWindow {
+        bound
+            .subscription_exchange
+            .0
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong()
+    }
+    let reference = hydrus_testkit::fixture_json("subscription_exchange.json");
+    let _windows = headless::init();
+    for case in reference["log_changes"].as_array().unwrap() {
+        let (_dirs, store) = store();
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        let dialog = open_dialog(&ui, &bound);
+        let input = case["input"].to_string();
+        hydrus_gui::set_paster(move || input.clone());
+        dialog.invoke_exchange_mode(3);
+        child(&bound).invoke_action("accept".into());
+        dialog.invoke_apply();
+        let saved = store.read(subscriptions::subscriptions).unwrap();
+        let id = saved[0].id;
+        let query = store
+            .read(move |conn| subscriptions::queries(conn, id))
+            .unwrap()
+            .remove(0);
+        let queue = query.queue_id;
+        let before = store
+            .read(move |conn| Ok(hydrus_store::settings::get::<Headers>(conn)?.0[&queue].clone()))
+            .unwrap();
+        let dialog = open_dialog(&ui, &bound);
+        dialog.invoke_row_clicked(0, false, false);
+        match case["action"].as_str().unwrap() {
+            "reset" => {
+                dialog.invoke_reset();
+                dialog.invoke_chosen(0);
+            }
+            "retry_failed" => {
+                dialog.invoke_retry_failed();
+            }
+            "retry_ignored" => {
+                dialog.invoke_retry_ignored();
+                dialog.invoke_chosen(0);
+            }
+            other => panic!("unknown recorded log action {other}"),
+        }
+        dialog.invoke_apply();
+        let seeds = store
+            .read(move |conn| queues::file_seeds(conn, queue))
+            .unwrap();
+        let header = store
+            .read(move |conn| Ok(hydrus_store::settings::get::<Headers>(conn)?.0[&queue].clone()))
+            .unwrap();
+        let expected = &case["output"][2][0][3][1][0];
+        assert_eq!(header[2][9][2][1], expected[2][9][2][1]);
+        assert_eq!(header[2][9][2][2], expected[2][9][2][2]);
+        assert_eq!(header[2][13], before[2][13]);
+        assert_eq!(header[2][14], before[2][14]);
+        assert_eq!(header[2][16], before[2][16]);
+        if case["action"] == "reset" {
+            assert!(seeds.is_empty());
+            assert!(header[2][15].is_null());
+        } else {
+            assert_eq!(seeds[0].status, SeedStatus::Unknown);
+            assert!(seeds[0].note.is_empty());
+            assert!(seeds[0].meta.hashes.is_empty());
+            assert_eq!(header[2][15][2][4].as_i64().unwrap(), seeds[0].modified);
+            assert_eq!(header[2][15][2][6], 0);
+            assert_eq!(header[2][15][2][7], "");
+            assert_eq!(header[2][15][2][16], serde_json::json!([]));
+        }
+        let dialog = open_dialog(&ui, &bound);
+        dialog.invoke_row_clicked(0, false, false);
+        dialog.invoke_exchange(false);
+        let exported = exchange::decode_text(child(&bound).get_text().as_str()).unwrap();
+        assert_eq!(
+            exchange::query_header_tuple(&exported[0].queries[0]).unwrap()[2][9],
+            header[2][9]
+        );
+        assert_eq!(
+            exported[0].queries[0]
+                .log
+                .as_ref()
+                .unwrap()
+                .file_seeds
+                .len(),
+            seeds.len()
+        );
+        dialog.invoke_cancel();
+    }
+}

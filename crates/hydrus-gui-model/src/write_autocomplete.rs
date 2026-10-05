@@ -1,5 +1,5 @@
 //! Shared write-tag suggestions, highlighted entry and multiline paste decisions.
-use std::sync::Arc;
+use std::{collections::BTreeSet, sync::Arc};
 
 use hydrus_core::{ServiceKey, ServiceType, Tag, search::context::LocationContext};
 use hydrus_store::{
@@ -39,6 +39,9 @@ pub enum Paste {
 pub fn pasted_tags(text: &str) -> Vec<String> {
     let mut tags: Vec<_> = text
         .lines()
+        // HydrusText.DeserialiseNewlinedTexts strips clipboard line input
+        // before CleanTags, so a bare colon followed by spaces is empty.
+        .map(|line| line.trim_start_matches('\u{feff}').trim())
         .filter_map(Tag::new)
         .map(|t| t.as_str().to_owned())
         .collect();
@@ -88,6 +91,77 @@ impl Tab {
     }
 }
 
+/// The reference tag list keeps earlier selections during Shift ranges and
+/// uses Ctrl+Shift to remove a reversible range, unlike a table selection.
+#[derive(Debug, Default)]
+struct Selection {
+    selected: BTreeSet<usize>,
+    last: Option<usize>,
+    anchor: Option<usize>,
+    added: BTreeSet<usize>,
+    removed: BTreeSet<usize>,
+}
+impl Selection {
+    fn reset(&mut self, first: Option<usize>) {
+        *self = Self::default();
+        if let Some(first) = first {
+            self.click(first, false, false);
+        }
+    }
+    fn click(&mut self, hit: usize, ctrl: bool, shift: bool) {
+        if !shift {
+            self.anchor = Some(hit);
+            self.added.clear();
+            self.removed.clear();
+        }
+        if shift {
+            if self.anchor.is_none() || self.last.is_none() {
+                self.anchor = Some(self.last.unwrap_or(hit));
+            }
+            if ctrl && !self.added.is_empty() {
+                self.anchor = self.last;
+                self.added.clear();
+            } else if !ctrl && !self.removed.is_empty() {
+                self.anchor = self.last;
+                self.removed.clear();
+            }
+            let anchor = self.anchor.unwrap_or(hit);
+            let range: BTreeSet<_> = (anchor.min(hit)..=anchor.max(hit)).collect();
+            if ctrl {
+                let removed: Vec<_> = range.intersection(&self.selected).copied().collect();
+                let restored: Vec<_> = self.removed.difference(&range).copied().collect();
+                for index in removed {
+                    self.selected.remove(&index);
+                    self.removed.insert(index);
+                }
+                for index in restored {
+                    self.selected.insert(index);
+                    self.removed.remove(&index);
+                }
+            } else {
+                let added: Vec<_> = range.difference(&self.selected).copied().collect();
+                let restored: Vec<_> = self.added.difference(&range).copied().collect();
+                for index in added {
+                    self.selected.insert(index);
+                    self.added.insert(index);
+                }
+                for index in restored {
+                    self.selected.remove(&index);
+                    self.added.remove(&index);
+                }
+            }
+        } else if ctrl {
+            if !self.selected.remove(&hit) {
+                self.selected.insert(hit);
+            }
+        } else if !self.selected.contains(&hit) {
+            self.selected.clear();
+            self.selected.insert(hit);
+        }
+        self.last = Some(hit);
+    }
+}
+
 pub struct WriteAutocomplete {
     store: Arc<Store>,
     service: ServiceKey,
@@ -95,7 +169,8 @@ pub struct WriteAutocomplete {
     text: String,
     rows: Vec<Suggestion>,
     suggestions: Vec<(String, String)>,
-    highlighted: usize,
+    selections: [Selection; 3],
+    selection_rows: [Vec<(String, CountRange)>; 3],
     tab: Tab,
     context_tags: std::collections::BTreeSet<String>,
     decorations: [[Option<bool>; 3]; 3],
@@ -119,7 +194,8 @@ impl WriteAutocomplete {
             text: String::new(),
             rows: Vec::new(),
             suggestions: Vec::new(),
-            highlighted: 0,
+            selections: std::array::from_fn(|_| Selection::default()),
+            selection_rows: std::array::from_fn(|_| Vec::new()),
             tab: Tab::Tags,
             context_tags: std::collections::BTreeSet::new(),
             decorations: [[None; 3]; 3],
@@ -245,34 +321,157 @@ impl WriteAutocomplete {
     pub fn suggestions(&self) -> &[(String, String)] {
         &self.suggestions
     }
+    fn primary_rows(&self) -> impl Iterator<Item = (usize, &Suggestion)> {
+        self.rows
+            .iter()
+            .enumerate()
+            .filter(|(_, row)| !row.parent_row)
+    }
+    fn logical_index(&self, physical: usize) -> Option<usize> {
+        let row = self.rows.get(physical)?;
+        self.primary_rows()
+            .position(|(_, primary)| primary.tag == row.tag)
+    }
     pub fn highlighted(&self) -> Option<usize> {
-        (!self.rows.is_empty()).then_some(self.highlighted)
+        let logical = self.selections[self.tab.index()].last?;
+        self.primary_rows()
+            .nth(logical)
+            .map(|(physical, _)| physical)
+    }
+    pub fn selection_mask(&self) -> Vec<bool> {
+        let selection = &self.selections[self.tab.index()].selected;
+        self.rows
+            .iter()
+            .enumerate()
+            .map(|(physical, _)| {
+                self.logical_index(physical)
+                    .is_some_and(|logical| selection.contains(&logical))
+            })
+            .collect()
+    }
+    pub fn selected_tags(&self) -> Vec<String> {
+        let selected = &self.selections[self.tab.index()].selected;
+        self.primary_rows()
+            .enumerate()
+            .filter(|(logical, _)| selected.contains(logical))
+            .map(|(_, (_, row))| row.tag.clone())
+            .collect()
+    }
+    /// Clicking never enters a tag; the owner activates the selected batch separately.
+    pub fn click(&mut self, physical: usize, ctrl: bool, shift: bool) {
+        if let Some(logical) = self.logical_index(physical) {
+            self.selections[self.tab.index()].click(logical, ctrl, shift);
+        }
+    }
+    /// Up/down wrap. Page keys move by physical rows, including expanded parents.
+    /// The six directions are up, down, home, end, page up and page down.
+    pub fn navigate(&mut self, direction: i32, ctrl: bool, shift: bool) {
+        let count = self.primary_rows().count();
+        let Some(last) = self.selections[self.tab.index()].last else {
+            return;
+        };
+        if count <= 1 {
+            return;
+        }
+        let target = match direction {
+            0 => (last + count - 1) % count,
+            1 => (last + 1) % count,
+            2 => 0,
+            3 => count - 1,
+            4 | 5 => {
+                let physical = self.highlighted().unwrap_or(0);
+                let distance =
+                    usize::try_from(self.options().autocomplete_list_height.clamp(1, 128))
+                        .unwrap_or(11);
+                let physical = if direction == 4 {
+                    physical.saturating_sub(distance)
+                } else {
+                    physical.saturating_add(distance).min(self.rows.len() - 1)
+                };
+                self.logical_index(physical).unwrap_or(last)
+            }
+            _ => return,
+        };
+        self.selections[self.tab.index()].click(target, ctrl, shift);
     }
     pub fn move_highlight(&mut self, by: isize) {
-        if let Some(last) = self.rows.len().checked_sub(1) {
-            self.highlighted = self.highlighted.saturating_add_signed(by).min(last);
+        if by != 0 {
+            self.navigate(i32::from(by > 0), false, false);
         }
+    }
+    /// Select-all retains the last hit and range anchor, just like the Qt list.
+    pub fn select_all(&mut self) {
+        self.selections[self.tab.index()].selected = (0..self.primary_rows().count()).collect();
+    }
+    pub fn deselect(&mut self) -> bool {
+        let selection = &mut self.selections[self.tab.index()];
+        let had_selection = !selection.selected.is_empty();
+        selection.selected.clear();
+        had_selection
+    }
+    /// Ctrl+C uses the whole result when nothing is selected. Parents appear once.
+    pub fn copy_selection(&self, include_parents: bool) -> Option<String> {
+        let selected = &self.selections[self.tab.index()].selected;
+        let mut tags = Vec::new();
+        for (logical, (_, row)) in self.primary_rows().enumerate() {
+            if !selected.is_empty() && !selected.contains(&logical) {
+                continue;
+            }
+            for tag in
+                std::iter::once(&row.tag).chain(row.parents.iter().filter(|_| include_parents))
+            {
+                if !tags.contains(tag) {
+                    tags.push(tag.clone());
+                }
+            }
+        }
+        (!tags.is_empty()).then(|| tags.join("\n"))
     }
     pub fn chosen(&self, index: Option<usize>) -> Option<String> {
         index
-            .or_else(|| self.highlighted())
             .and_then(|i| self.rows.get(i))
-            .map(|r| r.tag.clone())
-            .or_else(|| Tag::new(&self.text).map(|t| t.as_str().to_owned()))
+            .map(|row| row.tag.clone())
+            .or_else(|| self.selected_tags().into_iter().next())
+            .or_else(|| Tag::new(&self.text).map(|tag| tag.as_str().to_owned()))
+    }
+    /// A double-click retains a selected batch, or selects the clicked new tag.
+    pub fn chosen_tags(&mut self, index: Option<usize>) -> Vec<String> {
+        if let Some(index) = index {
+            if self.logical_index(index).is_none() {
+                return Vec::new();
+            }
+            self.click(index, false, false);
+        }
+        let selected = self.selected_tags();
+        if selected.is_empty() && self.rows.is_empty() {
+            Tag::new(&self.text)
+                .map(|tag| vec![tag.as_str().to_owned()])
+                .unwrap_or_default()
+        } else {
+            selected
+        }
     }
     pub fn fetch(&mut self) {
         self.refresh(true);
     }
     fn refresh(&mut self, manual: bool) {
         self.rows = self.search(manual).unwrap_or_default();
-        self.highlighted = if self.options().select_first_with_count {
-            self.rows
-                .iter()
-                .position(|r| r.counted && !r.parent_row)
-                .unwrap_or(0)
-        } else {
-            0
-        };
+        let keys: Vec<_> = self
+            .primary_rows()
+            .map(|(_, row)| (row.tag.clone(), row.count))
+            .collect();
+        let tab = self.tab.index();
+        if self.selection_rows[tab] != keys {
+            let first = if self.options().select_first_with_count {
+                self.primary_rows()
+                    .position(|(_, row)| row.counted)
+                    .unwrap_or(0)
+            } else {
+                0
+            };
+            self.selections[tab].reset((!keys.is_empty()).then_some(first));
+            self.selection_rows[tab] = keys;
+        }
         self.suggestions = self
             .rows
             .iter()
@@ -524,6 +723,7 @@ pub struct TagEntry {
     pub input: WriteAutocomplete,
     tags: std::collections::BTreeSet<String>,
     add_only: bool,
+    additions: std::collections::BTreeSet<String>,
 }
 impl TagEntry {
     pub fn new(mut input: WriteAutocomplete, initial: &[String]) -> Self {
@@ -531,6 +731,7 @@ impl TagEntry {
         Self {
             input,
             add_only: false,
+            additions: std::collections::BTreeSet::new(),
             tags: initial
                 .iter()
                 .filter_map(|t| Tag::new(t))
@@ -551,27 +752,40 @@ impl TagEntry {
         }
         tags
     }
+    /// Explicit additive choices, retained only while present in the final list.
+    /// A selected-files owner uses these to distinguish re-entering an existing
+    /// union tag from applying an unchanged heterogeneous selection.
+    pub fn additions(&self) -> Vec<String> {
+        self.additions.intersection(&self.tags).cloned().collect()
+    }
     pub fn enter(&mut self, index: Option<usize>) {
-        if let Some(tag) = self.input.chosen(index) {
-            if self.add_only || !self.tags.remove(&tag) {
-                self.tags.insert(tag);
+        let tags = self.input.chosen_tags(index);
+        if !tags.is_empty() {
+            for tag in tags {
+                if self.add_only || !self.tags.remove(&tag) {
+                    self.additions.insert(tag.clone());
+                    self.tags.insert(tag);
+                }
             }
             self.input.set_context_tags(self.tags.iter().cloned());
             self.input.clear();
         }
     }
     pub fn paste(&mut self, tags: &[String]) {
-        self.tags.extend(
-            tags.iter()
-                .filter_map(|t| Tag::new(t))
-                .map(|t| t.as_str().to_owned()),
-        );
+        for tag in tags.iter().filter_map(|t| Tag::new(t)) {
+            let tag = tag.as_str().to_owned();
+            // Autocomplete paste is "only add": existing union members are
+            // not an explicit choice to spread across the selected files.
+            if self.tags.insert(tag.clone()) {
+                self.additions.insert(tag);
+            }
+        }
         self.input.set_context_tags(self.tags.iter().cloned());
-        self.input.clear();
     }
     pub fn remove(&mut self, index: usize) {
         if let Some(tag) = self.tags().get(index).cloned() {
             self.tags.remove(&tag);
+            self.additions.remove(&tag);
             self.input.set_context_tags(self.tags.iter().cloned());
         }
     }

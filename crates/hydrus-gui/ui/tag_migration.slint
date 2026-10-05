@@ -2,10 +2,22 @@ import { Button, CheckBox, ComboBox, LineEdit, VerticalBox, HorizontalBox } from
 import { Theme } from "theme.slint";
 export component TagMigrationWindow inherits Window {
     title: "migrate tags";
-    width: 760px; height: 590px;
+    width: 760px; height: 780px;
     background: Theme.window;
     in property <[string]> services;
     in property <[string]> statuses;
+    in property <[string]> count-services;
+    in property <bool> source-archive;
+    in property <bool> destination-archive;
+    in property <string> source-path;
+    in property <string> destination-path;
+    in property <string> source-hash;
+    in property <bool> hash-locked;
+    in-out property <int> hash-kind;
+    in-out property <int> count-service;
+    in-out property <bool> count-left;
+    in-out property <bool> count-right;
+    in-out property <bool> count-either;
     in property <[string]> actions;
     in-out property <int> source;
     in-out property <int> destination;
@@ -21,6 +33,7 @@ export component TagMigrationWindow inherits Window {
     in-out property <string> reason: "Mass Migration Job";
     in property <bool> petition;
     in property <bool> running;
+    in property <bool> paused;
     in property <string> progress;
     in property <string> error;
     in property <string> question;
@@ -28,9 +41,12 @@ export component TagMigrationWindow inherits Window {
     callback choices-changed();
     callback edit-filter(bool);
     callback edit-location();
+    callback choose-archive(bool);
+    callback archive-path-chosen(bool, string);
     callback go();
     callback answer(bool);
     callback cancel-job();
+    callback pause-job();
     callback close-clicked();
     VerticalBox {
         padding: 16px; spacing: 10px;
@@ -43,6 +59,10 @@ export component TagMigrationWindow inherits Window {
                 Text { text: "source"; color: Theme.text; }
                 ComboBox { enabled: !root.running && root.question == ""; model: root.services; current-index <=> root.source; selected => { root.choices-changed(); } }
             }
+            if root.source-archive: HorizontalBox {
+                Button { text: root.source-path; enabled: !root.running && root.question == ""; clicked => { root.choose-archive(true); } }
+                if root.content == 0: Text { text: root.source-hash; color: Theme.text; }
+            }
             HorizontalBox {
                 Text { text: "status"; color: Theme.text; }
                 ComboBox { enabled: !root.running && root.question == ""; model: root.statuses; current-index <=> root.status; selected => { root.choices-changed(); } }
@@ -53,28 +73,67 @@ export component TagMigrationWindow inherits Window {
                 Text { text: "destination"; color: Theme.text; }
                 ComboBox { enabled: !root.running && root.question == ""; model: root.services; current-index <=> root.destination; selected => { root.choices-changed(); } }
             }
+            if root.destination-archive: HorizontalBox {
+                Button { text: root.destination-path; enabled: !root.running && root.question == ""; clicked => { root.choose-archive(false); } }
+                if root.content == 0: ComboBox { model: ["sha256", "md5", "sha1", "sha512"]; current-index <=> root.hash-kind; enabled: !root.hash-locked && !root.running && root.question == ""; selected => { root.choices-changed(); } }
+            }
             if root.content == 0: HorizontalBox {
                 if root.have-files: CheckBox { enabled: !root.running && root.question == ""; text: root.file-label; checked <=> root.selected-files; toggled => {root.choices-changed();} }
                 Button { text: root.location-label; enabled: !root.selected-files && !root.running && root.question == ""; clicked => {root.edit-location();} }
             }
             Button { enabled: !root.running && root.question == ""; text: root.left-label; clicked => {root.edit-filter(false);} }
             if root.content != 0: Button { enabled: !root.running && root.question == ""; text: root.right-label; clicked => {root.edit-filter(true);} }
+            if root.content != 0: VerticalBox {
+                CheckBox { text: root.content == 1 ? "only if worse (left) side has count" : "only if child (left) side has count"; checked <=> root.count-left; enabled: !root.count-either && !root.running && root.question == ""; toggled => {root.choices-changed();} }
+                CheckBox { text: root.content == 1 ? "only if ideal (where right side's chain terminates) has count" : "only if parent (right) side has count"; checked <=> root.count-right; enabled: !root.count-either && !root.running && root.question == ""; toggled => {root.choices-changed();} }
+                CheckBox { text: root.content == 1 ? "only if the worse or ideal has count" : "only if the child or parent has count"; checked <=> root.count-either; enabled: !root.running && root.question == ""; toggled => {root.choices-changed();} }
+                HorizontalBox {
+                    Text { text: "in service:"; color: Theme.text; }
+                    ComboBox { model: root.count-services; current-index <=> root.count-service; enabled: (root.count-left || root.count-right || root.count-either) && !root.running && root.question == ""; selected => {root.choices-changed();} }
+                }
+            }
             if root.petition: HorizontalBox {
                 Text { text: "petition reason"; color: Theme.text; }
                 LineEdit { enabled: !root.running && root.question == ""; text <=> root.reason; }
             }
         }
         if root.question != "": Text { text: root.question; color: Theme.text; wrap: word-wrap; }
-        Text { text: root.progress; color: Theme.text; wrap: word-wrap; }
         Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         Rectangle { vertical-stretch: 1; }
         HorizontalBox {
             if root.question != "": Button { text: root.last-chance ? "yes" : "looks good"; clicked => {root.answer(true);} }
             if root.question != "": Button { text: root.last-chance ? "no" : "go back"; clicked => {root.answer(false);} }
             if root.question == "" && !root.running: Button { text: "Go!"; clicked => {root.go();} }
-            if root.running: Button { text: "cancel migration"; clicked => {root.cancel-job();} }
             Rectangle { horizontal-stretch: 1; }
             Button { text: "close"; clicked => {root.close-clicked();} }
+        }
+    }
+}
+
+export component TagMigrationProgressWindow inherits Window {
+    title: "tag migration";
+    width: 500px; height: 190px;
+    background: Theme.window;
+    in property <string> job-title;
+    in property <string> progress;
+    in property <string> error;
+    in property <bool> running;
+    in property <bool> can-control;
+    in property <bool> paused;
+    out property <string> status-text: root.paused ? "paused" : root.progress;
+    callback pause-job();
+    callback cancel-job();
+    callback dismiss();
+    VerticalBox {
+        padding: 12px; spacing: 8px;
+        Text { text: root.job-title; color: Theme.text; wrap: word-wrap; }
+        Text { text: root.status-text; color: Theme.text; wrap: word-wrap; }
+        Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+        Rectangle { vertical-stretch: 1; }
+        HorizontalBox {
+            if root.can-control: Button { text: root.paused ? "resume" : "pause"; clicked => { root.pause-job(); } }
+            if root.can-control: Button { text: "cancel"; clicked => { root.cancel-job(); } }
+            if !root.can-control: Button { text: "dismiss"; clicked => { root.dismiss(); } }
         }
     }
 }

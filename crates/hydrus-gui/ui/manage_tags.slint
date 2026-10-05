@@ -14,6 +14,9 @@ import { TagServicePanels } from "tag_service_panels.slint";
 export component ManageTagsWindow inherits Window {
     in property <[MenuPane]> tag-menu-panes;
     in property <string> tag-menu-question;
+    in property <string> tag-menu-question-title;
+    in property <string> tag-menu-yes-label: "yes";
+    in property <string> tag-menu-no-label: "no";
     callback tag-menu-hovered(int,int,length,length,length);
     callback tag-menu-clicked(int,int,length,length,length);
     callback tag-menu-placed(int,length,length,length);
@@ -32,14 +35,23 @@ export component ManageTagsWindow inherits Window {
     out property <float> service-content-offset: services.content-offset;
     in-out property <int> service-index;
     in property <[ListText]> tags;
+    in property <string> deleted-count-label;
+    in property <bool> deleted-count-visible;
+    in property <bool> show-deleted;
+    callback flip-show-deleted();
     in property <[ListText]> suggestions;
     in property <int> highlighted: -1;
+    in property <[bool]> suggestion-selected;
     in property <int> autocomplete-tab;
     in property <string> error;
     in property <string> question;
     in property <int> autocomplete-height: 11;
     in-out property <string> text;
 
+    public function normal-paste() { input.normal-paste(); }
+    public function focus-input() { input.focus-input(); }
+    out property <bool> input-focused: input.editor-focused;
+    public function select-input(anchor: int, cursor: int) { input.select-input(anchor,cursor); }
     callback service-chosen(int);
     callback text-edited(string);
     callback fetch();
@@ -47,6 +59,7 @@ export component ManageTagsWindow inherits Window {
     callback refresh-autocomplete();
     callback entered();
     callback suggestion-chosen(int);
+    callback selection-clicked(int,bool,bool);
     callback context-menu(int,length,length);
     callback domain-menu(bool,length,length);
     in property <string> file-label;
@@ -54,16 +67,22 @@ export component ManageTagsWindow inherits Window {
     callback paste-requested(bool) -> bool;
     callback paste-answered(bool);
     callback move-highlight(int);
+    callback navigate(int,bool,bool);
+    callback results-action(int) -> bool;
     callback tag-activated(int);
+    in property <bool> incremental-available;
+    in property <bool> incremental-open;
+    callback incremental-tags();
     callback migrate-tags();
     callback apply();
     callback cancel();
 
     forward-focus: input;
     FocusScope {
+        enabled: !root.incremental-open;
         capture-key-pressed(event) => {
             if (event.text == Key.Escape) {
-                if root.tag-menu-panes.length > 0 || root.tag-menu-question != "" { root.tag-menu-dismissed(); } else { root.cancel(); }
+                if root.tag-menu-panes.length > 0 || root.tag-menu-question != "" { root.tag-menu-dismissed(); } else if !input.escape-results() { root.cancel(); }
                 return accept;
             }
             reject
@@ -99,11 +118,23 @@ export component ManageTagsWindow inherits Window {
                         }
                     }
                 }
+                if root.incremental-available: Button { text: "± Incremental Tagging"; enabled: root.question == ""; clicked => { root.incremental-tags(); } }
+                if root.deleted-count-visible: HorizontalLayout {
+                    alignment: end;
+                    spacing: 6px;
+                    Text { text: root.deleted-count-label; color: Theme.text; vertical-alignment: center; }
+                    Button {
+                        text: root.show-deleted ? "hide deleted mappings" : "show deleted mappings";
+                        enabled: root.question == "";
+                        clicked => { root.flip-show-deleted(); }
+                    }
+                }
                 input := WriteTagInput {
                     enabled: root.question == "";
                     text <=> root.text;
                     suggestions: root.suggestions;
                     highlighted: root.highlighted;
+                    selected: root.suggestion-selected;
                     tab-index: root.autocomplete-tab;
                     tab-chosen(i) => { root.tab-chosen(i); }
                     list-height: root.autocomplete-height;
@@ -111,7 +142,10 @@ export component ManageTagsWindow inherits Window {
                     entered => { root.entered(); }
                     fetch => { root.fetch(); }
                     move-highlight(by) => { root.move-highlight(by); }
+                    navigate(d,ctrl,shift) => { root.navigate(d,ctrl,shift); }
+                    results-action(a) => { root.results-action(a) }
                     chosen(i) => { root.suggestion-chosen(i); }
+                    selection-clicked(i,ctrl,shift) => { root.selection-clicked(i,ctrl,shift); }
                     context-menu(i,x,y) => { root.context-menu(i,x,y); }
                     file-label:root.file-label;tag-label:root.tag-label;
                     domain-menu(tags,x,y)=>{root.domain-menu(tags,x,y);}
@@ -144,6 +178,7 @@ export component ManageTagsWindow inherits Window {
         if root.tag-menu-panes.length > 0 || root.tag-menu-question != "": TagMenuOverlay {
             width: root.width; height: root.height;
             panes: root.tag-menu-panes; question: root.tag-menu-question;
+            question-title: root.tag-menu-question-title; yes-label: root.tag-menu-yes-label; no-label: root.tag-menu-no-label;
             hovered(p,l,r,t,x) => { root.tag-menu-hovered(p,l,r,t,x); }
             clicked(p,l,r,t,x) => { root.tag-menu-clicked(p,l,r,t,x); }
             placed(p,x,y,w) => { root.tag-menu-placed(p,x,y,w); }
@@ -151,4 +186,5 @@ export component ManageTagsWindow inherits Window {
             answered(yes) => { root.tag-menu-answered(yes); }
         }
     }
+    if root.incremental-open: Rectangle { width: root.width; height: root.height; background: transparent; TouchArea { } }
 }

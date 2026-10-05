@@ -4,6 +4,10 @@
 //! committed prefix; a read transaction prevents same-service edits from moving
 //! the source beneath pagination. Service keys are resolved again on the writer.
 
+pub mod archive;
+mod job;
+pub use job::{Event, Options, PairCounts, run as run_job, run_with_events as run_job_events};
+
 use crate::content::{ContentWriter, MappingAction};
 use crate::display::RelationKind;
 use crate::services::ServiceRegistry;
@@ -207,7 +211,38 @@ pub fn run(
     request: &Request,
     cancel: &AtomicBool,
     batch_size: usize,
+    progress: impl FnMut(Progress),
+) -> Result<Progress> {
+    run_pausable(
+        store,
+        request,
+        cancel,
+        &AtomicBool::new(false),
+        batch_size,
+        progress,
+    )
+}
+/// Run with the reference's pause/resume boundary after each committed batch.
+/// Cancellation wakes a paused job and retains its committed prefix.
+pub fn run_pausable(
+    store: &Store,
+    request: &Request,
+    cancel: &AtomicBool,
+    paused: &AtomicBool,
+    batch_size: usize,
     mut progress: impl FnMut(Progress),
+) -> Result<Progress> {
+    run_timed(store, request, cancel, paused, batch_size, |p, _| {
+        progress(p);
+    })
+}
+pub(super) fn run_timed(
+    store: &Store,
+    request: &Request,
+    cancel: &AtomicBool,
+    paused: &AtomicBool,
+    batch_size: usize,
+    mut progress: impl FnMut(Progress, std::time::Duration),
 ) -> Result<Progress> {
     if !(1..=1024).contains(&batch_size) {
         return Err(StoreError::Invalid(
@@ -232,6 +267,7 @@ pub fn run(
                 done.cancelled = true;
                 break;
             }
+            let started = std::time::Instant::now();
             let mut statement = transaction.prepare(&sql)?;
             let mut rows = if sql.contains("?4") {
                 statement.query(params![
@@ -292,9 +328,12 @@ pub fn run(
             // Progress counts accepted source entries; idempotent destination
             // changes may leave an entry's existing state untouched.
             done.accepted += accepted;
-            progress(done);
+            progress(done, started.elapsed());
+            while paused.load(Ordering::Acquire) && !cancel.load(Ordering::Acquire) {
+                std::thread::sleep(std::time::Duration::from_millis(25));
+            }
         }
-        progress(done);
+        progress(done, std::time::Duration::ZERO);
         Ok(done)
     })
 }

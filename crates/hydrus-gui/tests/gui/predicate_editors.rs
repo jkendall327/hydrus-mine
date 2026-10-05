@@ -8,7 +8,7 @@
 use std::sync::Arc;
 
 use serde_json::Value as Json;
-use slint::Model as _;
+use slint::{ComponentHandle as _, Model as _};
 
 use hydrus_core::search::context::{LocationContext, TagContext};
 use hydrus_core::service::builtin_keys;
@@ -566,6 +566,7 @@ fn the_editor_window_adds_what_it_makes_to_the_search() {
     let (_dirs, store) = store();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     let editor = || {
         bound
@@ -650,11 +651,97 @@ fn the_editor_window_adds_what_it_makes_to_the_search() {
 }
 
 #[test]
+fn native_viewtime_milliseconds_survive_accept_recent_reopen_and_cancel() {
+    use hydrus_core::search::{predicate::ViewingStat, recent::RecentPredicates};
+    let fixture = hydrus_testkit::fixture_json("viewtime_milliseconds.json");
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("".into());
+    for milliseconds in [345, 1001] {
+        let case = fixture["cases"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|case| {
+                case["milliseconds"] == milliseconds
+                    && case["operator"] == "="
+                    && case["locations"] == serde_json::json!(["media"])
+            })
+            .unwrap();
+        ui.invoke_suggestion_chosen(suggestion(&ui, "system:file viewing statistics"));
+        let window = bound
+            .predicate_editor
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        window.invoke_chose(1, 2, 2);
+        for (field, value) in [
+            (3, 0),
+            (4, 0),
+            (5, 0),
+            (6, milliseconds / 1000),
+            (7, milliseconds % 1000),
+        ] {
+            window.invoke_number_edited(1, field, value);
+        }
+        if milliseconds == 345 {
+            let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 1040, 400);
+            headless::save_png(
+                &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                    .join("viewtime-milliseconds.png"),
+                &pixels,
+                1040,
+                400,
+            )
+            .unwrap();
+        }
+        window.invoke_ok(1);
+        assert!(bound.predicate_editor.borrow().is_none());
+        assert!(shown_predicates(&ui).contains(&case["text"].as_str().unwrap().to_owned()));
+        let recent: RecentPredicates = store.read(hydrus_store::settings::get).unwrap();
+        let hydrus_search::SystemPredicate::FileViewingStats { stat, value, .. } =
+            recent.by_type[&29][0]
+        else {
+            panic!("missing viewing predicate");
+        };
+        assert_eq!(stat, ViewingStat::ViewTimeMilliseconds);
+        assert_eq!(value, u64::try_from(milliseconds).unwrap());
+    }
+    let before: RecentPredicates = store.read(hydrus_store::settings::get).unwrap();
+    ui.invoke_suggestion_chosen(suggestion(&ui, "system:file viewing statistics"));
+    let window = bound
+        .predicate_editor
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(
+        window.get_recent().row_data(0).unwrap(),
+        "system:viewtime in media = 1.0 seconds"
+    );
+    window.invoke_number_edited(1, 7, 999);
+    window.invoke_cancel();
+    window.invoke_ok(1);
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<RecentPredicates>)
+            .unwrap(),
+        before
+    );
+    assert_eq!(shown_predicates(&ui).len(), 2);
+}
+
+#[test]
 fn the_editor_window_shows_what_trees_and_buttons_change() {
     let boundaries = hydrus_testkit::fixture_json("predicate_boundaries.json");
     let (_dirs, store) = store();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     let editor = || {
         bound
@@ -835,6 +922,7 @@ fn more_suggestions_than_fit_scroll_rather_than_spill_over() {
         .unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let _bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     let main_window = windows.get(0).unwrap();
     let (width, height) = (1100_usize, 900_usize);
@@ -893,4 +981,378 @@ fn more_suggestions_than_fit_scroll_rather_than_spill_over() {
         scrolled.iter().all(|y| (top - 2..bottom).contains(y)),
         "{scrolled:?} outside {top}..{bottom}"
     );
+}
+
+#[test]
+fn predicate_star_save_and_reset_survive_cancel_and_reach_future_searches() {
+    use hydrus_gui::predicate_editors::defaults::CustomDefaults;
+    use slint::ComponentHandle as _;
+    let recording = hydrus_testkit::fixture_json("predicate_custom_defaults.json");
+    let (dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let editor = || {
+        bound
+            .predicate_editor
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong()
+    };
+    let open = || {
+        ui.invoke_search_edited("".into());
+        ui.invoke_suggestion_chosen(suggestion(&ui, "system:limit"));
+        editor()
+    };
+    let actions = |window: &hydrus_gui::PredicateEditorWindow| {
+        window
+            .get_defaults_actions()
+            .iter()
+            .map(|a| a.to_string())
+            .collect::<Vec<_>>()
+    };
+    let case = recording["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["class"] == "PanelPredicateSystemLimit")
+        .unwrap();
+    let window = open();
+    window.invoke_defaults_menu(0);
+    assert_eq!(actions(&window), strings(&case["menu_before"]));
+    window.invoke_number_edited(0, 1, 731);
+    window.invoke_defaults_action(0, "set this as new default".into());
+    assert!(window.get_error().is_empty());
+    window.invoke_defaults_menu(0);
+    assert_eq!(actions(&window), strings(&case["menu_after_save"]));
+    let kept = store
+        .read(hydrus_store::settings::get::<CustomDefaults>)
+        .unwrap();
+    assert_eq!(
+        kept.predicates,
+        vec![Predicate::System(hydrus_search::SystemPredicate::Limit(
+            731
+        ))]
+    );
+    window.invoke_cancel();
+    assert!(shown_predicates(&ui).is_empty());
+    let window = open();
+    assert_eq!(
+        window
+            .get_panels()
+            .row_data(0)
+            .unwrap()
+            .fields
+            .row_data(1)
+            .unwrap()
+            .value,
+        731
+    );
+    window.invoke_defaults_action(0, "reset to original default".into());
+    assert!(
+        store
+            .read(hydrus_store::settings::get::<CustomDefaults>)
+            .unwrap()
+            .predicates
+            .is_empty()
+    );
+    assert_eq!(
+        window
+            .get_panels()
+            .row_data(0)
+            .unwrap()
+            .fields
+            .row_data(1)
+            .unwrap()
+            .value,
+        731
+    );
+    window.invoke_defaults_menu(0);
+    assert_eq!(actions(&window), strings(&case["menu_before"]));
+    window.invoke_cancel();
+    window.invoke_defaults_action(0, "set this as new default".into());
+    assert!(
+        store
+            .read(hydrus_store::settings::get::<CustomDefaults>)
+            .unwrap()
+            .predicates
+            .is_empty()
+    );
+    let window = open();
+    assert_eq!(
+        window
+            .get_panels()
+            .row_data(0)
+            .unwrap()
+            .fields
+            .row_data(1)
+            .unwrap()
+            .value,
+        256
+    );
+    window.invoke_number_edited(0, 1, 731);
+    window.invoke_defaults_action(0, "set this as new default".into());
+    window.invoke_cancel();
+    let window = open();
+    window.invoke_defaults_menu(0);
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 1020, 540);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("predicate_custom_defaults.png"),
+        &pixels,
+        1020,
+        540,
+    )
+    .unwrap();
+    window.invoke_ok(0);
+    assert_eq!(shown_predicates(&ui), ["system:limit is 731"]);
+    drop(bound);
+    drop(ui);
+    drop(store);
+    let reopened = Store::open(dirs[1].path()).unwrap();
+    assert_eq!(
+        reopened
+            .read(hydrus_store::settings::get::<CustomDefaults>)
+            .unwrap()
+            .predicates,
+        kept.predicates
+    );
+}
+
+#[test]
+fn regex_star_save_is_immediate_but_acceptance_checks_and_viewtime_keeps_milliseconds() {
+    use hydrus_gui::predicate_editors::defaults::CustomDefaults;
+    use slint::ComponentHandle as _;
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("".into());
+    ui.invoke_suggestion_chosen(suggestion(&ui, "system:urls"));
+    let window = bound
+        .predicate_editor
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    window.invoke_text_edited(2, 3, "predicate-defaults\\.example".into());
+    window.invoke_defaults_action(2, "set this as new default".into());
+    window.invoke_text_edited(2, 3, "[".into());
+    window.invoke_defaults_action(2, "set this as new default".into());
+    assert!(window.get_error().is_empty());
+    let kept = store
+        .read(hydrus_store::settings::get::<CustomDefaults>)
+        .unwrap();
+    assert_eq!(
+        kept.predicates,
+        vec![Predicate::System(
+            hydrus_search::SystemPredicate::KnownUrl {
+                rule: hydrus_core::search::predicate::UrlRule::Regex("[".into()),
+                has: true,
+            }
+        )]
+    );
+    window.invoke_ok(2);
+    assert!(window.get_error().contains("regex"));
+    assert!(shown_predicates(&ui).is_empty());
+    window.invoke_cancel();
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<CustomDefaults>)
+            .unwrap(),
+        kept
+    );
+    ui.invoke_search_edited("".into());
+    ui.invoke_suggestion_chosen(suggestion(&ui, "system:urls"));
+    let window = bound
+        .predicate_editor
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(
+        window
+            .get_panels()
+            .row_data(2)
+            .unwrap()
+            .fields
+            .row_data(3)
+            .unwrap()
+            .text,
+        "["
+    );
+    window.invoke_defaults_menu(2);
+    let recording = hydrus_testkit::fixture_json("predicate_custom_defaults.json");
+    assert_eq!(
+        window
+            .get_defaults_actions()
+            .iter()
+            .map(|a| a.to_string())
+            .collect::<Vec<_>>(),
+        strings(&recording["invalid_regex"]["menu_after_save"])
+    );
+    window.invoke_cancel();
+    ui.invoke_search_edited("".into());
+    ui.invoke_suggestion_chosen(suggestion(&ui, "system:file viewing statistics"));
+    let window = bound
+        .predicate_editor
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    window.invoke_number_edited(1, 7, 37);
+    window.invoke_defaults_action(1, "set this as new default".into());
+    window.invoke_cancel();
+    ui.invoke_search_edited("".into());
+    ui.invoke_suggestion_chosen(suggestion(&ui, "system:file viewing statistics"));
+    let window = bound
+        .predicate_editor
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(
+        window
+            .get_panels()
+            .row_data(1)
+            .unwrap()
+            .fields
+            .row_data(7)
+            .unwrap()
+            .value,
+        37
+    );
+    window.invoke_ok(1);
+    let defaults = store
+        .read(hydrus_store::settings::get::<CustomDefaults>)
+        .unwrap();
+    let recent = store
+        .read(hydrus_store::settings::get::<hydrus_core::search::recent::RecentPredicates>)
+        .unwrap();
+    let value = defaults
+        .predicates
+        .iter()
+        .find(|p| {
+            matches!(
+                p,
+                Predicate::System(hydrus_search::SystemPredicate::FileViewingStats { .. })
+            )
+        })
+        .unwrap();
+    assert!(matches!(
+        value,
+        Predicate::System(hydrus_search::SystemPredicate::FileViewingStats {
+            stat: hydrus_core::search::predicate::ViewingStat::ViewTimeMilliseconds,
+            value: 600_037,
+            ..
+        })
+    ));
+    assert!(
+        recent.by_type[&29]
+            .iter()
+            .any(|p| Predicate::System(p.clone()) == *value)
+    );
+}
+
+#[test]
+fn imported_predicate_defaults_reach_panels_and_reset_never_resurrects_legacy_values() {
+    use hydrus_gui::predicate_editors::defaults::CustomDefaults;
+    use slint::ComponentHandle as _;
+    let recording = hydrus_testkit::fixture_json("predicate_custom_defaults.json");
+    let source = hydrus_testkit::legacy_fixture("basic");
+    let destination = tempfile::tempdir().unwrap();
+    let conn = rusqlite::Connection::open(source.path().join("client.db")).unwrap();
+    conn.execute(
+        "UPDATE json_dumps SET dump = ?1 WHERE dump_type = 22",
+        [recording["options_saved_families"][2]
+            .to_string()
+            .into_bytes()],
+    )
+    .unwrap();
+    drop(conn);
+    import_legacy(
+        source.path(),
+        &destination.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(destination.path()).unwrap();
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<CustomDefaults>)
+            .unwrap()
+            .predicates
+            .len(),
+        38
+    );
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let open = || {
+        ui.invoke_search_edited("".into());
+        ui.invoke_suggestion_chosen(suggestion(&ui, "system:limit"));
+        bound
+            .predicate_editor
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong()
+    };
+    let window = open();
+    assert_eq!(
+        window
+            .get_panels()
+            .row_data(0)
+            .unwrap()
+            .fields
+            .row_data(1)
+            .unwrap()
+            .value,
+        259
+    );
+    window.invoke_defaults_menu(0);
+    assert_eq!(window.get_defaults_actions().row_count(), 2);
+    window.invoke_defaults_action(0, "reset to original default".into());
+    assert_eq!(
+        window
+            .get_panels()
+            .row_data(0)
+            .unwrap()
+            .fields
+            .row_data(1)
+            .unwrap()
+            .value,
+        259
+    );
+    window.invoke_cancel();
+    assert!(shown_predicates(&ui).is_empty());
+    let window = open();
+    assert_eq!(
+        window
+            .get_panels()
+            .row_data(0)
+            .unwrap()
+            .fields
+            .row_data(1)
+            .unwrap()
+            .value,
+        256
+    );
+    window.invoke_defaults_menu(0);
+    assert_eq!(window.get_defaults_actions().row_count(), 1);
+    window.invoke_cancel();
+    drop(bound);
+    drop(ui);
+    drop(store);
+    let reopened = Store::open(destination.path()).unwrap();
+    let defaults = reopened
+        .read(hydrus_store::settings::get::<CustomDefaults>)
+        .unwrap();
+    assert_eq!(defaults.predicates.len(), 37);
+    assert!(!defaults.predicates.iter().any(|p| matches!(
+        p,
+        Predicate::System(hydrus_search::SystemPredicate::Limit(_))
+    )));
 }

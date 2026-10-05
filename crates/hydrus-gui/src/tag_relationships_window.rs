@@ -50,6 +50,15 @@ pub(crate) fn open(
     applied: Rc<dyn Fn()>,
 ) -> Result<TagRelationshipsWindow, slint::PlatformError> {
     let window = TagRelationshipsWindow::new()?;
+    window
+        .global::<crate::TagTextHistory<'_>>()
+        .on_record(crate::write_tag_history::record);
+    window
+        .global::<crate::TagTextHistory<'_>>()
+        .on_undo(crate::write_tag_history::undo);
+    window
+        .global::<crate::TagTextHistory<'_>>()
+        .on_redo(crate::write_tag_history::redo);
     window.set_use_listbook(model.use_listbook());
     window.set_siblings(model.kind() == hydrus_store::display::RelationKind::Siblings);
     window.set_service_names(ModelRc::new(VecModel::from(
@@ -140,6 +149,8 @@ pub(crate) fn open(
             window.set_right_tab(i32::try_from(right_input.tab().index()).unwrap_or(0));
             window.set_left_suggestions(suggestions(left_input));
             window.set_right_suggestions(suggestions(right_input));
+            window.set_left_selected(ModelRc::new(VecModel::from(left_input.selection_mask())));
+            window.set_right_selected(ModelRc::new(VecModel::from(right_input.selection_mask())));
             window.set_left_highlighted(
                 left_input
                     .highlighted()
@@ -241,12 +252,19 @@ pub(crate) fn open(
         let tag_menu = tag_menu.clone();
         let binding = binding.clone();
         let target = menu_target.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
         move |right, i, x, y| {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
+                return;
+            }
             if let Ok(i) = usize::try_from(i) {
                 let mut binding = binding.borrow_mut();
                 target.set((binding.model.service(), right));
+                binding.input_mut(right).click(i, false, false);
                 let entries = binding.input_mut(right).menu(i);
                 drop(binding);
+                refresh();
                 tag_menu.open(&entries, x, y);
             }
         }
@@ -295,6 +313,12 @@ pub(crate) fn open(
                 return;
             };
             let answers = binding.answers.clone();
+            let declined_paste = match &op {
+                Operation::Paste { right, .. } if answers.first().is_some_and(Option::is_none) => {
+                    Some(*right)
+                }
+                _ => None,
+            };
             let result = match &op {
                 Operation::Paste {
                     right,
@@ -309,11 +333,10 @@ pub(crate) fn open(
                             reason: false,
                         })
                     } else {
-                        if answers[0].is_some() {
-                            if let Err(e) = binding.model.paste_tags(*right, tags) {
-                                window.set_error(e.into());
-                            }
-                            binding.input_mut(*right).clear();
+                        if answers[0].is_some()
+                            && let Err(e) = binding.model.paste_tags(*right, tags)
+                        {
+                            window.set_error(e.into());
                         }
                         Ok(())
                     }
@@ -369,6 +392,9 @@ pub(crate) fn open(
                 window.set_question("".into());
             }
             drop(binding);
+            if let Some(right) = declined_paste {
+                window.invoke_normal_paste(right);
+            }
             refresh();
         }
     });
@@ -480,7 +506,9 @@ pub(crate) fn open(
             if b.input_mut(right).text() != text.as_str() {
                 b.input_mut(right).set_text(&text);
             }
-            if let Some(chosen) = b.input_mut(right).chosen(None) {
+            let chosen = b.input_mut(right).chosen_tags(None);
+            if !chosen.is_empty() {
+                let chosen = chosen.join("\n");
                 match b.model.enter_tags(right, &chosen) {
                     Ok(()) => {
                         w.set_error("".into());
@@ -552,6 +580,54 @@ pub(crate) fn open(
             refresh();
         }
     });
+    window.on_autocomplete_navigate({
+        let binding = binding.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        let tag_menu = tag_menu.clone();
+        move |right, direction, ctrl, shift| {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
+                return;
+            }
+            binding
+                .borrow_mut()
+                .input_mut(right)
+                .navigate(direction, ctrl, shift);
+            refresh();
+        }
+    });
+    window.on_autocomplete_results_action({
+        let binding = binding.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        let tag_menu = tag_menu.clone();
+        move |right, action| {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
+                return false;
+            }
+            let handled = crate::write_tag_menu::results_action(
+                binding.borrow_mut().input_mut(right),
+                action,
+            );
+            refresh();
+            handled
+        }
+    });
+    window.on_autocomplete_clicked({
+        let binding = binding.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        let tag_menu = tag_menu.clone();
+        move |right, i, ctrl, shift| {
+            if !active.get() || tag_menu.busy() || binding.borrow().operation.is_some() {
+                return;
+            }
+            if let Ok(i) = usize::try_from(i) {
+                binding.borrow_mut().input_mut(right).click(i, ctrl, shift);
+                refresh();
+            }
+        }
+    });
     window.on_autocomplete_chosen({
         let binding = binding.clone();
         let refresh = refresh.clone();
@@ -563,7 +639,9 @@ pub(crate) fn open(
                 return;
             }
             let mut b = binding.borrow_mut();
-            if let Some(tag) = b.input_mut(right).chosen(usize::try_from(i).ok()) {
+            let tags = b.input_mut(right).chosen_tags(usize::try_from(i).ok());
+            if !tags.is_empty() {
+                let tag = tags.join("\n");
                 if let Err(e) = b.model.enter_tags(right, &tag)
                     && let Some(w) = weak.upgrade()
                 {
@@ -613,7 +691,6 @@ pub(crate) fn open(
                     {
                         w.set_error(e.into());
                     }
-                    b.input_mut(right).clear();
                     drop(b);
                     refresh();
                     true

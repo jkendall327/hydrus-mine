@@ -8,7 +8,7 @@ use slint::PhysicalSize;
 use slint::platform::software_renderer::{
     MinimalSoftwareWindow, PremultipliedRgbaColor, RepaintBufferType,
 };
-use slint::platform::{Platform, PlatformError, WindowAdapter};
+use slint::platform::{Clipboard, Platform, PlatformError, WindowAdapter};
 
 /// Every window made so far, in order.
 #[derive(Clone, Default)]
@@ -31,11 +31,37 @@ impl Windows {
     }
 }
 
+thread_local! {
+    static CLIPBOARD_TEXT: RefCell<Option<String>> = const { RefCell::new(None) };
+}
+
+/// Seed the native text editor's clipboard for headless key/paste tests.
+pub fn set_clipboard_text(text: &str) {
+    CLIPBOARD_TEXT.with(|clipboard| *clipboard.borrow_mut() = Some(text.to_owned()));
+}
+
+/// Read the native text editor clipboard in headless keyboard regressions.
+pub fn clipboard_text() -> Option<String> {
+    CLIPBOARD_TEXT.with(|clipboard| clipboard.borrow().clone())
+}
+
 struct Headless {
     windows: Windows,
 }
 
 impl Platform for Headless {
+    fn set_clipboard_text(&self, text: &str, clipboard: Clipboard) {
+        if clipboard == Clipboard::DefaultClipboard {
+            set_clipboard_text(text);
+        }
+    }
+    fn clipboard_text(&self, clipboard: Clipboard) -> Option<String> {
+        if clipboard == Clipboard::DefaultClipboard {
+            CLIPBOARD_TEXT.with(|text| text.borrow().clone())
+        } else {
+            None
+        }
+    }
     fn create_window_adapter(&self) -> Result<Rc<dyn WindowAdapter>, PlatformError> {
         let window = MinimalSoftwareWindow::new(RepaintBufferType::NewBuffer);
         self.windows.0.borrow_mut().push(window.clone());

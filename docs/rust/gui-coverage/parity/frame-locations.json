@@ -1,0 +1,658 @@
+{
+  "schema_version": 1,
+  "task": "GUI Options remembered/default frame locations",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "source_commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+  "validation": {
+    "reference": "executed actual Qt recorder and inspected its child PNG",
+    "formatting": "rustfmt --edition2024, Python py_compile and git diff --check passed",
+    "slint_source_check": "cached warning-aware Slint compiler passed, no Cargo",
+    "rust_tests": "authored for root hosted CI; pending"
+  },
+  "eligible_concrete_first_pass_count": 4,
+  "entries": [
+    {
+      "reference_id": "audit-options-gui-frame-locations-flip-remember-size",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Selected frame rows independently flip only remember-size, preserve remembered coordinates/size/state and other rows, retain stable selected identities under resort, and stage until Options Apply. Cancel discards; accepted flips persist/reopen and govern the existing main/media/Options saved-size placement paths.",
+      "exactBehavior": "Selected frame rows independently flip only remember-size, preserve remembered coordinates/size/state and other rows, retain stable selected identities under resort, and stage until Options Apply. Cancel discards; accepted flips persist/reopen and govern the existing main/media/Options saved-size placement paths.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/GUIPanel.py",
+        "line": 83,
+        "symbol": "GUIPanel frame locations"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_frames.rs",
+          "line": 19,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/frame_locations.rs",
+          "line": 115,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn action("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3654,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn set_frame_locations("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/windows.rs",
+          "line": 24,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "pub fn place("
+        },
+        {
+          "relativepath": "crates/hydrus-core/src/windows.rs",
+          "line": 203,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn saved("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/frame_locations.rs",
+          "line": 53,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn frame_table_defaults_cells_and_selected_actions_match_actual_qt("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/frame_locations.rs",
+          "line": 129,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn settings_keep_unknown_rows_and_merge_unedited_runtime_geometry("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/frame_locations.rs",
+          "line": 69,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn frame_options_table_child_staging_and_saved_viewer_geometry_match_reference("
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_frame_locations.py",
+        "fixture": "oracle/fixtures/frame_locations.json",
+        "screenshots": [
+          "oracle/fixtures/frame_locations_child.png"
+        ],
+        "commit": "b7952ba5722c1eaa2c084954306cc50edc49c1bf",
+        "executed": true,
+        "result": "Passed actual Qt recording21:00 UTC, clean reference shutdown:22 original rows/cells, selected multi-row flip-size/position and reset-size/position, parent draft discard vs UpdateOptions/apply/reopen, real EditFrameLocations child cancel/accept, pair None/clamps/retained values and all default-position choices. Only dialog acceptance and child user inputs scripted; no remote/public domains or reference edits."
+      },
+      "limits": [
+        "Placement consumers use remembered size/position and maximised/fullscreen for main_gui, media_viewer and manage_options_dialog. Other named owners, default gravity/parent-cursor positioning, screen fitting and offscreen rescue remain parent limitations; no parent or geometry-editor completion claimed.",
+        "Native MinimalSoftwareWindow supports size/state but does not implement native-position adapter. Coordinate persistence and actual placement dispatch are covered; no rendered absolute desktop-position assertion is claimed.",
+        "Rust model/native/store regressions authored for hosted CI only; no local Cargo builds, tests or mutations run. General ListTable arrow-key navigation remains outside this slice."
+      ],
+      "limitations": [
+        "Placement consumers use remembered size/position and maximised/fullscreen for main_gui, media_viewer and manage_options_dialog. Other named owners, default gravity/parent-cursor positioning, screen fitting and offscreen rescue remain parent limitations; no parent or geometry-editor completion claimed.",
+        "Native MinimalSoftwareWindow supports size/state but does not implement native-position adapter. Coordinate persistence and actual placement dispatch are covered; no rendered absolute desktop-position assertion is claimed.",
+        "Rust model/native/store regressions authored for hosted CI only; no local Cargo builds, tests or mutations run. General ListTable arrow-key navigation remains outside this slice."
+      ]
+    },
+    {
+      "reference_id": "audit-options-gui-frame-locations-flip-remember-position",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Selected frame rows independently flip only remember-position without clearing stored coordinates or other fields. Stable extended selection persists across resort; parent Cancel discards and Apply persists/reopens. The existing saved-position placement and saved-frame consumers honour the flag for supported main/media/Options owners.",
+      "exactBehavior": "Selected frame rows independently flip only remember-position without clearing stored coordinates or other fields. Stable extended selection persists across resort; parent Cancel discards and Apply persists/reopens. The existing saved-position placement and saved-frame consumers honour the flag for supported main/media/Options owners.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/GUIPanel.py",
+        "line": 83,
+        "symbol": "GUIPanel frame locations"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_frames.rs",
+          "line": 19,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/frame_locations.rs",
+          "line": 115,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn action("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3654,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn set_frame_locations("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/windows.rs",
+          "line": 24,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "pub fn place("
+        },
+        {
+          "relativepath": "crates/hydrus-core/src/windows.rs",
+          "line": 203,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn saved("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/frame_locations.rs",
+          "line": 53,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn frame_table_defaults_cells_and_selected_actions_match_actual_qt("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/frame_locations.rs",
+          "line": 129,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn settings_keep_unknown_rows_and_merge_unedited_runtime_geometry("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/frame_locations.rs",
+          "line": 69,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn frame_options_table_child_staging_and_saved_viewer_geometry_match_reference("
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_frame_locations.py",
+        "fixture": "oracle/fixtures/frame_locations.json",
+        "screenshots": [
+          "oracle/fixtures/frame_locations_child.png"
+        ],
+        "commit": "b7952ba5722c1eaa2c084954306cc50edc49c1bf",
+        "executed": true,
+        "result": "Passed actual Qt recording21:00 UTC, clean reference shutdown:22 original rows/cells, selected multi-row flip-size/position and reset-size/position, parent draft discard vs UpdateOptions/apply/reopen, real EditFrameLocations child cancel/accept, pair None/clamps/retained values and all default-position choices. Only dialog acceptance and child user inputs scripted; no remote/public domains or reference edits."
+      },
+      "limits": [
+        "Placement consumers use remembered size/position and maximised/fullscreen for main_gui, media_viewer and manage_options_dialog. Other named owners, default gravity/parent-cursor positioning, screen fitting and offscreen rescue remain parent limitations; no parent or geometry-editor completion claimed.",
+        "Native MinimalSoftwareWindow supports size/state but does not implement native-position adapter. Coordinate persistence and actual placement dispatch are covered; no rendered absolute desktop-position assertion is claimed.",
+        "Rust model/native/store regressions authored for hosted CI only; no local Cargo builds, tests or mutations run. General ListTable arrow-key navigation remains outside this slice."
+      ],
+      "limitations": [
+        "Placement consumers use remembered size/position and maximised/fullscreen for main_gui, media_viewer and manage_options_dialog. Other named owners, default gravity/parent-cursor positioning, screen fitting and offscreen rescue remain parent limitations; no parent or geometry-editor completion claimed.",
+        "Native MinimalSoftwareWindow supports size/state but does not implement native-position adapter. Coordinate persistence and actual placement dispatch are covered; no rendered absolute desktop-position assertion is claimed.",
+        "Rust model/native/store regressions authored for hosted CI only; no local Cargo builds, tests or mutations run. General ListTable arrow-key navigation remains outside this slice."
+      ]
+    },
+    {
+      "reference_id": "audit-options-gui-frame-locations-reset-last-size",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Reset last size clears only selected rows to None, retaining remember flags and all other fields. Parent Apply persists; Cancel discards. Reopened child displays none set with retained/default640×480 spinner values; actual media viewer no longer opens with the previous saved dimensions.",
+      "exactBehavior": "Reset last size clears only selected rows to None, retaining remember flags and all other fields. Parent Apply persists; Cancel discards. Reopened child displays none set with retained/default640×480 spinner values; actual media viewer no longer opens with the previous saved dimensions.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/GUIPanel.py",
+        "line": 83,
+        "symbol": "GUIPanel frame locations"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_frames.rs",
+          "line": 19,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/frame_locations.rs",
+          "line": 115,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn action("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3654,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn set_frame_locations("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/windows.rs",
+          "line": 24,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "pub fn place("
+        },
+        {
+          "relativepath": "crates/hydrus-core/src/windows.rs",
+          "line": 203,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn saved("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/frame_locations.rs",
+          "line": 53,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn frame_table_defaults_cells_and_selected_actions_match_actual_qt("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/frame_locations.rs",
+          "line": 129,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn settings_keep_unknown_rows_and_merge_unedited_runtime_geometry("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/frame_locations.rs",
+          "line": 69,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn frame_options_table_child_staging_and_saved_viewer_geometry_match_reference("
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_frame_locations.py",
+        "fixture": "oracle/fixtures/frame_locations.json",
+        "screenshots": [
+          "oracle/fixtures/frame_locations_child.png"
+        ],
+        "commit": "b7952ba5722c1eaa2c084954306cc50edc49c1bf",
+        "executed": true,
+        "result": "Passed actual Qt recording21:00 UTC, clean reference shutdown:22 original rows/cells, selected multi-row flip-size/position and reset-size/position, parent draft discard vs UpdateOptions/apply/reopen, real EditFrameLocations child cancel/accept, pair None/clamps/retained values and all default-position choices. Only dialog acceptance and child user inputs scripted; no remote/public domains or reference edits."
+      },
+      "limits": [
+        "Placement consumers use remembered size/position and maximised/fullscreen for main_gui, media_viewer and manage_options_dialog. Other named owners, default gravity/parent-cursor positioning, screen fitting and offscreen rescue remain parent limitations; no parent or geometry-editor completion claimed.",
+        "Native MinimalSoftwareWindow supports size/state but does not implement native-position adapter. Coordinate persistence and actual placement dispatch are covered; no rendered absolute desktop-position assertion is claimed.",
+        "Rust model/native/store regressions authored for hosted CI only; no local Cargo builds, tests or mutations run. General ListTable arrow-key navigation remains outside this slice."
+      ],
+      "limitations": [
+        "Placement consumers use remembered size/position and maximised/fullscreen for main_gui, media_viewer and manage_options_dialog. Other named owners, default gravity/parent-cursor positioning, screen fitting and offscreen rescue remain parent limitations; no parent or geometry-editor completion claimed.",
+        "Native MinimalSoftwareWindow supports size/state but does not implement native-position adapter. Coordinate persistence and actual placement dispatch are covered; no rendered absolute desktop-position assertion is claimed.",
+        "Rust model/native/store regressions authored for hosted CI only; no local Cargo builds, tests or mutations run. General ListTable arrow-key navigation remains outside this slice."
+      ]
+    },
+    {
+      "reference_id": "audit-options-gui-frame-locations-reset-last-position",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Reset last position clears only selected rows to None while retaining remember flags, dimensions, gravity/default-position and state. Parent Apply persists/reopens, Cancel discards; reopened optional pair shows none set and reference defaults(20,20). Supported placement skips the obsolete remembered coordinates when None.",
+      "exactBehavior": "Reset last position clears only selected rows to None while retaining remember flags, dimensions, gravity/default-position and state. Parent Apply persists/reopens, Cancel discards; reopened optional pair shows none set and reference defaults(20,20). Supported placement skips the obsolete remembered coordinates when None.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/GUIPanel.py",
+        "line": 83,
+        "symbol": "GUIPanel frame locations"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_frames.rs",
+          "line": 19,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/frame_locations.rs",
+          "line": 115,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn action("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3654,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn set_frame_locations("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/windows.rs",
+          "line": 24,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "pub fn place("
+        },
+        {
+          "relativepath": "crates/hydrus-core/src/windows.rs",
+          "line": 203,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn saved("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/frame_locations.rs",
+          "line": 53,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn frame_table_defaults_cells_and_selected_actions_match_actual_qt("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/frame_locations.rs",
+          "line": 129,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn settings_keep_unknown_rows_and_merge_unedited_runtime_geometry("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/frame_locations.rs",
+          "line": 69,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn frame_options_table_child_staging_and_saved_viewer_geometry_match_reference("
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_frame_locations.py",
+        "fixture": "oracle/fixtures/frame_locations.json",
+        "screenshots": [
+          "oracle/fixtures/frame_locations_child.png"
+        ],
+        "commit": "b7952ba5722c1eaa2c084954306cc50edc49c1bf",
+        "executed": true,
+        "result": "Passed actual Qt recording21:00 UTC, clean reference shutdown:22 original rows/cells, selected multi-row flip-size/position and reset-size/position, parent draft discard vs UpdateOptions/apply/reopen, real EditFrameLocations child cancel/accept, pair None/clamps/retained values and all default-position choices. Only dialog acceptance and child user inputs scripted; no remote/public domains or reference edits."
+      },
+      "limits": [
+        "Placement consumers use remembered size/position and maximised/fullscreen for main_gui, media_viewer and manage_options_dialog. Other named owners, default gravity/parent-cursor positioning, screen fitting and offscreen rescue remain parent limitations; no parent or geometry-editor completion claimed.",
+        "Native MinimalSoftwareWindow supports size/state but does not implement native-position adapter. Coordinate persistence and actual placement dispatch are covered; no rendered absolute desktop-position assertion is claimed.",
+        "Rust model/native/store regressions authored for hosted CI only; no local Cargo builds, tests or mutations run. General ListTable arrow-key navigation remains outside this slice."
+      ],
+      "limitations": [
+        "Placement consumers use remembered size/position and maximised/fullscreen for main_gui, media_viewer and manage_options_dialog. Other named owners, default gravity/parent-cursor positioning, screen fitting and offscreen rescue remain parent limitations; no parent or geometry-editor completion claimed.",
+        "Native MinimalSoftwareWindow supports size/state but does not implement native-position adapter. Coordinate persistence and actual placement dispatch are covered; no rendered absolute desktop-position assertion is claimed.",
+        "Rust model/native/store regressions authored for hosted CI only; no local Cargo builds, tests or mutations run. General ListTable arrow-key navigation remains outside this slice."
+      ]
+    },
+    {
+      "reference_id": "audit-options-gui-frame-locations-editor-list",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "partial",
+      "proposedStatus": "partial",
+      "behavior": "The real GUI Options table shows all22 reference frame names plus imported unknown names and all nine exact display/sort columns. Extended selected rows and sort/replacement preserve stable identities; edit, independent flips and resets are live staged controls. Not completed as a parent: other named placement consumers and general ListTable keyboard controls remain missing.",
+      "exactBehavior": "The real GUI Options table shows all22 reference frame names plus imported unknown names and all nine exact display/sort columns. Extended selected rows and sort/replacement preserve stable identities; edit, independent flips and resets are live staged controls. Not completed as a parent: other named placement consumers and general ListTable keyboard controls remain missing.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/GUIPanel.py",
+        "line": 83,
+        "symbol": "GUIPanel frame locations"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_frames.rs",
+          "line": 19,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/frame_locations.rs",
+          "line": 115,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn action("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3654,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn set_frame_locations("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/windows.rs",
+          "line": 24,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "pub fn place("
+        },
+        {
+          "relativepath": "crates/hydrus-core/src/windows.rs",
+          "line": 203,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn saved("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/frame_locations.rs",
+          "line": 53,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn frame_table_defaults_cells_and_selected_actions_match_actual_qt("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/frame_locations.rs",
+          "line": 129,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn settings_keep_unknown_rows_and_merge_unedited_runtime_geometry("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/frame_locations.rs",
+          "line": 69,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn frame_options_table_child_staging_and_saved_viewer_geometry_match_reference("
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_frame_locations.py",
+        "fixture": "oracle/fixtures/frame_locations.json",
+        "screenshots": [
+          "oracle/fixtures/frame_locations_child.png"
+        ],
+        "commit": "b7952ba5722c1eaa2c084954306cc50edc49c1bf",
+        "executed": true,
+        "result": "Passed actual Qt recording21:00 UTC, clean reference shutdown:22 original rows/cells, selected multi-row flip-size/position and reset-size/position, parent draft discard vs UpdateOptions/apply/reopen, real EditFrameLocations child cancel/accept, pair None/clamps/retained values and all default-position choices. Only dialog acceptance and child user inputs scripted; no remote/public domains or reference edits."
+      },
+      "limits": [
+        "Placement consumers use remembered size/position and maximised/fullscreen for main_gui, media_viewer and manage_options_dialog. Other named owners, default gravity/parent-cursor positioning, screen fitting and offscreen rescue remain parent limitations; no parent or geometry-editor completion claimed.",
+        "Native MinimalSoftwareWindow supports size/state but does not implement native-position adapter. Coordinate persistence and actual placement dispatch are covered; no rendered absolute desktop-position assertion is claimed.",
+        "Rust model/native/store regressions authored for hosted CI only; no local Cargo builds, tests or mutations run. General ListTable arrow-key navigation remains outside this slice."
+      ],
+      "limitations": [
+        "Placement consumers use remembered size/position and maximised/fullscreen for main_gui, media_viewer and manage_options_dialog. Other named owners, default gravity/parent-cursor positioning, screen fitting and offscreen rescue remain parent limitations; no parent or geometry-editor completion claimed.",
+        "Native MinimalSoftwareWindow supports size/state but does not implement native-position adapter. Coordinate persistence and actual placement dispatch are covered; no rendered absolute desktop-position assertion is claimed.",
+        "Rust model/native/store regressions authored for hosted CI only; no local Cargo builds, tests or mutations run. General ListTable arrow-key navigation remains outside this slice."
+      ]
+    },
+    {
+      "reference_id": "audit-options-gui-frame-locations-edit",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "partial",
+      "proposedStatus": "partial",
+      "behavior": "The live owned geometry child edits both remember flags, noneable dimensions/coordinates with exact bounds and retained values, x/y gravity, default position, maximised/fullscreen. Child Apply replaces only the parent draft; child Cancel discards; parent Cancel force-closes/inactivates; child blocks parent Apply. Parent Apply persists/reopens and reaches existing supported placement. Gravity/default-position and other named-owner consumers remain unfinished, so editor stays Partial.",
+      "exactBehavior": "The live owned geometry child edits both remember flags, noneable dimensions/coordinates with exact bounds and retained values, x/y gravity, default position, maximised/fullscreen. Child Apply replaces only the parent draft; child Cancel discards; parent Cancel force-closes/inactivates; child blocks parent Apply. Parent Apply persists/reopens and reaches existing supported placement. Gravity/default-position and other named-owner consumers remain unfinished, so editor stays Partial.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/GUIPanel.py",
+        "line": 83,
+        "symbol": "GUIPanel frame locations"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_frames.rs",
+          "line": 19,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/frame_locations.rs",
+          "line": 115,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn action("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3654,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn set_frame_locations("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/windows.rs",
+          "line": 24,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "pub fn place("
+        },
+        {
+          "relativepath": "crates/hydrus-core/src/windows.rs",
+          "line": 203,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn saved("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/frame_locations.rs",
+          "line": 53,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn frame_table_defaults_cells_and_selected_actions_match_actual_qt("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/frame_locations.rs",
+          "line": 129,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn settings_keep_unknown_rows_and_merge_unedited_runtime_geometry("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/frame_locations.rs",
+          "line": 69,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn frame_options_table_child_staging_and_saved_viewer_geometry_match_reference("
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_frame_locations.py",
+        "fixture": "oracle/fixtures/frame_locations.json",
+        "screenshots": [
+          "oracle/fixtures/frame_locations_child.png"
+        ],
+        "commit": "b7952ba5722c1eaa2c084954306cc50edc49c1bf",
+        "executed": true,
+        "result": "Passed actual Qt recording21:00 UTC, clean reference shutdown:22 original rows/cells, selected multi-row flip-size/position and reset-size/position, parent draft discard vs UpdateOptions/apply/reopen, real EditFrameLocations child cancel/accept, pair None/clamps/retained values and all default-position choices. Only dialog acceptance and child user inputs scripted; no remote/public domains or reference edits."
+      },
+      "limits": [
+        "Placement consumers use remembered size/position and maximised/fullscreen for main_gui, media_viewer and manage_options_dialog. Other named owners, default gravity/parent-cursor positioning, screen fitting and offscreen rescue remain parent limitations; no parent or geometry-editor completion claimed.",
+        "Native MinimalSoftwareWindow supports size/state but does not implement native-position adapter. Coordinate persistence and actual placement dispatch are covered; no rendered absolute desktop-position assertion is claimed.",
+        "Rust model/native/store regressions authored for hosted CI only; no local Cargo builds, tests or mutations run. General ListTable arrow-key navigation remains outside this slice."
+      ],
+      "limitations": [
+        "Placement consumers use remembered size/position and maximised/fullscreen for main_gui, media_viewer and manage_options_dialog. Other named owners, default gravity/parent-cursor positioning, screen fitting and offscreen rescue remain parent limitations; no parent or geometry-editor completion claimed.",
+        "Native MinimalSoftwareWindow supports size/state but does not implement native-position adapter. Coordinate persistence and actual placement dispatch are covered; no rendered absolute desktop-position assertion is claimed.",
+        "Rust model/native/store regressions authored for hosted CI only; no local Cargo builds, tests or mutations run. General ListTable arrow-key navigation remains outside this slice."
+      ]
+    },
+    {
+      "reference_id": "audit-options-gui-frame-locations",
+      "previous_status": "partial",
+      "before": "partial",
+      "proposed_status": "partial",
+      "proposedStatus": "partial",
+      "behavior": "Adds the complete editable frame table, staged geometry child and four real selected-row flip/reset controls; preserves all legacy/unknown frames and unedited concurrent runtime geometry. Main/media placement consumes edited remembered values. Options opens using manage_options_dialog, but Cancel, native close and unchanged Apply preserve its stored tuple; explicit frame edits/resets persist through parent Apply. Offscreen rescue, fitting/default placement and remaining named owners keep this parent Partial.",
+      "exactBehavior": "Adds the complete editable frame table, staged geometry child and four real selected-row flip/reset controls; preserves all legacy/unknown frames and unedited concurrent runtime geometry. Main/media placement consumes edited remembered values. Options opens using manage_options_dialog, but Cancel, native close and unchanged Apply preserve its stored tuple; explicit frame edits/resets persist through parent Apply. Offscreen rescue, fitting/default placement and remaining named owners keep this parent Partial.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/GUIPanel.py",
+        "line": 83,
+        "symbol": "GUIPanel frame locations"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/options_frames.rs",
+          "line": 19,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "pub(crate) fn bind("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/frame_locations.rs",
+          "line": 115,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn action("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3654,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn set_frame_locations("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/windows.rs",
+          "line": 24,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "pub fn place("
+        },
+        {
+          "relativepath": "crates/hydrus-core/src/windows.rs",
+          "line": 203,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "    pub fn saved("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/frame_locations.rs",
+          "line": 155,
+          "commit": "d92abea9cddfd2fd9df89d614bbdc84989c021e0",
+          "symbol": "pub fn save_window_state("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/windows.rs",
+          "line": 53,
+          "commit": "d92abea9cddfd2fd9df89d614bbdc84989c021e0",
+          "symbol": "pub fn save_named("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/frame_locations.rs",
+          "line": 53,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn frame_table_defaults_cells_and_selected_actions_match_actual_qt("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/frame_locations.rs",
+          "line": 129,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn settings_keep_unknown_rows_and_merge_unedited_runtime_geometry("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/frame_locations.rs",
+          "line": 69,
+          "commit": "d7567b3456af869edcfe4b84b26ceb63ebb4bb3d",
+          "symbol": "fn frame_options_table_child_staging_and_saved_viewer_geometry_match_reference("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/frame_locations.rs",
+          "line": 187,
+          "commit": "d92abea9cddfd2fd9df89d614bbdc84989c021e0",
+          "symbol": "fn named_geometry_transactions_preserve_peer_frames_and_latest_viewer_save_preference("
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_frame_locations.py",
+        "fixture": "oracle/fixtures/frame_locations.json",
+        "screenshots": [
+          "oracle/fixtures/frame_locations_child.png"
+        ],
+        "commit": "b7952ba5722c1eaa2c084954306cc50edc49c1bf",
+        "executed": true,
+        "result": "Passed actual Qt recording21:00 UTC, clean reference shutdown:22 original rows/cells, selected multi-row flip-size/position and reset-size/position, parent draft discard vs UpdateOptions/apply/reopen, real EditFrameLocations child cancel/accept, pair None/clamps/retained values and all default-position choices. Only dialog acceptance and child user inputs scripted; no remote/public domains or reference edits."
+      },
+      "limits": [
+        "Placement consumers use remembered size/position and maximised/fullscreen for main_gui, media_viewer and manage_options_dialog. Other named owners, default gravity/parent-cursor positioning, screen fitting and offscreen rescue remain parent limitations; no parent or geometry-editor completion claimed.",
+        "Native MinimalSoftwareWindow supports size/state but does not implement native-position adapter. Coordinate persistence and actual placement dispatch are covered; no rendered absolute desktop-position assertion is claimed.",
+        "Rust model/native/store regressions authored for hosted CI only; no local Cargo builds, tests or mutations run. General ListTable arrow-key navigation remains outside this slice."
+      ],
+      "limitations": [
+        "Placement consumers use remembered size/position and maximised/fullscreen for main_gui, media_viewer and manage_options_dialog. Other named owners, default gravity/parent-cursor positioning, screen fitting and offscreen rescue remain parent limitations; no parent or geometry-editor completion claimed.",
+        "Native MinimalSoftwareWindow supports size/state but does not implement native-position adapter. Coordinate persistence and actual placement dispatch are covered; no rendered absolute desktop-position assertion is claimed.",
+        "Rust model/native/store regressions authored for hosted CI only; no local Cargo builds, tests or mutations run. General ListTable arrow-key navigation remains outside this slice."
+      ]
+    }
+  ],
+  "native_navigation": [
+    {
+      "native_window": "FrameLocationWindow",
+      "source": "crates/hydrus-gui/ui/frame_locations.slint",
+      "owner_slot": "Bound::options_frame_child",
+      "reference_panel": "hydrus/client/gui/panels/ClientGUIScrolledPanelsEdit.py::EditFrameLocationPanel",
+      "opens_from": [
+        "OptionsWindow > GUI > kind26 frame table edit/doubleclick"
+      ],
+      "title": "set frame location information",
+      "scope": "new owned native geometry child; no new reference leaf or duplicate alias counted"
+    }
+  ],
+  "lifecycle_provenance": {
+    "reviewed_source_commit": "d92abea9cddfd2fd9df89d614bbdc84989c021e0",
+    "reference_recorder": "oracle/record_options_geometry_lifecycle.py",
+    "reference_fixture": "oracle/fixtures/options_geometry_lifecycle.json",
+    "source": "Options placement reads manage_options_dialog. Incidental Options Cancel/X/unchanged Apply do not save current geometry; explicit resets/edits persist. Main/viewer close uses a named transaction retaining peer frames and reading latest save-media-viewer preference.",
+    "native_regression": "crates/hydrus-gui/tests/gui/frame_locations.rs::frame_options_table_child_staging_and_saved_viewer_geometry_match_reference",
+    "model_regression": "crates/hydrus-gui-model/tests/model/frame_locations.rs::named_geometry_transactions_preserve_peer_frames_and_latest_viewer_save_preference",
+    "counting": "Four original flip/reset completion proposals unchanged; table, geometry edit and overall frame parent remain Partial.",
+    "validation": "Existing author reference recording and authored regression scopes; no new execution or green CI attestation supplied by this source-only addendum."
+  }
+}

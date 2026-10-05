@@ -1,0 +1,1027 @@
+{
+  "now": 1800000000,
+  "initial": [
+    {
+      "data": "/srv/import/file-0.jpg",
+      "created": 1799999900,
+      "modified": 1799999950,
+      "source_time": 1799999800,
+      "status": 4,
+      "note": "detail 0",
+      "hashes": [
+        [
+          "sha256",
+          "1212121212121212121212121212121212121212121212121212121212121212"
+        ]
+      ]
+    },
+    {
+      "data": "/srv/import/file-1.jpg",
+      "created": 1799999901,
+      "modified": 1799999951,
+      "source_time": 1799999801,
+      "status": 2,
+      "note": "detail 1",
+      "hashes": [
+        [
+          "sha256",
+          "1212121212121212121212121212121212121212121212121212121212121212"
+        ]
+      ]
+    },
+    {
+      "data": "/srv/import/file-2.jpg",
+      "created": 1799999902,
+      "modified": 1799999952,
+      "source_time": 1799999802,
+      "status": 0,
+      "note": "detail 2",
+      "hashes": [
+        [
+          "sha256",
+          "1212121212121212121212121212121212121212121212121212121212121212"
+        ]
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "child_applied": false,
+      "folder_applied": false,
+      "calls": [
+        {
+          "kind": "dialog",
+          "title": "edit import folder"
+        },
+        {
+          "kind": "dialog",
+          "title": "file log"
+        },
+        {
+          "kind": "question",
+          "text": "Are you sure you want to delete the 1 selected entries?",
+          "answer": true
+        }
+      ],
+      "child_states": [
+        {
+          "phase": "initial",
+          "rows": [
+            {
+              "data": "/srv/import/file-0.jpg",
+              "created": 1799999900,
+              "modified": 1799999950,
+              "source_time": 1799999800,
+              "status": 4,
+              "note": "detail 0",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            },
+            {
+              "data": "/srv/import/file-1.jpg",
+              "created": 1799999901,
+              "modified": 1799999951,
+              "source_time": 1799999801,
+              "status": 2,
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            },
+            {
+              "data": "/srv/import/file-2.jpg",
+              "created": 1799999902,
+              "modified": 1799999952,
+              "source_time": 1799999802,
+              "status": 0,
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "phase": "retry",
+          "rows": [
+            {
+              "data": "/srv/import/file-0.jpg",
+              "created": 1799999900,
+              "modified": 1800000000,
+              "source_time": 1799999800,
+              "status": 0,
+              "note": "",
+              "hashes": []
+            },
+            {
+              "data": "/srv/import/file-1.jpg",
+              "created": 1799999901,
+              "modified": 1799999951,
+              "source_time": 1799999801,
+              "status": 2,
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            },
+            {
+              "data": "/srv/import/file-2.jpg",
+              "created": 1799999902,
+              "modified": 1799999952,
+              "source_time": 1799999802,
+              "status": 0,
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "phase": "delete",
+          "rows": [
+            {
+              "data": "/srv/import/file-0.jpg",
+              "created": 1799999900,
+              "modified": 1800000000,
+              "source_time": 1799999800,
+              "status": 0,
+              "note": "",
+              "hashes": []
+            },
+            {
+              "data": "/srv/import/file-2.jpg",
+              "created": 1799999902,
+              "modified": 1799999952,
+              "source_time": 1799999802,
+              "status": 0,
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "phase": "owner_before_child_close",
+          "rows": [
+            {
+              "data": "/srv/import/file-0.jpg",
+              "created": 1799999900,
+              "modified": 1799999950,
+              "source_time": 1799999800,
+              "status": 4,
+              "note": "detail 0",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            },
+            {
+              "data": "/srv/import/file-1.jpg",
+              "created": 1799999901,
+              "modified": 1799999951,
+              "source_time": 1799999801,
+              "status": 2,
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            },
+            {
+              "data": "/srv/import/file-2.jpg",
+              "created": 1799999902,
+              "modified": 1799999952,
+              "source_time": 1799999802,
+              "status": 0,
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "phase": "owner_after_child_close",
+          "rows": [
+            {
+              "data": "/srv/import/file-0.jpg",
+              "created": 1799999900,
+              "modified": 1799999950,
+              "source_time": 1799999800,
+              "status": 4,
+              "note": "detail 0",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            },
+            {
+              "data": "/srv/import/file-1.jpg",
+              "created": 1799999901,
+              "modified": 1799999951,
+              "source_time": 1799999801,
+              "status": 2,
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            },
+            {
+              "data": "/srv/import/file-2.jpg",
+              "created": 1799999902,
+              "modified": 1799999952,
+              "source_time": 1799999802,
+              "status": 0,
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "manager_rows": [
+        {
+          "data": "/srv/import/file-0.jpg",
+          "created": 1799999900,
+          "modified": 1799999950,
+          "source_time": 1799999800,
+          "status": 4,
+          "note": "detail 0",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
+        },
+        {
+          "data": "/srv/import/file-1.jpg",
+          "created": 1799999901,
+          "modified": 1799999951,
+          "source_time": 1799999801,
+          "status": 2,
+          "note": "detail 1",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
+        },
+        {
+          "data": "/srv/import/file-2.jpg",
+          "created": 1799999902,
+          "modified": 1799999952,
+          "source_time": 1799999802,
+          "status": 0,
+          "note": "detail 2",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
+        }
+      ],
+      "reopened_rows": [
+        {
+          "data": "/srv/import/file-0.jpg",
+          "created": 1799999900,
+          "modified": 1799999950,
+          "source_time": 1799999800,
+          "status": 4,
+          "note": "detail 0",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
+        },
+        {
+          "data": "/srv/import/file-1.jpg",
+          "created": 1799999901,
+          "modified": 1799999951,
+          "source_time": 1799999801,
+          "status": 2,
+          "note": "detail 1",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
+        },
+        {
+          "data": "/srv/import/file-2.jpg",
+          "created": 1799999902,
+          "modified": 1799999952,
+          "source_time": 1799999802,
+          "status": 0,
+          "note": "detail 2",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
+        }
+      ],
+      "original_rows": [
+        {
+          "data": "/srv/import/file-0.jpg",
+          "created": 1799999900,
+          "modified": 1799999950,
+          "source_time": 1799999800,
+          "status": 4,
+          "note": "detail 0",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
+        },
+        {
+          "data": "/srv/import/file-1.jpg",
+          "created": 1799999901,
+          "modified": 1799999951,
+          "source_time": 1799999801,
+          "status": 2,
+          "note": "detail 1",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
+        },
+        {
+          "data": "/srv/import/file-2.jpg",
+          "created": 1799999902,
+          "modified": 1799999952,
+          "source_time": 1799999802,
+          "status": 0,
+          "note": "detail 2",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "child_applied": true,
+      "folder_applied": false,
+      "calls": [
+        {
+          "kind": "dialog",
+          "title": "edit import folder"
+        },
+        {
+          "kind": "dialog",
+          "title": "file log"
+        },
+        {
+          "kind": "question",
+          "text": "Are you sure you want to delete the 1 selected entries?",
+          "answer": true
+        }
+      ],
+      "child_states": [
+        {
+          "phase": "initial",
+          "rows": [
+            {
+              "data": "/srv/import/file-0.jpg",
+              "created": 1799999900,
+              "modified": 1799999950,
+              "source_time": 1799999800,
+              "status": 4,
+              "note": "detail 0",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            },
+            {
+              "data": "/srv/import/file-1.jpg",
+              "created": 1799999901,
+              "modified": 1799999951,
+              "source_time": 1799999801,
+              "status": 2,
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            },
+            {
+              "data": "/srv/import/file-2.jpg",
+              "created": 1799999902,
+              "modified": 1799999952,
+              "source_time": 1799999802,
+              "status": 0,
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "phase": "retry",
+          "rows": [
+            {
+              "data": "/srv/import/file-0.jpg",
+              "created": 1799999900,
+              "modified": 1800000000,
+              "source_time": 1799999800,
+              "status": 0,
+              "note": "",
+              "hashes": []
+            },
+            {
+              "data": "/srv/import/file-1.jpg",
+              "created": 1799999901,
+              "modified": 1799999951,
+              "source_time": 1799999801,
+              "status": 2,
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            },
+            {
+              "data": "/srv/import/file-2.jpg",
+              "created": 1799999902,
+              "modified": 1799999952,
+              "source_time": 1799999802,
+              "status": 0,
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "phase": "delete",
+          "rows": [
+            {
+              "data": "/srv/import/file-0.jpg",
+              "created": 1799999900,
+              "modified": 1800000000,
+              "source_time": 1799999800,
+              "status": 0,
+              "note": "",
+              "hashes": []
+            },
+            {
+              "data": "/srv/import/file-2.jpg",
+              "created": 1799999902,
+              "modified": 1799999952,
+              "source_time": 1799999802,
+              "status": 0,
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "phase": "owner_before_child_close",
+          "rows": [
+            {
+              "data": "/srv/import/file-0.jpg",
+              "created": 1799999900,
+              "modified": 1799999950,
+              "source_time": 1799999800,
+              "status": 4,
+              "note": "detail 0",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            },
+            {
+              "data": "/srv/import/file-1.jpg",
+              "created": 1799999901,
+              "modified": 1799999951,
+              "source_time": 1799999801,
+              "status": 2,
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            },
+            {
+              "data": "/srv/import/file-2.jpg",
+              "created": 1799999902,
+              "modified": 1799999952,
+              "source_time": 1799999802,
+              "status": 0,
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "phase": "owner_after_child_close",
+          "rows": [
+            {
+              "data": "/srv/import/file-0.jpg",
+              "created": 1799999900,
+              "modified": 1800000000,
+              "source_time": 1799999800,
+              "status": 0,
+              "note": "",
+              "hashes": []
+            },
+            {
+              "data": "/srv/import/file-2.jpg",
+              "created": 1799999902,
+              "modified": 1799999952,
+              "source_time": 1799999802,
+              "status": 0,
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "manager_rows": [
+        {
+          "data": "/srv/import/file-0.jpg",
+          "created": 1799999900,
+          "modified": 1800000000,
+          "source_time": 1799999800,
+          "status": 0,
+          "note": "",
+          "hashes": []
+        },
+        {
+          "data": "/srv/import/file-2.jpg",
+          "created": 1799999902,
+          "modified": 1799999952,
+          "source_time": 1799999802,
+          "status": 0,
+          "note": "detail 2",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
+        }
+      ],
+      "reopened_rows": [
+        {
+          "data": "/srv/import/file-0.jpg",
+          "created": 1799999900,
+          "modified": 1800000000,
+          "source_time": 1799999800,
+          "status": 0,
+          "note": "",
+          "hashes": []
+        },
+        {
+          "data": "/srv/import/file-2.jpg",
+          "created": 1799999902,
+          "modified": 1799999952,
+          "source_time": 1799999802,
+          "status": 0,
+          "note": "detail 2",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
+        }
+      ],
+      "original_rows": [
+        {
+          "data": "/srv/import/file-0.jpg",
+          "created": 1799999900,
+          "modified": 1799999950,
+          "source_time": 1799999800,
+          "status": 4,
+          "note": "detail 0",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
+        },
+        {
+          "data": "/srv/import/file-1.jpg",
+          "created": 1799999901,
+          "modified": 1799999951,
+          "source_time": 1799999801,
+          "status": 2,
+          "note": "detail 1",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
+        },
+        {
+          "data": "/srv/import/file-2.jpg",
+          "created": 1799999902,
+          "modified": 1799999952,
+          "source_time": 1799999802,
+          "status": 0,
+          "note": "detail 2",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "child_applied": true,
+      "folder_applied": true,
+      "calls": [
+        {
+          "kind": "dialog",
+          "title": "edit import folder"
+        },
+        {
+          "kind": "dialog",
+          "title": "file log"
+        },
+        {
+          "kind": "question",
+          "text": "Are you sure you want to delete the 1 selected entries?",
+          "answer": true
+        }
+      ],
+      "child_states": [
+        {
+          "phase": "initial",
+          "rows": [
+            {
+              "data": "/srv/import/file-0.jpg",
+              "created": 1799999900,
+              "modified": 1799999950,
+              "source_time": 1799999800,
+              "status": 4,
+              "note": "detail 0",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            },
+            {
+              "data": "/srv/import/file-1.jpg",
+              "created": 1799999901,
+              "modified": 1799999951,
+              "source_time": 1799999801,
+              "status": 2,
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            },
+            {
+              "data": "/srv/import/file-2.jpg",
+              "created": 1799999902,
+              "modified": 1799999952,
+              "source_time": 1799999802,
+              "status": 0,
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "phase": "retry",
+          "rows": [
+            {
+              "data": "/srv/import/file-0.jpg",
+              "created": 1799999900,
+              "modified": 1800000000,
+              "source_time": 1799999800,
+              "status": 0,
+              "note": "",
+              "hashes": []
+            },
+            {
+              "data": "/srv/import/file-1.jpg",
+              "created": 1799999901,
+              "modified": 1799999951,
+              "source_time": 1799999801,
+              "status": 2,
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            },
+            {
+              "data": "/srv/import/file-2.jpg",
+              "created": 1799999902,
+              "modified": 1799999952,
+              "source_time": 1799999802,
+              "status": 0,
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "phase": "delete",
+          "rows": [
+            {
+              "data": "/srv/import/file-0.jpg",
+              "created": 1799999900,
+              "modified": 1800000000,
+              "source_time": 1799999800,
+              "status": 0,
+              "note": "",
+              "hashes": []
+            },
+            {
+              "data": "/srv/import/file-2.jpg",
+              "created": 1799999902,
+              "modified": 1799999952,
+              "source_time": 1799999802,
+              "status": 0,
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "phase": "owner_before_child_close",
+          "rows": [
+            {
+              "data": "/srv/import/file-0.jpg",
+              "created": 1799999900,
+              "modified": 1799999950,
+              "source_time": 1799999800,
+              "status": 4,
+              "note": "detail 0",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            },
+            {
+              "data": "/srv/import/file-1.jpg",
+              "created": 1799999901,
+              "modified": 1799999951,
+              "source_time": 1799999801,
+              "status": 2,
+              "note": "detail 1",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            },
+            {
+              "data": "/srv/import/file-2.jpg",
+              "created": 1799999902,
+              "modified": 1799999952,
+              "source_time": 1799999802,
+              "status": 0,
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "phase": "owner_after_child_close",
+          "rows": [
+            {
+              "data": "/srv/import/file-0.jpg",
+              "created": 1799999900,
+              "modified": 1800000000,
+              "source_time": 1799999800,
+              "status": 0,
+              "note": "",
+              "hashes": []
+            },
+            {
+              "data": "/srv/import/file-2.jpg",
+              "created": 1799999902,
+              "modified": 1799999952,
+              "source_time": 1799999802,
+              "status": 0,
+              "note": "detail 2",
+              "hashes": [
+                [
+                  "sha256",
+                  "1212121212121212121212121212121212121212121212121212121212121212"
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "manager_rows": [
+        {
+          "data": "/srv/import/file-0.jpg",
+          "created": 1799999900,
+          "modified": 1800000000,
+          "source_time": 1799999800,
+          "status": 0,
+          "note": "",
+          "hashes": []
+        },
+        {
+          "data": "/srv/import/file-2.jpg",
+          "created": 1799999902,
+          "modified": 1799999952,
+          "source_time": 1799999802,
+          "status": 0,
+          "note": "detail 2",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
+        }
+      ],
+      "reopened_rows": [
+        {
+          "data": "/srv/import/file-0.jpg",
+          "created": 1799999900,
+          "modified": 1800000000,
+          "source_time": 1799999800,
+          "status": 0,
+          "note": "",
+          "hashes": []
+        },
+        {
+          "data": "/srv/import/file-2.jpg",
+          "created": 1799999902,
+          "modified": 1799999952,
+          "source_time": 1799999802,
+          "status": 0,
+          "note": "detail 2",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
+        }
+      ],
+      "original_rows": [
+        {
+          "data": "/srv/import/file-0.jpg",
+          "created": 1799999900,
+          "modified": 1799999950,
+          "source_time": 1799999800,
+          "status": 4,
+          "note": "detail 0",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
+        },
+        {
+          "data": "/srv/import/file-1.jpg",
+          "created": 1799999901,
+          "modified": 1799999951,
+          "source_time": 1799999801,
+          "status": 2,
+          "note": "detail 1",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
+        },
+        {
+          "data": "/srv/import/file-2.jpg",
+          "created": 1799999902,
+          "modified": 1799999952,
+          "source_time": 1799999802,
+          "status": 0,
+          "note": "detail 2",
+          "hashes": [
+            [
+              "sha256",
+              "1212121212121212121212121212121212121212121212121212121212121212"
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

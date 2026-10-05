@@ -321,15 +321,11 @@ impl ClientOptions {
         out
     }
 
-    /// The main window's and the media viewer's frames, and whether the
-    /// viewer's is saved as it closes.
+    /// All imported frame names and whether the media viewer saves on close.
     pub fn window_settings(&self) -> WindowSettings {
         let mut out = WindowSettings::default();
-        if let Some(frame) = self.frame_locations.get("main_gui") {
-            out.main_gui = frame.clone();
-        }
-        if let Some(frame) = self.frame_locations.get("media_viewer") {
-            out.media_viewer = frame.clone();
+        for (name, frame) in &self.frame_locations {
+            out.set_frame(name, frame.clone());
         }
         if let Some(&save) = self
             .booleans
@@ -523,6 +519,26 @@ impl ClientOptions {
             Some(meta) => recent_predicates(expect_object(meta, "recent predicates")?, scales),
             None => Ok(hydrus_core::search::recent::RecentPredicates::default()),
         }
+    }
+
+    /// Custom panel defaults as canonical predicates, keeping their stored
+    /// order and actual numerical rating scales. Unsupported predicate records
+    /// remain lossless in `dictionary`; only decodable records become active.
+    pub fn custom_default_predicates(
+        &self,
+        scales: &dyn Fn(&ServiceKey) -> Option<super::predicates::StarScale>,
+    ) -> DecodeResult<Vec<hydrus_core::search::predicate::Predicate>> {
+        let settings = Settings::new(KIND, &self.dictionary)?;
+        let Some(meta) = settings.get("custom_default_predicates") else {
+            return Ok(Vec::new());
+        };
+        Ok(
+            list_items(expect_object(meta, "custom predicate defaults")?)?
+                .iter()
+                .filter_map(Meta::as_object)
+                .filter_map(|object| super::predicates::predicate_with_scales(object, scales).ok())
+                .collect(),
+        )
     }
 
     /// How ratings are drawn over thumbnails.
@@ -965,6 +981,62 @@ fn media_view(settings: &Settings<'_>) -> DecodeResult<Option<BTreeMap<i64, Medi
 mod tests {
     use super::ClientOptions;
     use crate::serialisable::SerialisableObject;
+
+    #[test]
+    fn custom_defaults_keep_supported_records_and_preserve_unknown_raw_options() {
+        let recording = hydrus_testkit::fixture_json("predicate_custom_defaults.json");
+        let mut raw = recording["options_saved_families"].clone();
+        let entries = raw[2][2].as_array_mut().unwrap();
+        let entry = entries
+            .iter_mut()
+            .find(|e| e[0][1] == "custom_default_predicates")
+            .unwrap();
+        let records = entry[1][1][2].as_array_mut().unwrap();
+        // Known typed defaults remain active beside a future, unreadable record.
+        records.push(serde_json::json!([2, [14, 999, [13, 987, true]]]));
+        let options = ClientOptions::from_object(
+            &SerialisableObject::from_tuple_str(&raw.to_string()).unwrap(),
+        )
+        .unwrap();
+        let scales = |key: &hydrus_core::ServiceKey| {
+            recording["services"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|s| {
+                    s["key"].as_str() == Some(key.to_hex().as_str())
+                        && s["type"].as_u64()
+                            == Some(u64::from(
+                                hydrus_core::ServiceType::LocalRatingNumerical.code(),
+                            ))
+                })
+                .map(|s| {
+                    (
+                        s["num_stars"].as_u64().unwrap(),
+                        s["allow_zero"].as_bool().unwrap(),
+                    )
+                })
+        };
+        assert_eq!(
+            options.custom_default_predicates(&|_| None).unwrap().len(),
+            37
+        );
+        let active = options.custom_default_predicates(&scales).unwrap();
+        assert_eq!(active.len(), 38);
+        assert!(
+            active.contains(&hydrus_core::search::predicate::Predicate::System(
+                hydrus_core::search::predicate::SystemPredicate::Limit(259),
+            ))
+        );
+        assert!(options.dictionary.info_string().contains("999"));
+        assert_eq!(
+            ClientOptions::defaults()
+                .unwrap()
+                .custom_default_predicates(&|_| None)
+                .unwrap(),
+            Vec::new()
+        );
+    }
 
     #[test]
     fn the_volumes_and_mutes_come_across() {

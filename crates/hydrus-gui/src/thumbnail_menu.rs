@@ -506,8 +506,7 @@ pub fn info_menu(
 }
 
 /// How often `files` were viewed (`AddFileViewingStatsMenu`, the
-/// reference's defaults: the media viewer's and the Client API's views,
-/// summed in a submenu's title when both have some).
+/// selected canvases, summed in a submenu or stacked according to Options).
 fn views_entries(store: &Store, files: &[HashId], now_ms: i64) -> Vec<Entry> {
     use hydrus_core::CanvasType;
     let Ok(stats) = store.read(|c| hydrus_store::media::viewing_stats(c, files)) else {
@@ -520,6 +519,7 @@ fn views_entries(store: &Store, files: &[HashId], now_ms: i64) -> Vec<Entry> {
         let canvas = match canvases {
             [CanvasType::MediaViewer] => " in media viewer",
             [CanvasType::ClientApi] => " in client api viewer",
+            [CanvasType::Preview] => " in preview viewer",
             _ => "",
         };
         if views == 0 {
@@ -542,7 +542,10 @@ fn views_entries(store: &Store, files: &[HashId], now_ms: i64) -> Vec<Entry> {
             hydrus_core::time::pretty_time_delta_f64(viewtime_ms as f64 / 1000.0)
         )
     };
-    let with_views: Vec<CanvasType> = [CanvasType::MediaViewer, CanvasType::ClientApi]
+    let settings: hydrus_store::settings::FileViewingStatistics =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    let with_views: Vec<CanvasType> = settings
+        .interesting_canvases
         .into_iter()
         .filter(|&c| stats.iter().any(|s| s.canvas == c && s.views > 0))
         .collect();
@@ -550,7 +553,9 @@ fn views_entries(store: &Store, files: &[HashId], now_ms: i64) -> Vec<Entry> {
         .iter()
         .map(|&c| Entry::Label(line(&[c])))
         .collect();
-    if with_views.len() > 1 {
+    if with_views.len() > 1
+        && settings.menu_display == hydrus_store::settings::ViewingStatsMenuDisplay::Combined
+    {
         vec![Entry::Menu(line(&with_views), lines)]
     } else {
         lines

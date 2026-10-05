@@ -4,6 +4,7 @@
 
 pub mod autocomplete;
 pub mod bandwidth;
+pub mod command_palette;
 pub mod conn;
 pub mod content;
 pub mod counts;
@@ -13,11 +14,13 @@ pub mod domains;
 pub mod duplicates;
 pub mod error;
 pub mod file_maintenance;
+pub mod folder_activity;
 pub mod gallery;
 pub mod import;
 pub mod import_folders;
 pub mod legacy;
 pub mod live;
+pub mod login_runtime;
 pub mod logins;
 pub mod maintenance;
 pub mod master;

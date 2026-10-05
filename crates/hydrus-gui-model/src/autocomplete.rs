@@ -5,13 +5,14 @@
 //! with theirs, then those that open an editor
 //! ([`crate::predicate_editors`]).
 
-use std::sync::Arc;
+use std::{collections::BTreeSet, sync::Arc};
 
+use crate::write_autocomplete::Tab;
 use hydrus_core::mime::SEARCHABLE_MIMES;
 use hydrus_core::search::context::{LocationContext, TagContext};
 use hydrus_core::service::ServiceType;
 use hydrus_core::tag_presentation::TagPresentation;
-use hydrus_core::{ServiceId, ServiceKey};
+use hydrus_core::{ServiceId, ServiceKey, Tag};
 use hydrus_store::Store;
 use hydrus_store::autocomplete::{
     self, AutocompleteInput, AutocompleteSettings, CountDomain, CountRange, TagDisplayType,
@@ -40,6 +41,10 @@ pub struct Autocomplete {
     text: String,
     suggestions: Vec<Suggestion>,
     highlighted: usize,
+    tab: Tab,
+    or_draft: Option<String>,
+    tab_highlights: [usize; 3],
+    context_tags: BTreeSet<String>,
 }
 
 impl std::fmt::Debug for Autocomplete {
@@ -67,6 +72,10 @@ impl Autocomplete {
             text: String::new(),
             suggestions: Vec::new(),
             highlighted: 0,
+            tab: Tab::Tags,
+            or_draft: None,
+            tab_highlights: [0; 3],
+            context_tags: BTreeSet::new(),
         }
     }
 
@@ -79,8 +88,39 @@ impl Autocomplete {
     /// Count in these file domains and this tag service from now on.
     pub fn set_context(&mut self, location: &LocationContext, tags: &TagContext) {
         self.context = (location.clone(), tags.clone());
-        let text = std::mem::take(&mut self.text);
-        self.set_text(&text);
+        self.suggestions = self.search(false);
+        self.reset_highlight();
+    }
+
+    pub fn tab(&self) -> Tab {
+        self.tab
+    }
+    pub fn set_tab(&mut self, tab: Tab) {
+        self.tab_highlights[self.tab.index()] = self.highlighted;
+        self.tab = tab;
+        self.suggestions = self.search(false);
+        self.highlighted =
+            self.tab_highlights[tab.index()].min(self.suggestions.len().saturating_sub(1));
+    }
+    /// Only top-level tag predicates supply child context; their polarity is immaterial.
+    pub fn set_context_tags(&mut self, tags: impl IntoIterator<Item = String>) {
+        let tags = tags.into_iter().collect();
+        if self.context_tags != tags {
+            self.context_tags = tags;
+            if self.tab == Tab::Children {
+                let selected = self
+                    .highlighted()
+                    .map(|i| self.suggestions[i].predicate.clone());
+                self.suggestions = self.search(false);
+                self.highlighted = selected
+                    .and_then(|selected| {
+                        self.suggestions
+                            .iter()
+                            .position(|suggestion| suggestion.predicate == selected)
+                    })
+                    .unwrap_or(0);
+            }
+        }
     }
 
     pub fn text(&self) -> &str {
@@ -111,6 +151,11 @@ impl Autocomplete {
         }
     }
 
+    fn reset_highlight(&mut self) {
+        self.highlighted = usize::from(
+            self.tab == Tab::Tags && self.or_draft.is_some() && self.suggestions.len() > 1,
+        );
+    }
     pub fn clear(&mut self) {
         self.set_text("");
     }
@@ -118,8 +163,11 @@ impl Autocomplete {
     /// The text changed: search again.
     pub fn set_text(&mut self, text: &str) {
         text.clone_into(&mut self.text);
-        self.highlighted = 0;
-        self.suggestions = self.search(false).unwrap_or_default();
+        if !text.is_empty() {
+            self.tab = Tab::Tags;
+        }
+        self.suggestions = self.search(false);
+        self.reset_highlight();
     }
 
     /// How the user has tags shown.
@@ -131,11 +179,36 @@ impl Autocomplete {
 
     /// Explicit fetch, used by Ctrl+Space when automatic fetching is off.
     pub fn fetch(&mut self) {
-        self.highlighted = 0;
-        self.suggestions = self.search(true).unwrap_or_default();
+        self.suggestions = self.search(true);
+        self.reset_highlight();
     }
 
-    fn search(&self, manual: bool) -> Option<Vec<Suggestion>> {
+    /// The constructed predicate is the first result, including an empty input.
+    pub fn set_or_draft(&mut self, label: Option<String>) {
+        self.or_draft = label;
+        self.suggestions = self.search(false);
+        self.reset_highlight();
+    }
+    fn search(&self, manual: bool) -> Vec<Suggestion> {
+        let mut suggestions = self.search_results(manual).unwrap_or_default();
+        if self.tab == Tab::Tags
+            && let Some(label) = &self.or_draft
+        {
+            suggestions.insert(
+                0,
+                Suggestion {
+                    label: label.clone(),
+                    predicate: String::new(),
+                    editor: None,
+                },
+            );
+        }
+        suggestions
+    }
+    fn search_results(&self, manual: bool) -> Option<Vec<Suggestion>> {
+        if self.tab != Tab::Tags {
+            return self.tab_suggestions();
+        }
         if self.text.trim().is_empty() {
             return self.system_predicates();
         }
@@ -187,6 +260,82 @@ impl Autocomplete {
                 .map(|m| Suggestion {
                     label: format!("{sign}{} {}", presentation.render(&m.tag), m.count.suffix()),
                     predicate: format!("{sign}{}", m.tag),
+                    editor: None,
+                })
+                .collect(),
+        )
+    }
+
+    fn tab_suggestions(&self) -> Option<Vec<Suggestion>> {
+        let tags = match self.tab {
+            Tab::Favourites => {
+                let mut tags = self
+                    .store
+                    .read(hydrus_store::settings::get::<hydrus_store::settings::FavouriteTags>)
+                    .ok()?
+                    .0;
+                tags.sort();
+                tags.dedup();
+                tags
+            }
+            Tab::Children => {
+                let snapshot = self.store.snapshot();
+                let registry = &snapshot.services;
+                let (location, context) = &self.context;
+                let service = registry.by_key(&context.service).ok()?;
+                let sources: Vec<_> = if context.is_all_known_tags() {
+                    registry.tag_services().map(|service| service.id).collect()
+                } else {
+                    vec![service.id]
+                };
+                self.store
+                    .read(|conn| {
+                        let tags: Vec<_> = self
+                            .context_tags
+                            .iter()
+                            .filter_map(|tag| Tag::new(tag))
+                            .collect();
+                        let context_ids = hydrus_store::master::tag_ids(conn, &tags)?;
+                        let mut children = BTreeSet::new();
+                        for service in &sources {
+                            let graph = snapshot.display.get(*service);
+                            for tag in context_ids.values() {
+                                children.extend(graph.descendants(*tag).iter().copied());
+                            }
+                        }
+                        children.retain(|tag| !context_ids.values().any(|context| context == tag));
+                        // Qt creates a fresh default TagContext for the children count query.
+                        // Read-search current/pending toggles do not filter this unnumbered list.
+                        let scope = TagSearchScope {
+                            domains: count_domains(registry, location),
+                            tag_service: (!context.is_all_known_tags()).then_some(service.id),
+                            display: TagDisplayType::Display,
+                            include_current: true,
+                            include_pending: true,
+                        };
+                        let mut matches = autocomplete::count_tags(
+                            conn,
+                            registry,
+                            &scope,
+                            &children.into_iter().collect::<Vec<_>>(),
+                        )?;
+                        let prefs: hydrus_store::settings::TagAutocompleteTabs =
+                            hydrus_store::settings::get(conn)?;
+                        if let Some(limit) = prefs.children_limit {
+                            matches.truncate(limit);
+                        }
+                        Ok(matches.into_iter().map(|tag| tag.tag).collect())
+                    })
+                    .ok()?
+            }
+            Tab::Tags => return None,
+        };
+        let presentation = self.presentation();
+        Some(
+            tags.into_iter()
+                .map(|tag| Suggestion {
+                    label: presentation.render(&tag),
+                    predicate: tag,
                     editor: None,
                 })
                 .collect(),

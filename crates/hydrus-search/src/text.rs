@@ -385,6 +385,12 @@ fn system_text(p: &SystemPredicate, c: &TextContext) -> String {
                     "viewtime",
                     pretty_time_delta(i64::try_from(*value).unwrap_or(i64::MAX), false),
                 ),
+                ViewingStat::ViewTimeMilliseconds => (
+                    "viewtime",
+                    hydrus_core::time::pretty_time_delta_f64(
+                        (value / 1000) as f64 + (value % 1000) as f64 / 1000.0,
+                    ),
+                ),
             };
             format!("{stat} in {domain} {} {value}", op.symbol())
         }

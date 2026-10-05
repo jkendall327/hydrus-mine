@@ -1,0 +1,386 @@
+{
+  "corpus": [
+    {
+      "tag": "parity:tabs alpha",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+      ]
+    },
+    {
+      "tag": "parity:tabs beta",
+      "hashes": [
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ]
+    },
+    {
+      "tag": "parity:tabs alpha old",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ]
+    }
+  ],
+  "parents": [
+    [
+      "parity:tabs alpha",
+      "parity:tabs root"
+    ],
+    [
+      "parity:tabs beta",
+      "parity:tabs root"
+    ],
+    [
+      "parity:tabs zero",
+      "parity:tabs root"
+    ],
+    [
+      "parity:tabs deep",
+      "parity:tabs alpha"
+    ]
+  ],
+  "siblings": [
+    [
+      "parity:tabs alpha old",
+      "parity:tabs alpha"
+    ]
+  ],
+  "events": [
+    {
+      "action": "favourites",
+      "tab": 1,
+      "tab_label": "favourites",
+      "text": "",
+      "rows": [
+        {
+          "tag": "parity:tabs alpha old",
+          "rows": [
+            "parity:tabs alpha old"
+          ]
+        },
+        {
+          "tag": "parity:tabs root",
+          "rows": [
+            "parity:tabs root"
+          ]
+        },
+        {
+          "tag": "parity:tabs unseen",
+          "rows": [
+            "parity:tabs unseen"
+          ]
+        }
+      ],
+      "predicates": [],
+      "favourites": [
+        "parity:tabs root",
+        "parity:tabs alpha old",
+        "parity:tabs unseen"
+      ]
+    },
+    {
+      "action": "favourites_with_text",
+      "tab": 1,
+      "tab_label": "favourites",
+      "text": "draft content",
+      "rows": [
+        {
+          "tag": "parity:tabs alpha old",
+          "rows": [
+            "parity:tabs alpha old"
+          ]
+        },
+        {
+          "tag": "parity:tabs root",
+          "rows": [
+            "parity:tabs root"
+          ]
+        },
+        {
+          "tag": "parity:tabs unseen",
+          "rows": [
+            "parity:tabs unseen"
+          ]
+        }
+      ],
+      "predicates": []
+    },
+    {
+      "action": "choose_favourite",
+      "tab": 1,
+      "tab_label": "favourites",
+      "text": "",
+      "rows": [
+        {
+          "tag": "parity:tabs alpha old",
+          "rows": [
+            "parity:tabs alpha old"
+          ]
+        },
+        {
+          "tag": "parity:tabs root",
+          "rows": [
+            "parity:tabs root"
+          ]
+        },
+        {
+          "tag": "parity:tabs unseen",
+          "rows": [
+            "parity:tabs unseen"
+          ]
+        }
+      ],
+      "predicates": [
+        "parity:tabs root"
+      ],
+      "query_count": 2
+    },
+    {
+      "action": "children",
+      "tab": 2,
+      "tab_label": "children",
+      "text": "",
+      "rows": [
+        {
+          "tag": "parity:tabs alpha",
+          "rows": [
+            "parity:tabs alpha"
+          ]
+        },
+        {
+          "tag": "parity:tabs beta",
+          "rows": [
+            "parity:tabs beta"
+          ]
+        },
+        {
+          "tag": "parity:tabs deep",
+          "rows": [
+            "parity:tabs deep"
+          ]
+        },
+        {
+          "tag": "parity:tabs zero",
+          "rows": [
+            "parity:tabs zero"
+          ]
+        }
+      ],
+      "predicates": [
+        "parity:tabs root"
+      ],
+      "limit": 40
+    },
+    {
+      "action": "children",
+      "tab": 2,
+      "tab_label": "children",
+      "text": "",
+      "rows": [
+        {
+          "tag": "parity:tabs alpha",
+          "rows": [
+            "parity:tabs alpha"
+          ]
+        }
+      ],
+      "predicates": [
+        "parity:tabs root"
+      ],
+      "limit": 1
+    },
+    {
+      "action": "children",
+      "tab": 2,
+      "tab_label": "children",
+      "text": "",
+      "rows": [],
+      "predicates": [
+        "parity:tabs root"
+      ],
+      "limit": 0
+    },
+    {
+      "action": "children",
+      "tab": 2,
+      "tab_label": "children",
+      "text": "",
+      "rows": [
+        {
+          "tag": "parity:tabs alpha",
+          "rows": [
+            "parity:tabs alpha"
+          ]
+        },
+        {
+          "tag": "parity:tabs beta",
+          "rows": [
+            "parity:tabs beta"
+          ]
+        },
+        {
+          "tag": "parity:tabs deep",
+          "rows": [
+            "parity:tabs deep"
+          ]
+        },
+        {
+          "tag": "parity:tabs zero",
+          "rows": [
+            "parity:tabs zero"
+          ]
+        }
+      ],
+      "predicates": [
+        "parity:tabs root"
+      ],
+      "limit": null
+    },
+    {
+      "action": "choose_child",
+      "tab": 2,
+      "tab_label": "children",
+      "text": "",
+      "rows": [
+        {
+          "tag": "parity:tabs beta",
+          "rows": [
+            "parity:tabs beta"
+          ]
+        },
+        {
+          "tag": "parity:tabs deep",
+          "rows": [
+            "parity:tabs deep"
+          ]
+        },
+        {
+          "tag": "parity:tabs zero",
+          "rows": [
+            "parity:tabs zero"
+          ]
+        }
+      ],
+      "predicates": [
+        "parity:tabs alpha",
+        "parity:tabs root"
+      ]
+    },
+    {
+      "action": "remove_child",
+      "tab": 2,
+      "tab_label": "children",
+      "text": "",
+      "rows": [
+        {
+          "tag": "parity:tabs alpha",
+          "rows": [
+            "parity:tabs alpha"
+          ]
+        },
+        {
+          "tag": "parity:tabs beta",
+          "rows": [
+            "parity:tabs beta"
+          ]
+        },
+        {
+          "tag": "parity:tabs deep",
+          "rows": [
+            "parity:tabs deep"
+          ]
+        },
+        {
+          "tag": "parity:tabs zero",
+          "rows": [
+            "parity:tabs zero"
+          ]
+        }
+      ],
+      "predicates": [
+        "parity:tabs root"
+      ]
+    },
+    {
+      "action": "type_returns_to_search",
+      "tab": 0,
+      "tab_label": "results",
+      "text": "parity:tabs",
+      "rows": [],
+      "predicates": [
+        "parity:tabs root"
+      ],
+      "pending_results": true
+    },
+    {
+      "action": "children_without_search_tag_flags",
+      "tab": 2,
+      "tab_label": "children",
+      "text": "",
+      "rows": [
+        {
+          "tag": "parity:tabs alpha",
+          "rows": [
+            "parity:tabs alpha"
+          ]
+        },
+        {
+          "tag": "parity:tabs beta",
+          "rows": [
+            "parity:tabs beta"
+          ]
+        },
+        {
+          "tag": "parity:tabs deep",
+          "rows": [
+            "parity:tabs deep"
+          ]
+        },
+        {
+          "tag": "parity:tabs zero",
+          "rows": [
+            "parity:tabs zero"
+          ]
+        }
+      ],
+      "predicates": [
+        "parity:tabs root"
+      ]
+    },
+    {
+      "action": "all_known_children",
+      "tab": 2,
+      "tab_label": "children",
+      "text": "",
+      "rows": [
+        {
+          "tag": "parity:tabs alpha",
+          "rows": [
+            "parity:tabs alpha"
+          ]
+        },
+        {
+          "tag": "parity:tabs beta",
+          "rows": [
+            "parity:tabs beta"
+          ]
+        },
+        {
+          "tag": "parity:tabs deep",
+          "rows": [
+            "parity:tabs deep"
+          ]
+        },
+        {
+          "tag": "parity:tabs zero",
+          "rows": [
+            "parity:tabs zero"
+          ]
+        }
+      ],
+      "predicates": [
+        "parity:tabs root"
+      ]
+    }
+  ]
+}

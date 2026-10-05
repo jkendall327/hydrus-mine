@@ -24,6 +24,10 @@ pub(crate) fn open(
         .read(hydrus_store::settings::get)
         .unwrap_or_default();
     let tag_display_type = presentation.viewer_display_type;
+    let viewing_stats = crate::viewing_tracking::CanvasTracker::new(
+        model.store().clone(),
+        hydrus_core::CanvasType::ArchiveDeleteFilter,
+    );
     let model = Rc::new(RefCell::new(model));
     let playback = playback::Playback::for_store(model.borrow().store().clone());
     let animator = animation::Animator::for_store(model.borrow().store().clone());
@@ -34,11 +38,21 @@ pub(crate) fn open(
         .unwrap_or_default();
     let zoomed = crate::zoom_window!(window, settings);
     let close = {
+        let viewing_stats = viewing_stats.clone();
         let weak = window.as_weak();
         let slot = slot.clone();
         let playback = playback.clone();
         let animator = animator.clone();
         move || {
+            let Some(window) = weak.upgrade() else { return };
+            viewing_stats.close();
+            if !slot
+                .borrow()
+                .as_ref()
+                .is_some_and(|current| std::ptr::eq(current.window(), window.window()))
+            {
+                return;
+            }
             playback.close();
             animator.stop();
             if let Some(window) = weak.upgrade() {
@@ -49,6 +63,7 @@ pub(crate) fn open(
     };
     // show the file to decide on; with none left, ask
     let show = {
+        let viewing_stats = viewing_stats.clone();
         let model = model.clone();
         let weak = window.as_weak();
         let playback = playback.clone();
@@ -58,7 +73,11 @@ pub(crate) fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
+            if !viewing_stats.active() {
+                return;
+            }
             let model = model.borrow();
+            viewing_stats.show(model.current());
             window.set_caption(model.caption().into());
             let Some(file) = model.current() else {
                 playback.stop();
@@ -113,10 +132,14 @@ pub(crate) fn open(
     // after a decision: the next file, or, when done, ask (or, with
     // nothing to commit, close)
     let decided = {
+        let viewing_stats = viewing_stats.clone();
         let model = model.clone();
         let show = show.clone();
         let close = close.clone();
         move |decide: fn(&mut ArchiveDeleteFilter)| {
+            if !viewing_stats.active() {
+                return;
+            }
             decide(&mut model.borrow_mut());
             let (done, anything) = {
                 let model = model.borrow();
@@ -139,18 +162,26 @@ pub(crate) fn open(
     });
     window.on_skip(move || decided(ArchiveDeleteFilter::skip));
     window.on_back({
+        let viewing_stats = viewing_stats.clone();
         let model = model.clone();
         let show = show.clone();
         move || {
+            if !viewing_stats.active() {
+                return;
+            }
             model.borrow_mut().back();
             show();
         }
     });
     window.on_close_requested({
+        let viewing_stats = viewing_stats.clone();
         let model = model.clone();
         let weak = window.as_weak();
         let close = close.clone();
         move || {
+            if !viewing_stats.active() {
+                return;
+            }
             let model = model.borrow();
             match weak.upgrade() {
                 Some(window) if model.has_decisions() => {
@@ -161,10 +192,14 @@ pub(crate) fn open(
         }
     });
     window.on_resume({
+        let viewing_stats = viewing_stats.clone();
         let model = model.clone();
         let weak = window.as_weak();
         let show = show.clone();
         move || {
+            if !viewing_stats.active() {
+                return;
+            }
             if let Some(window) = weak.upgrade() {
                 window.set_question(SharedString::new());
             }
@@ -180,9 +215,13 @@ pub(crate) fn open(
         move || close()
     });
     window.on_commit({
+        let viewing_stats = viewing_stats.clone();
         let model = model.clone();
         let close = close.clone();
         move || {
+            if !viewing_stats.active() {
+                return;
+            }
             let model = model.borrow();
             if let Err(e) = model.commit() {
                 eprintln!("could not commit the archive/delete filter: {e}");

@@ -1,0 +1,49 @@
+// Command palette provider order, staged inside its owning Options window.
+import { Button, ScrollView } from "std-widgets.slint";
+import { ListTable, TableRow } from "list_table.slint";
+import { Theme } from "theme.slint";
+export component PaletteProviderQueue inherits Rectangle {
+    in property <[TableRow]> rows;
+    in property <[string]> missing;
+    in property <bool> has-selection;
+    in property <int> mode;
+    in property <string> message;
+    callback row-clicked(int, bool, bool);
+    callback action(string);
+    callback chosen(int);
+    callback answer(bool);
+    min-height: 210px;
+    preferred-height: 210px;
+    VerticalLayout {
+        spacing: 4px;
+        if root.mode == 0: HorizontalLayout {
+            spacing: 4px;
+            ListTable {
+                columns: [{title:"search provider",width:240px,stretch:true}];
+                rows: root.rows;
+                row-clicked(i,ctrl,shift) => { root.row-clicked(i,ctrl,shift); }
+                row-activated(i) => { root.row-clicked(i,false,false); root.action("delete"); }
+                delete-pressed => { root.action("delete"); }
+            }
+            VerticalLayout {
+                alignment: center;
+                Button { text:"\u{2191}"; enabled:root.has-selection; clicked=>{root.action("up");} }
+                Button { text:"X"; enabled:root.has-selection; clicked=>{root.action("delete");} }
+                Button { text:"\u{2193}"; enabled:root.has-selection; clicked=>{root.action("down");} }
+            }
+        }
+        if root.mode == 0: Button { text:"add"; clicked=>{root.action("add");} }
+        if root.mode != 0: Text { text:root.message; wrap:word-wrap; color:Theme.text; }
+        if root.mode == 2: ScrollView {
+            VerticalLayout {
+                alignment:start;
+                for name[i] in root.missing: Button { text:name; clicked=>{root.chosen(i);} }
+            }
+        }
+        if root.mode == 1: HorizontalLayout {
+            Button { text:"yes"; clicked=>{root.answer(true);} }
+            Button { text:"no"; clicked=>{root.answer(false);} }
+        }
+        if root.mode == 2: Button { text:"cancel"; clicked=>{root.action("cancel");} }
+    }
+}

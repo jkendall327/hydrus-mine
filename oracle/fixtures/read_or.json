@@ -1,0 +1,206 @@
+{
+  "events": [
+    {
+      "action": "initial",
+      "text": "",
+      "draft": null,
+      "draft_label": null,
+      "cancel_visible": false,
+      "rewind_visible": false,
+      "predicates": []
+    },
+    {
+      "action": "broadcast",
+      "text": "",
+      "draft": [
+        "parity:or beta"
+      ],
+      "draft_label": "parity:or beta",
+      "cancel_visible": true,
+      "rewind_visible": false,
+      "predicates": [],
+      "tag": "parity:or beta",
+      "shift": true
+    },
+    {
+      "action": "broadcast",
+      "text": "",
+      "draft": [
+        "parity:or alpha",
+        "parity:or beta"
+      ],
+      "draft_label": "parity:or alpha OR parity:or beta",
+      "cancel_visible": true,
+      "rewind_visible": true,
+      "predicates": [],
+      "tag": "parity:or alpha",
+      "shift": true
+    },
+    {
+      "action": "broadcast",
+      "text": "",
+      "draft": [
+        "parity:or alpha",
+        "parity:or beta"
+      ],
+      "draft_label": "parity:or alpha OR parity:or beta",
+      "cancel_visible": true,
+      "rewind_visible": true,
+      "predicates": [],
+      "tag": "parity:or beta",
+      "shift": true
+    },
+    {
+      "action": "broadcast",
+      "text": "",
+      "draft": [
+        "parity:or alpha",
+        "parity:or beta",
+        "parity:or gamma"
+      ],
+      "draft_label": "parity:or alpha OR parity:or beta OR parity:or gamma",
+      "cancel_visible": true,
+      "rewind_visible": true,
+      "predicates": [],
+      "tag": "parity:or gamma",
+      "shift": true
+    },
+    {
+      "action": "rewind",
+      "text": "",
+      "draft": [
+        "parity:or alpha",
+        "parity:or beta"
+      ],
+      "draft_label": "parity:or alpha OR parity:or beta",
+      "cancel_visible": true,
+      "rewind_visible": true,
+      "predicates": []
+    },
+    {
+      "action": "escape",
+      "text": "",
+      "draft": [
+        "parity:or alpha"
+      ],
+      "draft_label": "parity:or alpha",
+      "cancel_visible": true,
+      "rewind_visible": false,
+      "predicates": [],
+      "handled": true
+    },
+    {
+      "action": "escape",
+      "text": "",
+      "draft": null,
+      "draft_label": null,
+      "cancel_visible": false,
+      "rewind_visible": false,
+      "predicates": [],
+      "handled": true
+    },
+    {
+      "action": "broadcast",
+      "text": "",
+      "draft": [
+        "parity:or beta"
+      ],
+      "draft_label": "parity:or beta",
+      "cancel_visible": true,
+      "rewind_visible": false,
+      "predicates": [],
+      "tag": "parity:or beta",
+      "shift": true
+    },
+    {
+      "action": "cancel",
+      "text": "",
+      "draft": null,
+      "draft_label": null,
+      "cancel_visible": false,
+      "rewind_visible": false,
+      "predicates": []
+    },
+    {
+      "action": "broadcast",
+      "text": "",
+      "draft": [
+        "parity:or beta"
+      ],
+      "draft_label": "parity:or beta",
+      "cancel_visible": true,
+      "rewind_visible": false,
+      "predicates": [],
+      "tag": "parity:or beta",
+      "shift": true
+    },
+    {
+      "action": "broadcast",
+      "text": "",
+      "draft": null,
+      "draft_label": null,
+      "cancel_visible": false,
+      "rewind_visible": false,
+      "predicates": [
+        "parity:or alpha OR parity:or beta"
+      ],
+      "tag": "parity:or alpha",
+      "shift": false
+    },
+    {
+      "action": "broadcast",
+      "text": "",
+      "draft": [
+        "parity:or single"
+      ],
+      "draft_label": "parity:or single",
+      "cancel_visible": true,
+      "rewind_visible": false,
+      "predicates": [
+        "parity:or alpha OR parity:or beta"
+      ],
+      "tag": "parity:or single",
+      "shift": true
+    },
+    {
+      "action": "commit_draft",
+      "text": "",
+      "draft": null,
+      "draft_label": null,
+      "cancel_visible": false,
+      "rewind_visible": false,
+      "predicates": [
+        "parity:or alpha OR parity:or beta",
+        "parity:or single"
+      ]
+    }
+  ],
+  "first_selected_with_draft": [
+    "parity:or beta"
+  ],
+  "query_count": 2,
+  "corpus": [
+    {
+      "tag": "parity:or alpha",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ]
+    },
+    {
+      "tag": "parity:or beta",
+      "hashes": [
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+      ]
+    },
+    {
+      "tag": "parity:or single",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+      ]
+    }
+  ]
+}

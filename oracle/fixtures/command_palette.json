@@ -1,0 +1,1811 @@
+{
+  "initial": {
+    "show_page_of_pages": false,
+    "initially_show_all_pages": true,
+    "initially_show_history": true,
+    "initially_show_favourite_searches": false,
+    "fav_searches_open_new_page": true,
+    "show_main_menu": false,
+    "show_media_menu": false,
+    "limit_page_results": null,
+    "limit_history_results": 10,
+    "limit_favourite_searches_results": null,
+    "threshold": 1,
+    "order": [
+      0,
+      1,
+      2,
+      4,
+      3,
+      5
+    ],
+    "threshold_bounds": [
+      1,
+      64
+    ],
+    "limit_bounds": [
+      1,
+      1000000
+    ]
+  },
+  "events": [
+    {
+      "provider": 3,
+      "query": "Palette",
+      "rows": [
+        {
+          "text": [
+            "<b>Palette</b> Alpha",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette</b> Beta",
+            "child of 'Palette Nested'"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette</b> Gamma",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 4,
+      "query": "Palette",
+      "rows": [
+        {
+          "text": [
+            "<b>Palette</b> Gamma",
+            "1st result in history"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette</b> Beta",
+            "2nd result in history"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette</b> Alpha",
+            "3rd result in history"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 5,
+      "query": "Favourite",
+      "rows": [
+        {
+          "text": [
+            "<b>Favourite</b> Alpha",
+            "Palette Folder - <i>favourite search</i>"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Favourite</b> Beta",
+            ""
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 5,
+      "query": "Palette Folder",
+      "rows": [
+        {
+          "text": [
+            "Favourite Alpha",
+            "<b>Palette Folder</b> - <i>favourite search</i>"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 1,
+      "query": "Palette",
+      "rows": [
+        {
+          "text": [
+            "<b>Palette</b> Launch",
+            "Palette Synthetic"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette</b> checked",
+            "Palette Synthetic"
+          ],
+          "toggled": true,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette</b> disabled",
+            "Palette Synthetic"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 1,
+      "query": "pa",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "2+3*4",
+      "rows": [
+        {
+          "text": [
+            "14",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "sqrt(16)",
+      "rows": [
+        {
+          "text": [
+            "4.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "pow(2,3)",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "1/0",
+      "rows": []
+    },
+    {
+      "provider": 3,
+      "query": "Palette",
+      "rows": [
+        {
+          "text": [
+            "<b>Palette</b> Alpha",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette</b> Nested",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette</b> Beta",
+            "child of 'Palette Nested'"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Palette</b> Gamma",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 3,
+      "query": "Palette",
+      "rows": [
+        {
+          "text": [
+            "<b>Palette</b> Alpha",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 4,
+      "query": "Palette",
+      "rows": [
+        {
+          "text": [
+            "<b>Palette</b> Gamma",
+            "1st result in history"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 5,
+      "query": "Favourite",
+      "rows": [
+        {
+          "text": [
+            "<b>Favourite</b> Alpha",
+            "Palette Folder - <i>favourite search</i>"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 3,
+      "query": "Pal",
+      "rows": []
+    },
+    {
+      "provider": 3,
+      "query": "Pale",
+      "rows": [
+        {
+          "text": [
+            "<b>Pale</b>tte Alpha",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Pale</b>tte Nested",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Pale</b>tte Beta",
+            "child of 'Palette Nested'"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Pale</b>tte Gamma",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 3,
+      "query": "   ",
+      "rows": []
+    },
+    {
+      "provider": 1,
+      "query": "Pal",
+      "rows": []
+    },
+    {
+      "provider": 1,
+      "query": "Pale",
+      "rows": [
+        {
+          "text": [
+            "<b>Pale</b>tte Launch",
+            "Palette Synthetic"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Pale</b>tte checked",
+            "Palette Synthetic"
+          ],
+          "toggled": true,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>Pale</b>tte disabled",
+            "Palette Synthetic"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    }
+  ],
+  "selected": {
+    "page": "Palette Alpha",
+    "menu_calls": [
+      "launch"
+    ],
+    "favourite": {
+      "name": "Favourite Alpha",
+      "new_pages": 1
+    },
+    "favourite_current": {
+      "name": "Favourite Alpha",
+      "new_pages": 0,
+      "same_page": true
+    }
+  },
+  "window_route": {
+    "visible": true,
+    "query": "Palette Alpha",
+    "selected_before": 0,
+    "selected_text": "<b>Palette Alpha</b>",
+    "closed_after_launch": true,
+    "page": "Palette Alpha"
+  },
+  "media_events": [
+    {
+      "provider": 2,
+      "query": "refresh",
+      "rows": [
+        {
+          "text": [
+            "<b>refresh</b>",
+            ""
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 2,
+      "query": "select",
+      "rows": []
+    }
+  ],
+  "calculator_events": [
+    {
+      "provider": 0,
+      "query": "2",
+      "rows": [
+        {
+          "text": [
+            "2",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "-2**2",
+      "rows": [
+        {
+          "text": [
+            "-4",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "(-2)**2",
+      "rows": [
+        {
+          "text": [
+            "4",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "2**-2",
+      "rows": [
+        {
+          "text": [
+            "0.25",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "2**3**2",
+      "rows": [
+        {
+          "text": [
+            "512",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "--3",
+      "rows": [
+        {
+          "text": [
+            "3",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "7//3",
+      "rows": [
+        {
+          "text": [
+            "2",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "-7//3",
+      "rows": [
+        {
+          "text": [
+            "-3",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "7//-3",
+      "rows": [
+        {
+          "text": [
+            "-3",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "-7%3",
+      "rows": [
+        {
+          "text": [
+            "2",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "7%-3",
+      "rows": [
+        {
+          "text": [
+            "-2",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "7.0//3",
+      "rows": [
+        {
+          "text": [
+            "2.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "-7.0%3",
+      "rows": [
+        {
+          "text": [
+            "2.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "0.0%-3",
+      "rows": [
+        {
+          "text": [
+            "-0.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "1e3",
+      "rows": [
+        {
+          "text": [
+            "1000.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": ".5+1.",
+      "rows": [
+        {
+          "text": [
+            "1.5",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "01",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "01.0",
+      "rows": [
+        {
+          "text": [
+            "1.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "000",
+      "rows": [
+        {
+          "text": [
+            "0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "2(3)",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "abs(-5)",
+      "rows": [
+        {
+          "text": [
+            "5",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "abs(-5.0)",
+      "rows": [
+        {
+          "text": [
+            "5.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "ceil(2.2)",
+      "rows": [
+        {
+          "text": [
+            "3",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "floor(-2.2)",
+      "rows": [
+        {
+          "text": [
+            "-3",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "ceil(inf)",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "gcd()",
+      "rows": [
+        {
+          "text": [
+            "0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "gcd(-5)",
+      "rows": [
+        {
+          "text": [
+            "5",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "gcd(5.0)",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "hypot()",
+      "rows": [
+        {
+          "text": [
+            "0.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "hypot(-5)",
+      "rows": [
+        {
+          "text": [
+            "5.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "factorial(6)",
+      "rows": [
+        {
+          "text": [
+            "720",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "factorial(6.0)",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "factorial(-1)",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "factorial(30)",
+      "rows": [
+        {
+          "text": [
+            "265252859812191058636308480000000",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "exp(1)",
+      "rows": [
+        {
+          "text": [
+            "2.718281828459045",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "exp(1000)",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "exp(inf)",
+      "rows": [
+        {
+          "text": [
+            "inf",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "log(e)",
+      "rows": [
+        {
+          "text": [
+            "1.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "log(0)",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "log2(8)",
+      "rows": [
+        {
+          "text": [
+            "3.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "log10(100)",
+      "rows": [
+        {
+          "text": [
+            "2.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "sqrt(16)",
+      "rows": [
+        {
+          "text": [
+            "4.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "sqrt(-1)",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "acos(1)",
+      "rows": [
+        {
+          "text": [
+            "0.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "asin(0)",
+      "rows": [
+        {
+          "text": [
+            "0.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "atan(1)",
+      "rows": [
+        {
+          "text": [
+            "0.7853981633974483",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "atan2(1)",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "cos(0)",
+      "rows": [
+        {
+          "text": [
+            "1.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "sin(pi/2)",
+      "rows": [
+        {
+          "text": [
+            "1.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "tan(0)",
+      "rows": [
+        {
+          "text": [
+            "0.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "degrees(pi)",
+      "rows": [
+        {
+          "text": [
+            "180.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "radians(180)",
+      "rows": [
+        {
+          "text": [
+            "3.141592653589793",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "acosh(1)",
+      "rows": [
+        {
+          "text": [
+            "0.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "asinh(0)",
+      "rows": [
+        {
+          "text": [
+            "0.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "atanh(.5)",
+      "rows": [
+        {
+          "text": [
+            "0.5493061443340548",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "atanh(1)",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "cosh(0)",
+      "rows": [
+        {
+          "text": [
+            "1.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "sinh(0)",
+      "rows": [
+        {
+          "text": [
+            "0.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "tanh(inf)",
+      "rows": [
+        {
+          "text": [
+            "1.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "erf(0)",
+      "rows": [
+        {
+          "text": [
+            "0.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "erfc(0)",
+      "rows": [
+        {
+          "text": [
+            "1.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "gamma(5)",
+      "rows": [
+        {
+          "text": [
+            "24.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "gamma(0)",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "gamma(-.5)",
+      "rows": [
+        {
+          "text": [
+            "-3.544907701811032",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "lgamma(5)",
+      "rows": [
+        {
+          "text": [
+            "3.178053830347945",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "pow(2)",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "pow(2,3)",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "randint(1,2)",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "random()",
+      "rows": [
+        {
+          "text": [
+            "0.020734499299199016",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "pi",
+      "rows": [
+        {
+          "text": [
+            "3.141592653589793",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "e",
+      "rows": [
+        {
+          "text": [
+            "2.718281828459045",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "inf",
+      "rows": [
+        {
+          "text": [
+            "inf",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "-inf",
+      "rows": [
+        {
+          "text": [
+            "-inf",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "inf-inf",
+      "rows": [
+        {
+          "text": [
+            "nan",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "inf%2",
+      "rows": [
+        {
+          "text": [
+            "nan",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "2%inf",
+      "rows": [
+        {
+          "text": [
+            "2.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "-2%inf",
+      "rows": [
+        {
+          "text": [
+            "inf",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "inf//2",
+      "rows": [
+        {
+          "text": [
+            "nan",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "2//inf",
+      "rows": [
+        {
+          "text": [
+            "0.0",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "(-2)**.5",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "0**-1",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "1e308*2",
+      "rows": [
+        {
+          "text": [
+            "inf",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "1e308**2",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "2**100",
+      "rows": [
+        {
+          "text": [
+            "1267650600228229401496703205376",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "999999999999999999999999999999+1",
+      "rows": [
+        {
+          "text": [
+            "1000000000000000000000000000000",
+            "Calculator"
+          ],
+          "toggled": false,
+          "close": false
+        }
+      ]
+    },
+    {
+      "provider": 0,
+      "query": "__import__(1)",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "sqrt",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "2^3",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "1E3",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "1/0",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "1//0",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "1%0",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "",
+      "rows": []
+    },
+    {
+      "provider": 0,
+      "query": "   ",
+      "rows": []
+    }
+  ],
+  "unicode_events": [
+    {
+      "provider": 3,
+      "query": "\u00df",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra<b>\u00df</b>e ffi ff",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 3,
+      "query": "\ufb00",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ff</b>i <b>ff</b>",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 3,
+      "query": "\ufb03",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ffi</b> ff",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 4,
+      "query": "\u00df",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra<b>\u00df</b>e ffi ff",
+            "1st result in history"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 4,
+      "query": "\ufb00",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ff</b>i <b>ff</b>",
+            "1st result in history"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 4,
+      "query": "\ufb03",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ffi</b> ff",
+            "1st result in history"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 5,
+      "query": "\u00df",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra<b>\u00df</b>e ffi ff",
+            ""
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 5,
+      "query": "\ufb00",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ff</b>i <b>ff</b>",
+            ""
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 5,
+      "query": "\ufb03",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ffi</b> ff",
+            ""
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 1,
+      "query": "\u00df",
+      "rows": [],
+      "threshold": 2
+    },
+    {
+      "provider": 1,
+      "query": "\ufb00",
+      "rows": [],
+      "threshold": 2
+    },
+    {
+      "provider": 1,
+      "query": "\ufb03",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ffi</b> ff",
+            "Palette Synthetic"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 2
+    },
+    {
+      "provider": 3,
+      "query": "\u00df",
+      "rows": [],
+      "threshold": 3
+    },
+    {
+      "provider": 3,
+      "query": "\ufb00",
+      "rows": [],
+      "threshold": 3
+    },
+    {
+      "provider": 3,
+      "query": "\ufb03",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ffi</b> ff",
+            "top level page"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 3
+    },
+    {
+      "provider": 4,
+      "query": "\u00df",
+      "rows": [],
+      "threshold": 3
+    },
+    {
+      "provider": 4,
+      "query": "\ufb00",
+      "rows": [],
+      "threshold": 3
+    },
+    {
+      "provider": 4,
+      "query": "\ufb03",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ffi</b> ff",
+            "1st result in history"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 3
+    },
+    {
+      "provider": 5,
+      "query": "\u00df",
+      "rows": [],
+      "threshold": 3
+    },
+    {
+      "provider": 5,
+      "query": "\ufb00",
+      "rows": [],
+      "threshold": 3
+    },
+    {
+      "provider": 5,
+      "query": "\ufb03",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ffi</b> ff",
+            ""
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 3
+    },
+    {
+      "provider": 1,
+      "query": "\u00df",
+      "rows": [],
+      "threshold": 3
+    },
+    {
+      "provider": 1,
+      "query": "\ufb00",
+      "rows": [],
+      "threshold": 3
+    },
+    {
+      "provider": 1,
+      "query": "\ufb03",
+      "rows": [
+        {
+          "text": [
+            "Unicode Stra\u00dfe <b>ffi</b> ff",
+            "Palette Synthetic"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ],
+      "threshold": 3
+    }
+  ],
+  "queue_events": [
+    [
+      1,
+      0,
+      2,
+      4,
+      3,
+      5
+    ],
+    [
+      1,
+      2,
+      4,
+      3,
+      5
+    ],
+    [
+      1,
+      2,
+      4,
+      3,
+      5
+    ],
+    [
+      1,
+      2,
+      4,
+      3,
+      5,
+      0
+    ]
+  ],
+  "questions": [
+    "Remove 1 selected?",
+    {
+      "text": "Select a provider to add:",
+      "choices": [
+        [
+          "calculator",
+          0,
+          "calculator"
+        ]
+      ]
+    }
+  ],
+  "persisted": {
+    "order": [
+      1,
+      2,
+      4,
+      3,
+      5,
+      0
+    ]
+  }
+}

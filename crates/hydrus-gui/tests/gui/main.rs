@@ -20,10 +20,14 @@ mod edit_subscription;
 mod embedded_metadata;
 mod favourites;
 mod file_log;
+mod filename_rules;
+mod filename_simple;
+mod folder_manager_lifecycle;
 mod folders;
 mod force_filetype;
 mod formula_editors;
 mod import_files;
+mod import_folder_log;
 mod import_options;
 mod import_options_panel;
 mod importer_list_menu;
@@ -51,6 +55,7 @@ mod page_navigation_options;
 mod page_scroll;
 mod popups;
 mod predicate_editors;
+mod predicate_history;
 mod ratings;
 mod recent_predicates;
 mod scanbar;
@@ -120,3 +125,15 @@ mod namespace_sorts;
 mod tag_list_display_types;
 
 mod sort_cog;
+
+mod command_palette;
+
+mod read_autocomplete;
+
+mod read_or;
+mod system_or_activation;
+
+mod manage_tag_counts;
+
+mod frame_locations;
+mod incremental_tagging;

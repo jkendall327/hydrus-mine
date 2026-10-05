@@ -215,10 +215,14 @@ search.
   such as "ß", which we fold to "ss" as it does).
 
 - **System predicate editors type dates** ("2011-06-04", and "13:05") where
-  the reference's have a calendar and a time box, and a viewing time is
-  kept to the second (the reference keeps its milliseconds, though it
-  never shows them; one stored by hydrus comes across to the nearest
-  second). A file size in terabytes, which the reference's editor offers
+  the reference's have a calendar and a time box. Viewing-time predicates
+  now preserve the millisecond fields through creation, reference import,
+  recent predicates and database searches, including the reference's
+  floating-point truncation at the query boundary. The free-text parser
+  continues to accept whole-second viewtime intervals. Legacy viewtimes
+  with submillisecond precision round to the nearest millisecond; exact
+  arbitrary-float import parity remains unfinished. A file size in
+  terabytes, which the reference's editor offers
   but can't write out ("error:cannot render this predicate"), is written
   "200TB"; neither parser takes "TB". Their radio buttons are drop-downs
   (as are the like/dislike and star controls of "system:rating"), and an
@@ -228,7 +232,18 @@ search.
   the reference warns of in a dialog is said under the panels.
   "Paste image!" takes a file's path from the clipboard, not image data.
   A recent predicate is forgotten with a "forget" button where the
-  reference has a trash icon.
+  reference has a trash icon. The star menu now saves/resets typed defaults
+  immediately, surviving owner Cancel and keeping current fields unchanged on
+  reset. Star Save can retain an invalid regex, as the reference's Save path
+  bypasses its separate acceptance check; OK still reports the invalid regex.
+  Its date/relative, views/viewtime, URL-type and cross-service rating
+  comparability follows the actual reference. Per-service rating panels preserve
+  the reference's omission of custom-default initialization; advanced rating uses
+  it. Legacy defaults are imported into the same canonical typed store setting;
+  unreadable future records stay lossless in imported options and inactive in
+  editors. URL class defaults
+  retain the existing native predicate's class-name identity. Date and fractional
+  viewtime precision retain the limits above.
 
 - **Thumbnails on a scaled screen are resampled to its pixels** (area
   when shrinking, Lanczos when growing, as the reference resizes
@@ -265,7 +280,14 @@ search.
   "administrate", for repository admins; the database menu's backup
   entries as hydrus has them for a database across several locations;
   and the
-  undo menu's undo, redo and search history, which hydrus-rs doesn't keep.
+  undo menu's content undo and redo. Search predicate history now has native
+  addition/removal consumers and confirmed clearing, checked against an
+  executed actual Qt recording; its authored model/native replay awaits CI.
+  Changes within one batch are kept in deterministic predicate order, whereas
+  Qt emits a Python set difference whose internal order can vary between
+  processes. Populated locked pages retain their badge and media after
+  hidden-query Undo, including with synchronization enabled, as recorded
+  from the reference.
   Hydrus's menu entries describe themselves in the status bar as the
   pointer passes; ours don't yet, and the history's latest page isn't in
   bold. Saving a session asks its name and its questions in one dialog,
@@ -580,10 +602,44 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   time); a router's rows go through its processor in the order the
   sidecars give them (the reference's go through a set, so a slice or
   rows the human sort ties come out in no set order);
-  its tags are typed a line each (the reference has a tags input with
-  autocomplete and paste buttons), as are its quick namespaces
-  ("namespace:regex") and regexes, where the reference has lists with
-  add and edit dialogs.
+  the import-folder cached-path child now edits a complete private queue in
+  memory and accepts it into the manager draft. Cancelling that child or the
+  manager does not mutate the live cache; accepted edits survive cancelling
+  only an existing folder's fields editor. Folder managers now acquire a
+  crash-safe transient pause request before waiting for active workers to
+  finish, then read the draft while holding an exclusive activity lease.
+  Both requests and activity leases work across processes sharing the store.
+  `oracle/record_folder_manager_lifecycle.py` records the real Qt manager's
+  temporary pause, wait message and completion, and restoration of an already
+  paused or unpaused state after Apply, Cancel and exceptions. Export management
+  also notifies its scheduler in `finally`; import management notifies only on
+  Apply. Native coordination uses owned file locks rather than Qt global
+  running flags and temporary Boolean overwrites. It preserves live user pause
+  changes, offers Cancel while waiting in the manager window, and releases
+  requests on failed acquisition or save. Scheduler wakeups poll the inert
+  request-file timestamp at one-second intervals instead of Qt publications.
+  A crash releases the OS leases automatically; leftover unlocked files do
+  not pause workers. Cancellation interrupts work between files, not inside
+  an individual copy/import or database query, as in the recorded reference.
+  Shared file-log menu parity (including all bulk-action questions and ignored
+  retry regex filtering) remains independently incomplete.
+  its simple tag lists use an owned shared autocomplete editor plus direct
+  paste buttons, rather than Qt's inline autocomplete and tag list. The native
+  child has Apply/Cancel within the filename draft, and holds the service/file
+  selection fixed. Selected-file union edits preserve untouched per-file tags;
+  explicit entry, autocomplete paste, direct paste and removal follow the
+  recorded Qt distinctions. Unavailable clipboard text preserves the native
+  draft and displays an error; Qt shows a critical message then raises an
+  uncaught TypeError in this handler. The shared autocomplete's recent-tag
+  history and complete tag-list keyboard/context operations remain separately
+  incomplete. Advanced quick namespaces and regexes now
+  use lists with the reference's accepted-rule actions and literal field values.
+  The quick-namespace child and deletion question occupy the owning native
+  window rather than separate Qt dialogs; namespace/regex header sorting is
+  local to that editor, while Qt remembers its list-column state globally.
+  Validation error details come from the native Python-compatible regex engine.
+  Both inputs expose the shared component/help/favourites menus; native popup
+  presentation omits Qt bold headings and action hover tooltips.
 - **There is one review window at a time**: files dropped on the main
   window while it is open join its list, where the reference opens a
   second window.
@@ -642,13 +698,30 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   goes when the download ends rather than ten seconds later.
 - **Subscription changes made from the command line reach a running
   `hydrus serve` within five minutes.**
+- **Full subscription exchange transport** supports modern reference container 90
+  JSON and PNG without dropping query history or cached header metadata. Legacy
+  subscription type3 versions1–10 now import through the actual list. The original transport menus are wired; native imports still
+  pass through a reviewed child instead of adding immediately. Clipboard PNG
+  image precedence and PNG list drops remain absent. Older unsupported seed-cache
+  versions fail explicitly rather than losing history.
+  Missing histories now ask the original message, title and decisions before
+  staging; accepted missing logs are initialised empty directly on Apply. The list owner now stages modern imports and
+  persists both histories. JSON file export/overwrite and multi-file JSON/PNG
+  import are wired, with atomic review of each selection. The reference can keep
+  earlier valid objects when a later file/type fails; native rejects that complete
+  selection before staging. Staged and saved reset/retry exports now refresh the
+  original file-count/example caches and forget hashes of retried files. Fresh
+  native query exports initialise counts/examples; gallery and velocity caches
+  without a retained reference header remain unsynchronised. This slice does not
+  complete subscriptions-exchange.
 - **The manage subscriptions dialog is a first pass.** It lists the
   subscriptions and can delete, pause/resume, scrub delays, check
   queries now and select by query text, add and edit subscriptions,
   merge, separate, lowercase, retry, reset, and overwrite downloader and
   checker options, and deduplicate. Import options can be copied as the
   reference JSON container, pasted and cleared within the dialog's draft.
-  Subscription "export"/"import" buttons remain absent. "merge" merges each group
+  Subscription export/import opens a staged modern-container child (remaining
+  exchange modes are noted above). "merge" merges each group
   as its questions are answered (cancelling a later group's questions
   leaves the earlier merged, where the reference merges none). It doesn't reckon bandwidth waits (the
   error/delay column is empty unless the subscription is delayed). It
@@ -916,7 +989,7 @@ Checked by the `popups` conformance scenario.
   `false` for a numerical or inc/dec rating service (Python counts a bool as
   an int, so the reference stores `true` as one star).
 
-- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions, repository/IPFS account administration, archive tag migration and bulk clear/undelete maintenance actions remain unavailable and are described in the window.
+- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions and repository/IPFS account administration remain unavailable. Local trash clear/undelete, double-confirmed deleted-file-record clearing and all three local rating-clear populations are implemented; bulk rating choices and confirmations use native inline controls rather than Qt popup menus/dialogs. Opening a replacement review retires the previous owner's pending maintenance confirmation.
 
 - **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields and there is no live rating preview; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available; HTTPS, normie Eris and external URL overrides are preserved imported values, with an explicit control to disable unsupported HTTPS. A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
 
@@ -978,8 +1051,8 @@ warning (the display graph ignores such pairs anyway). Batches creating loops
 or conflicting sibling ideals are rejected with an explicit message; enter
 the pairs separately to perform the ordinary automatic repairs. Already corrupt
 reference graph cycles are traversed safely, but do not raise its detailed
-pre-existing-loop warning. Archive tag migration and
-manual background sibling/parent synchronization remain separate future work.
+pre-existing-loop warning. Manual background sibling/parent synchronization
+remains separate future work.
 
 ## Detailed embedded file metadata (`hydrus-gui`, `hydrus-media`)
 
@@ -1007,7 +1080,7 @@ from an explicit queue preserves its empty intent. Native settings preserve
 unknown JSON fields and unedited service settings. The application
 window uses ordered native lists and an inline source selector. Display/search
 uses a numeric zero for the reference's nullable "always autocomplete" threshold.
-Archive tag migration and manual/background sibling/parent sync remain unimplemented.
+Manual/background sibling/parent sync remains unimplemented.
 Autocomplete configuration refresh preserves any open manage-tags draft; its
 location editor always exposes the permitted file domains.
 Display/search edits merge unedited services and setting areas from the current
@@ -1140,7 +1213,7 @@ explicit buttons. Login-script waits remain outside the implemented engine.
 Local snapshots are published by the daemon without requiring its Client API;
 expiry disables stale controls and saved bandwidth history remains available.
 
-## Service-to-service tag migration
+## Tag migration
 
 Migration opens from Tags > migrate, service review or Manage Tags. The global
 entry uses the configured or remembered default tag-dialog service, without a
@@ -1157,14 +1230,35 @@ One migration runs per open Store; a second job is rejected promptly so a normal
 reader remains available to the UI. The reservation is released on error or cancel.
 Display graph/count publication happens after each relationship batch, following
 the existing native immediate-sync design; large graph rebuilds occupy the writer
-but run outside the UI thread. Cancellation is available; pausing is deferred.
-Hydrus Tag Archive/tag-pair archive import/export and non-SHA256 conversion remain
-unimplemented. Pair left/right filters are available; the reference's optional
-"side/ideal has mappings count" gates are deferred. Repository migration retains
+but run outside the UI thread. Pause/resume waits after the current atomic batch,
+as the reference does; cancelling also wakes a paused job. Closing the settings
+window leaves its independently retained progress job alive. Native progress is
+a separate window rather than an embedded message-manager popup; it follows the
+reference phase/speed text, paused override, immediate cancel/dismiss controls
+and delayed completion dismissal. The native timer checks the strict integer
+three-second deadline every 80 ms; the reference manager/checker polls it.
+Hydrus Tag Archive/tag-pair archive sources are read-only snapshots, including
+hash-type inference, rather than opening the reference's writable archive job.
+Native archive output uses the actual Python SQLite schemas and commits atomic
+bounded batches; the reference commits its long archive transaction during job
+cleanup. Cancellation retains the committed prefix. Existing hash/pair metadata
+is revalidated and preserved. The reference's existing MD5 archive picker can
+leave its SHA256 dropdown selected while disabled; native pins the actual archive
+kind, avoiding relabeling its existing hashes. Source and destination must be
+different archive paths. Native output does not run the reference's optional
+post-job VACUUM/ANALYZE optimization.
+
+SHA256/MD5/SHA1/SHA512 conversion uses known stored digests; unknown conversions
+are skipped, while same-kind all-known archive copies retain unknown hashes.
+Selected-file/domain filtering converts through SHA256. Pair gates use actual
+current and pending storage mappings and the sibling terminal ideal, rather than
+implied display counts. Count gates reload a fresh reader snapshot after each
+source batch, matching the reference's current service counts and ideal chains
+while source pagination remains stable. Repository migration retains
 pending/petitioned content locally; uploading is outside this window's scope.
 The reference's fixed Mass Migration Job reason is offered as an editable petition
-reason in the native window. Progress reports scanned and accepted source entries,
-including destination entries already in the requested state.
+reason in the native window. The speed label counts accepted source entries,
+including destination entries already in the requested state, as the reference does.
 
 Go freezes the entire migration request. Applying an already-open filter or location
 child after the confirmation appears changes only the next job's settings.
@@ -1274,9 +1368,22 @@ shortcuts before that same multi-domain selector.
 
 Manage Tags' write autocomplete now has storage counts, typed/ideal elevation,
 parent and sibling rows, manual fetch, a scrollable suggestions list, multiline
-paste and all six Tag Editing autocomplete preferences. Favourites and children now use the shared tabs; maintenance and multiple-selection context actions remain outstanding.
-Declining a multiline paste leaves the existing text draft intact; Qt returns
-that event to its line editor's normal paste handling. Import additional-tags and whitelist fields now open a detached shared write-tag editor; their raw multiline fields remain available as well. Expanded
+paste and all six Tag Editing autocomplete preferences. Favourites and children now use the shared tabs. Logical multi-selection, batch activation, selected copy/search/relationship menus and local tag-display regeneration work across shared write inputs. Regeneration publishes recalculated display graphs and counts atomically; Qt queues a subsequent display-maintenance pass and shows its database job progress. Native regeneration currently waits on its writer without that job-progress panel.
+Declining a multiline paste resumes the native line editor at the retained
+cursor/selection. The shared write input uses Slint's native TextInput cursor/selection/IME
+with a short multiline allowance during normal paste, retaining Qt's
+raw newline draft text instead of standard Slint LineEdit's newline-to-space
+conversion. Accepted clipboard tags preserve an existing text draft in both
+clients. Undo/Redo uses history owned by each input, keeping a replacement paste
+atomic, separating subsequent typing and invalidating redo on a fresh edit.
+Cursor movement and Undo/Redo boundaries prevent later typing from merging
+into an older command, and Delete and Backspace retain separate directions.
+This avoids Slint's separate selection-deletion and insertion undo items. Undo
+restores the pre-edit selection; redo restores that edit's saved post-edit
+caret, while Qt can retain a later command's caret/selection at a redo boundary.
+Same-value programmatic draft resets are not distinguished from live model
+refreshes, so this remains a limitation of the partial shared-input assessment.
+Platform widget appearance differs. Import additional-tags and whitelist fields now open a detached shared write-tag editor; their raw multiline fields remain available as well. Expanded
 parent rows enter their originating child, matching Qt's logical-list selection.
 
 File Search list heights and floating policy reach new-page presentation;
@@ -1367,12 +1474,25 @@ opening the page does not explicitly raise the desktop window.
 
 Login HTTP execution is implemented as a reusable NetEngine consumer with script
 editor test controls and result review. Test runs use fresh cookie sessions while
-copying request preferences and custom headers. Results populate after the run
-finishes; the reference inserts them as each step finishes. Native copy feedback
+copying request preferences and custom headers. Results now stream into the native list as each step finishes, before the next
+wait/request, and can be reviewed while the run is active.
+Script Run test now uses the recorded runtime domain prompt and remembered
+credentials, preserving old results on either cancellation and clearing them only
+at execution start. Test NetworkJobControl cog/error UI, the script-help button
+and the informational completion popup remain absent; final result is inline. Native copy feedback
 stays visible until the review closes. Domain-manager confirmed execution now saves/closes the draft then runs the selected
 eligible queue through the shared persisted cookie store. Its progress/cancel
 controls appear when the manager is reopened; it does not share the reference's
 global login process monitor or automatically log in on ordinary downloader demand.
+The manager now shows required-cookie login status and session/earliest-cookie
+expiry, refreshes it from the shared store, and resets selected resolved sessions
+after the reference confirmation. This reset is immediate and survives parent
+Cancel, matching Qt ownership; configuration edits still wait for Apply.
+Domain Add/change-script now uses an owned sequential native prompt window for
+script, available example/custom domain, access, description and activation, with
+the existing credential child. Its final description Cancel keeps the default,
+while owner cancellation discards it. Reference no-op separator/current-script
+choices, duplicate warnings, validity/delay resets and staged Delete are retained.
 Login requests bypass bandwidth
 waiting while using ordinary cookies, custom headers, redirect and retry behavior.
 The executor waits the reference two seconds after successful steps and observes
@@ -1451,10 +1571,10 @@ text and once-per-boot allowance. Active weight is checked by the one-second
 session monitor; the reference checks when its page-count menu becomes dirty.
 
 Login step argument maps now have three independent extended-selection lists, as
-in the reference. Native row editing uses an inline detached key/value pair;
-the reference asks sequential text questions. Both reject duplicate/nonblank-key
-violations and allow blank values, preserve dictionary precedence and support
-confirmed deletion. The scrollable native body keeps its footer visible.
+in the reference. Native Add/Edit now asks the same sequential key/value text
+questions, with remembered edit defaults, key-stage duplicate warnings and
+Cancel/blank-key aborts. Blank values are accepted; dictionary precedence and
+confirmed deletion remain unchanged. Warnings use the native inline error text. The scrollable native body keeps its footer visible.
 
 Subscription import-options favourites have reference menu actions and overwrite
 semantics through the native shared editors. Their warnings use the existing
@@ -1463,8 +1583,10 @@ import-options default management and external-program command editing still hav
 separate incomplete coverage; this does not complete those broader controls.
 
 Login global/step cookie requirements are now editable through a shared child list
-with a staged row and separate name/value matcher buttons; the reference embeds
-the list and asks sequential matcher dialogs. Independent matcher objects with
+with immediate sequential **edit cookie name** and **edit match** dialogs.
+Cancel at either stage retains the whole original pair, and edit dialogs preload
+the original matchers. The reference embeds its list in the script/step editor;
+the native editor still opens that list in an owned child Window. Independent matcher objects with
 identical descriptions remain distinct, as in Python. Explicit matcher edits
 canonicalize their unused auxiliary matcher values. The three argument-list topology
 and selection gap is closed; example-domain add/edit/delete and the reference
@@ -1516,9 +1638,8 @@ reach Manage Tags; the service navigator also reaches sibling and parent editors
 These are opening defaults independent of write-autocomplete decorations. Native
 service tabs and list rows use Slint geometry. Inherited parent ordering follows
 natural tag order; Qt's inherited-parent collection does not specify relative
-order. Existing Manage Tags differences remain: counts are omitted when every
-selected file has the tag, multiple stored-tag selection and its full context
-menu are not implemented, and remote service petition dialogs are outside this
+order. Existing Manage Tags differences remain: multiple stored-tag selection and its
+full context menu are not implemented, and remote service petition dialogs are outside this
 local-service slice. The four preference leaves do not claim those parent
 workflow gaps complete.
 
@@ -1666,3 +1787,170 @@ cogs now edit both contexts transactionally. Their two-level native popups
 use the reference service groups, separators, checks and advanced-view order.
 They edit each sort independently and preserve its full saved context metadata.
 The page-level sort cog remains a separate, unclaimed workflow.
+
+Command-palette preferences and snapshot-based provider/queue models are now
+present, with fresh Qt recordings. The Options editor now stages and persists these
+settings and migrates legacy preferences. The native Ctrl+P window now queries
+and launches pages, history, favourites and the supported native main/media menu
+actions. Media results carry an action snapshot and refuse to mutate a different
+page or changed selection. The palette closes on native focus loss through the
+shared focus observer. The calculator now parses the reference's closed numeric
+language, including all its callable names (commas remain forbidden by the
+reference, so two-argument calls produce no result). Native math functions can
+differ in their final floating-point bit, particularly gamma/lgamma and Windows
+atanh. Cross-platform fixture assertions permit at most four ULPs or four relative
+machine epsilons only for finite nonzero exp/log, trig/inverse-trig, hyperbolic,
+erf/erfc and gamma/lgamma outputs, retaining the float result type and sign.
+Zeros, special values/infinite inputs, integer results, errors and ordinary
+arithmetic display strings remain exact. This tolerance verifies bounded numerical
+semantics and does not claim identical platform-independent display strings or
+promote the partial calculator. Expressions
+requiring huge intermediate powers or conversion of enormous integers to floats
+have bounded native evaluation. The native palette uses plain matched text
+rather than Qt's rich-text emphasis and result icons; native menus retain their
+existing unavailable commands. These boundaries keep the whole-palette entry
+partial while its concrete preference and provider-order controls have consumers.
+
+Shared write autocomplete now records and implements result keyboard wrap,
+reversible ranges, physical-row page jumps and selected clipboard output. Native
+result rows gain focus on click; the editor retains its own selection/clipboard
+engine. Shared search autocomplete tabs/OR controls and asynchronous loading
+remain separate workflows; this keyboard slice does not promote their parent
+coverage entries.
+
+Write-autocomplete result deselection and reversible mouse ranges now share the
+reference's add/remove mode, including inherited rows and retained drafts. The
+native result list uses a persistent pointer surface across refreshes. The recorded mouse paths
+cover displayed rows; continuous dragging outside the viewport is not covered
+by this recording.
+
+Viewing-statistic context-menu style and canvas selection now have native Options
+controls and real menu/search/sort consumers, backed by
+`oracle/fixtures/viewing_statistics_options.json`. Native media-preview rendering
+and its minimum/maximum tracking controls remain absent. The actual media viewer,
+archive/delete filter and duplicate filter now own recorded viewing intervals,
+with reference minimum/cap controls, filter switches, live policy reads,
+cap-before-minimum arithmetic and latest-start preservation across overlapping
+canvases. Duration fields retain the reference's float-to-millisecond truncation
+at opening/Apply. Native recording commits at interval boundaries rather than
+buffering Qt's60-second flush; the explicit Client API count/viewtime path keeps
+its existing semantics. Preview statistics imported or supplied by the API can
+still participate in the menu/canvas selection without pretending that a native
+preview renderer exists.
+
+Read-search favourites and children now reach actual page predicates, queries,
+shared settings and restored contexts. Their selector is a native dropdown
+rather than Qt's notebook header. Children fetch synchronously from the native
+snapshot; Qt schedules work/publish with stale-domain checks. This slice records
+the typing/tab-switch pending state separately from final query results. Read
+result multi-selection/context menus, interactive OR construction and advanced
+OR input remain distinct gaps, so the search-autocomplete parent stays partial.
+
+Automatic domain login now runs before downloader connection admission and uses
+the shared persisted session cookies. Its crash-safe per-store file lease spans independently opened GUI/daemon engines
+and real manual/forced login attempts. Owner identity and cancellation are
+persisted without a global mutable registry; stale crash metadata is ignored
+when the file lease is free. The native domain manager monitors and cancels
+this live owner directly instead of showing the reference JobStatus popup.
+A triggering downloader cancellation leaves its engine-owned login alive, while
+process cancellation stops later steps and records the reference four-hour delay.
+Invalid ordinary requests wait 60 seconds; subscriptions retain the exact
+reference cancellation note.
+
+Files and Trash confirmation preferences now reach thumbnail and viewer local
+file operations. The native deletion question still presents one action rather
+than the reference's complete service/action picker when advanced mode is off.
+Advanced local-domain, trash and physical/clean deletion now uses the action and
+reason picker with the ordered reason queue and remembered accepted choices.
+Remote repository/IPFS actions are outside this local dialog. Copy/move-domain
+confirmation controls are not yet connected. Undelete currently restores immediately.
+
+Read-search OR construction, rewind and cancel now have native consumers. The empty-OR and advanced Boolean child editors are now implemented.
+The shared read autocomplete remains partial: multiple selection, read context
+menus and asynchronous fetch publication are assessed separately. The native
+rewind/cancel controls use text buttons rather than Qt's icon buttons.
+
+The OR child keeps the opening file/tag domains; it does not yet embed Qt's
+domain chooser and favourite-search cog. Shared read selection/context menus and
+asynchronous fetch publication remain partial. The advanced editor supports the
+existing native system-parser vocabulary, rejects negated system terms as Qt
+does, and limits Boolean distribution to 4,096 clauses to avoid an exponential
+allocation. System-predicate editors reuse the existing shared native opener;
+the OR owner cancels them on close. Native layouts and text controls differ from
+Qt's notebook and icon controls. These additions do not promote the complete
+read-autocomplete or OR parent workflows.
+
+System selections in main read and basic OR input now preserve activation
+Shift and use the same OR construction broadcast as tags. The executed actual
+Qt activation recording covers both consumers, accepted recents after outer
+Cancel, history-free drafts and real query counts. Authored model/native
+regression execution remains pending hosted CI.
+
+Manage Tags deleted-mapping counts and the global show/hide preference now reach
+existing local-service panels, including staged changes and persisted reopening.
+Other open native owners observe a toggle within 200 ms, rather than Qt's queued
+notification. Native uses a labelled show/hide button instead of the reference
+eye icon. Repository Manage Tags panels and their petition/pend action choices
+remain an inherited gap; this checkpoint does not claim that parent complete.
+
+The native Incremental Tagging child uses the existing local-service Manage Tags
+consumer. Repository panels, repository pend/petition choices and parent-level
+uncommitted-change confirmation remain separate inherited Manage Tags gaps.
+Reference numeric controls and additive per-file behavior are retained; native
+rejects out-of-range callback values without changing the preview. Initial-start
+inference now uses the reference Unicode15.1 decimal values and ASCII-run numeric
+sort keys, including mixed-script digits and skipped negative subtags. The actual
+Qt panel fails to open when its initial integer exceeds signed 32-bit range,
+and Python rejects raw previews above its configured integer-digit limit. Native
+retains a usable value: it clamps large decimal values to 10,000,000 and correctly
+reads long leading-zero values. This intentional difference is recorded in
+`incremental_number_boundaries.json`; synthetic previews above the 1,024-character
+stored-tag limit are injected only into media tag managers, never written to DB.
+The ordinary tag-selection parent remains independently
+assessed; these two features do not complete it. Adding a fresh tag then removing
+it now retains a staged deleted mapping, matching Qt instead of treating that
+sequence as an unchanged draft.
+
+
+Frame locations: the complete imported table and geometry editor persist all
+fields, but placement consumers currently use remembered size/position and
+maximised/fullscreen for the main window, media viewer and Options window. Other
+named dialog owners have not yet been wired to their frame keys. Default gravity,
+parent/cursor positioning, screen fitting and offscreen-rescue preferences still
+lack native consumers; their parent/table/editor coverage remains Partial.
+The real Options lifecycle does not retain incidental resize/move geometry on
+Cancel/X or unchanged Apply: the accepted-dialog geometry save occurs before
+the GUI page commits its captured frame table. Native retains the same final
+Options-frame values, including explicit own-frame resets, as recorded in
+`options_geometry_lifecycle.json`.
+
+Service review trash deletion delegates physical unlinking to the existing
+deferred-delete worker and preserves its delete-lock behaviour. The recorded
+rating warning about restarting media views is retained: review counts reopen
+from the database immediately, while cached media ratings refresh through their
+existing viewer/page lifecycle. The service review parent remains partial;
+this slice covers only the two local bulk-maintenance leaves.
+
+
+Tag-banner editors use RGBA spin boxes with swatches instead of Qt's alpha-colour
+picker, and owned inline namespace questions instead of three separate text-entry
+dialogs. The colour-picker and deeper child-window hierarchy remain partial.
+Generator colours affect thumbnails only, as in Qt; the viewer title uses its
+normal information text colour. Repeated namespace rows retain their existing
+summary semantics; Unicode decimal numeric collapse is now supported. Authored
+native owner/consumer regressions and rendered PNGs await hosted CI.
+
+
+Deleted-file-record review uses an owned two-stage inline confirmation in place
+of Qt's two modal questions. It retains exact messages/labels and the reference
+trash-history exception. Clearing records does not unlink bytes or cancel the
+physical-delete queue; it changes future import recognition through the existing
+content lifecycle. No broad service-review parent completion is claimed.
+
+Human text sort keys now mirror Qt's two separate steps: split ASCII digit runs,
+then convert every complete decimal chunk, including Unicode scripts, to an
+integer. Empty chunks and decimal zero share the same tuple. Banner previews
+therefore place fullwidth numeric subtags before alphabetic ones while retaining
+the reference's mixed ASCII/Unicode chunk ordering; the existing40-state exact
+banner replay remains unchanged. A fresh live Qt preview recording covers eight
+Unicode/mixed-script/zero boundaries and four sort-key equalities.

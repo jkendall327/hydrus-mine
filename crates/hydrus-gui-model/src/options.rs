@@ -20,6 +20,7 @@ use hydrus_core::thumbnail::{ThumbnailRatingSettings, ThumbnailScale, ThumbnailS
 use hydrus_core::url::UrlClassSettings;
 use hydrus_core::windows::WindowSettings;
 use hydrus_store::bandwidth::BandwidthSettings;
+use hydrus_store::command_palette::{CommandPaletteSettings, Provider};
 use hydrus_store::delete_lock::DeleteLock;
 use hydrus_store::duplicates::DuplicateFilterSettings;
 use hydrus_store::duplicates::auto::AutoResolutionSettings;
@@ -41,6 +42,31 @@ use hydrus_store::trash::TrashSettings;
 use rusqlite::Connection;
 
 macro_rules! settings {
+    (@save $conn:ident, $after:ident, $before:ident, windows) => {
+        if $after.windows != $before.windows {
+            let mut windows: WindowSettings = hydrus_store::settings::get($conn)?;
+            let before_frames = $before.windows.frames();
+            for (name,frame) in $after.windows.frames() {
+                if before_frames.get(&name) != Some(&frame) { windows.set_frame(&name,frame); }
+            }
+            if $after.windows.save_media_viewer_on_close != $before.windows.save_media_viewer_on_close {
+                windows.save_media_viewer_on_close = $after.windows.save_media_viewer_on_close;
+            }
+            hydrus_store::settings::set($conn,&windows)?;
+        }
+    };
+    (@save $conn:ident, $after:ident, $before:ident, deletion) => {
+        if $after.deletion != $before.deletion {
+            let mut deletion = $after.deletion.clone();
+            let current: hydrus_store::settings::DeletionPreferences = hydrus_store::settings::get($conn)?;
+            if deletion.last_action == $before.deletion.last_action {deletion.last_action = current.last_action;}
+            if deletion.last_reason == $before.deletion.last_reason {deletion.last_reason = current.last_reason;}
+            hydrus_store::settings::set($conn, &deletion)?;
+        }
+    };
+    (@save $conn:ident, $after:ident, $before:ident, $field:ident) => {
+        if $after.$field != $before.$field {hydrus_store::settings::set($conn, &$after.$field)?;}
+    };
     (@load $conn:ident, $ty:ty, $load:path) => { $load($conn) };
     (@load $conn:ident, $ty:ty) => { hydrus_store::settings::get::<$ty>($conn) };
     ($($field:ident: $ty:ty $(=> $load:path)?),* $(,)?) => {
@@ -60,9 +86,7 @@ macro_rules! settings {
             /// Write those changed since `before`.
             pub fn save(&self, conn: &Connection, before: &Self) -> hydrus_store::Result<()> {
                 $(
-                    if self.$field != before.$field {
-                        hydrus_store::settings::set(conn, &self.$field)?;
-                    }
+                    settings!(@save conn, self, before, $field);
                 )*
                 Ok(())
             }
@@ -75,7 +99,9 @@ settings! {
     auto_resolution: AutoResolutionSettings,
     bandwidth: BandwidthSettings,
     checker_defaults: CheckerDefaults,
+    command_palette: CommandPaletteSettings,
     delete_lock: DeleteLock,
+    deletion: hydrus_store::settings::DeletionPreferences,
     downloader_pages: DownloaderPageSettings,
     duplicate_filter: DuplicateFilterSettings,
     export: ExportSettings,
@@ -110,6 +136,7 @@ settings! {
     slideshow: SlideshowSettings,
     sorts: SortSettings,
     tag_presentation: TagPresentation,
+    tag_summaries: hydrus_core::tag_summary::TagSummaries,
     thumbnails: ThumbnailSettings,
     thumbnail_layout: ThumbnailLayout,
     thumbnail_ratings: ThumbnailRatingSettings,
@@ -148,6 +175,13 @@ pub enum Value {
     },
     /// A time, in seconds (the reference's `TimeDeltaWidget`).
     Duration(f64),
+    /// A duration whose last numeric value remains staged while disabled.
+    NoneableDuration {
+        none: bool,
+        seconds: f64,
+    },
+    /// Selected viewing canvases, in the reference checkbox-list order.
+    Canvases(Vec<hydrus_core::CanvasType>),
     /// A number per a time in seconds (the reference's `VelocityCtrl`).
     Velocity(i64, f64),
     /// A file sort: its type and order (the reference's
@@ -161,10 +195,15 @@ pub enum Value {
     Checker(CheckerOptions),
     /// The editable regular expression/description pairs.
     RegexFavourites(RegexFavourites),
+    /// Ordered advanced file-deletion reason suggestions.
+    DeletionReasons(Vec<String>),
+    FrameLocations(std::collections::BTreeMap<String, hydrus_core::windows::FrameLocation>),
     /// Shared favourite tags, staged until the parent options dialog applies.
     FavouriteTags(FavouriteTags),
     ImportOptions(crate::import_options_panel::Value),
     NamespaceSorts(Vec<PageSort>),
+    TagBanner(hydrus_core::tag_summary::TagSummaryGenerator),
+    ProviderOrder(Vec<Provider>),
     TagService(hydrus_core::ServiceKey),
     Location(hydrus_core::search::context::LocationContext),
 }
@@ -192,6 +231,8 @@ pub enum Kind {
     Choice(&'static [&'static str]),
     /// Named GUI sessions plus the blank-page startup choice.
     SavedSession,
+    /// Media, preview and Client API viewing-statistic canvases.
+    CanvasTicks,
     GallerySource,
     Text,
     /// An editable folder path with the shared native directory picker.
@@ -203,6 +244,13 @@ pub enum Kind {
     Duration {
         units: &'static [Unit],
         min: f64,
+    },
+    /// A reference NoneableTimeDeltaWidget, including millisecond fields.
+    NoneableDuration {
+        units: &'static [Unit],
+        min: f64,
+        default: f64,
+        none_phrase: &'static str,
     },
     /// A number in `number`'s range, `per` (the text between), then a time
     /// as a duration's.
@@ -223,6 +271,9 @@ pub enum Kind {
     Checker,
     /// A button opening the transactional favourites list editor.
     RegexFavourites,
+    /// Inline ordered advanced file-deletion reason queue.
+    DeletionReasons,
+    FrameLocations,
     /// Importable current file domains, edited in a child selector.
     LocalLocation,
     /// A detached tag list editor sharing write autocomplete.
@@ -230,6 +281,9 @@ pub enum Kind {
     /// The transactional manager page, including simple-mode presentation.
     ImportOptions,
     NamespaceSorts,
+    TagBanner(crate::tag_banner::Target),
+    /// Inline staged command-palette provider queue.
+    ProviderOrder,
     /// Real tag services, optionally including all known tags.
     TagService {
         combined: bool,
@@ -367,6 +421,26 @@ pub fn duration_fields(seconds: f64, units: &[Unit]) -> Vec<i64> {
         .collect()
 }
 
+/// Fields of a NoneableTimeDeltaWidget opened from persisted milliseconds.
+/// Qt truncates its fractional millisecond remainder on SetValue; regular
+/// duration editing retains its separately entered fields until Apply.
+pub fn noneable_duration_fields(seconds: f64, units: &[Unit]) -> Vec<i64> {
+    let mut remaining = seconds.max(0.0);
+    units
+        .iter()
+        .map(|&unit| {
+            let number = if unit == Unit::Milliseconds {
+                (remaining * 1000.0) as i64
+            } else {
+                let number = (remaining / unit.seconds()).floor() as i64;
+                remaining %= unit.seconds();
+                number
+            };
+            number.min(unit.max())
+        })
+        .collect()
+}
+
 /// The time these fields say.
 pub fn duration_seconds(fields: &[i64], units: &[Unit]) -> f64 {
     units
@@ -442,6 +516,13 @@ fn opt(label: &'static str, kind: Kind, get: Get, set: Set) -> Item {
         set,
         enabled: |_| true,
     })
+}
+
+fn enabled(mut item: Item, predicate: fn(&Settings) -> bool) -> Item {
+    if let Item::Opt(option) = &mut item {
+        option.enabled = predicate;
+    }
+    item
 }
 
 /// Tag service choices in reference order: all known tags first when offered,
@@ -774,6 +855,41 @@ fn duration(
     )
 }
 
+fn noneable_duration(
+    label: &'static str,
+    units: &'static [Unit],
+    min: f64,
+    default: f64,
+    none_phrase: &'static str,
+    get: fn(&Settings) -> Option<u64>,
+    set: fn(&mut Settings, Option<u64>),
+) -> Item {
+    opt(
+        label,
+        Kind::NoneableDuration {
+            units,
+            min,
+            default,
+            none_phrase,
+        },
+        Rc::new(move |s| {
+            let value = get(s);
+            Value::NoneableDuration {
+                none: value.is_none(),
+                seconds: value.map_or(default, |ms| ms as f64 / 1000.0),
+            }
+        }),
+        Rc::new(move |s, v| match v {
+            Value::NoneableDuration { none, seconds } => {
+                // Reference MillisecondiseS truncates this float, including 1.001s.
+                set(s, (!none).then_some((seconds.max(min) * 1000.0) as u64));
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+    )
+}
+
 fn velocity(
     label: &'static str,
     (number, per): ((i64, i64), &'static str),
@@ -830,6 +946,108 @@ fn whole(seconds: f64) -> u64 {
 
 fn boxed(title: &'static str, items: Vec<Item>) -> Item {
     Item::Box(title, items)
+}
+
+/// Exact command-palette control order and bounds from the reference options panel.
+fn command_palette_page() -> Page {
+    Page {
+        name: "command palette",
+        items: vec![boxed(
+            "command palette",
+            vec![
+                check(
+                    "Initially show all page results:",
+                    |s| s.command_palette.initially_show_pages,
+                    |s, v| s.command_palette.initially_show_pages = v,
+                ),
+                check(
+                    "Initially show page history results:",
+                    |s| s.command_palette.initially_show_history,
+                    |s, v| s.command_palette.initially_show_history = v,
+                ),
+                check(
+                    "Initially show favourite search results:",
+                    |s| s.command_palette.initially_show_favourites,
+                    |s, v| s.command_palette.initially_show_favourites = v,
+                ),
+                int(
+                    "Start searching when this many characters have been typed:",
+                    (1, 64),
+                    |s| i64::try_from(s.command_palette.threshold).unwrap_or(64),
+                    |s, v| s.command_palette.threshold = usize::try_from(v).unwrap_or(1),
+                ),
+                noneable(
+                    "Max page results to show:",
+                    none("no limit", 10, (1, 1_000_000), None),
+                    |s| {
+                        s.command_palette
+                            .page_limit
+                            .map(|n| i64::try_from(n).unwrap_or(1_000_000))
+                    },
+                    |s, v| s.command_palette.page_limit = v.and_then(|n| usize::try_from(n).ok()),
+                ),
+                noneable(
+                    "Max page history to show:",
+                    none("no limit", 10, (1, 1_000_000), None),
+                    |s| {
+                        s.command_palette
+                            .history_limit
+                            .map(|n| i64::try_from(n).unwrap_or(1_000_000))
+                    },
+                    |s, v| {
+                        s.command_palette.history_limit = v.and_then(|n| usize::try_from(n).ok());
+                    },
+                ),
+                noneable(
+                    "Max favourite searches to show:",
+                    none("no limit", 10, (1, 1_000_000), None),
+                    |s| {
+                        s.command_palette
+                            .favourite_limit
+                            .map(|n| i64::try_from(n).unwrap_or(1_000_000))
+                    },
+                    |s, v| {
+                        s.command_palette.favourite_limit = v.and_then(|n| usize::try_from(n).ok());
+                    },
+                ),
+                check(
+                    "Include \"page of pages\" page results:",
+                    |s| s.command_palette.show_notebooks,
+                    |s, v| s.command_palette.show_notebooks = v,
+                ),
+                check(
+                    "Open favourite searches in a new page:",
+                    |s| s.command_palette.favourites_new_page,
+                    |s, v| s.command_palette.favourites_new_page = v,
+                ),
+                check(
+                    "ADVANCED: Search main menubar:",
+                    |s| s.command_palette.show_main_menu,
+                    |s, v| s.command_palette.show_main_menu = v,
+                ),
+                check(
+                    "ADVANCED: Search media menu:",
+                    |s| s.command_palette.show_media_menu,
+                    |s, v| s.command_palette.show_media_menu = v,
+                ),
+                boxed(
+                    "search provider order",
+                    vec![opt(
+                        "You can re-order or remove search providers from the palette here. Any removed providers can be re-added.",
+                        Kind::ProviderOrder,
+                        Rc::new(|s| Value::ProviderOrder(s.command_palette.provider_order.clone())),
+                        Rc::new(|s, v| match v {
+                            Value::ProviderOrder(order) => {
+                                s.command_palette.provider_order.clone_from(order);
+                                Ok(())
+                            }
+                            _ => Err(wrong("search provider order")),
+                        }),
+                    )],
+                ),
+            ],
+        )],
+    }
 }
 
 /// The downloaders' waits after an error (`TimeDeltaButton`s of days to
@@ -986,6 +1204,7 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 },
             )],
         ),
+        command_palette_page(),
         page(
             "connection",
             vec![
@@ -1511,11 +1730,78 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         ),
         page(
             "file viewing statistics",
-            vec![check(
-                "Enable file viewing statistics tracking?:",
-                |s| s.file_viewing.active,
-                |s, v| s.file_viewing.active = v,
-            )],
+            vec![
+                check(
+                    "Enable file viewing statistics tracking?:",
+                    |s| s.file_viewing.active,
+                    |s, v| s.file_viewing.active = v,
+                ),
+                check(
+                    "Enable file viewing statistics tracking in the archive/delete filter?:",
+                    |s| s.file_viewing.archive_delete,
+                    |s, v| s.file_viewing.archive_delete = v,
+                ),
+                check(
+                    "Enable file viewing statistics tracking in the duplicate filter?:",
+                    |s| s.file_viewing.duplicates,
+                    |s, v| s.file_viewing.duplicates = v,
+                ),
+                noneable_duration(
+                    "Min time to view on media viewer to count as a view:",
+                    &[Unit::Minutes, Unit::Seconds, Unit::Milliseconds],
+                    0.05,
+                    2.0,
+                    "count every view",
+                    |s| s.file_viewing.media_min_ms,
+                    |s, v| s.file_viewing.media_min_ms = v,
+                ),
+                noneable_duration(
+                    "Cap any view on the media viewer to this maximum time:",
+                    &[
+                        Unit::Hours,
+                        Unit::Minutes,
+                        Unit::Seconds,
+                        Unit::Milliseconds,
+                    ],
+                    1.0,
+                    600.0,
+                    "no limit",
+                    |s| s.file_viewing.media_max_ms,
+                    |s, v| s.file_viewing.media_max_ms = v,
+                ),
+                choice(
+                    "Show viewing stats on media right-click menus?:",
+                    &[
+                        "show a combined value, and stack the separate values a submenu",
+                        "stack the separate values",
+                    ],
+                    |s| {
+                        usize::from(
+                            s.file_viewing.menu_display
+                                == hydrus_store::settings::ViewingStatsMenuDisplay::Stacked,
+                        )
+                    },
+                    |s, v| {
+                        s.file_viewing.menu_display = if v == 1 {
+                            hydrus_store::settings::ViewingStatsMenuDisplay::Stacked
+                        } else {
+                            hydrus_store::settings::ViewingStatsMenuDisplay::Combined
+                        }
+                    },
+                ),
+                opt(
+                    "Which views to show?:",
+                    Kind::CanvasTicks,
+                    Rc::new(|s| Value::Canvases(s.file_viewing.interesting_canvases.clone())),
+                    Rc::new(|s, v| match v {
+                        Value::Canvases(canvases) => {
+                            s.file_viewing.interesting_canvases.clone_from(canvases);
+                            Ok(())
+                        }
+                        _ => Err(wrong("Which views to show?:")),
+                    }),
+                ),
+            ],
         ),
         page(
             "files and trash",
@@ -1524,6 +1810,16 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     "When copying file hashes, prefix with booru-friendly hash type: ",
                     |s| s.file_handling.prefix_hash_when_copying,
                     |s, v| s.file_handling.prefix_hash_when_copying = v,
+                ),
+                check(
+                    "Confirm sending files to trash: ",
+                    |s| s.deletion.confirm_trash,
+                    |s, v| s.deletion.confirm_trash = v,
+                ),
+                check(
+                    "Confirm sending more than one file to archive or inbox: ",
+                    |s| s.deletion.confirm_archive,
+                    |s, v| s.deletion.confirm_archive = v,
                 ),
                 check(
                     "When physically deleting files or folders, send them to the OS's recycle bin: ",
@@ -1577,6 +1873,47 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         ),
                     ],
                 ),
+                boxed(
+                    "advanced file deletion and custom reasons",
+                    vec![
+                        check(
+                            "Use the advanced file deletion dialog: ",
+                            |s| s.deletion.advanced,
+                            |s, v| s.deletion.advanced = v,
+                        ),
+                        enabled(
+                            check(
+                                "Remember the last action: ",
+                                |s| s.deletion.remember_action,
+                                |s, v| s.deletion.remember_action = v,
+                            ),
+                            |s| s.deletion.advanced,
+                        ),
+                        enabled(
+                            check(
+                                "Remember the last reason: ",
+                                |s| s.deletion.remember_reason,
+                                |s, v| s.deletion.remember_reason = v,
+                            ),
+                            |s| s.deletion.advanced,
+                        ),
+                        enabled(
+                            opt(
+                                "",
+                                Kind::DeletionReasons,
+                                Rc::new(|s| Value::DeletionReasons(s.deletion.reasons.clone())),
+                                Rc::new(|s, v| match v {
+                                    Value::DeletionReasons(reasons) => {
+                                        s.deletion.reasons.clone_from(reasons);
+                                        Ok(())
+                                    }
+                                    _ => Err(wrong("deletion reasons")),
+                                }),
+                            ),
+                            |s| s.deletion.advanced,
+                        ),
+                    ],
+                ),
             ],
         ),
         page(
@@ -1622,11 +1959,27 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 ),
                 boxed(
                     "frame locations",
-                    vec![check(
-                        "Save media viewer window size and position on close: ",
-                        |s| s.windows.save_media_viewer_on_close,
-                        |s, v| s.windows.save_media_viewer_on_close = v,
-                    )],
+                    vec![
+                        check(
+                            "Save media viewer window size and position on close: ",
+                            |s| s.windows.save_media_viewer_on_close,
+                            |s, v| s.windows.save_media_viewer_on_close = v,
+                        ),
+                        opt(
+                            "",
+                            Kind::FrameLocations,
+                            Rc::new(|s| Value::FrameLocations(s.windows.frames())),
+                            Rc::new(|s, v| match v {
+                                Value::FrameLocations(frames) => {
+                                    for (name, frame) in frames {
+                                        s.windows.set_frame(name, frame.clone());
+                                    }
+                                    Ok(())
+                                }
+                                _ => Err(wrong("frame locations")),
+                            }),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -2445,6 +2798,49 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             "tag presentation",
             vec![
                 boxed(
+                    "tag banners",
+                    vec![
+                        opt(
+                            "On thumbnail top:",
+                            Kind::TagBanner(crate::tag_banner::Target::ThumbnailTop),
+                            Rc::new(|s| Value::TagBanner(s.tag_summaries.thumbnail_top.clone())),
+                            Rc::new(|s, value| match value {
+                                Value::TagBanner(value) => {
+                                    s.tag_summaries.thumbnail_top.clone_from(value);
+                                    Ok(())
+                                }
+                                _ => Err("not a tag banner".into()),
+                            }),
+                        ),
+                        opt(
+                            "On thumbnail bottom-right:",
+                            Kind::TagBanner(crate::tag_banner::Target::ThumbnailBottomRight),
+                            Rc::new(|s| {
+                                Value::TagBanner(s.tag_summaries.thumbnail_bottom_right.clone())
+                            }),
+                            Rc::new(|s, value| match value {
+                                Value::TagBanner(value) => {
+                                    s.tag_summaries.thumbnail_bottom_right.clone_from(value);
+                                    Ok(())
+                                }
+                                _ => Err("not a tag banner".into()),
+                            }),
+                        ),
+                        opt(
+                            "On media viewer top:",
+                            Kind::TagBanner(crate::tag_banner::Target::MediaViewerTop),
+                            Rc::new(|s| Value::TagBanner(s.tag_summaries.media_viewer_top.clone())),
+                            Rc::new(|s, value| match value {
+                                Value::TagBanner(value) => {
+                                    s.tag_summaries.media_viewer_top.clone_from(value);
+                                    Ok(())
+                                }
+                                _ => Err("not a tag banner".into()),
+                            }),
+                        ),
+                    ],
+                ),
+                boxed(
                     "selection tags",
                     vec![noneable(
                         "Max number of thumbnails to compute tags for when none are selected: ",
@@ -2644,6 +3040,16 @@ pub fn values(pages: &[Page], settings: &Settings) -> Vec<Vec<Value>> {
                     (Kind::Int { min, max }, Value::Int(number)) => {
                         Value::Int(number.clamp(*min, *max))
                     }
+                    (
+                        Kind::NoneableDuration { units, min, .. },
+                        Value::NoneableDuration { none, seconds },
+                    ) => Value::NoneableDuration {
+                        none,
+                        seconds: duration_seconds(
+                            &noneable_duration_fields(seconds.max(*min), units),
+                            units,
+                        ),
+                    },
                     (_, value) => value,
                 })
                 .collect()
@@ -2758,7 +3164,19 @@ pub fn suggestions_with_values(pages: &[Page], values: &[Vec<Value>]) -> Vec<Sug
                     labels.extend(*unit);
                 }
                 (Kind::NoneableText { none_phrase }, _) => labels.push(*none_phrase),
+                (Kind::CanvasTicks, _) => {
+                    labels.extend(["media views", "preview views", "client api views"]);
+                }
                 (Kind::Duration { units, .. }, _) => {
+                    labels.extend(units.iter().map(|unit| unit.label()));
+                }
+                (
+                    Kind::NoneableDuration {
+                        units, none_phrase, ..
+                    },
+                    _,
+                ) => {
+                    labels.push(*none_phrase);
                     labels.extend(units.iter().map(|unit| unit.label()));
                 }
                 (Kind::Velocity { per, units, .. }, _) => {
@@ -3000,6 +3418,28 @@ impl Editor {
         }
     }
 
+    /// Toggle one reference viewing-canvas tick, retaining its displayed order.
+    pub fn canvas(&mut self, row: usize, index: usize, checked: bool) {
+        use hydrus_core::CanvasType;
+        const CANVASES: [CanvasType; 3] = [
+            CanvasType::MediaViewer,
+            CanvasType::Preview,
+            CanvasType::ClientApi,
+        ];
+        let Some(i) = self.option_at(row) else { return };
+        let Some(canvas) = CANVASES.get(index) else {
+            return;
+        };
+        let Value::Canvases(canvases) = &mut self.values[self.page][i] else {
+            return;
+        };
+        canvases.retain(|c| c != canvas);
+        if checked {
+            canvases.push(*canvas);
+        }
+        canvases.sort_by_key(|c| CANVASES.iter().position(|v| v == c));
+    }
+
     pub fn number(&mut self, row: usize, number: i64) {
         let Some(i) = self.option_at(row) else {
             return;
@@ -3026,7 +3466,9 @@ impl Editor {
             return;
         };
         let value = &mut self.values[self.page][i];
-        if let Value::NoneableText { none: was, .. } = value {
+        if let Value::NoneableText { none: was, .. } | Value::NoneableDuration { none: was, .. } =
+            value
+        {
             *was = none;
         } else {
             let number = self.numbers[self.page][i];
@@ -3055,7 +3497,9 @@ impl Editor {
             return;
         };
         let units = match self.kind(i) {
-            Kind::Duration { units, .. } | Kind::Velocity { units, .. } => *units,
+            Kind::Duration { units, .. }
+            | Kind::NoneableDuration { units, .. }
+            | Kind::Velocity { units, .. } => *units,
             _ => return,
         };
         let set = |seconds: f64| {
@@ -3068,6 +3512,10 @@ impl Editor {
         let value = &mut self.values[self.page][i];
         *value = match *value {
             Value::Duration(seconds) => Value::Duration(set(seconds)),
+            Value::NoneableDuration { none, seconds } => Value::NoneableDuration {
+                none,
+                seconds: set(seconds),
+            },
             Value::Velocity(number, seconds) => Value::Velocity(number, set(seconds)),
             _ => return,
         };
@@ -3218,6 +3666,36 @@ impl Editor {
         }
     }
 
+    pub fn edited_banner(
+        &self,
+        row: usize,
+    ) -> Option<(
+        crate::tag_banner::Target,
+        hydrus_core::tag_summary::TagSummaryGenerator,
+    )> {
+        let index = self.option_at(row)?;
+        match (self.kind(index), &self.values[self.page][index]) {
+            (Kind::TagBanner(target), Value::TagBanner(value)) => Some((*target, value.clone())),
+            _ => None,
+        }
+    }
+
+    /// A child can apply after its parent changes page; identify the original button.
+    pub fn set_banner(
+        &mut self,
+        target: crate::tag_banner::Target,
+        draft: hydrus_core::tag_summary::TagSummaryGenerator,
+    ) {
+        for (page, values) in self.pages.iter().zip(&mut self.values) {
+            for (option, value) in page.options().iter().zip(values) {
+                if matches!(option.kind, Kind::TagBanner(found) if found == target) {
+                    *value = Value::TagBanner(draft);
+                    return;
+                }
+            }
+        }
+    }
+
     pub fn edited_namespace_sorts(&self) -> Vec<PageSort> {
         self.values
             .iter()
@@ -3232,6 +3710,77 @@ impl Editor {
         for value in self.values.iter_mut().flatten() {
             if matches!(value, Value::NamespaceSorts(_)) {
                 *value = Value::NamespaceSorts(sorts);
+                return;
+            }
+        }
+    }
+
+    pub fn edited_frame_locations(
+        &self,
+    ) -> std::collections::BTreeMap<String, hydrus_core::windows::FrameLocation> {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|v| match v {
+                Value::FrameLocations(frames) => Some(frames.clone()),
+                _ => None,
+            })
+            .unwrap_or_else(|| self.before.windows.frames())
+    }
+    pub fn set_frame_locations(
+        &mut self,
+        frames: std::collections::BTreeMap<String, hydrus_core::windows::FrameLocation>,
+    ) {
+        if let Some(value) = self
+            .values
+            .iter_mut()
+            .flatten()
+            .find(|v| matches!(v, Value::FrameLocations(_)))
+        {
+            *value = Value::FrameLocations(frames);
+        }
+    }
+
+    /// Provider order staged independently of which options page is visible.
+    /// Reason queue edits stay in the parent draft until Options applies.
+    pub fn edited_deletion_reasons(&self) -> Vec<String> {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|v| {
+                if let Value::DeletionReasons(reasons) = v {
+                    Some(reasons.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_default()
+    }
+    pub fn set_deletion_reasons(&mut self, reasons: Vec<String>) {
+        if let Some(value) = self
+            .values
+            .iter_mut()
+            .flatten()
+            .find(|v| matches!(v, Value::DeletionReasons(_)))
+        {
+            *value = Value::DeletionReasons(reasons);
+        }
+    }
+    pub fn edited_provider_order(&self) -> Vec<Provider> {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| match value {
+                Value::ProviderOrder(order) => Some(order.clone()),
+                _ => None,
+            })
+            .unwrap_or_else(|| self.before.command_palette.provider_order.clone())
+    }
+    /// Accept queue edits into the parent options draft without writing preferences.
+    pub fn set_provider_order(&mut self, order: Vec<Provider>) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::ProviderOrder(_)) {
+                *value = Value::ProviderOrder(order);
                 return;
             }
         }
@@ -3557,7 +4106,7 @@ mod tests {
             .unwrap();
         editor.show_page(trash);
         let rows = editor.rows();
-        // (the delete lock's box title is a row of its own)
+        // Each reference box title is a separate row.
         let titles: Vec<_> = rows
             .iter()
             .filter_map(|r| match r {
@@ -3565,7 +4114,13 @@ mod tests {
                 Row::Opt { .. } => None,
             })
             .collect();
-        assert_eq!(titles, [("delete lock", 0)]);
+        assert_eq!(
+            titles,
+            [
+                ("delete lock", 0),
+                ("advanced file deletion and custom reasons", 0)
+            ]
+        );
         let find = |label: &str| {
             rows.iter()
                 .position(|row| matches!(row, Row::Opt { option, .. } if option.label == label))

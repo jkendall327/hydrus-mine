@@ -18,6 +18,8 @@ export component FileLogWindow inherits Window {
     preferred-height: 560px;
     background: Theme.window;
     in property <string> status;
+    in property <bool> staged;
+    callback apply();
     // (a file log's, or a search log's)
     in property <[TableColumn]> columns;
     in property <[TableRow]> rows;
@@ -96,8 +98,9 @@ export component FileLogWindow inherits Window {
             }
             HorizontalLayout {
                 alignment: end;
+                if root.staged: Button { text: "apply"; enabled: !root.asking && !root.busy; clicked => { root.apply(); } }
                 Button {
-                    text: "close";
+                    text: root.staged ? "cancel" : "close";
                     clicked => { root.close-window(); }
                 }
             }

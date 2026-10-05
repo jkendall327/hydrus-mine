@@ -1,0 +1,302 @@
+{
+ "script": [
+  73,
+  "test prompt",
+  2,
+  [
+   "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+   [
+    21,
+    2,
+    []
+   ],
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       72,
+       "username",
+       1,
+       [
+        0,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          null,
+          null,
+          "example string"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       74,
+       "synthetic request",
+       2,
+       [
+        "http",
+        "GET",
+        null,
+        "/",
+        {
+         "username": "user"
+        },
+        {},
+        {},
+        [
+         21,
+         2,
+         []
+        ],
+        [
+         26,
+         3,
+         []
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     "z.example",
+     0,
+     "last"
+    ],
+    [
+     "a.example",
+     1,
+     "first"
+    ]
+   ]
+  ]
+ ],
+ "button": "run test",
+ "states": [
+  {
+   "name": "cancel-first-domain",
+   "before": {
+    "domain": "",
+    "credentials": {},
+    "running": false,
+    "run_enabled": true,
+    "result_count": 1
+   },
+   "prompts": [
+    {
+     "kind": "domain",
+     "message": "Edit the domain.",
+     "default": "a.example",
+     "answer": null
+    }
+   ],
+   "started": [],
+   "after": {
+    "domain": "a.example",
+    "credentials": {},
+    "running": false,
+    "run_enabled": true,
+    "result_count": 1
+   }
+  },
+  {
+   "name": "blank-domain",
+   "before": {
+    "domain": "a.example",
+    "credentials": {},
+    "running": false,
+    "run_enabled": true,
+    "result_count": 1
+   },
+   "prompts": [
+    {
+     "kind": "domain",
+     "message": "Edit the domain.",
+     "default": "a.example",
+     "answer": ""
+    }
+   ],
+   "started": [],
+   "after": {
+    "domain": "a.example",
+    "credentials": {},
+    "running": false,
+    "run_enabled": true,
+    "result_count": 1
+   }
+  },
+  {
+   "name": "start",
+   "before": {
+    "domain": "a.example",
+    "credentials": {},
+    "running": false,
+    "run_enabled": true,
+    "result_count": 1
+   },
+   "prompts": [
+    {
+     "kind": "domain",
+     "message": "Edit the domain.",
+     "default": "a.example",
+     "answer": "runtime.example"
+    },
+    {
+     "kind": "credentials",
+     "initial": {
+      "username": ""
+     },
+     "answer": {
+      "username": "alice"
+     }
+    }
+   ],
+   "started": [
+    {
+     "domain": "runtime.example",
+     "credentials": {
+      "username": "alice"
+     }
+    }
+   ],
+   "after": {
+    "domain": "runtime.example",
+    "credentials": {
+     "username": "alice"
+    },
+    "running": true,
+    "run_enabled": false,
+    "result_count": 0
+   }
+  },
+  {
+   "name": "cancel-credentials",
+   "before": {
+    "domain": "runtime.example",
+    "credentials": {
+     "username": "alice"
+    },
+    "running": false,
+    "run_enabled": true,
+    "result_count": 1
+   },
+   "prompts": [
+    {
+     "kind": "domain",
+     "message": "Edit the domain.",
+     "default": "runtime.example",
+     "answer": "remember.example"
+    },
+    {
+     "kind": "credentials",
+     "initial": {
+      "username": "alice"
+     },
+     "answer": null
+    }
+   ],
+   "started": [],
+   "after": {
+    "domain": "remember.example",
+    "credentials": {
+     "username": "alice"
+    },
+    "running": false,
+    "run_enabled": true,
+    "result_count": 1
+   }
+  },
+  {
+   "name": "cancel-remembered-domain",
+   "before": {
+    "domain": "remember.example",
+    "credentials": {
+     "username": "alice"
+    },
+    "running": false,
+    "run_enabled": true,
+    "result_count": 1
+   },
+   "prompts": [
+    {
+     "kind": "domain",
+     "message": "Edit the domain.",
+     "default": "remember.example",
+     "answer": null
+    }
+   ],
+   "started": [],
+   "after": {
+    "domain": "remember.example",
+    "credentials": {
+     "username": "alice"
+    },
+    "running": false,
+    "run_enabled": true,
+    "result_count": 1
+   }
+  },
+  {
+   "name": "start-again",
+   "before": {
+    "domain": "remember.example",
+    "credentials": {
+     "username": "alice"
+    },
+    "running": false,
+    "run_enabled": true,
+    "result_count": 1
+   },
+   "prompts": [
+    {
+     "kind": "domain",
+     "message": "Edit the domain.",
+     "default": "remember.example",
+     "answer": "next.example"
+    },
+    {
+     "kind": "credentials",
+     "initial": {
+      "username": "alice"
+     },
+     "answer": {
+      "username": "bob"
+     }
+    }
+   ],
+   "started": [
+    {
+     "domain": "next.example",
+     "credentials": {
+      "username": "bob"
+     }
+    }
+   ],
+   "after": {
+    "domain": "next.example",
+    "credentials": {
+     "username": "bob"
+    },
+    "running": true,
+    "run_enabled": false,
+    "result_count": 0
+   }
+  }
+ ]
+}

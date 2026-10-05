@@ -1,0 +1,91 @@
+import { Button, CheckBox, ComboBox, SpinBox } from "std-widgets.slint";
+import { ListTable, TableRow } from "list_table.slint";
+export component FrameLocationsTable inherits Rectangle {
+    in property <[TableRow]> rows;
+    in property <bool> selected;
+    in property <bool> single;
+    in property <bool> child-open;
+    in property <int> sort-column;
+    in property <bool> ascending;
+    callback clicked(int,bool,bool);
+    callback activated(int);
+    callback sort(int,bool);
+    callback action(string);
+    min-height:300px;
+    min-width:650px;
+    VerticalLayout {
+        spacing:4px;
+        ListTable {
+            rows:root.rows;
+            sort-column:root.sort-column;
+            ascending:root.ascending;
+            columns:[{title:"name",width:190px,stretch:true},{title:"remember size",width:95px},{title:"remember position",width:110px},{title:"last size",width:95px},{title:"last position",width:95px},{title:"default gravity",width:150px},{title:"default position",width:95px},{title:"maximised",width:80px},{title:"fullscreen",width:80px}];
+            row-clicked(i,c,s)=>{if !root.child-open{root.clicked(i,c,s);}}
+            row-activated(i)=>{if !root.child-open{root.activated(i);}}
+            sort(i,a)=>{if !root.child-open{root.sort(i,a);}}
+        }
+        HorizontalLayout {
+            spacing:4px;
+            Button{text:"edit";enabled:root.single && !root.child-open;clicked=>{root.action("edit");}}
+            Button{text:"flip remember size";enabled:root.selected && !root.child-open;clicked=>{root.action("flip-size");}}
+            Button{text:"flip remember position";enabled:root.selected && !root.child-open;clicked=>{root.action("flip-position");}}
+        }
+        HorizontalLayout {
+            spacing:4px;
+            Button{text:"reset last size";enabled:root.selected && !root.child-open;clicked=>{root.action("reset-size");}}
+            Button{text:"reset last position";enabled:root.selected && !root.child-open;clicked=>{root.action("reset-position");}}
+        }
+    }
+}
+export component FrameLocationWindow inherits Window {
+    title:"set frame location information";
+    width:720px;height:470px;
+    in property <string> message;
+    in-out property <bool> remember-size;
+    in-out property <bool> remember-position;
+    in-out property <bool> size-none;
+    in-out property <bool> position-none;
+    in-out property <int> last-width:640;
+    in-out property <int> last-height:480;
+    in-out property <int> last-x:20;
+    in-out property <int> last-y:20;
+    in-out property <int> gravity-x:1;
+    in-out property <int> gravity-y:1;
+    in-out property <int> default-position;
+    in-out property <bool> maximised;
+    in-out property <bool> fullscreen;
+    callback apply();
+    callback cancel();
+    keys:=FocusScope {
+        key-pressed(e)=>{if e.text==Key.Escape{root.cancel();return accept;}if e.text==Key.Return{root.apply();return accept;}reject}
+        VerticalLayout {
+            padding:12px;spacing:8px;
+            Text{text:root.message;wrap:word-wrap;}
+            CheckBox{text:"remember size";checked<=>root.remember-size;}
+            CheckBox{text:"remember position";checked<=>root.remember-position;}
+            HorizontalLayout {
+                Text{text:"last size: ";}
+                SpinBox{value<=>root.last-width;minimum:100;maximum:1000000;enabled:!root.size-none;}
+                Text{text:"x";}
+                SpinBox{value<=>root.last-height;minimum:100;maximum:1000000;enabled:!root.size-none;}
+                CheckBox{text:"none set";checked<=>root.size-none;}
+            }
+            HorizontalLayout {
+                Text{text:"last position: ";}
+                SpinBox{value<=>root.last-x;minimum:-1000000;maximum:1000000;enabled:!root.position-none;}
+                Text{text:"x";}
+                SpinBox{value<=>root.last-y;minimum:-1000000;maximum:1000000;enabled:!root.position-none;}
+                CheckBox{text:"none set";checked<=>root.position-none;}
+            }
+            ComboBox{model:["by default, expand to width of parent","by default, expand width as much as needed"];current-index<=>root.gravity-x;}
+            ComboBox{model:["by default, expand to height of parent","by default, expand height as much as needed"];current-index<=>root.gravity-y;}
+            ComboBox{model:["by default, position off the top-left corner of parent","by default, position centered on the parent","by default, position centered on the mouse cursor"];current-index<=>root.default-position;}
+            CheckBox{text:"start maximised";checked<=>root.maximised;}
+            CheckBox{text:"start fullscreen";checked<=>root.fullscreen;}
+            HorizontalLayout {
+                Button{text:"apply";clicked=>{root.apply();}}
+                Button{text:"cancel";clicked=>{root.cancel();}}
+            }
+        }
+    }
+}

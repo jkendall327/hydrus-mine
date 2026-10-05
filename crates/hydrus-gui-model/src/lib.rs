@@ -16,6 +16,7 @@ pub mod checker_options;
 pub mod clipboard_urls;
 pub mod collect;
 pub mod datetime_editor;
+pub mod delete_files;
 pub mod domains;
 pub mod downloader_definitions;
 pub mod downloader_interchange;
@@ -26,6 +27,7 @@ pub mod embedded_metadata;
 pub mod export_files;
 pub mod favourites;
 pub mod file_log;
+pub mod filename_rules;
 pub mod filename_tagging;
 pub mod filetype_tree;
 pub mod folders;
@@ -48,6 +50,7 @@ pub mod options;
 pub mod page_chooser;
 pub mod png_export;
 pub mod predicate_editors;
+pub mod predicate_history;
 pub mod ratings;
 pub mod ratings_editor;
 pub mod scanbar;
@@ -63,6 +66,7 @@ pub mod simple_downloader;
 pub mod sort;
 pub mod status;
 pub mod string_editors;
+pub mod subscription_exchange;
 pub mod subscription_quality;
 pub mod subscriptions_dedupe;
 pub mod subscriptions_dialog;
@@ -103,3 +107,15 @@ pub mod namespace_sorts;
 pub mod viewer_cursor;
 
 pub mod sort_cog;
+
+pub mod command_palette;
+
+mod palette_calculator;
+
+pub mod viewing_statistics;
+
+pub mod search_or;
+
+pub mod frame_locations;
+pub mod incremental_tagging;
+pub mod tag_banner;

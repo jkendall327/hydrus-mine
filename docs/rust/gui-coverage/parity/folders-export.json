@@ -1,0 +1,625 @@
+{
+  "schema_version": 1,
+  "agent": "follow-folders",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "base_checkout": "2388372d",
+  "implementationCommits": [
+    "2912cca8",
+    "9f2b317f",
+    "afd062329395b25562ddde8ee7841a60a76cdfe3",
+    "9913c5f3",
+    "933255e2",
+    "96c0b7b0",
+    "2bd97edc",
+    "5f66919d",
+    "b7a7034c",
+    "34ee5bd0",
+    "7b978489",
+    "5a08521d",
+    "d23d2bd4",
+    "f73ea634"
+  ],
+  "claims": [
+    {
+      "reference_id": "audit-network-tagging-regex",
+      "before": "partial",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "change_kind": "implementation",
+      "implementationCommit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+      "exactBehavior": "Replace multiline regex configuration with actual accepted-rule lists shared by manual-import and import-folder tagging. Quick namespace Add/Edit uses separate literal fields, compiler validation, owned stable row identity, cancellation, casefold column sorting and deletion confirmation. Invalid child input cannot replace an accepted rule; duplicates select the existing quick row. Raw regex Enter/add allows duplicates, ignores blank input, retains invalid expressions in the input and leaves accepted rules unchanged. Raw regex selection is single and double-click removes only the selected row, returning its expression to the input. Both regex buttons expose reference help/component/favourites menus; clipboard choices never insert into fields, and immediate shared favourites Apply survives filename owner cancellation. Nested and closed-owner callbacks cannot alter drafts or saved settings. Saved folder rules reopen unchanged and feed filename extraction; manual-import rules reach the actual local-import seed tags.",
+      "limits": [
+        "The quick-namespace child and deletion prompt are embedded in the existing native window rather than separate Qt dialogs. Native popup menus omit Qt bold heading/tooltip styling.",
+        "Quick-list column ordering is remembered within the owner editor; global Qt list-column state is outside this bounded extraction workflow.",
+        "Native Python-compatible regex errors preserve the reference warning prefix and validation boundary; detailed engine diagnostics may differ. The filename clipboard snippet follows the host separator, as the reference does.",
+        "The simple tag autocomplete/paste box, sidecars, broader manual-import/folder parents, shared favourites editor IDs and export workflows remain separately assessed and are not claimed by this change.",
+        "Rust model/GUI regressions are authored for root hosted CI; no local Cargo builds or tests were run."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/filename_rules.rs",
+          "line": 26,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "source",
+          "symbol": "pub struct Editor"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/filename_rules.rs",
+          "line": 301,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "source",
+          "symbol": "pub fn regex_menu"
+        },
+        {
+          "path": "crates/hydrus-gui/src/filename_tagging_window.rs",
+          "line": 208,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "source",
+          "symbol": "fn bind_rules"
+        },
+        {
+          "path": "crates/hydrus-gui/src/filename_regex_menu.rs",
+          "line": 27,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "source",
+          "symbol": "pub(crate) fn bind"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/filename_tagging.slint",
+          "line": 53,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "source",
+          "symbol": "export component FilenameTaggingWindow"
+        },
+        {
+          "path": "crates/hydrus-download/src/folders.rs",
+          "line": 713,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "existing_consumer",
+          "symbol": "for (key, tagging) in &folder.settings.filename_tagging"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/filename_rules.rs",
+          "line": 6,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "reference_replay",
+          "symbol": "fn advanced_lists_children_and_filename_consumers_match_real_reference"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/filename_rules.rs",
+          "line": 132,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "boundary_regression",
+          "symbol": "fn child_identity_is_frozen_and_unrelated_callbacks_preserve_it"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/filename_rules.rs",
+          "line": 169,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "reference_replay",
+          "symbol": "fn both_original_regex_buttons_offer_the_recorded_help_components_and_favourites"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/filename_rules.rs",
+          "line": 24,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_lists_replay_reference_and_save_folder_consumers_without_stale_callbacks"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/filename_rules.rs",
+          "line": 282,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn attached_regex_menus_copy_without_edits_and_favourites_commit_independently"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_files.rs",
+          "line": 198,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "manual_import_consumer_regression",
+          "symbol": "fn files_are_imported_with_the_tags_filename_tagging_gives_them"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_filename_rules.py",
+          "line": 19,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "reference_recorder",
+          "symbol": "def record("
+        },
+        "fixture": {
+          "path": "oracle/fixtures/filename_rules.json",
+          "line": 1,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "reference_fixture"
+        },
+        "executed": true,
+        "command": "/workspace/parallel/with-oracle python oracle/record_filename_rules.py",
+        "executed_utc": "2026-10-04 17:43 UTC",
+        "observed": "21 actual FilenameTaggingOptionsPanel advanced list handler states: owned namespace/regex child defaults and validation, cancel, casefold namespace/regex sorting with retained selection, duplicate namespace de-duplication, literal colons/whitespace and empty compiled patterns, frozen edits/deletion questions, raw regex Enter/add duplicates and single-selection removal-to-input, exact generated tags and reopened rules. Both actual RegexButton menu trees, all help URL/component/favourite clipboard outputs, no replacement group menu and unchanged inputs. Real ManageFavourites/_Add user-facing dialog responses, cancelled/accepted immediate global favourites mutations; filename options remain unchanged. Private basic reference client; no imports, exports or remote requests."
+      }
+    },
+    {
+      "reference_id": "audit-network-tagging-simple",
+      "before": "partial",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "change_kind": "implementation",
+      "implementationCommit": "933255e2",
+      "exactBehavior": "Replace text-only simple tag editing with real-service shared additive autocomplete children and direct paste buttons. All-file and selected-file entry clean and deduplicate tags without toggling an existing tag off. The selected editor starts with the union of selected path tags, freezes service and selected path identities, retains untouched per-file differences on no-op Apply, spreads explicitly re-entered existing tags to each selected file, skips existing union members on autocomplete paste, applies every direct-paste tag to the selected files, and removes deleted union members from all selected files. Empty selections disable selected actions. Filename/directory text edits check nonempty fields without trimming their literal namespace or unchecking on clear. Child Apply updates only the filename draft; Cancel, owner closure, stale confirmations and retained callbacks do not save. Manual Apply reaches actual local-import seed metadata; folder tags save and reopen on the actual service, and cancelled descendants cannot alter persisted folder settings.",
+      "limits": [
+        "Native simple tag lists launch an owned shared write editor with Apply/Cancel, rather than inline Qt autocomplete/tag-list widgets. Shared autocomplete and complete tag-list navigation/context leaves are separately assessed and not newly claimed here; this recorder does not assert a recent-tag menu in the inline SimplePanel.",
+        "Qt unavailable clipboard shows a critical message and subsequently raises TypeError in the original SimplePanel handler; native preserves the draft and displays the recorded error title/text without that crash.",
+        "Native UI presentation and shared autocomplete child are reused; no new exported windows or shared autocomplete reference leaves counted.",
+        "Rust model/GUI regressions are authored for root hosted CI; no local Cargo builds/tests were run."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/filename_tagging.rs",
+          "line": 87,
+          "commit": "933255e2",
+          "kind": "source",
+          "symbol": "pub fn apply_selected"
+        },
+        {
+          "path": "crates/hydrus-gui/src/write_tag_window.rs",
+          "line": 46,
+          "commit": "933255e2",
+          "kind": "source",
+          "symbol": "pub fn open_additions"
+        },
+        {
+          "path": "crates/hydrus-gui/src/filename_tagging_window.rs",
+          "line": 365,
+          "commit": "933255e2",
+          "kind": "source",
+          "symbol": "fn bind_tags"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/filename_tagging.slint",
+          "line": 53,
+          "commit": "933255e2",
+          "kind": "source",
+          "symbol": "export component FilenameTaggingWindow"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/filename_simple.rs",
+          "line": 20,
+          "commit": "933255e2",
+          "kind": "reference_replay",
+          "symbol": "fn additive_entry_and_selected_union_replay_real_simple_panel_without_spreading_untouched_tags"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/filename_simple.rs",
+          "line": 44,
+          "commit": "933255e2",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_simple_actions_replay_selection_paste_and_removal_then_reach_manual_import_seeds"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/filename_simple.rs",
+          "line": 292,
+          "commit": "933255e2",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn folder_tag_child_is_staged_reopens_and_is_cancelled_with_its_owner"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_filename_simple.py",
+          "line": 18,
+          "commit": "933255e2",
+          "kind": "reference_recorder",
+          "symbol": "def record("
+        },
+        "fixture": {
+          "path": "oracle/fixtures/filename_simple.json",
+          "line": 1,
+          "commit": "933255e2",
+          "kind": "reference_fixture"
+        },
+        "executed": true,
+        "command": "/workspace/parallel/with-oracle python oracle/record_filename_simple.py",
+        "executed_utc": "2026-10-04 17:59 UTC",
+        "observed": "24 actual SimplePanel handler states under the real manual-import dialog: all/selected additive entry, repeated existing entry, direct and autocomplete paste, list removal, real path-list selection and union/context, no-selection disabling, filename/directory textEdited/check behavior, unavailable clipboard critical publication and native reference TypeError, exact per-path GetValue output, all-tags/misc folder options reopened with selected panel hidden. Private basic reference client; no imports, exports or remote requests."
+      }
+    },
+    {
+      "reference_id": "audit-network-import-folder-log",
+      "before": "partial",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": false,
+      "change_kind": "implementation",
+      "implementationCommit": "2bd97edc",
+      "exactBehavior": "Correct the folder-specific file-log ownership mismatch. FileSeedCacheButton under an import-folder dialog edits an independent cache duplicate; native now routes every existing queue mutation to a private in-memory real-schema queue with complete seed records, leaving the live folder cache and worker nudges untouched. Log Apply updates only the manager-owned folder cache draft; log Cancel discards it. Accepted cache edits survive cancelling the existing folder-fields editor, exactly as the Qt setter updates that manager object. Manager Apply atomically writes settings and accepted ordered caches into the actual folder queue, preserving complete cache state, comparison values, times, notes, status and referral URLs; resetting a seed to unknown intentionally scrubs hashes, as reference FileSeed.SetStatus does; manager Cancel, parent closure and retained callbacks cannot commit. New folders can review an empty cache before receiving a live queue. Child questions/errors freeze Apply; both parent Apply callbacks are blocked while their child is active. Importer/search/subscription live logs retain their independent immediate source.",
+      "limits": [
+        "This original node is a shared_reference alias targeting audit-network-file-log and is explicitly excluded from the concrete-leaf completion metric. The actual folder-specific ownership consumer has changed; no shared menu leaf is newly claimed.",
+        "Folder manager lifetime coordination now pauses workers through crash-safe edit/activity leases and reads its draft after active work commits. The separately recorded lifecycle follow-up below adds no new reference leaf or alias count.",
+        "Inherited shared file-log gaps, including every bulk-operation question and ignored-retry regex filtering, remain separately incomplete. Internal SQL seed identities are regenerated on copied-cache acceptance; real folder queue identity and all user-visible cache data are preserved.",
+        "The owned log uses the existing native FileLogWindow with Apply/Cancel. No new exported window or persistent draft queue/table is created.",
+        "Rust store/GUI regressions are authored for root hosted CI; no local Cargo builds/tests were run."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-store/src/queues.rs",
+          "line": 1034,
+          "commit": "2bd97edc",
+          "kind": "source",
+          "symbol": "pub struct FileSeedDraft"
+        },
+        {
+          "path": "crates/hydrus-store/src/queues.rs",
+          "line": 1076,
+          "commit": "2bd97edc",
+          "kind": "source",
+          "symbol": "pub fn replace_file_seeds"
+        },
+        {
+          "path": "crates/hydrus-gui/src/file_log_window.rs",
+          "line": 459,
+          "commit": "2bd97edc",
+          "kind": "source",
+          "symbol": "pub(crate) fn open_staged"
+        },
+        {
+          "path": "crates/hydrus-gui/src/folders_window.rs",
+          "line": 256,
+          "commit": "2bd97edc",
+          "kind": "source",
+          "symbol": "fn write_import_folders"
+        },
+        {
+          "path": "crates/hydrus-gui/src/folders_window.rs",
+          "line": 672,
+          "commit": "2bd97edc",
+          "kind": "source",
+          "symbol": "fn open_import_folder"
+        }
+      ],
+      "testAnchors": [
+        {
+          "path": "crates/hydrus-store/src/queues.rs",
+          "line": 1617,
+          "commit": "2bd97edc",
+          "kind": "store_consumer_regression",
+          "symbol": "fn file_log_drafts_isolate_mutations_and_restore_complete_metadata_in_order"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_folder_log.rs",
+          "line": 73,
+          "commit": "2bd97edc",
+          "kind": "reference_replay",
+          "symbol": "fn copied_cache_replays_reference_child_apply_cancel_and_folder_cancel_then_manager_commit"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/import_folder_log.rs",
+          "line": 285,
+          "commit": "2bd97edc",
+          "kind": "boundary_regression",
+          "symbol": "fn unsaved_folder_has_owned_empty_log_and_owner_closure_discards_pending_cache"
+        }
+      ],
+      "referenceRecording": {
+        "recorder": {
+          "path": "oracle/record_import_folder_log.py",
+          "line": 18,
+          "commit": "2bd97edc",
+          "kind": "reference_recorder",
+          "symbol": "def record("
+        },
+        "fixture": {
+          "path": "oracle/fixtures/import_folder_log.json",
+          "line": 1,
+          "commit": "2bd97edc",
+          "kind": "reference_fixture"
+        },
+        "executed": true,
+        "command": "/workspace/parallel/with-oracle python oracle/record_import_folder_log.py",
+        "executed_utc": "2026-10-04 18:24 UTC",
+        "observed": "Three real EditImportFoldersPanel._Edit/FileSeedCacheButton._ShowFileSeedCacheFrame modal sequences: child Cancel + folder Cancel, child Apply + folder Cancel, child Apply + folder Apply. Actual selected retry and Delete handlers/questions, including a seeded SHA256 cleared on retry and retained by untouched seeds, independent duplicate before child close, accepted manager object, original cache isolation and serialised/reopened full cache. Uses an existing private temporary watched directory for real field validation; no workers, imports, exports or remote requests."
+      }
+    }
+  ],
+  "nativeComponents": [
+    {
+      "name": "FilenameTaggingWindow",
+      "existingNativeId": "catalog.filenametaggingwindow",
+      "file": "crates/hydrus-gui/ui/filename_tagging.slint",
+      "newExportedWindows": 0,
+      "title": "filename tagging / edit filename tagging options",
+      "controls": [
+        "advanced quick-namespace ListTable: namespace / regex columns, header sorting, Add/Edit/Delete and Delete key",
+        "owned embedded namespace/regex editor and frozen deletion question",
+        "raw single-selection regex ListTable and Enter/add/remove-to-input",
+        "two owned RegexButton popup menus: help/components/favourites",
+        "existing shared RegexFavouritesWindow child, immediate Apply, independent Cancel and owner closure",
+        "simple all/selected tag review lists and direct paste buttons",
+        "owned existing shared WriteTagsWindow additive editor, frozen service/path selection and owner cancellation"
+      ],
+      "referenceRoots": [
+        "audit-network-tagging-regex",
+        "audit-network-tagging-simple"
+      ],
+      "source": {
+        "path": "crates/hydrus-gui/ui/filename_tagging.slint",
+        "line": 53,
+        "commit": "933255e2",
+        "kind": "source",
+        "symbol": "export component FilenameTaggingWindow"
+      },
+      "tests": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/filename_rules.rs",
+          "line": 24,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn real_lists_replay_reference_and_save_folder_consumers_without_stale_callbacks"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/filename_rules.rs",
+          "line": 282,
+          "commit": "afd062329395b25562ddde8ee7841a60a76cdfe3",
+          "kind": "gui_consumer_regression",
+          "symbol": "fn attached_regex_menus_copy_without_edits_and_favourites_commit_independently"
+        }
+      ]
+    },
+    {
+      "name": "WriteTagsWindow",
+      "existingNativeId": "catalog.writetagswindow",
+      "file": "crates/hydrus-gui/ui/write_autocomplete.slint",
+      "newExportedWindows": 0,
+      "title": "tags for all / tags just for selected files",
+      "controls": [
+        "existing shared service-aware autocomplete, additive choices, review list removal and clipboard child confirmation"
+      ],
+      "referenceRoots": [
+        "audit-network-tagging-simple"
+      ],
+      "source": {
+        "path": "crates/hydrus-gui/src/write_tag_window.rs",
+        "line": 46,
+        "commit": "933255e2",
+        "kind": "source",
+        "symbol": "pub fn open_additions"
+      }
+    },
+    {
+      "name": "FileLogWindow",
+      "existingNativeId": "dialog.subscription.file-log",
+      "file": "crates/hydrus-gui/ui/file_log.slint",
+      "newExportedWindows": 0,
+      "title": "file log",
+      "controls": [
+        "folder-specific staged cache source, existing table/actions/questions, Apply and Cancel",
+        "closed-owner cancellation, private mutation/error handling and full seed handoff"
+      ],
+      "referenceRoots": [
+        "audit-network-import-folder-log"
+      ],
+      "source": {
+        "path": "crates/hydrus-gui/ui/file_log.slint",
+        "line": 14,
+        "commit": "2bd97edc",
+        "kind": "source",
+        "symbol": "export component FileLogWindow"
+      }
+    },
+    {
+      "name": "ImportFolderWindow",
+      "existingNativeId": "dialog.import-folder",
+      "file": "crates/hydrus-gui/ui/folders.slint",
+      "newExportedWindows": 0,
+      "title": "edit import folder",
+      "controls": [
+        "cached-path log for new and existing folders",
+        "owned child gating and accepted cache status",
+        "cache-only manager callback independent of field-editor cancellation"
+      ],
+      "referenceRoots": [
+        "audit-network-import-folder-log"
+      ],
+      "source": {
+        "path": "crates/hydrus-gui/ui/folders.slint",
+        "line": 225,
+        "commit": "2bd97edc",
+        "kind": "source",
+        "symbol": "export component ImportFolderWindow"
+      }
+    },
+    {
+      "name": "FoldersWindow",
+      "existingNativeId": "dialog.import-folders",
+      "relatedExistingNativeIds": [
+        "dialog.export-folders"
+      ],
+      "file": "crates/hydrus-gui/ui/folders.slint",
+      "newExportedWindows": 0,
+      "title": "edit import folders / edit export folders",
+      "controls": [
+        "owned asynchronous activity-lease wait with exact import/export wait text",
+        "Cancel/window-close while waiting, read-after-worker-commit draft acquisition",
+        "Apply/Cancel lifetime lease through child cancellation and genuine store failures"
+      ],
+      "referenceRoots": [
+        "audit-network-import-folder-log"
+      ],
+      "source": {
+        "path": "crates/hydrus-gui/src/folders_lifecycle.rs",
+        "line": 18,
+        "commit": "7b978489",
+        "kind": "source",
+        "symbol": "pub(crate) fn open"
+      }
+    }
+  ],
+  "validation": {
+    "reference_recording": "passed; actual reference recordings executed 2026-10-04 17:43 UTC (rules), 17:59 UTC (simple tags), 18:24 UTC (folder log), using shared with-oracle lock, lifecycle24cases18:44UTC",
+    "slint_source_check": "passed; cached warning-aware Slint compiler, no Cargo build",
+    "formatting": "cargo fmt --all and git diff --check passed",
+    "rust_tests": "authored; root asynchronous hosted CI pending",
+    "rendered_ui": "native screenshot regressions authored for filename_rules.png, filename_simple.png and import_folder_log.png; root CI rendering pending; folder_manager_wait.png authored"
+  },
+  "remainingBoundaries": [
+    "No parent/shared alias is counted. Manual/import-folder broader parents, sidecars, export worker/examples and scheduled-export workflows remain separately assessed; inherited shared autocomplete and file-log gaps are explicit above. Folder editing pause/wait is repaired by the lifecycle implementation follow-up without an extra concrete-leaf claim."
+  ],
+  "lifecycleFollowup": {
+    "change_kind": "implementation",
+    "countAsCompletedLeaf": false,
+    "exactBehavior": "Coordinate existing import/export managers with actual workers across processes sharing a store. A crash-safe edit request pauses new work and stops active work at import seed/export query/copy boundaries. An activity lease delays private draft acquisition until the active worker commits, then excludes workers through all owned child closures and manager Apply/Cancel. The existing manager window polls asynchronously with exact reference wait messages and supports Cancel/window close. User pause settings stay intact, including later changes by a separate live consumer. Actual CLI scheduler rests wake on acquire/release; successful import manager Apply separately resets the due cache, while Cancel/failed saves do not publish that notification. Stale unlocked files never pause workers. Both schedulers retain a marker captured before worker execution through their subsequent wait, so manager completion between work and rest cannot lose its notification. An already observed active request retains bounded retry rest.",
+    "limits": [
+      "Native file-lock requests replace Qt global running flags and transient Boolean overwrites. The native manager has a cancellable waiting state, whereas the reference publishes a non-cancellable wait job. Scheduler wakeups poll at one-second intervals rather than Qt publications.",
+      "An individual import, file copy or database query finishes before the next safe boundary. Filesystem marker modification times are wakeup hints; live OS leases determine whether work may run.",
+      "This follow-up repairs broader manager/worker ownership and adds no new eligible reference leaf or evidence-only promotion. Full shared log menus, richer export query editors, shared tag-list controls and remaining folder/export parent limits remain independently assessed.",
+      "Rust/store/downloader/GUI/CLI assertions are authored for asynchronous hosted CI. No local Cargo builds or tests were run."
+    ],
+    "sourceAnchors": [
+      {
+        "path": "crates/hydrus-store/src/folder_activity.rs",
+        "line": 120,
+        "commit": "5a08521d",
+        "kind": "source",
+        "symbol": "pub struct Edit"
+      },
+      {
+        "path": "crates/hydrus-store/src/folder_activity.rs",
+        "line": 83,
+        "commit": "5a08521d",
+        "kind": "source",
+        "symbol": "pub fn paused"
+      },
+      {
+        "path": "crates/hydrus-gui/src/folders_lifecycle.rs",
+        "line": 18,
+        "commit": "7b978489",
+        "kind": "source",
+        "symbol": "pub(crate) fn open"
+      },
+      {
+        "path": "crates/hydrus-gui/src/folders_window.rs",
+        "line": 319,
+        "commit": "5a08521d",
+        "kind": "source",
+        "symbol": "fn open_import_folders_ready"
+      },
+      {
+        "path": "crates/hydrus-cli/src/folder_wait.rs",
+        "line": 8,
+        "commit": "b7a7034c",
+        "kind": "source",
+        "symbol": "pub(crate) async fn wait"
+      },
+      {
+        "path": "crates/hydrus-download/src/folders.rs",
+        "line": 779,
+        "commit": "5a08521d",
+        "kind": "source",
+        "symbol": "pub struct ImportFolderSchedule"
+      }
+    ],
+    "testAnchors": [
+      {
+        "path": "crates/hydrus-gui/tests/gui/folder_manager_lifecycle.rs",
+        "line": 55,
+        "commit": "5a08521d",
+        "kind": "test",
+        "symbol": "fn replay_reference_pause_wait_apply_cancel_and_original_pause_restoration"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/folder_manager_lifecycle.rs",
+        "line": 141,
+        "commit": "5a08521d",
+        "kind": "test",
+        "symbol": "fn wait_cancel_window_close_and_live_pause_changes_release_only_the_transient_request"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/folder_manager_lifecycle.rs",
+        "line": 187,
+        "commit": "5a08521d",
+        "kind": "test",
+        "symbol": "fn draft_is_read_after_worker_commit_and_read_failure_releases_the_request"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/folder_manager_lifecycle.rs",
+        "line": 251,
+        "commit": "5a08521d",
+        "kind": "test",
+        "symbol": "fn failed_folder_commit_closes_owners_and_releases_the_lease_without_partial_writes"
+      },
+      {
+        "path": "crates/hydrus-download/tests/folder_activity.rs",
+        "line": 14,
+        "commit": "5a08521d",
+        "kind": "test",
+        "symbol": "fn active_import_finishes_its_commit_before_the_manager_reads_and_stops_before_next_seed"
+      },
+      {
+        "path": "crates/hydrus-download/tests/folder_activity.rs",
+        "line": 110,
+        "commit": "5a08521d",
+        "kind": "test",
+        "symbol": "fn successful_manager_apply_resets_due_cache_but_cancel_does_not"
+      },
+      {
+        "path": "crates/hydrus-cli/src/folder_wait.rs",
+        "line": 32,
+        "commit": "b7a7034c",
+        "kind": "test",
+        "symbol": "async fn manager_acquisition_and_release_interrupt_the_real_scheduler_rest"
+      },
+      {
+        "path": "crates/hydrus-cli/src/folder_wait.rs",
+        "line": 86,
+        "commit": "f73ea634",
+        "kind": "test",
+        "symbol": "async fn manager_finishing_between_worker_and_wait_cannot_lose_its_wakeup"
+      },
+      {
+        "path": "crates/hydrus-cli/src/folder_wait.rs",
+        "line": 113,
+        "commit": "f73ea634",
+        "kind": "test",
+        "symbol": "async fn an_already_seen_active_request_does_not_spin_the_scheduler"
+      }
+    ],
+    "referenceRecording": {
+      "recorder": {
+        "path": "oracle/record_folder_manager_lifecycle.py",
+        "line": 21,
+        "commit": "f22d6048",
+        "kind": "reference_recorder",
+        "symbol": "def record("
+      },
+      "fixture": {
+        "path": "oracle/fixtures/folder_manager_lifecycle.json",
+        "line": 1,
+        "commit": "f22d6048",
+        "kind": "reference_fixture",
+        "symbol": "cases"
+      },
+      "command": "/workspace/parallel/with-oracle python oracle/record_folder_manager_lifecycle.py",
+      "executed": "2026-10-04 18:44 UTC; passed",
+      "observed": "24 actual FrameGUI import/export manager worker invocations using original blocking Qt handoff and real panels, Apply/Cancel/scripted child exceptions, both original pause states, running/idle flags, real wait-loop messages and completed/dismissed jobs, final pause restoration, import Apply-only notifications and export always-finally notification. Empty private client folder lists; no imports, exports or remote requests."
+    }
+  },
+  "runtimeRepair": {
+    "referenceRecording": {
+      "command": "/workspace/parallel/with-oracle python oracle/record_import_folder_log.py",
+      "executedAt": "2026-10-04T20:27:34Z",
+      "fixture": "oracle/fixtures/import_folder_log.json",
+      "observed": "Actual Qt selected retry resets only the selected seed to unknown and scrubs its seeded SHA256; untouched unknown/status seeds retain SHA256 through child/folder Apply/Cancel and serialised reopening."
+    },
+    "behavior": "Filename/directory literal edits immediately publish their current MiscRow even when an already checked field is cleared; this retains the checkbox and does not reset unrelated advanced input. Copied file logs preserve all other metadata while following the reference intentional hash reset. No additional reference leaf is claimed.",
+    "validation": [
+      "cargo fmt --all",
+      "git diff --check",
+      "cached Slint source compilation; no Cargo build or tests"
+    ]
+  }
+}

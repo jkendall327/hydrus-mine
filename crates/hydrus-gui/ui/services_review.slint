@@ -21,23 +21,71 @@ export component ServicesReviewWindow inherits Window {
     in property <bool> tag-service;
     callback migrate-tags();
     callback close-clicked();
+    in property <bool> physical-storage;
+    in property <string> yes-label: "do it";
+    in property <string> no-label: "forget it";
+    in property <bool> trash-service;
+    in property <bool> trash-nonempty;
+    in property <bool> rating-service;
+    in property <bool> rating-menu;
+    in property <string> question;
+    callback rating-menu-open();
+    callback maintenance(int);
+    callback answer(bool);
+    FocusScope {
+        init => { self.focus(); }
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                if root.question != "" { root.answer(false); }
+                else { root.close-clicked(); }
+                return accept;
+            }
+            return reject;
+        }
     VerticalBox {
         padding: 14px; spacing: 12px;
-        ComboBox { model: root.services; current-index <=> root.selected; selected(value) => { root.selected-service(self.current-index); } }
+        ComboBox { enabled: root.question == ""; model: root.services; current-index <=> root.selected; selected(value) => { root.selected-service(self.current-index); } }
         Text { text: root.name-and-type; color: Theme.text; font-weight: 700; wrap: word-wrap; }
         Text { text: root.statistics; color: Theme.text; wrap: word-wrap; }
         Text { text: root.unavailable; color: Theme.text; wrap: word-wrap; }
+        HorizontalBox {
+            if root.physical-storage: Button { text: "clear deleted files record"; enabled: root.question == ""; clicked => { root.maintenance(5); } }
+            if root.trash-service: Button { text: "undelete all"; enabled: root.trash-nonempty && root.question == ""; clicked => { root.maintenance(1); } }
+            if root.trash-service: Button { text: "clear trash"; enabled: root.trash-nonempty && root.question == ""; clicked => { root.maintenance(0); } }
+            if root.rating-service: Button { enabled: root.question == ""; text: "clear ratings"; clicked => { root.rating-menu-open(); } }
+            Rectangle { horizontal-stretch: 1; }
+        }
+        if root.rating-menu: VerticalBox {
+            Button { enabled: root.question == ""; text: "for deleted files"; clicked => { root.maintenance(2); } }
+            Button { enabled: root.question == ""; text: "for all non-local files"; clicked => { root.maintenance(3); } }
+            Button { enabled: root.question == ""; text: "for all files"; clicked => { root.maintenance(4); } }
+        }
         Text { text: root.database-id; color: Theme.text; }
         Text { text: root.error; color: red; wrap: word-wrap; }
         Rectangle { vertical-stretch: 1; }
         HorizontalBox {
-            if root.tag-service: Button {text: "migrate tags…"; clicked => {root.migrate-tags();}}
-            if root.client-api: Button { text: "client api access keys"; clicked => { root.manage-api-keys(); } }
-            Button { text: "id"; clicked => { root.show-id(); } }
-            Button { text: "copy service key"; clicked => { root.copy-key(); } }
-            Button { text: "refresh"; clicked => { root.refresh-clicked(); } }
+            if root.tag-service: Button { enabled: root.question == "";text: "migrate tags…"; clicked => {root.migrate-tags();}}
+            if root.client-api: Button { enabled: root.question == ""; text: "client api access keys"; clicked => { root.manage-api-keys(); } }
+            Button { enabled: root.question == ""; text: "id"; clicked => { root.show-id(); } }
+            Button { enabled: root.question == ""; text: "copy service key"; clicked => { root.copy-key(); } }
+            Button { enabled: root.question == ""; text: "refresh"; clicked => { root.refresh-clicked(); } }
             Rectangle { horizontal-stretch: 1; }
-            Button { text: "close"; clicked => { root.close-clicked(); } }
+            Button { enabled: root.question == ""; text: "close"; clicked => { root.close-clicked(); } }
         }
     }
+    if root.question != "": Rectangle {
+        background: Theme.window;
+        border-width: 1px;
+        border-color: Theme.text;
+        VerticalBox {
+            padding: 20px;
+            Text { text: root.question; color: Theme.text; wrap: word-wrap; }
+            HorizontalBox {
+                Button { text: root.yes-label; clicked => { root.answer(true); } }
+                Button { text: root.no-label; clicked => { root.answer(false); } }
+            }
+        }
+    }
+    }
+
 }

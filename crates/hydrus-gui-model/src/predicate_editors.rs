@@ -22,6 +22,8 @@ use hydrus_core::search::time::{CalendarDelta, CivilDateTime, RelativeOp, TimeKi
 use hydrus_core::{ContentStatus, ServiceKey, ServiceType, Tag};
 use hydrus_search::{TextContext, predicate_text};
 
+pub mod defaults;
+mod initialise;
 mod special;
 pub(crate) use special::FILETYPE_TREE;
 pub use special::Pressed;
@@ -832,9 +834,8 @@ impl Panel {
                 let (stat, value) = if self.kind == Kind::Views {
                     (ViewingStat::Views, self.unsigned(3))
                 } else {
-                    // (in seconds: the milliseconds are dropped)
                     let ms = hms_ms(self, 3, &[86_400_000, 3_600_000, 60_000, 1000, 1]);
-                    (ViewingStat::ViewTime, ms / 1000)
+                    ViewingStat::from_viewtime_milliseconds(ms)
                 };
                 system(SystemPredicate::FileViewingStats {
                     stat,

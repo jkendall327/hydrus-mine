@@ -23,6 +23,7 @@ export QT_QPA_PLATFORM=offscreen
 |---|---|
 | `dump_constants.py` | `fixtures/constants.json`: file types, service types, enum codes |
 | `dump_tag_cleaning.py` | `fixtures/tag_cleaning.json`: tag cleaning on awkward inputs |
+| `record_predicate_custom_defaults.py` | `fixtures/predicate_custom_defaults.json`: actual Qt star actions across all 40 panel families, 1,600 comparability pairs, explicit-input precedence, immediate reset, owner-close persistence and actual ClientOptions serialization with an interior 3/5 rating for native import |
 | `dump_system_predicates.py` | `fixtures/system_predicates.json`: search predicate parsing (system predicates and Client API tag lists) over a large corpus |
 | `make_import_media.py` | `fixtures/import_media/`: small deterministic media corpus (committed) |
 | `make_repository_fixture.py` | `fixtures/legacy_db/repositories.tar.gz` + manifest: `basic` with a tag and a file repository holding pending content |
@@ -37,6 +38,10 @@ export QT_QPA_PLATFORM=offscreen
 | `record_network_data.py` | `fixtures/network_data.json`: real Qt bandwidth/context/rule rows, current-job rows and reset questions |
 | `record_network_sessions.py` | `fixtures/network_sessions.json`: real Qt session/cookie/header rows, editor validation and clear/delete questions |
 | `record_clipboard_urls.py` | `fixtures/clipboard_urls.json`: real Qt clipboard watcher changes, independent switches, recognition and failure behavior on synthetic domains |
+| `record_tag_archives.py` | `fixtures/tag_archives.json` and `tag_archive_*.db`: real Qt archive inspectors/confirmations, four hash kinds and scope conversion, pair-count gates and actual Python/native-codec/Python SQLite round trips (`--rust-executable`, standalone `archive_exchange_harness.rs` compiled with cached third-party SQLite only) |
+| `record_tag_migration_progress.py` | `fixtures/tag_migration_progress.json`: real MigrationJob, settings panel and Qt popup phases/speed, independent close, pause/cancel/dismiss and strict delayed dismissal |
+| `record_tag_migration_pause.py` | `fixtures/tag_migration_pause.json`: actual MigrationJob and Qt PopupMessage pause/resume/cancel with 11 identical entries in batches of three |
+| `record_tag_migration_filter_summaries.py` | `fixtures/tag_migration_filter_summaries.json`: 12 actual Qt sibling/parent confirmations with equal, asymmetric and equal-text distinct filter rules |
 | `record_tag_migration.py` | `fixtures/tag_migration.json`: real Qt migration controls/questions and reference mapping/pair destination changes |
 | `record_downloader_interchange.py` | `fixtures/downloader_interchange.json` and `.png`: reference definition formats, recent version upgrades and Rust JSON/PNG exports loaded by Python |
 | `record_subscription_add.py` | `fixtures/subscription_add.json`: real Qt separate gallery chooser and subscription editor acceptance/cancellation chain |
@@ -74,6 +79,12 @@ export QT_QPA_PLATFORM=offscreen
 | `record_ugoira_render.py` | `fixtures/ugoira_render.json`: `/get_files/render` of the corpus's ugoiras as APNG and animated WebP, with and without timing notes: headers, and each frame's duration, size and pixels |
 | `record_viewer_zoom.py` | `fixtures/viewer_zoom.json`: the media viewer's zooms (`CalculateCanvasZooms`) for files of several types and sizes in several canvases, with a new client's options and with changed zoom levels and per-filetype rules (the changed options object included) |
 | `record_url_class_search.py` | `fixtures/url_class_search.json`: searches by URL class, through the Client API and in memory |
+| `record_search_undo_locked.py` | `fixtures/search_undo_locked.json`: actual populated lock keeps badge/media during synchronized Undo; hidden namespaces still have raw history menu names (executed 2026-10-04 19:56:17 UTC) |
+| `record_system_or_activation.py` | `fixtures/system_or_activation.json`: actual main/basic OR result activation, Shift/normal, seeded drafts, system accept/Cancel, outer Cancel, recents, global history and actual DB query counts (18 cases; executed 2026-10-04 20:22:54 UTC) |
+| `record_search_predicate_undo.py` | `fixtures/search_predicate_undo.json`: actual Qt frame-global histories, QAction visible-page toggles, OR, editor cancellation, close/restore, clear confirmations, hidden locked query and empty notebook (20 events; executed 2026-10-04 19:44:59 UTC) |
+| `record_incremental_number_boundaries.py` | `fixtures/incremental_number_boundaries.json`: actual IncrementalTaggingPanel initial/clamp boundaries, long ASCII/Unicode leading-zero inputs, Qt signed-integer overflow and Python raw-preview digit-limit failures (executed 2026-10-04 21:00:55 UTC) |
+| `record_options_geometry_lifecycle.py` | `fixtures/options_geometry_lifecycle.json`: actual DialogManage + all Options pages on Cancel/X/unchanged Apply/own-frame reset; accepted geometry is saved before the frame table commits |
+| `record_filename_simple_paths.py` | `fixtures/filename_simple_paths.json`: actual FilenameTaggingOptions.GetTags with Python posixpath/ntpath backends and real controller filtering; records preserved/dropped `srv` prefixes and mixed Windows separators (path-backend evidence, no Windows Qt execution) |
 | `record_similar_files.py` | `fixtures/similar_files.json`: the similar-files search on generated near-duplicates |
 | `record_auto_resolution.py` | `fixtures/auto_resolution_run.json` + `legacy_db/auto_resolution.tar.gz`: auto-resolution rules run on generated files |
 | `record_downloads.py` | `fixtures/downloads.json`: the downloader against a local fake site |
@@ -119,3 +130,15 @@ recorded as sha256 + length.
 
 Where the reference is wrong (a bug users would not rely on), the Rust side
 does not copy it: the difference is recorded in `docs/rust/DIFFERENCES.md`.
+
+`record_service_bulk.py` records actual local trash clear/undelete and like,
+numerical and inc/dec rating-clear panels on a freshly unpacked basic fixture,
+including declined/accepted exact questions, enabled controls and reopened
+counts. Reference cached rating values intentionally remain recorded separately
+from database-backed service counts because bulk rating writes suppress media
+content publication. No remote service is exercised.
+
+`record_service_deleted.py` captures physical-storage review's exact two-stage
+record-clear decisions, accepted store updates, local domain counts and import
+status of a permanent deletion versus a trash file (executed 2026-10-04 21:43:09
+UTC on a freshly unpacked basic fixture). The review panel PNG is recorded too.

@@ -28,7 +28,7 @@ use crate::store::Snapshot;
 
 pub use files::AddRows;
 pub use mappings::MappingAction;
-pub use metadata::FileTime;
+pub use metadata::{FileTime, RatingClearScope};
 
 use tally::Tally;
 

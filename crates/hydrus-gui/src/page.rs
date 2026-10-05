@@ -2,7 +2,9 @@
 //! or a page that shows files without a search, and which file is selected.
 //! Plain Rust, driven by the window and by tests alike.
 
+use std::cell::RefCell;
 use std::collections::HashMap;
+use std::rc::Rc;
 use std::sync::Arc;
 
 use hydrus_core::HashId;
@@ -27,15 +29,20 @@ use crate::watcher::WatcherView;
 pub struct SearchPage {
     store: Arc<Store>,
     autocomplete: Autocomplete,
+    or_draft: hydrus_gui_model::search_or::Construction,
     /// The page's file and tag domains (its predicates are `predicates`).
     context: FileSearchContext,
     predicates: Vec<Predicate>,
+    /// One frame's transient history, attached explicitly by its Pages owner.
+    predicate_history: Rc<RefCell<hydrus_gui_model::predicate_history::History>>,
     /// Whether the page searches as its predicates change.
     synchronised: bool,
     /// Whether the search is locked to a `system:hash` of the page's
     /// files, and what that hash follows (kept while unlocked, as the
     /// reference's page keeps it).
     locked: bool,
+    /// The lock panel count is updated by lock/hash synchronization, not Undo.
+    lock_panel_count: usize,
     lock_syncs: HashLock,
     /// Why the page shows files without a search, if it does.
     note: Option<String>,
@@ -69,7 +76,7 @@ pub struct SearchPage {
     tag_computation_limit: Option<u32>,
     error: Option<String>,
     /// A system predicate chosen that needs more, whose editor is to open.
-    editor_wanted: Option<crate::predicate_editors::Blank>,
+    editor_wanted: Option<(crate::predicate_editors::Blank, bool)>,
     /// A duplicates page's filtering, which the page can launch.
     duplicates: Option<DuplicatesPage>,
     /// What the status bar says while the page is empty (the reference's
@@ -224,11 +231,14 @@ impl SearchPage {
             store.read(hydrus_store::settings::get).unwrap_or_default();
         Self {
             autocomplete,
+            or_draft: hydrus_gui_model::search_or::Construction::default(),
             store,
             context,
             predicates: Vec::new(),
+            predicate_history: Rc::default(),
             synchronised: file_search.search_immediately,
             locked: false,
+            lock_panel_count: 0,
             lock_syncs: HashLock::default(),
             note: None,
             // the options' default sort
@@ -316,6 +326,7 @@ impl SearchPage {
         page.autocomplete
             .set_context(&page.context.location, &page.context.tags);
         page.predicates = predicates;
+        page.sync_autocomplete_tags();
         page.synchronised = synchronised;
         page.set_page_sort(sort);
         // (collecting as the session says, `with_collect`: a page that
@@ -371,7 +382,11 @@ impl SearchPage {
         self.autocomplete
             .set_context(&self.context.location, &self.context.tags);
         self.autocomplete.clear();
+        self.predicate_history
+            .borrow_mut()
+            .record(&self.predicates, &predicates);
         self.predicates = predicates;
+        self.sync_autocomplete_tags();
         self.synchronised = favourite.synchronised;
         if favourite.sort.is_some() {
             let before = self.sort.clone();
@@ -1548,7 +1563,7 @@ impl SearchPage {
 
     /// How the page writes predicates: with the store's services, viewing
     /// options and tag presentation.
-    fn text_context(&self) -> TextContext {
+    pub(crate) fn text_context(&self) -> TextContext {
         let snapshot = self.store.snapshot();
         let viewing = self
             .store
@@ -1559,13 +1574,22 @@ impl SearchPage {
         context
     }
 
-    /// Enter predicates into the search as the reference's list of them
-    /// takes them ([`hydrus_search::enter_predicates`]): one already there
-    /// goes, one that isn't comes in and those it excludes go, then they
-    /// sort.
+    /// Attach this page to the transient history owned by its frame.
+    pub(crate) fn attach_predicate_history(
+        &mut self,
+        history: Rc<RefCell<hydrus_gui_model::predicate_history::History>>,
+    ) {
+        self.predicate_history = history;
+    }
+    /// Toggle, exclude and sort before recording the actual predicate delta.
     fn enter_predicates(&mut self, predicates: &[Predicate]) {
         let context = self.text_context();
+        let before = self.predicates.clone();
         hydrus_search::enter_predicates(&mut self.predicates, predicates, &context);
+        self.predicate_history
+            .borrow_mut()
+            .record(&before, &self.predicates);
+        self.sync_autocomplete_tags();
     }
 
     /// Count the tag list's tags again (after they were changed).
@@ -1714,6 +1738,7 @@ impl SearchPage {
     /// The page restored with its search locked as a session kept it.
     #[must_use]
     pub fn with_lock(mut self, lock: Option<HashLock>) -> Self {
+        self.lock_panel_count = self.lock_hashes().map_or(0, |hashes| hashes.len());
         self.locked = lock.is_some();
         self.lock_syncs = lock.unwrap_or_default();
         self
@@ -1725,11 +1750,14 @@ impl SearchPage {
         self.locked.then_some(self.lock_syncs)
     }
 
-    /// How many files a locked search holds (its `system:hash`'s), for
-    /// the reference's "Locked at N files." (0 if the search is not just
-    /// such a hash).
+    /// The lock panel retains its prior count when Undo changes the hidden
+    /// query; locking or synchronizing its hashes updates the displayed count.
     pub fn locked_count(&self) -> usize {
-        self.lock_hashes().map_or(0, |h| h.len())
+        if self.locked {
+            self.lock_panel_count
+        } else {
+            self.lock_hashes().map_or(0, |h| h.len())
+        }
     }
 
     /// Unlock the search: it becomes its `system:hash`, which can be
@@ -1798,10 +1826,16 @@ impl SearchPage {
 
     /// Make the search a `system:hash` of `hashes` (`_UpdateSystemLockFiles`).
     fn set_lock_hashes(&mut self, hashes: std::collections::BTreeSet<hydrus_core::Sha256>) {
+        self.lock_panel_count = hashes.len();
+        let before = self.predicates.clone();
         self.predicates = vec![Predicate::System(SystemPredicate::Hash {
             hashes: FileHashes::Sha256(hashes),
             inclusive: true,
         })];
+        self.predicate_history
+            .borrow_mut()
+            .record(&before, &self.predicates);
+        self.sync_autocomplete_tags();
     }
 
     fn sha256s(&self, files: &[HashId]) -> std::collections::BTreeSet<hydrus_core::Sha256> {
@@ -2085,6 +2119,22 @@ impl SearchPage {
         &self.autocomplete
     }
 
+    pub fn set_autocomplete_tab(&mut self, tab: hydrus_gui_model::write_autocomplete::Tab) {
+        if !self.locked && self.note.is_none() {
+            self.autocomplete.set_tab(tab);
+        }
+    }
+    fn sync_autocomplete_tags(&mut self) {
+        self.autocomplete
+            .set_context_tags(self.predicates.iter().filter_map(|predicate| {
+                if let Predicate::Tag { tag, .. } = predicate {
+                    Some(tag.as_str().to_owned())
+                } else {
+                    None
+                }
+            }));
+    }
+
     /// The search box's text changed.
     pub fn type_text(&mut self, text: &str) {
         self.autocomplete.set_text(text);
@@ -2099,38 +2149,123 @@ impl SearchPage {
     /// as typed), and empty the box if that worked; or, for a system
     /// predicate that needs more, ask for its editor.
     pub fn enter(&mut self) {
-        if let Some(i) = self.autocomplete.highlighted()
-            && let Some(blank) = self.autocomplete.suggestions()[i].editor
+        self.enter_or(false);
+    }
+    /// Shift+Enter accumulates without changing the active search.
+    pub fn enter_or(&mut self, shift: bool) {
+        if self.or_draft.terms().is_some()
+            && !self.autocomplete.text().trim().is_empty()
+            && self.autocomplete.tab() == hydrus_gui_model::write_autocomplete::Tab::Tags
+            && self.autocomplete.suggestions().len() == 1
         {
-            self.editor_wanted = Some(blank);
+            let text = self.autocomplete.text().to_owned();
+            self.broadcast_or_text(&text, shift);
             return;
         }
-        if let Some(chosen) = self.autocomplete.chosen()
-            && self.add_predicate(&chosen)
-        {
-            self.autocomplete.clear();
+        if let Some(index) = self.autocomplete.highlighted() {
+            self.choose_or(index, shift);
+        } else if let Some(text) = self.autocomplete.chosen() {
+            self.broadcast_or_text(&text, shift);
         }
     }
-
-    /// A suggestion was clicked.
     pub fn choose(&mut self, index: usize) {
+        self.choose_or(index, false);
+    }
+    pub fn choose_or(&mut self, index: usize, shift: bool) {
+        if self.locked || self.note.is_some() {
+            return;
+        }
+        if index == 0
+            && self.autocomplete.tab() == hydrus_gui_model::write_autocomplete::Tab::Tags
+            && let Some(draft) = self.or_draft.predicate()
+        {
+            self.broadcast_or(vec![draft], shift);
+            return;
+        }
         let Some(suggestion) = self.autocomplete.suggestions().get(index) else {
             return;
         };
         if let Some(blank) = suggestion.editor {
-            self.editor_wanted = Some(blank);
+            self.editor_wanted = Some((blank, shift));
             return;
         }
-        let predicate = suggestion.predicate.clone();
-        if self.add_predicate(&predicate) {
-            self.autocomplete.clear();
+        let text = suggestion.predicate.clone();
+        self.broadcast_or_text(&text, shift);
+    }
+    fn broadcast_or_text(&mut self, text: &str, shift: bool) {
+        if text.trim().is_empty() {
+            return;
+        }
+        match parse_api_search(&serde_json::json!([text])) {
+            Ok(predicates) => self.broadcast_or(predicates, shift),
+            Err(error) => self.error = Some(error.to_string()),
+        }
+    }
+    fn broadcast_or(&mut self, predicates: Vec<Predicate>, shift: bool) {
+        if self.locked || self.note.is_some() {
+            return;
+        }
+        let text = hydrus_search::TextContext {
+            presentation: None,
+            ..self.text_context()
+        };
+        let committed = self.or_draft.broadcast(predicates, shift, &text);
+        self.sync_or_draft();
+        if !committed.is_empty() {
+            self.add_predicates(&committed);
+        }
+        self.autocomplete.clear();
+    }
+    /// Accepted child predicates follow the same normal broadcast as suggestions.
+    pub fn apply_or_editor(&mut self, predicates: Vec<Predicate>) {
+        self.broadcast_or(predicates, false);
+    }
+    fn sync_or_draft(&mut self) {
+        let label = self
+            .or_draft
+            .predicate()
+            .map(|predicate| predicate_text(&predicate, &self.text_context()));
+        self.autocomplete.set_or_draft(label);
+    }
+    pub fn or_terms(&self) -> Option<&[Predicate]> {
+        self.or_draft.terms()
+    }
+    /// Rewind or cancel; neither action changes active predicates or queries.
+    pub fn change_or_draft(&mut self, rewind: bool) {
+        if self.locked || self.note.is_some() {
+            return;
+        }
+        if rewind {
+            self.or_draft.rewind();
+        } else {
+            self.or_draft.cancel();
+        }
+        self.sync_or_draft();
+        self.autocomplete.clear();
+    }
+    /// Escape rewinds only an empty input with an active construction.
+    pub fn escape_or(&mut self) -> bool {
+        if self.or_draft.terms().is_some() && self.autocomplete.text().is_empty() && !self.locked {
+            self.change_or_draft(true);
+            true
+        } else {
+            false
         }
     }
 
     /// The editor a chosen system predicate asked for, if one did (asked
     /// once).
     pub fn take_editor_wanted(&mut self) -> Option<crate::predicate_editors::Blank> {
+        self.take_system_editor_wanted().map(|(blank, _)| blank)
+    }
+    /// Retain the selecting key's Shift intent until its system child accepts.
+    pub fn take_system_editor_wanted(&mut self) -> Option<(crate::predicate_editors::Blank, bool)> {
         self.editor_wanted.take()
+    }
+    /// A fleshed-out system value follows the original suggestion broadcast:
+    /// Shift extends the draft; normal acceptance merges and commits it.
+    pub fn apply_system_editor(&mut self, predicates: Vec<Predicate>, shift: bool) {
+        self.broadcast_or(predicates, shift);
     }
 
     /// Add predicates an editor made, empty the search box and search again;
@@ -2146,6 +2281,20 @@ impl SearchPage {
             self.search();
         }
         true
+    }
+
+    /// The frame history enters the hidden query even when its search is
+    /// locked. Pages without a query still retire the history entry only.
+    pub(crate) fn undo_predicate(&mut self, predicate: &Predicate) {
+        if self.note.is_some() {
+            return;
+        }
+        self.enter_predicates(std::slice::from_ref(predicate));
+        self.error = None;
+        self.autocomplete.clear();
+        if self.synchronised && !self.locked {
+            self.search();
+        }
     }
 
     /// Enter a predicate as typed (a tag, or a system predicate such as
@@ -2181,7 +2330,12 @@ impl SearchPage {
 
     pub fn remove_predicate(&mut self, index: usize) {
         if !self.locked && index < self.predicates.len() {
+            let before = self.predicates.clone();
             self.predicates.remove(index);
+            self.predicate_history
+                .borrow_mut()
+                .record(&before, &self.predicates);
+            self.sync_autocomplete_tags();
             if self.synchronised {
                 self.search();
             }

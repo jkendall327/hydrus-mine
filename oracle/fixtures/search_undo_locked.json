@@ -1,0 +1,141 @@
+{
+  "input_hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+  ],
+  "plain_menu": {
+    "predicates": [
+      [
+        14,
+        8,
+        [
+          0,
+          "undo:alpha",
+          true
+        ]
+      ]
+    ],
+    "visible_predicate_labels": [
+      "alpha"
+    ],
+    "media_hashes": [
+      "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+      "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+    ],
+    "badge": "Locked at 0 files.",
+    "locked": false,
+    "synchronised": false,
+    "menu": [
+      {
+        "menu": "addition",
+        "entries": [
+          "undo:alpha"
+        ]
+      },
+      "clear history…"
+    ]
+  },
+  "before_undo": {
+    "predicates": [
+      [
+        14,
+        8,
+        [
+          12,
+          [
+            [
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+              "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+            ],
+            "sha256"
+          ],
+          true
+        ]
+      ]
+    ],
+    "visible_predicate_labels": [
+      "hash is in 2 hashes"
+    ],
+    "media_hashes": [
+      "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+      "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+    ],
+    "badge": "Locked at 2 files.",
+    "locked": true,
+    "synchronised": true,
+    "menu": [
+      {
+        "menu": "addition",
+        "entries": [
+          "system:hash is in 2 hashes",
+          "undo:alpha"
+        ]
+      },
+      {
+        "menu": "removal",
+        "entries": [
+          "undo:alpha"
+        ]
+      },
+      "clear history…"
+    ]
+  },
+  "after_undo": {
+    "predicates": [
+      [
+        14,
+        8,
+        [
+          12,
+          [
+            [
+              "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+              "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+            ],
+            "sha256"
+          ],
+          true
+        ]
+      ],
+      [
+        14,
+        8,
+        [
+          0,
+          "undo:alpha",
+          true
+        ]
+      ]
+    ],
+    "visible_predicate_labels": [
+      "hash is in 2 hashes",
+      "alpha"
+    ],
+    "media_hashes": [
+      "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+      "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+    ],
+    "badge": "Locked at 2 files.",
+    "locked": true,
+    "synchronised": true,
+    "menu": [
+      {
+        "menu": "addition",
+        "entries": [
+          "undo:alpha",
+          "system:hash is in 2 hashes"
+        ]
+      },
+      {
+        "menu": "removal",
+        "entries": [
+          "undo:alpha"
+        ]
+      },
+      "clear history…"
+    ]
+  },
+  "questions": [
+    "This will lock the page, collapsing the current search to a system:hash of the current files. Is this ok?"
+  ]
+}

@@ -31,6 +31,82 @@ use crate::services::{
 };
 use crate::settings::{FavouriteTags, FileViewingStatistics, Setting};
 
+/// Translate legacy palette controls into the same typed settings used by live providers.
+fn command_palette_preferences(
+    options: Option<&legacy::ClientOptions>,
+) -> crate::command_palette::CommandPaletteSettings {
+    use crate::command_palette::{CommandPaletteSettings, Provider};
+    let mut settings = CommandPaletteSettings::default();
+    let Some(options) = options else {
+        return settings;
+    };
+    for (key, field) in [
+        (
+            "command_palette_show_page_of_pages",
+            &mut settings.show_notebooks,
+        ),
+        (
+            "command_palette_initially_show_all_pages",
+            &mut settings.initially_show_pages,
+        ),
+        (
+            "command_palette_initially_show_history",
+            &mut settings.initially_show_history,
+        ),
+        (
+            "command_palette_initially_show_favourite_searches",
+            &mut settings.initially_show_favourites,
+        ),
+        (
+            "command_palette_fav_searches_open_new_page",
+            &mut settings.favourites_new_page,
+        ),
+        (
+            "command_palette_show_main_menu",
+            &mut settings.show_main_menu,
+        ),
+        (
+            "command_palette_show_media_menu",
+            &mut settings.show_media_menu,
+        ),
+    ] {
+        if let Some(value) = options.booleans.get(key) {
+            *field = *value;
+        }
+    }
+    if let Some(value) = options
+        .integers
+        .get("command_palette_num_chars_for_results_threshold")
+    {
+        settings.threshold = usize::try_from((*value).clamp(1, 64)).unwrap_or(1);
+    }
+    for (key, field) in [
+        (
+            "command_palette_limit_page_results",
+            &mut settings.page_limit,
+        ),
+        (
+            "command_palette_limit_history_results",
+            &mut settings.history_limit,
+        ),
+        (
+            "command_palette_limit_favourite_searches_results",
+            &mut settings.favourite_limit,
+        ),
+    ] {
+        if let Some(value) = options.noneable_integers.get(key) {
+            *field = value.and_then(|n| usize::try_from(n.clamp(1, 1_000_000)).ok());
+        }
+    }
+    if let Some(order) = options.integer_lists.get("command_palette_provider_order") {
+        settings.provider_order = order
+            .iter()
+            .filter_map(|code| usize::try_from(*code).ok().and_then(Provider::from_code))
+            .collect();
+    }
+    settings
+}
+
 /// Decode everything the importer needs from the reference install `db`.
 pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     let mut input = ImportInput::default();
@@ -199,6 +275,31 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &tag_editing)?;
+    let mut manage_tags = crate::tag_editing::ManageTagsSettings::default();
+    if let Some(options) = &options {
+        if let Some(&value) = options.booleans.get("manage_tags_show_deleted_mappings") {
+            manage_tags.show_deleted = value;
+        }
+        for (key, field) in [
+            (
+                "last_incremental_tagging_namespace",
+                &mut manage_tags.incremental_namespace,
+            ),
+            (
+                "last_incremental_tagging_prefix",
+                &mut manage_tags.incremental_prefix,
+            ),
+            (
+                "last_incremental_tagging_suffix",
+                &mut manage_tags.incremental_suffix,
+            ),
+        ] {
+            if let Some(value) = options.strings.get(key) {
+                field.clone_from(value);
+            }
+        }
+    }
+    insert_setting(&mut input, &manage_tags)?;
     let mut autocomplete_tabs = crate::settings::TagAutocompleteTabs::default();
     if let Some(value) = options.as_ref().and_then(|o| {
         o.noneable_integers
@@ -349,6 +450,59 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &preferences)?;
+    let mut deletion = crate::settings::DeletionPreferences::default();
+    for (key, field) in [
+        ("confirm_trash", &mut deletion.confirm_trash),
+        ("confirm_archive", &mut deletion.confirm_archive),
+    ] {
+        if let Some(value) = legacy_options
+            .get(key)
+            .and_then(hydrus_legacy::objects::YamlValue::as_bool)
+        {
+            *field = value;
+        }
+    }
+    if let Some(options) = &options {
+        for (key, field) in [
+            ("use_advanced_file_deletion_dialog", &mut deletion.advanced),
+            (
+                "remember_last_advanced_file_deletion_special_action",
+                &mut deletion.remember_action,
+            ),
+            (
+                "remember_last_advanced_file_deletion_reason",
+                &mut deletion.remember_reason,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        if let Some(reasons) = options.string_lists.get("advanced_file_deletion_reasons") {
+            deletion.reasons.clone_from(reasons);
+        }
+        deletion.last_reason = options
+            .noneable_strings
+            .get("last_advanced_file_deletion_reason")
+            .cloned()
+            .flatten();
+        deletion.last_action = options
+            .noneable_strings
+            .get("last_advanced_file_deletion_special_action")
+            .as_ref()
+            .and_then(|value| value.as_deref())
+            .and_then(|value| match value {
+                "physical_delete" => Some(crate::settings::DeletionAction::Physical),
+                "clear_delete" => Some(crate::settings::DeletionAction::ClearRecord),
+                key => hex::decode(key)
+                    .ok()
+                    .filter(|bytes| !bytes.is_empty())
+                    .map(|bytes| {
+                        crate::settings::DeletionAction::Domain(hydrus_core::ServiceKey::new(bytes))
+                    }),
+            });
+    }
+    insert_setting(&mut input, &deletion)?;
     let mut delete_lock = crate::delete_lock::DeleteLock::default();
     if let Some(options) = &options {
         for (key, field) in delete_lock.by_option_name() {
@@ -428,6 +582,17 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     )?;
     insert_setting(
         &mut input,
+        &crate::settings::CustomPredicateDefaults {
+            predicates: options
+                .as_ref()
+                .map(|o| o.custom_default_predicates(&|key| scales.get(key).copied()))
+                .transpose()
+                .map_err(|e| StoreError::Invalid(format!("custom predicate defaults: {e}")))?
+                .unwrap_or_default(),
+        },
+    )?;
+    insert_setting(
+        &mut input,
         &options
             .as_ref()
             .map(|o| o.recent_predicates(&|key| scales.get(key).copied()))
@@ -484,6 +649,7 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .map(legacy::ClientOptions::window_settings)
             .unwrap_or_default(),
     )?;
+    insert_setting(&mut input, &command_palette_preferences(options.as_ref()))?;
     let mut handling = crate::settings::FileHandlingSettings::default();
     if let Some(options) = &options {
         let boolean = |key: &str| options.booleans.get(key).copied();
@@ -904,6 +1070,34 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         if let Some(&active) = options.booleans.get("file_viewing_statistics_active") {
             viewing.active = active;
         }
+        for (key, field) in [
+            (
+                "file_viewing_statistics_active_on_archive_delete_filter",
+                &mut viewing.archive_delete,
+            ),
+            (
+                "file_viewing_statistics_active_on_dupe_filter",
+                &mut viewing.duplicates,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        for (key, field) in [
+            (
+                "file_viewing_statistics_media_min_time_ms",
+                &mut viewing.media_min_ms,
+            ),
+            (
+                "file_viewing_statistics_media_max_time_ms",
+                &mut viewing.media_max_ms,
+            ),
+        ] {
+            if let Some(value) = options.noneable_integers.get(key) {
+                *field = value.and_then(|v| u64::try_from(v).ok());
+            }
+        }
         if let Some(codes) = options
             .integer_lists
             .get("file_viewing_stats_interesting_canvas_types")
@@ -918,6 +1112,12 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
                 })
                 .collect::<Result<_>>()?;
         }
+        viewing.menu_display =
+            if options.integers.get("file_viewing_stats_menu_display") == Some(&3) {
+                crate::settings::ViewingStatsMenuDisplay::Stacked
+            } else {
+                crate::settings::ViewingStatsMenuDisplay::Combined
+            };
         insert_setting(&mut input, &viewing)?;
         let mut similar = crate::similar::SimilarFilesSettings::default();
         if let Some(&d) = options
@@ -2741,6 +2941,93 @@ mod tests {
     }
 
     #[test]
+    fn recorded_custom_predicate_defaults_import_with_typed_units_and_keys() {
+        use hydrus_core::search::predicate::{Predicate, SystemPredicate, ViewingStat};
+        let recording = hydrus_testkit::fixture_json("predicate_custom_defaults.json");
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let conn = rusqlite::Connection::open(source.path().join("client.db")).unwrap();
+        conn.execute(
+            "UPDATE json_dumps SET dump = ?1 WHERE dump_type = 22",
+            [recording["options_saved_families"][2]
+                .to_string()
+                .into_bytes()],
+        )
+        .unwrap();
+        drop(conn);
+        let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        let defaults: crate::settings::CustomPredicateDefaults =
+            serde_json::from_value(input.settings["custom_default_predicates"].clone()).unwrap();
+        assert_eq!(defaults.predicates.len(), 38);
+        assert!(
+            defaults
+                .predicates
+                .contains(&Predicate::System(SystemPredicate::Limit(259)))
+        );
+        assert!(defaults.predicates.iter().any(|p| matches!(
+            p,
+            Predicate::System(SystemPredicate::FileViewingStats {
+                stat: ViewingStat::ViewTimeMilliseconds,
+                value: 600_037,
+                ..
+            })
+        )));
+        assert!(defaults.predicates.iter().any(|p| matches!(
+            p,
+            Predicate::System(SystemPredicate::Rating {
+                test: hydrus_core::search::predicate::RatingTest::Stars {
+                    op: hydrus_core::search::number::RatingOp::Equal,
+                    stars: 3,
+                    out_of: 5,
+                },
+                ..
+            })
+        )));
+        let recorded_service = recording["cases"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|c| c["class"] == "PanelPredicateSystemFileService")
+            .unwrap();
+        let object = hydrus_legacy::serialisable::SerialisableObject::from_tuple_str(
+            &recorded_service["saved"][0].to_string(),
+        )
+        .unwrap();
+        let service = hydrus_legacy::objects::predicates::predicate(&object).unwrap();
+        assert!(defaults.predicates.contains(&service));
+        // This is the same canonical key/type consumed by the native star menu.
+        let destination = tempfile::tempdir().unwrap();
+        crate::import::import_legacy(
+            source.path(),
+            &destination.path().join(crate::store::DB_FILE_NAME),
+        )
+        .unwrap();
+        let store = crate::Store::open(destination.path()).unwrap();
+        assert_eq!(
+            store
+                .read(crate::settings::get::<crate::settings::CustomPredicateDefaults>)
+                .unwrap(),
+            defaults
+        );
+        store
+            .write(|writer| {
+                crate::settings::set(
+                    writer.conn(),
+                    &crate::settings::CustomPredicateDefaults::default(),
+                )
+            })
+            .unwrap();
+        drop(store);
+        let store = crate::Store::open(destination.path()).unwrap();
+        assert!(
+            store
+                .read(crate::settings::get::<crate::settings::CustomPredicateDefaults>)
+                .unwrap()
+                .predicates
+                .is_empty()
+        );
+    }
+
+    #[test]
     fn subscription_concurrency_imports_nondefault_number() {
         let source = hydrus_testkit::legacy_fixture("basic");
         edit_client_options(
@@ -2816,6 +3103,30 @@ mod tests {
         )
         .unwrap();
         assert_eq!(pauses, before, "import does not apply a boot action");
+    }
+
+    #[test]
+    fn manage_tags_live_display_and_incremental_fields_import() {
+        use crate::tag_editing::ManageTagsSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "manage_tags_show_deleted_mappings"], [0, false]]"#,
+                    r#"[[0, "manage_tags_show_deleted_mappings"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "last_incremental_tagging_namespace"], [0, "page"]]"#,
+                    r#"[[0, "last_incremental_tagging_namespace"], [0, "sequence"]]"#,
+                ),
+            ],
+        );
+        let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        let imported: ManageTagsSettings =
+            serde_json::from_value(input.settings["manage_tags"].clone()).unwrap();
+        assert!(imported.show_deleted);
+        assert_eq!(imported.incremental_namespace, "sequence");
     }
 
     #[test]
@@ -3049,6 +3360,107 @@ mod tests {
                 ),
             }
         );
+    }
+
+    #[test]
+    fn command_palette_preferences_migrate_defaults_and_nondefault_provider_policies() {
+        use crate::command_palette::{CommandPaletteSettings, Provider};
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<CommandPaletteSettings>(
+                input.settings["command_palette"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(decoded(), CommandPaletteSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "command_palette_initially_show_all_pages"], [0, true]]"#,
+                    r#"[[0, "command_palette_initially_show_all_pages"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "command_palette_initially_show_favourite_searches"], [0, false]]"#,
+                    r#"[[0, "command_palette_initially_show_favourite_searches"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "command_palette_num_chars_for_results_threshold"], [0, 1]]"#,
+                    r#"[[0, "command_palette_num_chars_for_results_threshold"], [0, 4]]"#,
+                ),
+                (
+                    r#"[[0, "command_palette_limit_page_results"], [0, null]]"#,
+                    r#"[[0, "command_palette_limit_page_results"], [0, 2]]"#,
+                ),
+                (
+                    r#"[[0, "command_palette_provider_order"], [2, [26, 3, [[0, 0], [0, 1], [0, 2], [0, 4], [0, 3], [0, 5]]]]]"#,
+                    r#"[[0, "command_palette_provider_order"], [2, [26, 3, [[0, 5], [0, 3]]]]]"#,
+                ),
+            ],
+        );
+        let settings = decoded();
+        assert!(!settings.initially_show_pages);
+        assert!(settings.initially_show_favourites);
+        assert_eq!(settings.threshold, 4);
+        assert_eq!(settings.page_limit, Some(2));
+        assert_eq!(
+            settings.provider_order,
+            [Provider::Favourites, Provider::Pages]
+        );
+    }
+
+    #[test]
+    fn viewing_menu_preferences_import_the_display_style_and_canvas_ticks() {
+        use crate::settings::{FileViewingStatistics, ViewingStatsMenuDisplay};
+        let source = hydrus_testkit::legacy_fixture("basic");
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "file_viewing_statistics_active_on_archive_delete_filter"], [0, true]]"#,
+                    r#"[[0, "file_viewing_statistics_active_on_archive_delete_filter"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "file_viewing_statistics_active_on_dupe_filter"], [0, false]]"#,
+                    r#"[[0, "file_viewing_statistics_active_on_dupe_filter"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "file_viewing_statistics_media_min_time_ms"], [0, 2000]]"#,
+                    r#"[[0, "file_viewing_statistics_media_min_time_ms"], [0, null]]"#,
+                ),
+                (
+                    r#"[[0, "file_viewing_statistics_media_max_time_ms"], [0, 600000]]"#,
+                    r#"[[0, "file_viewing_statistics_media_max_time_ms"], [0, 1234]]"#,
+                ),
+                (
+                    r#"[[0, "file_viewing_stats_menu_display"], [0, 2]]"#,
+                    r#"[[0, "file_viewing_stats_menu_display"], [0, 3]]"#,
+                ),
+                (
+                    r#"[[0, "file_viewing_stats_interesting_canvas_types"], [2, [26, 3, [[0, 0], [0, 4]]]]]"#,
+                    r#"[[0, "file_viewing_stats_interesting_canvas_types"], [2, [26, 3, [[0, 1]]]]]"#,
+                ),
+            ],
+        );
+        let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        let viewing: FileViewingStatistics =
+            serde_json::from_value(input.settings["file_viewing_statistics"].clone()).unwrap();
+        assert!(!viewing.archive_delete);
+        assert!(viewing.duplicates);
+        assert_eq!(viewing.media_min_ms, None);
+        assert_eq!(viewing.media_max_ms, Some(1234));
+        assert_eq!(viewing.menu_display, ViewingStatsMenuDisplay::Stacked);
+        assert_eq!(viewing.interesting_canvases, [CanvasType::Preview]);
+        let old: FileViewingStatistics =
+            serde_json::from_str(r#"{"active":false,"interesting_canvases":[1]}"#).unwrap();
+        assert!(!old.active);
+        assert!(old.archive_delete);
+        assert!(!old.duplicates);
+        assert_eq!(old.media_min_ms, Some(2000));
+        assert_eq!(old.media_max_ms, Some(600_000));
+        assert_eq!(old.menu_display, ViewingStatsMenuDisplay::Combined);
+        assert_eq!(old.interesting_canvases, [CanvasType::Preview]);
     }
 
     #[test]

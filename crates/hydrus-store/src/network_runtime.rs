@@ -25,6 +25,7 @@ pub enum WaitReason {
     Connection,
     ServerBandwidth,
     Downloading,
+    Login,
 }
 
 impl WaitReason {
@@ -41,6 +42,7 @@ impl WaitReason {
             Self::Connection => "connection retry",
             Self::ServerBandwidth => "server bandwidth",
             Self::Downloading => "downloading",
+            Self::Login => "login",
         }
     }
 }
@@ -79,6 +81,16 @@ pub struct JobError {
     pub text: String,
 }
 
+/// One engine-owned domain login, retained across its individual HTTP steps.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct LoginProcess {
+    pub id: u64,
+    pub domain: String,
+    pub script: String,
+    pub epoch: String,
+    pub status: String,
+}
+
 /// Current daemon snapshot. It expires after five seconds without a heartbeat.
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Snapshot {
@@ -90,6 +102,8 @@ pub struct Snapshot {
     pub controls: Vec<JobControl>,
     #[serde(default)]
     pub errors: Vec<JobError>,
+    #[serde(default)]
+    pub login: Option<LoginProcess>,
 }
 impl Setting for Snapshot {
     const KEY: &'static str = "network_runtime";
@@ -105,6 +119,8 @@ impl Snapshot {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum JobAction {
     Cancel,
+    /// Cancel the global login process, independently of a triggering downloader.
+    CancelLogin,
     OverrideBandwidth,
     OverrideConnectionWait,
     OverrideServerBandwidthWait,

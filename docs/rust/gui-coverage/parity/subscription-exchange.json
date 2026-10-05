@@ -1,0 +1,289 @@
+{
+  "agent": "follow_subscription_exchange",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "working_baseline": "2388372d",
+  "implementation_commits": [
+    "fd6551d7641cf36cbf213a29013cadfa2867e7cc",
+    "155db883697c23d5142509ee2d90bb2507f62e03",
+    "6637b490ef94dae95512dc25fd74038437dd2738",
+    "3a1ab359ae925ddd87f09e4dd3050f6748261300",
+    "7753f862f02f82510c402602c8c7553b1b79e14b",
+    "1654a1cb7f4750391e745ad076e8cf6de1f236e1",
+    "73b10a50a24407219355dbbd1cd5359a181a0cb3",
+    "9cfd9a7a787f909c6f450cb0674e521379101cdf",
+    "9de71fac5f077c27861c1071b17b8642198aa865",
+    "ca65203f51e891216b6f3d1413c7d5e7b5b2ac2c",
+    "1de97b7033f68063effe18db0cd0b73e76b84cff"
+  ],
+  "validation": {
+    "reference_recording": "Passed actual Qt recordings under shared with-oracle lock: modern clipboard/JSON/PNG/list-menu/file-overwrite/missing-history flow, plus all twelve legacy container/query-version cases through real list import/export and acceptance of normalized native current exports. Synthetic domains only; original Qt editor screenshot inspected. Latest modern recorder rerun also drives actual list Reset/RetryFailed/RetryIgnored and selected exports, recording cleared hash metadata and exact auxiliary cache updates.",
+    "formatting": "rustfmt --edition 2024, git diff --check and Python recorder syntax passed.",
+    "slint_source_check": "Passed cached Slint compiler with no Cargo builds.",
+    "rust_tests": "Root reported earlier integrated3d3b5108 hosted parity-models success and Linux GUI396 tests passing. Newer missing-history/menu/legacy/reset-cache tests await hosted checkpointdc95767f; newest source checks passed. No local Cargo or mutation tests. No first-pass completion claimed."
+  },
+  "native_navigation": [
+    {
+      "parent": "SubscriptionsWindow",
+      "child": "DownloaderExchangeWindow",
+      "trigger": "serialized import/export",
+      "reuse_existing_component": true
+    },
+    {
+      "parent": "DownloaderExchangeWindow",
+      "child": "PngExportWindow",
+      "trigger": "export to png",
+      "reuse_existing_component": true
+    }
+  ],
+  "entries": [
+    {
+      "reference_id": "subscriptions-exchange",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "partial",
+      "proposedStatus": "partial",
+      "behavior": "Manage subscriptions exposes serialized import/export of modern reference container90 objects through an owned child. Settings, complete query states, cached velocity/example-seed headers and both file/gallery histories survive JSON/PNG exchange, staged import and Apply/reopen. Casefold name collisions use (1) suffixes and every imported query gets a fresh history identity. JSON file export asks the original existing-path overwrite question; rejecting or closing the owner preserves the existing file. Format-specific multi-file JSON/PNG imports validate before staging, cancellation leaves the saved store unchanged, and stale callbacks cannot append or overwrite. Export reads current native queues plus draft reset/retry commands and preserves copied header metadata. Incomplete objects now ask the exact reference missing query log data title, message and import/back-out choices before they enter the draft; accepting persists empty logs and rejecting or cancelling continues remaining objects in list order. Apply is blocked while the question remains unanswered. Modern clipboard/JSON/PNG menu choices now dispatch their actual transport action. Legacy subscription type3 versions1\u201310 and legacy query1\u20133 import with full embedded histories, historical checker/limit defaults and fresh identity handling; obsolete gallery identifiers become the original paused unknown downloader. Actual Qt direct conversion and list exports constrain full upgraded payloads, apart from generated random identities. Fresh history names invalidate velocity/status according to SetQueryLogContainerName while retaining example/cached-count fields. Actual Reset/RetryFailed/RetryIgnored exports now refresh file-count/example caches without changing velocity or gallery examples. Retried files lose hashes exactly as SetStatus(UNKNOWN) does, in both detached exports and the real Apply transaction; reopening exports those persisted caches.",
+      "exactBehavior": "Manage subscriptions exposes serialized import/export of modern reference container90 objects through an owned child. Settings, complete query states, cached velocity/example-seed headers and both file/gallery histories survive JSON/PNG exchange, staged import and Apply/reopen. Casefold name collisions use (1) suffixes and every imported query gets a fresh history identity. JSON file export asks the original existing-path overwrite question; rejecting or closing the owner preserves the existing file. Format-specific multi-file JSON/PNG imports validate before staging, cancellation leaves the saved store unchanged, and stale callbacks cannot append or overwrite. Export reads current native queues plus draft reset/retry commands and preserves copied header metadata. Incomplete objects now ask the exact reference missing query log data title, message and import/back-out choices before they enter the draft; accepting persists empty logs and rejecting or cancelling continues remaining objects in list order. Apply is blocked while the question remains unanswered. Modern clipboard/JSON/PNG menu choices now dispatch their actual transport action. Legacy subscription type3 versions1\u201310 and legacy query1\u20133 import with full embedded histories, historical checker/limit defaults and fresh identity handling; obsolete gallery identifiers become the original paused unknown downloader. Actual Qt direct conversion and list exports constrain full upgraded payloads, apart from generated random identities. Fresh history names invalidate velocity/status according to SetQueryLogContainerName while retaining example/cached-count fields. Actual Reset/RetryFailed/RetryIgnored exports now refresh file-count/example caches without changing velocity or gallery examples. Retried files lose hashes exactly as SetStatus(UNKNOWN) does, in both detached exports and the real Apply transaction; reopening exports those persisted caches.",
+      "limits": [
+        "Historical file seed-cache type8 versions1\u20137 remain unsupported and fail explicitly; current cache8 with seed versions handled by the legacy decoder is supported.",
+        "Clipboard PNG-image precedence and PNG drag/drop remain absent; PNG files and the original transport popup choices are supported.",
+        "Native package/file selection review rejects an entire invalid selection atomically; the reference can retain earlier valid objects and show type warnings. Imports open an additional reviewed child before staging.",
+        "Native initialises accepted missing logs directly during Apply instead of requiring a reopen.",
+        "Fresh native queries now export file counts/examples, but gallery/velocity caches without a retained reference header remain unsynchronised.",
+        "Newest native model/GUI/store/codec regressions and screenshot capture await root hosted CI. No completion is claimed for this Partial step.",
+        "subscriptions-merge and subscription-options are not changed or claimed; import-options clipboard is not counted again."
+      ],
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/ClientGUISubscriptions.py",
+        "line": 2463,
+        "symbol": "EditSubscriptionsPanel._GetSelectedSubsAsExportableContainers"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/src/subscriptions.rs",
+          "line": 282,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "pub fn decode_text("
+        },
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/src/subscriptions.rs",
+          "line": 408,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "pub fn tuple("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/subscription_exchange.rs",
+          "line": 59,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "pub fn stage("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/subscription_exchange.rs",
+          "line": 171,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "pub fn selected("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/subscription_exchange.rs",
+          "line": 94,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "pub fn restore("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/subscriptions_window.rs",
+          "line": 1516,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "window.on_exchange({"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_interchange_window.rs",
+          "line": 83,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "pub fn open_subscriptions("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/downloader_interchange_window.rs",
+          "line": 615,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "fn save_json("
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/mod.rs",
+          "line": 2929,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "pub fn restore_subscription_log("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/subscription_exchange.rs",
+          "line": 17,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "pub fn missing_history_question("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/subscriptions_window.rs",
+          "line": 406,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "fn import_next("
+        },
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/src/subscription_legacy.rs",
+          "line": 122,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "pub(crate) fn convert("
+        },
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/src/subscription_legacy.rs",
+          "line": 20,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "fn upgrade_info("
+        },
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/src/subscriptions.rs",
+          "line": 39,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "pub fn rename_history("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/subscriptions_window.rs",
+          "line": 1581,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "window.on_exchange_mode({"
+        },
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/src/subscriptions.rs",
+          "line": 54,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "pub fn update_file_status("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/subscription_exchange.rs",
+          "line": 105,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "pub fn update_file_status("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/subscriptions_window.rs",
+          "line": 271,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "fn change_log("
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/tests/subscriptions.rs",
+          "line": 6,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "fn actual_subscription_clipboard_and_png_retain_settings_headers_and_both_histories("
+        },
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/tests/subscriptions.rs",
+          "line": 60,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "fn subscription_exchange_reports_missing_logs_and_rejects_invalid_packages_atomically("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/subscription_exchange.rs",
+          "line": 7,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "fn staged_full_subscription_import_resolves_names_and_persists_both_histories("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/subscriptions.rs",
+          "line": 875,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "fn full_subscription_exchange_is_staged_cancellable_and_reopens_with_complete_histories("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/subscriptions.rs",
+          "line": 1040,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "fn subscription_exchange_file_menus_load_selected_packages_and_cancel_invalid_batches("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/subscription_exchange.rs",
+          "line": 127,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "fn missing_history_question_matches_actual_qt_message_title_and_decisions("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/subscriptions.rs",
+          "line": 1120,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "fn subscription_missing_history_asks_original_question_before_staging_or_persisting("
+        },
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/tests/subscriptions.rs",
+          "line": 82,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "fn actual_legacy_subscription_list_imports_match_converted_settings_histories_and_caches("
+        },
+        {
+          "relativepath": "crates/hydrus-downloader-exchange/tests/subscriptions.rs",
+          "line": 131,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "fn malformed_and_unsupported_legacy_subscriptions_fail_without_reducing_history("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/subscriptions.rs",
+          "line": 1190,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "fn legacy_subscription_clipboard_import_reaches_saved_query_settings_and_full_histories("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/subscriptions.rs",
+          "line": 1284,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "fn actual_subscription_list_transport_choices_dispatch_frozen_packages_and_guard_owners("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/subscription_exchange.rs",
+          "line": 143,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "fn draft_log_changes_export_exact_reference_counts_examples_and_complete_histories("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/subscriptions.rs",
+          "line": 1390,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "fn subscription_reset_and_retries_refresh_persisted_export_caches_and_forget_file_hashes("
+        }
+      ],
+      "reference_recording": [
+        {
+          "relativepath": "oracle/record_subscription_exchange.py",
+          "line": 17,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "def record(session):"
+        },
+        {
+          "relativepath": "oracle/fixtures/subscription_exchange.json",
+          "line": 2,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "\"single\""
+        },
+        {
+          "relativepath": "oracle/fixtures/subscription_exchange.png",
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "description": "Actual Python ClientSerialisable.DumpToPNG/LoadFromPNG full selected container package"
+        },
+        {
+          "relativepath": "oracle/fixtures/subscription_exchange_editor.png",
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "description": "Actual Qt list after imported collision and missing-history acceptance; inspected"
+        },
+        {
+          "relativepath": "oracle/record_subscription_legacy_exchange.py",
+          "line": 19,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "def record(session):"
+        },
+        {
+          "relativepath": "oracle/fixtures/subscription_legacy_exchange.json",
+          "line": 3,
+          "commit": "1de97b7033f68063effe18db0cd0b73e76b84cff",
+          "symbol": "\"cases\": ["
+        }
+      ]
+    }
+  ]
+}

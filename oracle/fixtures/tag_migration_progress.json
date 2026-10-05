@@ -1,0 +1,203 @@
+[
+  {
+    "action": "resume",
+    "paused": {
+      "text": "paused",
+      "batches": 1,
+      "accepted": [
+        0,
+        1,
+        2
+      ],
+      "dismissed": false,
+      "settings_closed": true,
+      "job_alive": true,
+      "title": "migration popup oracle"
+    },
+    "cancel_state": null,
+    "batches": 4,
+    "accepted": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "cleanup": [
+      "source",
+      "destination"
+    ],
+    "timeline": [
+      {
+        "status": "preparing source",
+        "visible": "preparing source"
+      },
+      {
+        "status": "preparing destination",
+        "visible": "preparing destination"
+      },
+      {
+        "status": "beginning work",
+        "visible": "beginning work"
+      },
+      {
+        "status": "6 rows/s",
+        "visible": "paused"
+      },
+      {
+        "status": "6 rows/s",
+        "visible": "6 rows/s"
+      },
+      {
+        "status": "6 rows/s",
+        "visible": "6 rows/s"
+      },
+      {
+        "status": "4 rows/s",
+        "visible": "4 rows/s"
+      },
+      {
+        "status": "done, cleaning up source",
+        "visible": "done, cleaning up source"
+      },
+      {
+        "status": "done, cleaning up destination",
+        "visible": "done, cleaning up destination"
+      },
+      {
+        "status": "done!",
+        "visible": "done!"
+      }
+    ],
+    "speed_inputs": [
+      {
+        "rows": 3,
+        "elapsed_ms": 500,
+        "text": "6 rows/s"
+      },
+      {
+        "rows": 3,
+        "elapsed_ms": 500,
+        "text": "6 rows/s"
+      },
+      {
+        "rows": 3,
+        "elapsed_ms": 500,
+        "text": "6 rows/s"
+      },
+      {
+        "rows": 2,
+        "elapsed_ms": 500,
+        "text": "4 rows/s"
+      }
+    ],
+    "finish_dismiss_seconds": [
+      3,
+      null
+    ],
+    "dismissal": [
+      {
+        "seconds": 2,
+        "dismissed": false
+      },
+      {
+        "seconds": 3,
+        "dismissed": false
+      },
+      {
+        "seconds": 4,
+        "dismissed": true
+      }
+    ],
+    "dismiss_signals": 0,
+    "done": true,
+    "cancelled": false,
+    "text": "done!"
+  },
+  {
+    "action": "cancel",
+    "paused": {
+      "text": "paused",
+      "batches": 1,
+      "accepted": [
+        0,
+        1,
+        2
+      ],
+      "dismissed": false,
+      "settings_closed": true,
+      "job_alive": true,
+      "title": "migration popup oracle"
+    },
+    "cancel_state": {
+      "done": true,
+      "pausable": false,
+      "cancellable": false,
+      "paused": false,
+      "worker_alive": true,
+      "dismissed": true
+    },
+    "batches": 1,
+    "accepted": [
+      0,
+      1,
+      2
+    ],
+    "cleanup": [
+      "source",
+      "destination"
+    ],
+    "timeline": [
+      {
+        "status": "preparing source",
+        "visible": "preparing source"
+      },
+      {
+        "status": "preparing destination",
+        "visible": "preparing destination"
+      },
+      {
+        "status": "beginning work",
+        "visible": "beginning work"
+      },
+      {
+        "status": "6 rows/s",
+        "visible": "paused"
+      },
+      {
+        "status": "done, cleaning up source",
+        "visible": "done, cleaning up source"
+      },
+      {
+        "status": "done, cleaning up destination",
+        "visible": "done, cleaning up destination"
+      },
+      {
+        "status": "done!",
+        "visible": "done!"
+      }
+    ],
+    "speed_inputs": [
+      {
+        "rows": 3,
+        "elapsed_ms": 500,
+        "text": "6 rows/s"
+      }
+    ],
+    "finish_dismiss_seconds": [
+      null,
+      3
+    ],
+    "dismissal": [],
+    "dismiss_signals": 1,
+    "done": true,
+    "cancelled": true,
+    "text": "done!"
+  }
+]

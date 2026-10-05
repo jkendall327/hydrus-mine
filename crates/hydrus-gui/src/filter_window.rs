@@ -152,6 +152,7 @@ impl Stills {
 const PREFETCH_PAIRS: usize = 3;
 
 struct State {
+    viewing_stats: crate::viewing_tracking::CanvasTracker,
     model: DuplicateFilter,
     asking: Asking,
     /// The pair shown, as (the file shown, the other), and its slow
@@ -205,6 +206,12 @@ fn key_order(key: &str) -> usize {
 
 /// Show the state in the window.
 fn show(window: &DuplicateFilterWindow, state: &mut State) {
+    if !state.viewing_stats.active() {
+        return;
+    }
+    state
+        .viewing_stats
+        .show(state.model.current().map(|(shown, _)| shown));
     let Some((shown, other)) = state.model.current() else {
         state.shown = None;
         state.playback.stop();
@@ -388,6 +395,10 @@ pub(crate) fn open_filter(
     });
     crate::bind_zoom!(window, zoomed);
     let state = Rc::new(RefCell::new(State {
+        viewing_stats: crate::viewing_tracking::CanvasTracker::new(
+            model.store().clone(),
+            hydrus_core::CanvasType::DuplicatesFilter,
+        ),
         model,
         asking: Asking::Nothing,
         shown: None,
@@ -431,6 +442,9 @@ pub(crate) fn open_filter(
         move |change: &dyn Fn(&mut State) -> Option<anyhow::Result<Step>>| {
             let Some(window) = weak.upgrade() else { return };
             let mut state = state.borrow_mut();
+            if !state.viewing_stats.active() {
+                return;
+            }
             let before = state.shown;
             match change(&mut state) {
                 Some(step) => after(&window, &mut state, step),
@@ -483,6 +497,9 @@ pub(crate) fn open_filter(
         let weak = window.as_weak();
         let state = state.clone();
         move |action| {
+            if !state.borrow().viewing_stats.active() {
+                return;
+            }
             // "custom action": its decision asked first
             if action == "custom" {
                 let Some(window) = weak.upgrade() else { return };
@@ -546,6 +563,15 @@ pub(crate) fn open_filter(
         let collect = collect.clone();
         let state = state.clone();
         move || {
+            let Some(window) = weak.upgrade() else { return };
+            state.borrow().viewing_stats.close();
+            if !slot
+                .borrow()
+                .as_ref()
+                .is_some_and(|current| std::ptr::eq(current.window(), window.window()))
+            {
+                return;
+            }
             collect.stop();
             if let Some(editor) = state.borrow().merge_options.borrow_mut().take() {
                 let _ = editor.hide();
@@ -569,6 +595,9 @@ pub(crate) fn open_filter(
         Rc::new(move || {
             let Some(window) = weak.upgrade() else { return };
             let mut state = state.borrow_mut();
+            if !state.viewing_stats.active() {
+                return;
+            }
             let pair = state.custom.as_ref().map(|c| c.0);
             if pair.is_none() || pair != state.model.current() || state.asking != Asking::Nothing {
                 state.custom = None;
@@ -590,6 +619,9 @@ pub(crate) fn open_filter(
         let state = state.clone();
         let close = close.clone();
         move |answer| {
+            if !state.borrow().viewing_stats.active() {
+                return;
+            }
             let asking = state.borrow().asking;
             match (asking, answer) {
                 (Asking::CustomType, i) => {
@@ -688,6 +720,9 @@ pub(crate) fn open_filter(
         let weak = window.as_weak();
         let close = close.clone();
         move || {
+            if !state.borrow().viewing_stats.active() {
+                return;
+            }
             let pending = state.borrow().model.pending();
             if pending == 0 {
                 close();

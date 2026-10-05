@@ -88,6 +88,7 @@ pub fn plan(
         url.push_str(&raw);
     }
     let mut request = Request::get(url);
+    request.for_login = true;
     request.referral_url = referral.map(str::to_owned);
     request.override_bandwidth_after = Some(0);
     let test_body = if step.method == "POST" {
@@ -166,13 +167,60 @@ pub fn check_cookies(
 }
 /// Persisted session cookies determine logged-in state, independent of active status.
 pub fn logged_in(store: &Store, script: &LoginScript, domain: &str) -> Result<bool, String> {
-    Ok(check_cookies(
-        &script.required_cookies,
-        &cookies(store, domain)?,
-        domain,
-        None,
-    )
-    .is_ok())
+    Ok(session_state(store, script, domain)?.logged_in)
+}
+/// Required-cookie validity and the earliest expiry, with session-cookie precedence.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SessionState {
+    pub logged_in: bool,
+    pub expires: Option<i64>,
+}
+/// Read the current shared cookie store, including changes made by open session editors.
+pub fn session_state(
+    store: &Store,
+    script: &LoginScript,
+    domain: &str,
+) -> Result<SessionState, String> {
+    let cookies = cookies(store, domain)?;
+    let logged_in = check_cookies(&script.required_cookies, &cookies, domain, None).is_ok();
+    let domain = host(domain);
+    let mut expires = None;
+    for requirement in &script.required_cookies {
+        let Some(cookie) = cookies.iter().find(|cookie| {
+            cookie_domain_matches(cookie, &domain) && requirement.name.matches(&cookie.name)
+        }) else {
+            return Ok(SessionState {
+                logged_in,
+                expires: None,
+            });
+        };
+        let Some(expiry) = cookie.expires else {
+            return Ok(SessionState {
+                logged_in,
+                expires: None,
+            });
+        };
+        expires = Some(expires.map_or(expiry, |old: i64| old.min(expiry)));
+    }
+    Ok(SessionState { logged_in, expires })
+}
+/// Reference reset-login clears the resolved shared sessions immediately, outside the draft.
+pub fn clear_sessions(store: &Store, domains: &[String]) -> Result<(), String> {
+    let domains = domains.to_vec();
+    store
+        .write_and_refresh(move |ctx| {
+            let sessions = domains
+                .iter()
+                .map(|domain| {
+                    network::session_for(ctx.conn(), &NetworkContext::domain(host(domain)))
+                })
+                .collect::<hydrus_store::Result<BTreeSet<_>>>()?;
+            for session in sessions {
+                network::clear_session(ctx.conn(), &session)?;
+            }
+            Ok(())
+        })
+        .map_err(|error| error.to_string())
 }
 fn cookie_strings(cookies: &[Cookie]) -> BTreeSet<String> {
     cookies
@@ -318,6 +366,52 @@ pub async fn execute_with_pause(
     control: &Job,
     pause: Duration,
 ) -> Execution {
+    execute_with_observer(
+        engine,
+        store,
+        script,
+        domain,
+        credentials,
+        control,
+        pause,
+        |_| {},
+    )
+    .await
+}
+/// Production login with reference per-step result delivery before its two-second wait.
+pub async fn execute_with_results(
+    engine: &NetEngine,
+    store: &Store,
+    script: &LoginScript,
+    domain: &str,
+    credentials: &BTreeMap<String, String>,
+    control: &Job,
+    result_ready: impl FnMut(&TestResult),
+) -> Execution {
+    execute_with_observer(
+        engine,
+        store,
+        script,
+        domain,
+        credentials,
+        control,
+        Duration::from_secs(2),
+        result_ready,
+    )
+    .await
+}
+// Spacing and observation are orthogonal test/production concerns; retain the existing call shape.
+#[allow(clippy::too_many_arguments)]
+async fn execute_with_observer(
+    engine: &NetEngine,
+    store: &Store,
+    script: &LoginScript,
+    domain: &str,
+    credentials: &BTreeMap<String, String>,
+    control: &Job,
+    pause: Duration,
+    mut result_ready: impl FnMut(&TestResult),
+) -> Execution {
     let mut execution = Execution {
         results: Vec::new(),
         variables: BTreeMap::new(),
@@ -347,6 +441,7 @@ pub async fn execute_with_pause(
             Ok(plan) => plan,
             Err(error) => {
                 result.result.clone_from(&error);
+                result_ready(&result);
                 execution.results.push(result);
                 execution.outcome = Outcome::Verification(error);
                 return execution;
@@ -359,6 +454,7 @@ pub async fn execute_with_pause(
             Ok(cookies) => cookies,
             Err(error) => {
                 result.result.clone_from(&error);
+                result_ready(&result);
                 execution.results.push(result);
                 execution.outcome = Outcome::Unusual(error);
                 return execution;
@@ -371,6 +467,7 @@ pub async fn execute_with_pause(
         match response {
             Err(error) => {
                 result.result = error.to_string();
+                result_ready(&result);
                 execution.results.push(result);
                 execution.outcome = network_outcome(&error);
                 return execution;
@@ -387,6 +484,7 @@ pub async fn execute_with_pause(
                     Some(&step.name),
                 ) {
                     result.result.clone_from(&error);
+                    result_ready(&result);
                     execution.results.push(result);
                     execution.outcome = Outcome::Verification(error);
                     return execution;
@@ -417,6 +515,7 @@ pub async fn execute_with_pause(
                                 ParseFailure::Veto(_) => Outcome::Verification(error.to_string()),
                                 ParseFailure::Error(_) => Outcome::Unusual(error.to_string()),
                             };
+                            result_ready(&result);
                             execution.results.push(result);
                             execution.outcome = outcome;
                             return execution;
@@ -429,6 +528,7 @@ pub async fn execute_with_pause(
                     .collect();
                 execution.variables.extend(variables);
                 result.result = "OK!".into();
+                result_ready(&result);
                 execution.results.push(result);
             }
         }
@@ -455,4 +555,98 @@ pub async fn execute_with_pause(
         Err(error) => execution.outcome = Outcome::Unusual(error),
     }
     execution
+}
+
+/// One active domain login selected by the reference's most-specific domain lookup.
+#[derive(Debug, Clone, PartialEq)]
+pub struct DemandLogin {
+    pub domain: String,
+    pub script: Box<LoginScript>,
+    pub credentials: BTreeMap<String, String>,
+}
+/// Request admission before any downloader worker/connection slot is acquired.
+#[derive(Debug, Clone, PartialEq)]
+pub enum Demand {
+    None,
+    Blocked { domain: String, error: String },
+    Ready(DemandLogin),
+}
+fn save_resolution(
+    store: &Store,
+    domain: &str,
+    old: &DomainLogin,
+    replacement: DomainLogin,
+) -> Result<(), String> {
+    let domain = domain.to_owned();
+    let old = old.clone();
+    store
+        .write_and_refresh(move |ctx| {
+            let mut manager = hydrus_store::logins::load(ctx.conn())?;
+            if manager.domains.get(&domain) == Some(&old) {
+                manager.domains.insert(domain, replacement);
+                hydrus_store::logins::save(ctx.conn(), &manager)?;
+            }
+            Ok(())
+        })
+        .map_err(|error| error.to_string())
+}
+/// Read current scripts/credentials/cookies on every admission retry. Inactive
+/// specific domains mask active parent domains, and www remains a possible owner.
+pub fn demand(store: &Store, requested: &str, now: i64) -> Result<Demand, String> {
+    let manager = store
+        .read(hydrus_store::logins::load)
+        .map_err(|error| error.to_string())?;
+    let Some((domain, login)) = std::iter::once(requested.to_owned())
+        .chain(hydrus_core::url::psl::all_applicable_domains(requested))
+        .find_map(|domain| manager.domains.get(&domain).map(|login| (domain, login)))
+    else {
+        return Ok(Demand::None);
+    };
+    if !login.active {
+        return Ok(Demand::None);
+    }
+    let blocked = |error: &str| Demand::Blocked {
+        domain: domain.clone(),
+        error: format!("The domain \"{domain}\" cannot log in: {error}"),
+    };
+    let Some(script) = manager.script(login) else {
+        let error = format!("Could not find the login script for \"{domain}\"!");
+        let mut replacement = login.clone();
+        replacement.validity = Validity::Invalid;
+        replacement.validity_error.clone_from(&error);
+        save_resolution(store, &domain, login, replacement)?;
+        return Ok(blocked(&error));
+    };
+    let mut replacement = login.clone();
+    replacement.script_key.clone_from(&script.key);
+    replacement.script_name.clone_from(&script.name);
+    if let Err(error) = script
+        .check_valid()
+        .and_then(|()| script.check_credentials(&login.credentials))
+    {
+        replacement.validity = Validity::Invalid;
+        replacement.validity_error.clone_from(&error);
+        save_resolution(store, &domain, login, replacement)?;
+        return Ok(blocked(&error));
+    }
+    if replacement.validity == Validity::Untested {
+        replacement.validity_error.clear();
+    }
+    if &replacement != login {
+        save_resolution(store, &domain, login, replacement)?;
+    }
+    if logged_in(store, script, &domain)? {
+        return Ok(Demand::None);
+    }
+    if login.validity == Validity::Invalid {
+        return Ok(blocked(&login.validity_error));
+    }
+    if login.no_work_until >= now && login.no_work_until != 0 {
+        return Ok(blocked(&login.delay_reason));
+    }
+    Ok(Demand::Ready(DemandLogin {
+        domain,
+        script: Box::new(script.clone()),
+        credentials: login.credentials.clone(),
+    }))
 }

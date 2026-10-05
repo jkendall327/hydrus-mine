@@ -98,6 +98,7 @@ pub struct Tabs {
 pub type TabHarvest = (Vec<PageKey>, Vec<HashId>, String);
 
 pub struct Pages {
+    predicate_history: Rc<RefCell<hydrus_gui_model::predicate_history::History>>,
     store: Arc<Store>,
     session: Session,
     /// The shown page's index in each notebook on the way to it.
@@ -244,6 +245,7 @@ impl Pages {
             open: HashMap::new(),
             closed: Vec::new(),
             history: Vec::new(),
+            predicate_history: Rc::default(),
             new_page_depth: None,
             new_page_target: None,
             remembered: HashMap::new(),
@@ -276,12 +278,35 @@ impl Pages {
         Ok(pages)
     }
 
+    /// Snapshot of the frame's two independent predicate recency lists.
+    pub fn predicate_history(&self) -> hydrus_gui_model::predicate_history::History {
+        self.predicate_history.borrow().clone()
+    }
+    /// Toggle the reviewed typed history entry on the visible media page.
+    pub fn undo_search_predicate(
+        &mut self,
+        kind: hydrus_gui_model::predicate_history::Kind,
+        predicate: &hydrus_search::Predicate,
+    ) {
+        if matches!(self.shown().content, PageContent::Pages(_)) {
+            return;
+        }
+        let taken = self.predicate_history.borrow_mut().take(kind, predicate);
+        if taken {
+            self.current().borrow_mut().undo_predicate(predicate);
+        }
+    }
+    /// Clear only search history; pages and closed-page history remain intact.
+    pub fn clear_predicate_history(&mut self) {
+        self.predicate_history.borrow_mut().clear();
+    }
+
     pub fn store(&self) -> &Arc<Store> {
         &self.store
     }
 
     /// One page, already open.
-    pub fn single(page: SearchPage) -> Self {
+    pub fn single(mut page: SearchPage) -> Self {
         let tree = new_search_page(page.store());
         let mut pages = Self {
             store: page.store().clone(),
@@ -293,6 +318,7 @@ impl Pages {
             open: HashMap::new(),
             closed: Vec::new(),
             history: Vec::new(),
+            predicate_history: Rc::default(),
             new_page_depth: None,
             new_page_target: None,
             remembered: HashMap::new(),
@@ -302,6 +328,7 @@ impl Pages {
             downloader_options: DownloaderPageSettings::default(),
             kept_counts: HashMap::new(),
         };
+        page.attach_predicate_history(pages.predicate_history.clone());
         pages.open.insert(tree.key, Rc::new(RefCell::new(page)));
         pages
     }
@@ -325,6 +352,81 @@ impl Pages {
             }
         }
         rows
+    }
+
+    /// Snapshot real page menu labels without opening unopened pages or altering history.
+    pub fn command_palette_pages(&self) -> Vec<hydrus_gui_model::command_palette::OpenPage> {
+        fn walk(
+            owner: &Pages,
+            pages: &[Page],
+            parent: Option<&str>,
+            out: &mut Vec<hydrus_gui_model::command_palette::OpenPage>,
+        ) {
+            for page in pages {
+                let (files, progress) = owner.file_summary(page);
+                out.push(hydrus_gui_model::command_palette::OpenPage {
+                    key: page.key,
+                    name: hydrus_core::pages::name_for_menu(&page.name, files, progress, false),
+                    parent_name: parent.map(str::to_owned),
+                    notebook: matches!(page.content, PageContent::Pages(_)),
+                });
+                if let PageContent::Pages(children) = &page.content {
+                    walk(owner, children, Some(&page.name), out);
+                }
+            }
+        }
+        let mut out = Vec::new();
+        walk(self, &self.session.pages, None, &mut out);
+        out
+    }
+
+    /// Launch a palette favourite on a new named search page or the current
+    /// supported search. Stable keys and existing load_favourite consumers retain
+    /// the full search, synchronisation, sort and collect payload.
+    pub fn command_palette_favourite(
+        &mut self,
+        favourite: &hydrus_core::pages::FavouriteSearch,
+        new_page: bool,
+    ) {
+        if new_page {
+            let mut page = new_search_page_on(&self.store, favourite.search.location.clone());
+            page.name.clone_from(&favourite.name);
+            if let PageContent::Search {
+                search,
+                synchronised,
+                sort,
+                collect,
+                ..
+            } = &mut page.content
+            {
+                *search = favourite.search.clone();
+                *synchronised = favourite.synchronised;
+                sort.clone_from(&favourite.sort);
+                collect.clone_from(&favourite.collect);
+            }
+            let initial_sync = self
+                .store
+                .read(hydrus_store::settings::get::<hydrus_store::settings::FileSearchSettings>)
+                .unwrap_or_default()
+                .search_immediately;
+            let mut opened = SearchPage::restored(
+                self.store.clone(),
+                favourite.search.clone(),
+                initial_sync,
+                favourite.sort.as_ref(),
+                Vec::new(),
+            )
+            .with_collect(favourite.collect.clone());
+            if initial_sync {
+                opened.refresh();
+            }
+            opened.load_favourite(favourite);
+            opened.attach_predicate_history(self.predicate_history.clone());
+            self.open.insert(page.key, Rc::new(RefCell::new(opened)));
+            self.add(page);
+        } else if matches!(self.shown().content, PageContent::Search { .. }) {
+            self.current().borrow_mut().load_favourite(favourite);
+        }
     }
 
     /// The tabs' names, as the reference writes them, for each notebook
@@ -730,6 +832,7 @@ impl Pages {
         {
             opened.select_files(&selected);
         }
+        opened.attach_predicate_history(self.predicate_history.clone());
         let opened = Rc::new(RefCell::new(opened));
         self.open.insert(page.key, opened.clone());
         opened
@@ -933,7 +1036,7 @@ impl Pages {
             },
         )];
         *lock = Some(hydrus_core::pages::HashLock::default());
-        let opened = SearchPage::restored(
+        let mut opened = SearchPage::restored(
             self.store.clone(),
             search.clone(),
             *synchronised,
@@ -942,6 +1045,7 @@ impl Pages {
         )
         .with_lock(*lock)
         .with_collect(page_collect.clone());
+        opened.attach_predicate_history(self.predicate_history.clone());
         self.open.insert(page.key, Rc::new(RefCell::new(opened)));
         self.add(page);
     }
@@ -990,6 +1094,7 @@ impl Pages {
         )
         .with_collect(collect.clone());
         opened.refresh();
+        opened.attach_predicate_history(self.predicate_history.clone());
         self.open.insert(page.key, Rc::new(RefCell::new(opened)));
         self.add(page);
     }
@@ -2186,7 +2291,7 @@ impl Pages {
             )];
             *lock = Some(hydrus_core::pages::HashLock::default());
         }
-        let opened = SearchPage::restored(
+        let mut opened = SearchPage::restored(
             self.store.clone(),
             search.clone(),
             *synchronised,
@@ -2211,6 +2316,7 @@ impl Pages {
         }
         let at = insertion.min(row.len());
         row.insert(at, page.clone());
+        opened.attach_predicate_history(self.predicate_history.clone());
         self.open.insert(page.key, Rc::new(RefCell::new(opened)));
         self.path.truncate(depth);
         self.select(depth, at);

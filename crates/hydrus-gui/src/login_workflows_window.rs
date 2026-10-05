@@ -24,6 +24,7 @@ pub struct Slots {
     pub step: crate::login_step_window::Slots,
     pub run: crate::login_test_window::RunSlot,
     pub result: crate::login_test_window::ResultSlot,
+    pub test_domain: crate::login_test_window::DomainSlot,
     pub cookies: crate::login_cookies_window::Slots,
     pub example: crate::login_example_window::Slot,
     pub definition: crate::login_credential_window::DefinitionSlot,
@@ -59,6 +60,7 @@ impl Slots {
         }
         self.run.stop();
         crate::login_test_window::cancel_result(&self.result);
+        crate::login_test_window::cancel_domain(&self.test_domain);
         self.domains.cancel();
         self.step.cancel();
         self.cookies.cancel();
@@ -292,6 +294,7 @@ pub fn open_script(
         let slot = Rc::downgrade(&slots.script);
         let definition = slots.definition.clone();
         let run = slots.run.clone();
+        let test_domain = slots.test_domain.clone();
         let result = slots.result.clone();
         let cookies = slots.cookies.clone();
         let example = slots.example.clone();
@@ -304,6 +307,7 @@ pub fn open_script(
                 return;
             }
             run.stop();
+            crate::login_test_window::cancel_domain(&test_domain);
             crate::login_test_window::cancel_result(&result);
             step.cancel();
             cookies.cancel();
@@ -564,7 +568,21 @@ pub fn open_script(
                     }
                 }
             });
-            run.start(
+            let result_ready: crate::login_test_window::ResultReady = Rc::new({
+                let weak = weak.clone();
+                let state = state.clone();
+                let active = active.clone();
+                move |result| {
+                    if !active.get() {
+                        return;
+                    }
+                    state.borrow_mut().results.push(result);
+                    if let Some(window) = weak.upgrade() {
+                        show_results(&window, &state.borrow());
+                    }
+                }
+            });
+            run.start_with_results(
                 crate::login_test_window::Input {
                     source: store.clone(),
                     script,
@@ -573,8 +591,61 @@ pub fn open_script(
                     test: true,
                 },
                 progress,
+                result_ready,
                 completed,
             );
+        }
+    });
+    let ask_credentials: Rc<dyn Fn()> = Rc::new({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let active = active.clone();
+        let begin_test = begin_test.clone();
+        let slot = slots.credentials.clone();
+        move || {
+            if !active.get() {
+                return;
+            }
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let script = state.borrow().value();
+            if script.credentials.is_empty() {
+                state.borrow_mut().credentials.clear();
+                begin_test();
+                return;
+            }
+            let accepted: crate::login_credential_window::CredentialsApplied = Rc::new({
+                let state = state.clone();
+                let active = active.clone();
+                let begin_test = begin_test.clone();
+                move |credentials| {
+                    if !active.get() {
+                        return Err("The script editor has closed.".into());
+                    }
+                    state.borrow_mut().credentials = credentials;
+                    begin_test();
+                    Ok(())
+                }
+            });
+            let values = state.borrow().credentials.clone();
+            match crate::login_credential_window::open_credentials(
+                &script.credentials,
+                &values,
+                &slot,
+                accepted,
+            ) {
+                Ok(child) => {
+                    window.set_child_open(true);
+                    let weak = weak.clone();
+                    child.on_closed(move || {
+                        if let Some(window) = weak.upgrade() {
+                            window.set_child_open(false);
+                        }
+                    });
+                }
+                Err(error) => window.set_error(error.to_string().into()),
+            }
         }
     });
     window.on_action({
@@ -585,7 +656,8 @@ pub fn open_script(
         let result_slot = slots.result.clone();
         let cookies = slots.cookies.clone();
         let example = slots.example.clone();
-        let begin_test = begin_test.clone();
+        let ask_credentials = ask_credentials.clone();
+        let test_domain = slots.test_domain.clone();
         let test_requested = test_requested.clone();
         let step_slot = slots.step.clone();
         let store = store.clone();
@@ -608,7 +680,7 @@ pub fn open_script(
                 run.cancel();
                 return;
             }
-            if run.busy() {
+            if run.busy() && action != "review-result" {
                 if action == "apply" {
                     window.set_error("Currently testing! Please cancel it first!".into());
                 } else if action == "run-test" {
@@ -759,40 +831,30 @@ pub fn open_script(
                         return;
                     }
                     state.borrow_mut().test_domain_used = true;
-                    if script.credentials.is_empty() {
-                        state.borrow_mut().credentials.clear();
-                        begin_test();
-                        return;
-                    }
-                    let accepted: crate::login_credential_window::CredentialsApplied = Rc::new({
-                        let state = state.clone();
+                    let accepted: crate::login_test_window::DomainAccepted = Rc::new({
+                        let weak = weak.clone();
                         let active = active.clone();
-                        let begin_test = begin_test.clone();
-                        move |credentials| {
+                        let ask_credentials = ask_credentials.clone();
+                        move |domain| {
                             if !active.get() {
-                                return Err("The script editor has closed.".into());
+                                return;
                             }
-                            state.borrow_mut().credentials = credentials;
-                            begin_test();
-                            Ok(())
+                            let Some(window) = weak.upgrade() else {
+                                return;
+                            };
+                            window.set_child_open(false);
+                            if let Some(domain) = domain {
+                                window.set_test_domain(domain.into());
+                                ask_credentials();
+                            }
                         }
                     });
-                    let credentials = state.borrow().credentials.clone();
-                    match crate::login_credential_window::open_credentials(
-                        &script.credentials,
-                        &credentials,
-                        &credentials_slot,
+                    match crate::login_test_window::open_domain(
+                        window.get_test_domain().as_str(),
+                        &test_domain,
                         accepted,
                     ) {
-                        Ok(child) => {
-                            window.set_child_open(true);
-                            let weak = weak.clone();
-                            child.on_closed(move || {
-                                if let Some(window) = weak.upgrade() {
-                                    window.set_child_open(false);
-                                }
-                            });
-                        }
+                        Ok(_) => window.set_child_open(true),
                         Err(error) => window.set_error(error.to_string().into()),
                     }
                 }
@@ -1038,6 +1100,7 @@ pub fn open_scripts(store: &Arc<Store>, slots: &Slots) -> Result<LoginScriptsWin
         step: slots.step.clone(),
         run: slots.run.clone(),
         result: slots.result.clone(),
+        test_domain: slots.test_domain.clone(),
         cookies: slots.cookies.clone(),
         example: slots.example.clone(),
         definition: slots.definition.clone(),

@@ -1,10 +1,12 @@
+export { FrameLocationWindow } from "frame_locations.slint";
+export { SearchOrWindow } from "search_or.slint";
 export { NamespaceSortsWindow } from "namespace_sorts.slint";
 // The main window: for now one search page, laid out as the reference's
 // (a sidebar with the search, and the thumbnail grid), and a status bar.
 
 import { Button, CheckBox, ComboBox, LineEdit, ListView, ProgressIndicator, ScrollView, VerticalBox } from "std-widgets.slint";
 import { ListText, Theme } from "theme.slint";
-import { ReadSuggestions } from "read_suggestions.slint";
+import { ReadAutocomplete } from "read_autocomplete.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 import { DownloadLine, DownloadControl, JobCogMenu, ImporterBoxes, LocalImportBox } from "importing.slint";
 import { SimpleParsingBox } from "simple_downloader.slint";
@@ -29,8 +31,10 @@ export { ArchiveDeleteWindow } from "archive_delete.slint";
 export { BandwidthWindow, EditBandwidthRulesWindow, NetworkJobsWindow, MonthlyBandwidthBar } from "network_data.slint";
 export { TagDisplayWindow } from "tag_display.slint";
 export { TagRelationshipsWindow } from "tag_relationships.slint";
-export { TagMigrationWindow } from "tag_migration.slint";
+export { TagMigrationWindow, TagMigrationProgressWindow } from "tag_migration.slint";
 export { WriteTagsWindow } from "write_autocomplete.slint";
+export { IncrementalTaggingWindow } from "incremental_tagging.slint";
+export { TagTextHistory, TagTextHistoryState, TagTextEdit, TagTextState } from "write_tag_line_edit.slint";
 export { ManageTagsWindow } from "manage_tags.slint";
 export { ManageNotesWindow } from "manage_notes.slint";
 export { ManageUrlsWindow } from "manage_urls.slint";
@@ -53,6 +57,7 @@ export { FormulaWindow, FormulaRuleWindow } from "formula_editors.slint";
 export { ConversionWindow, StringConverterWindow, StringProcessorWindow, StringStepWindow } from "string_processor.slint";
 export { AutoResolutionReviewWindow, PairRow } from "auto_resolution_review.slint";
 export { DurationField, OptionRow, OptionsWindow, SortCogItem } from "options.slint";
+export { CommandPaletteWindow, PaletteRow } from "command_palette.slint";
 export { CheckerOptionsWindow, CheckerTexts } from "checker_options.slint";
 export { SessionDialog } from "session_dialog.slint";
 export { TableColumn, TableRow }
@@ -558,6 +563,14 @@ export component MainWindow inherits Window {
     in property <[ListText]> suggestions;
     in property <int> active-predicate-rows: 6;
     in property <int> autocomplete-rows: 22;
+    in property <int> autocomplete-tab;
+    callback autocomplete-tab-chosen(int);
+    in property <bool> or-active;
+    in property <bool> search-or-open;
+    in property <bool> advanced-or-visible;
+    in property <bool> or-rewind-visible;
+    callback search-or-action(int);
+    callback search-or-escape() -> bool;
     in property <bool> float-autocomplete: true;
     in-out property <bool> search-focused;
     // Direct bindings include the first layout; floating popup construction
@@ -569,7 +582,7 @@ export component MainWindow inherits Window {
     out property <length> autocomplete-anchor-width: search-sidebar.visible ? search-anchor.width : 0px;
     out property <length> active-predicate-preferred-height: max(1, min(128, root.active-predicate-rows)) * 22px + 6px;
     out property <length> autocomplete-preferred-height: max(1, min(128, root.autocomplete-rows)) * 22px + 4px;
-    out property <bool> autocomplete-overlay-visible: root.float-autocomplete && root.search-focused && root.autocomplete-anchor-width > 0px && !root.search-locked && root.note == "" && root.question == "" && root.suggestions.length > 0 && root.menu-panes.length == 0 && root.chooser-labels.length == 0;
+    out property <bool> autocomplete-overlay-visible: root.float-autocomplete && (root.search-focused || suggestions-overlay.has-focus) && root.autocomplete-anchor-width > 0px && !root.search-locked && root.note == "" && root.question == "" && root.menu-panes.length == 0 && root.chooser-labels.length == 0;
     in property <int> highlighted: -1;
     in property <[ThumbnailRow]> thumbnail-rows;
     // a thumbnail's cell: the thumbnail bounding box and its border; and
@@ -722,6 +735,7 @@ export component MainWindow inherits Window {
     callback close-tab(int, int);
     // the reference's main window shortcuts: ctrl+t and F9 open a page,
     // ctrl+w closes the page shown
+    callback command-palette-requested();
     callback new-page();
     callback session-user-activity();
     callback session-mouse-activity();
@@ -827,6 +841,7 @@ export component MainWindow inherits Window {
         height: 100%;
         capture-key-pressed(event) => {
             root.session-user-activity();
+            if root.search-or-open { return accept; }
             // an open menu takes every key, and alt and a letter opens one
             if (root.menu-panes.length > 0) {
                 root.menu-key(event.text, event.modifiers.alt);
@@ -865,6 +880,7 @@ export component MainWindow inherits Window {
                 }
                 return accept;
             }
+            if (event.modifiers.control && (event.text == "p" || event.text == "P")) { root.command-palette-requested(); return accept; }
             if (event.text == Key.F9 || (event.modifiers.control && (event.text == "t" || event.text == "T"))) {
                 root.new-page();
                 return accept;
@@ -1357,6 +1373,10 @@ export component MainWindow inherits Window {
                         changed focus-requests => { if search-sidebar.visible { search.focus(); } }
                         // up and down move through the suggestions, as in the reference
                         capture-key-pressed(event) => {
+                            if event.text == Key.Return && event.modifiers.shift {
+                                root.search-or-action(0); return accept;
+                            }
+                            if event.text == Key.Escape && root.search-or-escape() { return accept; }
                             // ctrl+i: searching as the search changes, or waiting
                             if (event.modifiers.control && (event.text == "i" || event.text == "I")) {
                                 root.flip-synchronised();
@@ -1442,9 +1462,15 @@ export component MainWindow inherits Window {
                             clicked => { root.domain-menu-requested(1, self.absolute-position.x, self.absolute-position.y + self.height); }
                         }
                     }
-                    if root.suggestions.length > 0 && !root.search-locked && !root.float-autocomplete: ReadSuggestions {
-                        preferred-height: root.autocomplete-preferred-height;
-                        max-height: root.autocomplete-preferred-height;
+                    if !root.search-locked && !root.float-autocomplete && root.note == "": ReadAutocomplete {
+                        preferred-height: root.autocomplete-preferred-height + (root.or-active ? 108px : 72px);
+                        max-height: root.autocomplete-preferred-height + (root.or-active ? 108px : 72px);
+                        tab-index: root.autocomplete-tab;
+            or-active: root.or-active;
+                        advanced-visible: root.advanced-or-visible;
+            or-rewind-visible: root.or-rewind-visible;
+            or-action(i) => { root.search-or-action(i); root.search-focus-requests += 1; }
+                        tab-chosen(i) => { root.autocomplete-tab-chosen(i); root.search-focus-requests += 1; }
                         suggestions: root.suggestions;
                         highlighted: root.highlighted;
                         chosen(index) => { root.suggestion-chosen(index); }
@@ -1965,11 +1991,18 @@ export component MainWindow inherits Window {
                 }
             }
         }
-        if root.autocomplete-overlay-visible: ReadSuggestions {
+        suggestions-overlay := ReadAutocomplete {
+            visible: root.autocomplete-overlay-visible;
             x: root.autocomplete-anchor-x;
             y: root.autocomplete-anchor-y;
             width: root.autocomplete-anchor-width;
-            height: max(26px, min(root.autocomplete-preferred-height, root.height - self.y - 4px));
+            height: max(62px, min(root.autocomplete-preferred-height + (root.or-active ? 108px : 72px), root.height - self.y - 4px));
+            tab-index: root.autocomplete-tab;
+            or-active: root.or-active;
+                        advanced-visible: root.advanced-or-visible;
+            or-rewind-visible: root.or-rewind-visible;
+            or-action(i) => { root.search-or-action(i); root.search-focus-requests += 1; }
+            tab-chosen(i) => { root.autocomplete-tab-chosen(i); root.search-focus-requests += 1; }
             suggestions: root.suggestions;
             highlighted: root.highlighted;
             chosen(index) => { root.suggestion-chosen(index); }
@@ -2004,6 +2037,12 @@ export component MainWindow inherits Window {
             placed(p, x, y, width) => { root.menu-placed(p, x, y, width); }
             dismiss => { root.menu-dismissed(); }
         }
+        if root.search-or-open: Rectangle {
+            width: parent.width;
+            height: parent.height;
+            background: Theme.shade;
+            TouchArea { }
+        }
     }
     }
 }
@@ -2023,6 +2062,7 @@ export { ImportOptionsOverwriteWindow, ImportOverwriteRow } from "import_options
 
 
 export { LoginDomainsWindow } from "login_domains.slint";
+export { LoginDomainEntryWindow } from "login_domain_entry.slint";
 
 export { ImportFavouriteRow, ImportFavouritePromptWindow } from "import_options_favourites.slint";
 export { LoginTestResultWindow } from "login_result.slint";
@@ -2036,3 +2076,7 @@ export { LoginExampleDomainWindow } from "login_example.slint";
 export { GallerySourceWindow } from "gallery_source.slint";
 
 export { ImportOptionsPanelWindow } from "import_options_panel.slint";
+
+export { DeleteFilesWindow } from "delete_files.slint";
+
+export { TagBannerWindow } from "tag_banner.slint";

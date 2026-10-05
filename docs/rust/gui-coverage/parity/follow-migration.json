@@ -1,0 +1,373 @@
+{
+  "agent": "follow-migration",
+  "baseline": "4356918f",
+  "claims": [
+    {
+      "originalID": "audit-media-migration-pause",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Independently retained progress jobs survive closing the migration settings panel. Actual reference preparation, accepted-batch rows/s, cleanup and done labels; paused override; pause/resume after committed atomic batches; cancel wakes paused work and immediately removes controls/permits dismissal while cleanup finishes. Committed prefix, graph/count publication and reservation release remain bounded. Completed popups support manual dismissal and strict integer three-second delayed dismissal.",
+      "limits": [
+        "Native separate progress window replaces the reference message-manager popup; native checks its strict deadline every 80 ms rather than the reference manager/checker polling."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/tag_migration.rs",
+          "symbol": "pub fn run_pausable(",
+          "line": 227
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/tag_migration/job.rs",
+          "symbol": "pub fn run_with_events(",
+          "line": 355
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_migration_window/progress.rs",
+          "symbol": "pub(super) fn start(",
+          "line": 42
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-store/tests/tag_migration.rs",
+          "symbol": "fn pause_waits_after_commit",
+          "line": 403
+        },
+        {
+          "relativepath": "crates/hydrus-store/tests/tag_migration.rs",
+          "symbol": "fn published_job_events_match",
+          "line": 1072
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_migration.rs",
+          "symbol": "fn migration_popup_speed",
+          "line": 353
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_migration.rs",
+          "symbol": "fn closing_settings_retains",
+          "line": 165
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_migration.rs",
+          "symbol": "fn cancellation_allows_immediate",
+          "line": 415
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_migration.rs",
+          "symbol": "fn completed_popup_remains",
+          "line": 473
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_migration.rs",
+          "symbol": "fn progress_popup_renders",
+          "line": 509
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_tag_migration_pause.py",
+        "fixture": "oracle/fixtures/tag_migration_pause.json",
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "slintSyntax": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent runs asynchronous GitHub CI; authored regression tests not claimed locally passed."
+      },
+      "additionalReferenceRecordings": [
+        {
+          "script": "oracle/record_tag_migration_progress.py",
+          "fixture": "oracle/fixtures/tag_migration_progress.json",
+          "executed": true,
+          "provenance": "Actual unmodified MigrationJob, JobStatus, Qt PopupMessage and MigrateTagsPanel; eleven scripted source rows in batches of three; actual speed helper with pinned elapsed timing; resumed and cancelled runs; settings close, early/manual dismissal and strict delayed deadline."
+        }
+      ]
+    },
+    {
+      "originalID": "migration-archive-source",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Hydrus Tag Archive/Tag Pair Archive source choices and native picker; real SQLite read-only inspector validates hash/pair metadata, infers supported unset hash type, rejects wrong kinds, missing files and unsupported hashes without creating/mutating source. Current-only status; selected files/current/deleted domain and both tag filters reach bounded worker source snapshot.",
+      "limits": [
+        "Source archive inspection/inference is read-only; Python can persist inferred metadata.",
+        "Native archive destinations commit bounded atomic batches; Python commits its long transaction during cleanup.",
+        "Existing destination metadata takes precedence. Actual Qt MD5 destination inspection leaves SHA256 selected while disabled; native pins MD5 to avoid relabeling existing hashes.",
+        "Different source/destination archive paths are required; native output omits optional post-job VACUUM/ANALYZE.",
+        "Remote repository uploading and IPFS are outside the authorized scope."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/tag_migration/archive.rs",
+          "line": 105,
+          "symbol": "pub fn inspect("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/tag_migration.rs",
+          "line": 200,
+          "symbol": "pub fn set_archive_path("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_migration_window.rs",
+          "line": 267,
+          "symbol": "window.on_choose_archive("
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-store/tests/tag_migration.rs",
+          "line": 607,
+          "symbol": "fn actual_python_archives_import"
+        },
+        {
+          "relativepath": "crates/hydrus-store/tests/tag_migration.rs",
+          "line": 947,
+          "symbol": "fn archive_validation_rejects"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_migration.rs",
+          "line": 254,
+          "symbol": "fn archive_inspection_choices"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_tag_archives.py",
+        "fixture": "oracle/fixtures/tag_archives.json",
+        "binaryFixtures": [
+          "oracle/fixtures/tag_archive_sha256.db",
+          "oracle/fixtures/tag_archive_md5.db",
+          "oracle/fixtures/tag_archive_sha1.db",
+          "oracle/fixtures/tag_archive_sha512.db",
+          "oracle/fixtures/tag_archive_siblings.db",
+          "oracle/fixtures/tag_archive_parents.db"
+        ],
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "slintSyntax": true,
+        "localCargoBuildsOrTests": false,
+        "codecInteroperability": "Executed standalone rustc helper including the current archive.rs and cached third-party rusqlite only; 5.6 MiB binary in /tmp; no stale workspace implementation libraries. Real Python created the inputs and read native outputs for all four hash kinds and both pair kinds.",
+        "ci": "Parent runs asynchronous GitHub CI; store/model/GUI regressions authored, not claimed locally passed."
+      }
+    },
+    {
+      "originalID": "migration-archive-destination",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Archive destination chooser/picker supports new or existing HTA/HTPA, add-only action, metadata inspection and locked existing hash kind. Actual reference-compatible SQLite mappings/pairs/tags/hashes/namespaces; merge/idempotence, per-batch transactions, cancellation committed-prefix persistence, no output on confirmation decline or picker cancellation. Current native codec exports were opened and compared by actual Python archives.",
+      "limits": [
+        "Source archive inspection/inference is read-only; Python can persist inferred metadata.",
+        "Native archive destinations commit bounded atomic batches; Python commits its long transaction during cleanup.",
+        "Existing destination metadata takes precedence. Actual Qt MD5 destination inspection leaves SHA256 selected while disabled; native pins MD5 to avoid relabeling existing hashes.",
+        "Different source/destination archive paths are required; native output omits optional post-job VACUUM/ANALYZE.",
+        "Remote repository uploading and IPFS are outside the authorized scope."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/tag_migration/archive.rs",
+          "line": 129,
+          "symbol": "pub fn destination("
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/tag_migration/archive.rs",
+          "line": 178,
+          "symbol": "pub fn write("
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-store/tests/tag_migration.rs",
+          "line": 705,
+          "symbol": "fn archive_exports_preserve"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_migration.rs",
+          "line": 301,
+          "symbol": "fn archive_controls_inspect"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_tag_archives.py",
+        "fixture": "oracle/fixtures/tag_archives.json",
+        "binaryFixtures": [
+          "oracle/fixtures/tag_archive_sha256.db",
+          "oracle/fixtures/tag_archive_md5.db",
+          "oracle/fixtures/tag_archive_sha1.db",
+          "oracle/fixtures/tag_archive_sha512.db",
+          "oracle/fixtures/tag_archive_siblings.db",
+          "oracle/fixtures/tag_archive_parents.db"
+        ],
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "slintSyntax": true,
+        "localCargoBuildsOrTests": false,
+        "codecInteroperability": "Executed standalone rustc helper including the current archive.rs and cached third-party rusqlite only; 5.6 MiB binary in /tmp; no stale workspace implementation libraries. Real Python created the inputs and read native outputs for all four hash kinds and both pair kinds.",
+        "ci": "Parent runs asynchronous GitHub CI; store/model/GUI regressions authored, not claimed locally passed."
+      }
+    },
+    {
+      "originalID": "migration-hash",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "SHA256/MD5/SHA1/SHA512 selectors and source hash inspector; all 16 source/destination kind combinations work for all-known and selected-file scopes using recorded stored digests. Unavailable conversions are skipped; same-kind unrestricted archives retain unknown hashes. File-domain filtering bridges through SHA256 for alternate sources. 40 actual reference cases include positive current and deleted file-domain results.",
+      "limits": [
+        "Source archive inspection/inference is read-only; Python can persist inferred metadata.",
+        "Native archive destinations commit bounded atomic batches; Python commits its long transaction during cleanup.",
+        "Existing destination metadata takes precedence. Actual Qt MD5 destination inspection leaves SHA256 selected while disabled; native pins MD5 to avoid relabeling existing hashes.",
+        "Different source/destination archive paths are required; native output omits optional post-job VACUUM/ANALYZE.",
+        "Remote repository uploading and IPFS are outside the authorized scope."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/tag_migration/job.rs",
+          "line": 173,
+          "symbol": "fn convert("
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/tag_migration/job.rs",
+          "line": 266,
+          "symbol": "fn filter("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/tag_migration.rs",
+          "line": 396,
+          "symbol": "pub fn hash_label("
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-store/tests/tag_migration.rs",
+          "line": 607,
+          "symbol": "fn actual_python_archives_import"
+        },
+        {
+          "relativepath": "crates/hydrus-store/tests/tag_migration.rs",
+          "line": 705,
+          "symbol": "fn archive_exports_preserve"
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_tag_archives.py",
+        "fixture": "oracle/fixtures/tag_archives.json",
+        "binaryFixtures": [
+          "oracle/fixtures/tag_archive_sha256.db",
+          "oracle/fixtures/tag_archive_md5.db",
+          "oracle/fixtures/tag_archive_sha1.db",
+          "oracle/fixtures/tag_archive_sha512.db",
+          "oracle/fixtures/tag_archive_siblings.db",
+          "oracle/fixtures/tag_archive_parents.db"
+        ],
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "slintSyntax": true,
+        "localCargoBuildsOrTests": false,
+        "codecInteroperability": "Executed standalone rustc helper including the current archive.rs and cached third-party rusqlite only; 5.6 MiB binary in /tmp; no stale workspace implementation libraries. Real Python created the inputs and read native outputs for all four hash kinds and both pair kinds.",
+        "ci": "Parent runs asynchronous GitHub CI; store/model/GUI regressions authored, not claimed locally passed."
+      }
+    },
+    {
+      "originalID": "migration-pair-count",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Child/parent/worse/terminal-ideal/either mapping-count gates with selectable real tag service. Either mode disables and overrides separate flags; current or pending real storage mappings satisfy count, implied display counts do not. Count filtering applies to archive and service sources and reaches archive and native destinations. Confirmation summarizes enabled gates. Count/ideal state is re-read consistently per source batch so concurrent service updates affect subsequent batches as in the reference.",
+      "limits": [
+        "Source archive inspection/inference is read-only; Python can persist inferred metadata.",
+        "Native archive destinations commit bounded atomic batches; Python commits its long transaction during cleanup.",
+        "Existing destination metadata takes precedence. Actual Qt MD5 destination inspection leaves SHA256 selected while disabled; native pins MD5 to avoid relabeling existing hashes.",
+        "Different source/destination archive paths are required; native output omits optional post-job VACUUM/ANALYZE.",
+        "Remote repository uploading and IPFS are outside the authorized scope."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/tag_migration/job.rs",
+          "line": 247,
+          "symbol": "fn pair_ok("
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/tag_migration.rs",
+          "line": 157,
+          "symbol": "pub fn job_options("
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/tag_migration.slint",
+          "line": 88,
+          "symbol": "only if ideal"
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-store/tests/tag_migration.rs",
+          "line": 830,
+          "symbol": "fn pair_count_gates_replay"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_migration.rs",
+          "line": 254,
+          "symbol": "fn archive_inspection_choices"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_migration.rs",
+          "line": 301,
+          "symbol": "fn archive_controls_inspect"
+        },
+        {
+          "relativepath": "crates/hydrus-store/tests/tag_migration.rs",
+          "symbol": "fn pair_count_gates_observe_reference",
+          "line": 1008
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_tag_archives.py",
+        "fixture": "oracle/fixtures/tag_archives.json",
+        "binaryFixtures": [
+          "oracle/fixtures/tag_archive_sha256.db",
+          "oracle/fixtures/tag_archive_md5.db",
+          "oracle/fixtures/tag_archive_sha1.db",
+          "oracle/fixtures/tag_archive_sha512.db",
+          "oracle/fixtures/tag_archive_siblings.db",
+          "oracle/fixtures/tag_archive_parents.db"
+        ],
+        "executed": true
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "slintSyntax": true,
+        "localCargoBuildsOrTests": false,
+        "codecInteroperability": "Executed standalone rustc helper including the current archive.rs and cached third-party rusqlite only; 5.6 MiB binary in /tmp; no stale workspace implementation libraries. Real Python created the inputs and read native outputs for all four hash kinds and both pair kinds.",
+        "ci": "Parent runs asynchronous GitHub CI; store/model/GUI regressions authored, not claimed locally passed."
+      }
+    }
+  ],
+  "aggregateAssessment": {
+    "originalID": "tag-migration",
+    "before": "partial",
+    "proposedStatus": "partial",
+    "reason": "Concrete archive/hash/count/pause leaves are implemented. Overall dialog/progress/metadata lifecycle retains documented native differences; codec interoperability does not make the broader parent complete.",
+    "remainingUserVisibleDifferences": [
+      "Native separate progress windows rather than embedded message-manager popups; native deadline polling every 80 ms rather than reference manager/checker polling.",
+      "Read-only source inspection/inference versus reference metadata writeback.",
+      "Bounded atomic archive commits versus reference final-cleanup transaction.",
+      "Existing alternate-hash destinations pin actual metadata rather than the unsafe recorded reference MD5/SHA256-dropdown mismatch.",
+      "Optional post-job archive VACUUM/ANALYZE is omitted."
+    ]
+  },
+  "confirmationWordingRepair": {
+    "exactBehavior": "Sibling/parent migration summaries compare the actual rendered left/right filter text: equal text uses on both sides; asymmetric text retains separate left/right clauses, including distinct rule maps rendering identical text. No fixture weakened and no additional completion claim.",
+    "referenceRecorder": "oracle/record_tag_migration_filter_summaries.py",
+    "referenceFixture": "oracle/fixtures/tag_migration_filter_summaries.json",
+    "referenceExecuted": "2026-10-04 19:03:32 UTC; actual Qt MigrationGo with confirmation rejected, 12 sibling/parent variants",
+    "authoredRegression": "crates/hydrus-gui-model/tests/model/tag_migration.rs::pair_summary_replays_equal_asymmetric_and_equal_text_distinct_filters",
+    "localRustTestsRun": false,
+    "validation": "cargo fmt, Python syntax and git diff --check passed; runtime regressions await hosted CI"
+  }
+}

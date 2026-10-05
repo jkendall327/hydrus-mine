@@ -1,0 +1,1926 @@
+{
+  "paths": [
+    "/srv/import/artist/0012 - page 3.jpg",
+    "/srv/import/artist/0001.png",
+    "/srv/import/Some_File (v2).webm"
+  ],
+  "initial": {
+    "quick": [],
+    "regexes": [],
+    "quick_selected": [],
+    "regex_selected": [],
+    "input": "",
+    "tags": [
+      [],
+      [],
+      []
+    ]
+  },
+  "steps": [
+    {
+      "action": "quick_add",
+      "selected": null,
+      "attempts": null,
+      "text": null,
+      "answer": null,
+      "calls": [
+        {
+          "kind": "child",
+          "title": "configure quick namespace",
+          "initial": [
+            "",
+            ""
+          ],
+          "attempts": null
+        }
+      ],
+      "state": {
+        "quick": [],
+        "regexes": [],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [],
+          [],
+          []
+        ]
+      }
+    },
+    {
+      "action": "quick_add",
+      "selected": null,
+      "attempts": [
+        [
+          "",
+          "\\d+"
+        ],
+        [
+          "page",
+          "(?<=page )\\d+"
+        ]
+      ],
+      "text": null,
+      "answer": null,
+      "calls": [
+        {
+          "kind": "child",
+          "title": "configure quick namespace",
+          "initial": [
+            "",
+            ""
+          ],
+          "attempts": [
+            [
+              "",
+              "\\d+"
+            ],
+            [
+              "page",
+              "(?<=page )\\d+"
+            ]
+          ]
+        },
+        {
+          "kind": "warning",
+          "text": "Please enter something for the namespace."
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "page",
+            "(?<=page )\\d+"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "page",
+            "(?<=page )\\d+"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "page:3"
+          ],
+          [],
+          []
+        ]
+      }
+    },
+    {
+      "action": "quick_add",
+      "selected": null,
+      "attempts": [
+        [
+          "version",
+          "[unclosed"
+        ],
+        [
+          "version",
+          "(?<=\\(v)\\d+(?=\\))"
+        ]
+      ],
+      "text": null,
+      "answer": null,
+      "calls": [
+        {
+          "kind": "child",
+          "title": "configure quick namespace",
+          "initial": [
+            "",
+            ""
+          ],
+          "attempts": [
+            [
+              "version",
+              "[unclosed"
+            ],
+            [
+              "version",
+              "(?<=\\(v)\\d+(?=\\))"
+            ]
+          ]
+        },
+        {
+          "kind": "critical",
+          "title": "Error",
+          "text": "That regex would not compile!\n\nunterminated character set at position 0"
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "page",
+            "(?<=page )\\d+"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "page:3"
+          ],
+          [],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "quick_add",
+      "selected": null,
+      "attempts": [
+        [
+          "page",
+          "(?<=page )\\d+"
+        ]
+      ],
+      "text": null,
+      "answer": null,
+      "calls": [
+        {
+          "kind": "child",
+          "title": "configure quick namespace",
+          "initial": [
+            "",
+            ""
+          ],
+          "attempts": [
+            [
+              "page",
+              "(?<=page )\\d+"
+            ]
+          ]
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "page",
+            "(?<=page )\\d+"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "page",
+            "(?<=page )\\d+"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "page:3"
+          ],
+          [],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "quick_add",
+      "selected": null,
+      "attempts": [
+        [
+          "creator:name",
+          "artist"
+        ]
+      ],
+      "text": null,
+      "answer": null,
+      "calls": [
+        {
+          "kind": "child",
+          "title": "configure quick namespace",
+          "initial": [
+            "",
+            ""
+          ],
+          "attempts": [
+            [
+              "creator:name",
+              "artist"
+            ]
+          ]
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "creator:name",
+            "artist"
+          ],
+          [
+            "page",
+            "(?<=page )\\d+"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "creator:name",
+            "artist"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "creator:name:artist",
+            "page:3"
+          ],
+          [
+            "creator:name:artist"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "quick_sort_regex",
+      "selected": null,
+      "attempts": null,
+      "text": null,
+      "answer": null,
+      "calls": [],
+      "state": {
+        "quick": [
+          [
+            "creator:name",
+            "artist"
+          ],
+          [
+            "page",
+            "(?<=page )\\d+"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "creator:name",
+            "artist"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "creator:name:artist",
+            "page:3"
+          ],
+          [
+            "creator:name:artist"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "quick_sort_namespace",
+      "selected": null,
+      "attempts": null,
+      "text": null,
+      "answer": null,
+      "calls": [],
+      "state": {
+        "quick": [
+          [
+            "creator:name",
+            "artist"
+          ],
+          [
+            "page",
+            "(?<=page )\\d+"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "creator:name",
+            "artist"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "creator:name:artist",
+            "page:3"
+          ],
+          [
+            "creator:name:artist"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "quick_edit",
+      "selected": [
+        0
+      ],
+      "attempts": null,
+      "text": null,
+      "answer": null,
+      "calls": [
+        {
+          "kind": "child",
+          "title": "configure quick namespace",
+          "initial": [
+            "creator:name",
+            "artist"
+          ],
+          "attempts": null
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "creator:name",
+            "artist"
+          ],
+          [
+            "page",
+            "(?<=page )\\d+"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "creator:name",
+            "artist"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "creator:name:artist",
+            "page:3"
+          ],
+          [
+            "creator:name:artist"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "quick_edit",
+      "selected": [
+        0
+      ],
+      "attempts": [
+        [
+          "  SOURCE  ",
+          "artist"
+        ]
+      ],
+      "text": null,
+      "answer": null,
+      "calls": [
+        {
+          "kind": "child",
+          "title": "configure quick namespace",
+          "initial": [
+            "creator:name",
+            "artist"
+          ],
+          "attempts": [
+            [
+              "  SOURCE  ",
+              "artist"
+            ]
+          ]
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "  SOURCE  ",
+            "artist"
+          ],
+          [
+            "page",
+            "(?<=page )\\d+"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "  SOURCE  ",
+            "artist"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "page:3",
+            "source:artist"
+          ],
+          [
+            "source:artist"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "quick_edit",
+      "selected": [
+        0,
+        1
+      ],
+      "attempts": [
+        [
+          "all",
+          ""
+        ]
+      ],
+      "text": null,
+      "answer": null,
+      "calls": [
+        {
+          "kind": "child",
+          "title": "configure quick namespace",
+          "initial": [
+            "  SOURCE  ",
+            "artist"
+          ],
+          "attempts": [
+            [
+              "all",
+              ""
+            ]
+          ]
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "all",
+            ""
+          ],
+          [
+            "page",
+            "(?<=page )\\d+"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "all",
+            ""
+          ],
+          [
+            "page",
+            "(?<=page )\\d+"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "page:3"
+          ],
+          [],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "quick_delete",
+      "selected": [
+        0,
+        1
+      ],
+      "attempts": null,
+      "text": null,
+      "answer": false,
+      "calls": [
+        {
+          "kind": "question",
+          "text": "Remove all selected?",
+          "answer": false
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "all",
+            ""
+          ],
+          [
+            "page",
+            "(?<=page )\\d+"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [
+          [
+            "all",
+            ""
+          ],
+          [
+            "page",
+            "(?<=page )\\d+"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "page:3"
+          ],
+          [],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "quick_delete",
+      "selected": [
+        0,
+        1
+      ],
+      "attempts": null,
+      "text": null,
+      "answer": true,
+      "calls": [
+        {
+          "kind": "question",
+          "text": "Remove all selected?",
+          "answer": true
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [],
+          [],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "regex_add",
+      "selected": null,
+      "attempts": null,
+      "text": "",
+      "answer": null,
+      "calls": [],
+      "state": {
+        "quick": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [],
+          [],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "regex_add",
+      "selected": null,
+      "attempts": null,
+      "text": "[unclosed",
+      "answer": null,
+      "calls": [
+        {
+          "kind": "warning",
+          "text": "That regex would not compile!\n\nunterminated character set at position 0"
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "[unclosed",
+        "tags": [
+          [],
+          [],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "regex_add",
+      "selected": null,
+      "attempts": null,
+      "text": "(\\d{4})",
+      "answer": null,
+      "calls": [],
+      "state": {
+        "quick": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [
+          "(\\d{4})"
+        ],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "0012"
+          ],
+          [
+            "0001"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "regex_add",
+      "selected": null,
+      "attempts": null,
+      "text": "(?<=page )\\d+",
+      "answer": null,
+      "calls": [],
+      "state": {
+        "quick": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [
+          "(\\d{4})",
+          "(?<=page )\\d+"
+        ],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "0012",
+            "3"
+          ],
+          [
+            "0001"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "regex_add",
+      "selected": null,
+      "attempts": null,
+      "text": "(\\d{4})",
+      "answer": null,
+      "calls": [],
+      "state": {
+        "quick": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [
+          "(\\d{4})",
+          "(?<=page )\\d+",
+          "(\\d{4})"
+        ],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "0012",
+            "3"
+          ],
+          [
+            "0001"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "regex_remove",
+      "selected": [
+        0,
+        2
+      ],
+      "attempts": null,
+      "text": null,
+      "answer": null,
+      "calls": [],
+      "state": {
+        "quick": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [
+          "(\\d{4})",
+          "(?<=page )\\d+"
+        ],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "(\\d{4})",
+        "tags": [
+          [
+            "0012",
+            "3"
+          ],
+          [
+            "0001"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "regex_add",
+      "selected": null,
+      "attempts": null,
+      "text": "(\\d{4})",
+      "answer": null,
+      "calls": [],
+      "state": {
+        "quick": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [
+          "(\\d{4})",
+          "(?<=page )\\d+",
+          "(\\d{4})"
+        ],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "0012",
+            "3"
+          ],
+          [
+            "0001"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "regex_remove",
+      "selected": [],
+      "attempts": null,
+      "text": null,
+      "answer": null,
+      "calls": [],
+      "state": {
+        "quick": [
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [
+          "(\\d{4})",
+          "(?<=page )\\d+",
+          "(\\d{4})"
+        ],
+        "quick_selected": [],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "0012",
+            "3"
+          ],
+          [
+            "0001"
+          ],
+          [
+            "version:2"
+          ]
+        ]
+      }
+    },
+    {
+      "action": "quick_add",
+      "selected": null,
+      "attempts": [
+        [
+          "extension",
+          "(?<=\\.)[^.]+$"
+        ]
+      ],
+      "text": null,
+      "answer": null,
+      "calls": [
+        {
+          "kind": "child",
+          "title": "configure quick namespace",
+          "initial": [
+            "",
+            ""
+          ],
+          "attempts": [
+            [
+              "extension",
+              "(?<=\\.)[^.]+$"
+            ]
+          ]
+        }
+      ],
+      "state": {
+        "quick": [
+          [
+            "extension",
+            "(?<=\\.)[^.]+$"
+          ],
+          [
+            "version",
+            "(?<=\\(v)\\d+(?=\\))"
+          ]
+        ],
+        "regexes": [
+          "(\\d{4})",
+          "(?<=page )\\d+",
+          "(\\d{4})"
+        ],
+        "quick_selected": [
+          [
+            "extension",
+            "(?<=\\.)[^.]+$"
+          ]
+        ],
+        "regex_selected": [],
+        "input": "",
+        "tags": [
+          [
+            "0012",
+            "3",
+            "extension:jpg"
+          ],
+          [
+            "0001",
+            "extension:png"
+          ],
+          [
+            "extension:webm",
+            "version:2"
+          ]
+        ]
+      }
+    }
+  ],
+  "applied": {
+    "quick": [
+      [
+        "extension",
+        "(?<=\\.)[^.]+$"
+      ],
+      [
+        "version",
+        "(?<=\\(v)\\d+(?=\\))"
+      ]
+    ],
+    "regexes": [
+      "(\\d{4})",
+      "(?<=page )\\d+",
+      "(\\d{4})"
+    ],
+    "quick_selected": [
+      [
+        "extension",
+        "(?<=\\.)[^.]+$"
+      ]
+    ],
+    "regex_selected": [],
+    "input": "",
+    "tags": [
+      [
+        "0012",
+        "3",
+        "extension:jpg"
+      ],
+      [
+        "0001",
+        "extension:png"
+      ],
+      [
+        "extension:webm",
+        "version:2"
+      ]
+    ]
+  },
+  "reopened": {
+    "quick": [
+      [
+        "extension",
+        "(?<=\\.)[^.]+$"
+      ],
+      [
+        "version",
+        "(?<=\\(v)\\d+(?=\\))"
+      ]
+    ],
+    "regexes": [
+      "(\\d{4})",
+      "(?<=page )\\d+",
+      "(\\d{4})"
+    ]
+  },
+  "draft_isolated": true,
+  "regex_menus": [
+    [
+      {
+        "kind": "menu",
+        "label": "regex help",
+        "rows": [
+          {
+            "kind": "item",
+            "label": "a good regex introduction",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "url",
+                "value": "https://www.regular-expressions.info/index.html"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "a full interactive tutorial",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "url",
+                "value": "https://www.regexone.com/"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "regex sandbox",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "url",
+                "value": "https://regexr.com/3cvmf"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "separator"
+      },
+      {
+        "kind": "menu",
+        "label": "regex components",
+        "rows": [
+          {
+            "kind": "item",
+            "label": "click below to copy to clipboard",
+            "enabled": true,
+            "outputs": []
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "whitespace character - \\s",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\s"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "number character - \\d",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\d"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "alphanumeric or underscore character - \\w",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\w"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "any character - .",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "."
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "backslash character - \\\\",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\\\"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "beginning of line - ^",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "^"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "end of line - $",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "$"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "any of these - [\u2026]",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "[\u2026]"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "anything other than these - [^\u2026]",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "[^\u2026]"
+              }
+            ]
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "0 or more matches, consuming as many as possible - *",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "*"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "1 or more matches, consuming as many as possible - +",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "+"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "0 or 1 matches, preferring 1 - ?",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "?"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "0 or more matches, consuming as few as possible - *?",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "*?"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "1 or more matches, consuming as few as possible - +?",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "+?"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "0 or 1 matches, preferring 0 - ??",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "??"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "exactly m matches - {m}",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "{m}"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "m to n matches, consuming as many as possible - {m,n}",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "{m,n}"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "m to n matches, consuming as few as possible - {m,n}?",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "{m,n}?"
+              }
+            ]
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "the next characters are: (non-consuming) - (?=\u2026)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?=\u2026)"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "the next characters are not: (non-consuming) - (?!\u2026)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?!\u2026)"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "the previous characters are: (non-consuming) - (?<=\u2026)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?<=\u2026)"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "the previous characters are not: (non-consuming) - (?<!\u2026)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?<!\u2026)"
+              }
+            ]
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "anything except this exact phrase - ^(?!\u2026$).+$",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "^(?!\u2026$).+$"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "0074 -> 74 - [1-9]+\\d*",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "[1-9]+\\d*"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "filename - (?<=/)[^/]*?(?=\\..*$)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?<=/)[^/]*?(?=\\..*$)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "menu",
+        "label": "favourites",
+        "rows": [
+          {
+            "kind": "item",
+            "label": "manage favourites",
+            "enabled": true,
+            "outputs": []
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "click below to copy to clipboard",
+            "enabled": true,
+            "outputs": []
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "numbers",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\d+"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "creator",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "artist"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "kind": "menu",
+        "label": "regex help",
+        "rows": [
+          {
+            "kind": "item",
+            "label": "a good regex introduction",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "url",
+                "value": "https://www.regular-expressions.info/index.html"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "a full interactive tutorial",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "url",
+                "value": "https://www.regexone.com/"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "regex sandbox",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "url",
+                "value": "https://regexr.com/3cvmf"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "separator"
+      },
+      {
+        "kind": "menu",
+        "label": "regex components",
+        "rows": [
+          {
+            "kind": "item",
+            "label": "click below to copy to clipboard",
+            "enabled": true,
+            "outputs": []
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "whitespace character - \\s",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\s"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "number character - \\d",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\d"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "alphanumeric or underscore character - \\w",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\w"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "any character - .",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "."
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "backslash character - \\\\",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\\\"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "beginning of line - ^",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "^"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "end of line - $",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "$"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "any of these - [\u2026]",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "[\u2026]"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "anything other than these - [^\u2026]",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "[^\u2026]"
+              }
+            ]
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "0 or more matches, consuming as many as possible - *",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "*"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "1 or more matches, consuming as many as possible - +",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "+"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "0 or 1 matches, preferring 1 - ?",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "?"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "0 or more matches, consuming as few as possible - *?",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "*?"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "1 or more matches, consuming as few as possible - +?",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "+?"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "0 or 1 matches, preferring 0 - ??",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "??"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "exactly m matches - {m}",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "{m}"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "m to n matches, consuming as many as possible - {m,n}",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "{m,n}"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "m to n matches, consuming as few as possible - {m,n}?",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "{m,n}?"
+              }
+            ]
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "the next characters are: (non-consuming) - (?=\u2026)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?=\u2026)"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "the next characters are not: (non-consuming) - (?!\u2026)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?!\u2026)"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "the previous characters are: (non-consuming) - (?<=\u2026)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?<=\u2026)"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "the previous characters are not: (non-consuming) - (?<!\u2026)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?<!\u2026)"
+              }
+            ]
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "anything except this exact phrase - ^(?!\u2026$).+$",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "^(?!\u2026$).+$"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "0074 -> 74 - [1-9]+\\d*",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "[1-9]+\\d*"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "filename - (?<=/)[^/]*?(?=\\..*$)",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "(?<=/)[^/]*?(?=\\..*$)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "menu",
+        "label": "favourites",
+        "rows": [
+          {
+            "kind": "item",
+            "label": "manage favourites",
+            "enabled": true,
+            "outputs": []
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "click below to copy to clipboard",
+            "enabled": true,
+            "outputs": []
+          },
+          {
+            "kind": "separator"
+          },
+          {
+            "kind": "item",
+            "label": "numbers",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "\\d+"
+              }
+            ]
+          },
+          {
+            "kind": "item",
+            "label": "creator",
+            "enabled": true,
+            "outputs": [
+              {
+                "kind": "copy",
+                "value": "artist"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  ],
+  "menu_favourites": [
+    [
+      "\\d+",
+      "numbers"
+    ],
+    [
+      "artist",
+      "creator"
+    ]
+  ],
+  "managed_favourites": [
+    {
+      "accepted": false,
+      "before": [
+        [
+          "\\d+",
+          "numbers"
+        ],
+        [
+          "artist",
+          "creator"
+        ]
+      ],
+      "after": [
+        [
+          "\\d+",
+          "numbers"
+        ],
+        [
+          "artist",
+          "creator"
+        ]
+      ],
+      "filename_unchanged": true
+    },
+    {
+      "accepted": true,
+      "before": [
+        [
+          "\\d+",
+          "numbers"
+        ],
+        [
+          "artist",
+          "creator"
+        ]
+      ],
+      "after": [
+        [
+          ".*",
+          "from filename input"
+        ],
+        [
+          "\\d+",
+          "numbers"
+        ],
+        [
+          "artist",
+          "creator"
+        ]
+      ],
+      "filename_unchanged": true
+    }
+  ]
+}

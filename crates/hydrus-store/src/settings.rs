@@ -29,6 +29,17 @@ impl Setting for FavouriteTags {
     const KEY: &'static str = "favourite_tags";
 }
 
+/// Canonical predicate defaults shared by all input-predicate editors.
+/// Imported reference defaults and immediate native star actions use this same
+/// representation; services and predicate subtypes retain their typed identity.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub struct CustomPredicateDefaults {
+    pub predicates: Vec<hydrus_core::search::predicate::Predicate>,
+}
+impl Setting for CustomPredicateDefaults {
+    const KEY: &'static str = "custom_default_predicates";
+}
+
 /// Shared tag-autocomplete tabs: the children result cap and service-specific most-used tags.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]
@@ -48,6 +59,17 @@ impl Setting for TagAutocompleteTabs {
     const KEY: &'static str = "tag_autocomplete_tabs";
 }
 
+/// How selected viewing canvases are presented in media context menus.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ViewingStatsMenuDisplay {
+    /// Sum multiple canvases in a submenu title and retain each separate line.
+    #[default]
+    Combined,
+    /// Present each selected canvas as a separate menu label.
+    Stacked,
+}
+
 /// File viewing statistics: whether they are recorded, and which viewers'
 /// statistics count as "views" and "view time" when a search or sort does
 /// not name viewers (the reference's `file_viewing_statistics_active` and
@@ -56,6 +78,11 @@ impl Setting for TagAutocompleteTabs {
 #[serde(default)]
 pub struct FileViewingStatistics {
     pub active: bool,
+    pub archive_delete: bool,
+    pub duplicates: bool,
+    pub media_min_ms: Option<u64>,
+    pub media_max_ms: Option<u64>,
+    pub menu_display: ViewingStatsMenuDisplay,
     pub interesting_canvases: Vec<CanvasType>,
 }
 
@@ -64,6 +91,11 @@ impl Default for FileViewingStatistics {
     fn default() -> Self {
         Self {
             active: true,
+            archive_delete: true,
+            duplicates: false,
+            media_min_ms: Some(2000),
+            media_max_ms: Some(600_000),
+            menu_display: ViewingStatsMenuDisplay::Combined,
             interesting_canvases: vec![CanvasType::MediaViewer, CanvasType::ClientApi],
         }
     }
@@ -414,6 +446,62 @@ impl Setting for AdvancedMode {
 
 impl Setting for FolderSettings {
     const KEY: &'static str = "folders";
+}
+
+/// The local deletion choice remembered by the advanced dialog.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub enum DeletionAction {
+    Domain(hydrus_core::ServiceKey),
+    Physical,
+    ClearRecord,
+}
+
+/// Confirmation preferences for local file operations.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+#[allow(clippy::struct_excessive_bools)] // Independent reference checkbox preferences.
+pub struct DeletionPreferences {
+    /// Ask before simple deletion from one local domain.
+    pub confirm_trash: bool,
+    /// Ask before archiving or inboxing multiple actionable files.
+    pub confirm_archive: bool,
+    /// Show the action/reason chooser instead of a simple question.
+    pub advanced: bool,
+    /// Retain the last accepted action when it is offered again.
+    pub remember_action: bool,
+    /// Retain the last accepted non-default reason.
+    pub remember_reason: bool,
+    /// Ordered suggestions; duplicates and empty reasons are allowed.
+    pub reasons: Vec<String>,
+    pub last_action: Option<DeletionAction>,
+    pub last_reason: Option<String>,
+}
+
+impl Default for DeletionPreferences {
+    fn default() -> Self {
+        Self {
+            confirm_trash: true,
+            confirm_archive: true,
+            advanced: false,
+            remember_action: false,
+            remember_reason: true,
+            reasons: [
+                "I do not like it.",
+                "It is bad quality.",
+                "It is not appropriate for this client.",
+                "Temporary delete--I want to bring it back later.",
+            ]
+            .into_iter()
+            .map(str::to_owned)
+            .collect(),
+            last_action: None,
+            last_reason: None,
+        }
+    }
+}
+
+impl Setting for DeletionPreferences {
+    const KEY: &'static str = "deletion_preferences";
 }
 
 /// How files are read and written. As in the reference, these hold for the

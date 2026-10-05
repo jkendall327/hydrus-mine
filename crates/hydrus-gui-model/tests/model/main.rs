@@ -9,11 +9,14 @@ mod auto_resolution_rules;
 mod checker_options;
 mod clipboard_urls;
 mod datetime_editor;
+mod delete_files;
 mod downloader_definitions;
 mod duplicates_page;
 mod edit_subscription;
 mod embedded_metadata;
 mod file_log;
+mod filename_rules;
+mod filename_simple;
 mod filename_tagging;
 mod filetype_tree;
 mod folders;
@@ -32,6 +35,7 @@ mod merge_summaries;
 mod options_dialog;
 mod page_chooser_options;
 mod page_navigation_options;
+mod predicate_history;
 mod ratings_editor;
 mod recent_predicates;
 mod search_log;
@@ -45,6 +49,7 @@ mod string_converter_editor;
 mod string_match_editor;
 mod string_processor_editor;
 mod string_tag_filter_tests;
+mod subscription_exchange;
 mod subscription_import_options;
 mod subscriptions_buttons;
 mod subscriptions_dedupe;
@@ -54,6 +59,7 @@ mod tag_filter_favourites;
 mod thumbnail_ratings;
 mod times_editor;
 mod urls_editor;
+mod viewtime_milliseconds;
 
 mod export_files;
 mod services_review;
@@ -97,3 +103,16 @@ mod viewer_cursor;
 mod tag_list_display_types;
 
 mod sort_cog;
+
+mod command_palette;
+
+mod viewing_statistics;
+
+mod search_or;
+mod system_or_activation;
+
+mod manage_tag_counts;
+
+mod frame_locations;
+mod incremental_tagging;
+mod tag_banner;

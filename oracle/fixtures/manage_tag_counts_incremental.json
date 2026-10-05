@@ -1,0 +1,1046 @@
+{
+  "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+  ],
+  "corpus": [
+    {
+      "service": "my tags",
+      "tag": "checkpoint:old",
+      "files": [
+        0,
+        1
+      ],
+      "deleted": true
+    },
+    {
+      "service": "my tags",
+      "tag": "checkpoint:both",
+      "files": [
+        0
+      ],
+      "deleted": true
+    },
+    {
+      "service": "my tags",
+      "tag": "checkpoint:both",
+      "files": [
+        1
+      ],
+      "deleted": false
+    },
+    {
+      "service": "my tags",
+      "tag": "checkpoint:live",
+      "files": [
+        0,
+        1,
+        2
+      ],
+      "deleted": false
+    },
+    {
+      "service": "second tags",
+      "tag": "checkpoint:other",
+      "files": [
+        2
+      ],
+      "deleted": true
+    },
+    {
+      "service": "my tags",
+      "tag": "page:8",
+      "files": [
+        0
+      ],
+      "deleted": false
+    },
+    {
+      "service": "my tags",
+      "tag": "page:12",
+      "files": [
+        1
+      ],
+      "deleted": false
+    }
+  ],
+  "deleted": [
+    {
+      "step": "opened",
+      "state": {
+        "show_deleted": false,
+        "services": [
+          {
+            "service": "downloader tags",
+            "label": "0 deleted mappings",
+            "visible": false,
+            "tooltip": "show deleted mappings",
+            "rows": []
+          },
+          {
+            "service": "my tags",
+            "label": "4 deleted mappings",
+            "visible": true,
+            "tooltip": "show deleted mappings",
+            "rows": [
+              {
+                "tag": "checkpoint:both",
+                "label": "checkpoint:both (1)"
+              },
+              {
+                "tag": "checkpoint:live",
+                "label": "checkpoint:live (3)"
+              }
+            ]
+          },
+          {
+            "service": "second tags",
+            "label": "1 deleted mappings",
+            "visible": true,
+            "tooltip": "show deleted mappings",
+            "rows": []
+          }
+        ]
+      }
+    },
+    {
+      "step": "show",
+      "state": {
+        "show_deleted": true,
+        "services": [
+          {
+            "service": "downloader tags",
+            "label": "0 deleted mappings",
+            "visible": false,
+            "tooltip": "hide deleted mappings",
+            "rows": []
+          },
+          {
+            "service": "my tags",
+            "label": "4 deleted mappings",
+            "visible": true,
+            "tooltip": "hide deleted mappings",
+            "rows": [
+              {
+                "tag": "checkpoint:both",
+                "label": "checkpoint:both (1) (X1)"
+              },
+              {
+                "tag": "checkpoint:live",
+                "label": "checkpoint:live (3)"
+              },
+              {
+                "tag": "checkpoint:old",
+                "label": "checkpoint:old (X2)"
+              }
+            ]
+          },
+          {
+            "service": "second tags",
+            "label": "1 deleted mappings",
+            "visible": true,
+            "tooltip": "hide deleted mappings",
+            "rows": [
+              {
+                "tag": "checkpoint:other",
+                "label": "checkpoint:other (X1)"
+              }
+            ]
+          }
+        ]
+      },
+      "other_open_owner": {
+        "show_deleted": true,
+        "services": [
+          {
+            "service": "downloader tags",
+            "label": "0 deleted mappings",
+            "visible": false,
+            "tooltip": "hide deleted mappings",
+            "rows": []
+          },
+          {
+            "service": "my tags",
+            "label": "4 deleted mappings",
+            "visible": true,
+            "tooltip": "hide deleted mappings",
+            "rows": [
+              {
+                "tag": "checkpoint:both",
+                "label": "checkpoint:both (1) (X1)"
+              },
+              {
+                "tag": "checkpoint:live",
+                "label": "checkpoint:live (3)"
+              },
+              {
+                "tag": "checkpoint:old",
+                "label": "checkpoint:old (X2)"
+              }
+            ]
+          },
+          {
+            "service": "second tags",
+            "label": "1 deleted mappings",
+            "visible": true,
+            "tooltip": "hide deleted mappings",
+            "rows": [
+              {
+                "tag": "checkpoint:other",
+                "label": "checkpoint:other (X1)"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step": "remove",
+      "state": {
+        "show_deleted": true,
+        "services": [
+          {
+            "service": "downloader tags",
+            "label": "0 deleted mappings",
+            "visible": false,
+            "tooltip": "hide deleted mappings",
+            "rows": []
+          },
+          {
+            "service": "my tags",
+            "label": "7 deleted mappings",
+            "visible": true,
+            "tooltip": "hide deleted mappings",
+            "rows": [
+              {
+                "tag": "checkpoint:both",
+                "label": "checkpoint:both (1) (X1)"
+              },
+              {
+                "tag": "checkpoint:live",
+                "label": "checkpoint:live (X3)"
+              },
+              {
+                "tag": "checkpoint:old",
+                "label": "checkpoint:old (X2)"
+              }
+            ]
+          },
+          {
+            "service": "second tags",
+            "label": "1 deleted mappings",
+            "visible": true,
+            "tooltip": "hide deleted mappings",
+            "rows": [
+              {
+                "tag": "checkpoint:other",
+                "label": "checkpoint:other (X1)"
+              }
+            ]
+          }
+        ]
+      },
+      "asked": [
+        "Are you sure you want to remove these tags:\n\ncheckpoint:live"
+      ]
+    },
+    {
+      "step": "readd",
+      "state": {
+        "show_deleted": true,
+        "services": [
+          {
+            "service": "downloader tags",
+            "label": "0 deleted mappings",
+            "visible": false,
+            "tooltip": "hide deleted mappings",
+            "rows": []
+          },
+          {
+            "service": "my tags",
+            "label": "5 deleted mappings",
+            "visible": true,
+            "tooltip": "hide deleted mappings",
+            "rows": [
+              {
+                "tag": "checkpoint:both",
+                "label": "checkpoint:both (1) (X1)"
+              },
+              {
+                "tag": "checkpoint:live",
+                "label": "checkpoint:live (X3)"
+              },
+              {
+                "tag": "checkpoint:old",
+                "label": "checkpoint:old (3)"
+              }
+            ]
+          },
+          {
+            "service": "second tags",
+            "label": "1 deleted mappings",
+            "visible": true,
+            "tooltip": "hide deleted mappings",
+            "rows": [
+              {
+                "tag": "checkpoint:other",
+                "label": "checkpoint:other (X1)"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step": "parent_cancel_reopen",
+      "state": {
+        "show_deleted": true,
+        "services": [
+          {
+            "service": "downloader tags",
+            "label": "0 deleted mappings",
+            "visible": false,
+            "tooltip": "hide deleted mappings",
+            "rows": []
+          },
+          {
+            "service": "my tags",
+            "label": "4 deleted mappings",
+            "visible": true,
+            "tooltip": "hide deleted mappings",
+            "rows": [
+              {
+                "tag": "checkpoint:both",
+                "label": "checkpoint:both (1) (X1)"
+              },
+              {
+                "tag": "checkpoint:live",
+                "label": "checkpoint:live (3)"
+              },
+              {
+                "tag": "checkpoint:old",
+                "label": "checkpoint:old (X2)"
+              }
+            ]
+          },
+          {
+            "service": "second tags",
+            "label": "1 deleted mappings",
+            "visible": true,
+            "tooltip": "hide deleted mappings",
+            "rows": [
+              {
+                "tag": "checkpoint:other",
+                "label": "checkpoint:other (X1)"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step": "parent_apply_reopen",
+      "state": {
+        "show_deleted": true,
+        "services": [
+          {
+            "service": "downloader tags",
+            "label": "0 deleted mappings",
+            "visible": false,
+            "tooltip": "hide deleted mappings",
+            "rows": []
+          },
+          {
+            "service": "my tags",
+            "label": "5 deleted mappings",
+            "visible": true,
+            "tooltip": "hide deleted mappings",
+            "rows": [
+              {
+                "tag": "checkpoint:both",
+                "label": "checkpoint:both (1) (X1)"
+              },
+              {
+                "tag": "checkpoint:live",
+                "label": "checkpoint:live (X3)"
+              },
+              {
+                "tag": "checkpoint:old",
+                "label": "checkpoint:old (3)"
+              }
+            ]
+          },
+          {
+            "service": "second tags",
+            "label": "1 deleted mappings",
+            "visible": true,
+            "tooltip": "hide deleted mappings",
+            "rows": [
+              {
+                "tag": "checkpoint:other",
+                "label": "checkpoint:other (X1)"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "incremental": [
+    {
+      "input": {
+        "name": "child_cancel",
+        "namespace": "sequence",
+        "prefix": "v",
+        "suffix": "x",
+        "start": -2,
+        "step": -3,
+        "reverse": true,
+        "accept": false
+      },
+      "child": [
+        {
+          "step": "opened",
+          "state": {
+            "namespace": "page",
+            "prefix": "",
+            "suffix": "",
+            "start": 8,
+            "step": 1,
+            "reverse": false,
+            "summary": "For the 3 files, you are setting page:8, page:9, page:10.\n\n1 files already have these tags, and 2 files already have different tags for this namespace. Are you sure you are lined up correct?",
+            "updates": [
+              {
+                "service": "my tags",
+                "action": 0,
+                "tag": "page:8",
+                "files": [
+                  0
+                ]
+              },
+              {
+                "service": "my tags",
+                "action": 0,
+                "tag": "page:9",
+                "files": [
+                  1
+                ]
+              },
+              {
+                "service": "my tags",
+                "action": 0,
+                "tag": "page:10",
+                "files": [
+                  2
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "step": "edited",
+          "state": {
+            "namespace": "sequence",
+            "prefix": "v",
+            "suffix": "x",
+            "start": -2,
+            "step": -3,
+            "reverse": true,
+            "summary": "For the 3 files, you are setting sequence:v-8x, sequence:v-5x, sequence:v-2x.\n\nNo conflicts, this all looks fresh!",
+            "updates": [
+              {
+                "service": "my tags",
+                "action": 0,
+                "tag": "sequence:v-8x",
+                "files": [
+                  0
+                ]
+              },
+              {
+                "service": "my tags",
+                "action": 0,
+                "tag": "sequence:v-5x",
+                "files": [
+                  1
+                ]
+              },
+              {
+                "service": "my tags",
+                "action": 0,
+                "tag": "sequence:v-2x",
+                "files": [
+                  2
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "staged": [],
+      "preferences": {
+        "namespace": "sequence",
+        "prefix": "v",
+        "suffix": "x"
+      },
+      "reopened_tags": [
+        [
+          "checkpoint:old",
+          "page:8",
+          "safe"
+        ],
+        [
+          "checkpoint:both",
+          "checkpoint:old",
+          "page:12",
+          "safe",
+          "samus"
+        ],
+        [
+          "checkpoint:old",
+          "creator:anonymous artist",
+          "meta:lowres",
+          "page:3"
+        ]
+      ]
+    },
+    {
+      "input": {
+        "name": "child_apply_parent_cancel",
+        "namespace": "page",
+        "prefix": "",
+        "suffix": "",
+        "start": 8,
+        "step": 2,
+        "reverse": false,
+        "accept": true
+      },
+      "child": [
+        {
+          "step": "opened",
+          "state": {
+            "namespace": "sequence",
+            "prefix": "v",
+            "suffix": "x",
+            "start": 1,
+            "step": 1,
+            "reverse": false,
+            "summary": "For the 3 files, you are setting sequence:v1x, sequence:v2x, sequence:v3x.\n\nNo conflicts, this all looks fresh!",
+            "updates": [
+              {
+                "service": "my tags",
+                "action": 0,
+                "tag": "sequence:v1x",
+                "files": [
+                  0
+                ]
+              },
+              {
+                "service": "my tags",
+                "action": 0,
+                "tag": "sequence:v2x",
+                "files": [
+                  1
+                ]
+              },
+              {
+                "service": "my tags",
+                "action": 0,
+                "tag": "sequence:v3x",
+                "files": [
+                  2
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "step": "edited",
+          "state": {
+            "namespace": "page",
+            "prefix": "",
+            "suffix": "",
+            "start": 8,
+            "step": 2,
+            "reverse": false,
+            "summary": "For the 3 files, you are setting page:8, page:10, page:12.\n\n1 files already have these tags, and 2 files already have different tags for this namespace. Are you sure you are lined up correct?",
+            "updates": [
+              {
+                "service": "my tags",
+                "action": 0,
+                "tag": "page:8",
+                "files": [
+                  0
+                ]
+              },
+              {
+                "service": "my tags",
+                "action": 0,
+                "tag": "page:10",
+                "files": [
+                  1
+                ]
+              },
+              {
+                "service": "my tags",
+                "action": 0,
+                "tag": "page:12",
+                "files": [
+                  2
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "staged": [
+        {
+          "service": "my tags",
+          "action": 0,
+          "tag": "page:8",
+          "files": [
+            0
+          ]
+        },
+        {
+          "service": "my tags",
+          "action": 0,
+          "tag": "page:10",
+          "files": [
+            1
+          ]
+        },
+        {
+          "service": "my tags",
+          "action": 0,
+          "tag": "page:12",
+          "files": [
+            2
+          ]
+        }
+      ],
+      "preferences": {
+        "namespace": "page",
+        "prefix": "",
+        "suffix": ""
+      },
+      "reopened_tags": [
+        [
+          "checkpoint:old",
+          "page:8",
+          "safe"
+        ],
+        [
+          "checkpoint:both",
+          "checkpoint:old",
+          "page:12",
+          "safe",
+          "samus"
+        ],
+        [
+          "checkpoint:old",
+          "creator:anonymous artist",
+          "meta:lowres",
+          "page:3"
+        ]
+      ]
+    },
+    {
+      "input": {
+        "name": "child_apply_parent_apply",
+        "namespace": "sequence",
+        "prefix": "v",
+        "suffix": "x",
+        "start": -2,
+        "step": -3,
+        "reverse": true,
+        "accept": true
+      },
+      "child": [
+        {
+          "step": "opened",
+          "state": {
+            "namespace": "page",
+            "prefix": "",
+            "suffix": "",
+            "start": 8,
+            "step": 1,
+            "reverse": false,
+            "summary": "For the 3 files, you are setting page:8, page:9, page:10.\n\n1 files already have these tags, and 2 files already have different tags for this namespace. Are you sure you are lined up correct?",
+            "updates": [
+              {
+                "service": "my tags",
+                "action": 0,
+                "tag": "page:8",
+                "files": [
+                  0
+                ]
+              },
+              {
+                "service": "my tags",
+                "action": 0,
+                "tag": "page:9",
+                "files": [
+                  1
+                ]
+              },
+              {
+                "service": "my tags",
+                "action": 0,
+                "tag": "page:10",
+                "files": [
+                  2
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "step": "edited",
+          "state": {
+            "namespace": "sequence",
+            "prefix": "v",
+            "suffix": "x",
+            "start": -2,
+            "step": -3,
+            "reverse": true,
+            "summary": "For the 3 files, you are setting sequence:v-8x, sequence:v-5x, sequence:v-2x.\n\nNo conflicts, this all looks fresh!",
+            "updates": [
+              {
+                "service": "my tags",
+                "action": 0,
+                "tag": "sequence:v-8x",
+                "files": [
+                  0
+                ]
+              },
+              {
+                "service": "my tags",
+                "action": 0,
+                "tag": "sequence:v-5x",
+                "files": [
+                  1
+                ]
+              },
+              {
+                "service": "my tags",
+                "action": 0,
+                "tag": "sequence:v-2x",
+                "files": [
+                  2
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "staged": [
+        {
+          "service": "my tags",
+          "action": 0,
+          "tag": "sequence:v-8x",
+          "files": [
+            0
+          ]
+        },
+        {
+          "service": "my tags",
+          "action": 0,
+          "tag": "sequence:v-5x",
+          "files": [
+            1
+          ]
+        },
+        {
+          "service": "my tags",
+          "action": 0,
+          "tag": "sequence:v-2x",
+          "files": [
+            2
+          ]
+        }
+      ],
+      "preferences": {
+        "namespace": "sequence",
+        "prefix": "v",
+        "suffix": "x"
+      },
+      "reopened_tags": [
+        [
+          "checkpoint:old",
+          "page:8",
+          "safe",
+          "sequence:v-8x"
+        ],
+        [
+          "checkpoint:both",
+          "checkpoint:old",
+          "page:12",
+          "safe",
+          "samus",
+          "sequence:v-5x"
+        ],
+        [
+          "checkpoint:old",
+          "creator:anonymous artist",
+          "meta:lowres",
+          "page:3",
+          "sequence:v-2x"
+        ]
+      ]
+    }
+  ],
+  "fresh_cycle": {
+    "state": {
+      "show_deleted": true,
+      "services": [
+        {
+          "service": "downloader tags",
+          "label": "0 deleted mappings",
+          "visible": false,
+          "tooltip": "hide deleted mappings",
+          "rows": []
+        },
+        {
+          "service": "my tags",
+          "label": "8 deleted mappings",
+          "visible": true,
+          "tooltip": "hide deleted mappings",
+          "rows": [
+            {
+              "tag": "checkpoint:both",
+              "label": "checkpoint:both (1) (X1)"
+            },
+            {
+              "tag": "checkpoint:cycle",
+              "label": "checkpoint:cycle (X3)"
+            },
+            {
+              "tag": "checkpoint:live",
+              "label": "checkpoint:live (X3)"
+            },
+            {
+              "tag": "checkpoint:old",
+              "label": "checkpoint:old (3)"
+            }
+          ]
+        },
+        {
+          "service": "second tags",
+          "label": "1 deleted mappings",
+          "visible": true,
+          "tooltip": "hide deleted mappings",
+          "rows": [
+            {
+              "tag": "checkpoint:other",
+              "label": "checkpoint:other (X1)"
+            }
+          ]
+        }
+      ]
+    },
+    "has_changes": true
+  },
+  "initial_cases": [
+    {
+      "subtags": [
+        "١٢"
+      ],
+      "sorted": [
+        "١٢"
+      ],
+      "initial_start": 12,
+      "summary": "For the 3 files, you are setting page:v12x, page:v13x, page:v14x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v12x, page:v12x, page:v12x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "１２"
+      ],
+      "sorted": [
+        "１２"
+      ],
+      "initial_start": 12,
+      "summary": "For the 3 files, you are setting page:v12x, page:v13x, page:v14x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v12x, page:v12x, page:v12x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "١2٣"
+      ],
+      "sorted": [
+        "١2٣"
+      ],
+      "initial_start": 123,
+      "summary": "For the 3 files, you are setting page:v123x, page:v124x, page:v125x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v123x, page:v123x, page:v123x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "100",
+        "٢"
+      ],
+      "sorted": [
+        "100",
+        "٢"
+      ],
+      "initial_start": 100,
+      "summary": "For the 3 files, you are setting page:v100x, page:v101x, page:v102x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v100x, page:v100x, page:v100x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "-4",
+        "١٢"
+      ],
+      "sorted": [
+        "١٢",
+        "-4"
+      ],
+      "initial_start": 12,
+      "summary": "For the 3 files, you are setting page:v12x, page:v13x, page:v14x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v12x, page:v12x, page:v12x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "-4"
+      ],
+      "sorted": [
+        "-4"
+      ],
+      "initial_start": 1,
+      "summary": "For the 3 files, you are setting page:v1x, page:v2x, page:v3x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v1x, page:v1x, page:v1x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "²",
+        "١٢"
+      ],
+      "sorted": [
+        "١٢",
+        "²"
+      ],
+      "initial_start": 12,
+      "summary": "For the 3 files, you are setting page:v12x, page:v13x, page:v14x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v12x, page:v12x, page:v12x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "0",
+        "١٢"
+      ],
+      "sorted": [
+        "0",
+        "١٢"
+      ],
+      "initial_start": 0,
+      "summary": "For the 3 files, you are setting page:v0x, page:v1x, page:v2x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v0x, page:v0x, page:v0x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "99999999"
+      ],
+      "sorted": [
+        "99999999"
+      ],
+      "initial_start": 10000000,
+      "summary": "For the 3 files, you are setting page:v10000000x, page:v10000001x, page:v10000002x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v10000000x, page:v10000000x, page:v10000000x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "𑽕𑽓"
+      ],
+      "sorted": [
+        "𑽕𑽓"
+      ],
+      "initial_start": 53,
+      "summary": "For the 3 files, you are setting page:v53x, page:v54x, page:v55x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v53x, page:v53x, page:v53x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    },
+    {
+      "subtags": [
+        "𞓰𞓵"
+      ],
+      "sorted": [
+        "𞓰𞓵"
+      ],
+      "initial_start": 5,
+      "summary": "For the 3 files, you are setting page:v5x, page:v6x, page:v7x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?",
+      "zero_step_summary": "For the 3 files, you are setting page:v5x, page:v5x, page:v5x.\n\n3 files already have different tags for this namespace. Are you sure you are lined up correct?"
+    }
+  ],
+  "unicode_version": "15.1.0",
+  "decimal_zeros": [
+    48,
+    1632,
+    1776,
+    1984,
+    2406,
+    2534,
+    2662,
+    2790,
+    2918,
+    3046,
+    3174,
+    3302,
+    3430,
+    3558,
+    3664,
+    3792,
+    3872,
+    4160,
+    4240,
+    6112,
+    6160,
+    6470,
+    6608,
+    6784,
+    6800,
+    6992,
+    7088,
+    7232,
+    7248,
+    42528,
+    43216,
+    43264,
+    43472,
+    43504,
+    43600,
+    44016,
+    65296,
+    66720,
+    68912,
+    69734,
+    69872,
+    69942,
+    70096,
+    70384,
+    70736,
+    70864,
+    71248,
+    71360,
+    71472,
+    71904,
+    72016,
+    72784,
+    73040,
+    73120,
+    73552,
+    92768,
+    92864,
+    93008,
+    120782,
+    120792,
+    120802,
+    120812,
+    120822,
+    123200,
+    123632,
+    124144,
+    125264,
+    130032
+  ]
+}

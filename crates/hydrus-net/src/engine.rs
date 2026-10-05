@@ -141,6 +141,8 @@ pub struct Request {
     pub one_shot: bool,
     /// Write the response here instead of keeping it in memory.
     pub destination: Option<PathBuf>,
+    /// Login-step HTTP requests bypass demand admission to avoid recursive login.
+    pub for_login: bool,
 }
 
 impl Request {
@@ -157,6 +159,7 @@ impl Request {
             gallery_page: false,
             one_shot: false,
             destination: None,
+            for_login: false,
         }
     }
 }
@@ -434,33 +437,39 @@ impl Job {
     }
 }
 
+// Counters successfully saved together with the reset generations they observed.
+type BandwidthCheckpoint = (Vec<(NetworkContext, Tracker)>, HistoryResets);
+// Live request handles and the accounting contexts fixed at registration.
+type RegisteredJobs = std::collections::BTreeMap<u64, (Job, Vec<NetworkContext>)>;
+
 /// Makes requests with the client's cookies and headers.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct NetEngine {
-    client: RwLock<reqwest::Client>,
+    client: Arc<RwLock<reqwest::Client>>,
     store: Arc<Store>,
-    options: RwLock<NetOptions>,
-    slots: RwLock<Arc<Semaphore>>,
-    domain_slots: Mutex<std::collections::HashMap<String, Arc<Semaphore>>>,
+    options: Arc<RwLock<NetOptions>>,
+    slots: Arc<RwLock<Arc<Semaphore>>>,
+    domain_slots: Arc<Mutex<std::collections::HashMap<String, Arc<Semaphore>>>>,
     /// The bandwidth rules and usage, and when the usage was last saved.
-    bandwidth: Mutex<(Manager, i64, HistoryResets)>,
-    bandwidth_settings: RwLock<BandwidthSettings>,
+    bandwidth: Arc<Mutex<(Manager, i64, HistoryResets)>>,
+    bandwidth_settings: Arc<RwLock<BandwidthSettings>>,
     /// Last successfully persisted counts and their reset generations. Serializes
     /// saves without holding the live bandwidth-manager lock across store I/O.
-    saved_bandwidth: Mutex<(Vec<(NetworkContext, Tracker)>, HistoryResets)>,
+    saved_bandwidth: Arc<Mutex<BandwidthCheckpoint>>,
     /// When each domain last had serious errors (`DomainOK`).
-    domain_errors: Mutex<std::collections::HashMap<String, Vec<i64>>>,
+    domain_errors: Arc<Mutex<std::collections::HashMap<String, Vec<i64>>>>,
     /// When the sleep check last ran, and (after a wake) when requests may
     /// go again, in ms.
-    wake: Mutex<(Option<i64>, Option<i64>)>,
+    wake: Arc<Mutex<(Option<i64>, Option<i64>)>>,
     /// When it started, and what it has read since (the reference's
     /// session tracker, `GetMySessionTracker`).
     started: i64,
-    session: Mutex<Tracker>,
-    jobs: Mutex<std::collections::BTreeMap<u64, (Job, Vec<NetworkContext>)>>,
-    next_job: AtomicU64,
-    recent_errors: Mutex<Vec<network_runtime::JobError>>,
+    session: Arc<Mutex<Tracker>>,
+    jobs: Arc<Mutex<RegisteredJobs>>,
+    next_job: Arc<AtomicU64>,
+    recent_errors: Arc<Mutex<Vec<network_runtime::JobError>>>,
     epoch: String,
+    login: Arc<Mutex<Option<Arc<Job>>>>,
 }
 
 /// Why one attempt failed, and so what happens next.
@@ -516,6 +525,17 @@ struct RegisteredJob<'a> {
 impl Drop for RegisteredJob<'_> {
     fn drop(&mut self) {
         self.engine.jobs.lock().remove(&self.id);
+    }
+}
+
+// Engine clones own their current control; admission itself belongs to the store.
+struct LoginOwner {
+    lease: hydrus_store::login_runtime::Lease,
+    control: Arc<Mutex<Option<Arc<Job>>>>,
+}
+impl Drop for LoginOwner {
+    fn drop(&mut self) {
+        self.control.lock().take();
     }
 }
 
@@ -608,18 +628,30 @@ impl NetEngine {
                 }
             })
             .collect();
+        let usage = self.bandwidth.lock().0.all_trackers();
+        let errors = self.recent_errors.lock().clone();
+        let login = self.login_process();
         network_runtime::Snapshot {
             epoch: self.epoch.clone(),
             at: now(),
             jobs,
-            usage: self.bandwidth.lock().0.all_trackers(),
+            usage,
             controls,
-            errors: self.recent_errors.lock().clone(),
+            errors,
+            login,
         }
     }
 
     /// Apply a command only to the live request and daemon that were reviewed.
     pub fn runtime_command(&self, command: &network_runtime::Command) -> bool {
+        if command.action == network_runtime::JobAction::CancelLogin {
+            return hydrus_store::login_runtime::cancel(
+                &self.store,
+                command.epoch.clone(),
+                command.job,
+            )
+            .unwrap_or(false);
+        }
         if command.epoch != self.epoch {
             return false;
         }
@@ -639,6 +671,7 @@ impl NetEngine {
         }
         match command.action {
             network_runtime::JobAction::Cancel => job.cancel(),
+            network_runtime::JobAction::CancelLogin => return false,
             network_runtime::JobAction::OverrideBandwidth => job.override_bandwidth(),
             network_runtime::JobAction::OverrideConnectionWait => {
                 return job.override_retry_wait(WaitReason::Connection);
@@ -717,23 +750,28 @@ impl NetEngine {
         let mut manager = Manager::new(bandwidth_settings.rules.clone());
         manager.set_trackers(usage.clone());
         let saved_bandwidth = (usage, history_resets.clone());
+        let epoch = hydrus_store::login_runtime::next_epoch(&store)
+            .map_err(|error| NetError::Io(error.to_string()))?;
         Ok(Self {
-            client: RwLock::new(client),
+            client: Arc::new(RwLock::new(client)),
+            login: Arc::new(Mutex::default()),
             store,
-            slots: RwLock::new(Arc::new(Semaphore::new(options.max_jobs.max(1)))),
-            domain_slots: Mutex::default(),
-            bandwidth: Mutex::new((manager, now, history_resets)),
-            bandwidth_settings: RwLock::new(bandwidth_settings),
-            saved_bandwidth: Mutex::new(saved_bandwidth),
-            domain_errors: Mutex::default(),
-            wake: Mutex::default(),
+            slots: Arc::new(RwLock::new(Arc::new(Semaphore::new(
+                options.max_jobs.max(1),
+            )))),
+            domain_slots: Arc::new(Mutex::default()),
+            bandwidth: Arc::new(Mutex::new((manager, now, history_resets))),
+            bandwidth_settings: Arc::new(RwLock::new(bandwidth_settings)),
+            saved_bandwidth: Arc::new(Mutex::new(saved_bandwidth)),
+            domain_errors: Arc::new(Mutex::default()),
+            wake: Arc::new(Mutex::default()),
             started: now,
-            session: Mutex::new(Tracker::new(now)),
-            jobs: Mutex::default(),
-            next_job: AtomicU64::new(1),
-            recent_errors: Mutex::default(),
-            epoch: format!("{}:{}", std::process::id(), now_ms()),
-            options: RwLock::new(options),
+            session: Arc::new(Mutex::new(Tracker::new(now))),
+            jobs: Arc::new(Mutex::default()),
+            next_job: Arc::new(AtomicU64::new(1)),
+            recent_errors: Arc::new(Mutex::default()),
+            epoch,
+            options: Arc::new(RwLock::new(options)),
         })
     }
 
@@ -1269,6 +1307,244 @@ impl NetEngine {
         result
     }
 
+    async fn wait_invalid_login(
+        domain: &str,
+        request: &Request,
+        job: &Job,
+        error: &str,
+    ) -> Result<(), NetError> {
+        let subscription = request
+            .extra_contexts
+            .iter()
+            .chain(&job.scope().contexts)
+            .any(|context| context.kind == hydrus_core::network::CONTEXT_SUBSCRIPTION);
+        if subscription {
+            job.cancel_because(&format!(r#"This job's network context "web domain: {domain}" seems to have an invalid login. The error was: {error}"#));
+            return Err(NetError::Cancelled);
+        }
+        job.set_wait(WaitReason::Login);
+        job.set_status(error);
+        tokio::select! {
+            () = tokio::time::sleep(Duration::from_secs(60)) => Ok(()),
+            () = job.cancel.cancelled() => Err(NetError::Cancelled),
+        }
+    }
+
+    fn login_process(&self) -> Option<network_runtime::LoginProcess> {
+        let mut process = hydrus_store::login_runtime::current(&self.store)
+            .ok()
+            .flatten()?;
+        let control = self.login.lock().clone();
+        if process.epoch == self.epoch
+            && let Some(control) = control
+        {
+            process.status = control.state().stage;
+        }
+        Some(process)
+    }
+
+    fn try_login_owner(
+        &self,
+        domain: &str,
+        script: &str,
+        control: &Arc<Job>,
+    ) -> Result<Option<LoginOwner>, NetError> {
+        let process = network_runtime::LoginProcess {
+            id: self.next_job.fetch_add(1, Ordering::Relaxed),
+            domain: domain.into(),
+            script: script.into(),
+            epoch: self.epoch.clone(),
+            status: control.state().stage,
+        };
+        let lease = hydrus_store::login_runtime::try_acquire(&self.store, process)
+            .map_err(|error| NetError::Io(error.to_string()))?;
+        Ok(lease.map(|lease| {
+            *self.login.lock() = Some(control.clone());
+            LoginOwner {
+                lease,
+                control: self.login.clone(),
+            }
+        }))
+    }
+
+    // Neither the store writer nor an in-memory lock is held across HTTP or waits.
+    #[allow(clippy::too_many_arguments)]
+    async fn execute_login_owned(
+        &self,
+        owner: LoginOwner,
+        script: &hydrus_parse::login::LoginScript,
+        domain: &str,
+        credentials: &std::collections::BTreeMap<String, String>,
+        control: &Job,
+        result_ready: impl FnMut(&crate::login::TestResult),
+    ) -> Result<(crate::login::Execution, bool), NetError> {
+        let execution = crate::login::execute_with_results(
+            self,
+            &self.store,
+            script,
+            domain,
+            credentials,
+            control,
+            result_ready,
+        );
+        tokio::pin!(execution);
+        let mut ticks = tokio::time::interval(Duration::from_millis(50));
+        let execution = loop {
+            tokio::select! {
+                result = &mut execution => break result,
+                _ = ticks.tick() => {
+                    match owner.lease.pulse(control.state().stage) {
+                        Ok(true) => { control.cancel(); },
+                        Ok(false) => {},
+                        Err(error) => { control.cancel(); return Err(NetError::Io(error.to_string())); },
+                    }
+                }
+            }
+        };
+        // Save before releasing admission so a queued downloader sees the outcome.
+        let outcome = execution.outcome.clone();
+        let domain = domain.to_owned();
+        let key = script.key.clone();
+        let applied = self
+            .store
+            .write_and_refresh(move |ctx| {
+                let mut manager = hydrus_store::logins::load(ctx.conn())?;
+                let applied = manager
+                    .domains
+                    .get_mut(&domain)
+                    .is_some_and(|login| outcome.update_domain(login, &key, now()));
+                if applied {
+                    hydrus_store::logins::save(ctx.conn(), &manager)?;
+                }
+                Ok(applied)
+            })
+            .map_err(|error| NetError::Io(error.to_string()))?;
+        Ok((execution, applied))
+    }
+
+    /// Execute a manual or forced login through the same per-store lease as demand.
+    /// Test editors use an isolated store and may keep their direct execution path.
+    pub async fn run_login_with_results(
+        &self,
+        script: &hydrus_parse::login::LoginScript,
+        domain: &str,
+        credentials: &std::collections::BTreeMap<String, String>,
+        control: &Arc<Job>,
+        result_ready: impl FnMut(&crate::login::TestResult),
+    ) -> Result<crate::login::Execution, NetError> {
+        let owner = loop {
+            if control.is_cancelled() {
+                return Err(NetError::Cancelled);
+            }
+            if let Some(owner) = self.try_login_owner(domain, &script.name, control)? {
+                break owner;
+            }
+            control.set_wait(WaitReason::Login);
+            control.set_status("waiting in login queue…");
+            control.sleep(0.05).await?;
+        };
+        self.execute_login_owned(owner, script, domain, credentials, control, result_ready)
+            .await
+            .map(|(execution, _)| execution)
+    }
+
+    fn wait_for_login<'a>(
+        &'a self,
+        domain: &'a str,
+        request: &'a Request,
+        job: &'a Job,
+    ) -> futures_util::future::BoxFuture<'a, Result<(), NetError>> {
+        Box::pin(async move {
+            use crate::login::{Demand, Outcome, demand};
+            loop {
+                if job.is_cancelled() {
+                    return Err(NetError::Cancelled);
+                }
+                if self
+                    .login_process()
+                    .is_some_and(|active| active.domain == domain)
+                {
+                    job.set_wait(WaitReason::Login);
+                    job.set_status("waiting in login queue…");
+                    job.sleep(0.05).await?;
+                    continue;
+                }
+                match demand(&self.store, domain, now()).map_err(NetError::Io)? {
+                    Demand::None => return Ok(()),
+                    Demand::Blocked { error, .. } => {
+                        Self::wait_invalid_login(domain, request, job, &error).await?;
+                    }
+                    Demand::Ready(login) => {
+                        job.set_wait(WaitReason::Login);
+                        job.set_status("waiting in login queue…");
+                        let control = Job::new();
+                        let Some(owner) =
+                            self.try_login_owner(&login.domain, &login.script.name, &control)?
+                        else {
+                            job.sleep(0.05).await?;
+                            continue;
+                        };
+                        let expected_domain = login.domain;
+                        let expected_key = login.script.key;
+                        let Demand::Ready(login) =
+                            demand(&self.store, domain, now()).map_err(NetError::Io)?
+                        else {
+                            continue;
+                        };
+                        if login.domain != expected_domain || login.script.key != expected_key {
+                            continue;
+                        }
+                        job.set_status("logging in…");
+                        // The guard exists before spawning, including an unpolled
+                        // worker dropped with its runtime. Cancelling the trigger
+                        // detaches the process; only its reviewed owner cancels it.
+                        let mut task = tokio::spawn({
+                            let engine = self.clone();
+                            async move {
+                                let (execution, applied) = engine
+                                    .execute_login_owned(
+                                        owner,
+                                        &login.script,
+                                        &login.domain,
+                                        &login.credentials,
+                                        &control,
+                                        |_| {},
+                                    )
+                                    .await?;
+                                Ok::<_, NetError>(applied.then_some(execution.outcome))
+                            }
+                        });
+                        let outcome = tokio::select! {
+                            result = &mut task => result.map_err(|error| NetError::Network(error.to_string()))??,
+                            () = job.cancel.cancelled() => return Err(NetError::Cancelled),
+                        };
+                        let reason = match outcome {
+                            Some(
+                                Outcome::Verification(error)
+                                | Outcome::FinalCookies(error)
+                                | Outcome::Network(error)
+                                | Outcome::Unusual(error),
+                            ) => Some(error),
+                            Some(Outcome::Cancelled) => {
+                                Some("User cancelled the login process.".into())
+                            }
+                            _ => None,
+                        };
+                        if let Some(reason) = reason {
+                            Self::wait_invalid_login(
+                                domain,
+                                request,
+                                job,
+                                &format!("The domain \"{domain}\" cannot log in: {reason}"),
+                            )
+                            .await?;
+                        }
+                    }
+                }
+            }
+        })
+    }
+
     async fn fetch_inner(&self, request: &Request, job: &Job) -> Result<Response, NetError> {
         let parts = check_full_url(&request.url)
             .map_err(|e| NetError::Network(format!("Invalid URL {}: {e}", request.url)))?;
@@ -1336,6 +1612,9 @@ impl NetEngine {
         }
         if !request.one_shot {
             self.wait_for_domain(&request.url, job).await?;
+        }
+        if !request.for_login {
+            self.wait_for_login(&domain, request, job).await?;
         }
         let gallery_token = scope
             .gallery_token

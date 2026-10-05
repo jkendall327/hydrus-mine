@@ -11,6 +11,8 @@ use hydrus_core::{
 };
 use hydrus_store::{Store, settings};
 
+pub const REGENERATE_QUESTION: &str = "!!WARNING EXPERIMENTAL!!\n\nThis will delete and then regenerate all the display calculations for the selected tags and their siblings and parents, with the intention of fixing bad autocomplete counts or sibling/parent presentation. It is functionally similar to the 'tag storage mappings cache' regeneration job, but just for these tags.\n\nIt might take a while to run, perhaps many minutes for a heavily-siblinged/-parented/-mapped tag, during which the database will be locked. Doing it on a thousand tags is going to completely gonk you. Also, any sibling or parent rules will be reset, and they will have to be recalculated, which will probably occur in a few seconds in the background after the regeneration job completes.";
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Decoration {
     Parents,
@@ -20,6 +22,9 @@ pub enum Decoration {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Action {
     Copy(String),
+    Regenerate {
+        tags: Vec<String>,
+    },
     Domain(crate::domains::Choice),
     Locations(LocationContext),
     Relationship {
@@ -51,6 +56,9 @@ pub enum Action {
 }
 impl Action {
     pub fn question(&self) -> Option<&str> {
+        if matches!(self, Self::Regenerate { .. }) {
+            return Some(REGENERATE_QUESTION);
+        }
         if let Self::Favourite { question, .. } = self {
             question.as_deref()
         } else {
@@ -59,6 +67,10 @@ impl Action {
     }
     /// Re-read inside the write: other windows' favourites must survive a delayed answer.
     pub fn persist(&self, store: &Store) -> hydrus_store::Result<()> {
+        if let Self::Regenerate { tags } = self {
+            let tags: Vec<_> = tags.iter().filter_map(|tag| Tag::new(tag)).collect();
+            return hydrus_store::maintenance::regenerate_tag_display(store, &tags);
+        }
         let Self::Favourite {
             tag,
             service,
@@ -205,6 +217,21 @@ impl WriteAutocomplete {
             }
             entries.push(Entry::Separator);
         }
+        let selected_tags = self.selected_tags();
+        if selected_tags.len() > 1 && selected_tags.contains(&selected.tag) {
+            let selected_rows: Vec<_> = rows
+                .iter()
+                .copied()
+                .filter(|row| selected_tags.contains(&row.tag))
+                .collect();
+            entries.extend(batch_entries(
+                self.store(),
+                self.tab(),
+                &rows,
+                &selected_rows,
+            ));
+            return entries;
+        }
         let subtag = split_tag(&selected.tag).1;
         let mut copy_entries = vec![copy(&selected.tag, &selected.tag)];
         if subtag != selected.tag {
@@ -323,8 +350,160 @@ impl WriteAutocomplete {
             ));
         }
         entries.push(Entry::Menu("favourites".into(), favourite_entries));
+        entries.push(maintenance_entry(vec![tag.clone()]));
         entries
     }
+}
+
+fn batch_entries(
+    store: &Store,
+    tab: Tab,
+    rows: &[&Suggestion],
+    selected: &[&Suggestion],
+) -> Vec<Entry> {
+    let label = format!("{} selected", selected.len());
+    let subtags: Vec<_> = selected.iter().map(|row| split_tag(&row.tag).1).collect();
+    let subtag_count = subtags
+        .iter()
+        .collect::<std::collections::BTreeSet<_>>()
+        .len();
+    let sublabel = if subtag_count == 1 {
+        subtags[0].to_owned()
+    } else {
+        format!("{subtag_count} selected subtags")
+    };
+    let mut copy_entries = vec![copy(&label, copies(selected, false, false))];
+    let has_namespace = selected.iter().any(|row| split_tag(&row.tag).1 != row.tag);
+    if has_namespace {
+        copy_entries.push(copy(&sublabel, copies(selected, true, false)));
+    }
+    if subtags.iter().any(|tag| tag.contains(' ')) {
+        let mut underscores: Vec<_> = subtags.iter().map(|tag| tag.replace(' ', "_")).collect();
+        let mut seen = std::collections::BTreeSet::new();
+        underscores.retain(|tag| seen.insert(tag.clone()));
+        let underscores_label = if underscores.len() == 1 {
+            underscores[0].clone()
+        } else {
+            format!("{} selected subtags with underscores", underscores.len())
+        };
+        copy_entries.push(copy(underscores_label, underscores.join("\n")));
+    }
+    if tab != Tab::Favourites {
+        copy_entries.push(Entry::Separator);
+        copy_entries.push(copy(
+            format!("{label} with counts"),
+            copies(selected, false, true),
+        ));
+        if has_namespace {
+            copy_entries.push(copy(
+                format!("{sublabel} with counts"),
+                copies(selected, true, true),
+            ));
+        }
+    }
+    let tags: Vec<_> = selected.iter().map(|row| row.tag.clone()).collect();
+    let mut with_parents = Vec::new();
+    for row in selected {
+        for tag in std::iter::once(&row.tag).chain(&row.parents) {
+            if !with_parents.contains(tag) {
+                with_parents.push(tag.clone());
+            }
+        }
+    }
+    let num_parents = with_parents.len() - tags.len();
+    let selection = if num_parents > 0 {
+        copy_entries.push(Entry::Separator);
+        let label = format!("{label} and {num_parents} parents");
+        copy_entries.push(copy(&label, with_parents.join("\n")));
+        label
+    } else {
+        label
+    };
+    if rows.len() > selected.len() {
+        copy_entries.push(Entry::Separator);
+        copy_entries.push(copy("all tags", copies(rows, false, false)));
+        copy_entries.push(copy("all subtags", copies(rows, true, false)));
+        if tab != Tab::Favourites {
+            copy_entries.push(copy("all tags with counts", copies(rows, false, true)));
+            copy_entries.push(copy("all subtags with counts", copies(rows, true, true)));
+        }
+    }
+    let defaults: settings::SearchDefaults = store.read(settings::get).unwrap_or_default();
+    let context = TagContext::new(defaults.tag_service, true, true);
+    let predicates: Vec<_> = tags
+        .iter()
+        .map(|tag| Predicate::Tag {
+            tag: Tag::new(tag).expect("cleaned suggestion"),
+            inclusive: true,
+        })
+        .collect();
+    let launch = |predicates, duplicate| Action::Launch {
+        location: LocationContext::default(),
+        context: context.clone(),
+        predicates,
+        duplicate,
+    };
+    vec![
+        Entry::Menu("copy".into(), copy_entries),
+        Entry::Menu(
+            "siblings".into(),
+            vec![item(
+                "add siblings to selection",
+                Action::Relationship {
+                    kind: hydrus_store::display::RelationKind::Siblings,
+                    tags: tags.clone(),
+                },
+            )],
+        ),
+        Entry::Menu(
+            "parents".into(),
+            vec![item(
+                "add parents to selection",
+                Action::Relationship {
+                    kind: hydrus_store::display::RelationKind::Parents,
+                    tags: tags.clone(),
+                },
+            )],
+        ),
+        Entry::Menu(
+            "open".into(),
+            vec![
+                item(
+                    format!("open a new search page for {selection}"),
+                    launch(predicates.clone(), false),
+                ),
+                item(
+                    format!("open a new OR search page for {selection}"),
+                    launch(vec![Predicate::Or(predicates.clone())], false),
+                ),
+                item(
+                    "open new search pages for each in selection",
+                    Action::LaunchMany {
+                        location: LocationContext::default(),
+                        context: context.clone(),
+                        pages: predicates
+                            .iter()
+                            .cloned()
+                            .map(|predicate| vec![predicate])
+                            .collect(),
+                    },
+                ),
+                Entry::Separator,
+                item(
+                    format!("open a new duplicate filter page for {selection}"),
+                    launch(predicates, true),
+                ),
+            ],
+        ),
+        maintenance_entry(tags),
+    ]
+}
+
+fn maintenance_entry(tags: Vec<String>) -> Entry {
+    Entry::Menu(
+        "maintenance".into(),
+        vec![item("regenerate tag display", Action::Regenerate { tags })],
+    )
 }
 
 fn spam(entries: &mut Vec<Entry>, labels: &[(String, String)]) {

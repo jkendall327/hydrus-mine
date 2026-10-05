@@ -668,3 +668,202 @@ fn a_forced_filetype_keeps_the_detected_one_and_is_undone() {
     force(&w, None);
     assert_eq!(mimes(&w), (Mime::ImageJpeg, None));
 }
+
+#[test]
+fn service_bulk_rating_scopes_keep_trash_and_other_services() {
+    for kind in [
+        ServiceKind::RatingLike(services::LikeRatingConfig {
+            display: services::RatingDisplay::default(),
+            appearance: services::StarAppearance::Shape(services::StarShape::CIRCLE),
+        }),
+        ServiceKind::RatingNumerical(services::NumericalRatingConfig {
+            display: services::RatingDisplay::default(),
+            appearance: services::StarAppearance::Shape(services::StarShape::CIRCLE),
+            num_stars: 5,
+            allow_zero: true,
+            custom_pad: 0,
+            show_fraction_beside_stars: 0,
+        }),
+        ServiceKind::RatingIncDec(services::RatingDisplay::default()),
+    ] {
+        for (scope, expected) in [
+            (RatingClearScope::Deleted, vec![1, 2, 4]),
+            (RatingClearScope::NonLocal, vec![1, 2]),
+            (RatingClearScope::All, vec![]),
+        ] {
+            let mut w = world();
+            let selected = services::insert(
+                &w.conn,
+                &ServiceKey::new(vec![64; 32]),
+                "bulk selected",
+                &kind,
+            )
+            .unwrap();
+            let other =
+                services::insert(&w.conn, &ServiceKey::new(vec![65; 32]), "bulk other", &kind)
+                    .unwrap();
+            w.snap = Snapshot::load(&w.conn).unwrap();
+            let incdec = matches!(kind, ServiceKind::RatingIncDec(_));
+            let mut c = w.writer();
+            c.add_files(
+                w.roles.local[0],
+                &[
+                    (HashId(1), Some(100)),
+                    (HashId(2), Some(101)),
+                    (HashId(3), Some(102)),
+                ],
+            )
+            .unwrap();
+            c.delete_files(w.roles.combined_local_media, &hashes(&[2, 3]), None)
+                .unwrap();
+            c.delete_files(w.roles.local_file_storage, &hashes(&[3]), None)
+                .unwrap();
+            for service in [selected, other] {
+                if incdec {
+                    c.set_incdec(service, &hashes(&[1, 2, 3, 4]), 7).unwrap();
+                } else {
+                    c.set_rating(service, &hashes(&[1, 2, 3, 4]), Some(1.0))
+                        .unwrap();
+                }
+            }
+            assert_eq!(
+                c.clear_ratings(selected, scope).unwrap(),
+                4 - expected.len()
+            );
+            c.finish().unwrap();
+            let table = if incdec { "ratings_incdec" } else { "ratings" };
+            let rated = |service| {
+                w.conn
+                    .prepare(&format!(
+                        "SELECT hash_id FROM {table} WHERE service_id = ? ORDER BY hash_id"
+                    ))
+                    .unwrap()
+                    .query_map([service], |row| row.get::<_, HashId>(0))
+                    .unwrap()
+                    .collect::<rusqlite::Result<Vec<_>>>()
+                    .unwrap()
+            };
+            assert_eq!(rated(selected), hashes(&expected));
+            assert_eq!(rated(other), hashes(&[1, 2, 3, 4]));
+            assert!(w.writer().clear_ratings(w.roles.trash, scope).is_err());
+            w.assert_domain_invariants();
+        }
+    }
+}
+
+#[test]
+fn service_bulk_trash_respects_lock_and_restores_all_former_domains() {
+    let w = world();
+    let mut c = w.writer();
+    c.add_files(
+        w.roles.local[0],
+        &[(HashId(1), Some(100)), (HashId(2), Some(101))],
+    )
+    .unwrap();
+    c.add_files(w.second_local, &[(HashId(1), Some(200))])
+        .unwrap();
+    c.delete_files(w.roles.combined_local_media, &hashes(&[1, 2]), None)
+        .unwrap();
+    c.finish().unwrap();
+    crate::settings::set(
+        &w.conn,
+        &crate::delete_lock::DeleteLock {
+            archived: true,
+            ..crate::delete_lock::DeleteLock::default()
+        },
+    )
+    .unwrap();
+    w.conn
+        .execute("INSERT INTO file_inbox VALUES (2)", [])
+        .unwrap();
+    let mut c = w.writer();
+    c.clear_trash().unwrap();
+    c.finish().unwrap();
+    assert_eq!(
+        w.current_set(w.roles.trash),
+        hashes(&[1]).into_iter().collect()
+    );
+    let queued: Vec<HashId> = w
+        .conn
+        .prepare("SELECT hash_id FROM deferred_physical_deletes ORDER BY hash_id")
+        .unwrap()
+        .query_map([], |row| row.get(0))
+        .unwrap()
+        .collect::<rusqlite::Result<_>>()
+        .unwrap();
+    assert_eq!(queued, hashes(&[2]));
+    let mut c = w.writer();
+    c.undelete_trash().unwrap();
+    c.finish().unwrap();
+    assert_eq!(
+        w.current(w.roles.local[0]),
+        BTreeMap::from([(HashId(1), Some(100))])
+    );
+    assert_eq!(
+        w.current(w.second_local),
+        BTreeMap::from([(HashId(1), Some(200))])
+    );
+    assert!(w.current_set(w.roles.trash).is_empty());
+    w.assert_domain_invariants();
+    w.assert_counts_match_rebuild();
+}
+
+#[test]
+fn service_deleted_record_clear_keeps_trash_history_and_physical_queue() {
+    let w = world();
+    let mut c = w.writer();
+    c.add_files(
+        w.roles.local[0],
+        &[(HashId(1), Some(100)), (HashId(2), Some(200))],
+    )
+    .unwrap();
+    c.add_files(
+        w.second_local,
+        &[(HashId(1), Some(101)), (HashId(2), Some(201))],
+    )
+    .unwrap();
+    c.delete_files(
+        w.roles.combined_local_media,
+        &hashes(&[1, 2]),
+        Some("parity record test"),
+    )
+    .unwrap();
+    c.delete_files(w.roles.local_file_storage, &hashes(&[1]), None)
+        .unwrap();
+    c.finish().unwrap();
+    let before_trash = w.current(w.roles.trash);
+    let preserved = w.deleted(w.second_local)[&HashId(2)];
+    let mut c = w.writer();
+    c.clear_local_delete_records(None).unwrap();
+    c.finish().unwrap();
+    for domain in [
+        w.roles.local[0],
+        w.second_local,
+        w.roles.combined_local_media,
+        w.roles.local_file_storage,
+    ] {
+        assert!(!w.deleted(domain).contains_key(&HashId(1)));
+    }
+    assert_eq!(w.deleted(w.second_local)[&HashId(2)], preserved);
+    assert_eq!(w.current(w.roles.trash), before_trash);
+    let reason_hashes: Vec<HashId> = w
+        .conn
+        .prepare("SELECT hash_id FROM file_deletion_reasons ORDER BY hash_id")
+        .unwrap()
+        .query_map([], |row| row.get(0))
+        .unwrap()
+        .collect::<rusqlite::Result<_>>()
+        .unwrap();
+    assert_eq!(reason_hashes, hashes(&[2]));
+    let queued: Vec<HashId> = w
+        .conn
+        .prepare("SELECT hash_id FROM deferred_physical_deletes ORDER BY hash_id")
+        .unwrap()
+        .query_map([], |row| row.get(0))
+        .unwrap()
+        .collect::<rusqlite::Result<_>>()
+        .unwrap();
+    assert_eq!(queued, hashes(&[1]));
+    w.assert_domain_invariants();
+    w.assert_counts_match_rebuild();
+}

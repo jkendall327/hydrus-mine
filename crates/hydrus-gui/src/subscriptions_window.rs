@@ -37,6 +37,10 @@ const MULTIPLE_FAVOURITE_LOAD: &str = "Hey, multiple items in the subscriptions 
 
 /// What a question waits on.
 enum Asking {
+    MissingHistory(
+        Box<hydrus_downloader_exchange::subscriptions::Subscription>,
+        Vec<hydrus_downloader_exchange::subscriptions::Subscription>,
+    ),
     FavouriteLoad(String),
     Delete,
     ClearImportOptions(Vec<u64>, String),
@@ -124,6 +128,7 @@ fn read(store: &Store) -> hydrus_store::Result<Open> {
                         .collect(),
                     log_changes: Vec::new(),
                     copy_of: None,
+                    exchange: None,
                     state: q.state,
                 });
             }
@@ -161,6 +166,7 @@ struct QueryWrite {
     logs: Vec<LogChange>,
     /// A new query's file log, copied from this queue's.
     copy_of: Option<i64>,
+    exchange: Option<hydrus_downloader_exchange::subscriptions::Query>,
 }
 
 /// A change "apply" writes.
@@ -173,7 +179,7 @@ enum Write {
     Settings(i64, Box<SubscriptionSettings>),
     Query(i64, QueryState),
     /// A new query, its file log copied from a queue's if any.
-    AddQuery(i64, QueryState, Option<i64>),
+    AddQuery(i64, Box<QueryWrite>),
     /// A query moved to this subscription.
     Move(i64, i64),
     RemoveQuery(i64),
@@ -215,6 +221,7 @@ fn changes(open: &Open) -> Vec<Write> {
                         state: q.state.clone(),
                         logs: q.log_changes.clone(),
                         copy_of: q.copy_of,
+                        exchange: q.exchange.clone(),
                     })
                     .collect(),
             ));
@@ -230,7 +237,16 @@ fn changes(open: &Open) -> Vec<Write> {
         }
         for q in &s.queries {
             let Some(queue) = q.queue else {
-                writes.push(Write::AddQuery(id, q.state.clone(), q.copy_of));
+                writes.push(Write::AddQuery(
+                    id,
+                    Box::new(QueryWrite {
+                        queue: None,
+                        state: q.state.clone(),
+                        logs: q.log_changes.clone(),
+                        copy_of: q.copy_of,
+                        exchange: q.exchange.clone(),
+                    }),
+                ));
                 continue;
             };
             if owners.get(&queue) != Some(&id) {
@@ -265,19 +281,23 @@ fn change_log(
             queues::remove_file_seeds(conn, queue, &all)?;
         }
         LogChange::RetryFailed => {
-            queues::retry_file_seeds(conn, queue, &[SeedStatus::Error], now)?;
+            let ids = queues::file_seeds(conn, queue)?
+                .into_iter()
+                .filter(|seed| seed.status == SeedStatus::Error)
+                .map(|seed| seed.id)
+                .collect::<Vec<_>>();
+            queues::set_file_seed_statuses(conn, &ids, SeedStatus::Unknown, now)?;
         }
         LogChange::RetryIgnored(which) => {
-            for mut seed in queues::file_seeds(conn, queue)? {
-                if seed.status == SeedStatus::Vetoed && which.matches(&seed.note) {
-                    seed.status = SeedStatus::Unknown;
-                    seed.note.clear();
-                    seed.modified = now;
-                    queues::update_file_seed(conn, &seed)?;
-                }
-            }
+            let ids = queues::file_seeds(conn, queue)?
+                .into_iter()
+                .filter(|seed| seed.status == SeedStatus::Vetoed && which.matches(&seed.note))
+                .map(|seed| seed.id)
+                .collect::<Vec<_>>();
+            queues::set_file_seed_statuses(conn, &ids, SeedStatus::Unknown, now)?;
         }
     }
+    hydrus_gui_model::subscription_exchange::update_file_status(conn, queue, now)?;
     Ok(())
 }
 
@@ -298,6 +318,16 @@ fn write(store: &Store, writes: Vec<Write>) -> hydrus_store::Result<()> {
                             let queue = subscriptions::add_query(conn, id, &q.state, now)?;
                             if let Some(from) = q.copy_of {
                                 queues::copy_seeds(conn, from, queue)?;
+                                hydrus_gui_model::subscription_exchange::copy_header(
+                                    conn, from, queue,
+                                )?;
+                            }
+                            if q.copy_of.is_none()
+                                && let Some(query) = &q.exchange
+                            {
+                                hydrus_gui_model::subscription_exchange::restore(
+                                    conn, queue, query,
+                                )?;
                             }
                             for &change in &q.logs {
                                 change_log(conn, queue, change, now)?;
@@ -312,10 +342,16 @@ fn write(store: &Store, writes: Vec<Write>) -> hydrus_store::Result<()> {
                     }
                 }
                 Write::Move(queue, id) => subscriptions::move_query(conn, *queue, *id)?,
-                Write::AddQuery(id, state, copy_of) => {
-                    let queue = subscriptions::add_query(conn, *id, state, now)?;
-                    if let Some(from) = copy_of {
-                        queues::copy_seeds(conn, *from, queue)?;
+                Write::AddQuery(id, q) => {
+                    let queue = subscriptions::add_query(conn, *id, &q.state, now)?;
+                    if let Some(from) = q.copy_of {
+                        queues::copy_seeds(conn, from, queue)?;
+                        hydrus_gui_model::subscription_exchange::copy_header(conn, from, queue)?;
+                    } else if let Some(query) = &q.exchange {
+                        hydrus_gui_model::subscription_exchange::restore(conn, queue, query)?;
+                    }
+                    for &change in &q.logs {
+                        change_log(conn, queue, change, now)?;
                     }
                 }
                 Write::RemoveQuery(queue) => subscriptions::remove_query(conn, *queue)?,
@@ -363,6 +399,26 @@ fn merge_named(
     if !rest.is_empty() {
         let next = rest.remove(0);
         open.asking = Some(Asking::MergePrimary(next, rest));
+    }
+}
+
+/// Import in reference list order, pausing at each incomplete subscription.
+fn import_next(
+    open: &mut Open,
+    mut incoming: Vec<hydrus_downloader_exchange::subscriptions::Subscription>,
+) {
+    while !incoming.is_empty() {
+        let subscription = incoming.remove(0);
+        if subscription.queries.iter().any(|q| q.log.is_none()) {
+            open.asking = Some(Asking::MissingHistory(Box::new(subscription), incoming));
+            return;
+        }
+        if let Err(error) =
+            hydrus_gui_model::subscription_exchange::stage(&mut open.dialog, vec![subscription])
+        {
+            open.asking = Some(Asking::Message(error));
+            return;
+        }
     }
 }
 
@@ -427,6 +483,10 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
             .collect()
     };
     let question = match &open.asking {
+        Some(Asking::MissingHistory(subscription, _)) => Some((
+            hydrus_gui_model::subscription_exchange::missing_history_question(&subscription.name),
+            false,
+        )),
         Some(Asking::Reset) => yes_no(RESET_QUESTION),
         Some(Asking::Lowercase) => yes_no(LOWERCASE_QUESTION),
         Some(Asking::Merge) => yes_no(MERGE_QUESTION),
@@ -758,6 +818,7 @@ pub(crate) fn open(
     edit_slots: Slots,
 ) -> Result<SubscriptionsWindow, String> {
     let edit_slots = Rc::new(edit_slots);
+    let exchange = edit_slots.exchange.clone();
     let state = Rc::new(RefCell::new(read(store).map_err(|e| e.to_string())?));
     let active = Rc::new(Cell::new(true));
     let window = SubscriptionsWindow::new().map_err(|e| e.to_string())?;
@@ -772,10 +833,12 @@ pub(crate) fn open(
         let edit = edit_slots.edit.clone();
         let gallery = gallery_slot.clone();
         let state = state.clone();
+        let exchange = exchange.clone();
         move || {
             if !active.replace(false) {
                 return;
             }
+            exchange.cancel();
             let favourites = state.borrow().favourites.clone();
             if let Some(favourites) = favourites {
                 favourites.close();
@@ -802,8 +865,10 @@ pub(crate) fn open(
         let active = active.clone();
         let weak = window.as_weak();
         let state = state.clone();
+        let exchange = exchange.clone();
         move |f: &dyn Fn(&mut Open)| {
             if !active.get()
+                || exchange.has_open()
                 || state
                     .borrow()
                     .favourites
@@ -898,8 +963,8 @@ pub(crate) fn open(
         let refresh = refresh_favourites.clone();
         move || refresh()
     });
-    window.on_favourite({ let state = state.clone(); let targets = targets.clone(); let favourites = favourites.clone(); let change = change.clone(); let active = active.clone(); let refresh = refresh_favourites.clone(); move |action, name| {
-        if !active.get() || favourites.busy() || state.borrow().asking.is_some() { return; }
+    window.on_favourite({ let state = state.clone(); let targets = targets.clone(); let favourites = favourites.clone(); let change = change.clone(); let active = active.clone(); let refresh = refresh_favourites.clone(); let exchange = exchange.clone(); move |action, name| {
+        if !active.get() || exchange.has_open() || favourites.busy() || state.borrow().asking.is_some() { return; }
         if action == 0 || action == 1 {
             let keys = state.borrow().dialog.selected(now());
             if keys.is_empty() { change(&|open| open.asking = Some(Asking::Information("Hey, nothing is selected in the subscriptions list--select something and try loading again.".into()))); return; }
@@ -933,8 +998,9 @@ pub(crate) fn open(
         let store = store.clone();
         let change = change.clone();
         let slots = edit_slots.clone();
+        let active = active.clone();
         move |key: Option<u64>, settings: SubscriptionSettings| {
-            if slots.edit.borrow().is_some() {
+            if !active.get() || slots.exchange.has_open() || slots.edit.borrow().is_some() {
                 return;
             }
             let dialog = {
@@ -999,7 +1065,12 @@ pub(crate) fn open(
         let slot = gallery_slot.clone();
         let weak = window.as_weak();
         let edit = edit.clone();
+        let exchange = exchange.clone();
+        let active = active.clone();
         move || {
+            if !active.get() || exchange.has_open() {
+                return;
+            }
             let current = store
                 .read(hydrus_store::settings::get::<hydrus_core::subscriptions::GalleryDefaults>)
                 .ok()
@@ -1087,6 +1158,18 @@ pub(crate) fn open(
                 .map(|w| w.get_asked_text().to_string())
                 .unwrap_or_default();
             change(&|open| match open.asking.take() {
+                Some(Asking::MissingHistory(subscription, rest)) => {
+                    if index == 0
+                        && let Err(error) = hydrus_gui_model::subscription_exchange::stage(
+                            &mut open.dialog,
+                            vec![*subscription],
+                        )
+                    {
+                        open.asking = Some(Asking::Message(error));
+                        return;
+                    }
+                    import_next(open, rest);
+                }
                 Some(Asking::ClearImportOptions(keys, _)) => {
                     if index == 0 {
                         open.dialog.clear_import_options(&keys);
@@ -1206,15 +1289,19 @@ pub(crate) fn open(
         let change = change.clone();
         move || {
             change(&|open| {
-                // (a merged subscription's name cancelled keeps its name,
-                // as the reference's)
-                if let Some(Asking::MergeName {
-                    group,
-                    primary,
-                    rest,
-                }) = open.asking.take()
-                {
-                    merge_named(open, &group, primary, rest, None);
+                match open.asking.take() {
+                    // A cancelled rename keeps the primary's original name.
+                    Some(Asking::MergeName {
+                        group,
+                        primary,
+                        rest,
+                    }) => {
+                        merge_named(open, &group, primary, rest, None);
+                    }
+                    Some(Asking::MissingHistory(_, rest)) => {
+                        import_next(open, rest);
+                    }
+                    _ => (),
                 }
             });
         }
@@ -1298,7 +1385,12 @@ pub(crate) fn open(
         let store = store.clone();
         let slot = gallery_slot.clone();
         let weak = window.as_weak();
+        let exchange = exchange.clone();
+        let active = active.clone();
         move || {
+            if !active.get() || exchange.has_open() {
+                return;
+            }
             let current = {
                 let open = state.borrow();
                 open.dialog
@@ -1320,7 +1412,12 @@ pub(crate) fn open(
         let state = state.clone();
         let store = store.clone();
         let slot = edit_slots.checker.clone();
+        let exchange = exchange.clone();
+        let active = active.clone();
         move || {
+            if !active.get() || exchange.has_open() {
+                return;
+            }
             if slot.borrow().is_some() {
                 return;
             }
@@ -1347,7 +1444,11 @@ pub(crate) fn open(
         let state = state.clone();
         let change = change.clone();
         let active = active.clone();
+        let exchange = exchange.clone();
         move || {
+            if !active.get() || exchange.has_open() {
+                return;
+            }
             if !active.get() {
                 return;
             }
@@ -1380,7 +1481,9 @@ pub(crate) fn open(
         let state = state.clone();
         let change = change.clone();
         let active = active.clone();
+        let exchange = exchange.clone();
         move |index| {
+            if !active.get() || exchange.has_open() { return; }
             if !active.get() { return; }
             let Some(mode) = usize::try_from(index).ok().and_then(ImportOptionsPaste::from_menu_index) else { return; };
             let keys = state.borrow().dialog.selected(now());
@@ -1410,7 +1513,133 @@ pub(crate) fn open(
             });
         }
     });
+    window.on_exchange({
+        let active = active.clone();
+        let state = state.clone();
+        let store = store.clone();
+        let weak = window.as_weak();
+        let slots = exchange.clone();
+        move |importing| {
+            if !active.get() || slots.has_open() || state.borrow().asking.is_some()
+                || state.borrow().favourites.as_ref().is_some_and(|owner| owner.busy())
+            {
+                return;
+            }
+            let definitions = if importing {
+                Ok(Vec::new())
+            } else {
+                hydrus_gui_model::subscription_exchange::selected(&store, &state.borrow().dialog, now())
+            };
+            let result = definitions.and_then(|definitions| {
+                let preview = Rc::new(|incoming: Vec<hydrus_downloader_exchange::subscriptions::Subscription>| {
+                    hydrus_gui_model::subscription_exchange::validate(&incoming)?;
+                    let missing = incoming.iter()
+                        .filter(|s| s.queries.iter().any(|q| q.log.is_none()))
+                        .map(|s| s.name.as_str()).collect::<Vec<_>>();
+                    let warning = if missing.is_empty() {
+                        String::new()
+                    } else {
+                        format!("\nMissing query histories in {} will be reinitialised empty. Cancel to back out.", missing.join(", "))
+                    };
+                    let names = incoming.iter().map(|s| s.name.as_str()).collect::<Vec<_>>().join("\n");
+                    Ok(format!("Import {} complete subscriptions:\n{names}{warning}\nChanges are saved only when you apply manage subscriptions.", incoming.len()))
+                });
+                let applied = Rc::new({
+                    let active = active.clone();
+                    let state = state.clone();
+                    move |incoming| {
+                        if !active.get() {
+                            return Err("The subscription list was closed.".into());
+                        }
+                        import_next(&mut state.borrow_mut(), incoming);
+                        Ok(())
+                    }
+                });
+                crate::downloader_interchange_window::open_subscriptions(&store, &slots, importing, definitions, preview, applied)
+            });
+            if let Some(parent) = weak.upgrade() {
+                match result {
+                    Ok(child) => {
+                        parent.set_exchange_open(true);
+                        child.on_closed({
+                            let weak = weak.clone();
+                            let state = state.clone();
+                            let active = active.clone();
+                            move || {
+                                if active.get() && let Some(parent) = weak.upgrade() {
+                                    parent.set_exchange_open(false);
+                                    show(&parent, &state.borrow());
+                                }
+                            }
+                        });
+                    }
+                    Err(error) => { parent.set_import_status(error.into()); }
+                }
+            }
+        }
+    });
+    window.on_exchange_mode({
+        let active = active.clone();
+        let weak = window.as_weak();
+        let slots = exchange.clone();
+        move |mode| {
+            if !active.get() || slots.has_open() || !(0..=5).contains(&mode) {
+                return;
+            }
+            let Some(parent) = weak.upgrade() else {
+                return;
+            };
+            parent.invoke_exchange(mode >= 3);
+            let child = slots
+                .0
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            let Some(child) = child else {
+                return;
+            };
+            match mode {
+                0 => {
+                    child.invoke_action("copy".into());
+                    if child.get_error().is_empty() {
+                        child.invoke_action("cancel".into());
+                    }
+                }
+                1 => {
+                    child.invoke_action("browse-json".into());
+                    if child.get_path().is_empty() {
+                        child.invoke_action("cancel".into());
+                    } else {
+                        child.invoke_action("save-json".into());
+                    }
+                }
+                2 => {
+                    child.invoke_export_png();
+                }
+                3 => {
+                    child.invoke_action("paste".into());
+                    if child.get_error().is_empty() {
+                        child.invoke_action("review".into());
+                    }
+                }
+                _ => {
+                    child.invoke_action(
+                        if mode == 4 {
+                            "import-jsons"
+                        } else {
+                            "import-pngs"
+                        }
+                        .into(),
+                    );
+                    if !child.get_ready() && child.get_error().is_empty() {
+                        child.invoke_action("cancel".into());
+                    }
+                }
+            }
+        }
+    });
     window.on_apply({
+        let exchange = exchange.clone();
         let active = active.clone();
         let state = state.clone();
         let store = store.clone();
@@ -1423,6 +1652,9 @@ pub(crate) fn open(
                     .as_ref()
                     .is_some_and(|owner| owner.busy())
             {
+                return;
+            }
+            if exchange.has_open() || state.borrow().asking.is_some() {
                 return;
             }
             let writes = changes(&state.borrow());

@@ -1,0 +1,680 @@
+{
+  "cases": [
+    {
+      "folder_kind": "import",
+      "initially_paused": false,
+      "worker_initially_running": false,
+      "answer": "cancel",
+      "events": [
+        {
+          "kind": "dialog",
+          "title": "edit import folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "cancel"
+        }
+      ],
+      "error": null,
+      "finally_paused": false,
+      "wait_jobs": []
+    },
+    {
+      "folder_kind": "import",
+      "initially_paused": false,
+      "worker_initially_running": false,
+      "answer": "apply",
+      "events": [
+        {
+          "kind": "dialog",
+          "title": "edit import folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "apply"
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_import_folders",
+          "paused": true
+        }
+      ],
+      "error": null,
+      "finally_paused": false,
+      "wait_jobs": []
+    },
+    {
+      "folder_kind": "import",
+      "initially_paused": false,
+      "worker_initially_running": false,
+      "answer": "exception",
+      "events": [
+        {
+          "kind": "dialog",
+          "title": "edit import folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "exception"
+        }
+      ],
+      "error": "scripted folder-manager exception",
+      "finally_paused": false,
+      "wait_jobs": []
+    },
+    {
+      "folder_kind": "import",
+      "initially_paused": true,
+      "worker_initially_running": false,
+      "answer": "cancel",
+      "events": [
+        {
+          "kind": "dialog",
+          "title": "edit import folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "cancel"
+        }
+      ],
+      "error": null,
+      "finally_paused": true,
+      "wait_jobs": []
+    },
+    {
+      "folder_kind": "import",
+      "initially_paused": true,
+      "worker_initially_running": false,
+      "answer": "apply",
+      "events": [
+        {
+          "kind": "dialog",
+          "title": "edit import folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "apply"
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_import_folders",
+          "paused": true
+        }
+      ],
+      "error": null,
+      "finally_paused": true,
+      "wait_jobs": []
+    },
+    {
+      "folder_kind": "import",
+      "initially_paused": true,
+      "worker_initially_running": false,
+      "answer": "exception",
+      "events": [
+        {
+          "kind": "dialog",
+          "title": "edit import folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "exception"
+        }
+      ],
+      "error": "scripted folder-manager exception",
+      "finally_paused": true,
+      "wait_jobs": []
+    },
+    {
+      "folder_kind": "import",
+      "initially_paused": false,
+      "worker_initially_running": true,
+      "answer": "cancel",
+      "events": [
+        {
+          "kind": "wait",
+          "text": "Waiting for import folders to finish.",
+          "paused": true
+        },
+        {
+          "kind": "dialog",
+          "title": "edit import folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "cancel"
+        }
+      ],
+      "error": null,
+      "finally_paused": false,
+      "wait_jobs": [
+        {
+          "done": true,
+          "dismissed": true
+        }
+      ]
+    },
+    {
+      "folder_kind": "import",
+      "initially_paused": false,
+      "worker_initially_running": true,
+      "answer": "apply",
+      "events": [
+        {
+          "kind": "wait",
+          "text": "Waiting for import folders to finish.",
+          "paused": true
+        },
+        {
+          "kind": "dialog",
+          "title": "edit import folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "apply"
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_import_folders",
+          "paused": true
+        }
+      ],
+      "error": null,
+      "finally_paused": false,
+      "wait_jobs": [
+        {
+          "done": true,
+          "dismissed": true
+        }
+      ]
+    },
+    {
+      "folder_kind": "import",
+      "initially_paused": false,
+      "worker_initially_running": true,
+      "answer": "exception",
+      "events": [
+        {
+          "kind": "wait",
+          "text": "Waiting for import folders to finish.",
+          "paused": true
+        },
+        {
+          "kind": "dialog",
+          "title": "edit import folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "exception"
+        }
+      ],
+      "error": "scripted folder-manager exception",
+      "finally_paused": false,
+      "wait_jobs": [
+        {
+          "done": true,
+          "dismissed": true
+        }
+      ]
+    },
+    {
+      "folder_kind": "import",
+      "initially_paused": true,
+      "worker_initially_running": true,
+      "answer": "cancel",
+      "events": [
+        {
+          "kind": "wait",
+          "text": "Waiting for import folders to finish.",
+          "paused": true
+        },
+        {
+          "kind": "dialog",
+          "title": "edit import folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "cancel"
+        }
+      ],
+      "error": null,
+      "finally_paused": true,
+      "wait_jobs": [
+        {
+          "done": true,
+          "dismissed": true
+        }
+      ]
+    },
+    {
+      "folder_kind": "import",
+      "initially_paused": true,
+      "worker_initially_running": true,
+      "answer": "apply",
+      "events": [
+        {
+          "kind": "wait",
+          "text": "Waiting for import folders to finish.",
+          "paused": true
+        },
+        {
+          "kind": "dialog",
+          "title": "edit import folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "apply"
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_import_folders",
+          "paused": true
+        }
+      ],
+      "error": null,
+      "finally_paused": true,
+      "wait_jobs": [
+        {
+          "done": true,
+          "dismissed": true
+        }
+      ]
+    },
+    {
+      "folder_kind": "import",
+      "initially_paused": true,
+      "worker_initially_running": true,
+      "answer": "exception",
+      "events": [
+        {
+          "kind": "wait",
+          "text": "Waiting for import folders to finish.",
+          "paused": true
+        },
+        {
+          "kind": "dialog",
+          "title": "edit import folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "exception"
+        }
+      ],
+      "error": "scripted folder-manager exception",
+      "finally_paused": true,
+      "wait_jobs": [
+        {
+          "done": true,
+          "dismissed": true
+        }
+      ]
+    },
+    {
+      "folder_kind": "export",
+      "initially_paused": false,
+      "worker_initially_running": false,
+      "answer": "cancel",
+      "events": [
+        {
+          "kind": "dialog",
+          "title": "edit export folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "cancel"
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_export_folders",
+          "paused": false
+        }
+      ],
+      "error": null,
+      "finally_paused": false,
+      "wait_jobs": []
+    },
+    {
+      "folder_kind": "export",
+      "initially_paused": false,
+      "worker_initially_running": false,
+      "answer": "apply",
+      "events": [
+        {
+          "kind": "dialog",
+          "title": "edit export folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "apply"
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_export_folders",
+          "paused": true
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_export_folders",
+          "paused": false
+        }
+      ],
+      "error": null,
+      "finally_paused": false,
+      "wait_jobs": []
+    },
+    {
+      "folder_kind": "export",
+      "initially_paused": false,
+      "worker_initially_running": false,
+      "answer": "exception",
+      "events": [
+        {
+          "kind": "dialog",
+          "title": "edit export folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "exception"
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_export_folders",
+          "paused": false
+        }
+      ],
+      "error": "scripted folder-manager exception",
+      "finally_paused": false,
+      "wait_jobs": []
+    },
+    {
+      "folder_kind": "export",
+      "initially_paused": true,
+      "worker_initially_running": false,
+      "answer": "cancel",
+      "events": [
+        {
+          "kind": "dialog",
+          "title": "edit export folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "cancel"
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_export_folders",
+          "paused": true
+        }
+      ],
+      "error": null,
+      "finally_paused": true,
+      "wait_jobs": []
+    },
+    {
+      "folder_kind": "export",
+      "initially_paused": true,
+      "worker_initially_running": false,
+      "answer": "apply",
+      "events": [
+        {
+          "kind": "dialog",
+          "title": "edit export folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "apply"
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_export_folders",
+          "paused": true
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_export_folders",
+          "paused": true
+        }
+      ],
+      "error": null,
+      "finally_paused": true,
+      "wait_jobs": []
+    },
+    {
+      "folder_kind": "export",
+      "initially_paused": true,
+      "worker_initially_running": false,
+      "answer": "exception",
+      "events": [
+        {
+          "kind": "dialog",
+          "title": "edit export folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "exception"
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_export_folders",
+          "paused": true
+        }
+      ],
+      "error": "scripted folder-manager exception",
+      "finally_paused": true,
+      "wait_jobs": []
+    },
+    {
+      "folder_kind": "export",
+      "initially_paused": false,
+      "worker_initially_running": true,
+      "answer": "cancel",
+      "events": [
+        {
+          "kind": "wait",
+          "text": "Waiting for export folders to finish.",
+          "paused": true
+        },
+        {
+          "kind": "dialog",
+          "title": "edit export folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "cancel"
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_export_folders",
+          "paused": false
+        }
+      ],
+      "error": null,
+      "finally_paused": false,
+      "wait_jobs": [
+        {
+          "done": true,
+          "dismissed": true
+        }
+      ]
+    },
+    {
+      "folder_kind": "export",
+      "initially_paused": false,
+      "worker_initially_running": true,
+      "answer": "apply",
+      "events": [
+        {
+          "kind": "wait",
+          "text": "Waiting for export folders to finish.",
+          "paused": true
+        },
+        {
+          "kind": "dialog",
+          "title": "edit export folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "apply"
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_export_folders",
+          "paused": true
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_export_folders",
+          "paused": false
+        }
+      ],
+      "error": null,
+      "finally_paused": false,
+      "wait_jobs": [
+        {
+          "done": true,
+          "dismissed": true
+        }
+      ]
+    },
+    {
+      "folder_kind": "export",
+      "initially_paused": false,
+      "worker_initially_running": true,
+      "answer": "exception",
+      "events": [
+        {
+          "kind": "wait",
+          "text": "Waiting for export folders to finish.",
+          "paused": true
+        },
+        {
+          "kind": "dialog",
+          "title": "edit export folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "exception"
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_export_folders",
+          "paused": false
+        }
+      ],
+      "error": "scripted folder-manager exception",
+      "finally_paused": false,
+      "wait_jobs": [
+        {
+          "done": true,
+          "dismissed": true
+        }
+      ]
+    },
+    {
+      "folder_kind": "export",
+      "initially_paused": true,
+      "worker_initially_running": true,
+      "answer": "cancel",
+      "events": [
+        {
+          "kind": "wait",
+          "text": "Waiting for export folders to finish.",
+          "paused": true
+        },
+        {
+          "kind": "dialog",
+          "title": "edit export folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "cancel"
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_export_folders",
+          "paused": true
+        }
+      ],
+      "error": null,
+      "finally_paused": true,
+      "wait_jobs": [
+        {
+          "done": true,
+          "dismissed": true
+        }
+      ]
+    },
+    {
+      "folder_kind": "export",
+      "initially_paused": true,
+      "worker_initially_running": true,
+      "answer": "apply",
+      "events": [
+        {
+          "kind": "wait",
+          "text": "Waiting for export folders to finish.",
+          "paused": true
+        },
+        {
+          "kind": "dialog",
+          "title": "edit export folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "apply"
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_export_folders",
+          "paused": true
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_export_folders",
+          "paused": true
+        }
+      ],
+      "error": null,
+      "finally_paused": true,
+      "wait_jobs": [
+        {
+          "done": true,
+          "dismissed": true
+        }
+      ]
+    },
+    {
+      "folder_kind": "export",
+      "initially_paused": true,
+      "worker_initially_running": true,
+      "answer": "exception",
+      "events": [
+        {
+          "kind": "wait",
+          "text": "Waiting for export folders to finish.",
+          "paused": true
+        },
+        {
+          "kind": "dialog",
+          "title": "edit export folders",
+          "paused": true,
+          "worker_running": false,
+          "folder_count": 0,
+          "answer": "exception"
+        },
+        {
+          "kind": "notification",
+          "topic": "notify_new_export_folders",
+          "paused": true
+        }
+      ],
+      "error": "scripted folder-manager exception",
+      "finally_paused": true,
+      "wait_jobs": [
+        {
+          "done": true,
+          "dismissed": true
+        }
+      ]
+    }
+  ]
+}
