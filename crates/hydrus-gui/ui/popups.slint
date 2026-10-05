@@ -55,8 +55,8 @@ component PopupButton inherits Rectangle {
     min-height: button.min-height;
     preferred-width: button.preferred-width;
     preferred-height: button.preferred-height;
-    horizontal-stretch: 0;
-    vertical-stretch: 0;
+    horizontal-stretch: button.horizontal-stretch;
+    vertical-stretch: button.vertical-stretch;
     forward-focus: button;
     button := Button { width: parent.width; height: parent.height; text: root.text; icon: root.icon; clicked => { root.clicked(); } }
     property <PopupBounds> frame: {x:button.absolute-position.x,y:button.absolute-position.y,width:button.width,height:button.height};
