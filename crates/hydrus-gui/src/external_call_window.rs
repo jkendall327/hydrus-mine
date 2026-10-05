@@ -302,7 +302,7 @@ fn command_action(
         }
         "add" | "edit" => {
             let editing = if action == "edit" {
-                state.borrow().selected().first().copied()
+                state.borrow().selection.selected_order().first().copied()
             } else {
                 None
             };

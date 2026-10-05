@@ -2292,7 +2292,8 @@ authored for hosted CI; only the actual Qt recorder and source checks ran locall
 
 The external-command argument and template-clipboard controls are replayed against
 `external_command.json`: actual Qt CRUD/reordering and current-row/Shift behavior,
-list keyboard copy/delete, exact parameter text prompts, and ten split-space
+list keyboard copy/delete, six reverse-selection/current/anchor edge histories,
+exact parameter text prompts, and ten split-space
 paste inputs accepted or declined. The native command draft keeps raw pasted rows
 until acceptance while its example/copy and saved arguments use the reference
 cleaning. Clipboard access errors are explicitly owned and do not alter the draft.

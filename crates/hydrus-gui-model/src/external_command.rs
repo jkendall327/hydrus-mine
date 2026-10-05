@@ -45,6 +45,9 @@ impl Queue {
             _ => return,
         };
         self.current = Some(row);
+        if control && !shift {
+            self.selection.set_anchor(self.current);
+        }
         if !control || shift {
             self.selection
                 .click(&(0..=last).collect::<Vec<_>>(), row, control, shift);
@@ -57,7 +60,7 @@ impl Queue {
     }
     pub fn select_all(&mut self) {
         self.selection
-            .select_many(&(0..self.arguments.len()).collect::<Vec<_>>());
+            .select_all(&(0..self.arguments.len()).collect::<Vec<_>>());
     }
     pub fn copy_selected(&self) -> Option<String> {
         let selected = self.selection.selected_order();
@@ -71,17 +74,20 @@ impl Queue {
     }
     /// Remove the captured selection, preserving the nearest surviving current row.
     pub fn delete(&mut self, selected: &[usize]) {
-        if let Some(current) = self.current {
-            let before = selected.iter().filter(|i| **i < current).count();
-            let remaining = self.arguments.len() - selected.len();
-            self.current = remaining
-                .checked_sub(1)
-                .map(|last| (current - before).min(last));
-        }
         for i in selected.iter().rev() {
             self.arguments.remove(*i);
+            self.current = self.current.and_then(|current| {
+                self.arguments.len().checked_sub(1).map(|last| {
+                    if current >= *i {
+                        current.saturating_sub(1).min(last)
+                    } else {
+                        current
+                    }
+                })
+            });
         }
         self.selection = ListSelection::default();
+        self.selection.set_anchor(self.current);
     }
     /// Qt moves original selected indices, even across a selected neighbour.
     pub fn reorder(&mut self, down: bool) {
