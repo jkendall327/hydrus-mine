@@ -274,6 +274,27 @@ fn read_batches_favourite_questions_write_drafts_and_owner_boundaries_replay_qt(
     );
     assert_eq!(bound.current.borrow().borrow().predicates(), query);
     ui.show().unwrap();
+    // Lock before repaint: rendered flags may lag, but the live model rejects the write.
+    ui.invoke_suggestion_context_menu(0, 20.0, 30.0);
+    choose_menu(
+        &ui,
+        &[
+            "favourites",
+            "remove \"parity:concurrent favourite\" from favourites",
+        ],
+    );
+    bound.current.borrow().borrow_mut().lock_search();
+    assert!(!ui.get_search_locked());
+    ui.invoke_tag_menu_answered(true);
+    assert_eq!(
+        store
+            .read(settings::get::<settings::FavouriteTags>)
+            .unwrap()
+            .0,
+        before
+    );
+    bound.current.borrow().borrow_mut().unlock();
+    ui.invoke_autocomplete_tab_chosen(1);
     // A retained question belongs to the opening page, even while the frame stays visible.
     ui.invoke_suggestion_context_menu(0, 20.0, 30.0);
     choose_menu(
