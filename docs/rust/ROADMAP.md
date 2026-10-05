@@ -35,8 +35,8 @@ list followed by the editor. Definitions come from saved configuration; new
 recordings use synthetic domains. See the area sections in `GUI.md` and
 `DIFFERENCES.md` for coverage and remaining first-pass limitations.
 
-The continuous overnight run (2026-10-04) implements 189 distinct original
-reference leaves: 174 formerly Missing and 15 formerly Partial. It adds
+The continuous overnight run (2026-10-04) implements 240 distinct original
+reference leaves: 222 formerly Missing and 18 formerly Partial. It adds
 notebook/tab operations and independent named-session snapshots; live search,
 viewer, tag and import Options consumers; autocomplete preferences; namespace
 sort schemes and independent primary/fallback tag-service cog menus; network
@@ -44,17 +44,21 @@ job controls and URL/domain/parser workflows; subsidiary/content parser editing;
 login credential/result editors; subscription concurrency and failure-stop
 handling; and a configured default export destination. The two sorting cog menu
 nodes are assessed separately and excluded from the concrete leaf count.
+The next 51 validated leaves add palette, filename tagging, migration, viewing
+statistics, Files/Trash, OR controls, Manage Tags, frame reset/flip, tag banners
+and local-service actions. Source `028fd72f` passed all four hosted CI jobs;
+455 native GUI integration tests passed on Linux, macOS and Windows.
 Exact accounting and validation are in [the overnight report](notes/overnight_gui_burndown.md)
 and [the frozen-baseline ledger](gui-coverage/overnight/progress.json). Remaining
 boundaries stay explicit in the map and `DIFFERENCES.md`.
 
 The [GUI migration map](gui-progress.html) expands selected reference features
-and all 89 exported native windows into nested work, including shared editors,
+and all 97 exported native windows into nested work, including shared editors,
 all 38 reference option tabs and 19 system-predicate groups. It contains 1,812
-reference nodes and 1,622 native nodes, with per-node assessments, concrete
+reference nodes and 1,733 native nodes, with per-node assessments, concrete
 remaining work and pinned source/evidence links. The frozen reference inventory
-now has 647 Missing, 375 Partial and 790 First pass entries; its status changes
-also include parent/alias assessments, which do not inflate the 189-item goal.
+now has 581 Missing, 390 Partial and 841 First pass entries; its status changes
+also include parent/alias assessments, which do not inflate the 240-item completion count.
 Native first-pass claims cite scoped regression evidence; source-supported but
 unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in

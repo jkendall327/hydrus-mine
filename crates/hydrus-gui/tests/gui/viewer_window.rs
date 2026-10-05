@@ -180,3 +180,37 @@ fn the_viewer_s_browsing_shortcuts() {
     click(400.0);
     assert!(bound.viewer.borrow().is_none(), "a double-click closes it");
 }
+
+#[test]
+fn closing_an_older_viewer_releases_its_canvas_without_closing_its_successor() {
+    let (_directories, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store)));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    ui.invoke_thumbnail_activated(0);
+    let older = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    ui.invoke_thumbnail_activated(1);
+    let successor = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    assert!(older.window().is_visible());
+    assert!(successor.window().is_visible());
+    older.invoke_close_requested();
+    assert!(!older.window().is_visible());
+    assert!(!older.get_sharp_shown());
+    assert!(successor.window().is_visible());
+    assert!(std::ptr::eq(
+        bound.viewer.borrow().as_ref().unwrap().window(),
+        successor.window()
+    ));
+    // Holding the old Slint handle and invoking a late zoom must not bring
+    // its sharp canvas back or clear a successor, even after repeated Close.
+    older.invoke_zoom(1, false, 0.0, 0.0);
+    older.invoke_close_requested();
+    assert!(!older.get_sharp_shown());
+    assert!(successor.window().is_visible());
+    assert!(bound.viewer.borrow().is_some());
+    successor.invoke_close_requested();
+    assert!(!successor.window().is_visible());
+    assert!(bound.viewer.borrow().is_none());
+}

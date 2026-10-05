@@ -1295,7 +1295,12 @@ are also drawn as the reference draws them: the part showing is cut out
 and resized with the file type's zoom qualities (area shrinking, Lanczos
 growing, by default; cubic is drawn with Lanczos), off the UI thread, to
 exactly the pixels it covers, over the quickly scaled still once ready
-(`src/still.rs`; the filters do the same). F3 manages the
+(`src/still.rs`; the filters do the same). Closing a canvas releases its
+resampling worker even when a caller retains the closed window handle. If
+the OS cannot start that worker, the existing image stays visible with
+nearest-pixel scaling; a changed file, zoom or clipping plan can retry.
+Multiple viewer windows remain independently closable without clearing a
+successor's current-viewer slot. F3 manages the
 file's tags, as the reference's dialog does on the local tag services:
 the file's tags on the service chosen, and an input whose tag, entered,
 is added to the file (or removed, if it has it already), the tag as typed

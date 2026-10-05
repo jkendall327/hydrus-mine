@@ -52,21 +52,12 @@ component RatingExamplePanel inherits VerticalBox {
     in property <bool> interactive: true;
     callback pointer(int,bool,float,float,float,bool);
     callback counter-edit(int);
-    out property <length> first-x: first.hit-x;
-    out property <length> first-y: first.hit-y;
-    out property <length> first-width: first.hit-width;
-    out property <length> first-height: first.hit-height;
-    out property <length> first-fraction-x: first.fraction-x;
-    out property <length> first-fraction-y: first.fraction-y;
-    callback placed(float,float,float,float,float,float);
-    function report-placement() { root.placed(root.first-x / 1px, root.first-y / 1px, root.first-width / 1px, root.first-height / 1px, root.first-fraction-x / 1px, root.first-fraction-y / 1px); }
-    init => { root.report-placement(); }
-    changed first-x => { root.report-placement(); }
-    changed first-y => { root.report-placement(); }
-    changed first-width => { root.report-placement(); }
-    changed first-height => { root.report-placement(); }
-    changed first-fraction-x => { root.report-placement(); }
-    changed first-fraction-y => { root.report-placement(); }
+    in-out property <length> first-x: first.hit-x;
+    in-out property <length> first-y: first.hit-y;
+    in-out property <length> first-width: first.hit-width;
+    in-out property <length> first-height: first.hit-height;
+    in-out property <length> first-fraction-x: first.fraction-x;
+    in-out property <length> first-fraction-y: first.fraction-y;
     first := RatingSampleControl { sample: root.rows[0]; interactive: root.interactive;
         pointer(r,x,w,s,d) => { root.pointer(0,r,x,w,s,d); }
         counter-edit => { root.counter-edit(0); }
@@ -223,7 +214,14 @@ export component EditServiceWindow inherits Window {
                     Button { text: root.example-expanded ? "▼ example display" : "▶ example display"; clicked => { root.example-expanded = !root.example-expanded; } }
                     if root.example-expanded: example-panel := RatingExamplePanel {
                         rows: root.examples; interactive: !root.counter-editing;
-                        placed(x,y,w,h,fx,fy) => { root.first-preview-x = x * 1px; root.first-preview-y = y * 1px; root.first-preview-width = w * 1px; root.first-preview-height = h * 1px; root.first-preview-fraction-x = fx * 1px; root.first-preview-fraction-y = fy * 1px; }
+                        // Bind the hit geometry directly: copying it in changed
+                        // callbacks can lag a layout pass behind pointer dispatch.
+                        first-x <=> root.first-preview-x;
+                        first-y <=> root.first-preview-y;
+                        first-width <=> root.first-preview-width;
+                        first-height <=> root.first-preview-height;
+                        first-fraction-x <=> root.first-preview-fraction-x;
+                        first-fraction-y <=> root.first-preview-fraction-y;
                         pointer(i,r,x,w,s,d) => { root.preview-pointer(i,r,x,w,s,d); }
                         counter-edit(i) => { root.counter-edit(i); }
                     }

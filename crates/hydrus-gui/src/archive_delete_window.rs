@@ -43,20 +43,20 @@ pub(crate) fn open(
         let slot = slot.clone();
         let playback = playback.clone();
         let animator = animator.clone();
+        let zoomed = zoomed.clone();
         move || {
             let Some(window) = weak.upgrade() else { return };
             viewing_stats.close();
+            playback.close();
+            animator.stop();
+            zoomed.close();
+            let _ = window.hide();
             if !slot
                 .borrow()
                 .as_ref()
                 .is_some_and(|current| std::ptr::eq(current.window(), window.window()))
             {
                 return;
-            }
-            playback.close();
-            animator.stop();
-            if let Some(window) = weak.upgrade() {
-                let _ = window.hide();
             }
             slot.borrow_mut().take();
         }

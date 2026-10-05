@@ -10,7 +10,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use std::sync::Arc;
 
-use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
+use slint::{ComponentHandle as _, Model as _, ModelRc, SharedString, VecModel};
 
 use hydrus_core::HashId;
 use hydrus_store::Store;
@@ -19,6 +19,8 @@ use crate::ratings_editor::{RatingsEditor, Update, title};
 use crate::{ManageRatingsWindow, RatingRow, RatingShape};
 
 struct State {
+    // Updating row data retains each TouchArea and its active pointer grab.
+    drawn: Rc<VecModel<RatingRow>>,
     editor: RatingsEditor,
     notice: String,
     /// A paste's error, shown until dismissed.
@@ -79,7 +81,13 @@ fn show(window: &ManageRatingsWindow, state: &State) {
             drawn
         })
         .collect();
-    window.set_ratings(ModelRc::new(VecModel::from(rows)));
+    if state.drawn.row_count() == rows.len() {
+        for (index, row) in rows.into_iter().enumerate() {
+            state.drawn.set_row_data(index, row);
+        }
+    } else {
+        state.drawn.set_vec(rows);
+    }
     window.set_notice(state.notice.as_str().into());
     window.set_asking(state.error.is_some());
     if let Some(error) = &state.error {
@@ -116,7 +124,10 @@ pub(crate) fn open(
     window.set_rating_size(sizes.dialog_icon_size.trunc() as f32);
     window.set_incdec_height(sizes.dialog_incdec_height.trunc() as f32);
     window.set_rating_outline(crate::ratings::outline_width(sizes.dialog_icon_size.trunc()) as f32);
+    let drawn = Rc::new(VecModel::default());
+    window.set_ratings(ModelRc::from(drawn.clone()));
     let state = Rc::new(RefCell::new(State {
+        drawn,
         editor: RatingsEditor::new(&services, &file_ratings),
         notice: String::new(),
         error: None,

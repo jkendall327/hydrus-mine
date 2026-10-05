@@ -565,21 +565,23 @@ pub(crate) fn open_filter(
         move || {
             let Some(window) = weak.upgrade() else { return };
             state.borrow().viewing_stats.close();
+            collect.stop();
+            {
+                let state = state.borrow();
+                state.playback.close();
+                state.animator.stop();
+                state.zoomed.close();
+            }
+            if let Some(editor) = state.borrow().merge_options.borrow_mut().take() {
+                let _ = editor.hide();
+            }
+            let _ = window.hide();
             if !slot
                 .borrow()
                 .as_ref()
                 .is_some_and(|current| std::ptr::eq(current.window(), window.window()))
             {
                 return;
-            }
-            collect.stop();
-            if let Some(editor) = state.borrow().merge_options.borrow_mut().take() {
-                let _ = editor.hide();
-            }
-            state.borrow().playback.close();
-            state.borrow().animator.stop();
-            if let Some(window) = weak.upgrade() {
-                let _ = window.hide();
             }
             slot.borrow_mut().take();
             let done_work = state.borrow().model.done_work();

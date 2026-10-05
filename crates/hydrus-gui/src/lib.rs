@@ -5828,6 +5828,7 @@ fn open_viewer(
     window.on_close_requested({
         let viewing_stats = viewing_stats.clone();
         let native_cursor = native_cursor.clone();
+        let zoomed = zoomed.clone();
         let weak = window.as_weak();
         let slot = slot.clone();
         let viewing = viewing.clone();
@@ -5840,24 +5841,27 @@ fn open_viewer(
                 .as_ref()
                 .is_some_and(|current| std::ptr::eq(current.window(), window.window()));
             viewing_stats.close();
-            if !current {
-                return;
-            }
-            delete_files_window::cancel(&viewer_delete);
+            // Own resources belong to this viewer, even after another viewer
+            // occupies the shared slot. Its close must not leave a shown Slint
+            // component retaining its renderer or touch the successor's slot.
             native_cursor.close();
-            let exit = model.borrow().exit_media();
-            closing_owner.closed(&store, exit);
-            viewing.borrow_mut().take();
-            // (stops playing at once)
             scanning.stop();
             moving.stop();
             playback.close();
             animator.stop();
-            if let Some(window) = weak.upgrade() {
-                // its size and place, if hydrus's option says to keep them
+            zoomed.close();
+            if current {
+                // Save the native geometry/state before hiding this window.
                 windows::save_named(window.window(), &store, "media_viewer");
-                let _ = window.hide();
             }
+            let _ = window.hide();
+            if !current {
+                return;
+            }
+            delete_files_window::cancel(&viewer_delete);
+            let exit = model.borrow().exit_media();
+            closing_owner.closed(&store, exit);
+            viewing.borrow_mut().take();
             slot.borrow_mut().take();
         }
     });

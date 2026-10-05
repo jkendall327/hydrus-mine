@@ -859,9 +859,18 @@ fn numerical_examples_drag_and_fraction_text_use_the_whole_widget_hit_area() {
         for _ in 0..3 {
             headless::render(&window, 640, 1000);
         }
+        // A paint settles layout after the event-loop change callbacks. Hit
+        // geometry must describe that paint immediately, not the previous size.
+        headless::render(&window, 680, 1000);
+        let wider_hit_width = edit.get_first_preview_width();
+        headless::render(&window, 640, 1000);
         let x = edit.get_first_preview_x();
         let y = edit.get_first_preview_y() + edit.get_first_preview_height() / 2.0;
         let width = edit.get_first_preview_width();
+        assert!(
+            wider_hit_width > width,
+            "hit geometry must follow the most recently painted layout: side={side}, wider={wider_hit_width}, width={width}"
+        );
         assert!(width > 200.0 && y > 0.0 && y < 1000.0);
         let move_to = |at: f32| {
             edit.window().dispatch_event(WindowEvent::PointerMoved {
@@ -887,7 +896,11 @@ fn numerical_examples_drag_and_fraction_text_use_the_whole_widget_hit_area() {
             headless::render(&window, 640, 1000);
         };
         press(2.0, PointerEventButton::Left);
-        assert_eq!(edit.get_examples().row_data(0).unwrap().fraction, "0/5");
+        assert_eq!(
+            edit.get_examples().row_data(0).unwrap().fraction,
+            "0/5",
+            "first Left press: side={side}, hit=({x},{y}), width={width}"
+        );
         move_to(width * 0.85);
         assert_eq!(edit.get_examples().row_data(0).unwrap().fraction, "4/5");
         if side == 2 {
