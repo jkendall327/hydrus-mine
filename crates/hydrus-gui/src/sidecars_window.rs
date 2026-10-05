@@ -1477,7 +1477,7 @@ pub fn open_routers(
             }
         });
         move |importing| {
-            if blocked() {
+            if blocked() || !owner() {
                 return;
             }
             let routers = {
