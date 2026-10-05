@@ -276,3 +276,19 @@ completed 2026-10-05 04:35:36–38 UTC with clean shutdown; its unrelated sandbo
 Client API bind failed. Evidence is `existing_tags_filter.json` and the inspected
 actual Qt `existing_tags_filter.png`. Rust/native/importer replay assertions are
 authored for hosted CI and were not run locally.
+
+`record_subscription_import_flow.py` records the actual subscription list's
+permitted-type filtering and ordered clipboard/JSON/PNG import handlers on a
+fresh basic fixture. Eleven cases cover nested valid/wrong-type packages,
+missing-log rejection, warning and information counts, final selection, accepted
+prefixes before invalid/unreadable files, and one future-version warning while
+subsequent files continue. Full exported histories and the registered Python
+class names are retained. The final offscreen run completed 2026-10-05
+04:42:25–04:42:30 UTC under the shared oracle lock with clean shutdown; the
+unrelated sandbox Client API socket bind failed. Synthetic subscriptions use
+only fixture URLs. Business loading/import/export handlers are unmodified;
+clock, fresh-name generation, clipboard text availability and user dialogs are
+held or recorded. Authored codec/native/Store replay and owner cancellation
+regressions await hosted CI. Clipboard bitmap precedence, drops, native error
+bodies and full unrelated-object payload validation remain outside this slice;
+subscriptions-exchange stays Partial with zero completion credit.

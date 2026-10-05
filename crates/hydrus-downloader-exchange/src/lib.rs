@@ -9,6 +9,7 @@ pub mod import_options;
 pub mod logins;
 pub mod processing;
 pub mod routers;
+pub mod subscription_import;
 mod subscription_legacy;
 mod subscription_seed_cache;
 pub mod subscriptions;

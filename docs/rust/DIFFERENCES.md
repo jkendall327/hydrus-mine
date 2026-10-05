@@ -709,8 +709,9 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   `hydrus serve` within five minutes.**
 - **Full subscription exchange transport** supports modern reference container 90
   JSON and PNG without dropping query history or cached header metadata. Legacy
-  subscription type3 versions1–10 now import through the actual list. The original transport menus are wired; native imports still
-  pass through a reviewed child instead of adding immediately. Clipboard PNG
+  subscription type3 versions1–10 now import through the actual list. The original transport menus are wired; clipboard text and JSON/PNG import menus now
+  add to the staged list directly. The legacy explicit exchange callback still
+  opens its former review child. Clipboard PNG
   image precedence and PNG list drops remain absent. Historical file-cache
   versions 1–7 now upgrade within the exchange codec, with recorded order,
   timestamp, note, count and example preservation. Later historical caches can
@@ -724,9 +725,15 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   Missing histories now ask the original message, title and decisions before
   staging; accepted missing logs are initialised empty directly on Apply. The list owner now stages modern imports and
   persists both histories. JSON file export/overwrite and multi-file JSON/PNG
-  import are wired, with atomic review of each selection. The reference can keep
-  earlier valid objects when a later file/type fails; native rejects that complete
-  selection before staging. Staged and saved reset/retry exports now refresh the
+  import are wired. Known unrelated types now warn after permitted objects are
+  added, including within nested lists. File selections keep their accepted
+  prefix on unreadable/invalid files; future-version failures warn once and
+  continue later files. Missing-history rejection continues the remaining
+  package, and the last accepted row remains selected. Native exception bodies
+  differ from Qt, and registered unrelated objects are classified without fully
+  validating each type's internal payload. Each file/package has the existing
+  16 MiB/4096-object limit. Unsupported subscription payloads still fail loading
+  their entire package rather than partially decoding its histories. Staged and saved reset/retry exports now refresh the
   original file-count/example caches and forget hashes of retried files. Fresh
   native query exports initialise counts/examples; gallery and velocity caches
   without a retained reference header remain unsynchronised. This slice does not
