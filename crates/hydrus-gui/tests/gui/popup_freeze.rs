@@ -291,11 +291,14 @@ fn hidden_rebind_and_accepted_close_retire_ui_only_and_never_admit_to_a_successo
     ui.show().unwrap();
     wait(|| rows(&ui) == ["ongoing owned card"]);
     assert_ne!(ui.get_popups().row_data(0).unwrap().gui_owner, old_source);
+    // This card has no registered question; this is only a stale-source
+    // no-mutation check. The existing popup_job_actions replay proves actual
+    // registered question ownership separately.
     ui.invoke_popup_answer(
         hex::encode(key).into(),
         "".into(),
+        "".into(),
         old_source,
-        "stale".into(),
         true,
     );
     assert!(
