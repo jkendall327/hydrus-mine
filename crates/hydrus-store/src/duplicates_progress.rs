@@ -75,7 +75,7 @@ mod tests {
         let store = crate::Store::open(dir.path()).unwrap();
         assert!(store.read(load).unwrap().hide_caught_up);
         let info = tuple[2].to_string();
-        let version = tuple[1].as_u64().unwrap();
+        let version = i64::try_from(tuple[1].as_u64().unwrap()).unwrap();
         store.write(move |c| {
             c.conn().execute("INSERT INTO legacy_objects(source,type_id,name,version,timestamp_ms,dump) VALUES('json_dumps',?,'',?,0,?)", rusqlite::params![u32::from(SerialisableType::CLIENT_OPTIONS.0), version, info])?; Ok(())
         }).unwrap();
