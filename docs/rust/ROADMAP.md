@@ -64,7 +64,7 @@ unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in
 [gui-coverage/README.md](gui-coverage/README.md).
 
-Continuous source work now proposes 118 further original leaf completions over
+Continuous source work now proposes 123 further original leaf completions over
 that validated 240 checkpoint: 53 on `codex/parity-more-controls`, five more
 on the dependent `codex/parity-next-details` branch, and 13 more on
 `codex/parity-preview-and-launching`, plus nine on
@@ -75,7 +75,18 @@ on the dependent `codex/parity-next-details` branch, and 13 more on
 `codex/parity-appearance-and-file-menu`, and four on
 `codex/parity-preview-and-filter-controls`, and three on
 `codex/parity-predicate-and-job-controls`, and four on
-`codex/parity-deletion-and-dialog-controls`. The four latest proposals add the
+`codex/parity-deletion-and-dialog-controls`, and five on
+`codex/parity-maintenance-and-menu-controls`. These five add the two real
+normal-time maintenance gates, two owned five-second debug actions (popup and
+new search page), and the default-off Client API cookie/header notification
+control. Automatic workers run outside the UI and retire when the final binding
+clone closes; existing delayed actions deliver while Main is hidden and preserve
+open page-chooser destinations. Real authenticated cookie/header routes publish
+reference-matching finished jobs through the existing toaster. Actual Qt traces,
+independent source review and authored hosted regressions cover these bounded
+scopes. The represented menu-choice wheel preference and active-predicate
+copy/open routes are additional Partial improvements with zero completion credit.
+Random hidden-order restoration remains unimplemented. The four preceding proposals add the
 captured physical deletion delay, live radio Enter/Return preference, and raw
 namespace grouping Add/Edit controls. Physical deletion commits each pair before
 waiting outside the writer; shutdown wakes the owned worker and restored-file
@@ -138,7 +149,7 @@ and mouse idle tracking remains Partial because it observes application windows.
 Broader external
 call/editor boundaries also remain Partial. Inspect the current branch with
 `python3 scripts/gui_burndown.py --commit HEAD`; do not substitute its proposed
-total of 358 for the validated 240 ledger. The embedded-ICC leaf adds the saved policy with real importer, preview,
+total of 363 for the validated 240 ledger. The embedded-ICC leaf adds the saved policy with real importer, preview,
 viewer and maintenance consumers. The viewer tag-list now opens owned search
 pages and requests main-window activation on supported native platforms; that
 activation remains Partial because Wayland activation is unresolved. Application
