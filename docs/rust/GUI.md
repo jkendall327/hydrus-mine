@@ -3281,11 +3281,17 @@ byte/time/log outputs, import summaries, raw parsing previews, expiry and
 relative-time variants. Five owned status inputs per setting pass through the
 actual Qt network-job control; no request is sent. Native consumer replays and
 an Options PNG capture are authored for hosted CI, with no local Rust builds.
-Both original controls remain Partial and add zero completed leaves: backend
-network wait and import/network error messages still format with defaults, and
-whole-application cached-label broadcast refresh timing is not claimed. The
-radio Return flag is unclaimed because the reference dialog behaved identically
-in both states on the recorded platform. Broader GUI/misc/menu stays Partial.
+`gui_format_backend.json` additionally records real backend bandwidth/gallery
+waits, file-size rejection, over-length responses and critical-drive messages
+across four staged/saved/reopened settings. The network engine owns saved
+formatting and refreshes waiting labels without replacing job state, bandwidth
+usage or gallery deadlines. File importers read saved precision when rejecting
+a file or reporting a nearly full drive; their pause behavior is preserved.
+Focused asynchronous, loopback HTTP and real file-import regressions are
+authored for hosted CI. Whole-application cached-label broadcast timing is
+unclaimed. The radio Return flag is unclaimed because the reference dialog
+behaved identically in both states on the recorded platform. Broader
+GUI/misc/menu stays Partial.
 Tag Presentation offers the sibling connector colour controls. Fading disables the optional namespace choice and uses the ideal tag’s colour; turning fading off allows a named, missing, empty, or ideal-tag namespace choice. Apply saves the staged preferences and Cancel discards them. Manage Tags paints raw/count, connector and ideal-tag runs separately with solid colours; shared write-autocomplete rows can fade between namespace colours, including selected backgrounds. Detached tag editors and both relationship inputs share those runs, and open, visible editors refresh after another owner changes the preferences without replacing the input or selected tags.
 
 Selected sibling rows paint solid namespace runs through the remaining row, then overlay each fading run only within its fixed text block. A collapsed-parent suffix can fade to the unnamespaced colour while the preceding ideal tag’s solid colour remains beyond the suffix, including when the viewport widens.

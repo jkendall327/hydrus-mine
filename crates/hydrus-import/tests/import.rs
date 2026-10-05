@@ -63,6 +63,39 @@ impl World {
 }
 
 #[test]
+fn saved_precision_reaches_actual_import_rejection_without_importing_or_changing_rules() {
+    let fixture = hydrus_testkit::fixture_json("gui_format_backend.json");
+    let w = world();
+    let path = media_dir().join("png_rgba.png");
+    let info = MediaTools::new().inspect(&path).unwrap();
+    let rules = FileImportOptions {
+        min_size: Some(243200),
+        ..Default::default()
+    };
+    for event in fixture["events"].as_array().unwrap() {
+        let formatting: hydrus_store::settings::GuiFormatting =
+            serde_json::from_value(event["saved"].clone()).unwrap();
+        w.store
+            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &formatting))
+            .unwrap();
+        let reopened = Store::open(w.store.dir()).unwrap();
+        let saved: hydrus_store::settings::GuiFormatting =
+            reopened.read(hydrus_store::settings::get).unwrap();
+        let expected = rules.check_with_figures(&info, saved.figures).unwrap_err();
+        let result = w.importer.import_path(&path, &rules).unwrap();
+        assert_eq!(result.status, ImportStatus::Vetoed);
+        assert_eq!(result.note, expected);
+        assert_eq!(rules.min_size, Some(243200));
+        assert!(
+            w.store
+                .read(|conn| hydrus_store::master::hash_id(conn, &result.hash.unwrap()))
+                .unwrap()
+                .is_none()
+        );
+    }
+}
+
+#[test]
 fn imports_match_what_the_reference_records() {
     let w = world();
     for file in [

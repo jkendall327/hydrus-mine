@@ -2319,8 +2319,16 @@ UTC/New York/Berlin recordings cover the distinction and POSIX year-one output.
 Time-picker and duplicate-review relative suffixes intentionally retain the
 reference force-no-ISO behavior. Existing refresh paths update cached labels;
 immediate whole-application broadcast timing is not claimed. Backend-generated
-network wait and import/network error strings still use default formatting, so
-both original global preferences remain Partial and add zero completed leaves.
+network waits now use the engine’s owned saved formatting; settings reload
+wakes existing bandwidth/gallery jobs to refresh their labels while preserving
+usage, tokens, deadlines, progress and cancellation. File import size limits,
+critical-drive diagnostics and network whole/range over-length errors read
+saved byte precision. The real reference backend recording holds time and
+supplies scripted wait, response and free-space inputs without modifying its
+business handlers. Native regressions cover actual asynchronous waits, loopback
+HTTP, file rejection and persisted critical-drive pauses; hosted execution is
+pending. These consumers share the core ISO formatter without depending on GUI
+models or mutable formatter globals.
 Integer-locale, radio Return force and menu-button wheel are outside this slice.
 
 Drag and hover-wheel input now use each viewer's own active/closed lifetime,

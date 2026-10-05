@@ -3,10 +3,7 @@ use hydrus_store::{
     Store,
     settings::{self, GuiFormatting},
 };
-use jiff::{
-    Timestamp,
-    tz::{Offset, TimeZone},
-};
+use jiff::tz::Offset;
 
 pub fn preferences(store: &Store) -> GuiFormatting {
     store.read(settings::get).unwrap_or_default()
@@ -32,15 +29,7 @@ pub fn timestamp_with_offset(
             |value| hydrus_core::time::timestamp_to_pretty_time_delta(value, now, " ago"),
         );
     }
-    let Some(value) = value else {
-        return "unknown time".into();
-    };
-    match Timestamp::from_second(value).map(|t| t.to_zoned(TimeZone::fixed(offset))) {
-        Ok(time) if time.year() > 0 => {
-            format!("{}-{}", time.year(), time.strftime("%m-%d %H:%M:%S"))
-        }
-        _ => format!("unparseable time {value}"),
-    }
+    hydrus_core::time::timestamp_to_iso_with_offset(value, offset)
 }
 
 /// The downloader tables omit seconds in relative labels; ISO still wins.
