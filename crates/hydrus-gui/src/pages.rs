@@ -1498,7 +1498,8 @@ impl Pages {
         let snapshot = self.store.snapshot();
         let mut normalised = Vec::new();
         for url in urls {
-            hydrus_core::url::functions::check_full_url(url).map_err(|e| e.to_string())?;
+            hydrus_core::url::functions::check_full_url(url)
+                .map_err(|_| format!("Could not parse \"{url}\" at all!"))?;
             let encoded = hydrus_core::url::functions::ensure_url_is_encoded(
                 url,
                 false,

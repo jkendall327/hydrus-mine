@@ -232,6 +232,73 @@ fn real_popup_cancel_while_pass_waits_for_shared_lease_preserves_every_queued_fi
 }
 
 #[test]
+fn captured_clear_while_force_waits_is_serviced_before_the_next_physical_batch() {
+    use hydrus_store::media::FileFlags;
+    let (_dirs, store) = super::subscriptions::store();
+    let files = seed(&store);
+    let first = files[0];
+    let original = store
+        .read(move |conn| hydrus_store::media::load_basic(conn, &[first]))
+        .unwrap();
+    assert!(
+        !original[0]
+            .info
+            .as_ref()
+            .unwrap()
+            .flags
+            .has(FileFlags::EXIF)
+    );
+    store
+        .write(move |ctx| {
+            ctx.conn().execute(
+                "UPDATE files SET flags = flags | ?1 WHERE hash_id = ?2",
+                rusqlite::params![FileFlags::EXIF, first],
+            )?;
+            Ok(())
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let window = open(&ui, &bound);
+    pump(|| window.get_can_all());
+    window.invoke_clicked(index(&window, JobType::HasExif), false, false);
+    let lease = hydrus_store::store::lock_file_maintenance(store.dir())
+        .unwrap()
+        .unwrap();
+    window.invoke_work_clicked(true);
+    pump(|| {
+        ui.get_popups()
+            .iter()
+            .any(|row| row.title == "file maintenance")
+    });
+    window.invoke_clear_clicked();
+    assert_eq!(
+        window.get_question(),
+        "Clear all the selected scheduled work?"
+    );
+    window.invoke_answered(true);
+    window.invoke_refresh_clicked();
+    assert_eq!(counts(&store)[&JobType::HasExif], (2, 0));
+    drop(lease);
+    pump(|| !counts(&store).contains_key(&JobType::HasExif));
+    pump(|| window.get_rows().row_count() == 1);
+    assert_eq!(counts(&store)[&JobType::HasIccProfile], (0, 1));
+    // A post-pass Clear would let the HasExif physical runner overwrite this.
+    assert!(
+        store
+            .read(move |conn| hydrus_store::media::load_basic(conn, &[first]))
+            .unwrap()[0]
+            .info
+            .as_ref()
+            .unwrap()
+            .flags
+            .has(FileFlags::EXIF)
+    );
+}
+
+#[test]
 fn pending_exit_decline_and_accepted_exit_are_owned_boundaries_for_review_callbacks() {
     let (_dirs, store) = super::subscriptions::store();
     seed(&store);
@@ -353,6 +420,11 @@ fn actual_missing_file_integrity_runner_hands_useful_url_to_the_owned_named_impo
                     ..Default::default()
                 },
             )?;
+            let invalid_id = hydrus_store::master::intern_url(ctx.conn(), "0missing-scheme")?;
+            ctx.conn().execute(
+                "INSERT OR IGNORE INTO file_urls(hash_id,url_id) VALUES(?1,?2)",
+                rusqlite::params![file, invalid_id],
+            )?;
             let url_id = hydrus_store::master::intern_url(ctx.conn(), &url)?;
             ctx.conn().execute(
                 "INSERT OR IGNORE INTO file_urls(hash_id,url_id) VALUES(?1,?2)",
@@ -409,6 +481,15 @@ fn actual_missing_file_integrity_runner_hands_useful_url_to_the_owned_named_impo
         .write(move |ctx| hydrus_store::queues::take_url_requests(ctx.conn(), queue))
         .unwrap();
     assert_eq!(received, [expected]);
+    let recorded = hydrus_testkit::fixture_json("file_maintenance_current.json");
+    let invalid_error = recorded["redownload"]["errors"][0].as_str().unwrap();
+    assert!(
+        store
+            .read(|conn| popups::all(conn, super::subscriptions::now()))
+            .unwrap()
+            .iter()
+            .any(|job| job.status_text_1.as_deref() == Some(invalid_error))
+    );
     assert!(
         store
             .read(move |conn| file_maintenance::jobs_for(conn, file))

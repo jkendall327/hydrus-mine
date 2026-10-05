@@ -46,6 +46,21 @@ pub struct MaintenanceReport {
     pub redownload: Vec<String>,
 }
 
+/// Forced-pass hooks: metadata commands between fetched batches, gauge before
+/// each physical job, and durable results after the file's transaction commits.
+pub struct MaintenanceCallbacks<'a> {
+    pub before_batch: &'a mut dyn FnMut() -> Result<()>,
+    pub before_job: &'a mut dyn FnMut(u64),
+    pub committed: &'a mut dyn FnMut(&MaintenanceReport),
+}
+
+impl std::fmt::Debug for MaintenanceCallbacks<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("MaintenanceCallbacks")
+            .finish_non_exhaustive()
+    }
+}
+
 impl MaintenanceReport {
     pub fn total(&self) -> u64 {
         self.done.values().sum()
@@ -85,7 +100,19 @@ impl FileImporter {
         max_weight: u64,
         wanted: &dyn Fn(JobType) -> bool,
     ) -> Result<MaintenanceReport> {
-        self.run_file_maintenance_controlled(limit, max_weight, wanted, &|| true, &mut |_| {})
+        // Ordinary daemon/CLI work defers on contention. An uncancellable
+        // spawn_blocking waiter must not prevent runtime shutdown.
+        self.run_file_maintenance_inner::<false>(
+            limit,
+            max_weight,
+            wanted,
+            &|| true,
+            MaintenanceCallbacks {
+                before_batch: &mut || Ok(()),
+                before_job: &mut |_| {},
+                committed: &mut |_| {},
+            },
+        )
     }
 
     /// A forced GUI pass. Cancellation is checked between files, as `_RunJob`
@@ -98,6 +125,40 @@ impl FileImporter {
         continue_work: &dyn Fn() -> bool,
         progress: &mut dyn FnMut(&MaintenanceReport),
     ) -> Result<MaintenanceReport> {
+        self.run_file_maintenance_with_callbacks(
+            limit,
+            max_weight,
+            wanted,
+            continue_work,
+            MaintenanceCallbacks {
+                before_batch: &mut || Ok(()),
+                before_job: &mut |_| {},
+                committed: progress,
+            },
+        )
+    }
+
+    /// Force work with a genuine pre-job gauge and between-batch command hook.
+    /// Hooks execute off UI while this pass owns the physical-work lease.
+    pub fn run_file_maintenance_with_callbacks(
+        &self,
+        limit: u64,
+        max_weight: u64,
+        wanted: &dyn Fn(JobType) -> bool,
+        continue_work: &dyn Fn() -> bool,
+        callbacks: MaintenanceCallbacks<'_>,
+    ) -> Result<MaintenanceReport> {
+        self.run_file_maintenance_inner::<true>(limit, max_weight, wanted, continue_work, callbacks)
+    }
+
+    fn run_file_maintenance_inner<const WAIT: bool>(
+        &self,
+        limit: u64,
+        max_weight: u64,
+        wanted: &dyn Fn(JobType) -> bool,
+        continue_work: &dyn Fn() -> bool,
+        callbacks: MaintenanceCallbacks<'_>,
+    ) -> Result<MaintenanceReport> {
         // File work happens outside the writer. The crash-safe file lease also
         // excludes the independent daemon's ordinary maintenance pass.
         let _lease = loop {
@@ -106,6 +167,9 @@ impl FileImporter {
             }
             if let Some(lease) = hydrus_store::store::lock_file_maintenance(self.store.dir())? {
                 break lease;
+            }
+            if !WAIT {
+                return Ok(MaintenanceReport::default());
             }
             std::thread::sleep(std::time::Duration::from_millis(20));
         };
@@ -117,7 +181,9 @@ impl FileImporter {
             redownload: Vec::new(),
         };
         let mut report = MaintenanceReport::default();
+        let mut attempted = 0;
         while report.total() < limit && report.weight < max_weight {
+            (callbacks.before_batch)()?;
             let due: Vec<(HashId, Vec<JobType>)> = self
                 .store
                 .read(|conn| file_maintenance::due_jobs_of(conn, now_s(), wanted))?;
@@ -144,6 +210,8 @@ impl FileImporter {
                         break;
                     }
                     weight += job.weight();
+                    attempted += 1;
+                    (callbacks.before_job)(attempted);
                     let result = match media.get(&hash_id) {
                         Some(m) => self.run_job(m, job, &mut pass)?,
                         None => JobResult::Nothing,
@@ -170,7 +238,7 @@ impl FileImporter {
                 })?;
                 report.bad_files = pass.bad_files;
                 report.redownload.clone_from(&pass.redownload);
-                progress(&report);
+                (callbacks.committed)(&report);
             }
         }
         report.bad_files = pass.bad_files;

@@ -9,7 +9,7 @@ use hydrus_store::{
 use slint::{ComponentHandle as _, ModelRc, SharedString, Timer, TimerMode, VecModel};
 use std::{
     cell::{Cell, RefCell},
-    collections::BTreeMap,
+    collections::{BTreeMap, VecDeque},
     rc::Rc,
     sync::{
         Arc,
@@ -66,6 +66,8 @@ fn force(
     wanted: Option<&[JobType]>,
     shutdown: &AtomicBool,
     replies: &mpsc::Sender<Reply>,
+    commands: &mpsc::Receiver<Command>,
+    deferred: &mut VecDeque<Command>,
 ) -> Result<(), String> {
     let total: u64 = rows(store)?
         .iter()
@@ -87,7 +89,7 @@ fn force(
     // Default MediaTools remain configured by FileImporter (including FFmpeg).
     let importer = hydrus_import::FileImporter::new(store.clone(), hydrus_media::MediaTools::new());
     let mut delivered = 0;
-    let result = importer.run_file_maintenance_controlled(
+    let result = importer.run_file_maintenance_with_callbacks(
         u64::MAX,
         u64::MAX,
         &|job| wanted.is_none_or(|wanted| wanted.contains(&job)),
@@ -99,33 +101,59 @@ fn force(
                     .flatten()
                     .is_some_and(|job| !job.cancelled)
         },
-        &mut |report| {
-            let done = report.total();
-            let _ = store.write(move |ctx| {
-                popups::update(ctx.conn(), &key, now(), |job| {
-                    if !job.cancelled {
-                        job.status_text_1 = Some(format!(
-                            "{}/{}",
-                            hydrus_core::numbers::human_int(done),
-                            hydrus_core::numbers::human_int(total)
-                        ));
-                        job.popup_gauge_1 = Some((
-                            i64::try_from(done).unwrap_or(i64::MAX),
-                            i64::try_from(total).unwrap_or(i64::MAX),
-                        ));
+        hydrus_import::maintenance::MaintenanceCallbacks {
+            before_batch: &mut || {
+                // The completed batch has released its local media/results, but
+                // this actor still owns the exclusive physical-work lease.
+                while let Ok(command) = commands.try_recv() {
+                    if shutdown.load(Ordering::Acquire) {
+                        break;
                     }
-                })
-            });
-            if report.redownload.len() > delivered {
-                let _ = replies.send(Reply::Redownload(report.redownload[delivered..].to_vec()));
-                delivered = report.redownload.len();
-            }
-            let _ = replies.send(Reply::Changed(report.done.keys().any(|job| {
-                matches!(
-                    job,
-                    JobType::ForceThumbnail | JobType::RefitThumbnail | JobType::FileMetadata
-                )
-            })));
+                    match command {
+                        Command::Clear(jobs) => {
+                            store.write(move |ctx| {
+                                file_maintenance::cancel_jobs(ctx.conn(), &jobs)
+                            })?;
+                            let _ = replies.send(Reply::Rows(rows(store)));
+                        }
+                        Command::Refresh => {
+                            let _ = replies.send(Reply::Rows(rows(store)));
+                        }
+                        command @ Command::Force(_) => deferred.push_back(command),
+                    }
+                }
+                Ok(())
+            },
+            before_job: &mut |done| {
+                let _ = store.write(move |ctx| {
+                    popups::update(ctx.conn(), &key, now(), |job| {
+                        if !job.cancelled {
+                            job.status_text_1 = Some(format!(
+                                "{}/{}",
+                                hydrus_core::numbers::human_int(done),
+                                hydrus_core::numbers::human_int(total)
+                            ));
+                            job.popup_gauge_1 = Some((
+                                i64::try_from(done).unwrap_or(i64::MAX),
+                                i64::try_from(total).unwrap_or(i64::MAX),
+                            ));
+                        }
+                    })
+                });
+            },
+            committed: &mut |report| {
+                if report.redownload.len() > delivered {
+                    let _ =
+                        replies.send(Reply::Redownload(report.redownload[delivered..].to_vec()));
+                    delivered = report.redownload.len();
+                }
+                let _ = replies.send(Reply::Changed(report.done.keys().any(|job| {
+                    matches!(
+                        job,
+                        JobType::ForceThumbnail | JobType::RefitThumbnail | JobType::FileMetadata
+                    )
+                })));
+            },
         },
     );
     store
@@ -197,14 +225,22 @@ impl Control {
         std::thread::Builder::new()
             .name("file maintenance".into())
             .spawn(move || {
-                while let Ok(command) = commands.recv() {
+                let mut deferred = VecDeque::new();
+                while let Some(command) = deferred.pop_front().or_else(|| commands.recv().ok()) {
                     if stop.load(Ordering::Acquire) {
                         break;
                     }
                     let result = match command {
                         Command::Refresh => Ok(()),
                         Command::Clear(jobs) => clear(&store, jobs, &stop),
-                        Command::Force(wanted) => force(&store, wanted.as_deref(), &stop, &replies),
+                        Command::Force(wanted) => force(
+                            &store,
+                            wanted.as_deref(),
+                            &stop,
+                            &replies,
+                            &commands,
+                            &mut deferred,
+                        ),
                     };
                     if let Err(error) = result {
                         let message = popups::Job::text(error.clone(), now() as f64);

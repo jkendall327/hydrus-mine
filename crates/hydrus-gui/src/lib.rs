@@ -2383,15 +2383,17 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let changed = Rc::downgrade(&after_change);
             move |urls| {
                 if let Some(pages) = pages.upgrade() {
-                    let result = pages.borrow_mut().import_maintenance_urls(&urls);
-                    if let Err(error) = result {
-                        let store = pages.borrow().store().clone();
-                        let now = std::time::SystemTime::now()
-                            .duration_since(std::time::UNIX_EPOCH)
-                            .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX));
-                        let job = hydrus_store::popups::Job::text(error, now as f64);
-                        let _ = store
-                            .write(move |ctx| hydrus_store::popups::add(ctx.conn(), &job, now));
+                    for url in urls {
+                        let result = pages.borrow_mut().import_maintenance_urls(&[url]);
+                        if let Err(error) = result {
+                            let store = pages.borrow().store().clone();
+                            let now = std::time::SystemTime::now()
+                                .duration_since(std::time::UNIX_EPOCH)
+                                .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX));
+                            let job = hydrus_store::popups::Job::text(error, now as f64);
+                            let _ = store
+                                .write(move |ctx| hydrus_store::popups::add(ctx.conn(), &job, now));
+                        }
                     }
                     if let Some(slot) = changed.upgrade() {
                         let after = slot.borrow().as_ref().and_then(std::rc::Weak::upgrade);

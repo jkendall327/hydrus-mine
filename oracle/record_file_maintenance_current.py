@@ -20,7 +20,7 @@ def record(session):
     from hydrus.client.gui import ClientGUIAsync as A, ClientGUIDialogsQuick as Q
     from hydrus.client.gui.panels import ClientGUIScrolledPanelsReview as R
     from hydrus.client.files import ClientFilesMaintenance as F
-    from hydrus.core import HydrusTime
+    from hydrus.core import HydrusTime, HydrusData
     from qtpy import QtWidgets as W
     c = session.controller
     jobs = []
@@ -118,11 +118,18 @@ def record(session):
             state('clear_accepted_removes_future_too')
             current = c.gui.GetCurrentPage().GetPageKey().hex()
             url = 'https://maintenance.synthetic.example/repair.png'
-            c.gui.ImportURL(url, 'missing files redownloader')
-            c.gui.ImportURL(url, 'missing files redownloader')
+            errors = []
+            old_exception = HydrusData.ShowException
+            try:
+                HydrusData.ShowException = lambda error, **kwargs: errors.append(str(error))
+                c.gui.ImportURL('0missing-scheme', 'missing files redownloader')
+                c.gui.ImportURL(url, 'missing files redownloader')
+                c.gui.ImportURL(url, 'missing files redownloader')
+            finally:
+                HydrusData.ShowException = old_exception
             pages = c.gui._notebook._GetMediaPages(False)
             destinations = [dict(name=p.GetName(), key=p.GetPageKey().hex(), count=len(p.GetPageManager().GetVariable('urls_import').GetFileSeedCache().GetFileSeeds())) for p in pages if p.IsURLImportPage() and p.GetName() == 'missing files redownloader']
-            return dict(url=url, before_current=current, after_current=c.gui.GetCurrentPage().GetPageKey().hex(), destinations=destinations)
+            return dict(url=url, errors=errors, before_current=current, after_current=c.gui.GetCurrentPage().GetPageKey().hex(), destinations=destinations)
         destination = c.CallBlockingToQt(c.gui, clear)
         def cancellable():
             c.WriteSynchronous('file_maintenance_add_jobs', ids[:2], F.REGENERATE_FILE_DATA_JOB_FILE_HAS_EXIF, 0)
