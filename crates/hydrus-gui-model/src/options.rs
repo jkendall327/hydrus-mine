@@ -2102,29 +2102,6 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             "files and trash",
             vec![
                 check(
-                    "Remove files from view when they are archive/delete filtered: ",
-                    |s| s.file_view_removal.filtered,
-                    |s, v| s.file_view_removal.filtered = v,
-                ),
-                enabled(
-                    check(
-                        "--even skipped files: ",
-                        |s| s.file_view_removal.skipped,
-                        |s, v| s.file_view_removal.skipped = v,
-                    ),
-                    |s| s.file_view_removal.filtered,
-                ),
-                check(
-                    "Remove files from view when they are sent to the trash: ",
-                    |s| s.file_view_removal.trashed,
-                    |s, v| s.file_view_removal.trashed = v,
-                ),
-                check(
-                    "Remove files from view when they are moved to another local file domain: ",
-                    |s| s.file_view_removal.moved,
-                    |s, v| s.file_view_removal.moved = v,
-                ),
-                check(
                     "When copying file hashes, prefix with booru-friendly hash type: ",
                     |s| s.file_handling.prefix_hash_when_copying,
                     |s, v| s.file_handling.prefix_hash_when_copying = v,
@@ -2153,6 +2130,29 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     "When physically deleting files or folders, send them to the OS's recycle bin: ",
                     |s| s.folders.delete_to_recycle_bin,
                     |s, v| s.folders.delete_to_recycle_bin = v,
+                ),
+                check(
+                    "Remove files from view when they are archive/delete filtered: ",
+                    |s| s.file_view_removal.filtered,
+                    |s, v| s.file_view_removal.filtered = v,
+                ),
+                enabled(
+                    check(
+                        "--even skipped files: ",
+                        |s| s.file_view_removal.skipped,
+                        |s, v| s.file_view_removal.skipped = v,
+                    ),
+                    |s| s.file_view_removal.filtered,
+                ),
+                check(
+                    "Remove files from view when they are sent to the trash: ",
+                    |s| s.file_view_removal.trashed,
+                    |s, v| s.file_view_removal.trashed = v,
+                ),
+                check(
+                    "Remove files from view when they are moved to another local file domain: ",
+                    |s| s.file_view_removal.moved,
+                    |s, v| s.file_view_removal.moved = v,
                 ),
                 noneable(
                     "Number of hours a file will stay in the trash before being deleted: ",
