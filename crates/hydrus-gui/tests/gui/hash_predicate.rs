@@ -218,6 +218,23 @@ fn cleanup_replaces_real_typed_text_and_owns_warning_acknowledgement() {
     window.invoke_answer(true);
     assert_eq!(window.get_hash_text(), "");
     assert_eq!(fields(&window).row_data(2).unwrap().text, "");
+    // Inspect the actual TextEdit through its next physical edit, rather than
+    // accepting cleared model/getter values while an old visible draft survives.
+    window.window().dispatch_event(WindowEvent::PointerPressed {
+        position,
+        button: PointerEventButton::Left,
+    });
+    window
+        .window()
+        .dispatch_event(WindowEvent::PointerReleased {
+            position,
+            button: PointerEventButton::Left,
+        });
+    key(window.window(), "x".into());
+    assert_eq!(window.get_hash_text(), "x");
+    window.invoke_pressed(0, 4);
+    window.invoke_answer(true);
+    assert_eq!(window.get_hash_text(), "");
     for case in fixture["cleanup"].as_array().unwrap() {
         window.invoke_chose(0, 5, 3);
         window.invoke_text_edited(0, 2, case["before"]["text"].as_str().unwrap().into());

@@ -346,9 +346,12 @@ export component PredicateEditorWindow inherits Window {
                         edited(value) => { root.simple-edited(-1 - row, value); }
                         accepted => { root.ok(0); }
                     }
-                    if row >= 0: Rectangle {
+                    if row >= 0: panel-box := Rectangle {
                         property <int> p: row;
                         property <EditorPanel> panel: root.panels[p];
+                        // Keep the derived panel bound to its model after real typing.
+                        property <string> hash-draft: panel.hash-text;
+                        changed panel => { self.hash-draft = self.panel.hash-text; }
                         border-width: 1px;
                         border-color: Theme.border;
                         VerticalLayout {
@@ -380,7 +383,7 @@ export component PredicateEditorWindow inherits Window {
                                         property <{x:length,y:length,w:length,h:length}> frame: {x:self.absolute-position.x,y:self.absolute-position.y,w:self.width,h:self.height};
                                         changed frame => { root.hash-field-placed(2,self.frame.x/1px,self.frame.y/1px,self.frame.w/1px,self.frame.h/1px); }
                                         min-width: 420px; min-height: 220px;
-                                        text <=> panel.hash-text;
+                                        text <=> panel-box.hash-draft;
                                         placeholder-text: panel.fields[2].placeholder;
                                         enabled: root.question == "" && !root.notice-open;
                                         edited(text) => { root.text-edited(p, 2, text); }
