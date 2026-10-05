@@ -11,7 +11,7 @@ use slint::{
     },
 };
 use std::{
-    cell::RefCell,
+    cell::{Cell, RefCell},
     rc::Rc,
     sync::Arc,
     time::{Duration, Instant},
@@ -71,9 +71,17 @@ impl Native {
         }
     }
 }
-#[derive(Debug, Clone, Default)]
-pub(crate) struct Route(Rc<RefCell<Native>>);
+#[derive(Debug, Clone)]
+pub(crate) struct Route(Rc<RefCell<Native>>, Rc<Cell<bool>>);
+impl Default for Route {
+    fn default() -> Self {
+        Self(Rc::default(), Rc::new(Cell::new(true)))
+    }
+}
 impl Route {
+    pub(crate) fn retire(&self) {
+        self.1.set(false);
+    }
     pub(crate) fn observer(
         &self,
     ) -> impl FnMut(&slint::Window, &WindowEvent) -> EventResult + 'static {
@@ -105,10 +113,14 @@ fn settings(store: &Store) -> Settings {
 }
 pub(crate) fn main(window: &MainWindow, store: Arc<Store>) -> Route {
     let route = Route::default();
+    let active = route.1.clone();
     window.on_shortcut_key({
         let route = route.clone();
         let weak = window.as_weak();
         move |text, bits| {
+            if !active.get() {
+                return false;
+            }
             let Some(window) = weak.upgrade().filter(|w| {
                 w.window().is_visible()
                     && w.get_question().is_empty()
@@ -132,11 +144,19 @@ pub(crate) fn main(window: &MainWindow, store: Arc<Store>) -> Route {
     });
     route
 }
-pub(crate) fn viewer(window: &MediaViewerWindow, store: Arc<Store>) -> Route {
+pub(crate) fn viewer(
+    window: &MediaViewerWindow,
+    store: Arc<Store>,
+    canvas: crate::viewing_tracking::CanvasTracker,
+) -> Route {
     let route = Route::default();
     let execute: Rc<dyn Fn(i32) -> bool> = Rc::new({
         let weak = window.as_weak();
+        let canvas = canvas.clone();
         move |action| {
+            if !canvas.active() {
+                return false;
+            }
             let Some(window) = weak.upgrade().filter(|w| {
                 w.window().is_visible() && w.get_question().is_empty() && w.get_warning().is_empty()
             }) else {
@@ -158,7 +178,11 @@ pub(crate) fn viewer(window: &MediaViewerWindow, store: Arc<Store>) -> Route {
         let route = route.clone();
         let store = store.clone();
         let execute = execute.clone();
+        let canvas = canvas.clone();
         move |text, bits| {
+            if !canvas.active() {
+                return false;
+            }
             let settings = settings(&store);
             let Some(gesture) = route.keyboard(&text, bits as u8, settings.merge_numpad) else {
                 return false;
@@ -173,7 +197,11 @@ pub(crate) fn viewer(window: &MediaViewerWindow, store: Arc<Store>) -> Route {
         let store = store.clone();
         let execute = execute.clone();
         let weak = window.as_weak();
+        let canvas = canvas.clone();
         move |key, press, bits| {
+            if !canvas.active() {
+                return false;
+            }
             let settings = settings(&store);
             let Some(gesture) = route.mouse(key as u32, press as u8, bits as u8) else {
                 return false;
@@ -195,6 +223,9 @@ pub(crate) fn viewer(window: &MediaViewerWindow, store: Arc<Store>) -> Route {
         let route = route.clone();
         let execute = execute.clone();
         move |delta, bits| {
+            if !canvas.active() {
+                return false;
+            }
             let settings = settings(&store);
             let delta = route.0.borrow_mut().wheel.take().unwrap_or(delta);
             let bits = bits as u8 | (route.0.borrow().input.bits & 16);

@@ -211,8 +211,76 @@ fn saved_mouse_and_keyboard_captures_feed_existing_viewer_navigation_and_guard_c
     let successor = bound.viewer.borrow().as_ref().unwrap().clone_strong();
     assert!(!viewer.invoke_shortcut_mouse(1, 0, 1));
     assert!(!viewer.invoke_shortcut_key("v".into(), 0));
+    viewer.show().unwrap();
+    let retired_caption = viewer.get_caption();
+    assert!(!viewer.invoke_shortcut_mouse(1, 0, 1));
+    assert!(!viewer.invoke_shortcut_key("v".into(), 0));
+    assert!(!viewer.invoke_shortcut_wheel(-120.0, 0));
+    assert!(!viewer.invoke_shortcut_wheel(-30.0, 0));
+    assert_eq!(viewer.get_caption(), retired_caption);
     assert_eq!(successor.get_caption(), format!("1/{count}"));
+    assert!(successor.invoke_shortcut_key("v".into(), 0));
+    assert_eq!(successor.get_caption(), format!("{count}/{count}"));
+    viewer.hide().unwrap();
     successor.invoke_close_requested();
+}
+
+#[test]
+fn accepted_main_close_retires_saved_shortcuts_even_after_show_and_fresh_binding_reopens() {
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let parent = options(&ui, &bound);
+    let (sets, command) = add(&parent, 0);
+    // Apply the untouched reference F7/default refresh command.
+    command.invoke_apply();
+    sets.invoke_apply();
+    parent.invoke_apply();
+    let saved = store.read(hydrus_store::settings::get::<Settings>).unwrap();
+    assert_eq!(saved.sets["main_gui"][0].gesture, Gesture::default());
+    assert_eq!(saved.sets["main_gui"][0].action, 78);
+    store
+        .write(|ctx| {
+            let mut settings: hydrus_store::settings::GuiSettings =
+                hydrus_store::settings::get(ctx.conn())?;
+            settings.confirm_exit = true;
+            hydrus_store::settings::set(ctx.conn(), &settings)
+        })
+        .unwrap();
+    ui.window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(ui.window().is_visible());
+    assert!(
+        ui.get_question()
+            .starts_with("Are you sure you want to exit the client?")
+    );
+    ui.invoke_answer(false);
+    ui.invoke_flip_synchronised();
+    assert!(!bound.current.borrow().synchronised());
+    assert!(ui.invoke_shortcut_key(slint::platform::Key::F7.into(), 0));
+    assert!(bound.current.borrow().synchronised());
+    ui.invoke_flip_synchronised();
+    assert!(!bound.current.borrow().synchronised());
+    ui.window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(ui.window().is_visible());
+    ui.invoke_answer(true);
+    assert!(!ui.window().is_visible());
+    ui.show().unwrap();
+    assert!(!ui.invoke_shortcut_key(slint::platform::Key::F7.into(), 0));
+    assert!(!bound.current.borrow().synchronised());
+    assert_eq!(
+        store.read(hydrus_store::settings::get::<Settings>).unwrap(),
+        saved
+    );
+    let reopened = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_flip_synchronised();
+    assert!(!reopened.current.borrow().synchronised());
+    assert!(ui.invoke_shortcut_key(slint::platform::Key::F7.into(), 0));
+    assert!(reopened.current.borrow().synchronised());
+    assert!(!bound.current.borrow().synchronised());
 }
 #[test]
 fn raw_backend_key_location_and_modifier_identity_reach_the_same_capture_contract() {

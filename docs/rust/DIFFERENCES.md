@@ -2503,3 +2503,10 @@ mapping, trackpad angle semantics, global cross-viewer wheel state and native
 platform double-click thresholds are not established by the offscreen Qt
 recording. Authored Rust tests await hosted CI; no local Cargo build, Rust test
 or mutation run was performed.
+
+Shortcut execution now uses permanent owner guards in addition to visibility:
+viewer routes read their existing canvas tracker; the main route retires only
+through the client’s accepted-exit hook. Exit confirmation, Cancel and its
+auto-yes path remain owned by client_exit. Native regressions cover retained
+close/show, independent successor dispatch and untouched F7/default command
+Apply, with hosted execution pending. This adds no original leaf proposal.

@@ -1745,7 +1745,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }),
         Rc::new({
             let preview = preview.clone();
-            move || preview.close()
+            let shortcuts = shortcuts.clone();
+            move || {
+                preview.close();
+                shortcuts.retire();
+            }
         }),
     );
     // (the status bar counts the selection's inbox)
@@ -6153,7 +6157,11 @@ fn open_viewer(
         }
     });
     windows::place(window.window(), &settings_frame);
-    let shortcuts = shortcut_runtime::viewer(&window, model.borrow().store().clone());
+    let shortcuts = shortcut_runtime::viewer(
+        &window,
+        model.borrow().store().clone(),
+        viewing_stats.clone(),
+    );
     windows::watch_named_events(
         window.window(),
         model.borrow().store(),
