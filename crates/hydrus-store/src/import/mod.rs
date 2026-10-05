@@ -1636,6 +1636,10 @@ pub(crate) mod tests {
                 .unwrap()
         );
         assert_eq!(
+            input.settings["sibling_connector_colours"],
+            serde_json::json!({"fade":true,"namespace":"system"})
+        );
+        assert_eq!(
             input.settings["tag_display_filters"],
             serde_json::to_value(crate::tag_display::TagDisplayFilters::default()).unwrap()
         );

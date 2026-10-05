@@ -19,6 +19,7 @@ pub struct TagRow {
     pub tag: String,
     pub colour_tag: String,
     pub label: String,
+    pub parts: Vec<hydrus_core::tag_presentation::TagText>,
     pub parent_row: bool,
 }
 
@@ -408,15 +409,23 @@ impl ManageTags {
                 Ok(details)
             })
             .unwrap_or_default();
+        let colours: hydrus_core::tag_presentation::NamespaceColours = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        let style: hydrus_core::tag_presentation::SiblingConnectorColours = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
         let preferences = &self.dialog_preferences;
         let mut out = Vec::new();
         for (tag, mut label) in rows {
             let (ideal, parents) = details.get(&tag).cloned().unwrap_or_default();
-            if preferences.tag_list_show_siblings
-                && let Some(ideal) = ideal
-            {
+            let prefix = label.clone();
+            let shown_ideal = ideal.filter(|_| preferences.tag_list_show_siblings);
+            if let Some(ideal) = &shown_ideal {
                 label.push_str(&presentation.sibling_connector);
-                label.push_str(&ideal);
+                label.push_str(ideal);
             }
             if preferences.tag_list_show_parents
                 && !preferences.tag_list_expand_parents
@@ -427,10 +436,31 @@ impl ManageTags {
                     hydrus_core::numbers::human_int(parents.len() as u64)
                 ));
             }
+            let parts = if let Some(ideal) = shown_ideal.as_ref() {
+                let suffix = label
+                    .strip_prefix(&format!(
+                        "{prefix}{}{ideal}",
+                        presentation.sibling_connector
+                    ))
+                    .unwrap_or_default()
+                    .to_owned();
+                style.runs(
+                    (&tag, prefix),
+                    &presentation.sibling_connector,
+                    (ideal, ideal.clone()),
+                    suffix,
+                    &colours,
+                    false,
+                )
+            } else {
+                let suffix = label.strip_prefix(&prefix).unwrap_or_default().to_owned();
+                style.parent_runs((&tag, prefix), suffix, &colours, false)
+            };
             out.push(TagRow {
                 tag: tag.clone(),
                 colour_tag: tag.clone(),
                 label,
+                parts,
                 parent_row: false,
             });
             if preferences.tag_list_show_parents && preferences.tag_list_expand_parents {
@@ -439,6 +469,7 @@ impl ManageTags {
                         tag: tag.clone(),
                         colour_tag: parent.clone(),
                         label: format!("    {parent}"),
+                        parts: Vec::new(),
                         parent_row: true,
                     });
                 }

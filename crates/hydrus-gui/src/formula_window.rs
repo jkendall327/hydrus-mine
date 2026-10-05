@@ -84,7 +84,7 @@ fn rows(items: impl IntoIterator<Item = String>, selected: &[usize]) -> ModelRc<
 fn int(n: impl TryInto<i32>) -> i32 {
     n.try_into().unwrap_or(0)
 }
-fn show(w: &FormulaWindow, e: &FormulaEditor) {
+fn show(w: &FormulaWindow, e: &FormulaEditor, formatting: &hydrus_store::settings::GuiFormatting) {
     w.set_supported(e.supported());
     w.set_name(e.formula.name.as_str().into());
     let (kind, content, choices) = match &e.formula.kind {
@@ -138,9 +138,10 @@ fn show(w: &FormulaWindow, e: &FormulaEditor) {
         format!("example {} ({} characters)", i + 1, t.chars().count())
     })));
     w.set_example(int(e.example));
-    let raw = hydrus_gui_model::parser_test_data::preview(
+    let raw = hydrus_gui_model::parser_test_data::preview_with_format(
         &e.test.text,
         e.raw_mimes.get(e.example, &e.test.text),
+        formatting,
     );
     w.set_raw_description(raw.description.into());
     w.set_raw_preview(raw.text.into());
@@ -248,13 +249,18 @@ pub fn open(
     );
     let state = Rc::new(RefCell::new(FormulaEditor::new(formula, test_data)));
     let refresh: Rc<dyn Fn()> = Rc::new({
+        let store = store.clone();
         let weak = w.as_weak();
         let state = state.clone();
         let slots = slots.clone();
         let fetch = fetch.clone();
         move || {
             if let Some(w) = weak.upgrade() {
-                show(&w, &state.borrow());
+                show(
+                    &w,
+                    &state.borrow(),
+                    &hydrus_gui_model::gui_format::preferences(&store),
+                );
                 w.set_fetching(fetch.busy());
                 w.set_child_open(slots.has_children() || fetch.busy());
             }

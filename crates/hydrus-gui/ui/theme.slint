@@ -28,7 +28,9 @@ export global Theme {
 }
 
 // a row of a tag or predicate list: its text, in its namespace's colour
+export struct TagTextRun { text: string, colour: color, previous-colour: color, fade: bool }
 export struct ListText {
     text: string,
     colour: color,
+    parts: [TagTextRun],
 }

@@ -616,3 +616,481 @@ fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_chan
     q.invoke_answered(false);
     assert!(saved(&store).calls.is_empty());
 }
+
+fn command(bound: &Bound) -> hydrus_gui::ExternalCommandWindow {
+    bound
+        .options_external_calls
+        .command
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong()
+}
+fn question(bound: &Bound) -> hydrus_gui::SessionDialog {
+    bound
+        .options_external_calls
+        .question
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong()
+}
+fn command_rows(w: &hydrus_gui::ExternalCommandWindow) -> Vec<String> {
+    w.get_rows()
+        .iter()
+        .map(|r| r.cells.row_data(0).unwrap().to_string())
+        .collect()
+}
+fn command_key(
+    w: &hydrus_gui::ExternalCommandWindow,
+    key: slint::SharedString,
+    control: bool,
+    shift: bool,
+) {
+    use slint::platform::{Key, WindowEvent};
+    for (held, on) in [(Key::Control, control), (Key::Shift, shift)] {
+        if on {
+            w.window()
+                .dispatch_event(WindowEvent::KeyPressed { text: held.into() });
+        }
+    }
+    w.window()
+        .dispatch_event(WindowEvent::KeyPressed { text: key.clone() });
+    w.window()
+        .dispatch_event(WindowEvent::KeyReleased { text: key });
+    for (held, on) in [(Key::Shift, shift), (Key::Control, control)] {
+        if on {
+            w.window()
+                .dispatch_event(WindowEvent::KeyReleased { text: held.into() });
+        }
+    }
+}
+#[test]
+fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer() {
+    hydrus_gui::set_clipper(|clip| {
+        if let hydrus_gui::Clip::Text(text) = clip {
+            headless::set_clipboard_text(text);
+        }
+    });
+    use slint::platform::{Key, PointerEventButton, WindowEvent};
+    let (_dirs, store) = store();
+    let mut original = seed(&store);
+    let ActualCall::Process(ref mut process) = original.call else {
+        panic!("seed process");
+    };
+    process.arguments = ["zero", "one", "two", "three"].map(str::to_owned).to_vec();
+    let manager = Manager {
+        calls: vec![original.clone()],
+    };
+    store
+        .write(move |writer| hydrus_store::settings::set(writer.conn(), &manager))
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let options = open(&ui, &bound);
+    options.invoke_external_call_clicked(0, false, false);
+    options.invoke_external_call_action("edit".into());
+    let child = call(&bound);
+    child.invoke_command_edit();
+    let w = command(&bound);
+    let command_native = windows.get(windows.count() - 1).unwrap();
+    let fixture = hydrus_testkit::fixture_json("external_command.json");
+    for event in fixture["queue"].as_array().unwrap().iter().take(11) {
+        match event["action"].as_str().unwrap() {
+            "initial" => {}
+            "select_top_pair" => {
+                w.invoke_clicked(0, false, false);
+                w.invoke_clicked(1, true, false);
+            }
+            "up_at_top" | "up_after_bottom" => {
+                w.invoke_action("up".into());
+            }
+            "down_after_top" => {
+                w.invoke_action("down".into());
+            }
+            "down_at_bottom" => {
+                w.invoke_clicked(2, false, false);
+                w.invoke_clicked(3, true, false);
+                w.invoke_action("down".into());
+            }
+            "edit_first_of_multiple" => {
+                w.invoke_clicked(1, false, false);
+                w.invoke_clicked(3, true, false);
+                w.invoke_action("edit".into());
+                let q = question(&bound);
+                let expected = &event["entries"][0];
+                assert_eq!(q.get_window_title(), expected["title"].as_str().unwrap());
+                assert_eq!(q.get_message(), expected["message"].as_str().unwrap());
+                assert_eq!(q.get_text(), expected["default"].as_str().unwrap());
+                assert_eq!(
+                    q.get_placeholder(),
+                    expected["placeholder"].as_str().unwrap()
+                );
+                w.invoke_action("delete".into());
+                assert!(
+                    q.get_asking_name(),
+                    "the nested editor blocks other queue actions"
+                );
+                q.invoke_name_entered("  edited\t日本😀  \nignored".into());
+            }
+            "cancel_edit" => {
+                w.invoke_action("edit".into());
+                question(&bound).invoke_cancelled();
+            }
+            "add_unselected" => {
+                w.invoke_action("add".into());
+                question(&bound).invoke_name_entered("  added  value  ".into());
+            }
+            "decline_delete" | "accept_delete" => {
+                w.invoke_action("delete".into());
+                let q = question(&bound);
+                assert_eq!(
+                    q.get_message(),
+                    event["questions"][0]["message"].as_str().unwrap()
+                );
+                q.invoke_answered(event["action"] == "accept_delete");
+            }
+            unexpected => panic!("unexpected queue step {unexpected}"),
+        }
+        assert_eq!(
+            serde_json::to_value(command_rows(&w)).unwrap(),
+            event["rows"],
+            "{}",
+            event["action"]
+        );
+        let selected: Vec<usize> = w
+            .get_rows()
+            .iter()
+            .enumerate()
+            .filter(|(_, r)| r.selected)
+            .map(|(i, _)| i)
+            .collect();
+        let mut expected: Vec<usize> = serde_json::from_value(event["selected"].clone()).unwrap();
+        expected.sort_unstable();
+        assert_eq!(selected, expected);
+    }
+    let pixels = headless::render(&command_native, 760, 590);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("external-command-parameters.png"),
+        &pixels,
+        760,
+        590,
+    )
+    .unwrap();
+    w.invoke_cancel();
+    assert!(bound.options_external_calls.command.borrow().is_none());
+    child.invoke_command_edit();
+    let w = command(&bound);
+    // Fresh clicked row; genuine Slint key dispatch must retain list focus through row refreshes.
+    headless::render(&windows.get(windows.count() - 1).unwrap(), 760, 590);
+    let position = slint::LogicalPosition::new(
+        w.get_parameter_list_x() + 10.0,
+        w.get_parameter_list_y() + 24.0 + 33.0,
+    );
+    w.window().dispatch_event(WindowEvent::PointerPressed {
+        position,
+        button: PointerEventButton::Left,
+    });
+    w.window().dispatch_event(WindowEvent::PointerReleased {
+        position,
+        button: PointerEventButton::Left,
+    });
+    assert!(w.get_rows().row_data(1).unwrap().selected);
+    command_key(&w, Key::DownArrow.into(), false, true);
+    assert!(w.get_rows().row_data(2).unwrap().selected);
+    command_key(&w, Key::Home.into(), true, false);
+    command_key(&w, " ".into(), true, false);
+    assert!((0..3).all(|i| w.get_rows().row_data(i).unwrap().selected));
+    command_key(&w, "c".into(), true, false);
+    assert_eq!(
+        headless::clipboard_text().as_deref(),
+        Some("one\ntwo\nzero")
+    );
+    command_key(&w, "a".into(), true, false);
+    command_key(&w, "c".into(), true, false);
+    assert_eq!(
+        headless::clipboard_text().as_deref(),
+        Some("zero\none\ntwo\nthree")
+    );
+    command_key(&w, Key::End.into(), false, false);
+    command_key(&w, Key::UpArrow.into(), false, true);
+    command_key(&w, Key::Delete.into(), false, false);
+    let q = question(&bound);
+    assert_eq!(q.get_message(), "Remove 2 selected?");
+    q.invoke_answered(true);
+    assert_eq!(command_rows(&w), ["zero", "one"]);
+    // Accepted parameter editing reaches the existing saved substitution consumer.
+    w.invoke_clicked(1, false, false);
+    w.invoke_action("edit".into());
+    question(&bound).invoke_name_entered(" pre:%path%:日本😀 ".into());
+    w.invoke_apply();
+    child.invoke_apply();
+    options.invoke_apply();
+    let persisted = saved(&store);
+    let ActualCall::Process(process) = &persisted.calls[0].call else {
+        panic!("saved process");
+    };
+    let inputs = hydrus_core::external_calls::Inputs::from([(
+        Parameter::Path,
+        vec!["/synthetic/漢😀.png".into()],
+    )]);
+    assert_eq!(
+        process.command(&inputs).unwrap(),
+        [
+            process.executable.clone(),
+            "zero".into(),
+            "pre:/synthetic/漢😀.png:日本😀".into()
+        ]
+    );
+    let options = open(&ui, &bound);
+    options.invoke_external_call_clicked(0, false, false);
+    options.invoke_external_call_action("edit".into());
+    let child = call(&bound);
+    child.invoke_command_edit();
+    let reopened = command(&bound);
+    assert_eq!(command_rows(&reopened), ["zero", "pre:%path%:日本😀"]);
+    reopened.invoke_action("add".into());
+    let retired = question(&bound);
+    options.invoke_cancel();
+    retired.invoke_name_entered("retired".into());
+    reopened.invoke_apply();
+    assert_eq!(saved(&store), persisted);
+    assert!(!bound.options_external_calls.has_open());
+}
+
+#[test]
+fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement() {
+    hydrus_gui::set_clipper(|clip| {
+        if let hydrus_gui::Clip::Text(text) = clip {
+            headless::set_clipboard_text(text);
+        }
+    });
+    let (_dirs, store) = store();
+    headless::init();
+    let original = seed(&store);
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let options = open(&ui, &bound);
+    options.invoke_external_call_clicked(0, false, false);
+    options.invoke_external_call_action("edit".into());
+    let child = call(&bound);
+    let reference = hydrus_testkit::fixture_json("external_command.json");
+    for event in reference["clipboard"].as_array().unwrap() {
+        child.invoke_command_edit();
+        let w = command(&bound);
+        // Reproduce the recorded before-state through the real paste route.
+        hydrus_gui::set_paster(|| "before before".into());
+        w.invoke_action("paste".into());
+        question(&bound).invoke_answered(true);
+        let raw = event["raw"].as_str().unwrap().to_owned();
+        hydrus_gui::set_paster(move || raw.clone());
+        w.invoke_action("paste".into());
+        let q = question(&bound);
+        assert_eq!(
+            q.get_message(),
+            event["questions"][0]["message"].as_str().unwrap()
+        );
+        w.invoke_action("add".into());
+        assert!(!q.get_asking_name(), "paste review blocks queue mutation");
+        q.invoke_answered(event["accepted"].as_bool().unwrap());
+        assert_eq!(
+            serde_json::to_value(command_rows(&w)).unwrap(),
+            event["raw_arguments"]
+        );
+        assert_eq!(w.get_full_template(), event["example"].as_str().unwrap());
+        w.invoke_action("copy".into());
+        assert_eq!(w.get_feedback(), "Copied!");
+        assert_eq!(
+            headless::clipboard_text().as_deref(),
+            event["copies"][0][1].as_str()
+        );
+        w.invoke_cancel();
+        assert_eq!(saved(&store).calls, std::slice::from_ref(&original));
+    }
+    child.invoke_command_edit();
+    let w = command(&bound);
+    let before_rows = command_rows(&w);
+    let before_example = w.get_full_template();
+    hydrus_gui::set_clipboard_reader(|| Ok(None));
+    w.invoke_action("paste".into());
+    let q = question(&bound);
+    assert!(q.get_notice_only());
+    assert_eq!(
+        q.get_window_title(),
+        reference["unavailable"]["errors"][0]["title"]
+            .as_str()
+            .unwrap()
+    );
+    assert_eq!(
+        q.get_message(),
+        reference["unavailable"]["errors"][0]["message"]
+            .as_str()
+            .unwrap()
+    );
+    assert_eq!(command_rows(&w), before_rows);
+    assert_eq!(w.get_full_template(), before_example);
+    q.invoke_cancelled();
+    hydrus_gui::set_clipboard_reader(|| Err("synthetic clipboard access failure".into()));
+    w.invoke_action("paste".into());
+    let error = question(&bound);
+    assert_eq!(error.get_message(), "synthetic clipboard access failure");
+    error.invoke_cancelled();
+    hydrus_gui::clear_clipboard_reader();
+    hydrus_gui::set_paster(|| {
+        "owned-program --literal 日本😀 prefix:%path% profile=\"My Profile\"".into()
+    });
+    w.invoke_action("paste".into());
+    question(&bound).invoke_answered(true);
+    assert_eq!(w.get_feedback(), "Pasted!");
+    w.invoke_apply();
+    let availability = question(&bound);
+    assert!(availability.get_message().contains("with a \"which\" call"));
+    availability.invoke_answered(true);
+    child.invoke_apply();
+    options.invoke_apply();
+    let persisted = saved(&store);
+    let ActualCall::Process(process) = &persisted.calls[0].call else {
+        panic!("saved pasted process");
+    };
+    let inputs = hydrus_core::external_calls::Inputs::from([(
+        Parameter::Path,
+        vec!["/synthetic/漢😀.png".into()],
+    )]);
+    assert_eq!(
+        process.command(&inputs).unwrap(),
+        [
+            "owned-program",
+            "--literal",
+            "日本😀",
+            "prefix:/synthetic/漢😀.png",
+            "profile=\"My",
+            "Profile\""
+        ]
+    );
+    let options = open(&ui, &bound);
+    options.invoke_external_call_clicked(0, false, false);
+    options.invoke_external_call_action("edit".into());
+    let child = call(&bound);
+    child.invoke_command_edit();
+    let w = command(&bound);
+    assert_eq!(command_rows(&w), process.arguments);
+    hydrus_gui::set_paster(|| "stale accepted-paste 日本😀".into());
+    w.invoke_action("paste".into());
+    let retired = question(&bound);
+    options.invoke_cancel();
+    retired.invoke_answered(true);
+    w.invoke_apply();
+    child.invoke_apply();
+    assert_eq!(saved(&store), persisted);
+    assert!(!bound.options_external_calls.has_open());
+}
+
+#[test]
+fn parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt() {
+    use slint::platform::{Key, PointerEventButton, WindowEvent};
+    let (_dirs, store) = store();
+    let original = seed(&store);
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let options = open(&ui, &bound);
+    options.invoke_external_call_clicked(0, false, false);
+    options.invoke_external_call_action("edit".into());
+    let child = call(&bound);
+    let reference = hydrus_testkit::fixture_json("external_command.json");
+    for history in reference["queue_edges"].as_array().unwrap() {
+        child.invoke_command_edit();
+        let w = command(&bound);
+        let native = windows.get(windows.count() - 1).unwrap();
+        hydrus_gui::set_paster(|| "owned-program alpha beta gamma delta".into());
+        w.invoke_action("paste".into());
+        question(&bound).invoke_answered(true);
+        headless::render(&native, 760, 590);
+        for event in history["steps"].as_array().unwrap() {
+            match event["action"].as_str().unwrap() {
+                "initial" => {}
+                action @ ("click_1" | "click_3" | "ctrl_click_1") => {
+                    let control = action == "ctrl_click_1";
+                    let row = if action == "click_3" { 3.0 } else { 1.0 };
+                    if control {
+                        w.window().dispatch_event(WindowEvent::KeyPressed {
+                            text: Key::Control.into(),
+                        });
+                    }
+                    let position = slint::LogicalPosition::new(
+                        w.get_parameter_list_x() + 10.0,
+                        w.get_parameter_list_y() + 24.0 + row * 22.0 + 11.0,
+                    );
+                    w.window().dispatch_event(WindowEvent::PointerPressed {
+                        position,
+                        button: PointerEventButton::Left,
+                    });
+                    w.window().dispatch_event(WindowEvent::PointerReleased {
+                        position,
+                        button: PointerEventButton::Left,
+                    });
+                    if control {
+                        w.window().dispatch_event(WindowEvent::KeyReleased {
+                            text: Key::Control.into(),
+                        });
+                    }
+                }
+                "edit_selection_first" => {
+                    w.invoke_action("edit".into());
+                    let q = question(&bound);
+                    assert_eq!(
+                        q.get_text(),
+                        event["entries"][0]["default"].as_str().unwrap()
+                    );
+                    q.invoke_name_entered("first-added 日本😀".into());
+                }
+                "shift_down" => {
+                    command_key(&w, Key::DownArrow.into(), false, true);
+                }
+                "ctrl_home" => {
+                    command_key(&w, Key::Home.into(), true, false);
+                }
+                "select_all" => {
+                    command_key(&w, "a".into(), true, false);
+                }
+                "delete" => {
+                    w.invoke_action("delete".into());
+                    let q = question(&bound);
+                    assert_eq!(
+                        q.get_message(),
+                        event["questions"][0]["message"].as_str().unwrap()
+                    );
+                    q.invoke_answered(true);
+                }
+                unexpected => panic!("unexpected edge {unexpected}"),
+            }
+            assert_eq!(
+                serde_json::to_value(command_rows(&w)).unwrap(),
+                event["rows"],
+                "{} / {}",
+                history["name"],
+                event["action"]
+            );
+            let selected: Vec<usize> = w
+                .get_rows()
+                .iter()
+                .enumerate()
+                .filter(|(_, r)| r.selected)
+                .map(|(i, _)| i)
+                .collect();
+            let mut expected: Vec<usize> =
+                serde_json::from_value(event["selected"].clone()).unwrap();
+            expected.sort_unstable();
+            assert_eq!(
+                selected, expected,
+                "{} / {}",
+                history["name"], event["action"]
+            );
+        }
+        w.invoke_cancel();
+        assert_eq!(saved(&store).calls, std::slice::from_ref(&original));
+    }
+    options.invoke_cancel();
+    assert!(!bound.options_external_calls.has_open());
+}

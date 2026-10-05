@@ -3,7 +3,10 @@ use crate::{ExternalCallWindow, ExternalCommandWindow, ExternalRule, SessionDial
 use hydrus_core::external_calls::{
     ActualCall, Callable, Inputs, Parameter, Pipeline, Process, Rule, clean_arguments,
 };
-use hydrus_gui_model::{external_calls as model, list_selection::ListSelection};
+use hydrus_gui_model::{
+    external_calls as model,
+    external_command::{Paste, Queue as CommandState},
+};
 use hydrus_store::Store;
 use slint::{ComponentHandle as _, ModelRc, VecModel};
 use std::{
@@ -163,7 +166,9 @@ fn text_child(
     w.set_window_title("Enter parameter".into());
     w.set_asking_name(true);
     w.set_text(initial.into());
-    w.set_message("Edit the parameter. This should just be one thing, which you typically see separated by whitespace in a command. No newlines or leading/trailing whitespace allowed in these parameter templates, and multiple whitespace is collapsed to single. You can mix an input parameter's replacement token in amongst other text, or even have multiple tokens in the same parameter.".into());
+    w.set_placeholder("-o".into());
+    w.set_name_ok_label("ok".into());
+    w.set_message("Edit the parameter. This should just be one thing, which you typically see separated by whitespace in a command. In a command like this:\n\nmy_program -o d a=virt profile=\"My Profile\" input_path\n\nThe parameters would be \"-o\", \"d\", \"a=virt\", \"profile=\"My Profile\"\", and \"input_path\" (or, likely for our purposes here, \"%path%\"). While you may need quotes _within_ a parameter, you should not, generally speaking, wrap a whole parameter in quotes here to avoid whitespace issues--that is handled for you, so do not worry about it; trying to add extra quotes may just break things.\n\nNo newlines or leading/trailing whitespace allowed in these parameter templates, and multiple whitespace is collapsed to single.\n\nYou can mix an input parameter's replacement token in amongst other text, or even have multiple tokens in the same parameter. \"%parameter1%-%parameter2%\" is fine. You cannot use the same token more than once per parameter, but you can use it in multiple parameters!".into());
     let alive = Rc::new(Cell::new(true));
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = w.as_weak();
@@ -189,11 +194,7 @@ fn text_child(
             if !alive.get() || !active.get() {
                 return;
             }
-            let Some(value) = clean_arguments(&[text.to_string()])
-                .into_iter()
-                .next()
-                .filter(|s| !s.is_empty())
-            else {
+            let Some(value) = clean_arguments(&[text.to_string()]).into_iter().next() else {
                 return;
             };
             close();
@@ -220,10 +221,6 @@ fn text_child(
     w.show().map_err(|e| e.to_string())
 }
 
-struct CommandState {
-    arguments: Vec<String>,
-    selection: ListSelection<usize>,
-}
 fn command_show(w: &ExternalCommandWindow, state: &CommandState) {
     w.set_rows(ModelRc::new(VecModel::from(
         state
@@ -238,7 +235,7 @@ fn command_show(w: &ExternalCommandWindow, state: &CommandState) {
     )));
     w.set_selected(!state.selection.is_empty());
     w.set_single(state.selection.one().is_some());
-    w.set_full_template(format!("{} {}", w.get_executable(), state.arguments.join(" ")).into());
+    w.set_full_template(state.full_template(w.get_executable().as_str()).into());
 }
 fn command_action(
     action: &str,
@@ -252,25 +249,17 @@ fn command_action(
     match action {
         "copy" => {
             crate::copy_to_clipboard(w.get_full_template().as_str());
+            w.set_feedback("Copied!".into());
+            w.set_feedback_generation(w.get_feedback_generation() + 1);
         }
-        "paste" => match crate::from_clipboard() {
+        "paste" => match crate::clipboard_text()
+            .and_then(|text| text.ok_or_else(|| "No text on the clipboard!".to_owned()))
+        {
             Ok(text) => {
-                let items = text
-                    .trim()
-                    .split(' ')
-                    .map(str::to_owned)
-                    .collect::<Vec<_>>();
-                let executable = items[0].clone();
-                let arguments = items[1..].to_vec();
-                let summary = if arguments.is_empty() {
-                    ".".into()
-                } else {
-                    format!(":\n\n{}", arguments.join("\n"))
-                };
-                let message = format!(
-                    "I took your paste and got a command \"{executable}\" and {} parameters{summary}\n\nLook good?",
-                    arguments.len()
-                );
+                let paste = Paste::parse(&text);
+                let message = paste.question();
+                let executable = paste.executable;
+                let arguments = paste.arguments;
                 let done: Rc<dyn Fn(bool)> = Rc::new({
                     let weak = weak.clone();
                     let state = state.clone();
@@ -279,8 +268,9 @@ fn command_action(
                         if yes && let Some(w) = weak.upgrade() {
                             w.set_executable(executable.as_str().into());
                             let mut state = state.borrow_mut();
-                            state.arguments = arguments.clone();
-                            state.selection = ListSelection::default();
+                            *state = CommandState::new(arguments.clone());
+                            w.set_feedback("Pasted!".into());
+                            w.set_feedback_generation(w.get_feedback_generation() + 1);
                         }
                         show();
                     }
@@ -289,13 +279,30 @@ fn command_action(
                     w.set_error(e.into());
                 }
             }
-            Err(e) => {
-                w.set_error(e.into());
-            }
+            Err(e) => match ask(question, active, e, Rc::new(|_| {})) {
+                Ok(notice) => {
+                    notice.set_window_title("Error".into());
+                    notice.set_notice_only(true);
+                }
+                Err(error) => {
+                    w.set_error(error.into());
+                }
+            },
         },
+        "copy-selected" => {
+            if let Some(text) = state.borrow().copy_selected() {
+                crate::copy_to_clipboard(&text);
+            }
+        }
+        "select-all" => {
+            state.borrow_mut().select_all();
+        }
+        "toggle-current" => {
+            state.borrow_mut().toggle_current();
+        }
         "add" | "edit" => {
             let editing = if action == "edit" {
-                state.borrow().selection.one()
+                state.borrow().selection.selected_order().first().copied()
             } else {
                 None
             };
@@ -333,17 +340,17 @@ fn command_action(
             if selected.is_empty() {
                 return;
             }
-            let message = format!("Remove {} selected?", selected.len());
+            let message = format!(
+                "Remove {} selected?",
+                hydrus_core::numbers::human_int(selected.len() as u64)
+            );
             let done: Rc<dyn Fn(bool)> = Rc::new({
                 let state = state.clone();
                 let show = show.clone();
                 move |yes| {
                     if yes {
                         let mut state = state.borrow_mut();
-                        for i in selected.iter().rev() {
-                            state.arguments.remove(*i);
-                        }
-                        state.selection = ListSelection::default();
+                        state.delete(&selected);
                     }
                     show();
                 }
@@ -353,34 +360,7 @@ fn command_action(
             }
         }
         "up" | "down" => {
-            let mut state = state.borrow_mut();
-            let len = state.arguments.len();
-            let mut selected = (0..len)
-                .map(|i| state.selection.is_selected(i))
-                .collect::<Vec<_>>();
-            let mut order = (0..len).filter(|i| selected[*i]).collect::<Vec<_>>();
-            if action == "down" {
-                order.reverse();
-            }
-            for i in order {
-                let j = if action == "up" {
-                    i.checked_sub(1)
-                } else {
-                    (i + 1 < len).then_some(i + 1)
-                };
-                if let Some(j) = j {
-                    state.arguments.swap(i, j);
-                    selected.swap(i, j);
-                }
-            }
-            state.selection.select_many(
-                &selected
-                    .iter()
-                    .enumerate()
-                    .filter(|(_, on)| **on)
-                    .map(|(i, _)| i)
-                    .collect::<Vec<_>>(),
-            );
+            state.borrow_mut().reorder(action == "down");
         }
         _ => return,
     }
@@ -394,10 +374,8 @@ fn command_open(
 ) -> Result<ExternalCommandWindow, String> {
     let w = ExternalCommandWindow::new().map_err(|e| e.to_string())?;
     w.set_executable(process.executable.as_str().into());
-    let state = Rc::new(RefCell::new(CommandState {
-        arguments: process.arguments.clone(),
-        selection: ListSelection::default(),
-    }));
+    w.set_mac_delete_key(cfg!(target_os = "macos"));
+    let state = Rc::new(RefCell::new(CommandState::new(process.arguments.clone())));
     let active = Rc::new(Cell::new(true));
     let timer = Rc::new(slint::Timer::default());
     timer.start(
@@ -443,6 +421,7 @@ fn command_open(
                 q.invoke_cancelled();
             }
             if let Some(w) = weak.upgrade() {
+                w.set_feedback("".into());
                 let _ = w.hide();
             }
             if let Some(slot) = slot.upgrade() {
@@ -461,9 +440,23 @@ fn command_open(
             }
             if let Ok(i) = usize::try_from(i) {
                 let mut state = state.borrow_mut();
-                let order = (0..state.arguments.len()).collect::<Vec<_>>();
-                state.selection.click(&order, i, c, s);
+                state.click(i, c, s);
             }
+            show();
+        }
+    });
+    w.on_navigated({
+        let state = state.clone();
+        let active = active.clone();
+        let question = slots.question.clone();
+        let show = show.clone();
+        move |destination, control, shift| {
+            if !active.get() || question.borrow().is_some() {
+                return;
+            }
+            state
+                .borrow_mut()
+                .navigate(destination.as_str(), control, shift);
             show();
         }
     });
@@ -856,6 +849,7 @@ pub fn open(
                 .get(i)
                 .map(|r| (r.rule.processor.clone(), r.input.clone()))
             else {
+                close();
                 return;
             };
             let applied = Rc::new({

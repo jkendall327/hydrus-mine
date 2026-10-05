@@ -154,6 +154,7 @@ impl Controller {
     /// Menu data is reread each time it opens, including other owners' saves.
     pub fn rows(&self) -> Result<Vec<ImportFavouriteRow>, String> {
         let manager = self.manager()?;
+        let formatting = hydrus_gui_model::gui_format::preferences(&self.store);
         let snapshot = self.store.snapshot();
         let name = |key: &str| {
             hex::decode(key)
@@ -172,7 +173,11 @@ impl Controller {
             .into_iter()
             .map(|(entry, options)| {
                 let summary =
-                    hydrus_gui_model::import_options_editor::container_summary(&options, &name);
+                    hydrus_gui_model::import_options_editor::container_summary_with_format(
+                        &options,
+                        &name,
+                        &formatting,
+                    );
                 ImportFavouriteRow {
                     name: entry.clone().into(),
                     label: menu_label(&format!("{entry} - {summary}")).into(),

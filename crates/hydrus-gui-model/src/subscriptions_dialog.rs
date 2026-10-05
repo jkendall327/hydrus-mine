@@ -411,13 +411,30 @@ impl Subscriptions {
     /// The list's rows, in order: each subscription's key, cells and
     /// whether it is selected.
     pub fn rows(&self, now: i64, short: ShortSummary) -> Vec<(u64, Vec<String>, bool)> {
+        self.rows_with_format(
+            now,
+            short,
+            &hydrus_store::settings::GuiFormatting::default(),
+        )
+    }
+    pub fn rows_with_format(
+        &self,
+        now: i64,
+        short: ShortSummary,
+        formatting: &hydrus_store::settings::GuiFormatting,
+    ) -> Vec<(u64, Vec<String>, bool)> {
         self.order(now)
             .into_iter()
             .filter_map(|key| {
                 let s = self.get(key)?;
                 Some((
                     key,
-                    subscription_row(&s.facts(), now, short),
+                    crate::subscriptions_list::subscription_row_with_format(
+                        &s.facts(),
+                        now,
+                        short,
+                        formatting,
+                    ),
                     self.selection.is_selected(key),
                 ))
             })

@@ -6,7 +6,7 @@ use std::sync::OnceLock;
 
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 
-use hydrus_gui_model::about::{Facts, about};
+use hydrus_gui_model::about::{Facts, about_with_format};
 use hydrus_store::Store;
 
 use crate::AboutWindow;
@@ -83,7 +83,11 @@ pub fn facts(store: &Store) -> Facts {
 /// Open the about window.
 pub fn open(store: &Store) -> Result<AboutWindow, slint::PlatformError> {
     let window = AboutWindow::new()?;
-    let about = about(&facts(store), Some(LICENSE));
+    let about = about_with_format(
+        &facts(store),
+        Some(LICENSE),
+        &hydrus_gui_model::gui_format::preferences(store),
+    );
     window.set_name(about.name.into());
     window.set_version(about.version.into());
     window.set_site(about.site.as_str().into());

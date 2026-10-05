@@ -150,7 +150,9 @@ fn open_internal(
                 m.input
                     .rows()
                     .iter()
-                    .map(|r| crate::list_text(&r.label, colours.tag(&r.colour_tag)))
+                    .map(|r| {
+                        crate::styled_list_text(&r.label, colours.tag(&r.colour_tag), &r.parts)
+                    })
                     .collect::<Vec<_>>(),
             )));
             w.set_selected(ModelRc::new(VecModel::from(m.input.selection_mask())));
@@ -270,8 +272,30 @@ fn open_internal(
             }
         }),
     );
+    let colour_updates = crate::tag_text::watch(
+        store,
+        Rc::new({
+            let weak = window.as_weak();
+            let editable = editable.clone();
+            move || {
+                editable()
+                    && weak
+                        .upgrade()
+                        .is_some_and(|window| window.window().is_visible())
+            }
+        }),
+        Rc::new({
+            let model = model.clone();
+            let refresh = refresh.clone();
+            move || {
+                model.borrow_mut().input.fetch();
+                refresh();
+            }
+        }),
+    );
     let close = Rc::new({
         let tab_updates = tab_updates.clone();
+        let colour_updates = colour_updates.clone();
         let active = active.clone();
         let pending = pending.clone();
         let weak = window.as_weak();
@@ -282,6 +306,7 @@ fn open_internal(
                 return;
             }
             tab_updates.stop();
+            colour_updates.stop();
             tag_menu.close();
             pending.borrow_mut().take();
             if let Some(w) = weak.upgrade() {

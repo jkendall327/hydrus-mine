@@ -89,6 +89,7 @@ mod favourite_search_editor;
 mod regex_favourites;
 mod tab_context;
 
+mod sibling_colours;
 mod sibling_connector;
 mod tag_dialog_defaults;
 mod tag_dialog_preferences;
@@ -140,3 +141,5 @@ mod window_rescue;
 
 mod gui_format;
 mod viewer_tag_wheel;
+
+mod idle_timeout_options;

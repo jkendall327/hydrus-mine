@@ -18,7 +18,7 @@ use crate::list_selection::ListSelection;
 use crate::subscriptions_dialog::{
     Choice, DialogQuery, dead_answer, dead_question, paused_queries_question,
 };
-use crate::subscriptions_list::{ShortSummary, delta_exact, full_human_name, query_row};
+use crate::subscriptions_list::{ShortSummary, full_human_name, query_row};
 
 /// The dialog's title.
 pub const TITLE: &str = "edit subscription";
@@ -195,12 +195,23 @@ impl EditSubscription {
     /// The line under the name: "no recent errors", or when it is delayed
     /// until and why (`_UpdateDelayText`).
     pub fn delay_text(&self, now: i64) -> String {
+        self.delay_text_with_format(now, &hydrus_store::settings::GuiFormatting::default())
+    }
+    pub fn delay_text_with_format(
+        &self,
+        now: i64,
+        formatting: &hydrus_store::settings::GuiFormatting,
+    ) -> String {
         if now > self.settings.no_work_until {
             "no recent errors".into()
         } else {
             format!(
                 "delayed--retrying {} because: {}",
-                delta_exact(self.settings.no_work_until, now),
+                crate::subscriptions_list::delta_exact_with_format(
+                    self.settings.no_work_until,
+                    now,
+                    formatting
+                ),
                 self.settings.no_work_until_reason
             )
         }
@@ -240,13 +251,30 @@ impl EditSubscription {
     /// The list's rows, in order: each query's key, cells and whether it
     /// is selected.
     pub fn rows(&self, now: i64, short: ShortSummary) -> Vec<(u64, Vec<String>, bool)> {
+        self.rows_with_format(
+            now,
+            short,
+            &hydrus_store::settings::GuiFormatting::default(),
+        )
+    }
+    pub fn rows_with_format(
+        &self,
+        now: i64,
+        short: ShortSummary,
+        formatting: &hydrus_store::settings::GuiFormatting,
+    ) -> Vec<(u64, Vec<String>, bool)> {
         self.order(now)
             .into_iter()
             .filter_map(|key| {
                 let q = self.get(key)?;
                 Some((
                     key,
-                    query_row(&q.query.facts(&self.settings), now, short),
+                    crate::subscriptions_list::query_row_with_format(
+                        &q.query.facts(&self.settings),
+                        now,
+                        short,
+                        formatting,
+                    ),
                     self.selection.is_selected(key),
                 ))
             })

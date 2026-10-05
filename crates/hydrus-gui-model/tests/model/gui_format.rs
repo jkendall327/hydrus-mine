@@ -134,3 +134,226 @@ fn staged_bounds_cancel_save_reopen_and_real_log_columns_match_qt() {
     assert_eq!(store.read(Settings::load).unwrap(), before);
     assert_eq!(value(&before.gui_formatting), fixture["cancel_after"]);
 }
+
+#[test]
+fn recorded_current_local_offsets_and_ancient_boundaries_match_python() {
+    let fixture = hydrus_testkit::fixture_json("gui_format.json");
+    let settings = GuiFormatting {
+        iso: true,
+        figures: 3,
+    };
+    for zone in fixture["timezone_states"].as_array().unwrap() {
+        let offset = jiff::tz::Offset::from_seconds(
+            i32::try_from(zone["current_offset"].as_i64().unwrap()).unwrap(),
+        )
+        .unwrap();
+        for sample in zone["samples"].as_array().unwrap() {
+            assert_eq!(
+                gui_format::timestamp_with_offset(
+                    &settings,
+                    sample["timestamp"].as_i64(),
+                    fixture["now"].as_i64().unwrap(),
+                    offset
+                ),
+                sample["text"].as_str().unwrap(),
+                "{}",
+                zone["zone"]
+            );
+        }
+    }
+}
+
+#[test]
+fn precision_reaches_existing_import_png_network_and_service_displays() {
+    use hydrus_core::bandwidth::{BandwidthType, Rule, Tracker};
+    use hydrus_gui_model::{
+        local_import::{Parse, Parsed},
+        network_data, png_export, services_review,
+    };
+    use hydrus_store::network_runtime::{NetworkJob, WaitReason};
+    let fixture = hydrus_testkit::fixture_json("gui_format.json");
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let dir = tempfile::tempdir().unwrap();
+    hydrus_store::import::import_legacy(
+        legacy.path(),
+        &dir.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    store
+        .write(|ctx| {
+            ctx.conn().execute("UPDATE files SET size = 0", [])?;
+            ctx.conn().execute(
+                "UPDATE files SET size = 1536 WHERE hash_id = (SELECT min(hash_id) FROM files)",
+                [],
+            )?;
+            Ok(())
+        })
+        .unwrap();
+    let storage = store
+        .snapshot()
+        .services
+        .all()
+        .find(|service| {
+            matches!(
+                service.kind,
+                hydrus_store::services::ServiceKind::LocalFileStorage
+            )
+        })
+        .unwrap()
+        .id;
+    let parsed = Parsed {
+        index: 0,
+        path: "/synthetic/format.jpg".into(),
+        result: Parse::Good(hydrus_core::Mime::ImageJpeg),
+        size: 1536,
+    };
+    let payload = "x".repeat(1536);
+    let job = NetworkJob {
+        id: 1,
+        url: "https://format.invalid/transfer".into(),
+        status: "downloading".into(),
+        wait: WaitReason::Downloading,
+        speed: 1536,
+        bytes_read: 1536,
+        bytes_total: Some(1536),
+        contexts: Vec::new(),
+        obeys_bandwidth: true,
+    };
+    let now = fixture["now"].as_i64().unwrap();
+    for event in fixture["events"].as_array().unwrap() {
+        let p: GuiFormatting = serde_json::from_value(event["saved"].clone()).unwrap();
+        let saved = p.clone();
+        store
+            .write(move |ctx| settings::set(ctx.conn(), &saved))
+            .unwrap();
+        let expected = event["bytes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|sample| sample["size"] == 1536)
+            .unwrap()["text"]
+            .as_str()
+            .unwrap();
+        assert_eq!(parsed.row_with_format(&p)[3], expected);
+        assert_eq!(
+            png_export::payload_description_with_format(&payload, &p),
+            format!("String - {expected}")
+        );
+        assert_eq!(
+            png_export::object_payload_description_with_format(&payload, "Synthetic Object", 2, &p),
+            format!("A list of 2 Synthetic Object - {expected}")
+        );
+        assert_eq!(
+            network_data::rule_row_with_format(Rule::new(BandwidthType::Data, Some(60), 1536), &p),
+            [expected.to_owned(), "1 minute".into()]
+        );
+        let mut tracker = Tracker::new(now);
+        tracker.report_data(1536, now);
+        tracker.report_requests(1, now);
+        assert_eq!(
+            network_data::usage_text_with_format(&mut tracker, Some(60), now, &p),
+            format!("{expected} in 1 requests")
+        );
+        assert_eq!(
+            network_data::all_usage_text_with_format(&tracker, &p),
+            format!("{expected} in 1 requests")
+        );
+        assert_eq!(
+            network_data::job_row_with_format(&job, &p)[3..],
+            [format!("{expected}/s"), format!("{expected}/{expected}")]
+        );
+        let rows = services_review::rows(&store).unwrap();
+        let row = rows.iter().find(|row| row.id == storage).unwrap();
+        assert!(
+            row.statistics.contains(&format!("totalling {expected}")),
+            "{}",
+            row.statistics
+        );
+    }
+}
+
+#[test]
+fn recorded_summaries_previews_expiry_and_scheduling_variants_reach_existing_models() {
+    use hydrus_core::import_options::{FileFilteringOptions, ImportOptionsSlice};
+    use hydrus_gui_model::{
+        about::{Facts, about_with_format},
+        import_options_editor::{Kind, summary_with_format},
+        network_sessions, parser_test_data,
+        subscriptions_list::{QueryFacts, ShortSummary, query_row_with_format},
+        times_editor,
+    };
+    let fixture = hydrus_testkit::fixture_json("gui_format.json");
+    let now = fixture["now"].as_i64().unwrap();
+    let slice = ImportOptionsSlice {
+        file_filtering: Some(FileFilteringOptions {
+            min_size: Some(1536),
+            max_size: Some(243_200),
+            max_gif_size: Some(188_213_746),
+            ..FileFilteringOptions::default()
+        }),
+        ..ImportOptionsSlice::default()
+    };
+    for event in fixture["events"].as_array().unwrap() {
+        let p: GuiFormatting = serde_json::from_value(event["saved"].clone()).unwrap();
+        let consumer = &event["consumers"];
+        assert_eq!(
+            summary_with_format(Kind::FileFiltering, &slice, &str::to_owned, &p),
+            consumer["filtering_summary"].as_str().unwrap()
+        );
+        for preview in consumer["parser_previews"].as_array().unwrap() {
+            let input = preview["input"].as_str().unwrap();
+            let shown = parser_test_data::preview_with_format(input, None, &p);
+            assert_eq!(shown.description, preview["label"].as_str().unwrap());
+            assert!(shown.parse_enabled);
+            assert_eq!(preview["raw"], input);
+        }
+        for expiry in consumer["expiry"].as_array().unwrap() {
+            assert_eq!(
+                network_sessions::expiry_text_with_format(expiry["timestamp"].as_i64(), now, &p),
+                expiry["text"].as_str().unwrap()
+            );
+        }
+        for variant in consumer["variants"].as_array().unwrap() {
+            let at = variant["timestamp"].as_i64().unwrap();
+            assert_eq!(
+                gui_format::timestamp_minutes(&p, at, now),
+                variant["minutes"].as_str().unwrap()
+            );
+            assert_eq!(
+                gui_format::timestamp_exact(&p, at, now),
+                variant["exact"].as_str().unwrap()
+            );
+            // The actual time picker explicitly requests force_no_iso=True.
+            assert!(
+                times_editor::pretty_time(at * 1000, now, &jiff::tz::TimeZone::UTC).ends_with(
+                    &format!(" ({})", variant["forced_relative"].as_str().unwrap())
+                )
+            );
+        }
+        let ago = consumer["variants"][0]["timestamp"].as_i64().unwrap();
+        let expected = gui_format::timestamp(&p, Some(ago), now);
+        let facts = Facts {
+            boot_ms: ago * 1000,
+            now_ms: now * 1000,
+            ..Facts::default()
+        };
+        assert!(
+            about_with_format(&facts, None, &p).tabs[0]
+                .1
+                .contains(&format!("boot time: {expected} ("))
+        );
+        let future = now + 86_400;
+        let query = QueryFacts {
+            query_text: "format query".into(),
+            last_check_time: ago,
+            latest_added: ago,
+            next_check_time: future,
+            ..QueryFacts::default()
+        };
+        let row = query_row_with_format(&query, now, ShortSummary::default(), &p);
+        assert_eq!(row[3], expected);
+        assert_eq!(row[4], expected);
+        assert_eq!(row[5], gui_format::timestamp(&p, Some(future), now));
+    }
+}

@@ -4,8 +4,9 @@
 use hydrus_core::{
     bandwidth::{BandwidthType, Manager, Rule, Rules, Tracker, default_rules},
     network::{CONTEXT_GLOBAL, NetworkContext},
-    numbers::{human_bytes, human_int},
+    numbers::human_int,
 };
+use hydrus_store::settings::GuiFormatting;
 use hydrus_store::{Store, bandwidth::BandwidthSettings, network_runtime::Snapshot, settings};
 
 /// The reference's confirmation for reverting one context.
@@ -171,17 +172,26 @@ impl Review {
 
     /// Native summary matching the Qt review columns (history span is explicit).
     pub fn row(&self, context: &NetworkContext, history: Option<u64>, now: i64) -> [String; 8] {
+        self.row_with_format(context, history, now, &GuiFormatting::default())
+    }
+    pub fn row_with_format(
+        &self,
+        context: &NetworkContext,
+        history: Option<u64>,
+        now: i64,
+        formatting: &GuiFormatting,
+    ) -> [String; 8] {
         let mut tracker = self.tracker(context, now);
         let speed = if self.live {
             tracker.usage(BandwidthType::Data, Some(1), now)
         } else {
             0
         };
-        let day = usage_text(&mut tracker, Some(86400), now);
-        let month = usage_text(&mut tracker, None, now);
+        let day = usage_text_with_format(&mut tracker, Some(86400), now, formatting);
+        let month = usage_text_with_format(&mut tracker, None, now, formatting);
         let search = match history {
-            Some(span) => usage_text(&mut tracker, Some(span), now),
-            None => all_usage_text(&tracker),
+            Some(span) => usage_text_with_format(&mut tracker, Some(span), now, formatting),
+            None => all_usage_text_with_format(&tracker, formatting),
         };
         let wait = self.rules(context).waiting_estimate(&mut tracker, now);
         [
@@ -190,7 +200,7 @@ impl Review {
             if speed == 0 {
                 String::new()
             } else {
-                format!("{}/s", human_bytes(speed))
+                format!("{}/s", crate::gui_format::bytes(formatting, speed))
             },
             day,
             search,
@@ -283,9 +293,12 @@ pub fn duration(seconds: u64) -> String {
 
 /// The bandwidth editor's two columns.
 pub fn rule_row(rule: Rule) -> [String; 2] {
+    rule_row_with_format(rule, &GuiFormatting::default())
+}
+pub fn rule_row_with_format(rule: Rule, formatting: &GuiFormatting) -> [String; 2] {
     [
         match rule.kind {
-            BandwidthType::Data => human_bytes(rule.max_allowed),
+            BandwidthType::Data => crate::gui_format::bytes(formatting, rule.max_allowed),
             BandwidthType::Requests => format!("{} requests", human_int(rule.max_allowed)),
         },
         rule.time_delta.map_or_else(|| "per month".into(), duration),
@@ -294,18 +307,29 @@ pub fn rule_row(rule: Rule) -> [String; 2] {
 
 /// Data and requests over a rolling period, or this calendar month.
 pub fn usage_text(tracker: &mut Tracker, span: Option<u64>, now: i64) -> String {
+    usage_text_with_format(tracker, span, now, &GuiFormatting::default())
+}
+pub fn usage_text_with_format(
+    tracker: &mut Tracker,
+    span: Option<u64>,
+    now: i64,
+    formatting: &GuiFormatting,
+) -> String {
     format!(
         "{} in {} requests",
-        human_bytes(tracker.usage(BandwidthType::Data, span, now)),
+        crate::gui_format::bytes(formatting, tracker.usage(BandwidthType::Data, span, now)),
         human_int(tracker.usage(BandwidthType::Requests, span, now))
     )
 }
 
 /// All retained monthly totals.
 pub fn all_usage_text(tracker: &Tracker) -> String {
+    all_usage_text_with_format(tracker, &GuiFormatting::default())
+}
+pub fn all_usage_text_with_format(tracker: &Tracker, formatting: &GuiFormatting) -> String {
     format!(
         "{} in {} requests",
-        human_bytes(tracker.all_usage(BandwidthType::Data)),
+        crate::gui_format::bytes(formatting, tracker.all_usage(BandwidthType::Data)),
         human_int(tracker.all_usage(BandwidthType::Requests))
     )
 }
@@ -433,14 +457,26 @@ pub fn reset_defaults(store: &Store) -> Result<(), String> {
 
 /// The current-job review columns, with explicit native wait reasons.
 pub fn job_row(job: &hydrus_store::network_runtime::NetworkJob) -> [String; 5] {
+    job_row_with_format(job, &GuiFormatting::default())
+}
+pub fn job_row_with_format(
+    job: &hydrus_store::network_runtime::NetworkJob,
+    formatting: &GuiFormatting,
+) -> [String; 5] {
     [
         job.wait.label().into(),
         job.url.clone(),
         job.status.clone(),
-        format!("{}/s", human_bytes(job.speed)),
+        format!("{}/s", crate::gui_format::bytes(formatting, job.speed)),
         job.bytes_total.map_or_else(
-            || human_bytes(job.bytes_read),
-            |total| format!("{}/{}", human_bytes(job.bytes_read), human_bytes(total)),
+            || crate::gui_format::bytes(formatting, job.bytes_read),
+            |total| {
+                format!(
+                    "{}/{}",
+                    crate::gui_format::bytes(formatting, job.bytes_read),
+                    crate::gui_format::bytes(formatting, total)
+                )
+            },
         ),
     ]
 }

@@ -1,0 +1,2099 @@
+{
+  "cases": [
+    {
+      "kind": "modified",
+      "count": 4,
+      "cancel_at": null,
+      "seconds_per_file": 0,
+      "fallback": false,
+      "writes": [
+        {
+          "name": "content_updates",
+          "has_content": true
+        }
+      ],
+      "progress": [
+        {
+          "title": "setting file modified dates",
+          "text": "0/4",
+          "gauge": [
+            0,
+            4
+          ],
+          "cancelled": false
+        },
+        {
+          "title": "setting file modified dates",
+          "text": "1/4",
+          "gauge": [
+            1,
+            4
+          ],
+          "cancelled": false
+        },
+        {
+          "title": "setting file modified dates",
+          "text": "2/4",
+          "gauge": [
+            2,
+            4
+          ],
+          "cancelled": false
+        },
+        {
+          "title": "setting file modified dates",
+          "text": "3/4",
+          "gauge": [
+            3,
+            4
+          ],
+          "cancelled": false
+        }
+      ],
+      "published": [],
+      "files": [
+        {
+          "source": true,
+          "destination": false,
+          "modified_ms": 1700000000123,
+          "access_seconds": 1234567890,
+          "destination_modified_seconds": null
+        },
+        {
+          "source": true,
+          "destination": false,
+          "modified_ms": 1700000000373,
+          "access_seconds": 1234567890,
+          "destination_modified_seconds": null
+        },
+        {
+          "source": true,
+          "destination": false,
+          "modified_ms": 1700000000623,
+          "access_seconds": 1234567890,
+          "destination_modified_seconds": null
+        },
+        {
+          "source": true,
+          "destination": false,
+          "modified_ms": 1700000000873,
+          "access_seconds": 1234567890,
+          "destination_modified_seconds": null
+        }
+      ],
+      "finished": true,
+      "dismissed": true
+    },
+    {
+      "kind": "modified",
+      "count": 4,
+      "cancel_at": 2,
+      "seconds_per_file": 2,
+      "fallback": false,
+      "writes": [
+        {
+          "name": "content_updates",
+          "has_content": true
+        }
+      ],
+      "progress": [
+        {
+          "title": "setting file modified dates",
+          "text": "0/4",
+          "gauge": [
+            0,
+            4
+          ],
+          "cancelled": false
+        },
+        {
+          "title": "setting file modified dates",
+          "text": "1/4",
+          "gauge": [
+            1,
+            4
+          ],
+          "cancelled": false
+        },
+        {
+          "title": "setting file modified dates",
+          "text": "2/4",
+          "gauge": [
+            2,
+            4
+          ],
+          "cancelled": true
+        }
+      ],
+      "published": [
+        {
+          "title": "setting file modified dates",
+          "at": 1004,
+          "gauge": [
+            2,
+            4
+          ]
+        }
+      ],
+      "files": [
+        {
+          "source": true,
+          "destination": false,
+          "modified_ms": 1700000000123,
+          "access_seconds": 1234567890,
+          "destination_modified_seconds": null
+        },
+        {
+          "source": true,
+          "destination": false,
+          "modified_ms": 1700000000373,
+          "access_seconds": 1234567890,
+          "destination_modified_seconds": null
+        },
+        {
+          "source": true,
+          "destination": false,
+          "modified_ms": 1234567890000,
+          "access_seconds": 1234567890,
+          "destination_modified_seconds": null
+        },
+        {
+          "source": true,
+          "destination": false,
+          "modified_ms": 1234567890000,
+          "access_seconds": 1234567890,
+          "destination_modified_seconds": null
+        }
+      ],
+      "finished": true,
+      "dismissed": true
+    },
+    {
+      "kind": "modified",
+      "count": 4,
+      "cancel_at": 0,
+      "seconds_per_file": 2,
+      "fallback": false,
+      "writes": [
+        {
+          "name": "content_updates",
+          "has_content": true
+        }
+      ],
+      "progress": [
+        {
+          "title": "setting file modified dates",
+          "text": "0/4",
+          "gauge": [
+            0,
+            4
+          ],
+          "cancelled": true
+        }
+      ],
+      "published": [],
+      "files": [
+        {
+          "source": true,
+          "destination": false,
+          "modified_ms": 1234567890000,
+          "access_seconds": 1234567890,
+          "destination_modified_seconds": null
+        },
+        {
+          "source": true,
+          "destination": false,
+          "modified_ms": 1234567890000,
+          "access_seconds": 1234567890,
+          "destination_modified_seconds": null
+        },
+        {
+          "source": true,
+          "destination": false,
+          "modified_ms": 1234567890000,
+          "access_seconds": 1234567890,
+          "destination_modified_seconds": null
+        },
+        {
+          "source": true,
+          "destination": false,
+          "modified_ms": 1234567890000,
+          "access_seconds": 1234567890,
+          "destination_modified_seconds": null
+        }
+      ],
+      "finished": true,
+      "dismissed": true
+    },
+    {
+      "kind": "modified",
+      "count": 4,
+      "cancel_at": null,
+      "seconds_per_file": 1,
+      "fallback": false,
+      "writes": [
+        {
+          "name": "content_updates",
+          "has_content": true
+        }
+      ],
+      "progress": [
+        {
+          "title": "setting file modified dates",
+          "text": "0/4",
+          "gauge": [
+            0,
+            4
+          ],
+          "cancelled": false
+        },
+        {
+          "title": "setting file modified dates",
+          "text": "1/4",
+          "gauge": [
+            1,
+            4
+          ],
+          "cancelled": false
+        },
+        {
+          "title": "setting file modified dates",
+          "text": "2/4",
+          "gauge": [
+            2,
+            4
+          ],
+          "cancelled": false
+        },
+        {
+          "title": "setting file modified dates",
+          "text": "3/4",
+          "gauge": [
+            3,
+            4
+          ],
+          "cancelled": false
+        }
+      ],
+      "published": [],
+      "files": [
+        {
+          "source": true,
+          "destination": false,
+          "modified_ms": 1700000000123,
+          "access_seconds": 1234567890,
+          "destination_modified_seconds": null
+        },
+        {
+          "source": true,
+          "destination": false,
+          "modified_ms": 1700000000373,
+          "access_seconds": 1234567890,
+          "destination_modified_seconds": null
+        },
+        {
+          "source": true,
+          "destination": false,
+          "modified_ms": 1700000000623,
+          "access_seconds": 1234567890,
+          "destination_modified_seconds": null
+        },
+        {
+          "source": true,
+          "destination": false,
+          "modified_ms": 1700000000873,
+          "access_seconds": 1234567890,
+          "destination_modified_seconds": null
+        }
+      ],
+      "finished": true,
+      "dismissed": true
+    },
+    {
+      "kind": "force",
+      "count": 65,
+      "cancel_at": null,
+      "seconds_per_file": 0,
+      "fallback": false,
+      "writes": [
+        {
+          "name": "force_filetype",
+          "args": [
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63
+            ],
+            2
+          ]
+        },
+        {
+          "name": "force_filetype",
+          "args": [
+            [
+              64
+            ],
+            2
+          ]
+        }
+      ],
+      "progress": [
+        {
+          "title": "forcing filetypes",
+          "text": "0/65",
+          "gauge": [
+            0,
+            65
+          ],
+          "cancelled": false
+        },
+        {
+          "title": "forcing filetypes",
+          "text": "64/65",
+          "gauge": [
+            64,
+            65
+          ],
+          "cancelled": false
+        }
+      ],
+      "published": [
+        {
+          "title": "forcing filetypes",
+          "at": 1000,
+          "gauge": null
+        }
+      ],
+      "files": [
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        }
+      ],
+      "finished": true,
+      "dismissed": true
+    },
+    {
+      "kind": "force",
+      "count": 65,
+      "cancel_at": 64,
+      "seconds_per_file": 0,
+      "fallback": false,
+      "writes": [
+        {
+          "name": "force_filetype",
+          "args": [
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63
+            ],
+            2
+          ]
+        },
+        {
+          "name": "force_filetype",
+          "args": [
+            [
+              64
+            ],
+            2
+          ]
+        }
+      ],
+      "progress": [
+        {
+          "title": "forcing filetypes",
+          "text": "0/65",
+          "gauge": [
+            0,
+            65
+          ],
+          "cancelled": false
+        },
+        {
+          "title": "forcing filetypes",
+          "text": "64/65",
+          "gauge": [
+            64,
+            65
+          ],
+          "cancelled": true
+        }
+      ],
+      "published": [
+        {
+          "title": "forcing filetypes",
+          "at": 1000,
+          "gauge": null
+        }
+      ],
+      "files": [
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        }
+      ],
+      "finished": true,
+      "dismissed": true
+    },
+    {
+      "kind": "force",
+      "count": 65,
+      "cancel_at": 0,
+      "seconds_per_file": 0,
+      "fallback": false,
+      "writes": [
+        {
+          "name": "force_filetype",
+          "args": [
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63
+            ],
+            2
+          ]
+        }
+      ],
+      "progress": [
+        {
+          "title": "forcing filetypes",
+          "text": "0/65",
+          "gauge": [
+            0,
+            65
+          ],
+          "cancelled": true
+        }
+      ],
+      "published": [
+        {
+          "title": "forcing filetypes",
+          "at": 1000,
+          "gauge": null
+        }
+      ],
+      "files": [
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": false,
+          "destination": true,
+          "modified_ms": null,
+          "access_seconds": null,
+          "destination_modified_seconds": 1234567890
+        },
+        {
+          "source": true,
+          "destination": false,
+          "modified_ms": 1234567890000,
+          "access_seconds": 1234567890,
+          "destination_modified_seconds": null
+        }
+      ],
+      "finished": true,
+      "dismissed": true
+    },
+    {
+      "kind": "force",
+      "count": 1,
+      "cancel_at": null,
+      "seconds_per_file": 0,
+      "fallback": true,
+      "writes": [
+        {
+          "name": "force_filetype",
+          "args": [
+            [
+              0
+            ],
+            2
+          ]
+        },
+        {
+          "name": "file_maintenance_add_jobs_hashes",
+          "args": [
+            [
+              0
+            ],
+            4,
+            4600
+          ]
+        }
+      ],
+      "progress": [
+        {
+          "title": "forcing filetypes",
+          "text": "0/1",
+          "gauge": [
+            0,
+            1
+          ],
+          "cancelled": false
+        }
+      ],
+      "published": [],
+      "files": [
+        {
+          "source": true,
+          "destination": true,
+          "modified_ms": 1234567890000,
+          "access_seconds": 1791168993,
+          "destination_modified_seconds": 1234567890
+        }
+      ],
+      "finished": true,
+      "dismissed": true
+    },
+    {
+      "kind": "force",
+      "count": 0,
+      "cancel_at": null,
+      "seconds_per_file": 0,
+      "fallback": false,
+      "writes": [],
+      "progress": [],
+      "published": [],
+      "files": [],
+      "finished": true,
+      "dismissed": true
+    }
+  ],
+  "dialog_rejections": [
+    {
+      "kind": "modified",
+      "writes": [],
+      "workers": 0
+    },
+    {
+      "kind": "force",
+      "writes": [],
+      "workers": 0
+    }
+  ]
+}

@@ -130,6 +130,24 @@ macro_rules! settings {
             hydrus_store::settings::set($conn, &latest)?;
         }
     };
+    (@save $conn:ident, $after:ident, $before:ident, gui_idle) => {
+        if $after.gui_idle != $before.gui_idle {
+            let mut latest: hydrus_store::settings::GuiIdleSettings = hydrus_store::settings::get($conn)?;
+            if $after.gui_idle.enabled != $before.gui_idle.enabled {
+                latest.enabled = $after.gui_idle.enabled;
+            }
+            for (field, value, before) in [
+                (&mut latest.user_seconds, $after.gui_idle.user_seconds, $before.gui_idle.user_seconds),
+                (&mut latest.mouse_seconds, $after.gui_idle.mouse_seconds, $before.gui_idle.mouse_seconds),
+                (&mut latest.api_seconds, $after.gui_idle.api_seconds, $before.gui_idle.api_seconds),
+            ] {
+                if value != before {
+                    *field = value;
+                }
+            }
+            hydrus_store::settings::set($conn, &latest)?;
+        }
+    };
     (@save $conn:ident, $after:ident, $before:ident, $field:ident) => {
         if $after.$field != $before.$field {hydrus_store::settings::set($conn, &$after.$field)?;}
     };
@@ -181,6 +199,7 @@ settings! {
     gui: GuiSettings,
     gui_formatting: hydrus_store::settings::GuiFormatting,
     gui_sessions: hydrus_store::settings::GuiSessionSettings,
+    gui_idle: hydrus_store::settings::GuiIdleSettings,
     info_line: InfoLineSettings,
     import_options: hydrus_core::import_options::ImportOptionsManager,
     import_options_ui: hydrus_store::settings::ImportOptionsUiSettings,
@@ -210,6 +229,7 @@ settings! {
     sorts: SortSettings,
     tag_presentation: TagPresentation,
     namespace_colours: hydrus_core::tag_presentation::NamespaceColours,
+    sibling_connector_colours: hydrus_core::tag_presentation::SiblingConnectorColours,
     tag_summaries: hydrus_core::tag_summary::TagSummaries,
     thumbnails: ThumbnailSettings,
     thumbnail_layout: ThumbnailLayout,
@@ -929,6 +949,15 @@ fn noneable_text(
     get: fn(&Settings) -> Option<String>,
     set: fn(&mut Settings, Option<String>),
 ) -> Item {
+    noneable_text_default(label, none_phrase, "", get, set)
+}
+fn noneable_text_default(
+    label: &'static str,
+    none_phrase: &'static str,
+    default_text: &'static str,
+    get: fn(&Settings) -> Option<String>,
+    set: fn(&mut Settings, Option<String>),
+) -> Item {
     opt(
         label,
         Kind::NoneableText { none_phrase },
@@ -936,7 +965,7 @@ fn noneable_text(
             let value = get(s);
             Value::NoneableText {
                 none: value.is_none(),
-                text: value.unwrap_or_default(),
+                text: value.unwrap_or_else(|| default_text.to_owned()),
             }
         }),
         Rc::new(move |s, v| match v {
@@ -2449,6 +2478,65 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             "maintenance and processing",
             vec![
                 boxed(
+                    "when to run high cpu jobs",
+                    vec![boxed(
+                        "idle",
+                        vec![
+                            enabled(
+                                noneable(
+                                    "Permit idle mode if no general browsing activity has occurred in the past: ",
+                                    none("ignore normal browsing", 1, (1, 1000), Some("minutes")),
+                                    |settings| {
+                                        settings
+                                            .gui_idle
+                                            .user_seconds
+                                            .map(|seconds| (seconds / 60).clamp(1, 1000) as i64)
+                                    },
+                                    |settings, value| {
+                                        settings.gui_idle.user_seconds =
+                                            value.map(|minutes| minutes as u64 * 60);
+                                    },
+                                ),
+                                |settings| settings.gui_idle.enabled,
+                            ),
+                            enabled(
+                                noneable(
+                                    "Permit idle mode if your mouse cursor has not been moved in the past: ",
+                                    none("ignore mouse movements", 1, (1, 1000), Some("minutes")),
+                                    |settings| {
+                                        settings
+                                            .gui_idle
+                                            .mouse_seconds
+                                            .map(|seconds| (seconds / 60).clamp(1, 1000) as i64)
+                                    },
+                                    |settings, value| {
+                                        settings.gui_idle.mouse_seconds =
+                                            value.map(|minutes| minutes as u64 * 60);
+                                    },
+                                ),
+                                |settings| settings.gui_idle.enabled,
+                            ),
+                            enabled(
+                                noneable(
+                                    "Permit idle mode if no Client API requests in the past: ",
+                                    none("ignore client api", 1, (1, 1000), Some("minutes")),
+                                    |settings| {
+                                        settings
+                                            .gui_idle
+                                            .api_seconds
+                                            .map(|seconds| (seconds / 60).clamp(1, 1000) as i64)
+                                    },
+                                    |settings, value| {
+                                        settings.gui_idle.api_seconds =
+                                            value.map(|minutes| minutes as u64 * 60);
+                                    },
+                                ),
+                                |settings| settings.gui_idle.enabled,
+                            ),
+                        ],
+                    )],
+                ),
+                boxed(
                     "file maintenance",
                     vec![
                         check(
@@ -3251,6 +3339,21 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                 }
                                 _ => Err(wrong("OR row namespace")),
                             }),
+                        ),
+                        check(
+                            "Fade the colour of the sibling connector string on Qt6: ",
+                            |s| s.sibling_connector_colours.fade,
+                            |s, value| s.sibling_connector_colours.fade = value,
+                        ),
+                        enabled(
+                            noneable_text_default(
+                                "Namespace for the colour of the sibling connecting string: ",
+                                "use ideal tag colour",
+                                "system",
+                                |s| s.sibling_connector_colours.namespace.clone(),
+                                |s, value| s.sibling_connector_colours.namespace = value,
+                            ),
+                            |s| !s.sibling_connector_colours.fade,
                         ),
                         check(
                             "EXPERIMENTAL: Replace all underscores with spaces: ",

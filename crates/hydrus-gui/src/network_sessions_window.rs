@@ -79,16 +79,16 @@ enum Data {
     Headers(HeaderDraft),
 }
 impl Data {
-    fn cells(&self) -> Vec<Vec<String>> {
+    fn cells(&self, formatting: &hydrus_store::settings::GuiFormatting) -> Vec<Vec<String>> {
         match self {
             Self::Sessions(rows) => rows
                 .iter()
-                .map(|(s, c)| model::session_cells(s, c, now()))
+                .map(|(s, c)| model::session_cells_with_format(s, c, now(), formatting))
                 .collect(),
             Self::Cookies(d) => d
                 .cookies
                 .iter()
-                .map(|c| model::cookie_cells(c, now()))
+                .map(|c| model::cookie_cells_with_format(c, now(), formatting))
                 .collect(),
             Self::Headers(d) => d.rows.iter().map(model::header_cells).collect(),
         }
@@ -116,6 +116,7 @@ impl Data {
     }
 }
 struct State {
+    store: Arc<Store>,
     data: Data,
     selection: ListSelection<usize>,
     order: Vec<usize>,
@@ -123,7 +124,9 @@ struct State {
     ascending: bool,
 }
 fn refresh(window: &NetworkDataWindow, state: &mut State) {
-    let cells = state.data.cells();
+    let cells = state
+        .data
+        .cells(&hydrus_gui_model::gui_format::preferences(&state.store));
     let filter = window.get_filter().to_lowercase();
     state.order = (0..cells.len())
         .filter(|&i| {
@@ -228,6 +231,7 @@ fn open_data(
     window.set_browser(matches!(&data, Data::Sessions(_)));
     window.set_cookies(matches!(&data, Data::Cookies(_)));
     let state = Rc::new(RefCell::new(State {
+        store: store.clone(),
         data,
         selection: ListSelection::default(),
         order: Vec::new(),
@@ -309,7 +313,12 @@ fn open_data(
         move |i, a| {
             if let (Some(w), Ok(i)) = (weak.upgrade(), usize::try_from(i)) {
                 let mut st = state.borrow_mut();
-                if st.data.cells().first().is_some_and(|c| i < c.len()) {
+                if st
+                    .data
+                    .cells(&hydrus_gui_model::gui_format::preferences(&st.store))
+                    .first()
+                    .is_some_and(|c| i < c.len())
+                {
                     st.column = i;
                     st.ascending = a;
                     refresh(&w, &mut st);

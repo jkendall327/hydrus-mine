@@ -81,6 +81,7 @@ mod manage_times_window;
 mod manage_urls_window;
 mod menu_bar;
 pub mod merge_options_window;
+mod metadata_file_jobs;
 pub mod mpv;
 pub mod network_header_approval;
 pub mod options_deletion;
@@ -126,6 +127,7 @@ pub mod tag_filter_window;
 pub mod tag_migration_window;
 pub(crate) mod tag_relationships_window;
 pub mod tag_suggestions_window;
+mod tag_text;
 pub mod thumbnail_menu;
 mod thumbnail_navigation;
 mod thumbnails;
@@ -265,6 +267,8 @@ pub struct Bound {
     pub datetime_editor: Rc<RefCell<Option<DateTimeEditorWindow>>>,
     /// The force filetypes dialog while one is open.
     pub force_filetype: Rc<RefCell<Option<ForceFiletypeWindow>>>,
+    /// Finite file metadata workers accepted by this GUI.
+    pub metadata_jobs: metadata_file_jobs::Jobs,
     /// Manual file export dialog and sidecar editor.
     pub export_files: export_files_window::Slots,
     /// The focused file's detailed metadata window while open.
@@ -1504,17 +1508,20 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     // a thumbnail's or the viewer's "manage > times"
+    let metadata_jobs = metadata_file_jobs::Jobs::default();
     let manage_times: Rc<RefCell<Option<ManageTimesWindow>>> = Rc::default();
     let datetime_editor: Rc<RefCell<Option<DateTimeEditorWindow>>> = Rc::default();
     let open_manage_times: OpenOnFiles = Rc::new({
         let manage_times = manage_times.clone();
         let datetime_editor = datetime_editor.clone();
+        let jobs = metadata_jobs.clone();
         move |store: Arc<hydrus_store::Store>, files: Vec<HashId>, applied: Rc<dyn Fn()>| {
             match manage_times_window::open(
                 &store,
                 &files,
                 &manage_times,
                 &datetime_editor,
+                &jobs,
                 applied,
             ) {
                 Ok(window) => *manage_times.borrow_mut() = Some(window),
@@ -1539,8 +1546,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let force_filetype: Rc<RefCell<Option<ForceFiletypeWindow>>> = Rc::default();
     let open_force_filetype: OpenOnFiles = Rc::new({
         let force_filetype = force_filetype.clone();
+        let jobs = metadata_jobs.clone();
         move |store: Arc<hydrus_store::Store>, files: Vec<HashId>, applied: Rc<dyn Fn()>| {
-            match force_filetype_window::open(&store, &files, &force_filetype, applied) {
+            match force_filetype_window::open(&store, &files, &force_filetype, &jobs, applied) {
                 Ok(window) => *force_filetype.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open force filetypes: {e}"),
             }
@@ -3928,6 +3936,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         manage_times,
         datetime_editor,
         force_filetype,
+        metadata_jobs,
         export_files,
         embedded_metadata,
         manage_urls,
@@ -4553,6 +4562,13 @@ thread_local! {
 /// on this thread for deterministic monitoring tests.
 pub fn set_clipboard_reader(reader: impl Fn() -> Result<Option<String>, String> + 'static) {
     CLIPBOARD_READER.with(|slot| *slot.borrow_mut() = Some(Rc::new(reader)));
+}
+
+/// Restore normal clipboard reads after an injected transport failure.
+pub fn clear_clipboard_reader() {
+    CLIPBOARD_READER.with(|slot| {
+        let _ = slot.borrow_mut().take();
+    });
 }
 
 /// Give what is copied to `clipper` rather than the clipboard (for tests,
@@ -6051,7 +6067,32 @@ pub(crate) fn list_text(text: &str, [r, g, b]: [u8; 3]) -> ListText {
     ListText {
         text: text.into(),
         colour: slint::Color::from_rgb_u8(r, g, b),
+        parts: ModelRc::default(),
     }
+}
+
+pub(crate) fn styled_list_text(
+    text: &str,
+    colour: [u8; 3],
+    parts: &[hydrus_core::tag_presentation::TagText],
+) -> ListText {
+    let mut row = list_text(text, colour);
+    row.parts = ModelRc::new(VecModel::from(
+        parts
+            .iter()
+            .map(|part| TagTextRun {
+                text: part.text.as_str().into(),
+                colour: slint::Color::from_rgb_u8(part.colour[0], part.colour[1], part.colour[2]),
+                previous_colour: slint::Color::from_rgb_u8(
+                    part.previous_colour[0],
+                    part.previous_colour[1],
+                    part.previous_colour[2],
+                ),
+                fade: part.fade,
+            })
+            .collect::<Vec<_>>(),
+    ));
+    row
 }
 
 /// Show the page's search: the box's text and suggestions, the predicates,
@@ -6079,8 +6120,11 @@ fn show_importer(window: &MainWindow, page: &SearchPage) {
     window.set_import_fraction(fraction);
     window.set_import_paused(importer.paused);
     window.set_search_status(importer.search_status().into());
-    window.set_file_download(download_line(&importer.file_job_line()));
-    window.set_search_download(download_line(&importer.gallery_job_line()));
+    let formatting = hydrus_gui_model::gui_format::preferences(page.store());
+    window.set_file_download(download_line(&importer.file_job_line(formatting.figures)));
+    window.set_search_download(download_line(
+        &importer.gallery_job_line(formatting.figures),
+    ));
 }
 
 /// A simple downloader page's parsing box: its status line and pause, its
@@ -6140,15 +6184,17 @@ fn show_gallery(window: &MainWindow, page: &SearchPage) {
         .duration_since(std::time::UNIX_EPOCH)
         .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX));
     let highlighted = gallery.state.highlighted;
+    let formatting = hydrus_gui_model::gui_format::preferences(page.store());
     let rows: Vec<TableRow> = gallery
         .queries
         .iter()
         .map(|q| {
-            let cells = q.row(
+            let cells = q.row_with_format(
                 highlighted == Some(q.queue),
                 &gallery.settings,
                 gallery.short_summary,
                 now,
+                &formatting,
             );
             table_row(&cells, gallery.selection.is_selected(q.queue))
         })
@@ -6240,8 +6286,9 @@ fn show_watchers(window: &MainWindow, page: &SearchPage) {
         return;
     };
     let now = page::now();
+    let formatting = hydrus_gui_model::gui_format::preferences(page.store());
     let rows: Vec<TableRow> = view
-        .rows(now)
+        .rows_with_format(now, &formatting)
         .iter()
         .zip(&view.watchers)
         .map(|(cells, w)| table_row(cells, view.selection.is_selected(w.queue)))
@@ -6290,11 +6337,14 @@ fn show_watchers(window: &MainWindow, page: &SearchPage) {
             .map(|w| w.state.url.as_str())
             .unwrap_or_default()
             .into(),
-        files_line: shown.map(|w| w.files_line(now)).unwrap_or_default().into(),
+        files_line: shown
+            .map(|w| w.files_line_with_format(now, &formatting))
+            .unwrap_or_default()
+            .into(),
         files_paused: shown.is_some_and(|w| w.files_paused),
         velocity_line: page.watcher_velocity().into(),
         checker_line: shown
-            .map(|w| w.checker_line(now))
+            .map(|w| w.checker_line_with_format(now, &formatting))
             .unwrap_or_default()
             .into(),
         checking_paused: shown.is_some_and(|w| w.state.checking_paused),

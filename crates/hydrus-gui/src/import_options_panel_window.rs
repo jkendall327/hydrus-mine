@@ -112,6 +112,7 @@ impl Owner {
             return;
         };
         let mut state = self.state.borrow_mut();
+        let formatting = hydrus_gui_model::gui_format::preferences(&self.store);
         state.sync();
         let mut models = Vec::new();
         let mut any = Vec::new();
@@ -119,7 +120,7 @@ impl Owner {
         let mut columns = Vec::new();
         let mut ascending = Vec::new();
         for list in List::ALL {
-            let rows = state.rows(list, &|key| self.name(key));
+            let rows = state.rows_with_format(list, &|key| self.name(key), &formatting);
             let selected = rows.iter().filter(|row| row.selected).count();
             any.push(selected > 0);
             one.push(selected == 1);

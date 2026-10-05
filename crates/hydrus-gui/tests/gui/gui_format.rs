@@ -172,6 +172,73 @@ fn staged_controls_reopen_and_reach_real_log_rows_and_page_size_status() {
             ui.get_status()
         );
         ui.invoke_select_none();
+        for case in event["consumers"]["network_jobs"].as_array().unwrap() {
+            let input = &case["input"];
+            let job = hydrus_store::live::JobLive {
+                url: "https://format.invalid/transfer".into(),
+                status: "receiving\nsecond line".into(),
+                speed: input["speed"].as_u64().unwrap(),
+                bytes_read: input["read"].as_u64().unwrap(),
+                bytes_to_read: input["total"].as_u64(),
+                done: input["done"].as_bool().unwrap(),
+                error: input["error"].as_bool().unwrap(),
+            };
+            store
+                .write(move |ctx| {
+                    hydrus_store::live::publish(
+                        ctx.conn(),
+                        &[(
+                            queue,
+                            Some(hydrus_store::live::QueueLive {
+                                file_job: Some(job),
+                                ..hydrus_store::live::QueueLive::default()
+                            }),
+                        )],
+                    )
+                })
+                .unwrap();
+            bound.current.borrow().borrow_mut().refresh_import();
+            ui.invoke_select_none();
+            let shown = ui.get_file_download();
+            assert_eq!(shown.left, case["left"].as_str().unwrap());
+            assert_eq!(shown.right, case["right"].as_str().unwrap());
+            assert_eq!(shown.can_cancel, case["can_cancel"].as_bool().unwrap());
+        }
+        let png_slots = hydrus_gui::png_export_window::Slots::default();
+        let png = hydrus_gui::png_export_window::open(
+            &png_slots,
+            &store,
+            "x".repeat(1536),
+            std::rc::Rc::new(|| {}),
+        )
+        .unwrap();
+        assert_eq!(
+            png.get_payload_description(),
+            format!("String - {expected}")
+        );
+        png.invoke_action("close".into());
+        assert!(!png_slots.has_open());
+        let formula_slots = hydrus_gui::formula_window::Slots::default();
+        let preview = &event["consumers"]["parser_previews"][0];
+        let formula = hydrus_gui::formula_window::open(
+            &store,
+            &hydrus_gui::formula_editors::new_formula(false),
+            hydrus_gui::formula_window::FormulaTestData {
+                text: preview["input"].as_str().unwrap().into(),
+                ..hydrus_gui::formula_window::FormulaTestData::default()
+            },
+            &formula_slots,
+            std::rc::Rc::new(|_| panic!("inspecting a preview must not apply a formula")),
+        )
+        .unwrap();
+        *formula_slots.formula.borrow_mut() = Some(formula.clone_strong());
+        assert_eq!(
+            formula.get_raw_description(),
+            preview["label"].as_str().unwrap()
+        );
+        assert_eq!(formula.get_document(), preview["raw"].as_str().unwrap());
+        formula.invoke_cancel();
+        assert!(formula_slots.formula.borrow().is_none());
         ui.invoke_open_file_log();
         let log = bound.file_log.borrow().as_ref().unwrap().clone_strong();
         if saved.iso {

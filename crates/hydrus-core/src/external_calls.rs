@@ -188,7 +188,12 @@ pub fn clean_arguments(arguments: &[String]) -> Vec<String> {
                 .map(str::to_owned)
                 .collect::<Vec<_>>()
         })
-        .map(|s| s.split_whitespace().collect::<Vec<_>>().join(" "))
+        .map(|s| {
+            s.split(|c: char| c.is_whitespace() || matches!(c, '\u{1c}'..='\u{1f}'))
+                .filter(|part| !part.is_empty())
+                .collect::<Vec<_>>()
+                .join(" ")
+        })
         .collect()
 }
 fn python_strings(values: &[String]) -> String {

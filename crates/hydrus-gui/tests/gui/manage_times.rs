@@ -61,6 +61,18 @@ fn rows(dialog: &ManageTimesWindow) -> Vec<(String, String, bool)> {
         .collect()
 }
 
+fn wait_for_file_work(bound: &Bound) {
+    let until = std::time::Instant::now() + std::time::Duration::from_secs(5);
+    while bound.metadata_jobs.running() != 0 {
+        assert!(
+            std::time::Instant::now() < until,
+            "metadata worker did not finish"
+        );
+        std::thread::sleep(std::time::Duration::from_millis(5));
+        slint::platform::update_timers_and_animations();
+    }
+}
+
 #[test]
 fn times_are_edited_added_and_applied_as_the_reference_does() {
     let legacy = hydrus_testkit::legacy_fixture("basic");
@@ -85,6 +97,32 @@ fn times_are_edited_added_and_applied_as_the_reference_does() {
     let file = results[index];
     let index = i32::try_from(index).unwrap();
     ui.invoke_thumbnail_clicked(index, false, false);
+    let initial_modified = load(&store, file).info.unwrap().file_modified;
+    let retired = open(&ui, &bound, index);
+    retired.invoke_time_clicked(0);
+    let retired_child = editor(&bound);
+    retired_child.set_date("2020-01-02".into());
+    retired_child.invoke_edited();
+    retired.invoke_apply(); // parent acceptance cannot bypass its child
+    assert!(bound.manage_times.borrow().is_some());
+    assert_eq!(bound.metadata_jobs.running(), 0);
+    retired.invoke_cancel();
+    assert!(bound.datetime_editor.borrow().is_none());
+    let dialog = open(&ui, &bound, index);
+    dialog.invoke_time_clicked(0);
+    let successor_child = editor(&bound);
+    retired_child.invoke_apply();
+    retired_child.invoke_cancel();
+    retired.invoke_apply();
+    retired.invoke_cancel();
+    assert!(bound.manage_times.borrow().is_some());
+    assert!(bound.datetime_editor.borrow().is_some());
+    assert_eq!(
+        load(&store, file).info.unwrap().file_modified,
+        initial_modified
+    );
+    successor_child.invoke_cancel();
+    dialog.invoke_cancel();
     let dialog = open(&ui, &bound, index);
     assert_eq!(dialog.get_window_title(), "manage times");
     let shown = rows(&dialog);
@@ -180,6 +218,7 @@ fn times_are_edited_added_and_applied_as_the_reference_does() {
         .storage
         .file_path(&result.hash, result.info.as_ref().unwrap().mime)
         .unwrap();
+    wait_for_file_work(&bound);
     let on_disk = std::fs::metadata(&path).unwrap().modified().unwrap();
     let on_disk_ms = on_disk
         .duration_since(std::time::UNIX_EPOCH)

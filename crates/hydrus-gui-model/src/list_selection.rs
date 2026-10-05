@@ -33,10 +33,19 @@ impl<T: Copy + PartialEq> ListSelection<T> {
             .filter(|_| shift);
         match from {
             Some(from) => {
-                if !ctrl {
-                    self.selected.clear();
-                }
                 let (a, b) = (from.min(row), from.max(row));
+                if !ctrl {
+                    // Qt retains selection insertion order for survivors,
+                    // then appends newly selected range items (notably when
+                    // a range grows upwards from its already-selected anchor).
+                    if self.selected.contains(&order[from]) {
+                        self.selected.retain(|item| order[a..=b].contains(item));
+                    } else {
+                        // Ctrl navigation can leave the range origin unselected;
+                        // Qt starts a fresh ordered range from that origin.
+                        self.selected.clear();
+                    }
+                }
                 for &o in &order[a..=b] {
                     if !self.selected.contains(&o) {
                         self.selected.push(o);
@@ -64,6 +73,17 @@ impl<T: Copy + PartialEq> ListSelection<T> {
         self.anchor = None;
     }
 
+    /// Reset the next Shift range origin without changing selected rows.
+    /// Queue reordering keeps Qt's numeric current row as this origin.
+    pub fn set_anchor(&mut self, item: Option<T>) {
+        self.anchor = item;
+    }
+
+    /// Qt's select-all replaces selected rows while keeping the current range origin.
+    pub fn select_all(&mut self, order: &[T]) {
+        self.selected = order.to_vec();
+    }
+
     /// Select only `item` (or nothing).
     pub fn select_only(&mut self, item: Option<T>) {
         self.selected = item.into_iter().collect();
@@ -72,6 +92,11 @@ impl<T: Copy + PartialEq> ListSelection<T> {
 
     pub fn is_selected(&self, item: T) -> bool {
         self.selected.contains(&item)
+    }
+
+    /// Selection insertion order, as Qt's selectedItems used for list copying.
+    pub fn selected_order(&self) -> &[T] {
+        &self.selected
     }
 
     /// Those selected, in the list's order.

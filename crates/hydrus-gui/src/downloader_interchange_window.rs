@@ -122,10 +122,11 @@ pub fn open_subscriptions(
     );
     window.set_instructions("Complete subscriptions include query settings and file/gallery histories. Import stays staged until manage subscriptions is applied.".into());
     if let Some((payload, count)) = payload {
-        let summary = hydrus_gui_model::png_export::object_payload_description(
+        let summary = hydrus_gui_model::png_export::object_payload_description_with_format(
             &payload,
             "Subscription Container",
             count,
+            &hydrus_gui_model::gui_format::preferences(store),
         );
         attach_png(store, slots, &window, payload, summary);
     }
@@ -352,10 +353,11 @@ pub fn open_routers_with_store(
     };
     let window = open_routers(slots, importing, routers, preview, applied)?;
     if let Some((payload, count)) = payload {
-        let summary = hydrus_gui_model::png_export::object_payload_description(
+        let summary = hydrus_gui_model::png_export::object_payload_description_with_format(
             &payload,
             "Metadata Single File Router",
             count,
+            &hydrus_gui_model::gui_format::preferences(store),
         );
         attach_png(store, slots, &window, payload, summary);
     }
@@ -382,10 +384,11 @@ pub fn open_subsidiaries_with_store(
     };
     let window = open_subsidiaries(slots, importing, parsers, preview, applied)?;
     if let Some((payload, count)) = payload {
-        let summary = hydrus_gui_model::png_export::object_payload_description(
+        let summary = hydrus_gui_model::png_export::object_payload_description_with_format(
             &payload,
             "Subsidiary Page Parser",
             count,
+            &hydrus_gui_model::gui_format::preferences(store),
         );
         attach_png(store, slots, &window, payload, summary);
     }

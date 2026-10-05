@@ -490,10 +490,18 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &lifecycle)?;
+    let idle_defaults = crate::settings::GuiIdleSettings::default();
+    let idle_limit = |key, default| {
+        legacy_options.get(key).map_or(default, |value| {
+            value
+                .as_i64()
+                .and_then(|seconds| u64::try_from(seconds).ok())
+        })
+    };
     let mut idle = crate::settings::GuiIdleSettings {
-        user_seconds: limit("idle_period"),
-        mouse_seconds: limit("idle_mouse_period"),
-        ..crate::settings::GuiIdleSettings::default()
+        user_seconds: idle_limit("idle_period", idle_defaults.user_seconds),
+        mouse_seconds: idle_limit("idle_mouse_period", idle_defaults.mouse_seconds),
+        ..idle_defaults
     };
     if let Some(enabled) = legacy_options
         .get("idle_normal")
@@ -673,6 +681,7 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     insert_setting(&mut input, &lock)?;
     if let Some(options) = &options {
         insert_setting(&mut input, &tag_presentation(options))?;
+        insert_setting(&mut input, &sibling_connector_colours(options))?;
     }
     insert_setting(
         &mut input,
@@ -2424,8 +2433,24 @@ fn namespace_colours(
     out
 }
 
-/// How tags are shown: `RenderTag`'s options, the namespace order and the
-/// search page's and media viewer's tag sorts.
+/// Live sibling connector colour preferences preserve raw None/empty choices.
+fn sibling_connector_colours(
+    options: &legacy::ClientOptions,
+) -> hydrus_core::tag_presentation::SiblingConnectorColours {
+    let mut out = hydrus_core::tag_presentation::SiblingConnectorColours::default();
+    if let Some(fade) = options.booleans.get("fade_sibling_connector") {
+        out.fade = *fade;
+    }
+    if let Some(namespace) = options
+        .noneable_strings
+        .get("sibling_connector_custom_namespace_colour")
+    {
+        out.namespace.clone_from(namespace);
+    }
+    out
+}
+
+/// How tags are shown: RenderTag options, namespace order and tag sorts.
 fn tag_presentation(
     options: &legacy::ClientOptions,
 ) -> hydrus_core::tag_presentation::TagPresentation {
@@ -4202,6 +4227,58 @@ mod tests {
     }
 
     #[test]
+    fn idle_timeout_import_preserves_seconds_none_and_missing_defaults() {
+        use crate::settings::GuiIdleSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<GuiIdleSettings>(input.settings["gui_idle"].clone()).unwrap()
+        };
+        assert_eq!(decoded(), GuiIdleSettings::default());
+        let conn = rusqlite::Connection::open(source.path().join("client.db")).unwrap();
+        let original: String = conn
+            .query_row("SELECT options FROM options", [], |row| row.get(0))
+            .unwrap();
+        assert!(original.contains("idle_period: 1800\n"));
+        assert!(original.contains("idle_mouse_period: 600\n"));
+        for (user, mouse) in [("null", "null"), ("0", "59"), ("60", "60000")] {
+            let yaml = original
+                .replace("idle_period: 1800\n", &format!("idle_period: {user}\n"))
+                .replace(
+                    "idle_mouse_period: 600\n",
+                    &format!("idle_mouse_period: {mouse}\n"),
+                );
+            conn.execute("UPDATE options SET options=?", [yaml])
+                .unwrap();
+            let value = decoded();
+            assert_eq!(value.user_seconds, user.parse::<u64>().ok());
+            assert_eq!(value.mouse_seconds, mouse.parse::<u64>().ok());
+        }
+        let missing = original
+            .replace("idle_period: 1800\n", "")
+            .replace("idle_mouse_period: 600\n", "");
+        conn.execute("UPDATE options SET options=?", [missing])
+            .unwrap();
+        assert_eq!(decoded(), GuiIdleSettings::default());
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "idle_mode_client_api_timeout"], [0, null]]"#,
+                r#"[[0, "idle_mode_client_api_timeout"], [0, 60000]]"#,
+            )],
+        );
+        assert_eq!(decoded().api_seconds, Some(60_000));
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "idle_mode_client_api_timeout"], [0, 60000]]"#,
+                r#"[[0, "idle_mode_client_api_timeout"], [0, null]]"#,
+            )],
+        );
+        assert_eq!(decoded().api_seconds, None);
+    }
+
+    #[test]
     fn viewer_tag_wheel_imports_all_four_reference_policy_codes() {
         use crate::settings::ViewerTagScrollSettings;
         let source = hydrus_testkit::legacy_fixture("basic");
@@ -4484,6 +4561,34 @@ mod tests {
             ]
         );
         assert_eq!(converted.or_connector.as_deref(), Some("character"));
+    }
+
+    #[test]
+    fn sibling_connector_colours_import_retains_none_empty_and_raw_names() {
+        use hydrus_core::tag_presentation::SiblingConnectorColours;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let db = LegacyDb::open(source.path()).unwrap();
+        let mut options = db.client_options().unwrap().unwrap();
+        assert_eq!(
+            sibling_connector_colours(&options),
+            SiblingConnectorColours::default()
+        );
+        options
+            .booleans
+            .insert("fade_sibling_connector".into(), false);
+        for namespace in [None, Some(String::new()), Some(" character ".into())] {
+            options.noneable_strings.insert(
+                "sibling_connector_custom_namespace_colour".into(),
+                namespace.clone(),
+            );
+            assert_eq!(
+                sibling_connector_colours(&options),
+                SiblingConnectorColours {
+                    fade: false,
+                    namespace
+                }
+            );
+        }
     }
 
     /// The user's tag presentation options come across, with the search

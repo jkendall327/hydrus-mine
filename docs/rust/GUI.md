@@ -1160,7 +1160,12 @@ copies all the times, or one kind, as the reference's serialised
 timestamp data, and "paste" sets the times it names. "apply" writes the
 times changed (asking first if more than 100 changes), a stepped time
 file by file, and a changed file modified time to the files on disk too
-(as the warning under it says).
+(as the warning under it says). Disk updates run in an owned background worker
+on the accepted ordered targets, with cancellation between files. Its
+"setting file modified dates" popup appears only after three seconds have
+passed; cancellation retains the database updates and completed disk prefix.
+Closing or replacing the date child cancels its draft, and retired dialog
+callbacks cannot apply it or clear a successor.
 
 Manage → "force filetype" (the selected files'; in the viewer the file
 shown's) opens the reference's "force filetypes" dialog
@@ -1173,7 +1178,16 @@ them all to, in the reference's order ("remove all forced filetypes"
 first when some are forced; a single filetype isn't offered itself).
 "apply" forces them (a file forced to the type it was detected as isn't
 forced) and renames each file on disk to its new extension; hydrus-rs
-then shows and searches it as that type, as the reference does.
+then shows and searches it as that type, as the reference does. The accepted
+operation runs in a background worker, committing and moving in blocks of 64.
+Above 64 files, the existing popup shows "forcing filetypes" and allows
+cancellation before the next block. Rename failure preserves a copied file's
+mtime and queues duplicate-extension cleanup one hour later. Imported shared
+media remains copy-only. The accepted file targets are frozen, so changing the
+current selection cannot redirect the work. `oracle/record_metadata_file_jobs.py`
+records these bounded filesystem/popup paths and both rejected dialogs; the
+two original worker leaves remain Partial for the platform and lifecycle
+limits documented in DIFFERENCES.
 
 Urls → "manage" (the selected files'; in the viewer, the file shown's;
 always the urls menu's first entry, as the reference has it) opens the
@@ -3142,6 +3156,18 @@ copies and aborts the remainder. Add Defaults exposes both “add them all” an
 “select from a list”, with the reference platform question and factory calls.
 Selected defaults gain fresh keys and names alongside the prior selection.
 
+The owned command child edits the first parameter in selection insertion order, keeps
+added rows unselected, captures delete selections, and reorders adjacent selected
+rows at either boundary. Its focused parameter list preserves range origins through select-all, Ctrl
+navigation and deletion, and supports extended selection,
+arrow/Home/End navigation, select-all, selected-text copy and Delete (also
+Backspace on macOS). Preview and full-template copy use cleaned parameters while
+pasted raw rows remain visible until Apply. Paste asks the exact unsorted summary
+question, including quoted, empty, repeated-space and Unicode text; declining it
+keeps the draft. Clipboard failures use an owned Error/ok notice. Copy and accepted
+paste show the reference's brief feedback. Parent Cancel and retired children
+cannot publish drafts; accepted arguments persist and feed actual token expansion.
+
 Supported process calls expose enabled input rules, tokens and the existing
 string-processor child, an ordered command-argument editor, timeout/flags and
 preview/test inputs. Reopening a saved process and pressing its Test Call runs
@@ -3171,19 +3197,39 @@ gate. Apply refreshes an existing viewer, Cancel preserves its current policy,
 and the imported setting survives reopening. Existing scroll position survives
 a media change when it still fits, and clamps when the new list is shorter.
 
-Options > GUI > misc now stages the ISO-time checkbox and the bytes precision
-spinbox (1–6), imports their exact legacy keys, and preserves Apply/Cancel and
-reopening. File/gallery log rows, page and bandwidth status, and file-info
-hover/status/menu text consume owned formatting settings; timestamps use the
-system timezone and byte rounding preserves the reference half-even behavior.
-`gui_format.json` records eight actual Qt control states, boundary inputs,
-serialization/reopening and formatter/log outputs. Native replay tests include
-retained Cancel owners, real log rows, page totals, selected-file size text and
-an Options PNG capture; their execution awaits hosted CI.
+Options > GUI > misc stages the ISO-time checkbox and bytes precision spinbox
+(1–6), imports their exact legacy keys, and preserves Apply/Cancel and reopening.
+Owned formatting reaches existing log, page/status, file-info, service/import,
+network review/rule/job/graph, import-options, parser-preview and PNG labels;
+live download and popup progress preserve gauges and cancellation ownership.
+ISO also reaches About, cookies, subscriptions, downloader timestamps and
+viewing-statistics menus. Python applies the current local offset to every date;
+the native formatter does the same, with recorded opposite-season timezone and
+POSIX year-one cases. Manage Times and duplicate-review relative suffixes stay
+relative because the reference explicitly forces that behavior.
 
-Both formatting controls remain Partial proposals. Network review/job/rule/graph
-bytes, local-import and service list sizes, import/parser/PNG helper labels, and
-about/auto-resolution/subscription/network-session/times-editor relative-time
-labels still use the fixed default formatters. The inspected radio Return flag
-is unclaimed because the reference dialog behaved identically in both states
-on the recorded platform. Broader GUI/misc/menu coverage stays Partial.
+`gui_format.json` records eight actual Qt staged/saved/reopened control states,
+byte/time/log outputs, import summaries, raw parsing previews, expiry and
+relative-time variants. Five owned status inputs per setting pass through the
+actual Qt network-job control; no request is sent. Native consumer replays and
+an Options PNG capture are authored for hosted CI, with no local Rust builds.
+Both original controls remain Partial and add zero completed leaves: backend
+network wait and import/network error messages still format with defaults, and
+whole-application cached-label broadcast refresh timing is not claimed. The
+radio Return flag is unclaimed because the reference dialog behaved identically
+in both states on the recorded platform. Broader GUI/misc/menu stays Partial.
+Tag Presentation offers the sibling connector colour controls. Fading disables the optional namespace choice and uses the ideal tag’s colour; turning fading off allows a named, missing, empty, or ideal-tag namespace choice. Apply saves the staged preferences and Cancel discards them. Manage Tags paints raw/count, connector and ideal-tag runs separately with solid colours; shared write-autocomplete rows can fade between namespace colours, including selected backgrounds. Detached tag editors and both relationship inputs share those runs, and open, visible editors refresh after another owner changes the preferences without replacing the input or selected tags.
+
+Selected sibling rows paint solid namespace runs through the remaining row, then overlay each fading run only within its fixed text block. A collapsed-parent suffix can fade to the unnamespaced colour while the preceding ideal tag’s solid colour remains beyond the suffix, including when the viewport widens.
+
+
+Options > maintenance and processing includes separate browsing, mouse movement
+and Client API idle timeouts under “when to run high cpu jobs > idle”. Each accepts
+1–1000 minutes or its own ignore checkbox. Defaults are 30 minutes for browsing,
+10 for mouse movement and ignored API activity; imported values retain their
+stored seconds and the editor displays whole minutes as Qt does. Apply updates
+the existing running idle-only session autosave gate; Cancel keeps the saved
+thresholds. Reopening ignored controls restores the reference's hidden one-minute
+value. The controls are disabled when the stored idle-enable flag is off. Mouse
+activity currently covers native application windows, while browsing and Client
+API activity use the existing all-window and shared API timestamp consumers.

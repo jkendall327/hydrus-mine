@@ -144,6 +144,7 @@ fn set_text(get: impl Fn() -> SharedString, set: impl Fn(SharedString), text: St
 }
 
 struct State {
+    store: Arc<Store>,
     editor: Editor,
     manager: ImportOptionsManager,
     simple: bool,
@@ -177,10 +178,11 @@ impl State {
 
 /// Show the editor whole: the list and the shown kind's page.
 fn show(window: &ImportOptionsWindow, state: &State) {
+    let formatting = hydrus_gui_model::gui_format::preferences(&state.store);
     let editor = &state.editor;
     let services = &state.services.services;
     let name = namer(services);
-    window.set_labels(strings(editor.labels(&name)));
+    window.set_labels(strings(editor.labels_with_format(&name, &formatting)));
     window.set_shown(i32::try_from(editor.shown).unwrap_or(0));
     let Some(&kind) = editor.kinds.get(editor.shown) else {
         return;
@@ -197,7 +199,7 @@ fn show(window: &ImportOptionsWindow, state: &State) {
         match kind {
             Kind::ExternalPrograms => format!(
                 "{} (not editable here yet)",
-                crate::import_options_editor::summary(kind, values, &name)
+                crate::import_options_editor::summary_with_format(kind, values, &name, &formatting)
             ),
             _ => String::new(),
         }
@@ -611,6 +613,7 @@ fn open_inner(
         CallerType::LocalImport | CallerType::LocalImportFolder | CallerType::ClientApi
     ));
     let state = Rc::new(RefCell::new(State {
+        store: store.clone(),
         editor,
         manager,
         simple: context.simple,

@@ -5,7 +5,7 @@
 //! to its new extension, as the reference's `SetFilesForcedFiletypes`
 //! does.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::collections::BTreeMap;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -18,24 +18,20 @@ use hydrus_store::Store;
 use crate::ForceFiletypeWindow;
 use crate::force_filetype::ForceFiletype;
 
-/// Move a file to its new extension's path (copied if it can't move).
-fn rename(from: &std::path::Path, to: &std::path::Path) {
-    if from == to || !from.is_file() {
-        return;
-    }
-    if std::fs::rename(from, to).is_err() {
-        let _ = std::fs::copy(from, to);
-    }
-}
-
 /// Open the dialog on `files`; it forgets itself from `slot` when closed,
 /// and calls `applied` once the files are forced.
 pub(crate) fn open(
     store: &Arc<Store>,
     files: &[HashId],
     slot: &Rc<RefCell<Option<ForceFiletypeWindow>>>,
+    jobs: &crate::metadata_file_jobs::Jobs,
     applied: Rc<dyn Fn()>,
 ) -> Result<ForceFiletypeWindow, String> {
+    let previous = slot.borrow().as_ref().map(ComponentHandle::clone_strong);
+    if let Some(previous) = previous {
+        previous.invoke_cancel();
+    }
+    let active = Rc::new(Cell::new(true));
     let services = store.snapshot().services.clone();
     let results = store
         .read(|c| hydrus_store::media::load(c, &services, None, files))
@@ -60,7 +56,11 @@ pub(crate) fn open(
     let close = {
         let slot = slot.clone();
         let weak = window.as_weak();
+        let active = active.clone();
         Rc::new(move || {
+            if !active.replace(false) {
+                return;
+            }
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -69,9 +69,14 @@ pub(crate) fn open(
     };
     window.on_apply({
         let store = store.clone();
+        let jobs = jobs.clone();
+        let active = active.clone();
         let close = close.clone();
         let weak = window.as_weak();
         move || {
+            if !active.get() {
+                return;
+            }
             let chosen = weak
                 .upgrade()
                 .and_then(|w| usize::try_from(w.get_chosen()).ok())
@@ -80,36 +85,33 @@ pub(crate) fn open(
             let Some(mime) = chosen else {
                 return;
             };
-            let ids: Vec<HashId> = results.iter().map(|r| r.hash_id).collect();
-            if let Err(e) = store.write_content(move |w| w.force_filetype(&ids, mime)) {
-                eprintln!("could not force the filetypes: {e}");
+            let files = results
+                .iter()
+                .filter_map(|result| {
+                    let info = result.info.as_ref()?;
+                    Some(hydrus_store::metadata_jobs::File {
+                        id: result.hash_id,
+                        hash: result.hash,
+                        mime: info.mime,
+                        original_mime: info.original_mime.unwrap_or(info.mime),
+                    })
+                })
+                .collect();
+            let request = hydrus_store::metadata_jobs::Request::Force { files, mime };
+            if let Err(error) = jobs.start(store.clone(), request, applied.clone()) {
+                eprintln!("{error}");
                 return;
             }
-            // (each file renamed to its new extension)
-            let snapshot = store.snapshot();
-            for result in &results {
-                let Some(info) = &result.info else {
-                    continue;
-                };
-                let original = info.original_mime.unwrap_or(info.mime);
-                let to = mime.unwrap_or(original);
-                let (Some(from), Some(to)) = (
-                    snapshot.storage.file_path(&result.hash, info.mime),
-                    snapshot.storage.file_path(&result.hash, to),
-                ) else {
-                    continue;
-                };
-                rename(&from, &to);
-            }
-            applied();
             close();
         }
     });
-    window.on_cancel(move || close());
+    window.on_cancel({
+        let close = close.clone();
+        move || close()
+    });
     window.window().on_close_requested({
-        let slot = slot.clone();
         move || {
-            slot.borrow_mut().take();
+            close();
             slint::CloseRequestResponse::HideWindow
         }
     });

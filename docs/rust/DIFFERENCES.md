@@ -1311,10 +1311,9 @@ clears that pending position so it cannot affect a subsequent page creation.
 Named GUI session saves now retain selectable immutable snapshots; automatic
 `last session` synchronization writes the live session; a separate historical
 autosave timer now observes the configured period and idle-only preference and
-suppresses unchanged saves. Idle input tracking covers the main window and
-Client API page commands; auxiliary windows and other Client API request kinds
-do not yet reset its activity timestamps. Startup session selection remains
-deferred. Historical
+suppresses unchanged saves. Idle input tracking covers every native application
+window and the shared Client API activity marker; system-wide mouse movement
+outside these windows remains unobserved. Historical
 backups from imported legacy databases are not migrated; the current imported
 session is retained as the first backup when overwritten. Backup loads start fresh transfer/live-job state while retaining saved queue
 settings and file/gallery logs. Early native snapshots without importer-state
@@ -2224,9 +2223,8 @@ Partial. Recognized unsupported string-converter steps are preserved in native
 registered definitions but rejected by reference export encoding; mixed valid
 and wrong-class imports are rejected atomically instead of accepting the valid
 prefix, and unusually large imports do not offer the reference override question.
-Per-call PNG batches, drop import, input-rule clipboard controls, complete
-argument keyboard/multiple-row edit interactions and timeout minutes controls
-are not implemented. The native process test runs saved argument vectors with a
+Per-call PNG batches, drop import, input-rule clipboard controls and timeout
+minutes controls are not implemented. The native process test runs saved argument vectors with a
 single owner-scoped worker, a fallible thread start and bounded wait, discarding
 stdout/stderr. Cancellation owns/reaps the direct child only; descendant process
 groups, full reference output/error presentation and OS default-launch tests are
@@ -2255,14 +2253,17 @@ canvases remain outside this control slice. A real native wheel/navigation/zoom
 replay and `viewer-tags-wheel.png` capture are authored for hosted CI; they were
 not executed locally. No new broader hover/list/preview claim is proposed.
 
-GUI formatting settings are owned values rather than the reference mutable
-formatter globals. ISO time and byte precision reach existing log, page/status
-and file-info consumers after Apply, with Cancel and reopening preserved.
-Other native size/time display helpers listed in the GUI formatting packet
-still use default formatting, so the two global controls remain Partial and
-add zero completed original leaves. The Qt fixture was recorded in UTC; native
-production ISO formatting follows the system timezone. Integer-locale, radio
-Return force and menu-button wheel preferences are outside this slice.
+GUI formatting settings are owned values rather than mutable formatter globals.
+ISO and byte precision reach the existing GUI display consumers documented in
+`gui-format.json`, with staged Apply/Cancel and reopening preserved. ISO uses
+Python's current local offset rather than historical target-date DST; separate
+UTC/New York/Berlin recordings cover the distinction and POSIX year-one output.
+Time-picker and duplicate-review relative suffixes intentionally retain the
+reference force-no-ISO behavior. Existing refresh paths update cached labels;
+immediate whole-application broadcast timing is not claimed. Backend-generated
+network wait and import/network error strings still use default formatting, so
+both original global preferences remain Partial and add zero completed leaves.
+Integer-locale, radio Return force and menu-button wheel are outside this slice.
 
 Drag and hover-wheel input now use each viewer's own active/closed lifetime,
 rather than the main window's latest-viewer slot. Several visible viewers keep
@@ -2271,3 +2272,61 @@ does. Applying Options therefore reaches earlier visible viewers; drafts and
 Cancel do not. Closing an earlier viewer retires only its own handlers, leaves
 the successor active, and retained/re-shown closed handles cannot act. The
 focused two-owner native replay is authored for hosted CI, not locally executed.
+The sibling connector fade and custom-namespace preferences now have typed import/persistence, staged Options controls and segmented painting in every existing native sibling-annotation consumer. As in Qt, storage-list terms do not permit fades, while write-autocomplete predicate terms do. The broader Tag Presentation and tag-list families remain Partial: this slice does not add sibling decorations to native surfaces that never had them, expand OR rows, or complete list menus/navigation. Native fonts, palettes and clipping follow the existing Slint lists; the reference and hosted native PNGs expose the rendered solid/gradient states.
+
+Sibling colour replays also capture a selected collapsed-parent suffix with a different namespace colour. Qt and native extent checks keep its gradient fixed while the viewport grows and preserve the earlier solid ideal colour in the trailing area; native font/padding differences remain bounded.
+
+
+Options > maintenance and processing now exposes the three independent browsing,
+mouse and Client API idle timeouts as minute controls (1–1000) with the reference
+ignore choices. The browsing and API thresholds reach the running idle-only
+session autosave monitor on its next check, with the strict two-minute boot guard
+and strict activity boundaries. The mouse timeout uses the same live gate but
+remains Partial because the reference polls the system-wide cursor and native
+tracking only observes movement in application windows. This does not implement
+high-CPU maintenance scheduling, CPU-busy detection or the broader idle settings.
+Ignored controls reopen with a hidden one-minute value, matching the recorded
+Qt constructor/multiplier behavior. Options saves merge only edited idle fields
+so unrelated live changes survive. Native timing/persistence/Cancel/PNG tests are
+authored for hosted CI; only the actual Qt recorder and source checks ran locally.
+
+The external-command argument and template-clipboard controls are replayed against
+`external_command.json`: actual Qt CRUD/reordering and current-row/Shift behavior,
+list keyboard copy/delete, six reverse-selection/current/anchor edge histories,
+exact parameter text prompts, and ten split-space
+paste inputs accepted or declined. The native command draft keeps raw pasted rows
+until acceptance while its example/copy and saved arguments use the reference
+cleaning. Clipboard access errors are explicitly owned and do not alter the draft.
+Qt's platform-specific list PageUp/PageDown, type-ahead/scroll-to-current details,
+physical tooltip placement, executable picker/PATH and complete command-dialog
+geometry remain outside these two control leaves; the broad command parent stays
+Partial. Native real key/owner/store regressions and the command PNG are authored
+for hosted CI, without local Rust execution or mutation testing.
+
+
+
+## Metadata filesystem workers
+
+Manage Times and Force Filetype now dispatch finite, GUI-owned asynchronous
+work on captured targets. The actual Qt recording in
+`oracle/fixtures/metadata_file_jobs.json` covers nine worker inputs plus two
+rejected dialogs, real temporary files, strict delayed timestamp popup
+publication, file/64-file cancellation boundaries, normal finish/dismiss and
+copy-fallback cleanup scheduling. Authored native regressions retain actual
+DB/filesystem consumers while waiting for asynchronous completion, and protect
+retired parent/date-child callbacks, successor slots and changed selections.
+The store replay compares recorded durable prefixes and popup publication,
+uses real persisted popup cancellation, preserves timestamp DB updates after
+disk cancellation, and checks cleanup queue eligibility at +3600/+3601.
+
+`audit-media-times-disk` and `audit-media-force-rename` remain Partial, with
+zero completion promotions. Windows locked files, hardlink/same-file
+destinations, cross-device/read-only overwrite, metadata/permission recovery,
+full prefix-lock/concurrent storage-relocation behavior and reference exception
+presentation need further evidence. Native per-hash media claims and copy-only
+shared imports protect existing ownership rules. Copy fallback uses the existing
+DeleteNeighbourDupes backend, but the new tests do not execute its maintenance
+runner or prove unavailable-file retries. Native errors finish the active job
+and publish an error popup; fallible worker-spawn errors currently reach the
+caller/log. Broad metadata and generic job/shutdown lifecycle families remain
+Partial. Rust regressions are authored for hosted CI and were not run locally.
