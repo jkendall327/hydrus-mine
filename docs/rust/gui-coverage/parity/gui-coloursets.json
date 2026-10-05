@@ -1,0 +1,697 @@
+{
+  "schema_version": 1,
+  "task": "Three original legacy colour override/current-set controls and Help darkmode action with owned represented paint consumers",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "implementation_base": "d94dcfc97e63f94e6f45b270d832976d636ce6fd",
+  "source_commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f",
+  "implementation_commits": [
+    "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+  ],
+  "eligible_concrete_first_pass_count": 3,
+  "parent_promotions": 0,
+  "parents_remain_partial": [
+    "audit-options-colours-coloursets"
+  ],
+  "structural_support": {
+    "reference_id": "audit-options-colours-coloursets",
+    "kind": "family",
+    "proposed_status": "partial",
+    "countAsCompletedLeaf": false,
+    "scope": "Two staged thirteen-RGB editing tabs, picker ownership and clipboard support; QColorDialog topology remains explicitly Partial. Supporting family is not an entries/claims credit."
+  },
+  "eligibility": {
+    "frozen_before": {
+      "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page": "missing",
+      "audit-options-colours-current-colourset": "missing",
+      "audit-options-menu-menu-help-darkmode": "missing"
+    },
+    "checked_completed_ledger": "docs/rust/gui-coverage/overnight/progress.json",
+    "checked_all_prior_packets": "docs/rust/gui-coverage/parity/**/*.json",
+    "result": "All three are distinct frozen Missing concrete originals absent from completed ledger/all prior packets; no child/alias/parent credit. Structural coloursets family explicitly excluded."
+  },
+  "validation": {
+    "reference": "Actual Qt recording completed2026-10-05 10:12:25 UTC; both actual controls/picker PNGs individually inspected.",
+    "source_checks": "Direct rustfmt --check over28 changed/new Rust files, Python AST, git diff --check and cached Slint compiler pass. Generated Global and component APIs read; owned writer captures and PNG Results checked.",
+    "rust_tests": "Authored only; hosted CI and exact-source native render/PNG review pending. No local Rust/Cargo/mutation execution.",
+    "independent_review": "repair_namespace_contract reviewed represented-role enumeration and ownership repairs; immutable source final acceptance pending."
+  },
+  "consumer_reference_anchors": [
+    {
+      "relativepath": "hydrus/client/gui/panels/options/ColoursPanel.py",
+      "line": 10,
+      "symbol": "class ColoursPanel(",
+      "line_sha256": "6a829e02f7b4cb58282559e42519067b14348a2a6616b849f0710702d3210aee"
+    },
+    {
+      "relativepath": "hydrus/client/gui/panels/options/ColoursPanel.py",
+      "line": 150,
+      "symbol": "def UpdateOptions(",
+      "line_sha256": "ec561c946930e94bfb9b2f35a354e4758fab4834b484ee29ffc9b0209a86e212"
+    },
+    {
+      "relativepath": "hydrus/client/gui/ClientGUI.py",
+      "line": 7899,
+      "symbol": "def FlipDarkmode(",
+      "line_sha256": "b22f744647d4b39d75f1df8622af0ec8e2728689fadac19de7d3cb2222e72886"
+    },
+    {
+      "relativepath": "hydrus/client/gui/widgets/ClientGUIColourPicker.py",
+      "line": 196,
+      "symbol": "def _ImportHexFromClipboard(",
+      "line_sha256": "d030c3f76db356c8f0d65b1f68e96674e579651ebe49e5edbde90ba4bd2b6309"
+    },
+    {
+      "relativepath": "hydrus/client/gui/canvas/ClientGUICanvas.py",
+      "line": 835,
+      "symbol": "return self._new_options.GetColour( colour_type )",
+      "line_sha256": "518c60a4a3650e5af39eb216a86eebd6faa79fc0388f39871c1bec0d88f032f3"
+    },
+    {
+      "relativepath": "hydrus/client/gui/lists/ClientGUIListBoxes.py",
+      "line": 3249,
+      "symbol": "return new_options.GetColour( CC.COLOUR_TAGS_BOX )",
+      "line_sha256": "e579116a87368fab7fef92c2096acbc79b83f4204f47eb0cc13cd6d75b761a0b"
+    },
+    {
+      "relativepath": "hydrus/client/gui/search/ClientGUIACDropdown.py",
+      "line": 1453,
+      "symbol": "return new_options.GetColour( colour_type )",
+      "line_sha256": "07129034114f35d5e2430d916fade09aaabe8aab9a731ab93620fe84d43bf293"
+    }
+  ],
+  "native_hierarchy_support": {
+    "OptionsWindow": [
+      "exact override Check",
+      "exact current-set Choice",
+      "GuiColoursets two editing tabs/seven row groups/thirteen swatches",
+      "owned GuiColourPickerWindow",
+      "owned invalid-clipboard SessionDialog"
+    ],
+    "MainWindow": [
+      "Help darkmode check action",
+      "owned Information SessionDialog"
+    ],
+    "saved_role_consumers": [
+      "main/read/write autocomplete",
+      "main/ManageTags/suggestions/relationships/most-used/viewer/manual-export/active-predicate tag lists",
+      "fourway physical-local/remote selected/normal thumbnail fill+border",
+      "grid viewport",
+      "preview/viewer/archive-delete/duplicate canvas"
+    ]
+  },
+  "expected_native_renders": [
+    "gui-colour-picker.png",
+    "gui-coloursets-options.png",
+    "gui-coloursets-disabled.png",
+    "gui-colourset-darkmode-warning.png",
+    "gui-coloursets-live-main.png",
+    "gui-coloursets-live-viewer.png"
+  ],
+  "entries": [
+    {
+      "reference_id": "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page",
+      "id": "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "Independent exact override checkbox gates the thirteen swatches in each editing tab while preserving the current-set selector. Cancel/reopen and field-scoped Apply preserve latest unrelated Help/role changes; imported retained ClientOptions fallback and native precedence persist. Saved override controls the thirteen represented Qt colour roles across owned thumbnail, autocomplete, tagbox, preview/viewer/archive/delete/duplicate consumers while leaving the application Palette/style unchanged. Hidden Options and stale/hidden child callbacks cannot change or save drafts; child rebind/close ownership is retained.",
+      "behavior": "Independent exact override checkbox gates the thirteen swatches in each editing tab while preserving the current-set selector. Cancel/reopen and field-scoped Apply preserve latest unrelated Help/role changes; imported retained ClientOptions fallback and native precedence persist. Saved override controls the thirteen represented Qt colour roles across owned thumbnail, autocomplete, tagbox, preview/viewer/archive/delete/duplicate consumers while leaving the application Palette/style unchanged. Hidden Options and stale/hidden child callbacks cannot change or save drafts; child rebind/close ownership is retained.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ColoursPanel.py",
+        "line": 124,
+        "symbol": "override what is set in the stylesheet with the colours on this page: ",
+        "line_sha256": "c260dacb654c87aab4ea2c5c54312135583c4339029f3dd6d72d6ff1fae5441b"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/gui_colours.rs",
+          "line": 20,
+          "symbol": "pub struct Settings",
+          "line_sha256": "2316f29ba4b36bac799702b5e5afbec41bb9c5644e2ecee9f9bf4492ef35e496",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/gui_colours.rs",
+          "line": 78,
+          "symbol": "pub fn save_changed(",
+          "line_sha256": "08ed04e947dd2fe6b4d42591cd0b34a07f84f83a959a9f71f1220881d8cce709",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/gui_colours.rs",
+          "line": 125,
+          "symbol": "pub fn load(",
+          "line_sha256": "907ec5699988b30786d28f5a0c9b3cf33b88e7f7ae950d594ead1844b986db81",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 785,
+          "symbol": "crate::gui_colours::Settings::from_legacy,",
+          "line_sha256": "b7d906720aaad71a3cc0de76b5d45730f7dde04c9819de63eda6b1f0bc10291a",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 4960,
+          "symbol": "pub fn set_gui_colour(",
+          "line_sha256": "0fbe1e20d806d6b93fef2ad7e7b6cdebc4f04f2cb3068d9a9780bba82415a266",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/options_gui_colours.rs",
+          "line": 56,
+          "symbol": "pub(crate) fn bind(",
+          "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/options_window.rs",
+          "line": 466,
+          "symbol": "let gui_colour_list = crate::options_gui_colours::bind",
+          "line_sha256": "0665081a8c794821e86e559b35ac20d4ebdded92bdbeaaa137be767135212dc3",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/gui_colours.rs",
+          "line": 17,
+          "symbol": "pub(crate) fn bind_guard(",
+          "line_sha256": "538239f24796cccde34fe85db99f01b8620777e9c53afade426365bf34017cfe",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/gui_colours.rs",
+          "line": 19,
+          "symbol": "let weak = <Theme",
+          "line_sha256": "f40f103e5175330b9a18f895f85365f014c4d5e9b81528d50ef8b9d0d1da7cfe",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/gui_colour_actions.rs",
+          "line": 43,
+          "symbol": "fn valid(",
+          "line_sha256": "52f42a417c8e6938b7293be2635c48b2ede61288b708b00fe1f7e44b3c8fef63",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/gui_colour_actions.rs",
+          "line": 89,
+          "symbol": "fn flip(",
+          "line_sha256": "14c7667ded2c3b892a017d3a146cfb97b79db1f7c2c0d72564007b4318d3dfeb",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/gui_coloursets.slint",
+          "line": 48,
+          "symbol": "export component GuiColourPickerWindow",
+          "line_sha256": "759d87a9023481d786417481cf5ff9c9fee2ecdd7606cdb5fd68c15ffed56b72",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/theme.slint",
+          "line": 16,
+          "symbol": "pure function thumbnail-background",
+          "line_sha256": "da4eeb8d88c369a46e9cd4a837dfbd7fafac092b1076d1f47cd79e8d60c38718",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/grid.rs",
+          "line": 432,
+          "symbol": "// Collections aggregate current locations;",
+          "line_sha256": "10cb032277ec4a06907bcf5c7f95ad8baf5920173a9778a7467e7159e8a28772",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 586,
+          "symbol": "window.global::<Theme<'_>>().on_colours_changed",
+          "line_sha256": "afd5610c796406d54a52ef2192312eb51fd73442aec43f9ad3c66a529d1d1ffc",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/gui_colours.rs",
+          "line": 54,
+          "symbol": "fn all_twenty_six_rgb_roles",
+          "line_sha256": "66a6f91d8ec6fb8b09264d4815074812e911f18d0786a45914c511cf86b31b92",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/gui_colours.rs",
+          "line": 123,
+          "symbol": "fn staged_role_changes",
+          "line_sha256": "64f716fa29c167e8c3c9e47b7040b954a1eb9a21d3d5e69218a12b84386af9af",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/gui_colours.rs",
+          "line": 154,
+          "symbol": "fn old_imported_store",
+          "line_sha256": "4bb66ee60f8b488d39263e8777a7d73a433d5a80e50aa7977ccff9c78bba3457",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/gui_colours.rs",
+          "line": 88,
+          "symbol": "fn real_options_stage",
+          "line_sha256": "8e5deda7ace7e319a26d83e2fa885a00783b3ab2ec2c72f694d3fbd9f611c7fe",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/gui_colours.rs",
+          "line": 201,
+          "symbol": "fn help_warning_hidden",
+          "line_sha256": "2e6ba5df54fe718e584446abea219945b05cf52ff33138cc5a4a4b80a7fdf41d",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/gui_colours.rs",
+          "line": 307,
+          "symbol": "fn fresh_local_membership",
+          "line_sha256": "61c648795c323dbd19d831d2d77966af24801b7e9c3772da6fd30709b1898220",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/options_gui_colours.rs",
+          "line": 331,
+          "symbol": "fn clipboard_hex_acceptance",
+          "line_sha256": "b0c3282abef710620b430dffc0d5c3b825104969af2c82833a53a63d82f91ffb",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_gui_coloursets.py",
+        "fixture": "oracle/fixtures/gui_coloursets.json",
+        "screenshots": [
+          "oracle/fixtures/gui_coloursets_qt.png",
+          "oracle/fixtures/gui_colour_picker_qt.png"
+        ],
+        "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f",
+        "executed": true,
+        "executed_utc": "2026-10-05T10:12:25Z",
+        "command": "/workspace/parallel/with-oracle /workspace/.cloud/hydrus/pyenv/bin/python oracle/record_gui_coloursets.py",
+        "result": "Actual ColoursPanel controls, all26 staged/saved/reopened RGB roles and serialised roundtrip, Cancel without UpdateOptions, real QColorDialog accept/reject, actual clipboard/menu and four Help FlipDarkmode combinations. Actual current media page/autocomplete/tagbox/preview publish13 backend role values after both switches; stylesheet unchanged. Both actual Qt PNGs inspected.",
+        "environment_notes": "Serialized offscreen realQt on copied basic fixture; no network operations. Clipboard and ShowCritical presentation interception only at transport boundaries. Loopback API startup permission warning did not prevent normal client startup/recording/shutdown."
+      },
+      "limits": [
+        "Hosted Rust CI and exact-source native rendered review remain pending; no local Cargo/Rust builds, tests or mutations.",
+        "Structural audit-options-colours-coloursets remains Partial and uncounted: native bounded RGB picker differs from QColorDialog HSV/HTML/history/platform topology.",
+        "Application Palette, stylesheet/QSS and OS appearance remain separately owned; generic controls and synthetic preview status retain native palette semantics.",
+        "Saved role updates are owner-local, weak and at most250ms; arbitrary whole-platform or unrepresented-widget parity is not claimed.",
+        "Thumbnail appearance integration must map these eight brushes into the extracted Paint Palette, propagate current physical local membership, discard cached current/old colour snapshots on palette invalidation, and retain grid background behind viewport margins/bitmap. Standalone colour source does not depend on that separate branch."
+      ]
+    },
+    {
+      "reference_id": "audit-options-colours-current-colourset",
+      "id": "audit-options-colours-current-colourset",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "Exact independent default/darkmode choice remains available with override off and is separate from the editing tab, which always opens default. All26 staged RGB roles survive Apply/Store reopen; unchanged Apply preserves concurrent Help changes and untouched roles. Saved active set reaches every represented role consumer through owner-local weak observers, including physically-local/trash versus remote selected/normal thumbnail fills/borders. Closed/rebound consumers cannot resume observer publication; real semantic RGB pixel assertions are authored.",
+      "behavior": "Exact independent default/darkmode choice remains available with override off and is separate from the editing tab, which always opens default. All26 staged RGB roles survive Apply/Store reopen; unchanged Apply preserves concurrent Help changes and untouched roles. Saved active set reaches every represented role consumer through owner-local weak observers, including physically-local/trash versus remote selected/normal thumbnail fills/borders. Closed/rebound consumers cannot resume observer publication; real semantic RGB pixel assertions are authored.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/panels/options/ColoursPanel.py",
+        "line": 125,
+        "symbol": "current colourset: ",
+        "line_sha256": "9d412371a58980df222507202727525986807e2355d4d0ae7e9392a3daa44fb5"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/gui_colours.rs",
+          "line": 20,
+          "symbol": "pub struct Settings",
+          "line_sha256": "2316f29ba4b36bac799702b5e5afbec41bb9c5644e2ecee9f9bf4492ef35e496",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/gui_colours.rs",
+          "line": 78,
+          "symbol": "pub fn save_changed(",
+          "line_sha256": "08ed04e947dd2fe6b4d42591cd0b34a07f84f83a959a9f71f1220881d8cce709",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/gui_colours.rs",
+          "line": 125,
+          "symbol": "pub fn load(",
+          "line_sha256": "907ec5699988b30786d28f5a0c9b3cf33b88e7f7ae950d594ead1844b986db81",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 785,
+          "symbol": "crate::gui_colours::Settings::from_legacy,",
+          "line_sha256": "b7d906720aaad71a3cc0de76b5d45730f7dde04c9819de63eda6b1f0bc10291a",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 4960,
+          "symbol": "pub fn set_gui_colour(",
+          "line_sha256": "0fbe1e20d806d6b93fef2ad7e7b6cdebc4f04f2cb3068d9a9780bba82415a266",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/options_gui_colours.rs",
+          "line": 56,
+          "symbol": "pub(crate) fn bind(",
+          "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/options_window.rs",
+          "line": 466,
+          "symbol": "let gui_colour_list = crate::options_gui_colours::bind",
+          "line_sha256": "0665081a8c794821e86e559b35ac20d4ebdded92bdbeaaa137be767135212dc3",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/gui_colours.rs",
+          "line": 17,
+          "symbol": "pub(crate) fn bind_guard(",
+          "line_sha256": "538239f24796cccde34fe85db99f01b8620777e9c53afade426365bf34017cfe",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/gui_colours.rs",
+          "line": 19,
+          "symbol": "let weak = <Theme",
+          "line_sha256": "f40f103e5175330b9a18f895f85365f014c4d5e9b81528d50ef8b9d0d1da7cfe",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/gui_colour_actions.rs",
+          "line": 43,
+          "symbol": "fn valid(",
+          "line_sha256": "52f42a417c8e6938b7293be2635c48b2ede61288b708b00fe1f7e44b3c8fef63",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/gui_colour_actions.rs",
+          "line": 89,
+          "symbol": "fn flip(",
+          "line_sha256": "14c7667ded2c3b892a017d3a146cfb97b79db1f7c2c0d72564007b4318d3dfeb",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/gui_coloursets.slint",
+          "line": 48,
+          "symbol": "export component GuiColourPickerWindow",
+          "line_sha256": "759d87a9023481d786417481cf5ff9c9fee2ecdd7606cdb5fd68c15ffed56b72",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/theme.slint",
+          "line": 16,
+          "symbol": "pure function thumbnail-background",
+          "line_sha256": "da4eeb8d88c369a46e9cd4a837dfbd7fafac092b1076d1f47cd79e8d60c38718",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/grid.rs",
+          "line": 432,
+          "symbol": "// Collections aggregate current locations;",
+          "line_sha256": "10cb032277ec4a06907bcf5c7f95ad8baf5920173a9778a7467e7159e8a28772",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 586,
+          "symbol": "window.global::<Theme<'_>>().on_colours_changed",
+          "line_sha256": "afd5610c796406d54a52ef2192312eb51fd73442aec43f9ad3c66a529d1d1ffc",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/gui_colours.rs",
+          "line": 54,
+          "symbol": "fn all_twenty_six_rgb_roles",
+          "line_sha256": "66a6f91d8ec6fb8b09264d4815074812e911f18d0786a45914c511cf86b31b92",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/gui_colours.rs",
+          "line": 123,
+          "symbol": "fn staged_role_changes",
+          "line_sha256": "64f716fa29c167e8c3c9e47b7040b954a1eb9a21d3d5e69218a12b84386af9af",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/gui_colours.rs",
+          "line": 154,
+          "symbol": "fn old_imported_store",
+          "line_sha256": "4bb66ee60f8b488d39263e8777a7d73a433d5a80e50aa7977ccff9c78bba3457",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/gui_colours.rs",
+          "line": 88,
+          "symbol": "fn real_options_stage",
+          "line_sha256": "8e5deda7ace7e319a26d83e2fa885a00783b3ab2ec2c72f694d3fbd9f611c7fe",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/gui_colours.rs",
+          "line": 201,
+          "symbol": "fn help_warning_hidden",
+          "line_sha256": "2e6ba5df54fe718e584446abea219945b05cf52ff33138cc5a4a4b80a7fdf41d",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/gui_colours.rs",
+          "line": 307,
+          "symbol": "fn fresh_local_membership",
+          "line_sha256": "61c648795c323dbd19d831d2d77966af24801b7e9c3772da6fd30709b1898220",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/options_gui_colours.rs",
+          "line": 331,
+          "symbol": "fn clipboard_hex_acceptance",
+          "line_sha256": "b0c3282abef710620b430dffc0d5c3b825104969af2c82833a53a63d82f91ffb",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_gui_coloursets.py",
+        "fixture": "oracle/fixtures/gui_coloursets.json",
+        "screenshots": [
+          "oracle/fixtures/gui_coloursets_qt.png",
+          "oracle/fixtures/gui_colour_picker_qt.png"
+        ],
+        "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f",
+        "executed": true,
+        "executed_utc": "2026-10-05T10:12:25Z",
+        "command": "/workspace/parallel/with-oracle /workspace/.cloud/hydrus/pyenv/bin/python oracle/record_gui_coloursets.py",
+        "result": "Actual ColoursPanel controls, all26 staged/saved/reopened RGB roles and serialised roundtrip, Cancel without UpdateOptions, real QColorDialog accept/reject, actual clipboard/menu and four Help FlipDarkmode combinations. Actual current media page/autocomplete/tagbox/preview publish13 backend role values after both switches; stylesheet unchanged. Both actual Qt PNGs inspected.",
+        "environment_notes": "Serialized offscreen realQt on copied basic fixture; no network operations. Clipboard and ShowCritical presentation interception only at transport boundaries. Loopback API startup permission warning did not prevent normal client startup/recording/shutdown."
+      },
+      "limits": [
+        "Hosted Rust CI and exact-source native rendered review remain pending; no local Cargo/Rust builds, tests or mutations.",
+        "Structural audit-options-colours-coloursets remains Partial and uncounted: native bounded RGB picker differs from QColorDialog HSV/HTML/history/platform topology.",
+        "Application Palette, stylesheet/QSS and OS appearance remain separately owned; generic controls and synthetic preview status retain native palette semantics.",
+        "Saved role updates are owner-local, weak and at most250ms; arbitrary whole-platform or unrepresented-widget parity is not claimed.",
+        "Thumbnail appearance integration must map these eight brushes into the extracted Paint Palette, propagate current physical local membership, discard cached current/old colour snapshots on palette invalidation, and retain grid background behind viewport margins/bitmap. Standalone colour source does not depend on that separate branch."
+      ]
+    },
+    {
+      "reference_id": "audit-options-menu-menu-help-darkmode",
+      "id": "audit-options-menu-menu-help-darkmode",
+      "before": "missing",
+      "previous_status": "missing",
+      "proposedStatus": "first_pass",
+      "proposed_status": "first_pass",
+      "exactBehavior": "Actual Help check action reflects the saved current set and toggles default/darkmode. When override is off the exact reference Information warning is acknowledged first, then toggles regardless; when on it toggles immediately. Stylesheet/application Palette remain unchanged. The action reads latest settings at acknowledgement, updates the main owner immediately and other live role owners within250ms. Hidden acknowledgement is inert without consuming the notice; rebind/accepted close/final Bound drop permanently retire pending notices and retained callbacks while independent Store remains live.",
+      "behavior": "Actual Help check action reflects the saved current set and toggles default/darkmode. When override is off the exact reference Information warning is acknowledged first, then toggles regardless; when on it toggles immediately. Stylesheet/application Palette remain unchanged. The action reads latest settings at acknowledgement, updates the main owner immediately and other live role owners within250ms. Hidden acknowledgement is inert without consuming the notice; rebind/accepted close/final Bound drop permanently retire pending notices and retained callbacks while independent Store remains live.",
+      "reference_source": {
+        "relativepath": "hydrus/client/gui/ClientGUI.py",
+        "line": 7899,
+        "symbol": "def FlipDarkmode(",
+        "line_sha256": "b22f744647d4b39d75f1df8622af0ec8e2728689fadac19de7d3cb2222e72886"
+      },
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-store/src/gui_colours.rs",
+          "line": 20,
+          "symbol": "pub struct Settings",
+          "line_sha256": "2316f29ba4b36bac799702b5e5afbec41bb9c5644e2ecee9f9bf4492ef35e496",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/gui_colours.rs",
+          "line": 78,
+          "symbol": "pub fn save_changed(",
+          "line_sha256": "08ed04e947dd2fe6b4d42591cd0b34a07f84f83a959a9f71f1220881d8cce709",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/gui_colours.rs",
+          "line": 125,
+          "symbol": "pub fn load(",
+          "line_sha256": "907ec5699988b30786d28f5a0c9b3cf33b88e7f7ae950d594ead1844b986db81",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-store/src/import/decode.rs",
+          "line": 785,
+          "symbol": "crate::gui_colours::Settings::from_legacy,",
+          "line_sha256": "b7d906720aaad71a3cc0de76b5d45730f7dde04c9819de63eda6b1f0bc10291a",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/options.rs",
+          "line": 4960,
+          "symbol": "pub fn set_gui_colour(",
+          "line_sha256": "0fbe1e20d806d6b93fef2ad7e7b6cdebc4f04f2cb3068d9a9780bba82415a266",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/options_gui_colours.rs",
+          "line": 56,
+          "symbol": "pub(crate) fn bind(",
+          "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/options_window.rs",
+          "line": 466,
+          "symbol": "let gui_colour_list = crate::options_gui_colours::bind",
+          "line_sha256": "0665081a8c794821e86e559b35ac20d4ebdded92bdbeaaa137be767135212dc3",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/gui_colours.rs",
+          "line": 17,
+          "symbol": "pub(crate) fn bind_guard(",
+          "line_sha256": "538239f24796cccde34fe85db99f01b8620777e9c53afade426365bf34017cfe",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/gui_colours.rs",
+          "line": 19,
+          "symbol": "let weak = <Theme",
+          "line_sha256": "f40f103e5175330b9a18f895f85365f014c4d5e9b81528d50ef8b9d0d1da7cfe",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/gui_colour_actions.rs",
+          "line": 43,
+          "symbol": "fn valid(",
+          "line_sha256": "52f42a417c8e6938b7293be2635c48b2ede61288b708b00fe1f7e44b3c8fef63",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/gui_colour_actions.rs",
+          "line": 89,
+          "symbol": "fn flip(",
+          "line_sha256": "14c7667ded2c3b892a017d3a146cfb97b79db1f7c2c0d72564007b4318d3dfeb",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/gui_coloursets.slint",
+          "line": 48,
+          "symbol": "export component GuiColourPickerWindow",
+          "line_sha256": "759d87a9023481d786417481cf5ff9c9fee2ecdd7606cdb5fd68c15ffed56b72",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/theme.slint",
+          "line": 16,
+          "symbol": "pure function thumbnail-background",
+          "line_sha256": "da4eeb8d88c369a46e9cd4a837dfbd7fafac092b1076d1f47cd79e8d60c38718",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/grid.rs",
+          "line": 432,
+          "symbol": "// Collections aggregate current locations;",
+          "line_sha256": "10cb032277ec4a06907bcf5c7f95ad8baf5920173a9778a7467e7159e8a28772",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/lib.rs",
+          "line": 586,
+          "symbol": "window.global::<Theme<'_>>().on_colours_changed",
+          "line_sha256": "afd5610c796406d54a52ef2192312eb51fd73442aec43f9ad3c66a529d1d1ffc",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/gui_colours.rs",
+          "line": 54,
+          "symbol": "fn all_twenty_six_rgb_roles",
+          "line_sha256": "66a6f91d8ec6fb8b09264d4815074812e911f18d0786a45914c511cf86b31b92",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/gui_colours.rs",
+          "line": 123,
+          "symbol": "fn staged_role_changes",
+          "line_sha256": "64f716fa29c167e8c3c9e47b7040b954a1eb9a21d3d5e69218a12b84386af9af",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/gui_colours.rs",
+          "line": 154,
+          "symbol": "fn old_imported_store",
+          "line_sha256": "4bb66ee60f8b488d39263e8777a7d73a433d5a80e50aa7977ccff9c78bba3457",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/gui_colours.rs",
+          "line": 88,
+          "symbol": "fn real_options_stage",
+          "line_sha256": "8e5deda7ace7e319a26d83e2fa885a00783b3ab2ec2c72f694d3fbd9f611c7fe",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/gui_colours.rs",
+          "line": 201,
+          "symbol": "fn help_warning_hidden",
+          "line_sha256": "2e6ba5df54fe718e584446abea219945b05cf52ff33138cc5a4a4b80a7fdf41d",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/gui_colours.rs",
+          "line": 307,
+          "symbol": "fn fresh_local_membership",
+          "line_sha256": "61c648795c323dbd19d831d2d77966af24801b7e9c3772da6fd30709b1898220",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/options_gui_colours.rs",
+          "line": 331,
+          "symbol": "fn clipboard_hex_acceptance",
+          "line_sha256": "b0c3282abef710620b430dffc0d5c3b825104969af2c82833a53a63d82f91ffb",
+          "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f"
+        }
+      ],
+      "reference_recording": {
+        "script": "oracle/record_gui_coloursets.py",
+        "fixture": "oracle/fixtures/gui_coloursets.json",
+        "screenshots": [
+          "oracle/fixtures/gui_coloursets_qt.png",
+          "oracle/fixtures/gui_colour_picker_qt.png"
+        ],
+        "commit": "61bb24e757ac6bba3b987205d0c45739c0c8d94f",
+        "executed": true,
+        "executed_utc": "2026-10-05T10:12:25Z",
+        "command": "/workspace/parallel/with-oracle /workspace/.cloud/hydrus/pyenv/bin/python oracle/record_gui_coloursets.py",
+        "result": "Actual ColoursPanel controls, all26 staged/saved/reopened RGB roles and serialised roundtrip, Cancel without UpdateOptions, real QColorDialog accept/reject, actual clipboard/menu and four Help FlipDarkmode combinations. Actual current media page/autocomplete/tagbox/preview publish13 backend role values after both switches; stylesheet unchanged. Both actual Qt PNGs inspected.",
+        "environment_notes": "Serialized offscreen realQt on copied basic fixture; no network operations. Clipboard and ShowCritical presentation interception only at transport boundaries. Loopback API startup permission warning did not prevent normal client startup/recording/shutdown."
+      },
+      "limits": [
+        "Hosted Rust CI and exact-source native rendered review remain pending; no local Cargo/Rust builds, tests or mutations.",
+        "Structural audit-options-colours-coloursets remains Partial and uncounted: native bounded RGB picker differs from QColorDialog HSV/HTML/history/platform topology.",
+        "Application Palette, stylesheet/QSS and OS appearance remain separately owned; generic controls and synthetic preview status retain native palette semantics.",
+        "Saved role updates are owner-local, weak and at most250ms; arbitrary whole-platform or unrepresented-widget parity is not claimed.",
+        "Thumbnail appearance integration must map these eight brushes into the extracted Paint Palette, propagate current physical local membership, discard cached current/old colour snapshots on palette invalidation, and retain grid background behind viewport margins/bitmap. Standalone colour source does not depend on that separate branch."
+      ]
+    }
+  ]
+}
