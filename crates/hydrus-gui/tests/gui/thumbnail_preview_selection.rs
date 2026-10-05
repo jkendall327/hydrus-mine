@@ -194,7 +194,8 @@ fn staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retiremen
         &pixels,
         1100,
         900,
-    );
+    )
+    .expect("save preview selection evidence");
     applied.invoke_apply();
     let saved: Preferences = store.read(settings::get).unwrap();
     assert_eq!(
