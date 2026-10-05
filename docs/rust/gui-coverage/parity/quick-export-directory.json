@@ -28,7 +28,7 @@
       "before": "missing",
       "proposedStatus": "first_pass",
       "countAsCompletedLeaf": true,
-      "behavior": "Enable actual File > open > quick export directory with existing OS opener and saved ExportSettings consumer. Every trigger rereads raw saved preference. Configured absolute/portable/empty/whitespace/missing paths follow recorded resolution without creation or validation/picker/confirmation; conditional non-Windows backslash recovery preserves existing literal spelling. Only unset preference creates home/hydrus_export. Unresolved home and creation/read errors report without launch. Real Options Cancel/Apply/reopen affect only the shared saved path. Hidden/rebound/accepted-close binding and resolver-induced owner hiding cannot launch/create; resolver injection stays owner-local with no environment mutation.",
+      "behavior": "Enable actual File > open > quick export directory with existing OS opener and saved ExportSettings consumer. Every trigger rereads raw saved preference. Configured absolute/portable/empty/whitespace/missing paths follow recorded resolution without creation or validation/picker/confirmation; conditional non-Windows backslash recovery preserves existing literal spelling. Only unset preference creates home/hydrus_export. Unresolved home and creation/read errors report without launch. Real Options Cancel/Apply/reopen affect only the shared saved path. Hidden/rebound/accepted-close binding and resolver-induced owner hiding cannot launch/create; resolver injection stays owner-local with no environment mutation. Explicit empty HOME wins over account fallback, which runs only for absence; this precedence is covered by a pure owned regression without environment writes or root-directory creation.",
       "source": [
         "crates/hydrus-gui-model/src/main_menu.rs",
         "crates/hydrus-gui/src/quick_export_directory.rs",
@@ -44,16 +44,18 @@
       "tests": [
         "crates/hydrus-gui-model/tests/model/quick_export_directory.rs::actual_file_submenu_enables_and_selects_quick_export_directory",
         "crates/hydrus-gui/tests/gui/quick_export_directory.rs::actual_file_menu_replays_saved_paths_fallback_errors_cancel_and_reopen",
-        "crates/hydrus-gui/tests/gui/quick_export_directory.rs::hidden_rebound_closed_and_reentrant_resolver_owners_cannot_launch_or_create"
+        "crates/hydrus-gui/tests/gui/quick_export_directory.rs::hidden_rebound_closed_and_reentrant_resolver_owners_cannot_launch_or_create",
+        "crates/hydrus-gui/src/quick_export_directory.rs::tests::explicit_empty_home_wins_and_account_lookup_only_runs_for_absent_home"
       ],
       "limits": [
         "Conditional on hosted Rust/strict Clippy/native/render validation; no local Cargo, Rust builds/tests or mutations executed.",
         "Actual Qt recording is Linux; authored expected filesystem targets normalize per platform while raw saved strings remain unchanged. Windows account lookup follows Python USERPROFILE/HOMEDRIVE+HOMEPATH; POSIX standard-library home lookup is cfg-limited with a documented deprecation allowance.",
         "OS opener behavior is the existing platform launcher; this action does not add file-manager selection, picker/confirmation, a new export path preference or broader File/database menu completion."
       ],
-      "source_commit": "cf74f083d6c84ea2659b9183a58f327b831fb9e6",
+      "source_commit": "775e032fb5515b84de4ad0788f5694c830c09e04",
       "implementation_commits": [
-        "cf74f083d6c84ea2659b9183a58f327b831fb9e6"
+        "cf74f083d6c84ea2659b9183a58f327b831fb9e6",
+        "775e032fb5515b84de4ad0788f5694c830c09e04"
       ]
     }
   ],
@@ -82,21 +84,24 @@
       "Python syntax and unchanged saved/path/fallback/error invariants",
       "Frozen inventory/completed ledger/prior packet and native alias eligibility checks",
       "Direct rustfmt and git diff --check",
-      "Parent bounded source review; Windows expected-path portability correction applied"
+      "Parent bounded source review; Windows expected-path portability correction applied",
+      "Independent Rust 1.94 std-source review identified empty-HOME precedence; resolver corrected and repinned"
     ],
     "authored_not_executed": [
       "Model real enabled command/menu order selection",
       "Native actual menu path replay, missing settings fallback, missing/invalid paths no-create, typed-corrupt setting error, owned unavailable/conflicting home errors",
       "Native Options Cancel/Apply/reopen/raw settings and rendered File submenu",
-      "Native hidden/rebound/accepted-close plus resolver-induced hiding before creation"
+      "Native hidden/rebound/accepted-close plus resolver-induced hiding before creation",
+      "Pure owner-local empty/nonempty HOME precedence and absent-only account lookup; no environment mutation or filesystem side effects"
     ],
     "pending": [
       "Hosted strict Clippy, Rust/native tests and native render inspection"
     ]
   },
-  "source_commit": "cf74f083d6c84ea2659b9183a58f327b831fb9e6",
+  "source_commit": "775e032fb5515b84de4ad0788f5694c830c09e04",
   "implementation_commits": [
-    "cf74f083d6c84ea2659b9183a58f327b831fb9e6"
+    "cf74f083d6c84ea2659b9183a58f327b831fb9e6",
+    "775e032fb5515b84de4ad0788f5694c830c09e04"
   ],
   "canonical_changes": false,
   "completed_ledger_changes": false,
