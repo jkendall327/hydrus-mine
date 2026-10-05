@@ -23,14 +23,20 @@ pub(crate) fn bind(
         let captured = captured.clone();
         move || {
             weak.upgrade().is_some_and(|window| {
-                window.window().is_visible()
+                let current = page();
+                let editable = {
+                    let page = current.borrow();
+                    page.lock().is_none() && page.note().is_none()
+                };
+                editable
+                    && window.window().is_visible()
                     && !window.get_search_locked()
                     && !window.get_search_or_open()
                     && window.get_note().is_empty()
                     && captured
                         .borrow()
                         .as_ref()
-                        .is_none_or(|owner| Rc::ptr_eq(owner, &page()))
+                        .is_none_or(|owner| Rc::ptr_eq(owner, &current))
             })
         }
     });
