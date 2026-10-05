@@ -271,6 +271,7 @@ export component OptionsWindow inherits Window {
                 vertical-stretch: 1;
                 // (as the reference's 28 characters)
                 page-list := StandardListView {
+                    enabled: !root.shortcuts-child-open && !root.routing-child-open;
                     width: 200px;
                     model: root.pages;
                     current-item <=> root.page;

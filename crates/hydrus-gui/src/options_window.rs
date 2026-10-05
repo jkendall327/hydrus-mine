@@ -392,9 +392,22 @@ pub(crate) fn open(
     let colour_list =
         crate::options_namespace_colours::bind(&window, &editor, &active, colour_slot);
     let frame_table = crate::options_frames::bind(&window, &editor, &active, frame_slot);
-    let shortcuts = crate::shortcut_windows::bind(&window, &editor, &active);
-    let routing_table =
-        crate::options_open_externally::bind(&window, &editor, &active, routing_slots);
+    let shortcuts = crate::shortcut_windows::bind(
+        &window,
+        &editor,
+        &active,
+        Rc::new({
+            let slots = routing_slots.clone();
+            move || slots.has_open()
+        }),
+    );
+    let routing_table = crate::options_open_externally::bind(
+        &window,
+        &editor,
+        &active,
+        routing_slots,
+        shortcuts.has_open.clone(),
+    );
     let external_table =
         crate::options_external_calls::bind(store, &window, &editor, &active, external_slots);
     // (the rows are made anew only as the page changes: an edit leaves its
@@ -536,8 +549,9 @@ pub(crate) fn open(
         let show_page = show_page.clone();
         let weak = window.as_weak();
         let routing_open = routing_table.has_open.clone();
+        let shortcuts_open = shortcuts.has_open.clone();
         move |i| {
-            if routing_open() {
+            if routing_open() || shortcuts_open() {
                 return;
             }
             let chosen = usize::try_from(i)
@@ -843,13 +857,21 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let active = active.clone();
         let routing_open = routing_table.has_open.clone();
+        let shortcuts_open = shortcuts.has_open.clone();
         move |i| {
             if !active.get()
-                || routing_open()
                 || !weak
                     .upgrade()
                     .is_some_and(|window| window.window().is_visible())
             {
+                return;
+            }
+            if routing_open() || shortcuts_open() {
+                // The list's two-way current-item binding can precede this
+                // callback. Retain the editor's page while a child owns input.
+                if let Some(window) = weak.upgrade() {
+                    window.set_page(int(editor.borrow().page() as i64));
+                }
                 return;
             }
             editor.borrow_mut().show_page(at(i));

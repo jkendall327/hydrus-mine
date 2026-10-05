@@ -88,10 +88,12 @@ struct State {
     urls: Rc<RefCell<Queue>>,
     slots: Slots,
     prepared: Cell<bool>,
+    other_open: Rc<dyn Fn() -> bool>,
 }
 impl State {
     fn valid(&self) -> bool {
         self.active.get()
+            && !(self.other_open)()
             && self
                 .window
                 .upgrade()
@@ -667,6 +669,7 @@ pub(crate) fn bind(
     editor: &Rc<RefCell<Editor>>,
     active: &Rc<Cell<bool>>,
     slots: &Slots,
+    other_open: Rc<dyn Fn() -> bool>,
 ) -> Binding {
     let routing = editor.borrow().edited_open_externally();
     let state = Rc::new(State {
@@ -677,6 +680,7 @@ pub(crate) fn bind(
         model: RefCell::new(model::Editor::new(routing)),
         slots: slots.clone(),
         prepared: Cell::new(false),
+        other_open,
     });
     window.on_routing_url_clicked({
         let state = state.clone();

@@ -58,6 +58,7 @@ pub(crate) fn bind(
     parent: &OptionsWindow,
     editor: &Rc<RefCell<Editor>>,
     active: &Rc<Cell<bool>>,
+    other_open: Rc<dyn Fn() -> bool>,
 ) -> Owner {
     let slots = Rc::new(Slots::default());
     let settings = editor.borrow().edited_shortcuts();
@@ -67,8 +68,16 @@ pub(crate) fn bind(
         let editor = editor.clone();
         let active = active.clone();
         let slots = slots.clone();
+        let other_open = other_open.clone();
+        let weak = parent.as_weak();
         move |merge, primary| {
-            if !active.get() || slots.set.borrow().is_some() {
+            if !active.get()
+                || slots.set.borrow().is_some()
+                || other_open()
+                || !weak
+                    .upgrade()
+                    .is_some_and(|parent| parent.window().is_visible())
+            {
                 return;
             }
             let mut settings = editor.borrow().edited_shortcuts();
@@ -83,7 +92,13 @@ pub(crate) fn bind(
         let slots = slots.clone();
         let weak = parent.as_weak();
         move || {
-            if !active.get() || slots.set.borrow().is_some() {
+            if !active.get()
+                || slots.set.borrow().is_some()
+                || other_open()
+                || !weak
+                    .upgrade()
+                    .is_some_and(|parent| parent.window().is_visible())
+            {
                 return;
             }
             if let Ok(window) =

@@ -146,6 +146,105 @@ fn add_nested(bound: &Bound, name: &str) {
     choose(bound, name);
 }
 #[test]
+fn shortcut_and_routing_children_exclude_each_other_and_cancel_staged_changes() {
+    headless::init();
+    let (_dirs, store) = super::subscriptions::store();
+    seed(&store);
+    let saved = || {
+        store
+            .read(|conn| {
+                Ok((
+                    settings::get::<Routing>(conn)?,
+                    settings::get::<Manager>(conn)?,
+                    settings::get::<hydrus_core::shortcuts::Settings>(conn)?,
+                ))
+            })
+            .unwrap()
+    };
+    let before = saved();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let window = open(&ui, &bound);
+    let routing_page = window.get_page();
+    let shortcuts_page = i32::try_from(
+        window
+            .get_pages()
+            .iter()
+            .position(|page| page.text == "shortcuts")
+            .unwrap(),
+    )
+    .unwrap();
+    window.invoke_page_chosen(shortcuts_page);
+    window.invoke_shortcuts_clicked();
+    let shortcut_child = hydrus_gui::shortcut_windows::last_set().unwrap();
+    assert!(shortcut_child.window().is_visible());
+    // StandardListView's two-way current-item binding writes page first.
+    window.set_page(routing_page);
+    window.invoke_page_chosen(routing_page);
+    assert_eq!(
+        window.get_page(),
+        shortcuts_page,
+        "shortcut child owns parent page navigation"
+    );
+    window.invoke_search_edited("open externally".into());
+    let match_index = i32::try_from(
+        window
+            .get_matches()
+            .iter()
+            .position(|label| label.contains("open externally"))
+            .unwrap(),
+    )
+    .unwrap();
+    window.invoke_search_chosen(match_index);
+    assert_eq!(
+        window.get_page(),
+        shortcuts_page,
+        "search cannot bypass the child guard"
+    );
+    window.invoke_routing_url_action("add".into());
+    assert!(!bound.options_open_externally.has_open());
+    window.invoke_apply();
+    assert!(bound.options.borrow().is_some());
+    assert_eq!(saved(), before);
+    shortcut_child.invoke_cancel();
+    window.invoke_page_chosen(routing_page);
+    assert_eq!(window.get_page(), routing_page);
+    window.invoke_routing_url_action("add".into());
+    let routing_child = choice(&bound);
+    window.invoke_shortcuts_clicked();
+    assert!(
+        !shortcut_child.window().is_visible(),
+        "routing child cannot reopen a shortcut child"
+    );
+    assert!(
+        hydrus_gui::shortcut_windows::last_set().is_none_or(|child| !child.window().is_visible())
+    );
+    window.invoke_shortcuts_policy(!before.2.merge_numpad, !before.2.primary_labels);
+    window.set_page(shortcuts_page);
+    window.invoke_page_chosen(shortcuts_page);
+    assert_eq!(window.get_page(), routing_page);
+    window.invoke_apply();
+    assert!(bound.options.borrow().is_some());
+    routing_child.invoke_cancel();
+    window.invoke_apply();
+    assert!(bound.options.borrow().is_none());
+    assert_eq!(
+        saved(),
+        before,
+        "blocked policy edits and child-free Apply retain saved settings"
+    );
+    let successor = open(&ui, &bound);
+    successor.invoke_page_chosen(shortcuts_page);
+    successor.invoke_shortcuts_clicked();
+    let child = hydrus_gui::shortcut_windows::last_set().unwrap();
+    successor.invoke_cancel();
+    assert!(!child.window().is_visible());
+    child.invoke_apply();
+    routing_child.invoke_chosen(0);
+    assert_eq!(saved(), before, "parent Cancel retires both child families");
+}
+#[test]
 fn options_routes_replay_qt_owned_choosers_cancel_order_apply_reopen_and_retirement() {
     let fixture = hydrus_testkit::fixture_json("open_externally.json");
     let windows = headless::init();

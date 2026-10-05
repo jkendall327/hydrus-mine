@@ -3244,6 +3244,8 @@ selection and asks first. Any selection containing “all files” protects all
 selected MIME rows from deletion. Parent Apply alone saves routes, washes removed
 or wrong-type keys and updates renamed labels; Cancel discards accepted children.
 The opened routing draft supplies registered OS defaults for empty queues.
+Options page/search navigation and child launch paths keep shortcut and routing
+children mutually exclusive until the active child closes or the parent cancels.
 
 The main thumbnail and viewer default-open actions read current saved routes.
 Specific filetype entries replace general-class entries, then “all files”;

@@ -2288,7 +2288,10 @@ GetSafePosition decision handler is unchanged. Native OS movement and authored
 Rust regressions remain pending hosted validation.
 
 Options > open externally now edits registered URL and MIME-specific file-call
-queues with owned choosers and a staged nested calls child. The eight finite
+queues with owned choosers and a staged nested calls child. Parent page/search
+navigation and child launch paths exclude the owned shortcut editor while a
+routing child is open, and vice versa. Blocked two-way list selection restores
+the editor's current page. The eight finite
 Add/Edit/Delete/choose/order controls have executable Qt recordings and authored
 native/model persistence/consumer regressions; broader page/list parents remain
 Partial. The first/default route reaches main thumbnail and live viewer buttons,
