@@ -235,6 +235,7 @@ fn the_viewer_and_the_archive_delete_filter_zoom_and_pan() {
         .unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("system:filetype is jpeg".into());
     ui.invoke_search_accepted();

@@ -85,6 +85,7 @@ fn times_are_edited_added_and_applied_as_the_reference_does() {
     let store: Arc<Store> = Store::open(native.path()).unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();

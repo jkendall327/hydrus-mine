@@ -370,6 +370,7 @@ fn tags_are_added_and_removed_as_the_reference_does() {
     // typed, and the viewer's tags show the change
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();

@@ -164,6 +164,7 @@ fn a_right_click_shows_the_menu_and_its_entries_act() {
     let store: Arc<Store> = Store::open(native.path()).unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    slint::ComponentHandle::show(&ui).unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
@@ -288,6 +289,7 @@ fn the_urls_menu_opens_pages_of_a_url_and_asks_before_opening_several() {
     let store: Arc<Store> = Store::open(native.path()).unwrap();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    slint::ComponentHandle::show(&ui).unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();

@@ -68,6 +68,7 @@ fn persisted_custom_empty_and_unicode_connectors_render_without_changing_tags() 
     );
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(
         &ui,
         Pages::single(SearchPage::fixed(

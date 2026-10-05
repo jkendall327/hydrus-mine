@@ -19,6 +19,7 @@ fn export_files_menu_window_previews_confirmation_and_worker() {
     let work = tempfile::tempdir().unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();

@@ -174,6 +174,7 @@ fn the_collect_control_collects_the_page() {
     let fixture = fixture();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    slint::ComponentHandle::show(&ui).unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(fixture.store.clone())));
     ui.invoke_columns_changed(4);
     ui.invoke_search_edited("system:everything".into());
