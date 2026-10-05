@@ -643,9 +643,15 @@ fn rebind_retires_preview_under_predecessor_splitter_before_successor_hides_it()
             now.get()
         }
     }));
-    first.preview.set_decoder(std::sync::Arc::new(|_, _| {
-        Some(hydrus_media::Raster::new(1, 1, 3, vec![10, 20, 30]).unwrap())
-    }));
+    first
+        .preview
+        .set_decoder(std::sync::Arc::new(move |_, decoded| {
+            assert_eq!(
+                decoded, file,
+                "accepted raster belongs to the exact selected file"
+            );
+            Some(hydrus_media::Raster::new(1, 1, 3, vec![10, 20, 30]).unwrap())
+        }));
     let index = first
         .current
         .borrow()
@@ -664,7 +670,14 @@ fn rebind_retires_preview_under_predecessor_splitter_before_successor_hides_it()
         );
         std::thread::yield_now();
     }
-    assert_eq!(first.preview.displayed_file(), Some(file));
+    assert_eq!(
+        (
+            ui.get_preview_media().size().width,
+            ui.get_preview_media().size().height
+        ),
+        (1, 1),
+        "the exact selected file's accepted frame is displayed"
+    );
     now.set(2000);
     observed_splitters.borrow_mut().clear();
     store
@@ -686,8 +699,16 @@ fn rebind_retires_preview_under_predecessor_splitter_before_successor_hides_it()
         [false],
         "retirement samples predecessor geometry before any successor splitter setter/presentation callback"
     );
+    successor.preview.refresh();
     assert!(!ui.get_preview_has_media());
-    assert_eq!(successor.preview.displayed_file(), None);
+    assert_eq!(
+        (
+            ui.get_preview_media().size().width,
+            ui.get_preview_media().size().height
+        ),
+        (0, 0),
+        "the successor cannot retain its predecessor's frame"
+    );
     let stats = store
         .read(|conn| hydrus_store::media::viewing_stats(conn, &[file]))
         .unwrap()
