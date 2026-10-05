@@ -6,7 +6,7 @@
 
 use std::collections::HashMap;
 
-use hydrus_core::numbers::human_bytes;
+use hydrus_core::numbers::human_bytes_with_figures;
 use rusqlite::Connection;
 
 use crate::error::Result;
@@ -62,13 +62,17 @@ pub struct JobLive {
 impl JobLive {
     /// Its line under the importer's log.
     pub fn line(&self) -> JobLine {
-        network_job_line(
+        self.line_with_figures(3)
+    }
+    pub fn line_with_figures(&self, figures: u8) -> JobLine {
+        network_job_line_with_figures(
             &self.status,
             self.speed,
             Some(self.bytes_read),
             self.bytes_to_read,
             self.error,
             self.done,
+            figures,
         )
     }
 }
@@ -236,6 +240,26 @@ pub fn network_job_line(
     has_error: bool,
     is_done: bool,
 ) -> JobLine {
+    network_job_line_with_figures(
+        status,
+        speed,
+        bytes_read,
+        bytes_to_read,
+        has_error,
+        is_done,
+        3,
+    )
+}
+pub fn network_job_line_with_figures(
+    status: &str,
+    speed: u64,
+    bytes_read: Option<u64>,
+    bytes_to_read: Option<u64>,
+    has_error: bool,
+    is_done: bool,
+    figures: u8,
+) -> JobLine {
+    let bytes = |value| human_bytes_with_figures(value, figures);
     let mut right = String::new();
     if let Some(read) = bytes_read
         && read > 0
@@ -243,13 +267,13 @@ pub fn network_job_line(
     {
         match bytes_to_read {
             Some(total) if total != read => {
-                right = format!("{}/{}", human_bytes(read), human_bytes(total));
+                right = format!("{}/{}", bytes(read), bytes(total));
             }
-            _ => right = human_bytes(read),
+            _ => right = bytes(read),
         }
         // (a quick download just says its size)
         if Some(speed) != bytes_to_read {
-            right.push_str(&format!(" {}/s", human_bytes(speed)));
+            right.push_str(&format!(" {}/s", bytes(speed)));
         }
     }
     JobLine {

@@ -17,7 +17,7 @@ use hydrus_search::{
     collect_page_files, parse_api_search, predicate_text, search_files, sort_page_files,
 };
 use hydrus_store::Store;
-use hydrus_store::live::{self, JobKind, JobLine, JobLive, QueueLive};
+use hydrus_store::live::{self, JobKind, JobLine, QueueLive};
 use hydrus_store::queues::{self, StatusCounts};
 
 use crate::autocomplete::Autocomplete;
@@ -156,21 +156,21 @@ impl Importer {
     }
 
     /// The line for the file it is downloading, under its file log.
-    pub fn file_job_line(&self) -> JobLine {
+    pub fn file_job_line(&self, figures: u8) -> JobLine {
         self.live
             .file_job
             .as_ref()
-            .map(JobLive::line)
+            .map(|job| job.line_with_figures(figures))
             .unwrap_or_default()
     }
 
     /// The line for the gallery page it is downloading, under its search
     /// log.
-    pub fn gallery_job_line(&self) -> JobLine {
+    pub fn gallery_job_line(&self, figures: u8) -> JobLine {
         self.live
             .gallery_job
             .as_ref()
-            .map(JobLive::line)
+            .map(|job| job.line_with_figures(figures))
             .unwrap_or_default()
     }
 

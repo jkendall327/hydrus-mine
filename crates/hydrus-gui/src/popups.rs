@@ -68,7 +68,11 @@ fn gauge(g: Option<(i64, i64)>) -> Option<Gauge> {
 
 /// A popup as `PopupMessage.UpdateMessage` shows it: paused, its text is
 /// "paused" and its gauges and second text hide.
+#[cfg(test)]
 pub fn view(job: &Job) -> PopupView {
+    view_with_figures(job, 3)
+}
+pub fn view_with_figures(job: &Job, figures: u8) -> PopupView {
     let paused = job.paused;
     let text_1 = if paused {
         Some("paused".to_owned())
@@ -97,7 +101,7 @@ pub fn view(job: &Job) -> PopupView {
         // (whose stop button is the popup's own, below)
         download: job.network_job.as_ref().map(|network| JobLine {
             can_cancel: false,
-            ..network.line()
+            ..network.line_with_figures(figures)
         }),
         files: job.files.as_ref().map(|(hashes, label)| {
             format!(
@@ -116,11 +120,15 @@ pub fn view(job: &Job) -> PopupView {
 
 /// The popups shown (the oldest, as many as fit), and the summary line
 /// under them (`PopupMessageSummaryBar.SetNumMessages`), for all `jobs`.
+#[cfg(test)]
 pub fn shown(jobs: &[Job]) -> (Vec<PopupView>, String) {
+    shown_with_figures(jobs, 3)
+}
+pub fn shown_with_figures(jobs: &[Job], figures: u8) -> (Vec<PopupView>, String) {
     let views = jobs
         .iter()
         .take(hydrus_store::popups::IN_VIEW)
-        .map(view)
+        .map(|job| view_with_figures(job, figures))
         .collect();
     let summary = match jobs.len() {
         1 => "1 message".to_owned(),
@@ -200,7 +208,8 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> std::rc::Rc<slin
                     return;
                 }
             };
-            let (views, summary) = self::shown(&jobs);
+            let formatting = hydrus_gui_model::gui_format::preferences(&store(&hooks));
+            let (views, summary) = self::shown_with_figures(&jobs, formatting.figures);
             // (changed in place: rows made anew under the pointer would
             // lose its press)
             for (i, view) in views.iter().enumerate() {
@@ -410,6 +419,36 @@ mod tests {
             (shown.gauge_1, shown.gauge_2, shown.text_2),
             (None, None, None)
         );
+    }
+
+    #[test]
+    fn popup_download_precision_replays_actual_network_control_output() {
+        let fixture = hydrus_testkit::fixture_json("gui_format.json");
+        for event in fixture["events"].as_array().unwrap() {
+            let figures = u8::try_from(event["saved"]["figures"].as_u64().unwrap()).unwrap();
+            for case in event["consumers"]["network_jobs"].as_array().unwrap() {
+                let input = &case["input"];
+                let mut job = Job::new(false, true, 0.0);
+                job.network_job = Some(hydrus_store::live::JobLive {
+                    url: "https://format.invalid/transfer".into(),
+                    status: "receiving\nsecond line".into(),
+                    speed: input["speed"].as_u64().unwrap(),
+                    bytes_read: input["read"].as_u64().unwrap(),
+                    bytes_to_read: input["total"].as_u64(),
+                    done: input["done"].as_bool().unwrap(),
+                    error: input["error"].as_bool().unwrap(),
+                });
+                let original = job.clone();
+                let shown = view_with_figures(&job, figures).download.unwrap();
+                assert_eq!(shown.left, case["left"].as_str().unwrap());
+                assert_eq!(shown.right, case["right"].as_str().unwrap());
+                assert!(
+                    !shown.can_cancel,
+                    "popup cancellation belongs to the outer job"
+                );
+                assert_eq!(job, original);
+            }
+        }
     }
 
     #[test]

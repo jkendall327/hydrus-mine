@@ -21,6 +21,7 @@ def record(session):
         from hydrus.client.gui.panels.options.GUIPanel import GUIPanel
         from hydrus.client.gui.widgets.ClientGUICommon import EnterCatchingRadioButton
         from hydrus.client.gui.parsing import ClientGUIParsingTest
+        from hydrus.client.gui.networking import ClientGUINetworkJobControl
         from hydrus.client.importing.options import FileFilteringImportOptions as FFO,ImportOptionsConstants as IOC
         from hydrus.client.gui.importing import ClientGUIFileSeedCache as FC,ClientGUIGallerySeedLog as GL
         from hydrus.client.importing import ClientImportFileSeeds as FS,ClientImportGallerySeeds as GS
@@ -37,12 +38,25 @@ def record(session):
         parsing_panel=ClientGUIParsingTest.TestPanel(c.gui,lambda:None);panels.append(parsing_panel)
         parsing_inputs=['<html>'+('x'*1523)+'</html>',json.dumps('x'*1534)]
         filtering=FFO.FileFilteringImportOptions();filtering.SetMinSize(1536);filtering.SetMaxSize(243200);filtering.SetMaxGifSize(188213746)
+        class RecordedJob:
+            def __init__(self,data):self.data=data
+            def NoEngineYet(self):return False
+            def GetStatus(self):return ('receiving\nsecond line',self.data['speed'],self.data['read'],self.data['total'])
+            def HasError(self):return self.data['error']
+            def IsDone(self):return self.data['done']
         def consumers():
+            jobs=[]
+            for read,total,speed,error,done in [(1536,243200,1536,False,False),(1536,1536,1536,False,True),(1536,None,0,False,False),(0,243200,1536,False,False),(1536,243200,1536,True,True)]:
+                network_control=ClientGUINetworkJobControl.NetworkJobControl(c.gui);panels.append(network_control)
+                data=dict(read=read,total=total,speed=speed,error=error,done=done)
+                network_control._network_job=RecordedJob(data);network_control._Update()
+                jobs.append(dict(input=data,left=network_control._left_text.text(),right=network_control._right_text.text(),can_cancel=network_control._cancel_button.isEnabled()))
+            network_control._network_job=None
             previews=[]
             for text in parsing_inputs:
                 parsing_panel._SetExampleData(text)
                 previews.append(dict(input=text,label=parsing_panel._example_data_raw_description.text(),raw=parsing_panel._example_data_raw))
-            return dict(filtering_summary=filtering.GetSummary(IOC.IMPORT_OPTIONS_CALLER_TYPE_LOCAL_IMPORT),parser_previews=previews,expiry=[dict(timestamp=t,text=HydrusTime.TimestampToPrettyExpires(t)) for t in (NOW-4,NOW,NOW+4)],variants=[dict(timestamp=t,minutes=HydrusTime.TimestampToPrettyTimeDelta(t,show_seconds=False),exact=HydrusTime.TimestampToPrettyTimeDelta(t,just_now_threshold=0),no_prefix=HydrusTime.TimestampToPrettyTimeDelta(t,no_prefix=True),forced_relative=HydrusTime.TimestampToPrettyTimeDelta(t,force_no_iso=True)) for t in (NOW-86400,NOW-4,NOW,NOW+4,NOW+86400)])
+            return dict(network_jobs=jobs,filtering_summary=filtering.GetSummary(IOC.IMPORT_OPTIONS_CALLER_TYPE_LOCAL_IMPORT),parser_previews=previews,expiry=[dict(timestamp=t,text=HydrusTime.TimestampToPrettyExpires(t)) for t in (NOW-4,NOW,NOW+4)],variants=[dict(timestamp=t,minutes=HydrusTime.TimestampToPrettyTimeDelta(t,show_seconds=False),exact=HydrusTime.TimestampToPrettyTimeDelta(t,just_now_threshold=0),no_prefix=HydrusTime.TimestampToPrettyTimeDelta(t,no_prefix=True),forced_relative=HydrusTime.TimestampToPrettyTimeDelta(t,force_no_iso=True)) for t in (NOW-86400,NOW-4,NOW,NOW+4,NOW+86400)])
         try:
             defaults=prefs(c.new_options)
             for iso,figures in [(False,3),(True,1),(True,2),(False,4),(True,5),(False,6),(True,0),(False,7)]:
