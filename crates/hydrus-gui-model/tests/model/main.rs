@@ -144,3 +144,5 @@ mod viewer_tag_wheel;
 
 mod idle_timeout_options;
 mod legacy_seed_caches;
+
+mod import_work_slots;

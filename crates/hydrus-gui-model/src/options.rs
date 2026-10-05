@@ -211,6 +211,7 @@ settings! {
     info_line: InfoLineSettings,
     import_options: hydrus_core::import_options::ImportOptionsManager,
     import_options_ui: hydrus_store::settings::ImportOptionsUiSettings,
+    import_work_slots: hydrus_store::settings::ImportWorkSlots,
     media_viewer: MediaViewerSettings,
     network: NetworkSettings,
     notebooks: NotebookSettings,
@@ -2473,14 +2474,51 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         ),
         page(
             "importing",
-            vec![boxed(
-                "filetypes",
-                vec![check(
-                    "Inspect for .cbz properties when importing/rescanning .zip files:",
-                    |s| s.file_handling.comic_book_detection,
-                    |s, v| s.file_handling.comic_book_detection = v,
-                )],
-            )],
+            vec![
+                boxed(
+                    "filetypes",
+                    vec![check(
+                        "Inspect for .cbz properties when importing/rescanning .zip files:",
+                        |s| s.file_handling.comic_book_detection,
+                        |s, v| s.file_handling.comic_book_detection = v,
+                    )],
+                ),
+                boxed(
+                    "work slots",
+                    vec![
+                        int(
+                            "Number of gallery downloader file queues that can import at the same time:",
+                            (1, 500),
+                            |s| s.import_work_slots.gallery_files,
+                            |s, v| s.import_work_slots.gallery_files = v,
+                        ),
+                        int(
+                            "Number of gallery downloader searches that can run at the same time:",
+                            (1, 500),
+                            |s| s.import_work_slots.gallery_search,
+                            |s, v| s.import_work_slots.gallery_search = v,
+                        ),
+                        int(
+                            "Number of watcher page file queues that can run at the same time:",
+                            (1, 500),
+                            |s| s.import_work_slots.watcher_files,
+                            |s, v| s.import_work_slots.watcher_files = v,
+                        ),
+                        int(
+                            "Number of watcher page checkers that can run at the same time:",
+                            (1, 500),
+                            |s| s.import_work_slots.watcher_check,
+                            |s, v| s.import_work_slots.watcher_check = v,
+                        ),
+                        int(
+                            "Number of other paged importer jobs that can run at the same time:",
+                            (1, 500),
+                            |s| s.import_work_slots.misc,
+                            |s, v| s.import_work_slots.misc = v,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "maintenance and processing",

@@ -3274,3 +3274,20 @@ thresholds. Reopening ignored controls restores the reference's hidden one-minut
 value. The controls are disabled when the stored idle-enable flag is off. Mouse
 activity currently covers native application windows, while browsing and Client
 API activity use the existing all-window and shared API timestamp consumers.
+
+Options > importing now stages all five work-slot limits (1–500): gallery file
+queues, gallery searches, watcher file queues, watcher checks and other paged
+importer jobs. Apply reaches already-running daemon queues; Cancel preserves
+saved limits, and reopening/import retains them. The actual loaded reference
+defaults are 15/5/15/5/10, replacing its spinner constructor seeds of
+5/15/5/15/10. Imported raw integers remain intact until Apply normalizes the
+shown controls. `import_work_slots.json` and the inspected Qt PNG record the
+controls and the real controller's named acquire/release boundaries.
+
+Each runner owns independent active counters and cancellation-safe permits.
+Lowering a capacity preserves running counts and blocks new work until enough
+permits release; raising it admits pending work. Bandwidth/network waits still
+consume a work slot. Watcher checks and files now run independently, so a
+checker waiting for its own slot does not prevent that watcher's file imports.
+URL and simple-downloader file/page work and local-import files share the other
+paged-job pool. These limits are separate from network connection semaphores.

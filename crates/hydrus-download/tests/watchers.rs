@@ -39,10 +39,14 @@ struct Site {
     /// File ids per thread; a missing thread is 404.
     threads: Mutex<HashMap<u32, Vec<usize>>>,
     hits: Mutex<HashMap<String, usize>>,
+    release: tokio::sync::Notify,
 }
 
 async fn thread(State(site): State<Arc<Site>>, Path(id): Path<u32>) -> Response {
     *site.hits.lock().entry(format!("thread/{id}")).or_default() += 1;
+    if id >= 90 {
+        site.release.notified().await;
+    }
     let Some(files) = site.threads.lock().get(&id).cloned() else {
         return (StatusCode::NOT_FOUND, "thread gone").into_response();
     };
@@ -292,4 +296,141 @@ async fn a_watcher_follows_a_thread_until_it_404s() {
     assert!(st.checking_paused);
     let hits = s.site.hits.lock()["thread/5"];
     assert_eq!(hits, 3);
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn watcher_checks_share_their_own_live_capacity_and_owner_close_releases_it() {
+    use hydrus_store::settings::{self, ImportWorkSlots};
+    let s = setup().await;
+    s.store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &ImportWorkSlots {
+                    watcher_check: 1,
+                    ..ImportWorkSlots::default()
+                },
+            )
+        })
+        .unwrap();
+    let mut queues = Vec::new();
+    for thread in [90, 91, 92] {
+        s.site.threads.lock().insert(thread, vec![]);
+        let (queue, _) = s
+            .runner
+            .watch(
+                &format!("{}/thread/{thread}", s.base),
+                None,
+                None,
+                None,
+                &BTreeSet::new(),
+                &[],
+            )
+            .unwrap();
+        queues.push(queue.id);
+    }
+    s.runner.start_all().unwrap();
+    let count = || {
+        s.site
+            .hits
+            .lock()
+            .iter()
+            .filter(|(url, _)| url.starts_with("thread/9"))
+            .map(|(_, count)| count)
+            .sum::<usize>()
+    };
+    for _ in 0..400 {
+        if count() == 1 {
+            break;
+        }
+        tokio::time::sleep(Duration::from_millis(25)).await;
+    }
+    assert_eq!(count(), 1);
+    for _ in 0..200 {
+        if queues
+            .iter()
+            .filter(|&&id| s.runner.status(id).gallery_status == "pending")
+            .count()
+            == 2
+        {
+            break;
+        }
+        tokio::time::sleep(Duration::from_millis(25)).await;
+    }
+    assert_eq!(
+        queues
+            .iter()
+            .filter(|&&id| s.runner.status(id).gallery_status == "pending")
+            .count(),
+        2
+    );
+    let blocked = queues
+        .iter()
+        .copied()
+        .find(|&id| s.runner.status(id).gallery_status == "pending")
+        .unwrap();
+    s.runner
+        .pend_urls(
+            blocked,
+            &[format!("{}/files/1.jpg", s.base)],
+            &BTreeSet::new(),
+            &[],
+        )
+        .unwrap();
+    for _ in 0..200 {
+        if s.store
+            .read(|conn| queues::next_file_seed(conn, blocked))
+            .unwrap()
+            .is_none()
+        {
+            break;
+        }
+        tokio::time::sleep(Duration::from_millis(25)).await;
+    }
+    let imported = s
+        .store
+        .read(|conn| queues::file_seeds(conn, blocked))
+        .unwrap();
+    assert_eq!(imported.len(), 1);
+    assert_eq!(imported[0].status, SeedStatus::SuccessfulAndNew);
+    assert_eq!(count(), 1, "file work does not acquire a checker permit");
+    let running = s
+        .runner
+        .live()
+        .into_iter()
+        .find(|(_, live)| live.gallery_job.is_some())
+        .unwrap()
+        .0;
+    s.store
+        .write(move |ctx| queues::set_page_closed(ctx.conn(), running, true))
+        .unwrap();
+    for _ in 0..200 {
+        if count() == 2 {
+            break;
+        }
+        tokio::time::sleep(Duration::from_millis(25)).await;
+    }
+    assert_eq!(count(), 2);
+    s.store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &ImportWorkSlots {
+                    watcher_check: 2,
+                    ..ImportWorkSlots::default()
+                },
+            )
+        })
+        .unwrap();
+    s.runner.reload_settings().unwrap();
+    for _ in 0..200 {
+        if count() == 3 {
+            break;
+        }
+        tokio::time::sleep(Duration::from_millis(25)).await;
+    }
+    assert_eq!(count(), 3);
+    for queue in queues {
+        s.runner.cancel(queue, hydrus_store::live::JobKind::Gallery);
+    }
 }

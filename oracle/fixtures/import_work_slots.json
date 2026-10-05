@@ -1,0 +1,901 @@
+{
+  "defaults": {
+    "gallery_files": 15,
+    "gallery_search": 5,
+    "watcher_files": 15,
+    "watcher_check": 5,
+    "misc": 10
+  },
+  "fresh_defaults": {
+    "gallery_files": 15,
+    "gallery_search": 5,
+    "watcher_files": 15,
+    "watcher_check": 5,
+    "misc": 10
+  },
+  "loaded_boundaries": {
+    "before": {
+      "gallery_files": 0,
+      "gallery_search": -1,
+      "watcher_files": 501,
+      "watcher_check": 999,
+      "misc": 0
+    },
+    "controls": {
+      "gallery_files": 1,
+      "gallery_search": 1,
+      "watcher_files": 500,
+      "watcher_check": 500,
+      "misc": 1
+    },
+    "saved": {
+      "gallery_files": 1,
+      "gallery_search": 1,
+      "watcher_files": 500,
+      "watcher_check": 500,
+      "misc": 1
+    }
+  },
+  "events": [
+    {
+      "input": [
+        5,
+        15,
+        5,
+        15,
+        10
+      ],
+      "before": {
+        "gallery_files": 15,
+        "gallery_search": 5,
+        "watcher_files": 15,
+        "watcher_check": 5,
+        "misc": 10
+      },
+      "draft": {
+        "gallery_files": 5,
+        "gallery_search": 15,
+        "watcher_files": 5,
+        "watcher_check": 15,
+        "misc": 10
+      },
+      "staged": {
+        "gallery_files": 15,
+        "gallery_search": 5,
+        "watcher_files": 15,
+        "watcher_check": 5,
+        "misc": 10
+      },
+      "saved": {
+        "gallery_files": 5,
+        "gallery_search": 15,
+        "watcher_files": 5,
+        "watcher_check": 15,
+        "misc": 10
+      },
+      "round_trip": {
+        "gallery_files": 5,
+        "gallery_search": 15,
+        "watcher_files": 5,
+        "watcher_check": 15,
+        "misc": 10
+      },
+      "reopened": {
+        "gallery_files": 5,
+        "gallery_search": 15,
+        "watcher_files": 5,
+        "watcher_check": 15,
+        "misc": 10
+      }
+    },
+    {
+      "input": [
+        2,
+        3,
+        4,
+        6,
+        7
+      ],
+      "before": {
+        "gallery_files": 5,
+        "gallery_search": 15,
+        "watcher_files": 5,
+        "watcher_check": 15,
+        "misc": 10
+      },
+      "draft": {
+        "gallery_files": 2,
+        "gallery_search": 3,
+        "watcher_files": 4,
+        "watcher_check": 6,
+        "misc": 7
+      },
+      "staged": {
+        "gallery_files": 5,
+        "gallery_search": 15,
+        "watcher_files": 5,
+        "watcher_check": 15,
+        "misc": 10
+      },
+      "saved": {
+        "gallery_files": 2,
+        "gallery_search": 3,
+        "watcher_files": 4,
+        "watcher_check": 6,
+        "misc": 7
+      },
+      "round_trip": {
+        "gallery_files": 2,
+        "gallery_search": 3,
+        "watcher_files": 4,
+        "watcher_check": 6,
+        "misc": 7
+      },
+      "reopened": {
+        "gallery_files": 2,
+        "gallery_search": 3,
+        "watcher_files": 4,
+        "watcher_check": 6,
+        "misc": 7
+      }
+    },
+    {
+      "input": [
+        0,
+        -1,
+        501,
+        999,
+        0
+      ],
+      "before": {
+        "gallery_files": 2,
+        "gallery_search": 3,
+        "watcher_files": 4,
+        "watcher_check": 6,
+        "misc": 7
+      },
+      "draft": {
+        "gallery_files": 1,
+        "gallery_search": 1,
+        "watcher_files": 500,
+        "watcher_check": 500,
+        "misc": 1
+      },
+      "staged": {
+        "gallery_files": 2,
+        "gallery_search": 3,
+        "watcher_files": 4,
+        "watcher_check": 6,
+        "misc": 7
+      },
+      "saved": {
+        "gallery_files": 1,
+        "gallery_search": 1,
+        "watcher_files": 500,
+        "watcher_check": 500,
+        "misc": 1
+      },
+      "round_trip": {
+        "gallery_files": 1,
+        "gallery_search": 1,
+        "watcher_files": 500,
+        "watcher_check": 500,
+        "misc": 1
+      },
+      "reopened": {
+        "gallery_files": 1,
+        "gallery_search": 1,
+        "watcher_files": 500,
+        "watcher_check": 500,
+        "misc": 1
+      }
+    },
+    {
+      "input": [
+        500,
+        500,
+        500,
+        500,
+        500
+      ],
+      "before": {
+        "gallery_files": 1,
+        "gallery_search": 1,
+        "watcher_files": 500,
+        "watcher_check": 500,
+        "misc": 1
+      },
+      "draft": {
+        "gallery_files": 500,
+        "gallery_search": 500,
+        "watcher_files": 500,
+        "watcher_check": 500,
+        "misc": 500
+      },
+      "staged": {
+        "gallery_files": 1,
+        "gallery_search": 1,
+        "watcher_files": 500,
+        "watcher_check": 500,
+        "misc": 1
+      },
+      "saved": {
+        "gallery_files": 500,
+        "gallery_search": 500,
+        "watcher_files": 500,
+        "watcher_check": 500,
+        "misc": 500
+      },
+      "round_trip": {
+        "gallery_files": 500,
+        "gallery_search": 500,
+        "watcher_files": 500,
+        "watcher_check": 500,
+        "misc": 500
+      },
+      "reopened": {
+        "gallery_files": 500,
+        "gallery_search": 500,
+        "watcher_files": 500,
+        "watcher_check": 500,
+        "misc": 500
+      }
+    }
+  ],
+  "cancel_before": {
+    "gallery_files": 500,
+    "gallery_search": 500,
+    "watcher_files": 500,
+    "watcher_check": 500,
+    "misc": 500
+  },
+  "cancel_after": {
+    "gallery_files": 500,
+    "gallery_search": 500,
+    "watcher_files": 500,
+    "watcher_check": 500,
+    "misc": 500
+  },
+  "boundaries": [
+    {
+      "kind": "gallery_files",
+      "events": [
+        {
+          "action": "acquire",
+          "state": [
+            1,
+            2
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            2
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            2
+          ],
+          "granted": false
+        },
+        {
+          "action": "lower",
+          "state": [
+            2,
+            1
+          ],
+          "limit": 1
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            1
+          ],
+          "granted": false
+        },
+        {
+          "action": "release",
+          "state": [
+            1,
+            1
+          ]
+        },
+        {
+          "action": "acquire",
+          "state": [
+            1,
+            1
+          ],
+          "granted": false
+        },
+        {
+          "action": "release",
+          "state": [
+            0,
+            1
+          ]
+        },
+        {
+          "action": "acquire",
+          "state": [
+            1,
+            1
+          ],
+          "granted": true
+        },
+        {
+          "action": "raise",
+          "state": [
+            1,
+            3
+          ],
+          "limit": 3
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            3
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            3,
+            3
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            3,
+            3
+          ],
+          "granted": false
+        },
+        {
+          "action": "release",
+          "state": [
+            2,
+            3
+          ]
+        },
+        {
+          "action": "release",
+          "state": [
+            1,
+            3
+          ]
+        },
+        {
+          "action": "release",
+          "state": [
+            0,
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "gallery_search",
+      "events": [
+        {
+          "action": "acquire",
+          "state": [
+            1,
+            2
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            2
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            2
+          ],
+          "granted": false
+        },
+        {
+          "action": "lower",
+          "state": [
+            2,
+            1
+          ],
+          "limit": 1
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            1
+          ],
+          "granted": false
+        },
+        {
+          "action": "release",
+          "state": [
+            1,
+            1
+          ]
+        },
+        {
+          "action": "acquire",
+          "state": [
+            1,
+            1
+          ],
+          "granted": false
+        },
+        {
+          "action": "release",
+          "state": [
+            0,
+            1
+          ]
+        },
+        {
+          "action": "acquire",
+          "state": [
+            1,
+            1
+          ],
+          "granted": true
+        },
+        {
+          "action": "raise",
+          "state": [
+            1,
+            3
+          ],
+          "limit": 3
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            3
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            3,
+            3
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            3,
+            3
+          ],
+          "granted": false
+        },
+        {
+          "action": "release",
+          "state": [
+            2,
+            3
+          ]
+        },
+        {
+          "action": "release",
+          "state": [
+            1,
+            3
+          ]
+        },
+        {
+          "action": "release",
+          "state": [
+            0,
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "watcher_files",
+      "events": [
+        {
+          "action": "acquire",
+          "state": [
+            1,
+            2
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            2
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            2
+          ],
+          "granted": false
+        },
+        {
+          "action": "lower",
+          "state": [
+            2,
+            1
+          ],
+          "limit": 1
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            1
+          ],
+          "granted": false
+        },
+        {
+          "action": "release",
+          "state": [
+            1,
+            1
+          ]
+        },
+        {
+          "action": "acquire",
+          "state": [
+            1,
+            1
+          ],
+          "granted": false
+        },
+        {
+          "action": "release",
+          "state": [
+            0,
+            1
+          ]
+        },
+        {
+          "action": "acquire",
+          "state": [
+            1,
+            1
+          ],
+          "granted": true
+        },
+        {
+          "action": "raise",
+          "state": [
+            1,
+            3
+          ],
+          "limit": 3
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            3
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            3,
+            3
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            3,
+            3
+          ],
+          "granted": false
+        },
+        {
+          "action": "release",
+          "state": [
+            2,
+            3
+          ]
+        },
+        {
+          "action": "release",
+          "state": [
+            1,
+            3
+          ]
+        },
+        {
+          "action": "release",
+          "state": [
+            0,
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "watcher_check",
+      "events": [
+        {
+          "action": "acquire",
+          "state": [
+            1,
+            2
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            2
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            2
+          ],
+          "granted": false
+        },
+        {
+          "action": "lower",
+          "state": [
+            2,
+            1
+          ],
+          "limit": 1
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            1
+          ],
+          "granted": false
+        },
+        {
+          "action": "release",
+          "state": [
+            1,
+            1
+          ]
+        },
+        {
+          "action": "acquire",
+          "state": [
+            1,
+            1
+          ],
+          "granted": false
+        },
+        {
+          "action": "release",
+          "state": [
+            0,
+            1
+          ]
+        },
+        {
+          "action": "acquire",
+          "state": [
+            1,
+            1
+          ],
+          "granted": true
+        },
+        {
+          "action": "raise",
+          "state": [
+            1,
+            3
+          ],
+          "limit": 3
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            3
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            3,
+            3
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            3,
+            3
+          ],
+          "granted": false
+        },
+        {
+          "action": "release",
+          "state": [
+            2,
+            3
+          ]
+        },
+        {
+          "action": "release",
+          "state": [
+            1,
+            3
+          ]
+        },
+        {
+          "action": "release",
+          "state": [
+            0,
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "misc",
+      "events": [
+        {
+          "action": "acquire",
+          "state": [
+            1,
+            2
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            2
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            2
+          ],
+          "granted": false
+        },
+        {
+          "action": "lower",
+          "state": [
+            2,
+            1
+          ],
+          "limit": 1
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            1
+          ],
+          "granted": false
+        },
+        {
+          "action": "release",
+          "state": [
+            1,
+            1
+          ]
+        },
+        {
+          "action": "acquire",
+          "state": [
+            1,
+            1
+          ],
+          "granted": false
+        },
+        {
+          "action": "release",
+          "state": [
+            0,
+            1
+          ]
+        },
+        {
+          "action": "acquire",
+          "state": [
+            1,
+            1
+          ],
+          "granted": true
+        },
+        {
+          "action": "raise",
+          "state": [
+            1,
+            3
+          ],
+          "limit": 3
+        },
+        {
+          "action": "acquire",
+          "state": [
+            2,
+            3
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            3,
+            3
+          ],
+          "granted": true
+        },
+        {
+          "action": "acquire",
+          "state": [
+            3,
+            3
+          ],
+          "granted": false
+        },
+        {
+          "action": "release",
+          "state": [
+            2,
+            3
+          ]
+        },
+        {
+          "action": "release",
+          "state": [
+            1,
+            3
+          ]
+        },
+        {
+          "action": "release",
+          "state": [
+            0,
+            3
+          ]
+        }
+      ]
+    }
+  ]
+}

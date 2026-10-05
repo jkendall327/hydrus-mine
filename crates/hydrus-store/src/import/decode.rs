@@ -554,6 +554,11 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &rescue)?;
+    let mut work_slots = crate::settings::ImportWorkSlots::default();
+    if let Some(options) = &options {
+        work_slots.apply_legacy(&options.integers);
+    }
+    insert_setting(&mut input, &work_slots)?;
     let mut formatting = crate::settings::GuiFormatting::default();
     if let Some(options) = &options {
         if let Some(&value) = options.booleans.get("always_show_iso_time") {
@@ -4302,6 +4307,57 @@ mod tests {
             );
             assert_eq!(decoded(), code);
         }
+    }
+
+    #[test]
+    fn importing_work_slots_decode_five_legacy_keys_and_persist_native_limits() {
+        let fixture = hydrus_testkit::fixture_json("import_work_slots.json");
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let edits: Vec<_> = [
+            "gallery_files",
+            "gallery_search",
+            "watcher_files",
+            "watcher_check",
+            "misc",
+        ]
+        .into_iter()
+        .map(|key| {
+            (
+                format!(
+                    r#"[[0, "thread_slots_{key}"], [0, {}]]"#,
+                    fixture["defaults"][key]
+                ),
+                format!(
+                    r#"[[0, "thread_slots_{key}"], [0, {}]]"#,
+                    fixture["events"][1]["saved"][key]
+                ),
+            )
+        })
+        .collect();
+        let borrowed: Vec<_> = edits
+            .iter()
+            .map(|(before, after)| (before.as_str(), after.as_str()))
+            .collect();
+        edit_client_options(source.path(), &borrowed);
+        let destination = tempfile::tempdir().unwrap();
+        crate::import::import_legacy(
+            source.path(),
+            &destination.path().join(crate::store::DB_FILE_NAME),
+        )
+        .unwrap();
+        let store = crate::Store::open(destination.path()).unwrap();
+        let limits = store
+            .read(crate::settings::get::<crate::settings::ImportWorkSlots>)
+            .unwrap();
+        assert_eq!(serde_json::json!(limits), fixture["events"][1]["saved"]);
+        drop(store);
+        assert_eq!(
+            crate::Store::open(destination.path())
+                .unwrap()
+                .read(crate::settings::get::<crate::settings::ImportWorkSlots>)
+                .unwrap(),
+            limits
+        );
     }
 
     #[test]

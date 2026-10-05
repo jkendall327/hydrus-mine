@@ -29,6 +29,7 @@ use hydrus_store::settings::Pauses;
 
 use crate::gallery::{QueueSink, set_gallery_status};
 use crate::seeds::new_url_seed;
+use crate::work_slots::{Kind as WorkKind, Permit, Slots};
 use crate::{Downloader, WorkError, now};
 
 /// The default name of a new URL queue (the reference's page name).
@@ -77,6 +78,7 @@ pub struct QueueRunner {
     /// Queues only run once the runner is started.
     started: std::sync::atomic::AtomicBool,
     handles: Mutex<HashMap<i64, Arc<Handle>>>,
+    work_slots: Arc<Slots>,
     /// Seconds to wait after a network failure.
     network_error_delay: std::sync::atomic::AtomicU64,
 }
@@ -98,6 +100,7 @@ impl QueueRunner {
                 .downloader_network_error_delay,
             std::sync::atomic::Ordering::Relaxed,
         );
+        self.work_slots.changed.notify_waiters();
         Ok(changed)
     }
 
@@ -106,8 +109,75 @@ impl QueueRunner {
             downloader,
             started: std::sync::atomic::AtomicBool::new(false),
             handles: Mutex::default(),
+            work_slots: Arc::default(),
             network_error_delay: std::sync::atomic::AtomicU64::new(network_error_delay),
         })
+    }
+
+    // A pending task owns no permit. After a release/settings wake or one
+    // second, return to the caller to re-read pauses, seeds and owner state.
+    async fn acquire_work_slot(
+        &self,
+        kind: WorkKind,
+        handle: &Handle,
+        job_kind: JobKind,
+    ) -> Option<Permit> {
+        match self
+            .downloader
+            .store
+            .read(hydrus_store::settings::get::<hydrus_store::settings::ImportWorkSlots>)
+        {
+            Ok(settings) => {
+                if let Some(permit) = self.work_slots.acquire(kind, &settings) {
+                    let mut status = handle.status.lock();
+                    let text = match job_kind {
+                        JobKind::File => &mut status.files_status,
+                        JobKind::Gallery => &mut status.gallery_status,
+                    };
+                    if text == "pending" {
+                        text.clear();
+                    }
+                    return Some(permit);
+                }
+            }
+            Err(error) => tracing::error!(%error, "reading importing work slots"),
+        }
+        match job_kind {
+            JobKind::File => handle.status.lock().files_status = "pending".into(),
+            JobKind::Gallery => handle.status.lock().gallery_status = "pending".into(),
+        }
+        let _ =
+            tokio::time::timeout(Duration::from_secs(1), self.work_slots.changed.notified()).await;
+        None
+    }
+
+    // Closing/removing an owner cancels its network work; await ordinary cleanup
+    // before releasing its permit. Non-network imports may finish their current
+    // blocking work, and remain counted until that work actually ends.
+    async fn while_owner_open<F: std::future::Future>(
+        &self,
+        queue_id: i64,
+        handle: &Handle,
+        kind: JobKind,
+        work: F,
+    ) -> F::Output {
+        tokio::pin!(work);
+        let period = Duration::from_millis(250);
+        let mut poll = tokio::time::interval_at(tokio::time::Instant::now() + period, period);
+        loop {
+            tokio::select! {
+                output = &mut work => return output,
+                _ = poll.tick() => {
+                    let closed = self.downloader.store.read(|conn| queues::queue(conn, queue_id)).ok().is_some_and(|queue| queue.is_none_or(|queue| queue.page_closed));
+                    if closed {
+                        if let Some(job) = handle.job(kind).lock().as_ref() {
+                            job.cancel_because("The import page was closed.");
+                        }
+                        return work.await;
+                    }
+                }
+            }
+        }
     }
 
     pub fn downloader(&self) -> &Arc<Downloader> {
@@ -479,7 +549,7 @@ impl QueueRunner {
         let store = &self.downloader.store;
         let job = Job::scoped(bandwidth_scope(queue.kind, queue.id));
         *handle.gallery_job.lock() = Some(Arc::clone(&job));
-        handle.status.lock().files_status = "checking".into();
+        handle.status.lock().gallery_status = "checking".into();
         let new_seed = NewGallerySeed {
             url: state.url.clone(),
             can_generate_more_pages: false,
@@ -580,11 +650,11 @@ impl QueueRunner {
         if let Err(e) = compacted.and_then(|()| save_watcher_state(store, queue_id, &state)) {
             tracing::error!(queue_id, "saving a watcher: {e}");
         }
-        handle.status.lock().files_status.clear();
+        handle.status.lock().gallery_status.clear();
     }
 
-    /// Work a queue: a watcher's checks and files in turn; a gallery
-    /// search's (or URL list's) gallery pages and files at once, as the
+    /// Work a queue: watcher checks and files, or a gallery search's
+    /// (or URL list's) gallery pages and files at once, as the
     /// reference's `_WorkOnFiles` and `_WorkOnGallery` run, so files from
     /// the first pages import while later pages are read.
     async fn run(self: &Arc<Self>, queue_id: i64, handle: &Handle) {
@@ -597,7 +667,12 @@ impl QueueRunner {
             .map(|q| q.kind);
         match kind {
             None => {}
-            Some(QueueKind::Watcher) => self.run_files(queue_id, handle).await,
+            Some(QueueKind::Watcher) => {
+                tokio::join!(
+                    self.run_files(queue_id, handle),
+                    self.run_watcher_checks(queue_id, handle)
+                );
+            }
             Some(QueueKind::SimpleDownloader) => {
                 tokio::join!(
                     self.run_files(queue_id, handle),
@@ -648,8 +723,24 @@ impl QueueRunner {
             {
                 match store.read(|conn| queues::next_gallery_seed(conn, queue_id)) {
                     Ok(Some(gallery_seed)) => {
-                        self.work_on_gallery_seed(gallery_seed, search, handle)
-                            .await;
+                        let kind = if queue.kind == QueueKind::Gallery {
+                            WorkKind::GallerySearch
+                        } else {
+                            WorkKind::Misc
+                        };
+                        let Some(permit) =
+                            self.acquire_work_slot(kind, handle, JobKind::Gallery).await
+                        else {
+                            continue;
+                        };
+                        self.while_owner_open(
+                            queue_id,
+                            handle,
+                            JobKind::Gallery,
+                            self.work_on_gallery_seed(gallery_seed, search, handle),
+                        )
+                        .await;
+                        drop(permit);
                         // (the page's files are ready to import)
                         handle.wake.notify_one();
                         tokio::time::sleep(Duration::from_secs(1)).await;
@@ -704,7 +795,21 @@ impl QueueRunner {
                 && pauses.galleries_run()
                 && let Some(job) = job
             {
-                let error = self.work_on_simple_job(queue_id, job, handle).await;
+                let Some(permit) = self
+                    .acquire_work_slot(WorkKind::Misc, handle, JobKind::Gallery)
+                    .await
+                else {
+                    continue;
+                };
+                let error = self
+                    .while_owner_open(
+                        queue_id,
+                        handle,
+                        JobKind::Gallery,
+                        self.work_on_simple_job(queue_id, job, handle),
+                    )
+                    .await;
+                drop(permit);
                 handle.wake.notify_one();
                 // (a failed page waits a while before the next)
                 let pause = if error { 5 } else { 1 };
@@ -814,9 +919,74 @@ impl QueueRunner {
         error
     }
 
-    /// A queue's file work (and a watcher's checks).
-    async fn run_files(self: &Arc<Self>, queue_id: i64, handle: &Handle) {
+    /// A watcher's checks run independently from its files and use their own
+    /// category, so waiting for a checker permit does not hold up file imports.
+    async fn run_watcher_checks(self: &Arc<Self>, queue_id: i64, handle: &Handle) {
         let mut first_pass = true;
+        loop {
+            let store = &self.downloader.store;
+            let queue = match store.read(|conn| queues::queue(conn, queue_id)) {
+                Ok(Some(queue)) => queue,
+                Ok(None) => return,
+                Err(error) => {
+                    tracing::error!(queue_id, %error, "reading a watcher");
+                    return;
+                }
+            };
+            let Some(mut state) = watcher_state(&queue) else {
+                return;
+            };
+            if first_pass {
+                first_pass = false;
+                if let Ok(seeds) = store.read(|conn| queues::file_seeds(conn, queue_id)) {
+                    state.update_next_check_time(&seed_times(&seeds), now());
+                    if let Err(error) = save_watcher_state(store, queue_id, &state) {
+                        tracing::error!(queue_id, %error, "saving a watcher");
+                    }
+                }
+            }
+            let pauses = store
+                .read(hydrus_store::settings::get::<Pauses>)
+                .unwrap_or_default();
+            if state.check_due(now()) && pauses.watchers_run() && !queue.page_closed {
+                let Some(permit) = self
+                    .acquire_work_slot(WorkKind::WatcherCheck, handle, JobKind::Gallery)
+                    .await
+                else {
+                    continue;
+                };
+                self.while_owner_open(
+                    queue_id,
+                    handle,
+                    JobKind::Gallery,
+                    self.check_watcher(&queue, state, handle),
+                )
+                .await;
+                drop(permit);
+                handle.wake.notify_one();
+                continue;
+            }
+            let mut wait = if !queue.page_closed
+                && !state.checking_paused
+                && state.status == CheckerStatus::Ok
+            {
+                (state.next_check_time.max(state.no_work_until) + 1 - now()).clamp(1, 600)
+            } else {
+                600
+            };
+            if pauses.paged_importers || pauses.watcher_checkers {
+                wait = wait.min(30);
+            }
+            let _ = tokio::time::timeout(
+                Duration::from_secs(wait as u64),
+                handle.gallery_wake.notified(),
+            )
+            .await;
+        }
+    }
+
+    /// A queue's file work, independent from watcher checks.
+    async fn run_files(self: &Arc<Self>, queue_id: i64, handle: &Handle) {
         loop {
             let store = &self.downloader.store;
             let queue = match store.read(|conn| queues::queue(conn, queue_id)) {
@@ -841,28 +1011,14 @@ impl QueueRunner {
                 }
                 handle.status.lock().delayed_until = None;
             }
-            let mut watcher = None;
-            if queue.kind == QueueKind::Watcher {
-                let Some(mut state) = watcher_state(&queue) else {
+            let watcher = if queue.kind == QueueKind::Watcher {
+                let Some(state) = watcher_state(&queue) else {
                     return;
                 };
-                if first_pass {
-                    // (`Start`: the timing is worked out afresh)
-                    first_pass = false;
-                    let seeds = store.read(|conn| queues::file_seeds(conn, queue_id));
-                    if let Ok(seeds) = seeds {
-                        state.update_next_check_time(&seed_times(&seeds), now());
-                        if let Err(e) = save_watcher_state(store, queue_id, &state) {
-                            tracing::error!(queue_id, "saving a watcher: {e}");
-                        }
-                    }
-                }
-                if state.check_due(now()) && pauses.watchers_run() && !queue.page_closed {
-                    self.check_watcher(&queue, state, handle).await;
-                    continue;
-                }
-                watcher = Some(state);
-            }
+                Some(state)
+            } else {
+                None
+            };
             let files_blocked = watcher
                 .as_ref()
                 .is_some_and(|w| !w.can_do_network_work(now()));
@@ -906,7 +1062,23 @@ impl QueueRunner {
                         .await;
                 continue;
             };
-            let did_work = self.work_on_file_seed(&queue, seed, handle).await;
+            let kind = match queue.kind {
+                QueueKind::Gallery => WorkKind::GalleryFiles,
+                QueueKind::Watcher => WorkKind::WatcherFiles,
+                _ => WorkKind::Misc,
+            };
+            let Some(permit) = self.acquire_work_slot(kind, handle, JobKind::File).await else {
+                continue;
+            };
+            let did_work = self
+                .while_owner_open(
+                    queue_id,
+                    handle,
+                    JobKind::File,
+                    self.work_on_file_seed(&queue, seed, handle),
+                )
+                .await;
+            drop(permit);
             if did_work {
                 tokio::time::sleep(Duration::from_millis(100)).await;
             }

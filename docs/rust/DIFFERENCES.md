@@ -2369,3 +2369,24 @@ runner or prove unavailable-file retries. Native errors finish the active job
 and publish an error popup; fallible worker-spawn errors currently reach the
 caller/log. Broad metadata and generic job/shutdown lifecycle families remain
 Partial. Rust regressions are authored for hosted CI and were not run locally.
+
+Importing work slots use runner-owned RAII counters rather than mutable global
+controller counters. All five exact controls have typed legacy migration and
+live queue consumers, including independent watcher check/file loops. Native
+pending jobs re-read saved settings and owner/paused state within one second;
+page closure cancels its network job within 250 ms, retaining the permit through
+ordinary cleanup. A current blocking local import may finish before releasing
+its slot. Invalid saved capacities have effective runtime bounds of 1–500;
+raw integer storage is preserved until an Options Apply normalizes the controls.
+Per-kind limits and queued-job admission are separate from network semaphores
+and subscription concurrency. The broader importing/page families remain
+Partial, and no parent is proposed complete. Actual Qt options/controller
+boundary recording and screenshot inspection ran locally; the authored
+model/native/live-downloader regressions await hosted CI. No local Cargo build,
+Rust test or mutation run was performed for this slice.
+Monotonic persisted queue identities prevent retired workers from adopting a
+successor after SQLite reuses a deleted maximum row; late seed updates also
+qualify the seed by its queue. Pending-pause, deleted-owner replacement and
+retained Options callbacks after reopening are covered by authored regressions.
+FIFO fairness and background repeater scheduling cadence remain outside this
+five-control slice.

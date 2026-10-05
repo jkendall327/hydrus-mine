@@ -250,3 +250,16 @@ The final offscreen run completed on 2026-10-05 at 03:46:56–58 UTC via
 sandbox Client API socket bind failed; the DB/Qt recording completed.
 Native/model replay assertions were authored without local Cargo builds, Rust
 tests or mutation runs. This is boundary evidence, with no new parity claim.
+
+`record_import_work_slots.py` records the actual ImportingPanel's five 1–500
+controls, staged/save/serialization/reopen/abandoned draft boundaries and raw
+loaded integer normalization on unchanged Apply. Real ClientController named
+AcquireThreadSlot/ReleaseThreadSlot and limit refresh exercise capacity two,
+shrink below running counts, strict admission after release, and growth to three
+for every category. It authors no network request. The final offscreen run
+completed 2026-10-05 04:17:32–04:17:34 UTC with clean shutdown on a fresh basic fixture;
+the unrelated sandbox Client API socket bind failed. The inspected actual Qt
+image is `import_work_slots.png`; evidence is `import_work_slots.json`.
+Constructor spinner seeds are 5/15/5/15/10, but real ClientOptions defaults loaded
+into them are 15/5/15/5/10. Authored Rust/native/downloader tests remain unrun
+locally and require hosted CI before the five proposed control claims promote.

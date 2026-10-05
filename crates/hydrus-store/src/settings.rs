@@ -68,6 +68,47 @@ impl Setting for ThumbnailNavigation {
     const KEY: &'static str = "thumbnail_navigation";
 }
 
+/// Independent capacities for paged importer work, separate from network limits.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ImportWorkSlots {
+    pub gallery_files: i64,
+    pub gallery_search: i64,
+    pub watcher_files: i64,
+    pub watcher_check: i64,
+    pub misc: i64,
+}
+impl Default for ImportWorkSlots {
+    fn default() -> Self {
+        Self {
+            gallery_files: 15,
+            gallery_search: 5,
+            watcher_files: 15,
+            watcher_check: 5,
+            misc: 10,
+        }
+    }
+}
+impl Setting for ImportWorkSlots {
+    const KEY: &'static str = "import_work_slots";
+}
+impl ImportWorkSlots {
+    /// Preserve the five reference integer options; Options Apply clamps controls.
+    pub fn apply_legacy(&mut self, integers: &std::collections::BTreeMap<String, i64>) {
+        for (key, value) in [
+            ("thread_slots_gallery_files", &mut self.gallery_files),
+            ("thread_slots_gallery_search", &mut self.gallery_search),
+            ("thread_slots_watcher_files", &mut self.watcher_files),
+            ("thread_slots_watcher_check", &mut self.watcher_check),
+            ("thread_slots_misc", &mut self.misc),
+        ] {
+            if let Some(&saved) = integers.get(key) {
+                *value = saved;
+            }
+        }
+    }
+}
+
 /// Favourite tags offered by autocomplete.
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
 pub struct FavouriteTags(pub Vec<String>);
