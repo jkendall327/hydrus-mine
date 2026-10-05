@@ -78,8 +78,9 @@ fn real_options_constructor_cancel_normalization_save_reopen_and_retained_cancel
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     for case in fixture["controls"].as_array().unwrap() {
         let imported = policy(&case["imported"]);
+        let saved_imported = imported.clone();
         store
-            .write(|ctx| settings::set(ctx.conn(), &imported))
+            .write(move |ctx| settings::set(ctx.conn(), &saved_imported))
             .unwrap();
         let cancelled = options(&ui, &bound);
         cancelled.invoke_number_edited(row(&cancelled, fixture["labels"][1].as_str().unwrap()), 7);
@@ -207,9 +208,10 @@ fn scheduler(watcher: bool) {
     };
     assert_eq!(queues.len(), 12);
     let queue = page.borrow().importer().unwrap().queue;
+    let saved_queues = queues.clone();
     store
-        .write(|ctx| {
-            for queue in &queues {
+        .write(move |ctx| {
+            for queue in &saved_queues {
                 queues::set_paused(ctx.conn(), *queue, Some(true), Some(true))?;
             }
             Ok(())
@@ -227,7 +229,7 @@ fn scheduler(watcher: bool) {
     );
     let before = list(&ui, watcher);
     store
-        .write(|ctx| {
+        .write(move |ctx| {
             queues::add_file_seeds(
                 ctx.conn(),
                 queue,
@@ -332,7 +334,7 @@ fn scheduler(watcher: bool) {
         serde_json::json!(106.25)
     );
     store
-        .write(|ctx| {
+        .write(move |ctx| {
             queues::add_file_seeds(
                 ctx.conn(),
                 queue,
