@@ -3033,3 +3033,9 @@ buttons affect the plot; refresh preserves custom ranges. Typed tags and system
 predicates run actual independent current/deleted queries. Cancelling, refreshing
 or closing prevents an older background result from replacing the current chart.
 The parent page's predicates and session tree are unaffected.
+
+Each history window owns one worker. New queries cancel earlier work and replace
+one pending request; rapid refreshes do not start more threads. Closing drops
+the request channel and pending/result slots without joining on the UI thread.
+A worker startup failure leaves the window usable, displays the error and allows
+Refresh to retry.

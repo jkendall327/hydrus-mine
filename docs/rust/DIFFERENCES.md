@@ -2094,3 +2094,10 @@ Database parent. Only simple single current local domains are accepted; complex
 locations show the reference's simpler-domain message. Query cancellation keeps
 the previous chart data internally and hides it until a successful refresh;
 retired work cannot publish into a successor frame.
+
+Native history uses one owned worker, a bounded wakeup channel and one replaceable
+pending request/result rather than scheduling another thread for every refresh.
+Superseded work is cancelled and only the latest live request can publish. The
+current search executor still finishes an in-flight query before checking the
+cancellation flag; closing drops results and the worker exits afterward without
+blocking the UI. Thread startup is fallible and displays a retryable error.

@@ -134,3 +134,145 @@ fn global_and_filtered_series_ranges_visibility_refresh_and_cancel_match_actual_
         model::COMPLEX_DOMAIN
     );
 }
+
+#[test]
+fn owned_worker_runs_only_latest_queued_query_and_discards_cancelled_closed_results() {
+    use hydrus_gui_model::file_history_worker::Worker;
+    use hydrus_search::{Predicate, SystemPredicate};
+    use hydrus_store::file_history::History;
+    use std::{
+        sync::{
+            Arc, Mutex,
+            atomic::{AtomicUsize, Ordering},
+            mpsc,
+        },
+        time::{Duration, Instant},
+    };
+    let starts = Arc::new(AtomicUsize::new(0));
+    let calls = Arc::new(Mutex::new(Vec::new()));
+    let (entered, enter) = mpsc::channel();
+    let (release, wait) = mpsc::channel();
+    let (exited, exit) = mpsc::channel();
+    let mut worker = Worker::start_with(
+        {
+            let calls = calls.clone();
+            move |context, cancel| {
+                let [Predicate::System(SystemPredicate::Limit(id))] = context.predicates.as_slice()
+                else {
+                    panic!("typed query marker");
+                };
+                let id = *id;
+                calls
+                    .lock()
+                    .unwrap()
+                    .push((id, std::thread::current().id()));
+                entered.send(id).unwrap();
+                if id == 1 || id == 101 {
+                    wait.recv_timeout(Duration::from_secs(10)).unwrap();
+                }
+                // Even an executor that finishes after cancellation cannot publish.
+                if id == 1 || id == 101 {
+                    assert!(cancel.load(Ordering::Acquire));
+                }
+                Ok(History {
+                    current: vec![(i64::try_from(id).unwrap(), 1)],
+                    ..History::default()
+                })
+            }
+        },
+        {
+            let starts = starts.clone();
+            move |task| {
+                starts.fetch_add(1, Ordering::SeqCst);
+                std::thread::Builder::new()
+                    .spawn(move || {
+                        task();
+                        exited.send(()).unwrap();
+                    })
+                    .map(drop)
+            }
+        },
+    )
+    .unwrap();
+    let context = |id| FileSearchContext {
+        predicates: vec![Predicate::System(SystemPredicate::Limit(id))],
+        ..FileSearchContext::default()
+    };
+    worker.submit(context(1)).unwrap();
+    assert_eq!(enter.recv_timeout(Duration::from_secs(10)).unwrap(), 1);
+    for id in 2..=100 {
+        worker.submit(context(id)).unwrap();
+    }
+    release.send(()).unwrap();
+    assert_eq!(enter.recv_timeout(Duration::from_secs(10)).unwrap(), 100);
+    let deadline = Instant::now() + Duration::from_secs(10);
+    let published = loop {
+        if let Some(result) = worker.poll() {
+            break result.unwrap();
+        }
+        assert!(Instant::now() < deadline);
+        std::thread::sleep(Duration::from_millis(1));
+    };
+    assert_eq!(published.current, [(100, 1)]);
+    assert_eq!(starts.load(Ordering::SeqCst), 1);
+    worker.submit(context(101)).unwrap();
+    assert_eq!(enter.recv_timeout(Duration::from_secs(10)).unwrap(), 101);
+    worker.submit(context(102)).unwrap();
+    worker.close();
+    assert!(worker.submit(context(103)).is_err());
+    release.send(()).unwrap();
+    exit.recv_timeout(Duration::from_secs(10)).unwrap();
+    assert!(worker.poll().is_none());
+    let calls = calls.lock().unwrap();
+    assert_eq!(
+        calls.iter().map(|(id, _)| *id).collect::<Vec<_>>(),
+        [1, 100, 101]
+    );
+    assert!(calls.iter().all(|(_, thread)| *thread == calls[0].1));
+}
+
+#[test]
+fn dropping_worker_cancels_inflight_read_and_never_runs_pending_read() {
+    use hydrus_gui_model::file_history_worker::Worker;
+    use hydrus_store::file_history::History;
+    use std::{
+        sync::{
+            Arc,
+            atomic::{AtomicUsize, Ordering},
+            mpsc,
+        },
+        time::Duration,
+    };
+    let calls = Arc::new(AtomicUsize::new(0));
+    let (entered, enter) = mpsc::channel();
+    let (release, wait) = mpsc::channel();
+    let (exited, exit) = mpsc::channel();
+    let mut worker = Worker::start_with(
+        {
+            let calls = calls.clone();
+            move |_, cancel| {
+                calls.fetch_add(1, Ordering::SeqCst);
+                entered.send(()).unwrap();
+                wait.recv_timeout(Duration::from_secs(10)).unwrap();
+                assert!(cancel.load(Ordering::Acquire));
+                Ok(History::default())
+            }
+        },
+        move |task| {
+            std::thread::Builder::new()
+                .spawn(move || {
+                    task();
+                    exited.send(()).unwrap();
+                })
+                .map(drop)
+        },
+    )
+    .unwrap();
+    worker.submit(FileSearchContext::default()).unwrap();
+    enter.recv_timeout(Duration::from_secs(10)).unwrap();
+    worker.submit(FileSearchContext::default()).unwrap();
+    drop(worker);
+    release.send(()).unwrap();
+    exit.recv_timeout(Duration::from_secs(10)).unwrap();
+    assert_eq!(calls.load(Ordering::SeqCst), 1);
+}
