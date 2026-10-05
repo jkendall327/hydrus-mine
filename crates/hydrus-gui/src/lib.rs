@@ -3609,10 +3609,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // a change to the selection draws the rows it changed, and counts the
     // selection's tags
     let reselect = {
+        let binding_active = binding_active.clone();
         let page = page.clone();
         let rows = rows.clone();
         let shown = shown.clone();
         move |change: &dyn Fn(&mut SearchPage) -> Option<usize>| {
+            if !binding_active.get() {
+                return None;
+            }
             let page = page();
             let before = page.borrow().selected_indices();
             let focused = change(&mut page.borrow_mut());

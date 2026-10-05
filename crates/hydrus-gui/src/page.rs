@@ -2422,8 +2422,36 @@ impl SearchPage {
         if index.is_some() && file.is_none() {
             return;
         }
-        self.selection.hit(&self.results, file, ctrl, shift);
+        let preferences: hydrus_store::thumbnail_preview_selection::Preferences = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        let focus_target = file.is_some_and(|file| {
+            preferences.focus_target(
+                ctrl,
+                shift,
+                Self::preview_selection_has_duration(file, &self.collections, &self.facts),
+            )
+        });
+        self.selection
+            .hit_with_preview_focus(&self.results, file, ctrl, shift, focus_target);
         self.count_tags();
+    }
+
+    /// Collections use their aggregate duration, even when their preview member is static.
+    fn preview_selection_has_duration(
+        item: HashId,
+        collections: &HashMap<HashId, Vec<HashId>>,
+        facts: &HashMap<HashId, Facts>,
+    ) -> bool {
+        let collection = collections.get(&item);
+        let files = collection.map_or(std::slice::from_ref(&item), Vec::as_slice);
+        hydrus_gui_model::thumbnail_preview_selection::has_duration(
+            files
+                .iter()
+                .map(|file| facts.get(file).and_then(|facts| facts.duration_ms)),
+            collection.is_some(),
+        )
     }
 
     /// Select just `files` (the menu's select), as the reference's
@@ -2519,13 +2547,26 @@ impl SearchPage {
             .store
             .read(hydrus_store::settings::get)
             .unwrap_or_default();
-        let moved = self.selection.move_focus_with_last_hit(
+        let preferences: hydrus_store::thumbnail_preview_selection::Preferences = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        let collections = &self.collections;
+        let facts = &self.facts;
+        let eligible = |file| {
+            preferences.focus_target(
+                false,
+                shift,
+                Self::preview_selection_has_duration(file, collections, facts),
+            )
+        };
+        let moved = self.selection.move_focus_with_preview(
             &self.results,
             to,
             shift,
-            columns,
-            page_rows,
+            (columns, page_rows),
             navigation.shift_moves_origin,
+            &eligible,
         );
         self.count_tags();
         moved

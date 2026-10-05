@@ -91,6 +91,7 @@ mod subscriptions_separate;
 mod thumbnail_icons;
 mod thumbnail_menu;
 mod thumbnail_navigation;
+mod thumbnail_preview_selection;
 mod thumbnail_ratings;
 mod thumbnail_selection;
 mod unlock;
