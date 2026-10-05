@@ -186,7 +186,7 @@ fn database_repair_has_owned_scan_population_questions_and_updates_real_media_on
         store
             .read(
                 |conn| Ok(conn.query_row("SELECT count(*) FROM file_inbox", [], |r| r
-                    .get::<_, usize>(0))?)
+                    .get::<_, i64>(0))?)
             )
             .unwrap(),
         0

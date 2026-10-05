@@ -3160,7 +3160,8 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         },
                         |s, v| {
                             s.tag_suggestions.default_page =
-                                ["favourites", "related", "file_lookup_scripts", "recent"][v].into()
+                                ["favourites", "related", "file_lookup_scripts", "recent"][v]
+                                    .into();
                         },
                     ),
                     opt(
