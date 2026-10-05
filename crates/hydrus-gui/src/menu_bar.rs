@@ -20,6 +20,7 @@ type ShownLines = Rc<RefCell<Vec<(Vec<MenuLine>, ModelRc<MenuLine>)>>>;
 
 /// What the menu bar works with.
 pub(crate) struct Hooks {
+    pub sidebar_layout: Rc<dyn Fn(hydrus_gui_model::page_layout::Action)>,
     /// Open the siblings or parents editor.
     pub tag_display: Rc<dyn Fn(bool)>,
     pub tag_relationships: Rc<dyn Fn(hydrus_store::display::RelationKind)>,
@@ -465,6 +466,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
     let store = hooks.pages.borrow().store().clone();
     let change_pages = &hooks.change_pages;
     match command {
+        Command::Sidebar(action) => (hooks.sidebar_layout)(action),
         Command::DuplicateTab { depth, index } => {
             change_pages(&|pages| pages.duplicate_tab(depth, index));
         }

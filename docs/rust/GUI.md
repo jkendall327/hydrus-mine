@@ -3506,3 +3506,17 @@ the old cache and cancels its staged Options owner and descendants. Raw byte-con
 clamping is saved on unchanged Apply; raw subminimum timeout values stay untouched
 until their fields are edited. Actual Qt controls, cache boundaries and debug QAction are
 recorded in `thumbnail_cache.json` and its PNG.
+
+The main page's sidebar and preview now have drag handles. Each live page keeps
+its own sizes across switches and close/reopen; a newly loaded session uses the
+global saved defaults without changing session content. Double-click a handle to
+hide its pane; hiding clears preview focus while keeping selected files.
+Pages > sidebar toggles the current sidebar, saves its sizes immediately, toggles
+saving on accepted client exit, or restores saved sizes to every live page.
+Cancelling exit saves nothing. A hidden whole sidebar saves width zero and its
+last inner preview height; a separately collapsed preview keeps the saved height.
+Options > gui pages > preview window stages the global hide preference. Apply
+preserves concurrent size saves and the exit switch; Cancel discards the draft.
+New pages and restore/reveal consume the saved hide flag. Existing accepted preview
+media survives refused SetMedia/clear calls on that same page while globally hidden;
+page-owner transitions still retire the shared native raster (see DIFFERENCES.md).

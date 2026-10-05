@@ -283,6 +283,11 @@ impl Selection {
         *self = Self::default();
     }
 
+    /// Collapse a preview without changing selected files or the keyboard origin.
+    pub fn clear_focus(&mut self, sorted: &[HashId]) {
+        self.set_focused(sorted, None);
+    }
+
     /// `_SetFocusedMedia`: and when the focus goes, where it was.
     fn set_focused(&mut self, sorted: &[HashId], file: Option<HashId>) {
         if file == self.focused {

@@ -118,6 +118,8 @@ impl Pause {
 /// What an entry does.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Command {
+    /// Resize/show/save the live page sidebar and preview.
+    Sidebar(crate::page_layout::Action),
     /// Open tags > siblings or parents.
     /// Display/search (false) or relationship application (true).
     TagDisplay(bool),
@@ -325,6 +327,7 @@ pub struct Facts {
     /// The pages shown, the latest last; none before any has been.
     pub history: Option<Vec<(PageKey, String)>>,
     pub page_navigation: hydrus_store::settings::PageNavigationSettings,
+    pub page_layout: hydrus_store::page_layout::PageLayout,
     /// The saved sessions' names, a-z.
     pub sessions: Vec<String>,
     /// Historical snapshots grouped by saved-session name.
@@ -396,6 +399,7 @@ impl Facts {
                     .collect(),
                 session_backups: hydrus_store::session_backups::names(conn)?,
                 page_navigation: settings::get(conn)?,
+                page_layout: hydrus_store::page_layout::load(conn)?,
                 search_domains,
                 maintenance: settings::get(conn)?,
                 pauses: settings::get(conn)?,
@@ -702,17 +706,26 @@ fn pages_menu(facts: &Facts) -> Entry {
     let sidebar = menu(
         "sidebar",
         vec![
-            todo("show/hide sidebar and preview panel"),
+            item(
+                "show/hide sidebar and preview panel",
+                Command::Sidebar(crate::page_layout::Action::Toggle),
+            ),
             SEP,
             check(
                 "save current page's sidebar/preview size on client exit",
-                None,
-                true,
+                Some(Command::Sidebar(crate::page_layout::Action::SaveOnExit)),
+                facts.page_layout.save_on_exit,
             ),
             SEP,
-            todo("save current page's sidebar/preview size now"),
+            item(
+                "save current page's sidebar/preview size now",
+                Command::Sidebar(crate::page_layout::Action::SaveNow),
+            ),
             SEP,
-            todo("restore all pages' sidebar/preview sizes to saved value"),
+            item(
+                "restore all pages' sidebar/preview sizes to saved value",
+                Command::Sidebar(crate::page_layout::Action::RestoreAll),
+            ),
         ],
     );
     let mut sessions = Vec::new();

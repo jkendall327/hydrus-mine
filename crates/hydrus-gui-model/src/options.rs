@@ -50,6 +50,9 @@ fn normalise_idle_timeout(seconds: Option<u64>) -> Option<u64> {
 }
 
 macro_rules! settings {
+    (@save $conn:ident, $after:ident, $before:ident, page_layout) => {
+        hydrus_store::page_layout::save_changed($conn, &$after.page_layout, &$before.page_layout)?;
+    };
     (@save $conn:ident, $after:ident, $before:ident, popup_width) => {
         hydrus_store::popup_width::save_changed($conn, &$after.popup_width, &$before.popup_width)?;
     };
@@ -261,6 +264,7 @@ settings! {
     options_preferences: OptionsPreferences,
     page_names: PageNameSettings,
     page_settings: PageSettings,
+    page_layout: hydrus_store::page_layout::PageLayout => hydrus_store::page_layout::load,
     popup_width: hydrus_store::popup_width::PopupWidth,
     regex_favourites: RegexFavourites => hydrus_store::regex_favourites::load,
     session_backups: SessionBackupSettings,
@@ -2331,6 +2335,14 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
         page(
             "gui pages",
             vec![
+                boxed(
+                    "preview window",
+                    vec![check(
+                        "Hide the bottom-left preview window: ",
+                        |s| s.page_layout.hide_preview,
+                        |s, v| s.page_layout.hide_preview = v,
+                    )],
+                ),
                 boxed(
                     "opening and closing",
                     vec![

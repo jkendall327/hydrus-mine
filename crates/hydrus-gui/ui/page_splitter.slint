@@ -1,0 +1,33 @@
+import { Theme } from "theme.slint";
+/// The handle owns the page/epoch captured at press, even while tabs change.
+export component PageSplitter inherits Rectangle {
+    in property <bool> preview;
+    in property <string> page-key;
+    in property <int> epoch;
+    in property <length> size;
+    callback dragged(string,int,bool,float);
+    callback collapsed(string,int,bool);
+    background: pointer.has-hover || pointer.pressed ? Theme.border : Theme.panel;
+    property <string> captured-key;
+    property <int> captured-epoch;
+    property <length> origin;
+    property <length> initial;
+    pointer := TouchArea {
+        mouse-cursor: root.preview ? ns-resize : ew-resize;
+        pointer-event(event) => {
+            if event.kind == PointerEventKind.down && event.button == PointerEventButton.left {
+                root.captured-key=root.page-key;root.captured-epoch=root.epoch;
+                root.origin=root.preview ? self.absolute-position.y+self.mouse-y : self.absolute-position.x+self.mouse-x;
+                root.initial=root.size;
+            }
+        }
+        moved => {
+            if self.pressed {
+                let coordinate=root.preview ? self.absolute-position.y+self.mouse-y : self.absolute-position.x+self.mouse-x;
+                let delta=coordinate - root.origin;
+                root.dragged(root.captured-key,root.captured-epoch,root.preview,(root.initial+(root.preview ? -delta : delta))/1px);
+            }
+        }
+        double-clicked => { root.collapsed(root.page-key,root.epoch,root.preview); }
+    }
+}

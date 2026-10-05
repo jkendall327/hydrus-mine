@@ -9,6 +9,7 @@ export { NamespaceSortsWindow } from "namespace_sorts.slint";
 // The main window: for now one search page, laid out as the reference's
 // (a sidebar with the search, and the thumbnail grid), and a status bar.
 
+import { PageSplitter } from "page_splitter.slint";
 import { Button, CheckBox, ComboBox, LineEdit, ListView, ProgressIndicator, ScrollView, VerticalBox } from "std-widgets.slint";
 import { ListText, Theme } from "theme.slint";
 import { TagMenuOverlay } from "write_autocomplete.slint";
@@ -467,6 +468,25 @@ component ThumbnailGrid inherits ListView {
 }
 
 export component MainWindow inherits Window {
+    in property <string> layout-page-key;
+    in property <int> layout-epoch;
+    in property <bool> sidebar-hidden;
+    in property <length> sidebar-requested-width:400px;
+    in property <length> preview-requested-height:240px;
+    out property <length> sidebar-actual-width: sidebar-pane.width;
+    out property <length> preview-actual-height: preview-pane.height;
+    out property <length> sidebar-handle-x: sidebar-handle.absolute-position.x;
+    out property <length> sidebar-handle-y: sidebar-handle.absolute-position.y;
+    out property <length> preview-handle-x: preview-handle.absolute-position.x;
+    out property <length> preview-handle-y: preview-handle.absolute-position.y;
+    out property <length> layout-available-width: page-content.width;
+    out property <length> layout-available-height: page-content.height;
+    callback sidebar-resized(string,int,bool,float);
+    callback sidebar-collapsed(string,int,bool);
+    callback sidebar-layout-retired();
+    callback sidebar-measured();
+    changed layout-available-width => {root.sidebar-measured();}
+    changed layout-available-height => {root.sidebar-measured();}
     in property <image> preview-media;
     in property <bool> preview-has-media;
     in property <bool> preview-loading;
@@ -1068,12 +1088,18 @@ export component MainWindow inherits Window {
                 y: root.tab-alignment == 0 ? page-frame.tab-space : 0px;
                 width: page-frame.width - page-frame.tree-space - (page-frame.vertical-tabs ? page-frame.tab-space : 0px);
                 height: page-frame.height - (!page-frame.vertical-tabs ? page-frame.tab-space : 0px);
-                VerticalLayout {
-                    width: root.gallery-page || root.watcher-page ? 400px : 300px;
+                sidebar-pane := Rectangle {
+                    width: root.sidebar-hidden ? 0px : clamp(root.sidebar-requested-width,0px,max(0px,page-content.width - 86px));
+                    visible: !root.sidebar-hidden;
                     VerticalLayout {
+                    padding:0px;spacing:0px;
+                    ScrollView {
                         vertical-stretch: 1;
+                        content-width:root.sidebar-requested-width;
+                        VerticalLayout {
+                            width:root.sidebar-requested-width;
                 if root.gallery-page: VerticalBox {
-                    width: 400px;
+                    width:root.sidebar-requested-width;
                     alignment: start;
                     GallerySidebar {
                         focus-requests: root.page-focus-requests;
@@ -1121,7 +1147,7 @@ export component MainWindow inherits Window {
                     }
                 }
                 if root.watcher-page: VerticalBox {
-                    width: 400px;
+                    width:root.sidebar-requested-width;
                     alignment: start;
                     WatcherSidebar {
                         focus-requests: root.page-focus-requests;
@@ -1167,7 +1193,7 @@ export component MainWindow inherits Window {
                     }
                 }
                 if root.importing && root.local-import: VerticalBox {
-                    width: 300px;
+                    width:root.sidebar-requested-width;
                     alignment: start;
                     LocalImportBox {
                         current-action: root.import-action;
@@ -1188,7 +1214,7 @@ export component MainWindow inherits Window {
                     }
                 }
                 if root.importing && root.simple-downloader: VerticalBox {
-                    width: 300px;
+                    width:root.sidebar-requested-width;
                     alignment: start;
                     Text {
                         text: "simple downloader";
@@ -1247,7 +1273,7 @@ export component MainWindow inherits Window {
                     }
                 }
                 if root.importing && !root.local-import && !root.simple-downloader && !root.gallery-page && !root.watcher-page: url-sidebar := VerticalBox {
-                    width: 300px;
+                    width:root.sidebar-requested-width;
                     alignment: start;
                     property <bool> focus-pending: root.page-focus-on-show;
                     property <int> focus-requests: root.page-focus-requests;
@@ -1310,7 +1336,7 @@ export component MainWindow inherits Window {
                     }
                 }
                 if root.note != "" && !root.importing && !root.gallery-page && !root.watcher-page: VerticalBox {
-                    width: 300px;
+                    width:root.sidebar-requested-width;
                     alignment: start;
                     if !root.can-filter: Text {
                         text: root.note;
@@ -1337,7 +1363,7 @@ export component MainWindow inherits Window {
                 // A hidden search sidebar occupies no importer/note layout.
                 search-sidebar := VerticalBox {
                     visible: root.note == "" && !root.importing && !root.gallery-page && !root.watcher-page;
-                    width: self.visible ? 300px : 0px;
+                    width: self.visible ? root.sidebar-requested-width : 0px;
                     min-height: 0px;
                     // A layout maximum must not depend on the containing
                     // window's height: that height consumes this layout info.
@@ -1585,18 +1611,31 @@ export component MainWindow inherits Window {
                     }
                 }
                     }
-                    Button {
-                        text: root.preview-splitter-hidden ? "show preview" : "hide preview";
-                        clicked => { root.preview-splitter-hidden = !root.preview-splitter-hidden; }
                     }
-                    if !root.preview-splitter-hidden: Rectangle {
-                        preferred-height: 200px;
-                        min-height: 80px;
+                    preview-handle := PageSplitter {
+                        height:6px;
+                        preview:true;page-key:root.layout-page-key;epoch:root.layout-epoch;
+                        size:preview-pane.height;
+                        dragged(key,epoch,preview,pixels)=>{root.sidebar-resized(key,epoch,preview,pixels);}
+                        collapsed(key,epoch,preview)=>{root.sidebar-collapsed(key,epoch,preview);}
+                    }
+                    preview-pane := Rectangle {
+                        height:root.preview-splitter-hidden ? 0px : clamp(root.preview-requested-height,0px,max(0px,page-content.height - 86px));
+                        visible:!root.preview-splitter-hidden;
                         background: Theme.window;
                         border-width: 1px; border-color: Theme.border;
                         Image { source: root.preview-media; image-fit: contain; }
                         if !root.preview-has-media: Text { text: root.preview-loading ? "loading preview" : "no preview available"; color: Theme.text; horizontal-alignment: center; vertical-alignment: center; }
                     }
+                }
+                    }
+                sidebar-handle := PageSplitter {
+                    width:root.sidebar-hidden ? 0px : 6px;
+                    visible:!root.sidebar-hidden;
+                    page-key:root.layout-page-key;epoch:root.layout-epoch;
+                    size:sidebar-pane.width;
+                    dragged(key,epoch,preview,pixels)=>{root.sidebar-resized(key,epoch,preview,pixels);}
+                    collapsed(key,epoch,preview)=>{root.sidebar-collapsed(key,epoch,preview);}
                 }
                 // the thumbnails' shortcuts, once a click gives them the
                 // keyboard: F3 manages the files selected's tags, F7

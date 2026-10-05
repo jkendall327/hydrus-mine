@@ -54,6 +54,7 @@ pub mod notes_editor;
 pub mod open_externally;
 pub mod options;
 pub mod page_chooser;
+pub mod page_layout;
 pub mod page_tree;
 pub mod png_export;
 pub mod predicate_editors;

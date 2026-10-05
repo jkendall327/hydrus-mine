@@ -2632,3 +2632,29 @@ the reference process-wide cache. Image, tile, prefetch and video cache controls
 other debug actions and their parents remain Partial. Reference soft insertion,
 last-access expiry and immediate saved-policy maintenance are preserved. Native
 regressions are authored for hosted CI; no local Cargo/Rust/mutation runs occurred.
+
+Page sidebar/preview splitters and the four Pages > sidebar actions now have real
+consumers. Drag tokens capture a page and a monotonic window incarnation, so a held
+old press cannot resize a successor binding. Live sizes are associated with both
+PageKey and SearchPage owner identity: closed/reopened live pages retain geometry,
+while fresh session pages use global defaults. Session serialization/cache APIs
+remain unchanged. Signed YAML positions and the separate ClientOptions exit-save
+switch import into typed preferences; the historical positive-vpos calculation
+uses horizontal total minus vpos, as recorded in the actual Qt probe.
+The native still/poster layout reserves 80px for the other pane and uses six-pixel
+handles with a scrollable sidebar; Qt's intrinsic minimum sizes and four-pixel
+handles differ. Actual Qt SaveNow retains the hidden inner preview size, including
+an unsaved resize, and saves hidden sidebar width zero. These boundaries reach the
+native menu and accepted-exit consumer. Root integration must retain the newer
+accepted-close incarnation guards and weak AfterChange callback ownership.
+
+The newly editable hide-preview setting remains a scoped Partial action. Native
+staging, persistence, new/reset layouts and same-page refused SetMedia/clear calls
+are implemented, including retaining an accepted image while globally hidden.
+Qt owns a canvas per live page and retains that page's accepted image while the
+global flag refuses replacement. Native owns one shared raster: switching pages
+ends the old owned interval and clears its pixels, so returning under hide=true
+has no cached prior image to restore. This prevents pixels/statistics crossing page
+owners, but does not complete that original hide control. Broader sidebar/search,
+preview playback, hover/rating and structural Options parents remain Partial.
+No canonical inventory status or overnight completed ledger is edited here.

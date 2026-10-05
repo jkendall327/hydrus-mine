@@ -2114,6 +2114,11 @@ impl SearchPage {
             .is_some_and(|&f| self.selection.is_selected(f))
     }
 
+    /// Sidebar/preview collapse clears only preview focus, retaining selection.
+    pub fn clear_preview_focus(&mut self) {
+        self.selection.clear_focus(&self.results);
+    }
+
     /// The focused file's index, if a file is focused.
     pub fn focused(&self) -> Option<usize> {
         let focused = self.selection.focused()?;

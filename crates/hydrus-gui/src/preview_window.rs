@@ -17,7 +17,7 @@ use std::{
 };
 
 type Target = (PageKey, HashId);
-type Source = Rc<dyn Fn() -> Option<Target>>;
+type Source = Rc<dyn Fn() -> (PageKey, Option<HashId>)>;
 /// The preview clock, retained by its canvas owner rather than a global clock.
 pub type Clock = Rc<dyn Fn() -> i64>;
 /// Decode backend; the owner can supply a bounded media worker for deterministic replay.
@@ -112,6 +112,7 @@ struct State {
     decoder: RefCell<Decoder>,
     tracker: RefCell<Tracker>,
     requested: Cell<Option<Target>>,
+    page: Cell<Option<PageKey>>,
     blocked: Cell<Option<Target>>,
     splitter_hidden: Cell<bool>,
     pending: RefCell<Option<Pending>>,
@@ -174,19 +175,36 @@ impl State {
             self.close();
             return;
         };
-        let target = (self.source)();
+        let (page, file) = (self.source)();
+        if self.page.replace(Some(page)) != Some(page) {
+            // A shared native raster must never cross a page owner, even when
+            // global hide refuses the next page's SetMedia request.
+            self.clear(&window);
+            self.blocked.set(None);
+        }
+        let hide_preference = self
+            .store
+            .read(hydrus_store::page_layout::load)
+            .unwrap_or_default()
+            .hide_preview;
+        // Qt refuses all SetMedia (including clear) while globally hidden.
+        let target = if hide_preference {
+            self.requested.get()
+        } else {
+            file.map(|file| (page, file))
+        };
         if !window.window().is_visible() {
             self.clear(&window);
             return;
         }
         let hidden = window.get_preview_splitter_hidden();
-        if hidden != self.splitter_hidden.replace(hidden) {
+        if hidden != self.splitter_hidden.replace(hidden) && !hide_preference {
             self.clear(&window);
             // A splitter reveal does not restore its old file in Qt. The next
             // selection change supplies a fresh SetMedia; page show does restore.
             self.blocked.set(target);
         }
-        if hidden {
+        if hidden && !hide_preference {
             self.clear(&window);
             self.blocked.set(target);
             return;
@@ -312,6 +330,7 @@ impl Monitor {
             clock: RefCell::new(Rc::new(|| TimestampMs::now().0)),
             decoder: RefCell::new(Arc::new(crate::viewer::still)),
             requested: Cell::new(None),
+            page: Cell::new(None),
             blocked: Cell::new(None),
             splitter_hidden: Cell::new(false),
             pending: RefCell::new(None),

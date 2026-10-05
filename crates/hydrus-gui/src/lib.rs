@@ -120,6 +120,7 @@ pub mod shortcut_input;
 mod shortcut_runtime;
 pub mod shortcut_windows;
 mod sidebar_context_cog;
+mod sidebar_layout;
 pub mod sidecars_window;
 pub mod simple_formulae_window;
 pub mod slideshow;
@@ -492,6 +493,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let session_autosave = session_autosave::bind(window, &pages);
     let first = pages.borrow_mut().current();
     let current = Rc::new(RefCell::new(first.clone()));
+    let sidebar_layout = sidebar_layout::Binding::bind(window, pages.clone(), current.clone());
     let preview = preview_window::Monitor::bind(
         window,
         first.borrow().store().clone(),
@@ -502,8 +504,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let key = pages.borrow().shown().key;
                 let current = current.borrow();
                 let page = current.borrow();
-                let item = *page.results().get(page.focused()?)?;
-                Some((key, *page.files_of(item).first()?))
+                let file = page
+                    .focused()
+                    .and_then(|i| page.results().get(i))
+                    .and_then(|item| page.files_of(*item).first().copied());
+                (key, file)
             }
         }),
     );
@@ -555,6 +560,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
 
     // after a change to the page shown, show it; `true` if its files changed
     let shown = {
+        let sidebar_layout = sidebar_layout.clone();
         let preview = preview.clone();
         let current = current.clone();
         let weak = window.as_weak();
@@ -564,6 +570,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             if let Some(window) = weak.upgrade() {
                 refresh(&window, &current.borrow().borrow());
                 duplicates.show(&window, &current.borrow().borrow());
+                sidebar_layout.refresh();
                 preview.refresh();
                 if files {
                     rows.reset();
@@ -1985,6 +1992,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
+            sidebar_layout: Rc::new({
+                let layout = sidebar_layout.clone();
+                move |action| layout.action(action)
+            }),
             watch_clipboard: Rc::new({
                 let monitor = clipboard_monitor.clone();
                 move |watchers| monitor.toggle(watchers)
@@ -2676,8 +2687,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let retire_popups = popup_timer.retire_callback();
             let options = options.clone();
             let rows = rows.clone();
+            let sidebar_layout = sidebar_layout.clone();
             let binding_active = binding_active.clone();
             move || {
+                sidebar_layout.accepted_exit();
                 binding_active.set(false);
                 rows.retire();
                 let child = options.borrow().as_ref().map(|child| child.clone_strong());

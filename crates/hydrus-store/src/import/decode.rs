@@ -569,6 +569,14 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &formatting)?;
+    let mut page_layout = crate::page_layout::PageLayout::default();
+    page_layout.apply_legacy(
+        &legacy_options,
+        options
+            .as_ref()
+            .map_or(&std::collections::BTreeMap::new(), |o| &o.booleans),
+    );
+    insert_setting(&mut input, &page_layout)?;
     let mut popup_width = crate::popup_width::PopupWidth::default();
     if let Some(options) = &options {
         popup_width.apply_legacy(&options.integers, &options.booleans);

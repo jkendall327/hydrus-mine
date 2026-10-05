@@ -29,6 +29,7 @@ pub mod metadata_jobs;
 pub mod network;
 pub mod network_runtime;
 pub mod paths;
+pub mod page_layout;
 pub mod pending;
 pub mod popup_actions;
 pub mod popup_width;

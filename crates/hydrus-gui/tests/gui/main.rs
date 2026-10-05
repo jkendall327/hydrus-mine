@@ -181,3 +181,5 @@ mod import_work_slots;
 mod viewing_maintenance;
 
 mod local_transfer;
+
+mod sidebar_layout;
