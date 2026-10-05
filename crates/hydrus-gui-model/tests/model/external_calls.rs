@@ -454,3 +454,73 @@ fn command_parameter_queue_selection_reorder_and_keyboard_match_actual_qt() {
         );
     }
 }
+
+#[test]
+fn command_queue_reverse_edit_and_keyboard_origins_match_actual_qt() {
+    use hydrus_gui_model::external_command::Queue;
+    let reference = hydrus_testkit::fixture_json("external_command.json");
+    for history in reference["queue_edges"].as_array().unwrap() {
+        let mut queue = Queue::new(
+            ["alpha", "beta", "gamma", "delta"]
+                .map(str::to_owned)
+                .to_vec(),
+        );
+        for event in history["steps"].as_array().unwrap() {
+            match event["action"].as_str().unwrap() {
+                "initial" => {}
+                "click_1" => {
+                    queue.click(1, false, false);
+                }
+                "click_3" => {
+                    queue.click(3, false, false);
+                }
+                "ctrl_click_1" => {
+                    queue.click(1, true, false);
+                }
+                "edit_selection_first" => {
+                    let index = queue.selection.selected_order()[0];
+                    assert_eq!(
+                        queue.arguments[index],
+                        event["entries"][0]["default"].as_str().unwrap()
+                    );
+                    queue.arguments[index] = "first-added 日本😀".into();
+                }
+                "shift_down" => {
+                    queue.navigate("next", false, true);
+                }
+                "ctrl_home" => {
+                    queue.navigate("home", true, false);
+                }
+                "select_all" => {
+                    queue.select_all();
+                }
+                "delete" => {
+                    queue.delete(&queue.selected());
+                }
+                unexpected => panic!("unexpected edge {unexpected}"),
+            }
+            assert_eq!(
+                serde_json::to_value(&queue.arguments).unwrap(),
+                event["rows"],
+                "{} / {}",
+                history["name"],
+                event["action"]
+            );
+            let expected: Vec<usize> = serde_json::from_value(event["selected"].clone()).unwrap();
+            assert_eq!(
+                queue.selection.selected_order(),
+                expected,
+                "{} / {}",
+                history["name"],
+                event["action"]
+            );
+            assert_eq!(
+                queue.current.map_or(-1, |i| i64::try_from(i).unwrap()),
+                event["current"].as_i64().unwrap(),
+                "{} / {}",
+                history["name"],
+                event["action"]
+            );
+        }
+    }
+}

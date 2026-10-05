@@ -749,6 +749,722 @@
       "copies": []
     }
   ],
+  "queue_edges": [
+    {
+      "name": "reverse_edit",
+      "steps": [
+        {
+          "action": "initial",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [],
+          "current": -1,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "click_3",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [
+            3
+          ],
+          "current": 3,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "ctrl_click_1",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [
+            3,
+            1
+          ],
+          "current": 1,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "edit_selection_first",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "first-added 日本😀"
+          ],
+          "selected": [
+            3,
+            1
+          ],
+          "current": 1,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "first-added 日本😀"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma first-added 日本😀",
+          "questions": [],
+          "entries": [
+            {
+              "message": "Edit the parameter. This should just be one thing, which you typically see separated by whitespace in a command. In a command like this:\n\nmy_program -o d a=virt profile=\"My Profile\" input_path\n\nThe parameters would be \"-o\", \"d\", \"a=virt\", \"profile=\"My Profile\"\", and \"input_path\" (or, likely for our purposes here, \"%path%\"). While you may need quotes _within_ a parameter, you should not, generally speaking, wrap a whole parameter in quotes here to avoid whitespace issues--that is handled for you, so do not worry about it; trying to add extra quotes may just break things.\n\nNo newlines or leading/trailing whitespace allowed in these parameter templates, and multiple whitespace is collapsed to single.\n\nYou can mix an input parameter's replacement token in amongst other text, or even have multiple tokens in the same parameter. \"%parameter1%-%parameter2%\" is fine. You cannot use the same token more than once per parameter, but you can use it in multiple parameters!",
+              "default": "delta",
+              "placeholder": "-o",
+              "allow_blank": false,
+              "allow_whitespace": true,
+              "title": "Enter parameter"
+            }
+          ],
+          "copies": []
+        }
+      ]
+    },
+    {
+      "name": "select_all_contract",
+      "steps": [
+        {
+          "action": "initial",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [],
+          "current": -1,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "click_1",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [
+            1
+          ],
+          "current": 1,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "select_all",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "current": 1,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "shift_down",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [
+            1,
+            2
+          ],
+          "current": 2,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        }
+      ]
+    },
+    {
+      "name": "prior_shift_select_all",
+      "steps": [
+        {
+          "action": "initial",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [],
+          "current": -1,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "click_1",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [
+            1
+          ],
+          "current": 1,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "shift_down",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [
+            1,
+            2
+          ],
+          "current": 2,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "select_all",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "current": 2,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "shift_down",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [
+            1,
+            2,
+            3
+          ],
+          "current": 3,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        }
+      ]
+    },
+    {
+      "name": "ctrl_home_shift",
+      "steps": [
+        {
+          "action": "initial",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [],
+          "current": -1,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "click_1",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [
+            1
+          ],
+          "current": 1,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "ctrl_home",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [
+            1
+          ],
+          "current": 0,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "shift_down",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [
+            0,
+            1
+          ],
+          "current": 1,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        }
+      ]
+    },
+    {
+      "name": "delete_current_shift",
+      "steps": [
+        {
+          "action": "initial",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [],
+          "current": -1,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "click_1",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [
+            1
+          ],
+          "current": 1,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "delete",
+          "rows": [
+            "alpha",
+            "gamma",
+            "delta"
+          ],
+          "selected": [],
+          "current": 0,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha gamma delta",
+          "questions": [
+            {
+              "message": "Remove 1 selected?"
+            }
+          ],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "shift_down",
+          "rows": [
+            "alpha",
+            "gamma",
+            "delta"
+          ],
+          "selected": [
+            0,
+            1
+          ],
+          "current": 1,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        }
+      ]
+    },
+    {
+      "name": "delete_noncurrent_shift",
+      "steps": [
+        {
+          "action": "initial",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [],
+          "current": -1,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "click_1",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [
+            1
+          ],
+          "current": 1,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "ctrl_home",
+          "rows": [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta"
+          ],
+          "selected": [
+            1
+          ],
+          "current": 0,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "beta",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha beta gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "delete",
+          "rows": [
+            "alpha",
+            "gamma",
+            "delta"
+          ],
+          "selected": [],
+          "current": 0,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha gamma delta",
+          "questions": [
+            {
+              "message": "Remove 1 selected?"
+            }
+          ],
+          "entries": [],
+          "copies": []
+        },
+        {
+          "action": "shift_down",
+          "rows": [
+            "alpha",
+            "gamma",
+            "delta"
+          ],
+          "selected": [
+            0,
+            1
+          ],
+          "current": 1,
+          "value": [
+            "owned-program",
+            [
+              "alpha",
+              "gamma",
+              "delta"
+            ]
+          ],
+          "example": "owned-program alpha gamma delta",
+          "questions": [],
+          "entries": [],
+          "copies": []
+        }
+      ]
+    }
+  ],
   "clipboard": [
     {
       "raw": "owned-program",

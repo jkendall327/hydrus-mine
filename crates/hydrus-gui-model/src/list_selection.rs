@@ -38,7 +38,13 @@ impl<T: Copy + PartialEq> ListSelection<T> {
                     // Qt retains selection insertion order for survivors,
                     // then appends newly selected range items (notably when
                     // a range grows upwards from its already-selected anchor).
-                    self.selected.retain(|item| order[a..=b].contains(item));
+                    if self.selected.contains(&order[from]) {
+                        self.selected.retain(|item| order[a..=b].contains(item));
+                    } else {
+                        // Ctrl navigation can leave the range origin unselected;
+                        // Qt starts a fresh ordered range from that origin.
+                        self.selected.clear();
+                    }
                 }
                 for &o in &order[a..=b] {
                     if !self.selected.contains(&o) {
@@ -71,6 +77,11 @@ impl<T: Copy + PartialEq> ListSelection<T> {
     /// Queue reordering keeps Qt's numeric current row as this origin.
     pub fn set_anchor(&mut self, item: Option<T>) {
         self.anchor = item;
+    }
+
+    /// Qt's select-all replaces selected rows while keeping the current range origin.
+    pub fn select_all(&mut self, order: &[T]) {
+        self.selected = order.to_vec();
     }
 
     /// Select only `item` (or nothing).

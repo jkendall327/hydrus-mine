@@ -3141,9 +3141,10 @@ copies and aborts the remainder. Add Defaults exposes both “add them all” an
 “select from a list”, with the reference platform question and factory calls.
 Selected defaults gain fresh keys and names alongside the prior selection.
 
-The owned command child edits the first of multiple selected parameters, keeps
+The owned command child edits the first parameter in selection insertion order, keeps
 added rows unselected, captures delete selections, and reorders adjacent selected
-rows at either boundary. Its focused parameter list supports extended selection,
+rows at either boundary. Its focused parameter list preserves range origins through select-all, Ctrl
+navigation and deletion, and supports extended selection,
 arrow/Home/End navigation, select-all, selected-text copy and Delete (also
 Backspace on macOS). Preview and full-template copy use cleaned parameters while
 pasted raw rows remain visible until Apply. Paste asks the exact unsorted summary

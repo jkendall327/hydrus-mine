@@ -55,6 +55,24 @@ def record(session):
             queue._Up();snap('clicked_up');QT.QTest.keyClick(box,QC.Qt.Key.Key_Down,QC.Qt.KeyboardModifier.ShiftModifier);snap('shift_after_reorder')
             queue.SetData(['alpha','beta','gamma','delta']);QW.QApplication.processEvents()
             QT.QTest.mouseClick(box.viewport(),QC.Qt.MouseButton.LeftButton,QC.Qt.KeyboardModifier.NoModifier,box.visualItemRect(box.item(1)).center());queue._Down();snap('clicked_down')
+            edge_histories=[]
+            for edge in ['reverse_edit','select_all_contract','prior_shift_select_all','ctrl_home_shift','delete_current_shift','delete_noncurrent_shift']:
+                ep=Panel(c.gui,'owned-program',['alpha','beta','gamma','delta']);panels.append(ep);ep.resize(760,590);ep.show();QW.QApplication.processEvents();eq=ep._executable_parameter_templates;eb=eq._listbox;steps=[]
+                def edge_snap(action):
+                    steps.append(dict(action=action,rows=eq.GetData(),selected=eb.GetSelectedIndices(),current=eb.currentRow(),value=ep.GetValue(),example=ep._example_full_command.text(),questions=list(questions),entries=list(entries),copies=list(copies)));questions.clear();entries.clear();copies.clear()
+                def click(row,control=False):
+                    QT.QTest.mouseClick(eb.viewport(),QC.Qt.MouseButton.LeftButton,QC.Qt.KeyboardModifier.ControlModifier if control else QC.Qt.KeyboardModifier.NoModifier,eb.visualItemRect(eb.item(row)).center());edge_snap('ctrl_click_1' if control else 'click_'+str(row))
+                def key(name,code,mods):QT.QTest.keyClick(eb,code,mods);edge_snap(name)
+                edge_snap('initial');click(3 if edge=='reverse_edit' else 1)
+                if edge=='reverse_edit':
+                    click(1,True);answer['text']='first-added 日本😀';eq._Edit();edge_snap('edit_selection_first')
+                else:
+                    if edge=='prior_shift_select_all':key('shift_down',QC.Qt.Key.Key_Down,QC.Qt.KeyboardModifier.ShiftModifier)
+                    if edge in ('ctrl_home_shift','delete_noncurrent_shift'):key('ctrl_home',QC.Qt.Key.Key_Home,QC.Qt.KeyboardModifier.ControlModifier)
+                    if edge in ('select_all_contract','prior_shift_select_all'):key('select_all',QC.Qt.Key.Key_A,QC.Qt.KeyboardModifier.ControlModifier)
+                    if edge in ('delete_current_shift','delete_noncurrent_shift'):answer['yes']=True;eq._Delete();edge_snap('delete')
+                    key('shift_down',QC.Qt.Key.Key_Down,QC.Qt.KeyboardModifier.ShiftModifier)
+                edge_histories.append(dict(name=edge,steps=steps))
             clipboard=[]
             cases=['owned-program','owned-program one',' owned-program  one   two ','owned-program profile="My Profile" 日本😀','owned-program a\tb\nc',' \x1fowned-program \x1f日本😀\x1f ', '', '  ', 'owned-program '+' '.join('arg'+str(i) for i in range(30)), 'owned-program '+' '.join('x'*70+str(i) for i in range(30))]
             for value in cases:
@@ -63,7 +81,7 @@ def record(session):
                     clipboard.append(dict(raw=value,accepted=accepted,questions=list(questions),copies=list(copies),value=paste.GetValue(),raw_arguments=paste._executable_parameter_templates.GetData(),example=paste._example_full_command.text()));questions.clear();copies.clear()
             raw['text']=None;paste=Panel(c.gui,'before',['before']);panels.append(paste);paste._Paste();unavailable=dict(errors=list(errors),value=paste.GetValue());errors.clear()
             p.grab().save(str(HERE/'fixtures/external_command.png'))
-            return dict(queue=events,clipboard=clipboard,unavailable=unavailable)
+            return dict(queue=events,queue_edges=edge_histories,clipboard=clipboard,unavailable=unavailable)
         finally:
             Q.GetYesNo=old_yes;Q.EnterText=old_text;c.GetClipboardText=old_clip;c.pub=old_pub;M.ShowCritical=old_error
             for p in panels:p.hide();p.deleteLater()

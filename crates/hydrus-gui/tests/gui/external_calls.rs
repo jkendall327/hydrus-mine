@@ -985,3 +985,112 @@ fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retiremen
     assert_eq!(saved(&store), persisted);
     assert!(!bound.options_external_calls.has_open());
 }
+
+#[test]
+fn parameter_queue_reverse_edit_and_real_key_origin_histories_match_actual_qt() {
+    use slint::platform::{Key, PointerEventButton, WindowEvent};
+    let (_dirs, store) = store();
+    let original = seed(&store);
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let options = open(&ui, &bound);
+    options.invoke_external_call_clicked(0, false, false);
+    options.invoke_external_call_action("edit".into());
+    let child = call(&bound);
+    let reference = hydrus_testkit::fixture_json("external_command.json");
+    for history in reference["queue_edges"].as_array().unwrap() {
+        child.invoke_command_edit();
+        let w = command(&bound);
+        let native = windows.get(windows.count() - 1).unwrap();
+        hydrus_gui::set_paster(|| "owned-program alpha beta gamma delta".into());
+        w.invoke_action("paste".into());
+        question(&bound).invoke_answered(true);
+        headless::render(&native, 760, 590);
+        for event in history["steps"].as_array().unwrap() {
+            match event["action"].as_str().unwrap() {
+                "initial" => {}
+                action @ ("click_1" | "click_3" | "ctrl_click_1") => {
+                    let control = action == "ctrl_click_1";
+                    let row = if action == "click_3" { 3.0 } else { 1.0 };
+                    if control {
+                        w.window().dispatch_event(WindowEvent::KeyPressed {
+                            text: Key::Control.into(),
+                        });
+                    }
+                    let position = slint::LogicalPosition::new(
+                        w.get_parameter_list_x() + 10.0,
+                        w.get_parameter_list_y() + 24.0 + row * 22.0 + 11.0,
+                    );
+                    w.window().dispatch_event(WindowEvent::PointerPressed {
+                        position,
+                        button: PointerEventButton::Left,
+                    });
+                    w.window().dispatch_event(WindowEvent::PointerReleased {
+                        position,
+                        button: PointerEventButton::Left,
+                    });
+                    if control {
+                        w.window().dispatch_event(WindowEvent::KeyReleased {
+                            text: Key::Control.into(),
+                        });
+                    }
+                }
+                "edit_selection_first" => {
+                    w.invoke_action("edit".into());
+                    let q = question(&bound);
+                    assert_eq!(
+                        q.get_text(),
+                        event["entries"][0]["default"].as_str().unwrap()
+                    );
+                    q.invoke_name_entered("first-added 日本😀".into());
+                }
+                "shift_down" => {
+                    command_key(&w, Key::DownArrow.into(), false, true);
+                }
+                "ctrl_home" => {
+                    command_key(&w, Key::Home.into(), true, false);
+                }
+                "select_all" => {
+                    command_key(&w, "a".into(), true, false);
+                }
+                "delete" => {
+                    w.invoke_action("delete".into());
+                    let q = question(&bound);
+                    assert_eq!(
+                        q.get_message(),
+                        event["questions"][0]["message"].as_str().unwrap()
+                    );
+                    q.invoke_answered(true);
+                }
+                unexpected => panic!("unexpected edge {unexpected}"),
+            }
+            assert_eq!(
+                serde_json::to_value(command_rows(&w)).unwrap(),
+                event["rows"],
+                "{} / {}",
+                history["name"],
+                event["action"]
+            );
+            let selected: Vec<usize> = w
+                .get_rows()
+                .iter()
+                .enumerate()
+                .filter(|(_, r)| r.selected)
+                .map(|(i, _)| i)
+                .collect();
+            let mut expected: Vec<usize> =
+                serde_json::from_value(event["selected"].clone()).unwrap();
+            expected.sort_unstable();
+            assert_eq!(
+                selected, expected,
+                "{} / {}",
+                history["name"], event["action"]
+            );
+        }
+        w.invoke_cancel();
+        assert_eq!(saved(&store).calls, std::slice::from_ref(&original));
+    }
+    options.invoke_cancel();
+    assert!(!bound.options_external_calls.has_open());
+}
