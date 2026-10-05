@@ -64,18 +64,21 @@ unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in
 [gui-coverage/README.md](gui-coverage/README.md).
 
-Continuous source work now proposes 40 further original leaf completions over
-that validated 240 checkpoint, on `codex/parity-deeper-followup`,
-`codex/parity-next-controls` and `codex/parity-more-controls`. It includes tab
+Continuous source work now proposes 46 further original leaf completions over
+that validated 240 checkpoint, consolidated on `codex/parity-more-controls`. It includes tab
 appearance/drag, notebook tree, notes, rating sizes, archive repair, duplicate
 colours, tag suggestions/weights, autocomplete panes, sidebar cogs, thumbnail
-navigation, namespace colour actions, external-call list actions and viewer
+navigation, namespace colour actions, external-call list and command controls,
+sibling connector colours, browsing/API idle timeouts and viewer
 drag/hover-wheel preferences. These remain proposals while exact hosted CI
 runs and rendered review are pending. Window rescue and GUI formatting are
-explicitly Partial improvements with zero completion credit; broader external
+explicitly Partial improvements with zero completion credit. Owned asynchronous
+metadata filesystem jobs also retain their two original Partial assessments,
+and mouse idle tracking remains Partial because it observes application windows.
+Broader external
 call/editor boundaries also remain Partial. Inspect the current branch with
 `python3 scripts/gui_burndown.py --commit HEAD`; do not substitute its proposed
-total of 280 for the validated 240 ledger. New work and diagnostics continue
+total of 286 for the validated 240 ledger. New work and diagnostics continue
 while hosted validation runs, as authorized by the owner.
 
 The next breadth work, in the owner's existing order:
