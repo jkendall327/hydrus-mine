@@ -1940,7 +1940,7 @@ dismissal states are recorded in `oracle/fixtures/tag_migration_progress.json`.
 ## Downloader definition interchange
 
 Network > downloaders > import/export downloaders exchanges URL classes,
-page parsers and single/nested gallery URL generators with the reference
+page parsers, registered login scripts and single/nested gallery URL generators with the reference
 client's clipboard JSON and real downloader PNGs. Imports review the concrete
 objects and exact duplicates before saving all definitions, generated keys,
 nested members and parser links atomically. Exact parser duplicates merge
@@ -1955,6 +1955,19 @@ separate from the read-only legacy reader. `record_downloader_interchange.py`
 checks real reference PNG/JSON -> native encoders -> real reference loads;
 codec/model/GUI regressions cover bounds, unsupported data, cancellation,
 duplicates, stale snapshots and live downloader settings reload.
+The mixed exporter offers registered component selection, including login-only
+packages and linked generator/class/parser dependencies, through clipboard JSON,
+JSON files and PNG files. Login scripts contain credential definitions, cookie
+rules, ordered requests and response parsers; saved credentials, sessions and
+domain activation stay in the store. Mixed import reviews login scripts beside
+the other components, skips exact script duplicates without comparing their
+name/key, and regenerates new identities. Existing matching-name example-domain
+links follow imported scripts while retaining current credentials, validity,
+activation and delays; unconfigured example domains remain unconfigured.
+`record_mixed_login_packages.py` drives the actual Qt registered-script chooser,
+dependency expansion, PNG export and mixed import. Native codec/model/window
+replays cover saved script-list consumers, concurrent domain changes, stale
+script lists and retired callbacks; these new assertions await hosted CI.
 
 Tab right-click offers the reference's four move-page destinations and six
 sibling sorts (file count, total size and name, both ways). Actions target the

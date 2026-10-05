@@ -21,6 +21,162 @@ fn one_page() -> String {
     .unwrap()
 }
 #[test]
+fn mixed_registered_login_package_reviews_png_selects_dependencies_and_reopens_saved_scripts() {
+    let rendered = headless::init();
+    let (dir, store) = setup();
+    let fixture = hydrus_testkit::fixture_json("mixed_login_packages.json");
+    let slots = windows::Slots::default();
+    let import = windows::package(&store, &slots, true).unwrap();
+    import.set_path(
+        hydrus_testkit::fixture_path("mixed_login_packages.png")
+            .to_string_lossy()
+            .as_ref()
+            .into(),
+    );
+    import.invoke_action("open".into());
+    assert!(import.get_error().is_empty(), "{}", import.get_error());
+    assert!(import.get_ready());
+    assert!(
+        import
+            .get_review()
+            .contains("Login Script: mixed package login")
+    );
+    assert!(
+        store
+            .read(hydrus_store::logins::load)
+            .unwrap()
+            .scripts
+            .is_empty()
+    );
+    import.invoke_action("cancel".into());
+    import.invoke_action("accept".into());
+    assert!(
+        store
+            .read(hydrus_store::logins::load)
+            .unwrap()
+            .scripts
+            .is_empty()
+    );
+    let import = windows::package(&store, &slots, true).unwrap();
+    hydrus_gui::set_paster({
+        let text = fixture["reference"].to_string();
+        move || text.clone()
+    });
+    import.invoke_action("paste".into());
+    import.invoke_action("review".into());
+    assert!(import.get_ready());
+    import.invoke_action("accept".into());
+    let saved = store.read(hydrus_store::logins::load).unwrap();
+    assert_eq!(saved.scripts.len(), 1);
+    assert_eq!(saved.scripts[0].name, "mixed package login");
+    assert_ne!(saved.scripts[0].key, "71".repeat(32));
+    assert!(saved.domains.is_empty());
+    let scripts = hydrus_gui::login_workflows_window::Slots::default();
+    let list = hydrus_gui::login_workflows_window::open_scripts(&store, &scripts).unwrap();
+    assert_eq!(list.get_rows().row_count(), 1);
+    assert_eq!(
+        list.get_rows()
+            .row_data(0)
+            .unwrap()
+            .cells
+            .row_data(0)
+            .unwrap(),
+        "mixed package login"
+    );
+    list.invoke_action("cancel".into());
+    let export = windows::package(&store, &slots, false).unwrap();
+    assert!(export.get_text_read_only());
+    assert!(export.get_json_enabled());
+    let login = export
+        .get_package_choices()
+        .iter()
+        .position(|row| row.label == "Login Script: mixed package login")
+        .unwrap();
+    let nested = export
+        .get_package_choices()
+        .iter()
+        .position(|row| row.label == "GUG: mixed package nested")
+        .unwrap();
+    export.invoke_package_chosen(-1, false);
+    assert!(export.get_text().is_empty());
+    assert!(export.get_export_empty());
+    export.invoke_package_chosen(i32::try_from(login).unwrap(), true);
+    let login_only = exchange::decode_text(export.get_text().as_str()).unwrap();
+    assert_eq!(
+        login_only.len(),
+        fixture["login_only"].as_array().unwrap().len()
+    );
+    assert!(matches!(login_only[0].native, Native::Login(_)));
+    export.invoke_package_chosen(i32::try_from(nested).unwrap(), true);
+    let mixed = exchange::decode_text(export.get_text().as_str()).unwrap();
+    assert_eq!(mixed.len(), fixture["mixed"].as_array().unwrap().len());
+    let copied = Rc::new(RefCell::new(String::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| {
+            if let hydrus_gui::Clip::Text(text) = clip {
+                copied.borrow_mut().clone_from(text);
+            }
+        }
+    });
+    export.invoke_action("copy".into());
+    assert_eq!(exchange::decode_text(&copied.borrow()).unwrap(), mixed);
+    let json_path = dir.path().join("mixed.json");
+    export.set_path(json_path.to_string_lossy().as_ref().into());
+    export.invoke_action("save-json".into());
+    assert!(export.get_error().is_empty(), "{}", export.get_error());
+    assert_eq!(
+        exchange::decode_text(&std::fs::read_to_string(&json_path).unwrap()).unwrap(),
+        mixed
+    );
+    let png_path = dir.path().join("mixed.png");
+    export.set_path(png_path.to_string_lossy().as_ref().into());
+    export.invoke_action("save".into());
+    assert!(export.get_error().is_empty(), "{}", export.get_error());
+    assert_eq!(
+        exchange::decode_png(&std::fs::read(&png_path).unwrap()).unwrap(),
+        mixed
+    );
+    let pixels = headless::render(&rendered.get(rendered.count() - 1).unwrap(), 880, 750);
+    assert!(pixels.chunks_exact(4).any(|pixel| pixel != &pixels[..4]));
+    if let Ok(path) = std::env::var("HYDRUS_INTERCHANGE_SCREENSHOTS") {
+        headless::save_png(
+            &std::path::Path::new(&path).join("mixed-login-export.png"),
+            &pixels,
+            880,
+            750,
+        )
+        .unwrap();
+    }
+    export.invoke_action("cancel".into());
+    let retained = export.get_text();
+    let clipboard = copied.borrow().clone();
+    let retired_path = dir.path().join("retired.json");
+    export.set_path(retired_path.to_string_lossy().as_ref().into());
+    export.invoke_package_chosen(-1, false);
+    export.invoke_action("copy".into());
+    export.invoke_action("save-json".into());
+    assert_eq!(export.get_text(), retained);
+    assert_eq!(*copied.borrow(), clipboard);
+    assert!(!retired_path.exists());
+    let (_other_dir, other) = setup();
+    let import = windows::package(&other, &slots, true).unwrap();
+    import.set_path(png_path.to_string_lossy().as_ref().into());
+    import.invoke_action("open".into());
+    import.invoke_action("accept".into());
+    let imported = other.read(hydrus_store::logins::load).unwrap();
+    assert_eq!(imported.scripts[0].name, saved.scripts[0].name);
+    assert_ne!(imported.scripts[0].key, saved.scripts[0].key);
+    assert_eq!(
+        other
+            .read::<Downloaders>(settings::get)
+            .unwrap()
+            .parsers
+            .len(),
+        1
+    );
+}
+#[test]
 fn package_reviews_real_png_cancel_and_invalid_input_before_atomic_apply() {
     let rendered = headless::init();
     let (_dir, store) = setup();
