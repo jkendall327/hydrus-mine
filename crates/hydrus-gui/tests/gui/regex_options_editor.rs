@@ -132,6 +132,8 @@ fn replay(w: &RegexFavouritesWindow, f: &Value, copied: &Rc<RefCell<Vec<String>>
 
 #[test]
 fn real_options_saved_input_chooser_crud_cancel_apply_and_retired_owners_match_qt() {
+    use hydrus_core::url::strings::{MatchKind, PyRegex, StringMatch};
+
     let (_dirs, store) = crate::subscriptions::store();
     let f = hydrus_testkit::fixture_json("regex_options_editor.json");
     let initial = RegexFavourites(serde_json::from_value(f["initial"].clone()).unwrap());
@@ -278,7 +280,6 @@ fn real_options_saved_input_chooser_crud_cancel_apply_and_retired_owners_match_q
         f["saved"]
     );
     let slots = string_processor_window::Slots::default();
-    use hydrus_core::url::strings::{MatchKind, PyRegex, StringMatch};
     let input = StringMatch {
         kind: MatchKind::Regex(PyRegex::new("original+")),
         example: "original".into(),
