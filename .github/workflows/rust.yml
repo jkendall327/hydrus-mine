@@ -10,9 +10,10 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: rust-${{ github.ref }}-${{ (github.head_ref == 'codex/overnight-gui-burndown' || startsWith(github.head_ref, 'codex/parity-')) && github.event.pull_request.head.sha || 'latest' }}
-  # Overnight implementation continues while earlier checkpoints validate.
-  cancel-in-progress: ${{ github.head_ref != 'codex/overnight-gui-burndown' && github.ref != 'refs/heads/codex/overnight-gui-burndown' && !startsWith(github.head_ref, 'codex/parity-') && !startsWith(github.ref, 'refs/heads/codex/parity-') }}
+  # Each integration PR owns one current run. Separate checkpoint branches still
+  # validate concurrently; repairing a PR supersedes its obsolete running head.
+  group: rust-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   CARGO_TERM_COLOR: always

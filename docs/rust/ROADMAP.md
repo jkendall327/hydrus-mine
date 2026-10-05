@@ -64,7 +64,7 @@ unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in
 [gui-coverage/README.md](gui-coverage/README.md).
 
-Continuous source work now proposes 127 further original leaf completions over
+Continuous source work now proposes 132 further original leaf completions over
 that validated 240 checkpoint: 53 on `codex/parity-more-controls`, five more
 on the dependent `codex/parity-next-details` branch, and 13 more on
 `codex/parity-preview-and-launching`, plus nine on
@@ -78,7 +78,20 @@ on the dependent `codex/parity-next-details` branch, and 13 more on
 `codex/parity-deletion-and-dialog-controls`, and five on
 `codex/parity-maintenance-and-menu-controls`, and three on
 `codex/parity-cache-and-runtime-controls`, and one on
-`codex/parity-ffmpeg-timeout`. The saved FFmpeg timeout now reaches importer and
+`codex/parity-ffmpeg-timeout`, and five more on
+`codex/parity-prefetch-and-selected-records`. These add clearing captured selected
+deletion records in durable 64-record batches, the three saved viewer-prefetch
+count/budget controls reaching owned real image consumers, and the Help debug
+GET action with ordinary network policy and byte-save/text-copy response choices.
+Current-image asynchronous rendering, other cache families and the embedded
+network widget remain Partial. The latest integration consolidates work after
+the separately validating preview/launching checkpoint, preserving authored
+branches and evidence tags while avoiding redundant hosted runs for every
+intermediate draft. Windows cleanup now retains explicit stack-scoped collectors;
+the watcher replay waits for final persisted state. Newer hosted compile/lint
+diagnostics have narrow ownership/import/concrete-default repairs. All of this
+remains proposed until exact-source CI and native render review pass.
+The saved FFmpeg timeout now reaches importer and
 maintenance work, About, clipboard image import, import review, duplicate
 auto-resolution, parser fetching and folder-sidecar sampling through weak Store
 readers. Each process captures its deadline once, matching the reference's
@@ -89,8 +102,9 @@ reach shared pending/full-resolution renderers in preview, viewer, archive/delet
 and duplicate-filter consumers. Budget admission uses the reference RGB estimate;
 loaded footprints update on access, timeout is strict, and cache eviction preserves
 current displayed images and viewing intervals. Live policy, implicit normalization
-merges and owned-child edit guards are independently reviewed. Prefetch, tile,
-video and whole-cache families remain Partial. Runtime force-idle and hidden/native
+merges and owned-child edit guards are independently reviewed. The represented
+viewer-prefetch controls now have scoped proposals; tile, video, delay controls
+and whole-cache families remain Partial. Runtime force-idle and hidden/native
 minimized toaster freezing are further Partial improvements with zero completion
 credit; missing worker-wake/CPU behavior, Wayland minimized state and other-monitor
 freezing remain explicit. The five preceding proposals add the two real
@@ -166,7 +180,7 @@ and mouse idle tracking remains Partial because it observes application windows.
 Broader external
 call/editor boundaries also remain Partial. Inspect the current branch with
 `python3 scripts/gui_burndown.py --commit HEAD`; do not substitute its proposed
-total of 367 for the validated 240 ledger. The embedded-ICC leaf adds the saved policy with real importer, preview,
+total of 372 for the validated 240 ledger. The embedded-ICC leaf adds the saved policy with real importer, preview,
 viewer and maintenance consumers. The viewer tag-list now opens owned search
 pages and requests main-window activation on supported native platforms; that
 activation remains Partial because Wayland activation is unresolved. Application

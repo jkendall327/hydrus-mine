@@ -40,7 +40,6 @@ pub mod folders;
 pub mod force_filetype;
 pub mod formula_editors;
 pub mod image_cache;
-pub mod viewer_prefetch;
 pub mod import_options_editor;
 pub mod import_options_overwrite;
 pub mod import_options_panel;
@@ -102,6 +101,7 @@ pub mod thumbnail_preview_selection;
 pub mod thumbnail_ratings;
 pub mod times_editor;
 pub mod urls_editor;
+pub mod viewer_prefetch;
 
 pub mod tag_relationships;
 
