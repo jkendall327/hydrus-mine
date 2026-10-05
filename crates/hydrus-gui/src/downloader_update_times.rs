@@ -3,7 +3,7 @@ use crate::{MainWindow, SearchPage};
 use slint::{ComponentHandle as _, Timer, TimerMode};
 use std::{
     cell::{Cell, RefCell},
-    rc::Rc,
+    rc::{Rc, Weak},
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
@@ -18,6 +18,7 @@ struct State {
     current: Rc<RefCell<Rc<RefCell<SearchPage>>>>,
     active: Rc<Cell<bool>>,
     clock: RefCell<Clock>,
+    pending_force: RefCell<Option<Weak<RefCell<SearchPage>>>>,
     timer: Timer,
 }
 impl State {
@@ -34,13 +35,27 @@ impl State {
             return;
         }
         let page = self.current.borrow().clone();
+        if force {
+            *self.pending_force.borrow_mut() = Some(Rc::downgrade(&page));
+        }
         let clock = self.clock.borrow().clone();
         let now = clock();
-        page.borrow_mut().set_import_status_clock(clock);
-        let refreshed = page
-            .borrow_mut()
-            .refresh_import_status_at(now, force)
-            .is_some();
+        let refreshed = {
+            // A render can pump this timer while its caller still reads the
+            // source page. Leave the deadline intact and retry on the next
+            // tick; never keep a mutable page borrow through UI publication.
+            let Ok(mut source) = page.try_borrow_mut() else {
+                return;
+            };
+            let force = self
+                .pending_force
+                .borrow_mut()
+                .take()
+                .and_then(|owner| owner.upgrade())
+                .is_some_and(|owner| Rc::ptr_eq(&owner, &page));
+            source.set_import_status_clock(clock);
+            source.refresh_import_status_at(now, force).is_some()
+        };
         if refreshed {
             let page = page.borrow();
             crate::show_gallery(&window, &page);
@@ -68,6 +83,7 @@ impl Binding {
             current,
             active,
             clock: RefCell::new(Rc::new(now)),
+            pending_force: RefCell::default(),
             timer: Timer::default(),
         });
         state

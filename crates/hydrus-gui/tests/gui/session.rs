@@ -20,6 +20,17 @@ use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 use hydrus_store::sessions::{self, LAST_SESSION};
 
+/// These session replays inspect fresh list totals after daemon writes. Advance
+/// the visible owner's clock through its pending status deadline rather than
+/// requiring a list refresh during the independently live highlighted update.
+fn refresh_downloader_status_after_deadline(bound: &hydrus_gui::Bound) {
+    let next = bound.current.borrow().borrow().next_import_status_time();
+    bound
+        .downloader_updates
+        .set_clock(Rc::new(move || next + 0.25));
+    bound.downloader_updates.refresh();
+}
+
 /// A store imported from the fixture (whose files it uses in place, so the
 /// fixture's directory is kept too).
 fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
@@ -881,6 +892,7 @@ fn a_gallery_downloader_page_shows_and_controls_its_searches() {
         .unwrap();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
 
     // download, then gallery: a page with the client's default downloader
@@ -964,6 +976,7 @@ fn a_gallery_downloader_page_shows_and_controls_its_searches() {
         })
         .unwrap();
     (bound.sync)();
+    refresh_downloader_status_after_deadline(&bound);
     assert_eq!(bound.current.borrow().borrow().files(), [files[0].0]);
     assert_eq!(ui.get_gallery_data().top_status, "2 queries - 3/3");
     // (its files done, its search's first page not yet read)
@@ -1093,6 +1106,7 @@ fn a_gallery_downloader_page_shows_and_controls_its_searches() {
         })
         .unwrap();
     (bound.sync)();
+    refresh_downloader_status_after_deadline(&bound);
     ui.invoke_close_page();
     assert_eq!(
         ui.get_question(),
@@ -1137,6 +1151,7 @@ fn a_watcher_downloader_page_shows_and_controls_its_watchers() {
         .unwrap();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
 
     // download, then watcher: an empty watcher page
@@ -1226,6 +1241,7 @@ fn a_watcher_downloader_page_shows_and_controls_its_watchers() {
         })
         .unwrap();
     (bound.sync)();
+    refresh_downloader_status_after_deadline(&bound);
     assert_eq!(bound.current.borrow().borrow().files(), [files[0].0]);
     let data = ui.get_watcher_data();
     assert_eq!(data.top_status, "2 watchers - 1/1");
@@ -1293,6 +1309,7 @@ fn a_watcher_downloader_page_shows_and_controls_its_watchers() {
         })
         .unwrap();
     (bound.sync)();
+    refresh_downloader_status_after_deadline(&bound);
     let data = ui.get_watcher_data();
     assert!(data.can_retry_failed && !data.can_retry_ignored);
     assert!(data.can_highlight);

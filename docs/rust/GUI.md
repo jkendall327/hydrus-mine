@@ -3573,6 +3573,8 @@ bounds and saves each field independently; Cancel retains raw imports. Only the
 visible current downloader page polls its list/totals on the 250 ms GUI timer. Each
 deadline uses the currently displayed row count and the saved minimum/denominator;
 equality waits for the next tick. Explicit importer actions force an update.
+If a render caller still reads the page, the timer defers without consuming its
+deadline. A deferred explicit refresh belongs only to that page incarnation.
 Highlighted file/job controls, tab progress and close checks stay current while
 the list waits. Hidden windows pause list reads, while rebinding or accepted close
 permanently retires the old scheduler. The actual Qt controls, save/reopen and

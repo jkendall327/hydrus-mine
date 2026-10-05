@@ -194,11 +194,15 @@ fn scheduler(watcher: bool) {
     if watcher {
         ui.invoke_watcher_urls(entered.into());
         ui.invoke_watcher_row_clicked(0, false, false);
-        ui.invoke_watcher_highlight();
+        if ui.get_watcher_data().can_highlight {
+            ui.invoke_watcher_highlight();
+        }
     } else {
         ui.invoke_gallery_queries(entered.into());
         ui.invoke_gallery_row_clicked(0, false, false);
-        ui.invoke_gallery_highlight();
+        if ui.get_gallery_data().can_highlight {
+            ui.invoke_gallery_highlight();
+        }
     }
     let page = bound.current.borrow().clone();
     let queues = if watcher {
@@ -301,6 +305,14 @@ fn scheduler(watcher: bool) {
         serde_json::json!(104.0)
     );
     clock.set(104.25);
+    let held = page.borrow();
+    tick(&windows.get(0).unwrap());
+    assert_eq!(
+        serde_json::json!(held.next_import_status_time()),
+        serde_json::json!(104.0)
+    );
+    assert_eq!(list(&ui, watcher), before, "busy source leaves rows intact");
+    drop(held);
     tick(&windows.get(0).unwrap());
     assert_eq!(pending(&bound, watcher, queue), 1);
     assert_ne!(list(&ui, watcher), before);
@@ -496,6 +508,21 @@ fn scheduler(watcher: bool) {
     assert_eq!(
         serde_json::json!(page.borrow().next_import_status_time()),
         serde_json::json!(205.0)
+    );
+    clock.set(203.25);
+    let held = page.borrow();
+    bound.downloader_updates.force();
+    assert_eq!(
+        serde_json::json!(held.next_import_status_time()),
+        serde_json::json!(205.0),
+        "busy source cannot consume an explicit force request"
+    );
+    drop(held);
+    bound.downloader_updates.refresh();
+    assert_eq!(
+        serde_json::json!(page.borrow().next_import_status_time()),
+        serde_json::json!(205.25),
+        "queued current-owner force bypasses the still-pending deadline once"
     );
     // A new live owner replaces the old current-page scheduler without reviving it.
     let key = hydrus_core::pages::PageKey::random();
