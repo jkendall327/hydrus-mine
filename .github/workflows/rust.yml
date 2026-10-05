@@ -8,6 +8,12 @@ on:
     paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml']
   # (from the Actions tab)
   workflow_dispatch:
+    inputs:
+      full_validation:
+        description: Run the deferred full workspace and cross-platform validation
+        type: boolean
+        required: false
+        default: false
 
 concurrency:
   # Each integration PR owns one current run. Separate checkpoint branches still
@@ -20,10 +26,49 @@ env:
   RUSTFLAGS: -D warnings
 
 jobs:
+  quick-check:
+    # Implementation mode: one current Linux lane, with no GUI code generation,
+    # native GUI suite, platform matrix, render review or parity audit.
+    if: (github.event_name != 'workflow_dispatch' || !inputs.full_validation) && (github.event_name != 'push' || (github.ref != 'refs/heads/codex/overnight-gui-burndown' && !startsWith(github.ref, 'refs/heads/codex/parity-')))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      CARGO_BUILD_JOBS: 2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: '1.94'
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+          cache-workspace-crates: true
+      - name: install media tools and fontconfig
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg libfontconfig1-dev
+      - name: fmt
+        run: cargo fmt --all --check
+      - name: strict Clippy and type checking
+        run: |
+          set -o pipefail
+          cargo clippy --workspace --all-targets --locked --keep-going -- -D warnings 2>&1 | tee /tmp/hydrus-quick-clippy.log
+      - name: save cheap compiler diagnostics
+        if: ${{ failure() }}
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: quick-clippy-${{ github.run_id }}-${{ github.run_attempt }}
+          path: /tmp/hydrus-quick-clippy.log
+          if-no-files-found: ignore
+          retention-days: 3
+      - name: fast core and GUI-model tests
+        run: |
+          cargo test -p hydrus-core --lib --locked
+          cargo test -p hydrus-gui-model --test model --locked
+
   check:
-    # This branch has an open PR: run once per checkpoint, rather than both
-    # its push and pull_request events. Other branch pushes still validate.
-    if: github.event_name != 'push' || (github.ref != 'refs/heads/codex/overnight-gui-burndown' && !startsWith(github.ref, 'refs/heads/codex/parity-'))
+    # Deferred until the owner explicitly requests the final validation pass.
+    if: github.event_name == 'workflow_dispatch' && inputs.full_validation
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -106,7 +151,7 @@ jobs:
   # Keep exact-reference backend/model replays moving when GUI compilation
   # needs a repair. This lane is only for the owner's continuing parity work.
   parity-models:
-    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'codex/parity-')
+    if: github.event_name == 'workflow_dispatch' && inputs.full_validation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -127,7 +172,7 @@ jobs:
   # hydrus-rs should build and pass its tests on Windows and macOS too; the
   # Linux job above is the full check (lints and the parity ratchet).
   other-platforms:
-    if: github.event_name != 'push' || (github.ref != 'refs/heads/codex/overnight-gui-burndown' && !startsWith(github.ref, 'refs/heads/codex/parity-'))
+    if: github.event_name == 'workflow_dispatch' && inputs.full_validation
     strategy:
       fail-fast: false
       matrix:

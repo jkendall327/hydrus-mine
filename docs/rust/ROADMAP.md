@@ -225,6 +225,15 @@ leaves and their remaining boundaries in the GUI map to choose independent work;
 exclude parent groups, aliases and evidence-only reassessments from implementation
 completion goals.
 
+The owner's latest instruction (2026-10-05) is implementation throughput with
+cheap validation: strict Clippy, simple builds and fast tests. Full native GUI,
+cross-platform, rendered and audit passes are deferred until the end of the
+project. Fix bugs that block ongoing work and record other defects for that pass.
+The integrated implementation count remains separate from the fully validated
+240-item ledger. Current work is consolidated into PR #57 following PR #37;
+historical intermediate drafts are superseded. Automatic CI uses one current
+Linux lint/model lane; full jobs require explicit manual validation dispatch.
+
 ## 1. Manage subscriptions (network > subscriptions…)
 
 **Done**:
