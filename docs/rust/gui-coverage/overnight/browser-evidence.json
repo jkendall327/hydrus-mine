@@ -1,28 +1,23 @@
 {
-  "source_commit": "a1a997cd3a64232b65f0b1b1bad16499487af79e",
-  "ci_run_id": 37216336747,
-  "artifact": "docs/rust/gui-progress.html",
-  "html_sha256": "aa37aed3f8a9cb4bb51bd587a232165271e08b660c97187614e8b72686f91702",
-  "browser": "system Chromium through Playwright",
-  "checked_at_utc": "2026-10-04T17:02:02.429706+00:00",
-  "checks": [
-    "inventory/status cards",
-    "189-original-feature completion filter",
-    "search",
-    "reference/native navigation",
-    "reset",
-    "desktop/mobile no horizontal overflow"
-  ],
+  "source_commit": "028fd72f4a3cb747e7588d0987bbb99dd83d53f7",
+  "html_sha256": "c97e10fcd6da408b705e895d402afe47b7050ed9edb2f5425227670afc06849a",
+  "totals": {
+    "reference": 1812,
+    "native": 1733
+  },
+  "metric_agreement": true,
+  "reference_statuses": {
+    "partial": 390,
+    "first_pass": 841,
+    "missing": 581
+  },
+  "completed_filter_count": 240,
+  "native_or_search_matches": 1697,
   "page_errors": [],
-  "runtime_requests": [],
-  "counts": [
-    790,
-    375,
-    647
-  ],
-  "completed_original_leaves": 189,
-  "layouts": [
-    "desktop",
-    "mobile"
-  ]
+  "external_runtime_requests": [],
+  "desktop_mobile_overflow": false,
+  "interaction_checks": true,
+  "local_file_uri": false,
+  "load_method": "offline set_content",
+  "file_navigation_policy": "blocked by administrator"
 }
