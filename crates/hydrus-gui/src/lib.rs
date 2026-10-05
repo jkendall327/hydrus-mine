@@ -3723,11 +3723,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let owner = page();
             let removed = remove_from(owner.clone());
             let guard: Rc<dyn Fn() -> bool> = Rc::new({
+                let weak_main = weak_main.clone();
                 let binding_active = binding_active.clone();
                 let pages = pages.clone();
                 let owner = owner.clone();
                 move || {
                     binding_active.get()
+                        && weak_main.upgrade().is_some()
                         && pages
                             .borrow()
                             .open_pages()
