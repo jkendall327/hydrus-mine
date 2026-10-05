@@ -2561,3 +2561,12 @@ row kinds. Their former shared value rendered both unrelated editors on each
 page. Existing native workflows assert the correct page family and keep their
 routing and namespace render captures for hosted review. This integration repair
 adds no original leaf proposal; runtime and rendered verification remain pending.
+
+Default and registered single-file launch dispatch now reads current Store
+file-domain membership explicitly. The lightweight basic metadata reader leaves
+locations unloaded; treating that empty field as authoritative had rejected every
+local file before OS/process dispatch. The corrected boundary still rejects deleted
+files with retained bytes and accepts restored membership after Store reopen.
+Existing exact OS launch vectors and registered process deadlines are unchanged;
+a focused native deletion/restoration/retirement regression is authored for hosted
+CI. No local Cargo/Rust/mutation runs or additional completion credit are claimed.
