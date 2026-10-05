@@ -4051,7 +4051,8 @@ Cancel changes nothing. Accepted records clear in independent batches of 64,
 preserving unselected files, trash, current/re-added membership and the durable
 physical-deletion queue. The real import-status consumer then permits previously
 deleted files to be imported again. A later batch error leaves earlier batches
-committed and presents a warning. Hidden, retired, rebound or different-page main
+committed and presents its error in the main question dialog until acknowledged;
+acknowledgment does not retry deletion. Hidden, retired, rebound or different-page main
 owners cannot execute a retained menu/answer against another page. A tab
 departure permanently invalidates this action even after returning; an owned
 advanced-deletion child also blocks it.

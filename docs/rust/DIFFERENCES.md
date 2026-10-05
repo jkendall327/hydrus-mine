@@ -3272,7 +3272,9 @@ file newly deleted during confirmation stays outside that plan; a re-added file
 keeps current membership. No filesystem deletion or queue cancellation is added.
 The native main additionally refuses retained hidden/retired/binding-replaced or
 different-current-page callbacks, including a tab departure/return, and
-blocks its owned advanced-deletion child; Qt's modal question ordinarily prevents such
+blocks its owned advanced-deletion child. Native failures use the existing main
+question dialog with a no-op acknowledgment, keeping the error visible across
+refresh without retrying the writer; Qt's modal question ordinarily prevents such
 synthetic dispatch. Both recorded old/default thumbnail menus expose this action;
 no unsupported viewer action or broader media-context parent is claimed. Actual
 Qt recordings completed 2026-10-05 15:27:50–51. The copied fixture's sandbox-denied

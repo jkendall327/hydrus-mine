@@ -2294,6 +2294,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    let selected_clear_pending = Rc::downgrade(&pending);
     window.on_answer({
         let exit_confirmation = exit_confirmation.clone();
         let page = page.clone();
@@ -4609,13 +4610,31 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         || selected_delete_menu_epoch.get() != selected_delete_epoch.get()
                         || !window.window().is_visible()
                         || !window.get_question().is_empty()
-                        || !window.get_warning().is_empty()
+                        || !window.get_tag_menu_question().is_empty()
                         || delete_files
                             .upgrade()
                             .is_none_or(|slot| slot.borrow().is_some())
                     {
                         return;
                     }
+                    // Keep failures in the real owned main question until an
+                    // acknowledgment. Sidebar errors are replaced by refresh.
+                    // A weak pending handle avoids a callback -> ask -> pending
+                    // cycle while a selected-clear confirmation is stored there.
+                    let report_error = {
+                        let pending = selected_clear_pending.clone();
+                        let weak = weak.clone();
+                        let removed = remove_from(owner.clone());
+                        move |error: String| {
+                            let (Some(window), Some(pending)) = (weak.upgrade(), pending.upgrade())
+                            else {
+                                return;
+                            };
+                            window.set_question(error.clone().into());
+                            *pending.borrow_mut() =
+                                Some((Asked::Then(error, Rc::new(|| {})), removed.clone()));
+                        }
+                    };
                     let store = owner.borrow().store().clone();
                     let plan = match hydrus_gui_model::selected_deletion_records::Plan::capture(
                         &store,
@@ -4624,7 +4643,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         Ok(plan) if !plan.files.is_empty() => plan,
                         Ok(_) => return,
                         Err(error) => {
-                            window.set_warning(error.to_string().into());
+                            report_error(error.to_string());
                             return;
                         }
                     };
@@ -4648,6 +4667,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                             if !active.get()
                                 || epoch != selected_delete_epoch.get()
                                 || !window.window().is_visible()
+                                || !window.get_tag_menu_question().is_empty()
                                 || !Rc::ptr_eq(&owner, &current.borrow())
                                 || delete_files
                                     .upgrade()
@@ -4657,7 +4677,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                             }
                             match plan.apply(&store) {
                                 Ok(()) => shown(true),
-                                Err(error) => window.set_warning(error.to_string().into()),
+                                Err(error) => report_error(error.to_string()),
                             }
                         }),
                     ));
