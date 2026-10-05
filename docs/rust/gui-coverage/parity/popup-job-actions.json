@@ -2,9 +2,11 @@
   "schema_version": 1,
   "agent": "popup-job-actions",
   "baseline_git_head": "946ba0b2e07639c23331de0a60a5d3fc6b875264",
-  "implementation_git_head": "8bc6084a120d96526ff409f843a09cfb87644893",
+  "implementation_git_head": "836b4e4a643720073a3f1fee236b26d998021364",
   "implementation_commits": [
-    "8bc6084a120d96526ff409f843a09cfb87644893"
+    "8bc6084a120d96526ff409f843a09cfb87644893",
+    "59437fb04d686c4597d302eb1d2deac47c2da60f",
+    "836b4e4a643720073a3f1fee236b26d998021364"
   ],
   "validation": {
     "referenceRecording": "Actual Qt PopupMessage/JobStatus execution 2026-10-05 05:48:54\u201305:48:57 UTC under the shared oracle lock, basic private fixture; twelve states, private job callables and intercepted clipboard publication only. Reference sources unchanged. Normal controller shutdown; unrelated sandbox Client API bind denial did not affect action controls.",
@@ -13,9 +15,25 @@
     "diff_check": "git diff --check passed.",
     "slint_syntax": "Cached source compiler passed without warnings; no Cargo build.",
     "rust_tests": "Meaningful native, producer, independent Store IPC, API auth/label, schema upgrade/restart, concurrent/reentrant effect and retired/rebound owner regressions authored. Not locally executed under owner instruction; hosted exact-source CI remains pending.",
-    "rendered_artifacts": "Native action regression writes popup_job_actions.png under CARGO_TARGET_TMPDIR when CI executes. Native rendered inspection remains pending.",
+    "rendered_artifacts": "Five native images expected under CARGO_TARGET_TMPDIR when hosted CI executes: clipboard/callable controls, question yes/no controls, their rendered dismissal, and long questions with both other action controls at fixed32/flexible16 construction-time caps. The existing yes/no regression asserts the accepted answer changes rendered pixels while retaining its dismissal/reply/stale-owner checks. The cross-feature regression checks real measured card widths/caps and saved width policy. All native execution and image inspection remain pending.",
     "source_review": "finish_highlight_repair independently reviewed owner-qualified transport, synchronous replacements, serial/reentrant drain, weak poller restart, accepted-answer survival, schema/API defaults and native guards; bounded source accepted. Parent accepted-close composition remains mandatory.",
-    "canonical_status": "Proposal packet only: no frozen ledger, inventory, totals or reference source changed."
+    "canonical_status": "Proposal packet only: no frozen ledger, inventory, totals or reference source changed.",
+    "rendered_artifact_count": 5,
+    "rendered_artifact_files": [
+      "popup_job_actions.png",
+      "popup_job_question.png",
+      "popup_job_question_dismissed.png",
+      "popup_job_question_fixed32.png",
+      "popup_job_question_narrow16.png"
+    ],
+    "render_followup_scope": "59437fb04 adds images to the existing yes/no regression without duplicating semantic tests. 836b4e4a6 adds a bounded cross-feature long-question/action geometry regression using already reviewed/integrated popup-width APIs. The standalone popup branch lacks width2; this follow-up is for the combined integration tree, whose question Text must carry max-width: card.cap - 4px. Parent owns that Slint cap composition. Direct rustfmt --check and diff checks passed; no local Cargo/Rust execution.",
+    "native_source_anchors": {
+      "clipboard_and_repeatable_current_callable_reach_real_native_controls_and_store_effects": "crates/hydrus-gui/tests/gui/popup_job_actions.rs:19",
+      "yes_and_no_dismiss_the_popup_and_reach_the_retained_producer_once": "crates/hydrus-gui/tests/gui/popup_job_actions.rs:150",
+      "removed_question_tokens_and_retired_producers_cannot_answer_successors": "crates/hydrus-gui/tests/gui/popup_job_actions.rs:217",
+      "accepted_close_and_rebinding_retire_queued_calls_even_with_retained_windows_and_bindings": "crates/hydrus-gui/tests/gui/popup_job_actions.rs:265",
+      "long_question_and_action_controls_render_with_fixed_and_narrow_popup_caps": "crates/hydrus-gui/tests/gui/popup_job_actions.rs:325"
+    }
   },
   "claims": [
     {
