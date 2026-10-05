@@ -490,6 +490,34 @@ impl ClientOptions {
         out
     }
 
+    /// Ordered namespace weight rows in the related-tag Options tables.
+    pub fn related_tag_weights(&self, result: bool) -> DecodeResult<Option<Vec<(String, u16)>>> {
+        let settings = Settings::new(KIND, &self.dictionary)?;
+        let key = if result {
+            "related_tags_result_tag_slices_weight_percent"
+        } else {
+            "related_tags_search_tag_slices_weight_percent"
+        };
+        settings
+            .get(key)
+            .map(|meta| {
+                list_items(expect_object(meta, key)?)?
+                    .iter()
+                    .map(|item| {
+                        let value = plain(KIND, item, key)?;
+                        let [slice, weight] = tuple::<2>(KIND, &value, key)?;
+                        let weight = u16::try_from(int(KIND, weight, key)?)
+                            .map_err(|_| malformed(KIND, "related weight is outside 0..10000"))?;
+                        if weight > 10_000 {
+                            return Err(malformed(KIND, "related weight is outside 0..10000"));
+                        }
+                        Ok((string(KIND, slice, key)?, weight))
+                    })
+                    .collect()
+            })
+            .transpose()
+    }
+
     /// The conversion most recently accepted in a conversion child editor.
     pub fn last_used_string_conversion(
         &self,

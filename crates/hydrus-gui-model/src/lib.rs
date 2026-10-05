@@ -56,6 +56,7 @@ pub mod predicate_history;
 pub mod rating_sizes;
 pub mod ratings;
 pub mod ratings_editor;
+pub mod related_weights;
 pub mod scanbar;
 pub mod search_log;
 pub mod selection;

@@ -331,6 +331,37 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &suggestions)?;
+    let mut related = crate::related_tags::Settings::default();
+    if let Some(options) = &options {
+        if let Some(rows) = options.related_tag_weights(false)? {
+            related.weights.search = rows;
+        }
+        if let Some(rows) = options.related_tag_weights(true)? {
+            related.weights.result = rows;
+        }
+        if let Some(enabled) = options.booleans.get("show_related_tags") {
+            related.enabled = *enabled;
+        }
+        if let Some(threshold) = options
+            .integers
+            .get("related_tags_concurrence_threshold_percent")
+        {
+            related.concurrence_percent = u8::try_from(*threshold).unwrap_or(6).clamp(1, 100);
+        }
+        for (index, key) in [
+            "related_tags_search_1_duration_ms",
+            "related_tags_search_2_duration_ms",
+            "related_tags_search_3_duration_ms",
+        ]
+        .iter()
+        .enumerate()
+        {
+            if let Some(ms) = options.integers.get(*key) {
+                related.durations_ms[index] = u32::try_from(*ms).unwrap_or(250).clamp(50, 60_000);
+            }
+        }
+    }
+    insert_setting(&mut input, &related)?;
     let notebook_creation = crate::settings::NotebookCreationSettings {
         rename_new_notebooks: options.as_ref().is_some_and(|options| {
             options.booleans.get("rename_page_of_pages_on_pick_new") == Some(&true)

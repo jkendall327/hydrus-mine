@@ -32,6 +32,7 @@ pub mod pending;
 pub mod popups;
 pub mod queues;
 pub mod regex_favourites;
+pub mod related_tags;
 pub mod schema;
 pub mod services;
 pub mod services_management;

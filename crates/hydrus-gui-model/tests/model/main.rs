@@ -128,3 +128,4 @@ mod tab_presentation;
 mod archive_repair;
 
 mod file_history;
+mod related_weights;
