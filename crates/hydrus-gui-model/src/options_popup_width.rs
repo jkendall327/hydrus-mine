@@ -19,6 +19,11 @@ pub(super) fn page() -> Page {
                     |s, v| s.popup_width.fixed = v,
                 ),
                 check(
+                    "Freeze the popup toaster when the main gui is minimised: ",
+                    |s| s.popup_freeze.minimized,
+                    |s, value| s.popup_freeze.minimized = value,
+                ),
+                check(
                     "Make a short-lived popup on cookie/header updates through the Client API: ",
                     |s| s.api_update_toasts.enabled,
                     |s, value| s.api_update_toasts.enabled = value,

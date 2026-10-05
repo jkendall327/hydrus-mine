@@ -768,6 +768,10 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             &mut input,
             &crate::menu_choice_wheel::MenuChoiceWheel::from_legacy(options),
         )?;
+        insert_setting(
+            &mut input,
+            &crate::popup_freeze::Preferences::from_legacy(options),
+        )?;
         insert_setting(&mut input, &manage_tags_sort(options))?;
         insert_setting(&mut input, &sibling_connector_colours(options))?;
         insert_setting(

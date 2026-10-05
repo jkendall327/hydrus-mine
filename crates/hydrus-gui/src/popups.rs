@@ -262,7 +262,7 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> Binding {
     use std::cell::RefCell;
     use std::rc::Rc;
 
-    use slint::{ComponentHandle as _, Model as _, ModelRc, VecModel};
+    use slint::{ComponentHandle as _, Model as _, ModelRc, SharedString, VecModel};
 
     // Rebinding retires the prior incarnation even while its Bound is retained.
     window.invoke_popup_retire_owner();
@@ -276,8 +276,19 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> Binding {
         active.set(false);
         eprintln!("Could not own popup GUI actions: {error}");
     }
+    let input_valid: Rc<dyn Fn() -> bool> = Rc::new({
+        let active = active.clone();
+        let weak = window.as_weak();
+        move || {
+            active.get()
+                && weak
+                    .upgrade()
+                    .is_some_and(|window| crate::popup_freeze::accepts_input(window.window()))
+        }
+    });
     let model: Rc<VecModel<crate::PopupData>> = Rc::new(VecModel::default());
     window.set_popups(ModelRc::from(model.clone()));
+    window.set_popup_summary(SharedString::default());
     let card_widths = Rc::new(VecModel::<f32>::default());
     let card_caps = Rc::new(VecModel::<f32>::default());
     window.set_popup_card_widths(ModelRc::from(card_widths.clone()));
@@ -315,6 +326,9 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> Binding {
                 return;
             }
             let Some(window) = weak.upgrade() else { return };
+            if !crate::popup_freeze::can_alter(window.window(), &store(&hooks)) {
+                return;
+            }
             let jobs = match store(&hooks).read(|conn| hydrus_store::popups::all(conn, now())) {
                 Ok(jobs) => jobs,
                 Err(e) => {
@@ -376,10 +390,14 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> Binding {
     );
     // change the popup shown at `i`, then show them again
     let change = {
+        let valid = input_valid.clone();
         let hooks = hooks.clone();
         let shown = shown.clone();
         let refresh = refresh.clone();
         move |i: i32, f: fn(&mut Job)| {
+            if !valid() {
+                return;
+            }
             let key = usize::try_from(i)
                 .ok()
                 .and_then(|i| shown.borrow().get(i).map(|v| v.key));
@@ -420,9 +438,13 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> Binding {
         }
     });
     window.on_popups_dismiss_all({
+        let valid = input_valid.clone();
         let hooks = hooks.clone();
         let refresh = refresh.clone();
         move || {
+            if !valid() {
+                return;
+            }
             let done = store(&hooks)
                 .write(|ctx| hydrus_store::popups::dismiss_all_done(ctx.conn(), now()));
             if let Err(e) = done {
@@ -432,9 +454,13 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> Binding {
         }
     });
     window.on_popup_copy_traceback({
+        let valid = input_valid.clone();
         let hooks = hooks.clone();
         let shown = shown.clone();
         move |i| {
+            if !valid() {
+                return;
+            }
             let Some(key) = usize::try_from(i)
                 .ok()
                 .and_then(|i| shown.borrow().get(i).map(|v| v.key))
@@ -459,10 +485,14 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> Binding {
     // "show files": a page of those still in the client, named for them
     // (`ShowFiles`); with none left, the popup goes
     window.on_popup_show_files({
+        let valid = input_valid.clone();
         let hooks = hooks.clone();
         let shown = shown.clone();
         let refresh = refresh.clone();
         move |i| {
+            if !valid() {
+                return;
+            }
             let Some(key) = usize::try_from(i)
                 .ok()
                 .and_then(|i| shown.borrow().get(i).map(|v| v.key))

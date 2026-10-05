@@ -62,6 +62,7 @@ pub mod page_chooser;
 pub mod page_layout;
 pub mod page_tree;
 pub mod png_export;
+pub mod popup_freeze;
 pub mod predicate_editors;
 pub mod predicate_history;
 pub mod preview_zoom;

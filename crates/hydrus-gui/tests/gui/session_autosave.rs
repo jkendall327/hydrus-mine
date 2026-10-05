@@ -327,6 +327,7 @@ fn applied_size_warning_creates_exact_popup_once_and_resets_only_at_new_boot() {
     let (_dirs, store) = store();
     let fixture = hydrus_testkit::fixture_json("session_warning.json");
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let before: GuiSessionSettings = store.read(settings::get).unwrap();
     assert_eq!(
@@ -380,6 +381,7 @@ fn applied_size_warning_creates_exact_popup_once_and_resets_only_at_new_boot() {
     // A new bound client is a new boot; the durable setting survives but the
     // one-boot warning latch does not. No re-enable/reopen repeats within boot.
     let reopened_ui = MainWindow::new().unwrap();
+    reopened_ui.show().unwrap();
     let reopened = bind(&reopened_ui, Pages::open(store.clone()).unwrap());
     assert!(
         store
