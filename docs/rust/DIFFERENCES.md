@@ -3512,8 +3512,8 @@ manual save-last-session action and wider debug GUI/style families remain unclai
 
 ## Database > locations
 
-- "manage granularity" (migrating between 2 and 3 hex characters, and
-  offline folders) isn't there yet; the granularity is only shown.
+- "manage granularity" runs its progress in an ordinary popup rather than
+  a modal dialog, and its questions in button windows.
 - The prefix folder moved first is the first in order, not a random one.
 - The list selects one location; it sorts by location only.
 - The rebalance runs from a non-modal popup and the window stays open

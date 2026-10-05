@@ -21,6 +21,7 @@ pub mod error;
 pub mod file_maintenance;
 pub mod folder_activity;
 pub mod gallery;
+pub mod granularity;
 pub mod gui_colours;
 pub mod idle_state;
 pub mod import;

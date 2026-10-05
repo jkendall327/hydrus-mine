@@ -67,6 +67,7 @@ pub mod force_idle;
 pub mod formula_window;
 mod gallery;
 pub mod gallery_source_window;
+mod granularity_window;
 mod grid;
 pub mod gui_colour_actions;
 mod gui_colours;

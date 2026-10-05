@@ -4361,3 +4361,14 @@ files or go to the override). hydrus-store's `storage_locations` tests cover
 the shares and a full rebalance; `tests/model/database_locations.rs` the
 rows and buttons.
 
+"manage granularity" opens the reference's granularity window: this client's
+line and its "I AM READY TO GO FROM 2 TO 3" (or back) button, and the
+offline-folder buttons. The client migration asks its last check ("yes, I
+have a backup and I am ready"), then moves every file and thumbnail between
+`f3a` and `f3a/b` folders on a worker with a pausable, cancellable popup;
+a cancelled or failed one is undone. The offline migration asks, picks the
+folder, says what granularity it looks like, and moves it likewise. Both
+report the files moved, the time, and any weird files or folders left
+alone. hydrus-store's `granularity` tests cover both ways, the scan, and an
+undone cancel.
+

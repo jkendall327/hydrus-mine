@@ -25,6 +25,21 @@ pub struct StorageLocation {
     pub prefixes: Vec<String>,
 }
 
+/// The folder of prefix `prefix` (`f3a`, `t3ab`) under `base`
+/// (`_GetOurSubfolders`): `f3ab` is `f3a/b`, the first folder carrying the
+/// kind letter.
+pub fn prefix_dir(base: &Path, prefix: &str) -> PathBuf {
+    let (kind, hex) = prefix.split_at(1.min(prefix.len()));
+    let mut dir = base.join(format!("{kind}{}", &hex[..hex.len().min(2)]));
+    let mut rest = hex.get(2..).unwrap_or("");
+    while !rest.is_empty() {
+        let take = rest.len().min(2);
+        dir = dir.join(&rest[..take]);
+        rest = &rest[take..];
+    }
+    dir
+}
+
 /// The on-disk layout of media and thumbnails.
 #[derive(Debug, Clone, Default)]
 pub struct FileStorage {
@@ -111,16 +126,7 @@ impl FileStorage {
         let hex = hash.to_hex();
         let prefix = format!("{kind}{}", &hex[..self.granularity.min(hex.len())]);
         let base = self.prefix_to_base.get(&prefix)?;
-        // 'f3ab' -> ['f3a', 'b']: the first folder carries the kind letter
-        let hex_prefix = &prefix[1..];
-        let mut dir = base.join(format!("{kind}{}", &hex_prefix[..hex_prefix.len().min(2)]));
-        let mut rest = hex_prefix.get(2..).unwrap_or("");
-        while !rest.is_empty() {
-            let take = rest.len().min(2);
-            dir = dir.join(&rest[..take]);
-            rest = &rest[take..];
-        }
-        Some(dir)
+        Some(prefix_dir(base, &prefix))
     }
 
     /// The path of a media file.

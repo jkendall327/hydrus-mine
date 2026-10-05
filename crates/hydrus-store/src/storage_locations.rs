@@ -404,8 +404,11 @@ pub fn next_move(conn: &Connection) -> Result<Option<Move>> {
 /// location (renamed if the filesystems allow, else copied then removed),
 /// then the record.
 pub fn apply_move(store: &crate::Store, step: &Move) -> Result<()> {
-    let source = step.from.join(&step.prefix);
-    let dest = step.to.join(&step.prefix);
+    let source = crate::storage::prefix_dir(&step.from, &step.prefix);
+    let dest = crate::storage::prefix_dir(&step.to, &step.prefix);
+    if let Some(parent) = dest.parent() {
+        std::fs::create_dir_all(parent)?;
+    }
     std::fs::create_dir_all(&step.to)?;
     if source.exists() {
         if std::fs::rename(&source, &dest).is_err() {
@@ -447,8 +450,8 @@ pub fn rebalance(
         };
         say(format!(
             "Moving \"{}\" to \"{}\".",
-            step.from.join(&step.prefix).display(),
-            step.to.join(&step.prefix).display()
+            crate::storage::prefix_dir(&step.from, &step.prefix).display(),
+            crate::storage::prefix_dir(&step.to, &step.prefix).display()
         ));
         apply_move(store, &step)?;
         moved += 1;

@@ -24,6 +24,7 @@ pub(crate) struct Slot {
     runtime: Option<crate::ChoiceButtonsWindow>,
     custom: Option<crate::EditValueWindow>,
     timer: Option<slint::Timer>,
+    granularity: crate::granularity_window::Slots,
 }
 
 pub(crate) type Slots = Rc<RefCell<Slot>>;
@@ -184,7 +185,7 @@ pub(crate) fn open(
     };
     state.reload();
     let state = Rc::new(RefCell::new(state));
-    let refresh = {
+    let refresh: Rc<dyn Fn()> = {
         let weak = window.as_weak();
         let state = state.clone();
         Rc::new(move || {
@@ -397,6 +398,19 @@ fn act(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots, action
             return;
         }
         "rebalance" => return rebalance(state, refresh, slots),
+        "granularity" => {
+            let store = state.borrow().store.clone();
+            let granularity = slots.borrow().granularity.clone();
+            let changed: Rc<dyn Fn()> = {
+                let (state, refresh) = (state.clone(), refresh.clone());
+                Rc::new(move || {
+                    state.borrow_mut().reload();
+                    refresh();
+                })
+            };
+            crate::granularity_window::open(&store, &granularity, changed);
+            return;
+        }
         _ => {}
     }
     refresh();

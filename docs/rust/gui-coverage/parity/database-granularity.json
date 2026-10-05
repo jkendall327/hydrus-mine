@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "agent": "database-granularity",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 2,
+  "claims": [
+    {
+      "id": "audit-media-database-locations-granularity-client",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database > locations > manage granularity: the client's 2-to-3 / 3-to-2 migration with the reference's last check, moving every file and thumbnail between prefix folder depths on a worker with a pausable, cancellable popup (undone on cancel or failure) and the storage records updated; the offline folder migration with its ready check, folder scan (EstimateBaseLocationGranularity) and report.",
+      "source": [
+        "crates/hydrus-store/src/granularity.rs",
+        "crates/hydrus-gui-model/src/database_granularity.rs",
+        "crates/hydrus-gui/src/granularity_window.rs",
+        "crates/hydrus-gui/ui/database_locations.slint"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/granularity.rs::tests"
+      ],
+      "limits": [
+        "Non-modal progress popup; questions as button windows."
+      ]
+    },
+    {
+      "id": "audit-media-database-locations-granularity-offline",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database > locations > manage granularity: the client's 2-to-3 / 3-to-2 migration with the reference's last check, moving every file and thumbnail between prefix folder depths on a worker with a pausable, cancellable popup (undone on cancel or failure) and the storage records updated; the offline folder migration with its ready check, folder scan (EstimateBaseLocationGranularity) and report.",
+      "source": [
+        "crates/hydrus-store/src/granularity.rs",
+        "crates/hydrus-gui-model/src/database_granularity.rs",
+        "crates/hydrus-gui/src/granularity_window.rs",
+        "crates/hydrus-gui/ui/database_locations.slint"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/granularity.rs::tests"
+      ],
+      "limits": [
+        "Non-modal progress popup; questions as button windows."
+      ]
+    }
+  ]
+}

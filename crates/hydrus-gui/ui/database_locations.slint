@@ -93,6 +93,7 @@ export component DatabaseLocationsWindow inherits Window {
                 HorizontalLayout {
                     spacing: 4px;
                     Text { text: root.granularity; horizontal-alignment: right; vertical-alignment: center; color: Theme.text; horizontal-stretch: 1; }
+                    Button { text: "manage granularity"; enabled: !root.busy; clicked => { root.action("granularity"); } }
                 }
                 HorizontalLayout {
                     spacing: 4px;
@@ -141,6 +142,59 @@ export component LocationMaxSizeWindow inherits Window {
             spacing: 6px;
             Button { text: "apply"; clicked => { root.apply(); } }
             Button { text: "cancel"; clicked => { root.cancel(); } }
+        }
+    }
+}
+
+// "manage granularity" (`ReviewGranularityPanel`): this client's
+// migration between 2 and 3, and an offline folder's.
+export component GranularityWindow inherits Window {
+    in property <string> window-title: "manage granularity";
+    title: root.window-title;
+    preferred-width: 640px;
+    background: Theme.window;
+    in property <string> warning;
+    in property <string> intro;
+    in property <string> client-label;
+    in property <string> offline-label;
+    in property <int> granularity: 2;
+    in property <bool> busy;
+    callback action(string);
+    VerticalLayout {
+        padding: 8px;
+        spacing: 6px;
+        Text { text: root.warning; wrap: word-wrap; color: Theme.error; font-weight: 700; }
+        Text { text: root.intro; wrap: word-wrap; color: Theme.text; }
+        Rectangle {
+            border-width: 1px;
+            border-color: Theme.border;
+            VerticalLayout {
+                padding: 6px;
+                spacing: 4px;
+                Text { text: "this client"; font-weight: 700; color: Theme.text; }
+                Text { text: root.client-label; wrap: word-wrap; color: Theme.text; }
+                HorizontalLayout {
+                    alignment: end;
+                    if root.granularity == 2: Button { text: "I AM READY TO GO FROM 2 TO 3"; enabled: !root.busy; clicked => { root.action("2to3"); } }
+                    if root.granularity == 3: Button { text: "I want to return from 3 back to 2"; enabled: !root.busy; clicked => { root.action("3to2"); } }
+                }
+            }
+        }
+        Rectangle {
+            border-width: 1px;
+            border-color: Theme.border;
+            VerticalLayout {
+                padding: 6px;
+                spacing: 4px;
+                Text { text: "granularising offline storage"; font-weight: 700; color: Theme.text; }
+                Text { text: root.offline-label; wrap: word-wrap; color: Theme.text; }
+                HorizontalLayout {
+                    alignment: end;
+                    spacing: 4px;
+                    Button { text: "Migrate an offline folder from 2 to 3"; enabled: !root.busy; clicked => { root.action("folder 2to3"); } }
+                    Button { text: "Migrate an offline folder from 3 to 2"; enabled: !root.busy; clicked => { root.action("folder 3to2"); } }
+                }
+            }
         }
     }
 }
