@@ -759,6 +759,38 @@ fn hidden_or_parent_reconciles_actual_system_and_nested_child_cancellation() {
         !child.get_blocked(),
         "nested OR Cancel reconciles the still-owned hidden parent"
     );
+    let before = bound.current.borrow().borrow().active_predicates().to_vec();
+    child.invoke_edited("system:filesize".into());
+    child.invoke_enter(false);
+    let system = bound
+        .search_or
+        .system
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert!(child.get_blocked());
+    ui.hide().unwrap();
+    system.invoke_cancel();
+    ui.show().unwrap();
+    assert!(bound.search_or.system.borrow().is_none());
+    assert!(
+        !child.get_blocked(),
+        "cleanup reconciles its live local parent while the external Main owner is temporarily hidden"
+    );
+    child.invoke_or_action(3);
+    let nested_slot = bound.search_or.child().unwrap();
+    let nested = nested_slot.borrow().as_ref().unwrap().clone_strong();
+    assert!(child.get_blocked());
+    ui.hide().unwrap();
+    nested.invoke_cancel();
+    ui.show().unwrap();
+    assert!(nested_slot.borrow().is_none());
+    assert!(
+        !child.get_blocked(),
+        "nested cleanup also reconciles before the external owner-watch timer runs"
+    );
+    assert_eq!(bound.current.borrow().borrow().active_predicates(), before);
     child.invoke_apply();
     assert!(bound.search_or.borrow().is_none());
     assert!(!ui.get_search_or_open());
