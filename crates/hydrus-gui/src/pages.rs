@@ -1024,10 +1024,13 @@ impl Pages {
     /// Open a blank query in the notebook current at delivery, with a frozen
     /// file location and the current saved default tag service.
     pub fn new_query_page(&mut self, location: hydrus_search::LocationContext) {
-        // A deferred query is not a retained page-chooser insertion request.
-        self.new_page_target = None;
-        self.new_page_depth = None;
+        // Background delivery uses the current notebook without consuming a
+        // still-open chooser's captured destination/insertion anchor.
+        let target = self.new_page_target.take();
+        let depth = self.new_page_depth.take();
         self.add(new_search_page_on(&self.store, location));
+        self.new_page_target = target;
+        self.new_page_depth = depth;
     }
 
     /// Open `files` in a new page searching `location` (the reference's

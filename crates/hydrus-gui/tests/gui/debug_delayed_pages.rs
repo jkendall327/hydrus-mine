@@ -318,3 +318,54 @@ fn cancel_exit_preserves_query_but_accepted_exit_rebind_and_owner_drop_retire_re
     assert_eq!(last.debug_long_popup.pending_pages(), 0);
     assert!(!last.debug_long_popup.timer_running());
 }
+
+#[test]
+fn background_delivery_preserves_the_open_choosers_frozen_notebook_and_anchor() {
+    let (_dirs, store) = super::subscriptions::store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::open(store).unwrap());
+    let now = clock(&bound);
+    let source = bound.pages.borrow().shown().key;
+    launch(&ui);
+    bound.pages.borrow_mut().new_page(&NewPage::Pages).unwrap();
+    let delivery_notebook = bound.pages.borrow().tabs()[1].parent.unwrap();
+    // The actual chooser captures root + before source, despite current nested.
+    ui.invoke_tab_new_page_requested("".into(), source.to_hex().into());
+    assert!(ui.get_chooser_labels().row_count() > 0);
+    let before = bound.pages.borrow().page_count();
+    now.set(Duration::from_secs(5));
+    bound.debug_long_popup.tick();
+    assert_eq!(bound.pages.borrow().page_count(), before + 1);
+    assert_eq!(
+        bound.pages.borrow().tabs()[1].parent,
+        Some(delivery_notebook)
+    );
+    assert!(
+        ui.get_chooser_labels().row_count() > 0,
+        "delivery leaves the chooser live"
+    );
+    // Choose Special → page of pages through the real retained modal callbacks.
+    ui.invoke_chooser_pressed(6);
+    ui.invoke_chooser_pressed(8);
+    let pages = bound.pages.borrow();
+    assert_eq!(pages.page_count(), before + 3);
+    let root = &pages.session().pages;
+    assert_eq!(
+        root[1].key, source,
+        "chooser still inserts before its captured source"
+    );
+    assert_eq!(root[2].key, delivery_notebook);
+    assert!(matches!(root[0].content, PageContent::Pages(_)));
+    let PageContent::Pages(children) = &root[2].content else {
+        panic!("delivery notebook");
+    };
+    assert_eq!(
+        children.len(),
+        2,
+        "chooser did not silently insert into the delivery notebook"
+    );
+    assert_eq!(pages.tabs()[1].parent, Some(root[0].key));
+    assert_eq!(ui.get_chooser_labels().row_count(), 0);
+}
