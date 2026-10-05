@@ -64,7 +64,7 @@ unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in
 [gui-coverage/README.md](gui-coverage/README.md).
 
-Continuous source work now proposes 111 further original leaf completions over
+Continuous source work now proposes 114 further original leaf completions over
 that validated 240 checkpoint: 53 on `codex/parity-more-controls`, five more
 on the dependent `codex/parity-next-details` branch, and 13 more on
 `codex/parity-preview-and-launching`, plus nine on
@@ -73,7 +73,13 @@ on the dependent `codex/parity-next-details` branch, and 13 more on
 `codex/parity-tag-sort-and-refresh`, and one on
 `codex/parity-image-and-window-controls`, and seven on
 `codex/parity-appearance-and-file-menu`, and four on
-`codex/parity-preview-and-filter-controls`. The four latest proposals cover the
+`codex/parity-preview-and-filter-controls`, and three on
+`codex/parity-predicate-and-job-controls`. The three latest proposals add the
+reference multiline hash/type controls, owned cleanup warnings and text repaint,
+and the real two-job long-text popup producer. Active predicates now support
+populated system editing, selection, inversion and captured search commands;
+remaining batch, tag-text and OR/inherited menu branches keep that original action
+Partial with zero completion credit. The four preceding proposals cover the
 independent preview default zoom, file-size comparison/value/unit editor, and
 both archive/delete finish policies. Saved choices reach actual preview geometry,
 typed searches, selectable deletion domains and an owned 1.2-second button delay.
@@ -120,7 +126,7 @@ and mouse idle tracking remains Partial because it observes application windows.
 Broader external
 call/editor boundaries also remain Partial. Inspect the current branch with
 `python3 scripts/gui_burndown.py --commit HEAD`; do not substitute its proposed
-total of 351 for the validated 240 ledger. The embedded-ICC leaf adds the saved policy with real importer, preview,
+total of 354 for the validated 240 ledger. The embedded-ICC leaf adds the saved policy with real importer, preview,
 viewer and maintenance consumers. The viewer tag-list now opens owned search
 pages and requests main-window activation on supported native platforms; that
 activation remains Partial because Wayland activation is unresolved. Application
