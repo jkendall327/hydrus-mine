@@ -64,7 +64,10 @@ impl Editor {
     }
     /// Add after the exact namespace normalization/warnings. RGB comes from the owner.
     pub fn add(&mut self, raw: &str, rgb: [u8; 3]) -> Result<(), &'static str> {
-        let mut namespace = raw.to_lowercase().trim().to_owned();
+        let mut namespace = raw
+            .to_lowercase()
+            .trim_matches(|c: char| c.is_whitespace() || matches!(c, '\u{1c}'..='\u{1f}'))
+            .to_owned();
         if namespace.is_empty() || namespace == ":" {
             return Err(
                 "Sorry, that namespace means unnamespaced/default namespaced, which are already listed.",
@@ -81,20 +84,24 @@ impl Editor {
         {
             return Err("Sorry, that namespace is already listed!");
         }
-        let selected: Vec<_> = self
-            .rows()
-            .into_iter()
-            .filter(|row| row.selected)
-            .map(|row| row.namespace)
+        let old: Vec<_> = self
+            .colours
+            .iter()
+            .map(|(namespace, _)| namespace.clone())
             .collect();
         self.colours.push((Some(namespace), rgb));
         self.sort();
-        self.selection = Selection::default();
-        for (index, (namespace, _)) in self.colours.iter().enumerate() {
-            if selected.contains(namespace) {
-                self.selection.selected.insert(index);
-            }
-        }
+        let new: Vec<_> = self
+            .colours
+            .iter()
+            .map(|(namespace, _)| namespace.clone())
+            .collect();
+        // Qt keeps positional last-hit/anchor values after sorting. Only its
+        // selected term set follows namespace identities; range bookkeeping is numeric.
+        self.selection.remap_selected(|index| {
+            old.get(index)
+                .and_then(|namespace| new.iter().position(|entry| entry == namespace))
+        });
         Ok(())
     }
     /// Add with fresh random RGB channels, as the visible Add control does.

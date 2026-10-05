@@ -5,7 +5,6 @@ export component NamespaceColourList inherits Rectangle {
     in property <[NamespaceColourRow]> rows;
     in property <bool> child-open;
     in property <bool> enabled;
-    in property <bool> can-delete;
     callback clicked(int,bool,bool);
     callback action(string);
     min-height:220px;
@@ -26,7 +25,7 @@ export component NamespaceColourList inherits Rectangle {
         }
         HorizontalLayout {
             Button {text:"add";enabled:root.enabled && !root.child-open;clicked=>{root.action("add");}}
-            Button {text:"delete";enabled:root.enabled && !root.child-open && root.can-delete;clicked=>{root.action("delete");}}
+            Button {text:"delete";enabled:root.enabled && !root.child-open;clicked=>{root.action("delete");}}
         }
     }
 }

@@ -24,7 +24,7 @@ def record(session):
         original=c.new_options;old_colours=dict(HC.options['namespace_colours'])
         old_enter=Quick.EnterText;old_warning=Message.ShowWarning;old_yes=Quick.GetYesNo;old_random=Module.random.randint
         draft=original.Duplicate();c.new_options=draft
-        answer={'text':'','yes':False,'cancel':False};questions=[];warnings=[];rgb=iter([12,34,56]*20)
+        answer={'text':'','yes':False,'cancel':False};questions=[];warnings=[];rgb=iter([12,34,56]*50)
         def enter(win,message,*args,**kwargs):
             questions.append(message)
             if answer['cancel']:raise HydrusExceptions.CancelledException()
@@ -39,9 +39,9 @@ def record(session):
             return [dict(namespace=k,rgb=list(v)) for k,v in sorted(HC.options['namespace_colours'].items(),key=lambda item:'' if item[0] is None else item[0])]
         try:
             panel=Module.TagPresentationPanel(c.gui,draft);initial=rows(panel);events=[]
-            for text,cancel in [('unused',True),('',False),(':',False),(' SYSTEM: ',False),(' -Parity Artists::: ',False),('parity artists',False),('::::',False),(' Artist:Inner: ',False)]:
+            for text,cancel in [('unused',True),('',False),(':',False),(' SYSTEM: ',False),(' -Parity Artists::: ',False),('parity artists',False),('::::',False),(' Artist:Inner: ',False),('\u001c:\u001c',False),('\u001c \u001f',False),('series:\u001c',False)]:
                 answer.update(text=text,cancel=cancel);questions.clear();warnings.clear();panel._AddNamespaceColour()
-                events.append(dict(action='add',input=text,cancel=cancel,questions=list(questions),warnings=list(warnings),rows=rows(panel),durable=values()))
+                events.append(dict(action='add',input=text,cancel=cancel,questions=list(questions),warnings=list(warnings),rows=rows(panel),durable=values(),delete_enabled=panel._delete_namespace_colour.isEnabled()))
             # A default and unnamespaced row are selected along with deletable rows.
             selected=[None,'','creator','parity artists']
             panel._namespace_colours._DeselectAll()
@@ -50,7 +50,14 @@ def record(session):
                 panel._namespace_colours._Hit(False,True,index)
             for yes in [False,True]:
                 answer['yes']=yes;questions.clear();panel._DeleteNamespaceColour()
-                events.append(dict(action='delete',selected=selected,yes=yes,questions=list(questions),rows=rows(panel),durable=values()))
+                events.append(dict(action='delete',selected=selected,yes=yes,questions=list(questions),rows=rows(panel),durable=values(),delete_enabled=panel._delete_namespace_colour.isEnabled()))
+            for selected in [[None,''],[]]:
+                panel._namespace_colours._DeselectAll()
+                for namespace in selected:
+                    index=next(i for i,t in enumerate(panel._namespace_colours._ordered_terms) if t.GetNamespace()==namespace)
+                    panel._namespace_colours._Hit(False,True,index)
+                questions.clear();panel._DeleteNamespaceColour()
+                events.append(dict(action='delete',selected=selected,clear_selection=True,yes=False,questions=list(questions),rows=rows(panel),durable=values(),delete_enabled=panel._delete_namespace_colour.isEnabled()))
             panel.deleteLater()
             cancelled=Module.TagPresentationPanel(c.gui,draft);cancelled_rows=rows(cancelled);cancelled.deleteLater()
             panel=Module.TagPresentationPanel(c.gui,draft)
@@ -66,9 +73,30 @@ def record(session):
                 ac=AC.AutoCompleteDropdownTagsRead(c.gui,b'parity namespace colours',F.FileSearchContext(location_context=ClientLocation.LocationContext.STATICCreateSimple(CC.LOCAL_FILE_SERVICE_KEY)),synchronised=False)
                 actual=ac._favourites_list._GetRowsOfTextsAndColours(Data.ListBoxItemPredicate(predicate))
                 colour_cases.append(dict(input=namespace,saved=draft.GetNoneableString('or_connector_custom_namespace_colour'),rows=actual));ac.deleteLater()
+            selection_cases=[]
+            for mode in ['plain_then_add','shift_then_add','inverse_then_add']:
+                selection_panel=Module.TagPresentationPanel(c.gui,draft)
+                selection_events=[]
+                def selection_snapshot(action,**extra):
+                    selection_events.append(dict(action=action,rows=rows(selection_panel),selected=[t.GetNamespace() for t in selection_panel._namespace_colours._ordered_terms if t in selection_panel._namespace_colours._selected_terms],delete_enabled=selection_panel._delete_namespace_colour.isEnabled(),**extra))
+                selection_snapshot('initial')
+                def hit(namespace,shift=False,ctrl=False):
+                    index=next(i for i,t in enumerate(selection_panel._namespace_colours._ordered_terms) if t.GetNamespace()==namespace)
+                    selection_panel._namespace_colours._Hit(shift,ctrl,index);selection_snapshot('hit',namespace=namespace,shift=shift,ctrl=ctrl)
+                hit('creator')
+                if mode != 'plain_then_add':hit('system',True)
+                if mode == 'inverse_then_add':hit('creator',True,True)
+                answer.update(text='aaa parity',cancel=False);selection_panel._AddNamespaceColour();selection_snapshot('add',input='aaa parity')
+                if mode == 'plain_then_add':hit('system',True)
+                elif mode == 'shift_then_add':hit('parity artists',True)
+                else:hit('parity artists',True,True)
+                answer['yes']=True;selection_panel._DeleteNamespaceColour();selection_snapshot('delete')
+                hit(None,True)
+                selection_panel.deleteLater()
+                selection_cases.append(dict(mode=mode,events=selection_events))
             labels=[label.text() for label in reopened.findChildren(QW.QLabel) if label.text()=='Namespace for the OR top row: ']
             reopened.deleteLater()
-            return dict(initial=initial,events=events,cancelled_rows=cancelled_rows,saved=saved,reopened_rows=reopened_rows,colour_cases=colour_cases,labels=labels,random_rgb=[12,34,56])
+            return dict(initial=initial,events=events,cancelled_rows=cancelled_rows,saved=saved,reopened_rows=reopened_rows,colour_cases=colour_cases,selection_cases=selection_cases,labels=labels,random_rgb=[12,34,56])
         finally:
             c.new_options=original;HC.options['namespace_colours']=old_colours
             Quick.EnterText=old_enter;Quick.GetYesNo=old_yes;Message.ShowWarning=old_warning;Module.random.randint=old_random

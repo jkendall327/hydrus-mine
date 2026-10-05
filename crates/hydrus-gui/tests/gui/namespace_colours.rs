@@ -43,6 +43,15 @@ fn expected_labels(rows: &Value) -> Value {
             .collect::<Vec<_>>()
     )
 }
+fn namespace_label(namespace: &Value) -> String {
+    if namespace.is_null() {
+        "namespaced tags".to_owned()
+    } else if namespace == "" {
+        "unnamespaced tags".to_owned()
+    } else {
+        format!("'{}' tags", namespace.as_str().unwrap())
+    }
+}
 fn rgb(colour: slint::Color) -> [u8; 3] {
     [colour.red(), colour.green(), colour.blue()]
 }
@@ -150,36 +159,55 @@ fn actual_namespace_questions_cancel_retired_owners_reopen_and_live_colours_repl
                 assert_eq!(options.get_error(), warning.as_str().unwrap());
             }
         } else {
+            if event["clear_selection"] == true {
+                for (index, row) in options.get_namespace_colour_rows().iter().enumerate() {
+                    if row.selected {
+                        options.invoke_namespace_colour_clicked(
+                            i32::try_from(index).unwrap(),
+                            true,
+                            false,
+                        );
+                    }
+                }
+            }
             if event["yes"] == false {
                 for namespace in event["selected"].as_array().unwrap() {
-                    let label = if namespace.is_null() {
-                        "namespaced tags".to_owned()
-                    } else if namespace == "" {
-                        "unnamespaced tags".to_owned()
-                    } else {
-                        format!("'{}' tags", namespace.as_str().unwrap())
-                    };
+                    let label = namespace_label(namespace);
                     let index = options
                         .get_namespace_colour_rows()
                         .iter()
                         .position(|row| row.label == label)
                         .unwrap();
-                    options.invoke_namespace_colour_clicked(
-                        i32::try_from(index).unwrap(),
-                        true,
-                        false,
-                    );
+                    if !options
+                        .get_namespace_colour_rows()
+                        .row_data(index)
+                        .unwrap()
+                        .selected
+                    {
+                        options.invoke_namespace_colour_clicked(
+                            i32::try_from(index).unwrap(),
+                            true,
+                            false,
+                        );
+                    }
                 }
             }
             options.invoke_namespace_colour_action("delete".into());
-            let child = bound
-                .options_colour_child
-                .borrow()
-                .as_ref()
-                .unwrap()
-                .clone_strong();
-            assert_eq!(json!([child.get_message().as_str()]), event["questions"]);
-            child.invoke_answered(event["yes"].as_bool().unwrap());
+            if event["questions"].as_array().unwrap().is_empty() {
+                assert!(
+                    bound.options_colour_child.borrow().is_none(),
+                    "protected/empty Delete asks nothing"
+                );
+            } else {
+                let child = bound
+                    .options_colour_child
+                    .borrow()
+                    .as_ref()
+                    .unwrap()
+                    .clone_strong();
+                assert_eq!(json!([child.get_message().as_str()]), event["questions"]);
+                child.invoke_answered(event["yes"].as_bool().unwrap());
+            }
         }
         assert!(bound.options_colour_child.borrow().is_none());
         assert_eq!(labels(&options), expected_labels(&event["rows"]));
@@ -287,6 +315,70 @@ fn actual_namespace_questions_cancel_retired_owners_reopen_and_live_colours_repl
         added_colour,
         "accepted namespace reaches actual media tag list"
     );
+    // Sorting keeps Qt's numeric Shift range state while selections follow terms.
+    for case in fixture["selection_cases"].as_array().unwrap() {
+        let options = open(&ui, &bound);
+        for event in case["events"].as_array().unwrap() {
+            match event["action"].as_str().unwrap() {
+                "initial" => {}
+                "hit" => {
+                    let label = namespace_label(&event["namespace"]);
+                    let index = options
+                        .get_namespace_colour_rows()
+                        .iter()
+                        .position(|row| row.label == label)
+                        .unwrap();
+                    options.invoke_namespace_colour_clicked(
+                        i32::try_from(index).unwrap(),
+                        event["ctrl"].as_bool().unwrap(),
+                        event["shift"].as_bool().unwrap(),
+                    );
+                }
+                "add" => {
+                    options.invoke_namespace_colour_action("add".into());
+                    let child = bound
+                        .options_colour_child
+                        .borrow()
+                        .as_ref()
+                        .unwrap()
+                        .clone_strong();
+                    child.invoke_name_entered(event["input"].as_str().unwrap().into());
+                }
+                "delete" => {
+                    options.invoke_namespace_colour_action("delete".into());
+                    let child = bound
+                        .options_colour_child
+                        .borrow()
+                        .as_ref()
+                        .unwrap()
+                        .clone_strong();
+                    assert_eq!(child.get_message(), "Delete all selected colours?");
+                    child.invoke_answered(true);
+                }
+                other => panic!("unrecorded selection action {other}"),
+            }
+            assert_eq!(labels(&options), expected_labels(&event["rows"]));
+            let selected: Vec<_> = options
+                .get_namespace_colour_rows()
+                .iter()
+                .filter(|row| row.selected)
+                .map(|row| row.label.to_string())
+                .collect();
+            let expected: Vec<_> = event["selected"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(namespace_label)
+                .collect();
+            assert_eq!(selected, expected, "{case}");
+            assert_eq!(
+                store.read::<NamespaceColours>(settings::get).unwrap(),
+                saved,
+                "sorted selection stays in the parent draft"
+            );
+        }
+        options.invoke_cancel();
+    }
     // An explicit empty field starts from legacy None, but Cancel still preserves it.
     let cancelled = open(&ui, &bound);
     let index = cancelled

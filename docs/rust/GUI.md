@@ -3109,6 +3109,8 @@ persist across reopening and reach existing media tag and OR predicate rows.
 The OR-row namespace text preserves named, missing and empty namespace choices;
 explicitly entering empty text selects the unnamespaced colour even when the
 saved legacy value was unset.
+Namespace colour Add preserves the reference list’s positional Shift-range bookkeeping after sorting, while selected namespaces follow their rows. Delete stays available for empty or protected selections and quietly leaves those rows alone. Namespace input also accepts the reference’s control-character whitespace trimming before reserved-name and duplicate checks.
+
 Options > GUI > frame locations also stages the disable-rescue checkbox,
 rescued-position safety padding and its 0–100 pixel amount. Legacy preferences
 import and reopen with their recorded values. Remembered positions for the main

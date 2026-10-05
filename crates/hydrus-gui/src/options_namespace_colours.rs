@@ -41,7 +41,6 @@ pub(crate) fn bind(
                         })
                         .collect::<Vec<_>>(),
                 )));
-                window.set_namespace_colour_can_delete(list.removal_question().is_some());
                 window.set_namespace_colour_child_open(
                     child
                         .upgrade()
