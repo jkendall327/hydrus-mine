@@ -5,7 +5,7 @@
 
 use std::sync::Arc;
 
-use slint::Model as _;
+use slint::{ComponentHandle as _, Model as _};
 
 use hydrus_core::HashId;
 use hydrus_gui::media_actions::{self, Deletion};
@@ -66,6 +66,7 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
         &ui,
         Pages::single(super::common::all_local_page(store.clone())),
     );
+    ui.show().unwrap();
     ui.invoke_search_edited("system:inbox".into());
     ui.invoke_search_accepted();
     let page = bound.current.borrow().clone();

@@ -89,6 +89,23 @@ fn assert_event(store: &Store, event: &serde_json::Value) {
         );
     }
 }
+// Show alone does not measure a MinimalSoftwareWindow. Settle the real pane
+// before selection, so zero-width startup cannot masquerade as a collapsed sash.
+fn settle_viewport(
+    ui: &MainWindow,
+    preview: &hydrus_gui::preview_window::Monitor,
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+) {
+    assert!(ui.window().is_visible());
+    for _ in 0..3 {
+        headless::render(native, 1000, 900);
+    }
+    preview.refresh();
+    assert!(ui.get_layout_available_width() > 0.0);
+    assert!(ui.get_sidebar_actual_width() > 0.0);
+    assert!(ui.get_preview_actual_height() > 0.0);
+    assert!(!ui.get_preview_splitter_hidden());
+}
 fn wait_image(ui: &MainWindow, preview: &hydrus_gui::preview_window::Monitor) {
     let started = std::time::Instant::now();
     while ui.get_preview_media().size().width == 0 {
@@ -127,6 +144,7 @@ fn preview_display_replays_qt_page_splitter_active_clear_close_and_successor_own
     let other = file(&store, other_hash);
     save_settings(&store, true, None, Some(1000));
     ui.show().unwrap();
+    settle_viewport(&ui, &bound.preview, &windows.get(0).unwrap());
     for event in fixture["events"].as_array().unwrap() {
         clock.set(event["at_ms"].as_i64().unwrap());
         match event["event"].as_str().unwrap() {
@@ -259,7 +277,7 @@ fn row(options: &OptionsWindow, label: &str) -> i32 {
 fn saved_preview_options_reach_open_display_duration_cap_cancel_and_confirmed_client_exit() {
     let fixture = hydrus_testkit::fixture_json("preview_viewing_intervals.json");
     let (_directories, store) = store();
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     // Qt's recorder supplies these media directly to its viewing-statistics
     // policy, including a trashed video outside the current local-file search.
@@ -280,6 +298,7 @@ fn saved_preview_options_reach_open_display_duration_cap_cancel_and_confirmed_cl
         move || clock.get()
     }));
     ui.show().unwrap();
+    settle_viewport(&ui, &bound.preview, &windows.get(0).unwrap());
     select(&ui, &bound, first);
     let edit = options(&ui, &bound);
     let minimum = row(
@@ -381,7 +400,7 @@ fn saved_preview_options_reach_open_display_duration_cap_cancel_and_confirmed_cl
 fn native_preview_minimum_cap_before_minimum_none_limits_and_inactive_finish() {
     let fixture = hydrus_testkit::fixture_json("preview_viewing_intervals.json");
     let (_directories, store) = store();
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(
         &ui,
@@ -395,6 +414,7 @@ fn native_preview_minimum_cap_before_minimum_none_limits_and_inactive_finish() {
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
     ui.show().unwrap();
+    settle_viewport(&ui, &bound.preview, &windows.get(0).unwrap());
     let first = file(&store, fixture["file"].as_str().unwrap());
     let views = || {
         store
@@ -452,7 +472,7 @@ fn native_preview_minimum_cap_before_minimum_none_limits_and_inactive_finish() {
 fn native_page_generation_same_file_restore_and_late_decode_cannot_publish_to_successor() {
     let fixture = hydrus_testkit::fixture_json("preview_viewing_intervals.json");
     let (_directories, store) = store();
-    let _windows = headless::init();
+    let windows = headless::init();
     save_settings(&store, true, None, None);
     let first = file(&store, fixture["file"].as_str().unwrap());
     let other = file(
@@ -476,6 +496,7 @@ fn native_page_generation_same_file_restore_and_late_decode_cannot_publish_to_su
         move || clock.get()
     }));
     ui.show().unwrap();
+    settle_viewport(&ui, &bound.preview, &windows.get(0).unwrap());
     ui.invoke_tab_chosen(0, 0);
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
@@ -592,7 +613,7 @@ fn preview_workers_bound_slow_decodes_and_coalesce_the_latest_owned_target() {
     use std::sync::atomic::{AtomicUsize, Ordering};
     let fixture = hydrus_testkit::fixture_json("preview_viewing_intervals.json");
     let (_directories, store) = store();
-    let _windows = headless::init();
+    let windows = headless::init();
     save_settings(&store, true, None, None);
     let first = file(&store, fixture["file"].as_str().unwrap());
     let other = file(
@@ -641,6 +662,7 @@ fn preview_workers_bound_slow_decodes_and_coalesce_the_latest_owned_target() {
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
     ui.show().unwrap();
+    settle_viewport(&ui, &bound.preview, &windows.get(0).unwrap());
     request(&ui, &bound, first);
     assert_eq!(
         entry
@@ -727,7 +749,7 @@ fn preview_workers_bound_slow_decodes_and_coalesce_the_latest_owned_target() {
 fn rejected_preview_decode_never_counts_a_thumbnail_selection_or_loading_placeholder() {
     let fixture = hydrus_testkit::fixture_json("preview_viewing_intervals.json");
     let (_directories, store) = store();
-    let _windows = headless::init();
+    let windows = headless::init();
     save_settings(&store, true, None, None);
     let ui = MainWindow::new().unwrap();
     let bound = bind(
@@ -739,10 +761,18 @@ fn rejected_preview_decode_never_counts_a_thumbnail_selection_or_loading_placeho
         let clock = clock.clone();
         move || clock.get()
     }));
-    bound.preview.set_decoder(Arc::new(|_, _| None));
+    let decoded = Arc::new(std::sync::atomic::AtomicUsize::new(0));
+    bound.preview.set_decoder(Arc::new({
+        let decoded = decoded.clone();
+        move |_, _| {
+            decoded.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+            None
+        }
+    }));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
     ui.show().unwrap();
+    settle_viewport(&ui, &bound.preview, &windows.get(0).unwrap());
     let first = file(&store, fixture["file"].as_str().unwrap());
     request(&ui, &bound, first);
     let started = std::time::Instant::now();
@@ -751,6 +781,11 @@ fn rejected_preview_decode_never_counts_a_thumbnail_selection_or_loading_placeho
         assert!(started.elapsed() < std::time::Duration::from_secs(5));
         std::thread::sleep(std::time::Duration::from_millis(5));
     }
+    assert_eq!(
+        decoded.load(std::sync::atomic::Ordering::SeqCst),
+        1,
+        "the visible eligible canvas actually attempted its rejected decode"
+    );
     assert!(!ui.get_preview_has_media());
     assert_eq!(ui.get_preview_media().size().width, 0);
     clock.set(10_000);
@@ -767,7 +802,7 @@ fn rejected_preview_decode_never_counts_a_thumbnail_selection_or_loading_placeho
 #[test]
 fn preview_rejects_actual_reference_nonlocal_invalid_resolution_and_do_not_show_statuses() {
     let fixture = hydrus_testkit::fixture_json("preview_viewing_intervals.json");
-    let _windows = headless::init();
+    let windows = headless::init();
     for event in fixture["rejections"].as_array().unwrap() {
         assert_eq!(event["shown"], false);
         let (_directories, store) = store();
@@ -822,7 +857,13 @@ fn preview_rejects_actual_reference_nonlocal_invalid_resolution_and_do_not_show_
             )),
         );
         ui.show().unwrap();
+        settle_viewport(
+            &ui,
+            &bound.preview,
+            &windows.get(windows.count() - 1).unwrap(),
+        );
         request(&ui, &bound, first);
+        assert_eq!(bound.current.borrow().borrow().focused(), Some(0));
         assert!(!ui.get_preview_has_media());
         assert!(!ui.get_preview_loading());
         bound.preview.close();
