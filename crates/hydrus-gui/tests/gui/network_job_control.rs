@@ -253,7 +253,7 @@ fn page_cog_rules_cancel_apply_and_error_owner_boundary() {
 fn page_override_reaches_live_engine_and_auto_policy_reaches_next_request() {
     use hydrus_net::{BandwidthScope, Job, NetEngine, NetOptions, Request};
     use std::io::{Read, Write};
-    headless::init();
+    let _headless_windows = headless::init();
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
     let mut used = Tracker::new(now());
@@ -365,7 +365,7 @@ fn page_override_reaches_live_engine_and_auto_policy_reaches_next_request() {
 #[test]
 fn auto_policy_belongs_to_page_control_and_retires_when_page_closes() {
     use std::{cell::Cell, collections::HashSet};
-    headless::init();
+    let _headless_windows = headless::init();
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
     let mut s = snapshot();
@@ -496,7 +496,7 @@ fn auto_policy_belongs_to_page_control_and_retires_when_page_closes() {
 
 #[test]
 fn current_jobs_cog_retries_uses_rules_and_retains_finished_error() {
-    headless::init();
+    let _headless_windows = headless::init();
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
     let mut s = snapshot();
