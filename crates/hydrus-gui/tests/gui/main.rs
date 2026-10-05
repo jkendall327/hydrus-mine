@@ -152,3 +152,4 @@ mod archive_repair;
 mod file_history;
 
 mod autocomplete_tabs;
+mod related_weight_table;
