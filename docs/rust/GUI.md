@@ -3452,3 +3452,13 @@ keep their own routes.
 Main-window menu titles refresh after page changes while the window is live.
 Releasing the window and its binding also releases its pages and thumbnail
 loaders, including windows opened by native headless tests.
+
+Headless UI tests retain the returned window collector for the complete UI scope.
+Its final stack-scope drop hides visible components and releases callbacks, pages
+and workers before the UI thread returns. Helpers returning windows leave that
+collector in the caller's scope. This cleanup preserves the Store writer's normal
+shutdown and joins; it no longer runs from a thread-local destructor. A bounded
+Windows lifetime replay precedes the unchanged default-parallel native suite.
+The retained-component, callback/Store release and two-second worker-release
+assertions remain, with an additional explicit pre-thread-exit component check.
+Hosted execution remains pending; this repair proposes no feature completion.
