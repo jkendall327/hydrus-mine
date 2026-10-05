@@ -3472,7 +3472,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let previous = archive_delete
                 .borrow()
                 .as_ref()
-                .map(|child| child.clone_strong());
+                .map(slint::ComponentHandle::clone_strong);
             if let Some(previous) = previous {
                 previous.invoke_forget();
             }
@@ -4048,7 +4048,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                                         && Rc::ptr_eq(&owner, &current.borrow())
                                 }
                             });
-                            let applied: Rc<dyn Fn(&[HashId])> = Rc::new({
+                            let applied: local_transfer_window::AppliedFiles = Rc::new({
                                 let source = transfer.source.clone();
                                 let kind = transfer.kind;
                                 let location = owner.borrow().location().clone();
@@ -5984,15 +5984,15 @@ fn open_viewer(
                             let show_info = show_info.clone();
                             move |choice| {
                                 let location = model.borrow().location().clone();
-                                if !hydrus_gui_model::file_view_removal::advanced(
+                                if hydrus_gui_model::file_view_removal::advanced(
                                     &store, &location, choice,
                                 )
                                 .is_empty()
                                 {
-                                    remove_file(file);
-                                } else {
                                     removed(&[]);
                                     show_info();
+                                } else {
+                                    remove_file(file);
                                 }
                             }
                         });
@@ -6353,15 +6353,13 @@ fn open_viewer(
             };
             // (out of the page's domains, it leaves the page and the viewer;
             // else, trashed say, its hover frame says so)
-            if !hydrus_gui_model::file_view_removal::deleted(
-                &store, &location, &affected, &deletion,
-            )
-            .is_empty()
+            if hydrus_gui_model::file_view_removal::deleted(&store, &location, &affected, &deletion)
+                .is_empty()
             {
-                remove_file(file);
-            } else {
                 removed(&[]);
                 show_info();
+            } else {
+                remove_file(file);
             }
         }
     });

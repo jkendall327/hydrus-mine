@@ -8,6 +8,8 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 pub type Slot = Rc<RefCell<Option<LocalTransferWindow>>>;
+/// A callback receiving the identities successfully migrated from the source page.
+pub type AppliedFiles = Rc<dyn Fn(&[hydrus_core::HashId])>;
 pub fn cancel(slot: &Slot) {
     let window = slot
         .borrow()
@@ -34,7 +36,7 @@ pub fn open_with_result(
     store: &Arc<Store>,
     transfer: Transfer,
     guard: Rc<dyn Fn() -> bool>,
-    applied: Rc<dyn Fn(&[hydrus_core::HashId])>,
+    applied: AppliedFiles,
 ) -> Result<Option<LocalTransferWindow>, String> {
     cancel(slot);
     if !guard() {
