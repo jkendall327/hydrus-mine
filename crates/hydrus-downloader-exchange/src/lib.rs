@@ -10,6 +10,7 @@ pub mod logins;
 pub mod processing;
 pub mod routers;
 mod subscription_legacy;
+mod subscription_seed_cache;
 pub mod subscriptions;
 pub mod subsidiaries;
 mod transport;

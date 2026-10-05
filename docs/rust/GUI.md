@@ -158,7 +158,15 @@ import options converted through the reference rules. Historical single-query
 subscriptions acquire checker settings; obsolete gallery identifiers become a
 paused unknown downloader, with the original version-specific limit defaults. Fresh history identities
 invalidate cached velocity exactly as the reference does. Modern containers retain
-settings, query headers, cached example/velocity data and both URL histories. `oracle/record_subscription_exchange.py` records the actual Qt list
+settings, query headers, cached example/velocity data and both URL histories.
+Historical file seed-cache versions 1–7 now pass through the exchange codec's
+reference upgrade rules: first-occurrence deduplication through version 4,
+source-time reset through version 5, old Tumblr spelling migration through version
+6, and URL/path seed construction. Integer/boolean/None version-1 notes convert
+with Python's text spelling. Actual Qt direct conversion and list import/export
+recordings constrain order, timestamps, statuses, counts and examples. Histories
+with duplicate native identities or complex/float Python note representations
+fail explicitly before staging. `oracle/record_subscription_exchange.py` records the actual Qt list
 clipboard flow and reference PNG. Manage subscriptions now exposes the original clipboard/JSON/PNG transport
 menus, dispatching to an owned import/export child: clipboard/JSON text or JSON/PNG files are reviewed, imported
 subscriptions remain staged; JSON export asks before overwriting an existing file,
