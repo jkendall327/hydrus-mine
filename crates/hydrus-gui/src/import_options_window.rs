@@ -21,7 +21,8 @@ use hydrus_store::Store;
 use hydrus_store::services::ServiceRegistry;
 
 use crate::import_options_editor::{
-    CUSTOM_CHOICE, DESCRIPTION, Editor, Kind, inbox_choices, use_default_label,
+    CUSTOM_CHOICE, DESCRIPTION, EXISTING_TAGS_FILTER_MESSAGE, Editor, Kind, TagFilterTarget,
+    inbox_choices, use_default_label,
 };
 use crate::{ImportOptionsWindow, ResolutionLimit, SizeLimit, TagServiceRow};
 
@@ -643,6 +644,10 @@ fn open_inner(
             if let Some(overwrite) = overwrite {
                 overwrite.invoke_cancel();
             }
+            let filter = state.borrow().tag_filter.borrow_mut().take();
+            if let Some(filter) = filter {
+                filter.invoke_cancel();
+            }
             let child = state.borrow().write_tags.borrow_mut().take();
             if let Some(child) = child {
                 child.invoke_cancel();
@@ -654,36 +659,26 @@ fn open_inner(
             closed();
         }
     };
-    // the tag filters, each edited in the tag filter editor
+    // The child captures its field/service identity and updates only this owner.
     let edit_filter = {
         let weak = window.as_weak();
         let state = state.clone();
         let store = store.clone();
-        move |service: Option<usize>| {
+        let active = active.clone();
+        move |target: TagFilterTarget| {
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_favourite_child_open() {
+            if !active.get()
+                || window.get_favourite_child_open()
+                || window.get_tag_child_open()
+                || window.get_overwrite_open()
+            {
                 return;
             }
             let (filter, slot) = {
                 let state = state.borrow();
-                let values = &state.editor.values;
-                let filter = match service {
-                    None => values.tag_filtering.as_ref().map(|o| o.blacklist.clone()),
-                    Some(i) => {
-                        tag_services(&state.services.services)
-                            .get(i)
-                            .and_then(|(key, _)| {
-                                values.tags.as_ref().map(|o| {
-                                    o.service(key)
-                                        .map(|s| s.get_tags_filter.clone())
-                                        .unwrap_or_default()
-                                })
-                            })
-                    }
-                };
-                (filter, state.tag_filter.clone())
+                (state.editor.tag_filter(&target), state.tag_filter.clone())
             };
             let Some(filter) = filter else {
                 return;
@@ -692,65 +687,88 @@ fn open_inner(
                 .read(hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>)
                 .unwrap_or_default()
                 .0;
-            let message = match service {
-                None => crate::import_options_editor::BLACKLIST_MESSAGE,
-                Some(_) if advanced => "",
-                Some(_) => crate::import_options_editor::GET_TAGS_FILTER_MESSAGE,
+            let message = match &target {
+                TagFilterTarget::Blacklist => crate::import_options_editor::BLACKLIST_MESSAGE,
+                TagFilterTarget::ExistingTags(_) => EXISTING_TAGS_FILTER_MESSAGE,
+                TagFilterTarget::ParsedTags(_) if advanced => "",
+                TagFilterTarget::ParsedTags(_) => {
+                    crate::import_options_editor::GET_TAGS_FILTER_MESSAGE
+                }
+            };
+            let blacklist_only = matches!(target, TagFilterTarget::Blacklist);
+            let title = if matches!(target, TagFilterTarget::ExistingTags(_)) {
+                "edit already-exist filter"
+            } else {
+                crate::tag_filter_editor::title(blacklist_only)
             };
             let applied: Rc<dyn Fn(hydrus_core::tag_filter::TagFilter)> = {
                 let weak = window.as_weak();
                 let state = state.clone();
+                let active = active.clone();
                 Rc::new(move |filter| {
+                    if !active.get() {
+                        return;
+                    }
                     let Some(window) = weak.upgrade() else {
                         return;
                     };
-                    {
-                        let mut state = state.borrow_mut();
-                        let key = service.and_then(|i| {
-                            tag_services(&state.services.services)
-                                .get(i)
-                                .map(|s| s.0.clone())
-                        });
-                        let values = &mut state.editor.values;
-                        match key {
-                            None => {
-                                if let Some(o) = &mut values.tag_filtering {
-                                    o.blacklist = filter;
-                                }
-                            }
-                            Some(key) => {
-                                if let Some(o) = &mut values.tags {
-                                    service_options(o, &key).get_tags_filter = filter;
-                                }
-                            }
-                        }
-                    }
+                    state.borrow_mut().editor.set_tag_filter(&target, filter);
                     show(&window, &state.borrow());
                     show_tag_services(&window, &state.borrow());
                 })
             };
-            let blacklist_only = service.is_none();
             match crate::tag_filter_window::open(
                 &store,
                 &filter,
                 blacklist_only,
-                crate::tag_filter_editor::title(blacklist_only),
+                title,
                 message,
                 &slot,
                 applied,
             ) {
-                Ok(editor) => *slot.borrow_mut() = Some(editor),
-                Err(e) => eprintln!("could not open the tag filter editor: {e}"),
+                Ok(editor) => {
+                    let weak = window.as_weak();
+                    editor.on_closed(move || {
+                        if let Some(window) = weak.upgrade() {
+                            window.set_tag_child_open(false);
+                        }
+                    });
+                    *slot.borrow_mut() = Some(editor);
+                    window.set_tag_child_open(true);
+                }
+                Err(error) => eprintln!("could not open the tag filter editor: {error}"),
             }
         }
     };
     window.on_edit_blacklist({
         let edit_filter = edit_filter.clone();
-        move || edit_filter(None)
+        move || edit_filter(TagFilterTarget::Blacklist)
     });
-    window.on_edit_get_tags_filter(move |i| {
-        if let Ok(i) = usize::try_from(i) {
-            edit_filter(Some(i));
+    window.on_edit_get_tags_filter({
+        let edit_filter = edit_filter.clone();
+        let state = state.clone();
+        move |index| {
+            let key = usize::try_from(index).ok().and_then(|index| {
+                tag_services(&state.borrow().services.services)
+                    .get(index)
+                    .map(|service| service.0.clone())
+            });
+            if let Some(key) = key {
+                edit_filter(TagFilterTarget::ParsedTags(key));
+            }
+        }
+    });
+    window.on_edit_existing_tags_filter({
+        let state = state.clone();
+        move |index| {
+            let key = usize::try_from(index).ok().and_then(|index| {
+                tag_services(&state.borrow().services.services)
+                    .get(index)
+                    .map(|service| service.0.clone())
+            });
+            if let Some(key) = key {
+                edit_filter(TagFilterTarget::ExistingTags(key));
+            }
         }
     });
     // Detached write-autocomplete lists return only their accepted tags to this draft.
@@ -762,7 +780,7 @@ fn open_inner(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_favourite_child_open() {
+            if window.get_favourite_child_open() || window.get_tag_child_open() {
                 return;
             }
             if !window.window().is_visible() {
@@ -875,7 +893,7 @@ fn open_inner(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_favourite_child_open() {
+            if window.get_favourite_child_open() || window.get_tag_child_open() {
                 return;
             }
             if let Ok(i) = usize::try_from(i) {
@@ -892,7 +910,7 @@ fn open_inner(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_favourite_child_open() {
+            if window.get_favourite_child_open() || window.get_tag_child_open() {
                 return;
             }
             {
@@ -914,7 +932,7 @@ fn open_inner(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_favourite_child_open() {
+            if window.get_favourite_child_open() || window.get_tag_child_open() {
                 return;
             }
             if let Some(o) = &mut state.borrow_mut().editor.values.file_filtering {
@@ -935,7 +953,7 @@ fn open_inner(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_favourite_child_open() {
+            if window.get_favourite_child_open() || window.get_tag_child_open() {
                 return;
             }
             read(&window, &mut state.borrow_mut());
@@ -949,7 +967,7 @@ fn open_inner(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_favourite_child_open() {
+            if window.get_favourite_child_open() || window.get_tag_child_open() {
                 return;
             }
             {
@@ -983,7 +1001,7 @@ fn open_inner(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_favourite_child_open() {
+            if window.get_favourite_child_open() || window.get_tag_child_open() {
                 return;
             }
             {
@@ -1007,7 +1025,7 @@ fn open_inner(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_favourite_child_open() {
+            if window.get_favourite_child_open() || window.get_tag_child_open() {
                 return;
             }
             {
@@ -1032,7 +1050,7 @@ fn open_inner(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_favourite_child_open() {
+            if window.get_favourite_child_open() || window.get_tag_child_open() {
                 return;
             }
             {
@@ -1120,8 +1138,15 @@ fn open_inner(
         move || refresh()
     });
     window.on_favourite({
+        let weak = window.as_weak();
         let refresh = refresh_favourites.clone();
         move |action, name| {
+            if weak
+                .upgrade()
+                .is_none_or(|window| window.get_tag_child_open())
+            {
+                return;
+            }
             favourites.choose(action, name.as_str());
             refresh();
         }
@@ -1132,7 +1157,10 @@ fn open_inner(
         let state = state.clone();
         let weak = window.as_weak();
         move || {
-            if !active.get() {
+            if !active.get()
+                || state.borrow().tag_filter.borrow().is_some()
+                || state.borrow().write_tags.borrow().is_some()
+            {
                 return;
             }
             let result = hydrus_downloader_exchange::import_options::encode_text(
@@ -1151,7 +1179,7 @@ fn open_inner(
     window.on_paste_options({
         let active = active.clone(); let state = state.clone(); let weak = window.as_weak(); let store = store.clone();
         move |index| {
-            if !active.get() || state.borrow().overwrite.borrow().is_some() || state.borrow().favourites.as_ref().is_some_and(|owner| owner.busy()) { return; }
+            if !active.get() || state.borrow().tag_filter.borrow().is_some() || state.borrow().write_tags.borrow().is_some() || state.borrow().overwrite.borrow().is_some() || state.borrow().favourites.as_ref().is_some_and(|owner| owner.busy()) { return; }
             let Some(window) = weak.upgrade() else { return; };
             let result = crate::from_clipboard().and_then(|text| hydrus_downloader_exchange::import_options::decode_text(&text).map_err(|e| e.to_string()));
             let incoming = match result { Ok(options) => options, Err(error) => { window.set_clipboard_error(format!("Could not understand the clipboard as JSON-serialised Import Options Container.\n\n{error}").into()); return; } };
@@ -1192,6 +1220,7 @@ fn open_inner(
         let close = close.clone();
         move || {
             if !active.get()
+                || state.borrow().tag_filter.borrow().is_some()
                 || state.borrow().write_tags.borrow().is_some()
                 || state.borrow().overwrite.borrow().is_some()
                 || state

@@ -15,6 +15,7 @@ mod duplicate_colours;
 mod duplicates_page;
 mod edit_subscription;
 mod embedded_metadata;
+mod existing_tags_filter;
 mod file_log;
 mod filename_rules;
 mod filename_simple;

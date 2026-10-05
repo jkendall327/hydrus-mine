@@ -3306,3 +3306,14 @@ and preserves other canvases and timestamps. Preview minimum/maximum rules are
 editable and migrate from the reference; older native settings use the reference
 5-second/60-second defaults. Decline, closing the owning window and callbacks
 from retired questions preserve the records and any successor question.
+
+An importer's per-service tags page now offers “set a filter for already-exist
+test”. It opens the shared whitelist/blacklist/advanced tag-filter editor with
+the reference explanation and parser namespaces. Accepting the filter enables
+“only add tags that already exist” for that captured service and changes only
+the importer draft. Cancelling the child preserves its filter and toggle;
+cancelling or closing the importer closes the child and invalidates retained
+callbacks. Parent Apply waits for the child. Saved importer options retain the
+filter after reopening and feed the file importer's existing-tag consumer for
+both parsed and additional tags. Only tags admitted by this filter are tested
+against current mappings on the chosen service; excluded tags bypass the test.

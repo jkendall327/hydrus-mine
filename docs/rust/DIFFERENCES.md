@@ -2409,3 +2409,15 @@ Broader database maintenance and viewing-statistics families remain Partial.
 Actual Qt handlers and the reference SQLite module were recorded on eight cases;
 native/model regressions and a question PNG are authored for hosted CI. No local
 Cargo build, Rust test or mutation run was performed.
+
+The per-service already-exists filter action uses an owned detached shared tag
+filter editor, while Qt opens its modal editor from the cog menu. Accepting
+enables the test and stages the captured service's filter; Cancel and owner
+retirement do not save it. The importer already stored and consumed this filter,
+and now has a native editing route. Actual Qt recording covers real modal
+Cancel/accept, saved typed-object reopening, and real per-service mapping reads
+for parsed/additional tags, including disabled-test bypass. Authored model,
+native and real local-file-importer regressions await hosted CI; no local Cargo
+build, Rust test or mutation run was performed. This closes only the original
+`import-existing-tags-filter` action; broader service/import-option parents
+remain Partial, including other unimplemented controls.
