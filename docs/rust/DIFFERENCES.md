@@ -2269,3 +2269,4 @@ does. Applying Options therefore reaches earlier visible viewers; drafts and
 Cancel do not. Closing an earlier viewer retires only its own handlers, leaves
 the successor active, and retained/re-shown closed handles cannot act. The
 focused two-owner native replay is authored for hosted CI, not locally executed.
+The sibling connector fade and custom-namespace preferences now have typed import/persistence, staged Options controls and segmented painting in every existing native sibling-annotation consumer. As in Qt, storage-list terms do not permit fades, while write-autocomplete predicate terms do. The broader Tag Presentation and tag-list families remain Partial: this slice does not add sibling decorations to native surfaces that never had them, expand OR rows, or complete list menus/navigation. Native fonts, palettes and clipping follow the existing Slint lists; the reference and hosted native PNGs expose the rendered solid/gradient states.

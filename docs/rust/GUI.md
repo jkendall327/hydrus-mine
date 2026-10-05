@@ -3186,3 +3186,4 @@ about/auto-resolution/subscription/network-session/times-editor relative-time
 labels still use the fixed default formatters. The inspected radio Return flag
 is unclaimed because the reference dialog behaved identically in both states
 on the recorded platform. Broader GUI/misc/menu coverage stays Partial.
+Tag Presentation offers the sibling connector colour controls. Fading disables the optional namespace choice and uses the ideal tag’s colour; turning fading off allows a named, missing, empty, or ideal-tag namespace choice. Apply saves the staged preferences and Cancel discards them. Manage Tags paints raw/count, connector and ideal-tag runs separately with solid colours; shared write-autocomplete rows can fade between namespace colours, including selected backgrounds. Detached tag editors and both relationship inputs share those runs, and open, visible editors refresh after another owner changes the preferences without replacing the input or selected tags.

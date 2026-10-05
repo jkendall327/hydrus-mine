@@ -141,7 +141,9 @@ pub(crate) fn open(
                     input
                         .rows()
                         .iter()
-                        .map(|r| crate::list_text(&r.label, colours.tag(&r.colour_tag)))
+                        .map(|r| {
+                            crate::styled_list_text(&r.label, colours.tag(&r.colour_tag), &r.parts)
+                        })
                         .collect::<Vec<_>>(),
                 ))
             };
@@ -281,16 +283,49 @@ pub(crate) fn open(
             menu.open(&entries, x, y);
         }
     });
+    let colour_updates = crate::tag_text::watch(
+        binding.borrow().model.store(),
+        Rc::new({
+            let weak = window.as_weak();
+            let active = active.clone();
+            let binding = binding.clone();
+            let tag_menu = tag_menu.clone();
+            move || {
+                active.get()
+                    && !tag_menu.busy()
+                    && binding.borrow().operation.is_none()
+                    && weak
+                        .upgrade()
+                        .is_some_and(|window| window.window().is_visible())
+            }
+        }),
+        Rc::new({
+            let binding = binding.clone();
+            let refresh = refresh.clone();
+            move || {
+                {
+                    let mut binding = binding.borrow_mut();
+                    let service = binding.model.service();
+                    let pair = &mut binding.inputs[service];
+                    pair.0.fetch();
+                    pair.1.fetch();
+                }
+                refresh();
+            }
+        }),
+    );
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let slot = slot.clone();
         let active = active.clone();
         let binding = binding.clone();
         let tag_menu = tag_menu.clone();
+        let colour_updates = colour_updates.clone();
         move || {
             if !active.replace(false) {
                 return;
             }
+            colour_updates.stop();
             binding.borrow_mut().operation = None;
             tag_menu.close();
             if let Some(w) = weak.upgrade() {

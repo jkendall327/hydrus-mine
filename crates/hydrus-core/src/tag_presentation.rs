@@ -361,3 +361,79 @@ mod tests {
         assert!(!is_decimal("12a"));
     }
 }
+
+/// Colours for the presentation-only sibling connector in storage/write lists.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct SiblingConnectorColours {
+    pub fade: bool,
+    /// None uses the ideal tag's namespace; an explicit empty string is unnamespaced.
+    pub namespace: Option<String>,
+}
+impl Default for SiblingConnectorColours {
+    fn default() -> Self {
+        Self {
+            fade: true,
+            namespace: Some("system".into()),
+        }
+    }
+}
+/// One painted text run; fade starts at the preceding run's namespace colour.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TagText {
+    pub text: String,
+    pub colour: [u8; 3],
+    pub previous_colour: [u8; 3],
+    pub fade: bool,
+}
+impl SiblingConnectorColours {
+    pub fn runs(
+        &self,
+        (raw, prefix): (&str, String),
+        connector: &str,
+        (ideal, ideal_text): (&str, String),
+        suffix: String,
+        colours: &NamespaceColours,
+        can_fade: bool,
+    ) -> Vec<TagText> {
+        let raw_colour = colours.tag(raw);
+        let ideal_colour = colours.tag(ideal);
+        let connector_colour = if self.fade {
+            ideal_colour
+        } else {
+            self.namespace
+                .as_deref()
+                .map_or(ideal_colour, |namespace| colours.colour(Some(namespace)))
+        };
+        let mut runs = vec![
+            TagText {
+                text: prefix,
+                colour: raw_colour,
+                previous_colour: raw_colour,
+                fade: false,
+            },
+            TagText {
+                text: connector.into(),
+                colour: connector_colour,
+                previous_colour: raw_colour,
+                fade: self.fade && can_fade && raw_colour != connector_colour,
+            },
+            TagText {
+                text: ideal_text,
+                colour: ideal_colour,
+                previous_colour: connector_colour,
+                fade: false,
+            },
+        ];
+        if !suffix.is_empty() {
+            let colour = colours.colour(Some(""));
+            runs.push(TagText {
+                text: suffix,
+                colour,
+                previous_colour: ideal_colour,
+                fade: self.fade && can_fade && ideal_colour != colour,
+            });
+        }
+        runs
+    }
+}

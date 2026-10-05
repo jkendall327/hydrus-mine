@@ -1,0 +1,910 @@
+{
+  "options": {
+    "initial": {
+      "fade": true,
+      "namespace": "system"
+    },
+    "before_apply": {
+      "fade": true,
+      "namespace": "system"
+    },
+    "cancelled": {
+      "fade": true,
+      "namespace": "system"
+    },
+    "applied": {
+      "fade": false,
+      "namespace": "character"
+    },
+    "reopened": {
+      "fade": false,
+      "namespace": "character"
+    },
+    "labels": [
+      "Fade the colour of the sibling connector string on Qt6: ",
+      "Namespace for the colour of the sibling connecting string: "
+    ]
+  },
+  "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+  ],
+  "corpus": [
+    {
+      "tag": "character:parity ideal",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ]
+    },
+    {
+      "tag": "creator:parity alias",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ]
+    }
+  ],
+  "siblings": [
+    [
+      "creator:parity alias",
+      "character:parity ideal"
+    ]
+  ],
+  "parents": [],
+  "file_context": [
+    "6c6f63616c2066696c6573"
+  ],
+  "tag_service": "6c6f63616c2074616773",
+  "query": "creator:parity alias",
+  "cases": [
+    {
+      "fade": true,
+      "namespace": "system",
+      "namespace_enabled": false,
+      "reopened_text": "system",
+      "storage": [
+        {
+          "tag": "creator:parity alias",
+          "rows": [
+            [
+              [
+                "creator:parity alias (1)",
+                [
+                  170,
+                  0,
+                  0
+                ]
+              ],
+              [
+                " → ",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ],
+              [
+                "character:parity ideal",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": false
+        },
+        {
+          "tag": "character:parity ideal",
+          "rows": [
+            [
+              [
+                "character:parity ideal (2)",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": false
+        }
+      ],
+      "write": [
+        {
+          "tag": "character:parity ideal",
+          "rows": [
+            [
+              [
+                "character:parity ideal (1)",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": true
+        },
+        {
+          "tag": "creator:parity alias",
+          "rows": [
+            [
+              [
+                "creator:parity alias (1)",
+                [
+                  170,
+                  0,
+                  0
+                ]
+              ],
+              [
+                " → ",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ],
+              [
+                "character:parity ideal",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": true
+        }
+      ]
+    },
+    {
+      "fade": false,
+      "namespace": null,
+      "namespace_enabled": true,
+      "reopened_text": "system",
+      "storage": [
+        {
+          "tag": "creator:parity alias",
+          "rows": [
+            [
+              [
+                "creator:parity alias (1)",
+                [
+                  170,
+                  0,
+                  0
+                ]
+              ],
+              [
+                " → ",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ],
+              [
+                "character:parity ideal",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": false
+        },
+        {
+          "tag": "character:parity ideal",
+          "rows": [
+            [
+              [
+                "character:parity ideal (2)",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": false
+        }
+      ],
+      "write": [
+        {
+          "tag": "character:parity ideal",
+          "rows": [
+            [
+              [
+                "character:parity ideal (1)",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": true
+        },
+        {
+          "tag": "creator:parity alias",
+          "rows": [
+            [
+              [
+                "creator:parity alias (1)",
+                [
+                  170,
+                  0,
+                  0
+                ]
+              ],
+              [
+                " → ",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ],
+              [
+                "character:parity ideal",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": true
+        }
+      ]
+    },
+    {
+      "fade": false,
+      "namespace": "system",
+      "namespace_enabled": true,
+      "reopened_text": "system",
+      "storage": [
+        {
+          "tag": "creator:parity alias",
+          "rows": [
+            [
+              [
+                "creator:parity alias (1)",
+                [
+                  170,
+                  0,
+                  0
+                ]
+              ],
+              [
+                " → ",
+                [
+                  153,
+                  101,
+                  21
+                ]
+              ],
+              [
+                "character:parity ideal",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": false
+        },
+        {
+          "tag": "character:parity ideal",
+          "rows": [
+            [
+              [
+                "character:parity ideal (2)",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": false
+        }
+      ],
+      "write": [
+        {
+          "tag": "character:parity ideal",
+          "rows": [
+            [
+              [
+                "character:parity ideal (1)",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": true
+        },
+        {
+          "tag": "creator:parity alias",
+          "rows": [
+            [
+              [
+                "creator:parity alias (1)",
+                [
+                  170,
+                  0,
+                  0
+                ]
+              ],
+              [
+                " → ",
+                [
+                  153,
+                  101,
+                  21
+                ]
+              ],
+              [
+                "character:parity ideal",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": true
+        }
+      ]
+    },
+    {
+      "fade": false,
+      "namespace": "character",
+      "namespace_enabled": true,
+      "reopened_text": "character",
+      "storage": [
+        {
+          "tag": "creator:parity alias",
+          "rows": [
+            [
+              [
+                "creator:parity alias (1)",
+                [
+                  170,
+                  0,
+                  0
+                ]
+              ],
+              [
+                " → ",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ],
+              [
+                "character:parity ideal",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": false
+        },
+        {
+          "tag": "character:parity ideal",
+          "rows": [
+            [
+              [
+                "character:parity ideal (2)",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": false
+        }
+      ],
+      "write": [
+        {
+          "tag": "character:parity ideal",
+          "rows": [
+            [
+              [
+                "character:parity ideal (1)",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": true
+        },
+        {
+          "tag": "creator:parity alias",
+          "rows": [
+            [
+              [
+                "creator:parity alias (1)",
+                [
+                  170,
+                  0,
+                  0
+                ]
+              ],
+              [
+                " → ",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ],
+              [
+                "character:parity ideal",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": true
+        }
+      ]
+    },
+    {
+      "fade": false,
+      "namespace": "missing namespace",
+      "namespace_enabled": true,
+      "reopened_text": "missing namespace",
+      "storage": [
+        {
+          "tag": "creator:parity alias",
+          "rows": [
+            [
+              [
+                "creator:parity alias (1)",
+                [
+                  170,
+                  0,
+                  0
+                ]
+              ],
+              [
+                " → ",
+                [
+                  114,
+                  160,
+                  193
+                ]
+              ],
+              [
+                "character:parity ideal",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": false
+        },
+        {
+          "tag": "character:parity ideal",
+          "rows": [
+            [
+              [
+                "character:parity ideal (2)",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": false
+        }
+      ],
+      "write": [
+        {
+          "tag": "character:parity ideal",
+          "rows": [
+            [
+              [
+                "character:parity ideal (1)",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": true
+        },
+        {
+          "tag": "creator:parity alias",
+          "rows": [
+            [
+              [
+                "creator:parity alias (1)",
+                [
+                  170,
+                  0,
+                  0
+                ]
+              ],
+              [
+                " → ",
+                [
+                  114,
+                  160,
+                  193
+                ]
+              ],
+              [
+                "character:parity ideal",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": true
+        }
+      ]
+    },
+    {
+      "fade": false,
+      "namespace": "",
+      "namespace_enabled": true,
+      "reopened_text": "",
+      "storage": [
+        {
+          "tag": "creator:parity alias",
+          "rows": [
+            [
+              [
+                "creator:parity alias (1)",
+                [
+                  170,
+                  0,
+                  0
+                ]
+              ],
+              [
+                " → ",
+                [
+                  0,
+                  111,
+                  250
+                ]
+              ],
+              [
+                "character:parity ideal",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": false
+        },
+        {
+          "tag": "character:parity ideal",
+          "rows": [
+            [
+              [
+                "character:parity ideal (2)",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": false
+        }
+      ],
+      "write": [
+        {
+          "tag": "character:parity ideal",
+          "rows": [
+            [
+              [
+                "character:parity ideal (1)",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": true
+        },
+        {
+          "tag": "creator:parity alias",
+          "rows": [
+            [
+              [
+                "creator:parity alias (1)",
+                [
+                  170,
+                  0,
+                  0
+                ]
+              ],
+              [
+                " → ",
+                [
+                  0,
+                  111,
+                  250
+                ]
+              ],
+              [
+                "character:parity ideal",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": true
+        }
+      ]
+    },
+    {
+      "fade": false,
+      "namespace": " character ",
+      "namespace_enabled": true,
+      "reopened_text": " character ",
+      "storage": [
+        {
+          "tag": "creator:parity alias",
+          "rows": [
+            [
+              [
+                "creator:parity alias (1)",
+                [
+                  170,
+                  0,
+                  0
+                ]
+              ],
+              [
+                " → ",
+                [
+                  114,
+                  160,
+                  193
+                ]
+              ],
+              [
+                "character:parity ideal",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": false
+        },
+        {
+          "tag": "character:parity ideal",
+          "rows": [
+            [
+              [
+                "character:parity ideal (2)",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": false
+        }
+      ],
+      "write": [
+        {
+          "tag": "character:parity ideal",
+          "rows": [
+            [
+              [
+                "character:parity ideal (1)",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": true
+        },
+        {
+          "tag": "creator:parity alias",
+          "rows": [
+            [
+              [
+                "creator:parity alias (1)",
+                [
+                  170,
+                  0,
+                  0
+                ]
+              ],
+              [
+                " → ",
+                [
+                  114,
+                  160,
+                  193
+                ]
+              ],
+              [
+                "character:parity ideal",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": true
+        }
+      ]
+    },
+    {
+      "fade": true,
+      "namespace": null,
+      "namespace_enabled": false,
+      "reopened_text": "system",
+      "storage": [
+        {
+          "tag": "creator:parity alias",
+          "rows": [
+            [
+              [
+                "creator:parity alias (1)",
+                [
+                  170,
+                  0,
+                  0
+                ]
+              ],
+              [
+                " → ",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ],
+              [
+                "character:parity ideal",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": false
+        },
+        {
+          "tag": "character:parity ideal",
+          "rows": [
+            [
+              [
+                "character:parity ideal (2)",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": false
+        }
+      ],
+      "write": [
+        {
+          "tag": "character:parity ideal",
+          "rows": [
+            [
+              [
+                "character:parity ideal (1)",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": true
+        },
+        {
+          "tag": "creator:parity alias",
+          "rows": [
+            [
+              [
+                "creator:parity alias (1)",
+                [
+                  170,
+                  0,
+                  0
+                ]
+              ],
+              [
+                " → ",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ],
+              [
+                "character:parity ideal",
+                [
+                  0,
+                  170,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "can_fade": true
+        }
+      ]
+    }
+  ]
+}

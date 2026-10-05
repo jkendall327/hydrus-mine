@@ -673,6 +673,7 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     insert_setting(&mut input, &lock)?;
     if let Some(options) = &options {
         insert_setting(&mut input, &tag_presentation(options))?;
+        insert_setting(&mut input, &sibling_connector_colours(options))?;
     }
     insert_setting(
         &mut input,
@@ -2424,8 +2425,24 @@ fn namespace_colours(
     out
 }
 
-/// How tags are shown: `RenderTag`'s options, the namespace order and the
-/// search page's and media viewer's tag sorts.
+/// Live sibling connector colour preferences preserve raw None/empty choices.
+fn sibling_connector_colours(
+    options: &legacy::ClientOptions,
+) -> hydrus_core::tag_presentation::SiblingConnectorColours {
+    let mut out = hydrus_core::tag_presentation::SiblingConnectorColours::default();
+    if let Some(fade) = options.booleans.get("fade_sibling_connector") {
+        out.fade = *fade;
+    }
+    if let Some(namespace) = options
+        .noneable_strings
+        .get("sibling_connector_custom_namespace_colour")
+    {
+        out.namespace.clone_from(namespace);
+    }
+    out
+}
+
+/// How tags are shown: RenderTag options, namespace order and tag sorts.
 fn tag_presentation(
     options: &legacy::ClientOptions,
 ) -> hydrus_core::tag_presentation::TagPresentation {
@@ -4484,6 +4501,34 @@ mod tests {
             ]
         );
         assert_eq!(converted.or_connector.as_deref(), Some("character"));
+    }
+
+    #[test]
+    fn sibling_connector_colours_import_retains_none_empty_and_raw_names() {
+        use hydrus_core::tag_presentation::SiblingConnectorColours;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let db = LegacyDb::open(source.path()).unwrap();
+        let mut options = db.client_options().unwrap().unwrap();
+        assert_eq!(
+            sibling_connector_colours(&options),
+            SiblingConnectorColours::default()
+        );
+        options
+            .booleans
+            .insert("fade_sibling_connector".into(), false);
+        for namespace in [None, Some(String::new()), Some(" character ".into())] {
+            options.noneable_strings.insert(
+                "sibling_connector_custom_namespace_colour".into(),
+                namespace.clone(),
+            );
+            assert_eq!(
+                sibling_connector_colours(&options),
+                SiblingConnectorColours {
+                    fade: false,
+                    namespace
+                }
+            );
+        }
     }
 
     /// The user's tag presentation options come across, with the search
