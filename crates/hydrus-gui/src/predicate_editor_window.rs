@@ -97,6 +97,16 @@ fn field_row(panel: &Panel, i: usize) -> EditorField {
     row
 }
 
+fn hash_text(panel: &Panel) -> SharedString {
+    if panel.kind == Kind::Hash
+        && let Field::Lines { text, .. } = &panel.fields[2]
+    {
+        text.as_str().into()
+    } else {
+        SharedString::new()
+    }
+}
+
 /// A panel's fields as the window shows them.
 fn field_rows(panel: &Panel) -> Rc<VecModel<EditorField>> {
     Rc::new(VecModel::from(
@@ -145,10 +155,17 @@ impl State {
                     fields: ModelRc::from(rows.clone()),
                     two_lines: !panel.second_line.is_empty(),
                     hash_layout: panel.kind == Kind::Hash,
+                    hash_text: hash_text(panel),
                 },
             );
             self.fields[p] = rows;
             return;
+        }
+        if panel.kind == Kind::Hash
+            && let Some(mut row) = self.panels.row_data(p)
+        {
+            row.hash_text = hash_text(panel);
+            self.panels.set_row_data(p, row);
         }
         let model = &self.fields[p];
         for i in 0..panel.fields.len() {
@@ -226,6 +243,23 @@ pub(crate) fn open(
     editor.apply_defaults(&defaults, &context);
     let window = PredicateEditorWindow::new().map_err(|e| e.to_string())?;
     window.set_editing_existing(editor.supplied.is_some());
+    window.set_batch_mode(editor.batch.is_some());
+    if let Some(batch) = &editor.batch {
+        window.set_simple_texts(ModelRc::new(VecModel::from(
+            batch
+                .simple
+                .iter()
+                .map(|s| SharedString::from(s.as_str()))
+                .collect::<Vec<_>>(),
+        )));
+        window.set_invertible_labels(ModelRc::new(VecModel::from(
+            batch
+                .invertible
+                .iter()
+                .map(|p| SharedString::from(predicate_text(p, &text)))
+                .collect::<Vec<_>>(),
+        )));
+    }
     let closed = Rc::new(Cell::new(false));
     let valid: Rc<dyn Fn() -> bool> = Rc::new({
         let closed = closed.clone();
@@ -295,6 +329,7 @@ pub(crate) fn open(
                         fields: ModelRc::from(f.clone()),
                         two_lines: !panel.second_line.is_empty(),
                         hash_layout: panel.kind == Kind::Hash,
+                        hash_text: hash_text(panel),
                     })
                     .collect::<Vec<_>>(),
             ));
@@ -309,6 +344,16 @@ pub(crate) fn open(
             window.set_recent(ModelRc::new(VecModel::from(recent)));
             window.set_page(i32::try_from(page).unwrap_or(0));
             window.set_buttons(ModelRc::new(VecModel::from(labels)));
+            window.set_edit_order(ModelRc::new(VecModel::from(
+                state.editor.batch.as_ref().map_or_else(
+                    || {
+                        (0..panels.row_count())
+                            .filter_map(|i| i32::try_from(i).ok())
+                            .collect()
+                    },
+                    |b| b.order.clone(),
+                ),
+            )));
             window.set_panels(ModelRc::from(panels));
             if let Some(panel) = state.panels().iter().find(|panel| panel.kind == Kind::Hash)
                 && let Field::Lines { text, .. } = &panel.fields[2]
@@ -368,17 +413,10 @@ pub(crate) fn open(
                 return;
             }
             close();
-            let system: Vec<SystemPredicate> = predicates
-                .iter()
-                .filter_map(|p| match p {
-                    Predicate::System(s) => Some(s.clone()),
-                    _ => None,
-                })
-                .collect();
             if owner.as_ref().is_some_and(|owner| !owner()) {
                 return;
             }
-            change_recent(&store, |recent| recent.push(&system));
+            change_recent(&store, |recent| recent.push_all(&predicates));
             chosen(predicates);
         }
     };
@@ -609,6 +647,9 @@ pub(crate) fn open(
                 return;
             }
             let state = state.borrow();
+            if state.editor.batch.is_some() {
+                return;
+            }
             let Some(panel) = state.panels().get(index(p)) else {
                 return;
             };
@@ -642,6 +683,9 @@ pub(crate) fn open(
                 return;
             }
             let state = state.borrow();
+            if state.editor.batch.is_some() {
+                return;
+            }
             let Some(panel) = state.panels().get(index(p)) else {
                 return;
             };
@@ -672,6 +716,69 @@ pub(crate) fn open(
             }
         }
     });
+    window.on_simple_edited({
+        let valid = valid.clone();
+        let weak = window.as_weak();
+        let state = state.clone();
+        move |i, value| {
+            if !valid()
+                || weak.upgrade().is_none_or(|w| {
+                    !w.window().is_visible() || !w.get_question().is_empty() || w.get_notice_open()
+                })
+            {
+                return;
+            }
+            if let Some(text) = state
+                .borrow_mut()
+                .editor
+                .batch
+                .as_mut()
+                .and_then(|b| b.simple.get_mut(index(i)))
+            {
+                *text = value.to_string();
+                if let Some(window) = weak.upgrade() {
+                    window.get_simple_texts().set_row_data(index(i), value);
+                }
+            }
+        }
+    });
+    window.on_invertible_clicked({
+        let valid = valid.clone();
+        let weak = window.as_weak();
+        let state = state.clone();
+        let text = text.clone();
+        move |i| {
+            if !valid() {
+                return;
+            }
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if !window.window().is_visible()
+                || !window.get_question().is_empty()
+                || window.get_notice_open()
+            {
+                return;
+            }
+            let mut state = state.borrow_mut();
+            let Some(batch) = state.editor.batch.as_mut() else {
+                return;
+            };
+            let Some(p) = batch.invertible.get_mut(index(i)) else {
+                return;
+            };
+            if let Some(inverse) = p.inverse(&|s| hydrus_search::entry::is_incdec(s, &text)) {
+                *p = inverse;
+            }
+            window.set_invertible_labels(ModelRc::new(VecModel::from(
+                batch
+                    .invertible
+                    .iter()
+                    .map(|p| SharedString::from(predicate_text(p, &text)))
+                    .collect::<Vec<_>>(),
+            )));
+        }
+    });
     window.on_ok({
         let notices = notices.clone();
         let valid = valid.clone();
@@ -690,10 +797,14 @@ pub(crate) fn open(
             }
             let (hash, made) = {
                 let state = state.borrow();
-                let Some(panel) = state.panels().get(index(p)) else {
-                    return;
-                };
-                (panel.kind == Kind::Hash, panel.predicates(&state.context))
+                if state.editor.batch.is_some() {
+                    (false, state.editor.mixed_predicates(&state.context))
+                } else {
+                    let Some(panel) = state.panels().get(index(p)) else {
+                        return;
+                    };
+                    (panel.kind == Kind::Hash, panel.predicates(&state.context))
+                }
             };
             match made {
                 Ok(predicates) => finish(predicates),

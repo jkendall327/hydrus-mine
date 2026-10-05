@@ -39,6 +39,7 @@ export struct EditorPanel {
     fields: [EditorField],
     two-lines: bool,
     hash-layout: bool,
+    hash-text: string,
 }
 
 // A field, if it is shown on this line (else nothing, taking no room).
@@ -184,6 +185,12 @@ component DefaultsButton inherits Rectangle {
 export component PredicateEditorWindow inherits Window {
     title: root.editing-existing ? "edit predicates" : "input predicate";
     in property <bool> editing-existing;
+    in property <bool> batch-mode;
+    in property <[string]> simple-texts;
+    in property <[int]> edit-order;
+    in property <[string]> invertible-labels;
+    callback simple-edited(int, string);
+    callback invertible-clicked(int);
     preferred-width: 1020px;
     background: Theme.window;
     in property <string> note;
@@ -326,7 +333,22 @@ export component PredicateEditorWindow inherits Window {
                             }
                         }
                     }
-                    for panel[p] in root.panels: Rectangle {
+                    for label[i] in root.invertible-labels: Button {
+                        text: label;
+                        enabled: root.question == "" && !root.notice-open;
+                        clicked => { root.invertible-clicked(i); }
+                    }
+                    for row in root.edit-order: VerticalLayout {
+                    if row < 0: LineEdit {
+                        property <string> draft: root.simple-texts[-1 - row];
+                        text <=> self.draft;
+                        enabled: root.question == "" && !root.notice-open;
+                        edited(value) => { root.simple-edited(-1 - row, value); }
+                        accepted => { root.ok(0); }
+                    }
+                    if row >= 0: Rectangle {
+                        property <int> p: row;
+                        property <EditorPanel> panel: root.panels[p];
                         border-width: 1px;
                         border-color: Theme.border;
                         VerticalLayout {
@@ -334,7 +356,7 @@ export component PredicateEditorWindow inherits Window {
                             spacing: 4px;
                             if panel.hash-layout: HorizontalLayout {
                                 spacing: 6px;
-                                DefaultsButton {
+                                if !root.batch-mode: DefaultsButton {
                                     actions: root.defaults-actions;
                                     enabled: root.question == "" && !root.notice-open;
                                     opening => { root.defaults-menu(p); }
@@ -358,7 +380,7 @@ export component PredicateEditorWindow inherits Window {
                                         property <{x:length,y:length,w:length,h:length}> frame: {x:self.absolute-position.x,y:self.absolute-position.y,w:self.width,h:self.height};
                                         changed frame => { root.hash-field-placed(2,self.frame.x/1px,self.frame.y/1px,self.frame.w/1px,self.frame.h/1px); }
                                         min-width: 420px; min-height: 220px;
-                                        text <=> root.hash-text;
+                                        text <=> panel.hash-text;
                                         placeholder-text: panel.fields[2].placeholder;
                                         enabled: root.question == "" && !root.notice-open;
                                         edited(text) => { root.text-edited(p, 2, text); }
@@ -378,13 +400,13 @@ export component PredicateEditorWindow inherits Window {
                                         accepted => { root.ok(p); }
                                     }
                                 }
-                                VerticalLayout {
+                                if !root.batch-mode: VerticalLayout {
                                     alignment: center;
                                     Button { text: "ok"; enabled: root.question == "" && !root.notice-open; clicked => { root.ok(p); } }
                                 }
                             }
                             if !panel.hash-layout: HorizontalLayout {
-                                DefaultsButton {
+                                if !root.batch-mode: DefaultsButton {
                                     actions: root.defaults-actions;
                                     enabled: (root.question == "" && !root.notice-open);
                                     opening => { root.defaults-menu(p); }
@@ -405,7 +427,7 @@ export component PredicateEditorWindow inherits Window {
                                     expanded(group, on) => { root.expanded(p, f, group, on); }
                                 }
                                 Rectangle { horizontal-stretch: 1; }
-                                if !panel.two-lines: VerticalLayout {
+                                if !panel.two-lines && !root.batch-mode: VerticalLayout {
                                     alignment: center;
                                     Button {
                                         text: "ok";
@@ -430,7 +452,7 @@ export component PredicateEditorWindow inherits Window {
                                     expanded(group, on) => { root.expanded(p, f, group, on); }
                                 }
                                 Rectangle { horizontal-stretch: 1; }
-                                VerticalLayout {
+                                if !root.batch-mode: VerticalLayout {
                                     alignment: center;
                                     Button {
                                         text: "ok";
@@ -440,6 +462,7 @@ export component PredicateEditorWindow inherits Window {
                                 }
                             }
                         }
+                    }
                     }
                 }
             }
@@ -455,6 +478,11 @@ export component PredicateEditorWindow inherits Window {
             }
             HorizontalLayout {
                 alignment: end;
+                if root.batch-mode: Button {
+                    text: "apply";
+                    enabled: root.question == "" && !root.notice-open;
+                    clicked => { root.ok(0); }
+                }
                 Button {
                     text: "cancel";
                     clicked => { root.cancel(); }

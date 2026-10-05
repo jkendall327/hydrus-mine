@@ -270,7 +270,8 @@ impl Editor {
                             continue;
                         }
                     }
-                    let panel = panel.clone();
+                    let mut panel = panel.clone();
+                    panel.supplied = Some(predicate.clone());
                     editor.pages = vec![super::Page {
                         name: String::new(),
                         buttons: Vec::new(),
@@ -290,7 +291,8 @@ impl Editor {
     pub fn apply_defaults(&mut self, defaults: &CustomDefaults, context: &Context) {
         for page in &mut self.pages {
             for panel in &mut page.panels {
-                panel.initialise(self.supplied.as_ref(), defaults, context);
+                let supplied = panel.supplied.clone().or_else(|| self.supplied.clone());
+                panel.initialise(supplied.as_ref(), defaults, context);
             }
         }
     }

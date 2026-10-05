@@ -185,28 +185,40 @@ pub(crate) fn bind(
                 shown(true);
                 return;
             }
-            if selected.len() != 1 {
+            let context = context(&current.borrow());
+            let editor = (selected.len() == 1)
+                .then(|| Editor::existing(&selected[0], &context))
+                .flatten();
+            let editable = selected.iter().any(|p| {
+                Editor::existing(p, &context).is_some()
+                    || matches!(
+                        p,
+                        Predicate::Tag { .. }
+                            | Predicate::Namespace { .. }
+                            | Predicate::Wildcard { .. }
+                            | Predicate::Or(_)
+                    )
+            });
+            let inverses = active_predicates::inverses(&selected, &current.borrow().text_context());
+            if !editable && inverses.len() == 1 {
+                let edited = selected
+                    .iter()
+                    .map(|p| {
+                        p.inverse(&|s| {
+                            hydrus_search::entry::is_incdec(s, &current.borrow().text_context())
+                        })
+                        .unwrap_or_else(|| p.clone())
+                    })
+                    .collect::<Vec<_>>();
+                current
+                    .borrow_mut()
+                    .edit_active_predicates(&selected, &edited);
+                shown(true);
                 return;
             }
-            let context = context(&current.borrow());
-            let Some(editor) = Editor::existing(&selected[0], &context) else {
-                // A lone non-editable invertible predicate is edited by inversion.
-                if !matches!(
-                    selected[0],
-                    Predicate::Tag { .. }
-                        | Predicate::Namespace { .. }
-                        | Predicate::Wildcard { .. }
-                        | Predicate::Or(_)
-                ) {
-                    let inverses =
-                        active_predicates::inverses(&selected, &current.borrow().text_context());
-                    if !inverses.is_empty() {
-                        current
-                            .borrow_mut()
-                            .edit_active_predicates(&selected, &inverses);
-                        shown(true);
-                    }
-                }
+            let Some(editor) = editor
+                .or_else(|| Editor::mixed(&selected, &context, &current.borrow().text_context()))
+            else {
                 return;
             };
             let store = current.borrow().store().clone();
@@ -307,13 +319,36 @@ pub(crate) fn bind(
             state.captured = state.selected();
             let page = current.borrow();
             let context = context(&page);
-            let editable = state.captured.len() == 1
-                && Editor::existing(&state.captured[0], &context).is_some();
+            let editable = state.captured.iter().any(|p| {
+                Editor::existing(p, &context).is_some()
+                    || matches!(
+                        p,
+                        Predicate::Tag { .. }
+                            | Predicate::Namespace { .. }
+                            | Predicate::Wildcard { .. }
+                    )
+            });
+            let editable_terms = state
+                .captured
+                .iter()
+                .filter(|p| {
+                    Editor::existing(p, &context).is_some()
+                        || matches!(
+                            p,
+                            Predicate::Tag { .. }
+                                | Predicate::Namespace { .. }
+                                | Predicate::Wildcard { .. }
+                        )
+                        || p.inverse(&|s| hydrus_search::entry::is_incdec(s, &page.text_context()))
+                            .is_some()
+                })
+                .cloned()
+                .collect::<Vec<_>>();
             state.menu = active_predicates::menu(
                 &state.captured,
                 page.active_predicates(),
                 &page.text_context(),
-                editable,
+                editable.then_some(editable_terms.as_slice()),
             );
             if let Some(window) = weak.upgrade() {
                 state.show(&window);

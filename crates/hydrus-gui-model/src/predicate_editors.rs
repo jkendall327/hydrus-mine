@@ -22,6 +22,8 @@ use hydrus_core::search::time::{CalendarDelta, CivilDateTime, RelativeOp, TimeKi
 use hydrus_core::{ContentStatus, ServiceKey, ServiceType, Tag};
 use hydrus_search::{TextContext, predicate_text};
 
+pub mod batch;
+pub mod batch;
 pub mod defaults;
 mod initialise;
 mod special;
@@ -442,6 +444,8 @@ const ALL_OPERATORS: [&str; 8] = [
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Panel {
     pub kind: Kind,
+    /// Each existing panel keeps its own explicit value in a mixed edit.
+    pub supplied: Option<Predicate>,
     pub fields: Vec<Field>,
     pub conditions: Vec<Condition>,
     /// The fields on a second line, under the rest (as the reference
@@ -465,6 +469,7 @@ impl Panel {
     fn new(kind: Kind) -> Self {
         Self {
             kind,
+            supplied: None,
             fields: Vec::new(),
             conditions: Vec::new(),
             second_line: Vec::new(),
@@ -1153,6 +1158,8 @@ pub struct Editor {
     pub pages: Vec<Page>,
     /// An existing active value takes precedence over saved creation defaults.
     pub supplied: Option<Predicate>,
+    /// Whole-dialog staging for simple and mixed active values.
+    pub batch: Option<batch::Batch>,
 }
 
 impl Editor {
@@ -1386,6 +1393,7 @@ impl Editor {
             note,
             pages,
             supplied: None,
+            batch: None,
         }
     }
 }

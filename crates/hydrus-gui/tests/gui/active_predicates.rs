@@ -253,3 +253,232 @@ fn dropping_the_last_owner_releases_a_populated_editor_without_cancel() {
         "the close callback must not retain its owning slot"
     );
 }
+
+fn decoded(values: &serde_json::Value) -> Vec<hydrus_search::Predicate> {
+    values
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|value| {
+            let object =
+                hydrus_legacy::serialisable::SerialisableObject::from_tuple_str(&value.to_string())
+                    .unwrap();
+            hydrus_legacy::objects::predicates::predicate(&object).unwrap()
+        })
+        .collect()
+}
+fn mixed_editor(
+    ui: &MainWindow,
+    bound: &hydrus_gui::Bound,
+    selected: &[hydrus_search::Predicate],
+) -> hydrus_gui::PredicateEditorWindow {
+    let current = bound.current.borrow().borrow().active_predicates().to_vec();
+    for (i, p) in selected.iter().enumerate() {
+        let index =
+            i32::try_from(current.iter().position(|candidate| candidate == p).unwrap()).unwrap();
+        ui.invoke_active_predicate_clicked(index, i != 0, false);
+    }
+    ui.invoke_active_predicate_activated(false, true);
+    bound
+        .predicate_editor
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong()
+}
+#[test]
+fn mixed_apply_is_atomic_and_hidden_cancel_rebind_preserve_all_original_terms() {
+    use hydrus_core::search::recent::RecentPredicates;
+    use std::collections::HashSet;
+    let (_dir, store) = setup();
+    let windows = headless::init();
+    let recording = hydrus_testkit::fixture_json("active_predicate_mixed.json");
+    let case = recording["mixed"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["name"] == "mixed" && c["accepted"] == true)
+        .unwrap();
+    let context = FileSearchContext {
+        location: LocationContext::single(hydrus_core::ServiceKey::new(b"local files".to_vec())),
+        predicates: decoded(&case["before"]["predicates"]),
+        ..Default::default()
+    };
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(SearchPage::restored(
+            store.clone(),
+            context,
+            true,
+            None,
+            Vec::new(),
+        )),
+    );
+    let selected = decoded(&case["selected"]);
+    let before = bound.current.borrow().borrow().active_predicates().to_vec();
+    let set = |values: Vec<hydrus_search::Predicate>| values.into_iter().collect::<HashSet<_>>();
+    let child = mixed_editor(&ui, &bound, &selected);
+    assert!(child.get_batch_mode());
+    assert_eq!(child.get_panels().row_count(), 1);
+    assert_eq!(child.get_simple_texts().row_count(), 1);
+    assert_eq!(
+        child.get_invertible_labels().row_data(0).unwrap(),
+        "system:inbox"
+    );
+    child.invoke_simple_edited(0, "---".into());
+    child.invoke_number_edited(0, 2, 11);
+    child.invoke_ok(0);
+    assert_eq!(bound.current.borrow().borrow().active_predicates(), before);
+    assert_eq!(
+        child.get_error(),
+        "Please enter some tag, namespace, or wildcard text!"
+    );
+    assert!(bound.predicate_editor.borrow().is_some());
+    child.invoke_simple_edited(0, "--series:edited*".into());
+    child.invoke_invertible_clicked(0);
+    child.invoke_chose(0, 1, 4);
+    child.hide().unwrap();
+    child.invoke_simple_edited(0, "hidden:wrong".into());
+    child.invoke_invertible_clicked(0);
+    child.invoke_ok(0);
+    assert_eq!(bound.current.borrow().borrow().active_predicates(), before);
+    child.show().unwrap();
+    assert_eq!(
+        child.get_simple_texts().row_data(0).unwrap(),
+        "--series:edited*"
+    );
+    assert_eq!(
+        child.get_invertible_labels().row_data(0).unwrap(),
+        "system:archive"
+    );
+    let adapter = windows.get(windows.count() - 1).unwrap();
+    let pixels = headless::render(&adapter, 900, 480);
+    headless::save_png(
+        &hydrus_testkit::artifacts_dir().join("active-predicate-mixed.png"),
+        &pixels,
+        900,
+        480,
+    )
+    .unwrap();
+    assert!(pixels.iter().any(|p| p.r != p.g));
+    child.invoke_cancel();
+    assert_eq!(bound.current.borrow().borrow().active_predicates(), before);
+    let child = mixed_editor(&ui, &bound, &selected);
+    child.invoke_simple_edited(0, "--series:edited*".into());
+    child.invoke_invertible_clicked(0);
+    child.invoke_chose(0, 1, 4);
+    child.invoke_number_edited(0, 2, 11);
+    child.invoke_ok(0);
+    assert_eq!(
+        set(bound.current.borrow().borrow().active_predicates().to_vec()),
+        set(decoded(&case["after"]["predicates"]))
+    );
+    assert!(bound.predicate_editor.borrow().is_none());
+    let recent: RecentPredicates = store.read(hydrus_store::settings::get).unwrap();
+    assert!(recent.non_system[&3].contains(&decoded(&case["value"])[2]));
+    let current = bound.current.borrow().clone();
+    let edited = current.borrow().active_predicates().to_vec();
+    let child = mixed_editor(&ui, &bound, &edited);
+    let successor = bind(&ui, Pages::open(store.clone()).unwrap());
+    let successor_before = successor
+        .current
+        .borrow()
+        .borrow()
+        .active_predicates()
+        .to_vec();
+    child.show().unwrap();
+    child.invoke_simple_edited(0, "stale:wrong".into());
+    child.invoke_ok(0);
+    assert_eq!(current.borrow().active_predicates(), edited);
+    assert_eq!(
+        successor.current.borrow().borrow().active_predicates(),
+        successor_before
+    );
+    child.hide().unwrap();
+    ui.hide().unwrap();
+}
+
+#[test]
+fn mixed_same_family_panels_reopen_distinct_supplied_values_and_apply_both() {
+    use std::collections::HashSet;
+    let (_dir, store) = setup();
+    let _windows = headless::init();
+    let defaults = hydrus_store::settings::CustomPredicateDefaults {
+        predicates: hydrus_search::parse_api_search(&serde_json::json!(["system:filesize > 99MB"]))
+            .unwrap(),
+    };
+    store
+        .write(move |tx| hydrus_store::settings::set(tx.conn(), &defaults))
+        .unwrap();
+    let recording = hydrus_testkit::fixture_json("active_predicate_mixed.json");
+    let case = recording["mixed"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["name"] == "two_sizes" && c["accepted"] == true)
+        .unwrap();
+    let context = FileSearchContext {
+        location: LocationContext::single(hydrus_core::ServiceKey::new(b"local files".to_vec())),
+        predicates: decoded(&case["before"]["predicates"]),
+        ..Default::default()
+    };
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(SearchPage::restored(
+            store.clone(),
+            context,
+            true,
+            None,
+            Vec::new(),
+        )),
+    );
+    let child = mixed_editor(&ui, &bound, &decoded(&case["selected"]));
+    assert_eq!(child.get_panels().row_count(), 2);
+    assert_eq!(
+        child
+            .get_panels()
+            .row_data(0)
+            .unwrap()
+            .fields
+            .row_data(2)
+            .unwrap()
+            .value,
+        7
+    );
+    assert_eq!(
+        child
+            .get_panels()
+            .row_data(1)
+            .unwrap()
+            .fields
+            .row_data(2)
+            .unwrap()
+            .value,
+        3
+    );
+    for (i, size) in [11, 17].into_iter().enumerate() {
+        let i = i32::try_from(i).unwrap();
+        child.invoke_chose(i, 1, 4);
+        child.invoke_number_edited(i, 2, size);
+    }
+    child.invoke_ok(0);
+    assert!(bound.predicate_editor.borrow().is_none());
+    assert_eq!(
+        bound
+            .current
+            .borrow()
+            .borrow()
+            .active_predicates()
+            .iter()
+            .cloned()
+            .collect::<HashSet<_>>(),
+        decoded(&case["after"]["predicates"])
+            .into_iter()
+            .collect::<HashSet<_>>()
+    );
+    ui.hide().unwrap();
+}

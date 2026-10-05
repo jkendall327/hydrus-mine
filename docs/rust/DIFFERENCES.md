@@ -205,19 +205,17 @@ search.
 
 ## Pages (`hydrus-gui`)
 
-- **Active predicate editing remains Partial.** The represented single system
-  panels reopen their existing values, and active-list remove/invert/OR merge or
-  dissolve/namespace commands reach the query. This slice does not provide Qt's
-  mixed/multiple predicate edit panel, text editors for active tags/namespaces/
-  wildcards, the populated OR editor or start-OR command, or the inherited
-  open/copy/file-selection/tag-maintenance context-menu branches. These missing
-  actions prevent completion credit for the original active-edit action. Native
-  system panels retain the existing input-editor control topology and per-panel
-  OK/star controls rather than Qt's batch Apply dialog. Selection is cleared
-  when the query terms change, whereas Qt selects newly edited terms. A page
-  transition cancels the child, rather than keeping a modal editor behind a
-  switched page. The remaining list keyboard navigation is unchanged.
-
+- **Active predicate editing remains Partial.** Represented system values and
+  simple tags/namespaces/wildcards can now be edited together, with one atomic
+  Apply and separate supplied values for repeated system families. Immutable
+  terms are preserved and invertible terms have flip buttons. Active-list
+  remove/invert/OR merge or dissolve/namespace commands reach the query. Populated
+  OR editing, start-OR and inherited open/copy/file-selection/tag-maintenance
+  branches remain missing, so the original action earns no completion credit.
+  Single system editors keep their existing per-panel OK/star topology. Selection
+  is cleared when query terms change, whereas Qt selects newly edited terms. A
+  page transition cancels the child rather than retaining a modal editor behind
+  a switched page. Remaining list keyboard navigation is unchanged.
 - **Favourite search autocomplete shares the native page's suggestion model**,
   including blank system predicate editors, and has editable file/tag domains,
   current/pending tags, sort and collection controls. It does not yet offer the

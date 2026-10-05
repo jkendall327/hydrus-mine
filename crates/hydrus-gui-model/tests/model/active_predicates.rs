@@ -52,7 +52,12 @@ fn actual_qt_commands_preserve_inverse_add_vs_ctrl_toggle_and_exact_result_sets(
         let text = TextContext::default();
         let editable = selected.len() == 1 && Editor::existing(&selected[0], &context()).is_some();
         let actual_menu = menu_labels(&event["menu"]);
-        for (_, label) in active_predicates::menu(&selected, &current, &text, editable) {
+        for (_, label) in active_predicates::menu(
+            &selected,
+            &current,
+            &text,
+            editable.then_some(selected.as_slice()),
+        ) {
             assert!(actual_menu.contains(&label), "{}: {label}", event["name"]);
         }
         let command = match event["command"].as_str().unwrap() {
@@ -135,4 +140,74 @@ fn supplied_size_and_limit_reopen_exact_values_despite_saved_creation_defaults()
         creation.pages[0].panels[0].predicates(&context).unwrap(),
         defaults.predicates
     );
+}
+
+#[test]
+fn mixed_controls_replay_real_qt_values_row_order_cancel_and_parser_vetoes() {
+    use hydrus_gui_model::predicate_editors::batch::simple_predicate;
+    let recording = hydrus_testkit::fixture_json("active_predicate_mixed.json");
+    let context = context();
+    let text = TextContext::default();
+    let defaults = CustomDefaults {
+        predicates: hydrus_search::parse_api_search(&serde_json::json!(["system:filesize > 99MB"]))
+            .unwrap(),
+    };
+    assert_eq!(recording["simple_cases"].as_array().unwrap().len(), 14);
+    for case in recording["simple_cases"].as_array().unwrap() {
+        let result = simple_predicate(case["text"].as_str().unwrap());
+        if let Some(error) = case["error"].as_str() {
+            assert_eq!(result.unwrap_err(), error);
+        } else {
+            assert_eq!(result.unwrap(), decode(&case["predicate"]));
+        }
+    }
+    assert_eq!(recording["mixed"].as_array().unwrap().len(), 8);
+    for case in recording["mixed"].as_array().unwrap() {
+        let selected = predicates(&case["selected"]);
+        let mut editor = Editor::mixed(&selected, &context, &text).unwrap();
+        editor.apply_defaults(&defaults, &context);
+        assert_eq!(
+            set(editor.mixed_predicates(&context).unwrap()),
+            set(predicates(&case["initial"]))
+        );
+        let batch = editor.batch.as_mut().unwrap();
+        for (draft, changed) in batch
+            .simple
+            .iter_mut()
+            .zip(case["simple"].as_array().unwrap())
+        {
+            *draft = changed.as_str().unwrap().to_owned();
+        }
+        if case["flip"] == true {
+            for p in &mut batch.invertible {
+                *p = p.inverse(&|_| false).unwrap();
+            }
+        }
+        for (panel, size) in editor.pages[0]
+            .panels
+            .iter_mut()
+            .zip(case["sizes"].as_array().unwrap())
+        {
+            panel.choose(1, 4);
+            panel.set_number(2, size.as_i64().unwrap());
+        }
+        let made = editor.mixed_predicates(&context).unwrap();
+        assert_eq!(set(made.clone()), set(predicates(&case["value"])));
+        let mut current = search(&case["before"]);
+        if case["accepted"] == true {
+            active_predicates::replace(&mut current, &selected, &made, &text);
+        }
+        assert_eq!(set(current.clone()), set(search(&case["after"])));
+        let batch = editor.batch.as_mut().unwrap();
+        if !batch.simple.is_empty() {
+            batch.simple[0].clear();
+            assert!(
+                editor.mixed_predicates(&context).is_err(),
+                "one invalid simple field vetoes all staged values"
+            );
+        }
+        if case["name"] == "mixed" {
+            assert_eq!(editor.batch.as_ref().unwrap().order, [-1, 0]);
+        }
+    }
 }
