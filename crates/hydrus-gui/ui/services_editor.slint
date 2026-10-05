@@ -119,7 +119,9 @@ export component ServicesEditorWindow inherits Window {
 export component EditServiceWindow inherits Window {
     in property <string> window-title: "edit service";
     title: root.window-title;
-    width: 640px; height: 640px; background: Theme.window;
+    // Initial dimensions are preferences; live layout must depend on the
+    // window's actual geometry after native Resize events.
+    preferred-width: 640px; preferred-height: 640px; background: Theme.window;
     in-out property <string> service-name;
     in property <string> service-type;
     in property <bool> client-api;
