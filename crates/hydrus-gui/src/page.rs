@@ -7,11 +7,11 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use std::sync::Arc;
 
-use hydrus_core::HashId;
 use hydrus_core::pages::{
     DuplicatesPage, HashLock, PageCollect, PageContent, PageMedia, PageSort, PageSortBy,
 };
 use hydrus_core::search::predicate::{FileHashes, SystemPredicate};
+use hydrus_core::{HashId, Tag};
 use hydrus_search::{
     Clock, FileSearchContext, FileSort, Predicate, SortBy, SortOrder, TextContext,
     collect_page_files, parse_api_search, predicate_text, search_files, sort_page_files,
@@ -2172,10 +2172,18 @@ impl SearchPage {
             }
             return;
         }
-        let texts: Vec<_> = selected.into_iter().map(|row| row.predicate).collect();
-        match parse_api_search(&serde_json::json!(texts)) {
-            Ok(predicates) => self.broadcast_or(predicates, shift),
-            Err(error) => self.error = Some(error.to_string()),
+        // These panes contain literal tags, not parsed search input. In particular,
+        // '*' and 'system:' remain part of the stored tag rather than search syntax.
+        let predicates: Vec<_> = selected
+            .into_iter()
+            .filter_map(|row| Tag::new(&row.predicate))
+            .map(|tag| Predicate::Tag {
+                tag,
+                inclusive: true,
+            })
+            .collect();
+        if !predicates.is_empty() {
+            self.broadcast_or(predicates, shift);
         }
     }
 

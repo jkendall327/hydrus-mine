@@ -153,3 +153,28 @@ fn read_and_write_selection_replay_the_same_qt_tabs_and_persist_only_accepted_ed
     assert!(tags.0.contains(&"parity:concurrent".into()));
     assert!(!tags.0.contains(&"parity:tabs alpha".into()));
 }
+
+#[test]
+fn literal_favourite_rows_remain_selected_as_tags_until_explicitly_deselected() {
+    let fixture = hydrus_testkit::fixture_json("autocomplete_tab_selection.json");
+    let (_dir, store) = super::write_autocomplete::seeded(&fixture);
+    let tags: Vec<String> =
+        serde_json::from_value(fixture["literal_cases"][0]["tags"].clone()).unwrap();
+    store
+        .write(move |ctx| settings::set(ctx.conn(), &settings::FavouriteTags(tags)))
+        .unwrap();
+    let mut input = Autocomplete::new(store);
+    input.set_tab(Tab::Favourites);
+    input.select_all();
+    let selected: Vec<_> = input
+        .selected_suggestions()
+        .iter()
+        .map(|row| row.predicate.clone())
+        .collect();
+    assert_eq!(json!(selected), fixture["literal_cases"][0]["tags"]);
+    input.set_text("caller draft");
+    assert_eq!(input.selected_suggestions().len(), 3);
+    assert!(input.deselect());
+    assert!(input.selected_suggestions().is_empty());
+    assert_eq!(input.text(), "caller draft");
+}

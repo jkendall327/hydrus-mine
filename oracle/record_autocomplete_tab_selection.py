@@ -6,7 +6,9 @@ Actual Qt list _Hit and _Activate handlers drive reversible Ctrl/Shift selection
 normal predicate batches and Shift OR drafts. Real read-list QAction dispatch
 records favourite add/removal questions, No/Yes, refresh, tab retention, and a
 new dropdown opened after editing. Write lists broadcast selected favourites
-and children to their real external entry callback. Only asynchronous scheduling
+and children to their real external entry callback. Literal wildcard/system-looking
+tags remain typed tags, and deselected Enter/Shift+Enter leave queries/OR drafts
+unchanged. Only asynchronous scheduling
 is made synchronous; queries, list handlers and broadcast consumers are real.
 No remote data or file deletion is involved.
 """
@@ -24,7 +26,7 @@ def record(session):
     service=next(s.GetServiceKey() for s in c.services_manager.GetServices((HC.LOCAL_TAG,)) if s.GetName()=='my tags')
     manifest=json.load(open(os.path.join(HERE,'fixtures','legacy_db','basic.manifest.json')))
     hashes=[bytes.fromhex(f['hash']) for f in manifest['files'][:4]]
-    corpus=[('parity:tabs alpha',hashes[:3]),('parity:tabs beta',hashes[1:2]),('parity:tabs alpha old',hashes[:1])]
+    corpus=[('parity:tabs alpha',hashes[:3]),('parity:tabs beta',hashes[1:2]),('parity:tabs alpha old',hashes[:1])]+[(tag,hashes[:1]) for tag in ['parity:star*','parity:*','system:inbox']]
     parents=[['parity:tabs alpha','parity:tabs root'],['parity:tabs beta','parity:tabs root'],['parity:tabs zero','parity:tabs root'],['parity:tabs deep','parity:tabs alpha']]
     siblings=[['parity:tabs alpha old','parity:tabs alpha']]
     updates=[U.ContentUpdate(HC.CONTENT_TYPE_MAPPINGS,HC.CONTENT_UPDATE_ADD,(tag,set(files))) for tag,files in corpus]
@@ -42,7 +44,7 @@ def record(session):
         from qtpy import QtCore, QtWidgets
         from hydrus.client.gui import ClientGUICore, ClientGUIDialogsQuick, ClientGUIAsync
         from hydrus.client.gui.lists import ClientGUIListBoxes
-        events=[]; captured={}; answer={'yes':False}; asked=[]
+        events=[]; literals=[]; captured={}; answer={'yes':False}; asked=[]
         old_popup=ClientGUICore.core().PopupMenu;old_yes=ClientGUIDialogsQuick.GetYesNo;old_start=ClientGUIAsync.AsyncQtJob.start
         ClientGUICore.core().PopupMenu=lambda win,menu:captured.update(menu=menu)
         ClientGUIDialogsQuick.GetYesNo=lambda win,message,*args,**kwargs:(asked.append(message) or (QtWidgets.QDialog.DialogCode.Accepted if answer['yes'] else QtWidgets.QDialog.DialogCode.Rejected))
@@ -98,13 +100,35 @@ def record(session):
                 tab._Activate(False,False)
                 events.append(dict(action='write_activate',tab=write._dropdown_notebook.currentIndex(),selected=selected,entered=entered[-1],text=write._text_ctrl.text()))
             write.deleteLater()
+            literal_tags=['parity:star*','parity:*','system:inbox']
+            c.new_options.SetStringList('favourite_tags',literal_tags)
+            for shift in [False,True]:
+                literal=A.AutoCompleteDropdownTagsRead(c.gui,b'parity literal tabs',context,synchronised=False)
+                literal.RefreshFavouriteTags();literal._dropdown_notebook.setCurrentWidget(literal._favourites_list);literal._favourites_list._SelectAll()
+                literal._favourites_list._Activate(False,shift)
+                draft=literal._under_construction_or_predicate
+                predicates=literal.GetFileSearchContext().GetPredicates()
+                def shape(predicates):
+                    return sorted([dict(kind='tag' if p.GetType()==P.PREDICATE_TYPE_TAG else 'or',value=p.GetValue() if p.GetType()==P.PREDICATE_TYPE_TAG else sorted(child.GetValue() for child in p.GetValue())) for p in predicates],key=lambda p:str(p['value']))
+                step=dict(shift=shift,tags=sorted(literal_tags),active=shape(predicates),draft=[] if draft is None else shape(draft.GetValue()))
+                literal._favourites_list._DeselectAll()
+                step['empty_attempts']=[]
+                for empty_shift in [False,True]:
+                    activated=literal._favourites_list._Activate(False,empty_shift)
+                    empty_draft=literal._under_construction_or_predicate
+                    step['empty_attempts'].append(dict(shift=empty_shift,activated=activated,active=shape(literal.GetFileSearchContext().GetPredicates()),draft=[] if empty_draft is None else shape(empty_draft.GetValue())))
+                literal._favourites_list._SelectAll()
+                if shift:literal._favourites_list._Activate(False,False)
+                step['committed']=shape(literal.GetFileSearchContext().GetPredicates())
+                step['query_count']=len(c.Read('file_query_ids',literal.GetFileSearchContext()))
+                literals.append(step);literal.deleteLater()
         finally:
             ClientGUICore.core().PopupMenu=old_popup;ClientGUIDialogsQuick.GetYesNo=old_yes;ClientGUIAsync.AsyncQtJob.start=old_start
             ac.deleteLater()
-        return events
-    try:events=qt(replay)
+        return events,literals
+    try:events,literals=qt(replay)
     finally:c.CallToThread=old_thread
-    return dict(corpus=[dict(tag=t,hashes=[h.hex() for h in hs]) for t,hs in corpus],parents=parents,siblings=siblings,events=events)
+    return dict(corpus=[dict(tag=t,hashes=[h.hex() for h in hs]) for t,hs in corpus],parents=parents,siblings=siblings,events=events,literal_cases=literals)
 def child(out):
     import hydrus_driver,record_api
     result=hydrus_driver.run_client(record_api.unpack_fixture('basic'),record)
