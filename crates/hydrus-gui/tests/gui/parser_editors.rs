@@ -121,7 +121,7 @@ impl Drop for TestDocuments {
 fn content_test_panel_fetches_raw_data_and_hands_it_to_its_formula() {
     let server = TestDocuments::start();
     let (_dir, store, slots) = setup();
-    headless::init();
+    let _headless_windows = headless::init();
     let original = definitions(&store);
     let list = windows::open(&store, &slots, false).unwrap();
     list.invoke_row_clicked(0, false, false);
@@ -420,7 +420,7 @@ fn reusable_content_kinds_remap_restricted_choices_and_preserve_login_context() 
     use hydrus_gui_model::formula_editors::FormulaTestData;
     use std::{cell::RefCell, rc::Rc};
     let (_dir, store, slots) = setup();
-    headless::init();
+    let _headless_windows = headless::init();
     let mut parser = new_content();
     parser.kind = ContentKind::Variable {
         name: "token".into(),
@@ -540,7 +540,7 @@ fn native_page_content_apply_roundtrip_preserves_subsidiary_and_formula() {
 #[test]
 fn canceled_stale_nested_windows_and_invalid_fields_never_overwrite() {
     let (_dir, store, slots) = setup();
-    headless::init();
+    let _headless_windows = headless::init();
     let original = definitions(&store);
     let list = windows::open(&store, &slots, false).unwrap();
     list.invoke_row_clicked(0, false, false);
@@ -581,7 +581,7 @@ fn canceled_stale_nested_windows_and_invalid_fields_never_overwrite() {
 #[test]
 fn url_class_links_are_staged_cancel_safe_and_refresh_capability() {
     let (_dir, store, slots) = setup();
-    headless::init();
+    let _headless_windows = headless::init();
     let links = windows::open(&store, &slots, true).unwrap();
     assert_eq!(links.get_rows().row_count(), 1);
     links.invoke_row_clicked(0, false, false);
@@ -627,7 +627,7 @@ fn url_class_links_are_staged_cancel_safe_and_refresh_capability() {
 #[test]
 fn sorted_parser_rows_and_sparse_link_rows_select_the_visible_definition() {
     let (_dir, store, slots) = setup();
-    headless::init();
+    let _headless_windows = headless::init();
     store
         .write_and_refresh(|ctx| {
             let conn = ctx.conn();
@@ -680,7 +680,7 @@ fn sorted_parser_rows_and_sparse_link_rows_select_the_visible_definition() {
 #[test]
 fn namespace_control_is_disabled_without_losing_its_saved_text() {
     let (_dir, store, slots) = setup();
-    headless::init();
+    let _headless_windows = headless::init();
     let original = definitions(&store);
     let list = windows::open(&store, &slots, false).unwrap();
     list.invoke_row_clicked(0, false, false);
@@ -713,7 +713,7 @@ fn namespace_control_is_disabled_without_losing_its_saved_text() {
 #[test]
 fn deletion_confirmation_is_modal_and_removes_only_its_snapshotted_keys() {
     let (_dir, store, slots) = setup();
-    headless::init();
+    let _headless_windows = headless::init();
     store
         .write(|ctx| {
             let mut values: Downloaders = settings::get(ctx.conn())?;
@@ -755,7 +755,7 @@ fn deletion_confirmation_is_modal_and_removes_only_its_snapshotted_keys() {
 #[test]
 fn link_apply_rejects_a_class_changed_to_a_file_in_another_editor() {
     let (_dir, store, slots) = setup();
-    headless::init();
+    let _headless_windows = headless::init();
     let links = windows::open(&store, &slots, true).unwrap();
     links.invoke_row_clicked(0, false, false);
     links.set_chosen_parser(0);
@@ -1218,7 +1218,7 @@ fn recursive_subsidiary_creation_is_staged_and_owner_cancels_descendants() {
 
 #[test]
 fn subsidiary_edits_preserve_nested_page_identity_and_cancel_metadata_without_prompt() {
-    headless::init();
+    let _headless_windows = headless::init();
     let (_dir, store, slots) = setup();
     let cases = hydrus_testkit::fixture_json("parser_children.json");
     let recorded = cases
@@ -1594,7 +1594,7 @@ fn raw_content_preview_preserves_clipboard_context_and_detects_fetched_png_bytes
 #[test]
 fn subsidiary_export_uses_owned_reference_png_parameters_and_discards_stale_export() {
     let (_dir, store, slots) = setup();
-    headless::init();
+    let _headless_windows = headless::init();
     let reference = hydrus_testkit::fixture_json("parser_png_export.json");
     let original = definitions(&store);
     let list = windows::open(&store, &slots, false).unwrap();
