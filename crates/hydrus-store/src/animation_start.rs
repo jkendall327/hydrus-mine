@@ -121,7 +121,7 @@ mod tests {
         store
             .write(|ctx| {
                 ctx.conn().execute(
-                    "UPDATE settings SET value='[]' WHERE key=?",
+                    r#"UPDATE settings SET value='{"fraction":"invalid"}' WHERE key=?"#,
                     [Preferences::KEY],
                 )?;
                 Ok(())
