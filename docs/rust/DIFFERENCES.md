@@ -2920,3 +2920,14 @@ reopening in the native owner. The documented reference TB text defect and
 free-text parser limit remain. Structural predicate/Options parents stay
 Partial; no canonical ledger is changed. Rust/native render validation is
 pending hosted CI.
+
+The two archive/delete finish policies now reach selectable deletion scopes and
+an owned 1.2-second multiple-button guard. The native finish and Forget questions
+are modal layers within the existing filter canvas; Qt creates separate dialogs.
+Secondary local-domain choices follow deterministic native service order, while
+Qt obtains those secondary choices from set iteration; the page/all-local priority,
+labels, scope counts and selected transaction remain equivalent. Arbitrary broader
+archive/delete viewer/shortcut topology is not claimed. Stale replaced service keys
+reject the entire transaction instead of selecting a replacement domain. Actual
+Qt controls and 32 finish paths were recorded; source checks and authored tests
+are separate from pending hosted Rust and exact-source native PNG review.

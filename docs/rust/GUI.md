@@ -1398,9 +1398,9 @@ domain and not in the trash: a left click or F7 keeps the file, a right
 click or delete deletes it, a middle click or backspace goes back, up
 skips it, and F12 or escape stops; finishing (or stopping, with anything
 decided) asks, as the reference's "filtering done?" does, to keep N and
-delete M from the page's domain: enter commits (archiving the kept,
+delete M from the chosen local domains: enter commits (archiving the kept,
 deleting the deleted, with the delete lock's "inbox deletees" option
-honoured), f forgets, escape goes back to filtering. The deleted leave
+honoured), f asks to forget, escape goes back to filtering. The deleted leave
 the page. Files zoom and pan there as in the media viewer (but for
 dragging, as a click decides), and enter stops, as the reference's
 media viewer shortcuts have it. With the pointer
@@ -3720,3 +3720,17 @@ and showing the closed component cannot restore it. Cancelling exit keeps the
 current bitmap, while a fresh binding can load the still-saved path.
 
 The combined colour/thumbnail integration copies all eight saved local/remote and selected/unselected fill/border roles into each owned paint snapshot. Current physical storage membership selects the palette, including collection membership. A colour change clears both old and current copied cells before repaint; the viewport background keeps its saved grid colour behind the clipped image. This integration remains source-only until exact hosted native execution and PNG inspection.
+
+Archive/delete filtering now offers the actual finish deletion scopes: the page's
+local context, each current local domain, and an all-local choice when files span
+domains. The Files and Trash controls can reduce this to all possible domains or
+disable the reference's 1.2-second activation delay for multiple commit buttons.
+Single-choice and keep-only finishes stay enabled. Each choice retains its service
+keys until acceptance; deletion rechecks identities and current membership inside
+the transaction before archiving kept files. Forget asks the reference yes/no
+question, and back returns to filtering. Settings stage/Cancel/reopen independently,
+merge only changed fields, import real ClientOptions keys and preserve older
+retained values when the native key is absent. Closed, rebound, hidden and pending
+child owners cannot commit; owned timers stop on resume/close and cannot enable a
+successor's buttons. Actual Qt recorded 32 finish cases and both independent
+controls; Rust/native regressions and finish PNGs await hosted validation.

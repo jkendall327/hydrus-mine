@@ -173,3 +173,5 @@ mod image_colour;
 
 mod duplicates_progress;
 mod quick_export_directory;
+
+mod archive_delete_policies;

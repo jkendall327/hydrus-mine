@@ -23,6 +23,17 @@ fn store() -> (tempfile::TempDir, std::sync::Arc<Store>) {
     )
     .unwrap();
     let store = Store::open(dir.path()).unwrap();
+    store
+        .write(|tx| {
+            settings::set(
+                tx.conn(),
+                &hydrus_store::archive_delete_preferences::Preferences {
+                    delay_multiple: false,
+                    ..Default::default()
+                },
+            )
+        })
+        .unwrap();
     (dir, store)
 }
 fn ids(store: &Store) -> Vec<HashId> {
@@ -230,14 +241,18 @@ fn filter_accept_forget_resume_switch_and_closed_source_never_target_successor()
                 }
             }
             "forget" => {
+                filter.invoke_close_requested();
                 filter.invoke_forget();
+                filter.invoke_forget_answered(true);
                 assert_eq!(owner.borrow().files(), before);
             }
             "cancel" => {
                 filter.invoke_resume();
                 assert!(filter.get_question().is_empty());
                 assert_eq!(owner.borrow().files(), before);
+                filter.invoke_close_requested();
                 filter.invoke_forget();
+                filter.invoke_forget_answered(true);
             }
             _ => panic!(),
         }

@@ -48,6 +48,17 @@ fn the_archive_delete_filter_keeps_and_deletes() {
             )
         })
         .unwrap();
+    store
+        .write(|tx| {
+            hydrus_store::settings::set(
+                tx.conn(),
+                &hydrus_store::archive_delete_preferences::Preferences {
+                    delay_multiple: false,
+                    ..Default::default()
+                },
+            )
+        })
+        .unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     slint::ComponentHandle::show(&ui).unwrap();
@@ -137,6 +148,7 @@ fn the_archive_delete_filter_keeps_and_deletes() {
     window.invoke_keep();
     window.invoke_close_requested();
     window.invoke_forget();
+    window.invoke_forget_answered(true);
     assert!(bound.archive_delete.borrow().is_none());
     assert_eq!(after[1], files[2]);
     assert!(state(&store, after[1]).0, "still in the inbox");
