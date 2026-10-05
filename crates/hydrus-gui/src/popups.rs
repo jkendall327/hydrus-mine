@@ -20,6 +20,11 @@ pub enum Gauge {
 #[derive(Debug, Clone, PartialEq)]
 pub struct PopupView {
     pub key: [u8; 32],
+    pub action_owner: Option<[u8; 32]>,
+    pub question_token: Option<[u8; 32]>,
+    pub question: Option<String>,
+    pub clipboard: Option<String>,
+    pub callable: Option<String>,
     /// In bold, centred.
     pub title: Option<String>,
     /// "paused" while it is.
@@ -81,6 +86,17 @@ pub fn view_with_figures(job: &Job, figures: u8) -> PopupView {
     };
     PopupView {
         key: job.key,
+        action_owner: job.action_owner,
+        question_token: job.popup_yes_no_question.as_ref().map(|(token, _)| *token),
+        question: if paused {
+            None
+        } else {
+            job.popup_yes_no_question
+                .as_ref()
+                .map(|(_, text)| cut(text))
+        },
+        clipboard: job.popup_clipboard.as_ref().map(|(label, _)| label.clone()),
+        callable: job.user_callable_label.clone(),
         title: job.status_title.clone(),
         text_1,
         gauge_1: if paused {
@@ -147,7 +163,11 @@ fn now() -> i64 {
     hydrus_core::time::TimestampMs::now().millis() / 1000
 }
 
-fn data(view: &PopupView, width: &hydrus_store::popup_width::PopupWidth) -> crate::PopupData {
+fn data(
+    view: &PopupView,
+    width: &hydrus_store::popup_width::PopupWidth,
+    gui_owner: &[u8; 32],
+) -> crate::PopupData {
     let gauge = |g: Option<Gauge>| match g {
         None => (false, 0.0, false),
         Some(Gauge::Going) => (true, 0.0, true),
@@ -159,6 +179,24 @@ fn data(view: &PopupView, width: &hydrus_store::popup_width::PopupWidth) -> crat
     crate::PopupData {
         width_characters: width.effective_characters(),
         fixed_width: width.fixed,
+        key: hex::encode(view.key).into(),
+        gui_owner: hex::encode(gui_owner).into(),
+        action_owner: view
+            .action_owner
+            .map(hex::encode)
+            .unwrap_or_default()
+            .into(),
+        question_token: view
+            .question_token
+            .map(hex::encode)
+            .unwrap_or_default()
+            .into(),
+        has_question: view.question.is_some(),
+        question: text(&view.question),
+        has_clipboard: view.clipboard.is_some(),
+        clipboard: text(&view.clipboard),
+        has_callable: view.callable.is_some(),
+        callable: text(&view.callable),
         title: text(&view.title),
         text_1: text(&view.text_1),
         has_gauge_1,
@@ -182,16 +220,58 @@ fn data(view: &PopupView, width: &hydrus_store::popup_width::PopupWidth) -> crat
     }
 }
 
+pub(crate) struct Binding {
+    timer: std::rc::Rc<slint::Timer>,
+    active: std::rc::Rc<std::cell::Cell<bool>>,
+    store: std::sync::Arc<hydrus_store::Store>,
+    gui_owner: [u8; 32],
+}
+impl Binding {
+    pub(crate) fn retire_callback(&self) -> std::rc::Rc<dyn Fn()> {
+        let active = self.active.clone();
+        let timer = self.timer.clone();
+        let store = self.store.clone();
+        let gui_owner = self.gui_owner;
+        std::rc::Rc::new(move || {
+            if !active.replace(false) {
+                return;
+            }
+            timer.stop();
+            if let Err(error) = store
+                .write(move |ctx| hydrus_store::popup_actions::retire_gui(ctx.conn(), &gui_owner))
+            {
+                eprintln!("Could not retire popup GUI owner: {error}");
+            }
+        })
+    }
+}
+impl Drop for Binding {
+    fn drop(&mut self) {
+        self.retire_callback()();
+    }
+}
+
 /// Show the store's popups in `window`, four times a second as the
 /// reference's manager looks, and do what their buttons say. Returns the
-/// timer that shows them (to hold).
-pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> std::rc::Rc<slint::Timer> {
+/// binding that owns their timer and can be permanently retired on accepted close.
+pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> Binding {
     use std::cell::RefCell;
     use std::rc::Rc;
 
     use slint::{ComponentHandle as _, Model as _, ModelRc, VecModel};
 
+    // Rebinding retires the prior incarnation even while its Bound is retained.
+    window.invoke_popup_retire_owner();
     let hooks = Rc::new(hooks);
+    let gui_owner = rand::random::<[u8; 32]>();
+    let owned_store = hooks.pages.borrow().store().clone();
+    let active = Rc::new(std::cell::Cell::new(true));
+    if let Err(error) =
+        owned_store.write(move |ctx| hydrus_store::popup_actions::begin_gui(ctx.conn(), &gui_owner))
+    {
+        active.set(false);
+        eprintln!("Could not own popup GUI actions: {error}");
+    }
     let model: Rc<VecModel<crate::PopupData>> = Rc::new(VecModel::default());
     window.set_popups(ModelRc::from(model.clone()));
     let card_widths = Rc::new(VecModel::<f32>::default());
@@ -215,11 +295,15 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> std::rc::Rc<slin
     let shown: Rc<RefCell<Vec<PopupView>>> = Rc::default();
     let store = move |hooks: &Hooks| hooks.pages.borrow().store().clone();
     let refresh: Rc<dyn Fn()> = {
+        let active = active.clone();
         let hooks = hooks.clone();
         let shown = shown.clone();
         let policies = policies.clone();
         let weak = window.as_weak();
         Rc::new(move || {
+            if !active.get() {
+                return;
+            }
             let Some(window) = weak.upgrade() else { return };
             let jobs = match store(&hooks).read(|conn| hydrus_store::popups::all(conn, now())) {
                 Ok(jobs) => jobs,
@@ -243,7 +327,7 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> std::rc::Rc<slin
                 let policy = policies
                     .entry(view.key)
                     .or_insert_with(|| preferences.clone());
-                let row = data(view, policy);
+                let row = data(view, policy, &gui_owner);
                 if i < model.row_count() {
                     if model.row_data(i).as_ref() != Some(&row) {
                         model.set_row_data(i, row);
@@ -269,6 +353,13 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> std::rc::Rc<slin
         })
     };
     refresh();
+    crate::popup_job_actions::bind(
+        window,
+        store(&hooks),
+        active.clone(),
+        gui_owner,
+        refresh.clone(),
+    );
     // change the popup shown at `i`, then show them again
     let change = {
         let hooks = hooks.clone();
@@ -417,7 +508,15 @@ pub(crate) fn bind(window: &crate::MainWindow, hooks: Hooks) -> std::rc::Rc<slin
         std::time::Duration::from_millis(250),
         move || refresh(),
     );
-    timer
+    let binding = Binding {
+        timer,
+        active,
+        store: owned_store,
+        gui_owner,
+    };
+    let retire = binding.retire_callback();
+    window.on_popup_retire_owner(move || retire());
+    binding
 }
 
 #[cfg(test)]
@@ -425,6 +524,63 @@ mod tests {
     use hydrus_core::Sha256;
 
     use super::*;
+
+    #[test]
+    fn actual_qt_action_visibility_labels_and_question_cutoff_replay() {
+        let fixture = hydrus_testkit::fixture_json("popup_actions.json");
+        let mut job = Job::new(true, true, 0.0);
+        for event in fixture["states"].as_array().unwrap().iter().take(8) {
+            match event["label"].as_str().unwrap() {
+                "all actions" => {
+                    job.popup_clipboard = Some((
+                        "copy full payload".into(),
+                        fixture["payload"].as_str().unwrap().into(),
+                    ));
+                    job.popup_yes_no_question =
+                        Some(([1; 32], format!("Question\n{}", "é".repeat(1030))));
+                    job.user_callable_label = Some("repeat command".into());
+                }
+                "current values before refresh" => {
+                    job.popup_clipboard =
+                        Some(("replacement clipboard".into(), "replacement text".into()));
+                    job.user_callable_label = Some("replacement command".into());
+                    continue; // Qt intentionally still displays old labels.
+                }
+                "paused only question hides" => job.pause_play(),
+                "resume refresh labels" => {
+                    job.pause_play();
+                    job.popup_clipboard =
+                        Some(("replacement clipboard".into(), "replacement text".into()));
+                    job.user_callable_label = Some("replacement command".into());
+                }
+                "cancel retains callable" => job.cancel(),
+                "variables removed" => {
+                    job.popup_clipboard = None;
+                    job.popup_yes_no_question = None;
+                    job.user_callable_label = None;
+                }
+                _ => (),
+            }
+            let view = view(&job);
+            assert_eq!(
+                view.question.is_none(),
+                event["question_hidden"],
+                "{}",
+                event["label"]
+            );
+            assert_eq!(view.clipboard.is_none(), event["clipboard_hidden"]);
+            assert_eq!(view.callable.is_none(), event["callable_hidden"]);
+            if let Some(question) = view.question {
+                assert_eq!(question, event["question"]);
+            }
+            if let Some(label) = view.clipboard {
+                assert_eq!(label, event["clipboard_label"]);
+            }
+            if let Some(label) = view.callable {
+                assert_eq!(label, event["callable_label"]);
+            }
+        }
+    }
 
     #[test]
     fn a_popup_shows_as_the_reference_s() {

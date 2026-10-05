@@ -60,6 +60,7 @@ mod page_chooser_options;
 mod page_navigation_options;
 mod page_scroll;
 mod popup_width;
+mod popup_job_actions;
 mod popups;
 mod predicate_editors;
 mod predicate_history;

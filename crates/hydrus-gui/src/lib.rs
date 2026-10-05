@@ -100,6 +100,7 @@ pub mod parser_editors_window;
 mod parser_test_fetch;
 mod playback;
 pub mod png_export_window;
+mod popup_job_actions;
 mod popup_menu;
 mod popups;
 pub mod predicate_editor_window;
@@ -391,7 +392,7 @@ pub struct Bound {
     /// they change (held likewise).
     _menu_titles: Rc<slint::Timer>,
     /// Shows the popup messages (held likewise).
-    _popups: Rc<slint::Timer>,
+    _popups: popups::Binding,
     /// Automatic recognised URL imports while this desktop window is bound.
     pub clipboard_monitor: clipboard_monitor::Monitor,
     /// Historical autosaves, with real input activity and a bounded timer.
@@ -1751,25 +1752,6 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     };
-    client_exit::bind(
-        window,
-        page().borrow().store().clone(),
-        &exit_confirmation,
-        Rc::new({
-            let ask = ask.clone();
-            move |question, then| ask(Asked::Then(question, then))
-        }),
-        Rc::new({
-            let preview = preview.clone();
-            let shortcuts = shortcuts.clone();
-            let launcher = external_launches.clone();
-            move || {
-                preview.close();
-                shortcuts.retire();
-                launcher.cancel();
-            }
-        }),
-    );
     // (the status bar counts the selection's inbox)
     let archive_or_inbox = |archive: bool| {
         let page = page.clone();
@@ -2599,6 +2581,27 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             pages: pages.clone(),
             change_pages: Rc::new(change_pages.clone()),
         },
+    );
+    client_exit::bind(
+        window,
+        page().borrow().store().clone(),
+        &exit_confirmation,
+        Rc::new({
+            let ask = ask.clone();
+            move |question, then| ask(Asked::Then(question, then))
+        }),
+        Rc::new({
+            let preview = preview.clone();
+            let shortcuts = shortcuts.clone();
+            let launcher = external_launches.clone();
+            let retire_popups = popup_timer.retire_callback();
+            move || {
+                preview.close();
+                shortcuts.retire();
+                launcher.cancel();
+                retire_popups();
+            }
+        }),
     );
     // a URL downloader page's importer: pausing, and URLs typed or pasted
     window.on_pause_play_files({

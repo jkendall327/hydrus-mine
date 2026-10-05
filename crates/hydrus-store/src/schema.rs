@@ -17,8 +17,17 @@ use hydrus_core::ServiceId;
 /// Each entry upgrades the schema by one version. Never edit an entry once it
 /// has shipped; append a new one.
 const MIGRATIONS: &[&str] = &[
-    V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14, V15, V16, V17,
+    V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14, V15, V16, V17, V18,
 ];
+
+/// Popup requests are separate from their rows: yes/no dismisses the row before
+/// its retained producer consumes the answer. Random owners prevent ABA reuse.
+const V18: &str = r"
+CREATE TABLE popup_action_owners (job_key BLOB PRIMARY KEY, owner BLOB NOT NULL) STRICT;
+CREATE TABLE popup_action_gui_owners (owner BLOB PRIMARY KEY) STRICT;
+CREATE TABLE popup_action_requests (seq INTEGER PRIMARY KEY AUTOINCREMENT, job_key BLOB NOT NULL, owner BLOB NOT NULL, gui_owner BLOB, request TEXT NOT NULL) STRICT;
+CREATE INDEX popup_action_requests_owner ON popup_action_requests(job_key, owner);
+";
 
 /// The schema version this build writes.
 pub const SCHEMA_VERSION: u32 = MIGRATIONS.len() as u32;

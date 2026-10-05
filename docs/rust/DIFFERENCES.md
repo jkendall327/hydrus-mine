@@ -1003,6 +1003,18 @@ native/store/model regression source awaits hosted CI; no Rust runs locally.
   going on are forgotten when the daemon stops or starts (as the work has
   stopped), but messages and finished work stay until dismissed. The
   reference's popups all go when it closes.
+- **Live popup actions stay in their producer process.** Clipboard payloads
+  persist with the job, while callables and questions use owner-qualified SQLite
+  requests. The native clipboard, callable and yes/no controls consume these
+  current values. A yes/no click immediately finishes/dismisses the row and
+  commits its reply; the retained producer reads it afterward. Callables execute
+  serially outside producer locks on its weak polling task (up to 250ms later),
+  with current callbacks and ownership checked before each effect. Question and
+  action changes publish synchronously. Rebinding or accepted main-window close
+  retires unconsumed GUI calls, while committed answers survive. A producer drop
+  or daemon restart removes executable handlers; finished clipboard messages
+  remain copyable. This does not add reference-only maintenance/menu producers,
+  modal job windows, popup freeze rules or download/cancel parent completeness.
 - **A popup's `network_job`** says its URL, status, speed, bytes read and to
   read, whether it is done and whether it failed, as the reference's does;
   the popup/API shape does not yet carry the network review's typed wait

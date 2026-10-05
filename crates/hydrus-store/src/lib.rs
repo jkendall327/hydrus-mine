@@ -31,6 +31,7 @@ pub mod network_runtime;
 pub mod paths;
 pub mod pending;
 pub mod popup_width;
+pub mod popup_actions;
 pub mod popups;
 pub mod queues;
 pub mod regex_favourites;
