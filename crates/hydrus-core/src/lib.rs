@@ -90,3 +90,6 @@ pub(crate) mod test_fixtures {
         );
     }
 }
+
+/// Registered external calls and typed command arguments.
+pub mod external_calls;

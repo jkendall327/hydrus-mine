@@ -1273,3 +1273,7 @@ impl Default for NotePreferences {
 impl Setting for NotePreferences {
     const KEY: &'static str = "note_preferences";
 }
+
+impl Setting for hydrus_core::external_calls::Manager {
+    const KEY: &'static str = "external_calls";
+}
