@@ -236,6 +236,7 @@ struct Request {
     blurhash: bool,
 }
 
+#[allow(clippy::missing_fields_in_debug)] // (its store is a weak handle)
 impl std::fmt::Debug for ThumbnailLoader {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("ThumbnailLoader")

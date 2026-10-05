@@ -101,7 +101,7 @@ pub fn open_with_choice(
     let window = DeleteFilesWindow::new().map_err(|e| e.to_string())?;
     window.set_custom(draft.custom.as_str().into());
     show(&window, &draft);
-    let initial_radio = if draft.choices.len() > 1 { 0 } else { 1 };
+    let initial_radio = i32::from(draft.choices.len() <= 1);
     let draft = Rc::new(RefCell::new(draft));
     let active = Rc::new(Cell::new(true));
     let close: Rc<dyn Fn()> = Rc::new({

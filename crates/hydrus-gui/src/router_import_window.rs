@@ -82,7 +82,7 @@ pub fn open(
                         window.set_error("".into());
                     }
                     "paste" if !window.get_ready() => {
-                        window.set_text(crate::from_clipboard()?.into())
+                        window.set_text(crate::from_clipboard()?.into());
                     }
                     "accept" if window.get_ready() => {
                         applied(pending.borrow().clone())?;

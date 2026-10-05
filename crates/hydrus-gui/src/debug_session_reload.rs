@@ -42,7 +42,7 @@ impl State {
             match receive.try_recv() {
                 Ok(reply) => replies.push(reply),
                 Err(crossbeam_channel::TryRecvError::Empty) => {
-                    self.pending.borrow_mut().push(receive)
+                    self.pending.borrow_mut().push(receive);
                 }
                 Err(crossbeam_channel::TryRecvError::Disconnected) => {
                     replies.push(Err("reload worker disconnected".into()));
@@ -81,6 +81,7 @@ impl Drop for State {
 
 /// Cloneable access to this binding's reload requests; it does not retain the lease.
 #[derive(Clone)]
+#[allow(missing_debug_implementations)]
 pub struct Control(Rc<State>);
 /// Final Bound-clone retirement lease, shared through Rc by the binding.
 pub(crate) struct Owner(Control);

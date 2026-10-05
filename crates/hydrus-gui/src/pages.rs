@@ -1515,12 +1515,11 @@ impl Pages {
                 hydrus_core::url::UrlType::Post
                     | hydrus_core::url::UrlType::Gallery
                     | hydrus_core::url::UrlType::Watchable
-            ) && capability.parser.is_err()
+            ) && let Err(error) = &capability.parser
             {
                 return Err(format!(
                     "This URL was recognised as a \"{}\" but it cannot be parsed: {}\n\nSince this URL cannot be parsed, a downloader cannot be created for it! Please check your url class links under the 'networking' menu.",
-                    capability.match_name,
-                    capability.parser.unwrap_err()
+                    capability.match_name, error
                 ));
             }
             normalised.push(url);
@@ -1542,6 +1541,7 @@ impl Pages {
             self.new_page_depth = depth;
             result?;
             // The new page has not been renamed yet; find its previously absent key.
+            #[allow(clippy::items_after_statements)]
             fn new_url(pages: &[Page], existing: &[PageKey]) -> Option<PageKey> {
                 for page in pages {
                     match &page.content {

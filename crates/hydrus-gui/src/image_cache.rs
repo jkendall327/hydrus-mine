@@ -34,6 +34,7 @@ fn estimate_resolution(width: Option<u32>, height: Option<u32>) -> u64 {
 pub(crate) struct Loading {
     identity: Option<Identity>,
     cache: Weak<Shared>,
+    #[allow(clippy::option_option)] // (unfinished, or finished with no raster)
     result: Mutex<Option<Option<Arc<Raster>>>>,
     ready: Condvar,
 }
