@@ -82,13 +82,25 @@ fn history_frame_consumes_times_filters_and_ranges_without_touching_main_query_o
         slint::platform::update_timers_and_animations();
     }
     assert_eq!(window.get_status(), "Cancelled!");
+    store
+        .write(|ctx| {
+            let mut prefs = hydrus_store::settings::get::<
+                hydrus_store::settings::FileSearchSettings,
+            >(ctx.conn())?;
+            prefs.implicit_limit = Some(1);
+            hydrus_store::settings::set(ctx.conn(), &prefs)
+        })
+        .unwrap();
     window.set_input("parity:history-selected".into());
     window.invoke_enter();
     wait(&window);
     assert_eq!(window.get_predicates().row_count(), 1);
     assert_eq!(window.get_max_count(), 1);
     window.invoke_toggle(0);
-    assert!(!window.get_paths().row_data(0).unwrap().is_empty());
+    assert!(
+        window.get_paths().row_data(0).unwrap().contains("L"),
+        "history must include both matching import times despite implicit cap one"
+    );
     assert_eq!(bound.pages.borrow().session().pages, tree);
     window.invoke_close_clicked();
     assert!(bound.file_history.borrow().is_none());

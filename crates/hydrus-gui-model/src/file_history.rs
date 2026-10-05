@@ -1,6 +1,8 @@
 //! Independent file-history query and chart controls, without Slint state.
 use hydrus_core::search::context::{FileSearchContext, LocationContext};
-use hydrus_search::{Clock, FileSort, Predicate, SystemPredicate, search_files};
+use hydrus_search::{
+    Clock, FileSort, Predicate, SystemPredicate, search_files_without_implicit_limit,
+};
 use hydrus_store::{
     Store, StoreError,
     content::DomainRoles,
@@ -39,13 +41,19 @@ pub fn load(
             && search.predicates != [Predicate::System(SystemPredicate::Everything)]
         {
             let clock = Clock::system();
-            let current = search_files(conn, &snapshot, search, FileSort::default(), &clock)
-                .map_err(|e| StoreError::Invalid(e.to_string()))?;
+            let current = search_files_without_implicit_limit(
+                conn,
+                &snapshot,
+                search,
+                FileSort::default(),
+                &clock,
+            )
+            .map_err(|e| StoreError::Invalid(e.to_string()))?;
             let deleted_context = FileSearchContext {
                 location: LocationContext::new([], [key.clone()]),
                 ..search.clone()
             };
-            let deleted = search_files(
+            let deleted = search_files_without_implicit_limit(
                 conn,
                 &snapshot,
                 &deleted_context,

@@ -67,9 +67,47 @@ fn global_and_filtered_series_ranges_visibility_refresh_and_cancel_match_actual_
         predicates: hydrus_search::parse_api_search(&json!([recorded["filter_tag"]])).unwrap(),
         ..context.clone()
     };
+    store
+        .write(|ctx| {
+            let mut prefs = hydrus_store::settings::get::<
+                hydrus_store::settings::FileSearchSettings,
+            >(ctx.conn())?;
+            prefs.implicit_limit = Some(1);
+            hydrus_store::settings::set(ctx.conn(), &prefs)
+        })
+        .unwrap();
+    let ordinary = store
+        .read(|conn| {
+            Ok(hydrus_search::search_files(
+                conn,
+                &store.snapshot(),
+                &filtered,
+                hydrus_search::FileSort::default(),
+                &hydrus_search::Clock::system(),
+            )
+            .unwrap())
+        })
+        .unwrap();
+    assert_eq!(ordinary.len(), 1);
     assert_eq!(
         json!(model::load(&store, &filtered, 8, &AtomicBool::new(false)).unwrap()),
         recorded["filtered_compact"]
+    );
+    assert_eq!(
+        json!(model::load(&store, &filtered, 8, &AtomicBool::new(false)).unwrap()),
+        recorded["implicit_limit_case"]["history"]
+    );
+    let explicit = FileSearchContext {
+        predicates: vec![hydrus_search::Predicate::System(
+            hydrus_search::SystemPredicate::Limit(0),
+        )],
+        ..context.clone()
+    };
+    assert!(
+        model::load(&store, &explicit, 8, &AtomicBool::new(false))
+            .unwrap()
+            .current
+            .is_empty()
     );
     assert_eq!(
         model::load(&store, &context, 8, &AtomicBool::new(true))
