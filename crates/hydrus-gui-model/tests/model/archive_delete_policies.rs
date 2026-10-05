@@ -143,14 +143,14 @@ fn actual_qt_domain_alternatives_priorities_delay_and_selected_transaction() {
         .unwrap()
         .iter()
         .map(|d| {
-            let key: ServiceKey = d["key"].as_str().unwrap().parse().unwrap();
+            let key = ServiceKey::from_hex(d["key"].as_str().unwrap()).unwrap();
             store.snapshot().services.by_key(&key).unwrap().id
         })
         .collect();
     let combined = store
         .snapshot()
         .services
-        .by_key(&qt["combined_key"].as_str().unwrap().parse().unwrap())
+        .by_key(&ServiceKey::from_hex(qt["combined_key"].as_str().unwrap()).unwrap())
         .unwrap()
         .id;
     let files:Vec<HashId>=store.read(|conn|{let mut q=conn.prepare("SELECT hash_id FROM file_domain_current WHERE service_id=? ORDER BY hash_id LIMIT 2")?;Ok(q.query_map([ids[0]],|r|r.get(0))?.collect::<Result<_,_>>()?)}).unwrap();
