@@ -180,6 +180,34 @@ fn real_menu_selected_work_future_clear_and_owned_stale_callbacks() {
 }
 
 #[test]
+fn reopened_review_refetches_counts_without_inheriting_the_closed_selection() {
+    let (_dirs, store) = super::subscriptions::store();
+    seed(&store);
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let old = open(&ui, &bound);
+    pump(|| old.get_rows().row_count() == 2);
+    old.invoke_clicked(index(&old, JobType::HasIccProfile), false, false);
+    assert!(old.get_can_clear());
+    old.invoke_sorted(1, false);
+    old.invoke_close_clicked();
+    let fresh = open(&ui, &bound);
+    pump(|| fresh.get_rows().row_count() == 2);
+    assert!(!fresh.get_can_clear());
+    assert!(!fresh.get_can_work());
+    assert!(fresh.get_can_all());
+    assert!(fresh.get_rows().iter().all(|row| !row.selected));
+    old.show().unwrap();
+    old.invoke_clicked(index(&old, JobType::HasExif), false, false);
+    old.invoke_clear_clicked();
+    assert!(fresh.get_question().is_empty());
+    assert!(!fresh.get_can_clear());
+    assert_eq!(counts(&store)[&JobType::HasExif], (2, 0));
+}
+
+#[test]
 fn real_popup_cancel_while_pass_waits_for_shared_lease_preserves_every_queued_file() {
     let (_dirs, store) = super::subscriptions::store();
     let files = seed(&store);

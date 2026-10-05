@@ -354,6 +354,9 @@ impl Control {
             return Ok(window.clone_strong());
         }
         let window = FileMaintenanceWindow::new().map_err(|e| e.to_string())?;
+        // A new Review frame starts without selection or stale count rows.
+        // Keep this owner's column sort choice, but refetch actual counts.
+        self.0.queue.borrow_mut().replace(BTreeMap::new());
         window.set_explanation(model::EXPLANATION.into());
         let weak = Rc::downgrade(&self.0);
         let owner = window.as_weak();
