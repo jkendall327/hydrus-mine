@@ -486,14 +486,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     }));
     let binding_active = Rc::new(Cell::new(true));
-    window.on_retire_external_launches({
-        let launcher = external_launches.clone();
-        let binding_active = binding_active.clone();
-        move || {
-            binding_active.set(false);
-            launcher.cancel();
-        }
-    });
+    let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
+
     let pages = Rc::new(RefCell::new(pages));
     let session_autosave = session_autosave::bind(window, &pages);
     let first = pages.borrow_mut().current();
@@ -515,6 +509,22 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     );
     let local_transfer: local_transfer_window::Slot = Rc::default();
     let rows = Rc::new(ThumbnailRows::new(first));
+    window.on_retire_external_launches({
+        let options = options.clone();
+        let rows = rows.clone();
+        let launcher = external_launches.clone();
+        let binding_active = binding_active.clone();
+        move || {
+            binding_active.set(false);
+            launcher.cancel();
+            rows.retire();
+            let child = options.borrow().as_ref().map(|child| child.clone_strong());
+            if let Some(child) = child {
+                child.invoke_cancel();
+            }
+        }
+    });
+
     window.set_thumbnail_rows(ModelRc::from(rows.clone()));
     rows.set_columns(usize::try_from(window.get_grid_columns()).unwrap_or(1));
     rows.set_scale(window.window().scale_factor());
@@ -527,9 +537,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let rows = rows.clone();
             let window = window.as_weak();
             move || {
-                if let Some(window) = window.upgrade() {
-                    rows.set_scale(window.window().scale_factor());
-                }
+                let Some(window) = window.upgrade() else {
+                    rows.retire();
+                    return;
+                };
+                rows.set_scale(window.window().scale_factor());
                 rows.receive();
             }
         },
@@ -1928,7 +1940,6 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     let tab_name_dialog = tab_context_window::bind(window, &pages, Rc::new(change_pages.clone()));
     // the menu bar, its titles shown again as what they say changes
-    let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
     let options_reason_child: options_deletion::Slot = Rc::default();
     let options_colour_child: options_namespace_colours::Slot = Rc::default();
     let options_frame_child: options_frames::Slot = Rc::default();
@@ -2104,6 +2115,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             // file > options; once applied, what the options change is
             // shown again
             options: {
+                let binding_active = binding_active.clone();
                 let pages = pages.clone();
                 let slot = options.clone();
                 let reason_slot = options_reason_child.clone();
@@ -2119,7 +2131,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let rows = rows.clone();
                 let weak = window.as_weak();
                 Rc::new(move || {
-                    if slot.borrow().is_some() {
+                    if !binding_active.get() || slot.borrow().is_some() {
                         return;
                     }
                     let store = pages.borrow().store().clone();
@@ -2132,6 +2144,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         let weak = weak.clone();
                         let store = store.clone();
                         move || {
+                            rows.set_cache_policy(
+                                store.read(hydrus_store::settings::get).unwrap_or_default(),
+                            );
                             pages.borrow_mut().reload_settings();
                             if let Some(window) = viewer.borrow().as_ref() {
                                 window.invoke_presentation_settings_changed();
@@ -2349,6 +2364,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     }
                 })
             },
+            clear_thumbnail_cache: Rc::new({
+                let rows = rows.clone();
+                let weak = window.as_weak();
+                let binding_active = binding_active.clone();
+                move || {
+                    if binding_active.get()
+                        && weak.upgrade().is_some_and(|w| w.window().is_visible())
+                    {
+                        rows.clear_thumbnail_cache();
+                    }
+                }
+            }),
             viewing_maintenance: {
                 let pages = pages.clone();
                 let slot = viewing_maintenance.clone();
@@ -2647,9 +2674,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let shortcuts = shortcuts.clone();
             let launcher = external_launches.clone();
             let retire_popups = popup_timer.retire_callback();
+            let options = options.clone();
+            let rows = rows.clone();
             let binding_active = binding_active.clone();
             move || {
                 binding_active.set(false);
+                rows.retire();
+                let child = options.borrow().as_ref().map(|child| child.clone_strong());
+                if let Some(child) = child {
+                    child.invoke_cancel();
+                }
                 preview.close();
                 shortcuts.retire();
                 launcher.cancel();
@@ -3425,7 +3459,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let previous = archive_delete
                 .borrow()
                 .as_ref()
-                .map(ComponentHandle::clone_strong);
+                .map(|child| child.clone_strong());
             if let Some(previous) = previous {
                 previous.invoke_forget();
             }

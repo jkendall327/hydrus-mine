@@ -3,8 +3,8 @@
 //! that fill them): its menus and entries as hydrus shows them, from what
 //! the client knows at the time ([`Facts`]). An entry does what hydrus's
 //! does where hydrus-rs can ([`Command`]); the others are shown greyed out
-//! until it can. Left out (DIFFERENCES.md): help > debug, hydrus's own
-//! debugging tools, and "about Qt"; the services menu's "administrate",
+//! until it can. Left out (DIFFERENCES.md): other help > debug tools and
+//! "about Qt"; the services menu's "administrate",
 //! for repository admins; the database menu's backup entries as hydrus has
 //! them for a database across several locations.
 
@@ -253,6 +253,8 @@ pub enum Command {
     /// Scan and optionally fill missing global archive times.
     RepairArchiveTimes,
     ClearViewingStatistics,
+    /// Clear only this GUI incarnation's thumbnail cache and redraw its current grid.
+    ClearThumbnailCache,
     CullViewingStatistics,
     FileHistory,
     /// Forget a repository's pending content, asking first.
@@ -1184,7 +1186,7 @@ fn pending_menu(pending: &[Pending]) -> Entry {
     }
 }
 
-/// `_InitialiseMenuInfoHelp`, less its debug menu and "about Qt".
+/// `_InitialiseMenuInfoHelp`, with the implemented thumbnail-only debug memory action.
 fn help_menu(facts: &Facts) -> Entry {
     let link = |label: &str, url: &'static str| item(label, Command::OpenUrl(url));
     menu(
@@ -1226,6 +1228,14 @@ fn help_menu(facts: &Facts) -> Entry {
             SEP,
             check("darkmode", None, false),
             check("advanced mode", Some(Command::AdvancedMode), facts.advanced),
+            SEP,
+            menu(
+                "debug",
+                vec![menu(
+                    "memory actions",
+                    vec![item("clear thumbnail cache", Command::ClearThumbnailCache)],
+                )],
+            ),
             SEP,
             item("about", Command::About),
         ],

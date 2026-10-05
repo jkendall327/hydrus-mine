@@ -53,6 +53,7 @@ fn same_time(a: f64, b: Option<f64>) -> bool {
 
 /// The reference's widgets that are a control of ours.
 const WIDGETS: &[&str] = &[
+    "BytesControl",
     "MediaSortControl",
     "MediaCollectControl",
     "TagSortControl",
@@ -136,6 +137,10 @@ fn our_rows<'a>(items: &'a [Item], boxes: &[String], out: &mut Vec<(Vec<String>,
 fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<String> {
     let num = |key: &str| theirs.get(key).and_then(Json::as_f64);
     let problem = match (kind, value) {
+        (Kind::Bytes, Value::Bytes { amount, unit }) => (theirs["widget"] != "BytesControl"
+            || theirs["value"].as_u64()
+                != Some(hydrus_gui_model::thumbnail_cache::combined(*amount, *unit)))
+        .then(|| format!("byte amount/unit {amount}/{unit} vs {theirs}")),
         (Kind::NoneableDuration { .. }, Value::NoneableDuration { none, seconds }) => {
             (theirs["widget"] != "NoneableTimeDeltaWidget"
                 || if *none {

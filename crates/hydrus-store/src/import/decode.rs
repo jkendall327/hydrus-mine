@@ -904,6 +904,16 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &shortcuts)?;
+    let mut thumbnail_cache = crate::settings::ThumbnailCacheSettings::default();
+    if let Some(options) = &options {
+        if let Some(&n) = options.integers.get("thumbnail_cache_size") {
+            thumbnail_cache.bytes = n.max(0) as u64;
+        }
+        if let Some(&n) = options.integers.get("thumbnail_cache_timeout") {
+            thumbnail_cache.timeout = n.max(0) as u64;
+        }
+    }
+    insert_setting(&mut input, &thumbnail_cache)?;
     let mut view_removal = crate::settings::FileViewRemoval::default();
     if let Some(value) = legacy_options
         .get("remove_filtered_files")
@@ -4006,7 +4016,7 @@ mod tests {
                     r#"[[0, "file_viewing_statistics_media_min_time_ms"], [0, null]]"#,
                 ),
                 (
-                    r#"[[0, "file_viewing_statistics_media_max_time_ms"], [0, 600000]]"#,
+                    r#"[[0, "file_viewing_statistics_media_max_time_ms"], [0, 600_000]]"#,
                     r#"[[0, "file_viewing_statistics_media_max_time_ms"], [0, 1234]]"#,
                 ),
                 (
@@ -4767,6 +4777,40 @@ mod tests {
 
     /// The tag lists' colours come across: hydrus's defaults, the user's,
     /// and the namespace OR predicates take theirs from.
+    #[test]
+    fn thumbnail_cache_size_and_raw_timeout_import_as_independent_typed_preferences() {
+        use crate::settings::ThumbnailCacheSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ThumbnailCacheSettings>(
+                input.settings["thumbnail_cache"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(decoded(), ThumbnailCacheSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "thumbnail_cache_size"], [0, 33554432]]"#,
+                    r#"[[0, "thumbnail_cache_size"], [0, 1024]]"#,
+                ),
+                (
+                    r#"[[0, "thumbnail_cache_timeout"], [0, 86400]]"#,
+                    r#"[[0, "thumbnail_cache_timeout"], [0, 299]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ThumbnailCacheSettings {
+                bytes: 1024,
+                timeout: 299
+            }
+        );
+    }
+
     #[test]
     fn file_view_removal_imports_legacy_and_typed_flags_independently() {
         let source = hydrus_testkit::legacy_fixture("basic");

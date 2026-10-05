@@ -85,6 +85,7 @@ pub mod tab_context;
 pub mod tab_drag;
 pub mod tag_filter_editor;
 pub mod tag_suggestions;
+pub mod thumbnail_cache;
 pub mod thumbnail_icons;
 pub mod thumbnail_navigation;
 pub mod thumbnail_ratings;

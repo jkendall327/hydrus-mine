@@ -43,6 +43,38 @@ type SortCogTarget = (usize, usize, Vec<hydrus_gui_model::sort_cog::Entry>);
 
 const UNMATCHED: [&str; 2] = ["collect into one group", "leave separate"];
 
+fn refresh_byte_row(
+    weak: &slint::Weak<OptionsWindow>,
+    editor: &RefCell<Editor>,
+    store: &Store,
+    index: i32,
+) {
+    let Some(window) = weak.upgrade() else {
+        return;
+    };
+    let editor = editor.borrow();
+    let rows = editor.rows();
+    let Some(row) = rows.get(at(index)) else {
+        return;
+    };
+    if !matches!(row,Row::Opt{option,..} if matches!(option.kind,Kind::Bytes)) {
+        return;
+    }
+    if let Some(model) = window
+        .get_rows()
+        .as_any()
+        .downcast_ref::<VecModel<OptionRow>>()
+    {
+        model.set_row_data(
+            at(index),
+            OptionRow {
+                found: editor.found(at(index)),
+                ..option_row(row, store, &[])
+            },
+        );
+    }
+}
+
 /// A row as the window shows it (a sort's types are the store's).
 fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)]) -> OptionRow {
     let mut out = OptionRow::default();
@@ -69,6 +101,30 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                 (Kind::Check, Value::Check(b)) => {
                     out.kind = 1;
                     out.checked = *b;
+                }
+                (Kind::Bytes, Value::Bytes { amount, unit }) => {
+                    out.kind = 33;
+                    out.number = int(*amount);
+                    out.minimum = 0;
+                    out.maximum = 1_048_576;
+                    out.items = ModelRc::new(VecModel::from(
+                        ["B", "KB", "MB", "GB", "TB"]
+                            .into_iter()
+                            .map(SharedString::from)
+                            .collect::<Vec<_>>(),
+                    ));
+                    out.index = int(*unit as i64);
+                    let bounds = store.snapshot().thumbnails;
+                    let bytes = hydrus_gui_model::thumbnail_cache::combined(*amount, *unit);
+                    let per =
+                        3 * u64::from(bounds.bounding_width) * u64::from(bounds.bounding_height);
+                    out.text = format!(
+                        "(at {}x{}, about {} thumbnails)",
+                        bounds.bounding_width,
+                        bounds.bounding_height,
+                        hydrus_core::numbers::human_int(bytes / per.max(1))
+                    )
+                    .into();
                 }
                 (Kind::Int { min, max }, Value::Int(n)) => {
                     out.kind = 2;
@@ -981,7 +1037,12 @@ pub(crate) fn open(
     });
     window.on_number_edited({
         let editor = editor.clone();
-        move |i, n| editor.borrow_mut().number(at(i), i64::from(n))
+        let weak = window.as_weak();
+        let store = store.clone();
+        move |i, n| {
+            editor.borrow_mut().number(at(i), i64::from(n));
+            refresh_byte_row(&weak, &editor, &store, i);
+        }
     });
     window.on_none_toggled({
         let editor = editor.clone();
@@ -1065,7 +1126,11 @@ pub(crate) fn open(
         let session_choices=session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
+        let weak=window.as_weak();
         move |i, index| {
+            if matches!(editor.borrow().rows().get(at(i)),Some(Row::Opt{option,..}) if matches!(option.kind,Kind::Bytes)) {
+                editor.borrow_mut().choose(at(i),at(index));refresh_byte_row(&weak,&editor,&store,i);return;
+            }
             let mut editor = editor.borrow_mut();
             if matches!(editor.rows().get(at(i)),Some(Row::Opt {option,..}) if matches!(option.kind,Kind::SavedSession)) {
                 if let Some((name,_))=session_choices.get(at(index)) {editor.saved_session(at(i),name.clone());}

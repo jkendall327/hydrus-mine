@@ -745,6 +745,25 @@ impl Setting for DeletionPreferences {
     const KEY: &'static str = "deletion_preferences";
 }
 
+/// Decoded thumbnail-cache soft byte limit and last-access timeout, in seconds.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ThumbnailCacheSettings {
+    pub bytes: u64,
+    pub timeout: u64,
+}
+impl Default for ThumbnailCacheSettings {
+    fn default() -> Self {
+        Self {
+            bytes: 32 * 1024 * 1024,
+            timeout: 86400,
+        }
+    }
+}
+impl Setting for ThumbnailCacheSettings {
+    const KEY: &'static str = "thumbnail_cache";
+}
+
 /// FilesAndTrash view policy; content writes and physical file lifetimes are independent.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, serde::Deserialize)]
 #[serde(default)]

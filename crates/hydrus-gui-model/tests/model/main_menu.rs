@@ -3,7 +3,7 @@
 //! menus and entries, in the same order, enabled and ticked alike, from
 //! the store migrated from each fixture. Entries hydrus-rs can't do yet
 //! are there all the same (greyed out); a tick hydrus-rs doesn't keep is
-//! not compared. Left out of the reference's: help > debug and "about Qt",
+//! not compared. Left out of the reference's: other help > debug tools and "about Qt",
 //! historical imported session backups (not migrated to the native archive).
 
 use std::sync::Arc;
@@ -49,10 +49,8 @@ fn unescaped(text: &str) -> String {
 fn kept(entries: &[Value]) -> Vec<Value> {
     let mut out: Vec<Value> = Vec::new();
     for entry in entries {
-        let left_out = entry
-            .get("menu")
-            .is_some_and(|m| m == "debug" || m == "append backup")
-            || entry == "about Qt";
+        let left_out =
+            entry.get("menu").is_some_and(|m| m == "append backup") || entry == "about Qt";
         if left_out {
             continue;
         }
@@ -60,6 +58,25 @@ fn kept(entries: &[Value]) -> Vec<Value> {
             continue;
         }
         let mut entry = entry.clone();
+        if entry.get("menu").is_some_and(|menu| menu == "debug") {
+            let mut memory = entry["entries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| e.get("menu").is_some_and(|name| name == "memory actions"))
+                .unwrap()
+                .clone();
+            let clear = memory["entries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|e| *e == "clear thumbnail cache")
+                .unwrap()
+                .clone();
+            memory["entries"] = serde_json::json!([clear]);
+            entry["entries"] = serde_json::json!([memory]);
+        }
+
         if let Some(inner) = entry.get("entries").and_then(Value::as_array) {
             entry["entries"] = Value::Array(kept(inner));
         }
