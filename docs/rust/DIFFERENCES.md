@@ -3371,3 +3371,28 @@ synchronous Store boundary on the UI thread; broader asynchronous session/large
 library optimizations remain outside this one debug action. Qt's observed first
 page/first-child and empty-thumbnail-selection reset is retained. The neighboring
 manual save-last-session action and wider debug GUI/style families remain unclaimed.
+
+## Database maintenance entries
+
+- The native store keeps fewer derived caches (ADR-6), so each maintenance job
+  regenerates what serves its purpose: the tag storage/display counts (one
+  rebuild serves "all", "just pending" and "missing file repopulation"), the
+  subtag search indexes (global, whichever tag service is chosen) and the
+  in-memory sibling/parent graphs. Analyze is SQLite's `ANALYZE` (full) or
+  `PRAGMA optimize` (soft). Orphan tables are per-tag-service tables whose
+  service is gone.
+- Local hashes cache, local tags cache, service info numbers, total pending
+  count, similar files search tree, repopulate truncated mappings tables,
+  resync combined deleted files and clear orphan hashed serialisables stay
+  disabled: the native store has no such caches or separate tables (pending
+  counts and service numbers are counted live; the similar-files index is
+  built per search).
+- Get tables using definitions works on the native schema; the reference
+  v688's read raises `NotImplementedError` from one of its modules, so it
+  shows an error there. Its lines have no schema names (one database file).
+- Recovering orphan file records doesn't open a page of the recovered files.
+  Resyncing tag counts reports "N desynced tag counts in SERVICE!" per tag
+  service, where the reference reports surplus or missing files per
+  file/tag-service cache. Fixed invalid tags aren't written to a log.
+- The jobs show their result popups but no step-by-step progress text, and
+  can't be cancelled once started.

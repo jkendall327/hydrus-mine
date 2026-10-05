@@ -10,6 +10,7 @@ pub mod command_palette;
 pub mod conn;
 pub mod content;
 pub mod counts;
+pub mod db_maintenance;
 pub mod delete_lock;
 pub mod display;
 pub mod domains;

@@ -258,6 +258,8 @@ pub enum Command {
     /// Scan and optionally fill missing global archive times.
     RepairArchiveTimes,
     ClearViewingStatistics,
+    /// Ask, then run, a Database menu maintenance job.
+    DatabaseMaintenance(crate::database_maintenance::Job),
     /// Clear only this GUI incarnation's thumbnail cache and redraw its current grid.
     ClearThumbnailCache,
     /// Publish two real cards and grow their text/title at the recorded cadence.
@@ -894,10 +896,17 @@ pub const RESERVED_SESSION_NAMES: [&str; 2] = ["last session", "exit session"];
 /// `_InitialiseMenuInfoDatabase`, as its updater fills it for a database
 /// in its default location with no backup location set.
 fn database_menu(facts: &Facts) -> Entry {
+    // (the maintenance jobs hydrus-rs runs, else greyed out)
+    let job = |label: &str| -> Entry {
+        match crate::database_maintenance::Job::from_label(label) {
+            Some(job) => item(dots(label), Command::DatabaseMaintenance(job)),
+            None => todo(dots(label)),
+        }
+    };
     let all_todo = |labels: &[&str]| -> Vec<Entry> {
         labels
             .iter()
-            .map(|l| if *l == "---" { SEP } else { todo(*l) })
+            .map(|l| if *l == "---" { SEP } else { job(l) })
             .collect()
     };
     menu(
@@ -952,53 +961,49 @@ fn database_menu(facts: &Facts) -> Entry {
                     check("work deferred delete jobs during idle time", None, true),
                     check("work deferred delete jobs during normal time", None, true),
                     SEP,
-                    todo(dots("analyze")),
-                    todo(dots("review vacuum data")),
+                    job("analyze"),
+                    job("review vacuum data"),
                     SEP,
-                    todo(dots("clear/fix orphan file records")),
-                    todo(dots("clear orphan URL mappings")),
-                    todo(dots("clear orphan tables")),
-                    todo(dots("clear orphan hashed serialisables")),
+                    job("clear/fix orphan file records"),
+                    job("clear orphan URL mappings"),
+                    job("clear orphan tables"),
+                    job("clear orphan hashed serialisables"),
                     SEP,
-                    todo(dots("get tables using definitions")),
+                    job("get tables using definitions"),
                 ],
             ),
             menu(
                 "check and repair",
                 all_todo(&[
-                    &dots("fix invalid tags"),
-                    &dots("fix logically inconsistent mappings"),
+                    "fix invalid tags",
+                    "fix logically inconsistent mappings",
                     "---",
-                    &dots("repopulate truncated mappings tables"),
+                    "repopulate truncated mappings tables",
                     "---",
-                    &dots("resync combined deleted files"),
-                    &dots("resync tag mappings cache files"),
+                    "resync combined deleted files",
+                    "resync tag mappings cache files",
                 ]),
             ),
             menu(
                 "regenerate",
                 all_todo(&[
-                    &dots("total pending count, in the pending menu"),
-                    &dots(
-                        "tag storage mappings cache (all, with deferred siblings & parents calculation)",
-                    ),
-                    &dots("tag storage mappings cache (just pending tags, instant calculation)"),
-                    &dots(
-                        "tag display mappings cache (all, deferred siblings & parents calculation)",
-                    ),
-                    &dots("tag display mappings cache (just pending tags, instant calculation)"),
-                    &dots("tag display mappings cache (missing file repopulation)"),
-                    &dots("tag siblings lookup cache"),
-                    &dots("tag parents lookup cache"),
-                    &dots("tag text search cache"),
-                    &dots("tag text search cache (subtags repopulation)"),
-                    &dots("tag text search cache (searchable subtag maps)"),
+                    "total pending count, in the pending menu",
+                    "tag storage mappings cache (all, with deferred siblings & parents calculation)",
+                    "tag storage mappings cache (just pending tags, instant calculation)",
+                    "tag display mappings cache (all, deferred siblings & parents calculation)",
+                    "tag display mappings cache (just pending tags, instant calculation)",
+                    "tag display mappings cache (missing file repopulation)",
+                    "tag siblings lookup cache",
+                    "tag parents lookup cache",
+                    "tag text search cache",
+                    "tag text search cache (subtags repopulation)",
+                    "tag text search cache (searchable subtag maps)",
                     "---",
-                    &dots("local hashes cache"),
-                    &dots("local tags cache"),
+                    "local hashes cache",
+                    "local tags cache",
                     "---",
-                    &dots("service info numbers"),
-                    &dots("similar files search tree"),
+                    "service info numbers",
+                    "similar files search tree",
                 ]),
             ),
             menu(

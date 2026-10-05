@@ -80,6 +80,8 @@ pub(crate) struct Hooks {
     pub manage_services: Rc<dyn Fn()>,
     pub repair_archive_times: Rc<dyn Fn()>,
     pub viewing_maintenance: Rc<dyn Fn(bool)>,
+    /// Ask about, then run, a Database menu maintenance job.
+    pub database_maintenance: Rc<dyn Fn(hydrus_gui_model::database_maintenance::Job)>,
     pub clear_thumbnail_cache: Rc<dyn Fn()>,
     pub file_history: Rc<dyn Fn()>,
     pub file_maintenance: Rc<dyn Fn()>,
@@ -776,6 +778,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         }
         Command::ClearViewingStatistics => (hooks.viewing_maintenance)(false),
         Command::CullViewingStatistics => (hooks.viewing_maintenance)(true),
+        Command::DatabaseMaintenance(job) => (hooks.database_maintenance)(job),
         Command::FileMaintenance(idle) => {
             flip::<hydrus_store::file_maintenance::FileMaintenanceSettings>(&store, move |m| {
                 let field = if idle {

@@ -166,6 +166,8 @@ pub fn thumbnail_recovery(
 ) -> hydrus_media::Raster {
     thumbnails::recovery(store, id, settings, allow)
 }
+pub mod choice_buttons;
+pub mod database_maintenance_window;
 pub mod thumbnail_menu;
 mod thumbnail_navigation;
 pub mod thumbnail_paint;
@@ -2886,6 +2888,17 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     }
                 }
             }),
+            database_maintenance: {
+                let pages = pages.clone();
+                let slot = database_maintenance_window::Slot::default();
+                Rc::new(move |job| {
+                    if let Err(error) =
+                        database_maintenance_window::open(pages.borrow().store(), &slot, job)
+                    {
+                        eprintln!("could not open database maintenance: {error}");
+                    }
+                })
+            },
             viewing_maintenance: {
                 let pages = pages.clone();
                 let slot = viewing_maintenance.clone();

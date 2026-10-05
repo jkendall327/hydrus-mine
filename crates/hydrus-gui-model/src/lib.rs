@@ -16,6 +16,7 @@ pub mod autocomplete;
 pub mod checker_options;
 pub mod clipboard_urls;
 pub mod collect;
+pub mod database_maintenance;
 pub mod datetime_editor;
 pub mod delete_files;
 pub mod domains;

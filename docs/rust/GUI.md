@@ -4148,3 +4148,20 @@ Main destruction or final binding-clone release reject late delivery. The privat
 saved reload slot is removed before reconstruction. The real Qt recorder is
 `oracle/record_debug_session_reload.py`; Store isolation and native reconstruction,
 importer, hidden/retired ownership replays are authored for hosted execution.
+
+## Database maintenance entries
+
+Database > db maintenance, check and repair and regenerate now run the entries
+whose purpose the native store has: analyze (soft or full), clear/fix orphan
+file records, clear orphan URL mappings, clear orphan tables, get tables using
+definitions, fix invalid tags, fix logically inconsistent mappings, resync tag
+mappings cache files, both tag storage and all three tag display mappings cache
+entries, the siblings and parents lookup caches and the three tag text search
+cache entries. Each asks the reference's question with its buttons, then, where
+the reference does, "Which service?" (all services, then each tag service by
+name). Accepted jobs run off the UI thread and send the reference's popups: the
+titled working popup finishing "done!", then its result messages ("No orphan
+tables!", "Found 3 bad mappings! ..."). Get tables using definitions copies the
+`table,column` lines to the clipboard. The recording is
+`oracle/record_database_maintenance.py`; `tests/model/database_maintenance.rs`
+replays its questions, choices and popups on the imported basic client.

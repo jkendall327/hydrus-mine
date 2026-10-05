@@ -1,0 +1,2277 @@
+{
+  "tag_services": [
+    [
+      "downloader tags",
+      5
+    ],
+    [
+      "my tags",
+      5
+    ],
+    [
+      "second tags",
+      5
+    ]
+  ],
+  "events": [
+    {
+      "menu": "regenerate",
+      "label": "total pending count, in the pending menu",
+      "method": "_DeleteServiceInfo",
+      "call_kwargs": {
+        "only_pending": true
+      },
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will clear and regen the number for the pending menu up top. Due to unusual situations and little counting bugs, these numbers can sometimes become unsynced. It should not take long at all, and will update instantly if changed.",
+          "yes_label": "yes",
+          "no_label": "no"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "regenerate",
+      "label": "total pending count, in the pending menu",
+      "method": "_DeleteServiceInfo",
+      "call_kwargs": {
+        "only_pending": true
+      },
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will clear and regen the number for the pending menu up top. Due to unusual situations and little counting bugs, these numbers can sometimes become unsynced. It should not take long at all, and will update instantly if changed.",
+          "yes_label": "yes",
+          "no_label": "no"
+        },
+        {
+          "kind": "buttons",
+          "title": "Which service?",
+          "message": "",
+          "choices": [
+            [
+              "all services",
+              null,
+              "Do it for everything. Can take a long time!"
+            ]
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "command": "delete_service_info",
+          "args": [],
+          "kwargs": {
+            "types_to_delete": [
+              15,
+              17,
+              19,
+              16,
+              18,
+              20,
+              36,
+              37
+            ],
+            "service_key": null
+          }
+        }
+      ],
+      "reads": [],
+      "popups": [],
+      "accept": true,
+      "ran": [
+        "delete_service_info"
+      ]
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag storage mappings cache (all, with deferred siblings & parents calculation)",
+      "method": "_RegenerateTagMappingsCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "WARNING: Do not run this for no reason! On a large database, this could take hours to finish!\n\nThis will delete and then recreate the entire tag 'storage' mappings cache, which is used for tag calculation based on actual values and autocomplete counts in editing contexts like _manage tags_. This is useful if miscounting has somehow occurred.\n\nIf you have a lot of tags and files, it can take a long time, during which the gui may hang. It necessarily involves a regeneration of the tag display mappings cache, which relies on the storage cache, and the tag text search cache. All siblings and parents will have to be resynced.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag storage mappings cache (all, with deferred siblings & parents calculation)",
+      "method": "_RegenerateTagMappingsCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "WARNING: Do not run this for no reason! On a large database, this could take hours to finish!\n\nThis will delete and then recreate the entire tag 'storage' mappings cache, which is used for tag calculation based on actual values and autocomplete counts in editing contexts like _manage tags_. This is useful if miscounting has somehow occurred.\n\nIf you have a lot of tags and files, it can take a long time, during which the gui may hang. It necessarily involves a regeneration of the tag display mappings cache, which relies on the storage cache, and the tag text search cache. All siblings and parents will have to be resynced.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        },
+        {
+          "kind": "buttons",
+          "title": "Which service?",
+          "message": "",
+          "choices": [
+            [
+              "all services",
+              null,
+              "Do it for everything. Can take a long time!"
+            ],
+            [
+              "downloader tags",
+              "service:downloader tags",
+              "downloader tags"
+            ],
+            [
+              "my tags",
+              "service:my tags",
+              "my tags"
+            ],
+            [
+              "second tags",
+              "service:second tags",
+              "second tags"
+            ]
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "command": "regenerate_tag_mappings_cache",
+          "args": [],
+          "kwargs": {
+            "tag_service_key": null
+          }
+        }
+      ],
+      "reads": [
+        {
+          "command": "tag_display_maintenance_status",
+          "args": [
+            "service:downloader tags"
+          ]
+        },
+        {
+          "command": "tag_display_maintenance_status",
+          "args": [
+            "service:my tags"
+          ]
+        },
+        {
+          "command": "tag_display_maintenance_status",
+          "args": [
+            "service:second tags"
+          ]
+        }
+      ],
+      "popups": [
+        {
+          "title": "regenerating tag mappings cache",
+          "text_1": "done!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        },
+        {
+          "title": null,
+          "text_1": "Now the mappings cache regen is done, you might want to restart the program.",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": [
+        "regenerate_tag_mappings_cache"
+      ]
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag storage mappings cache (just pending tags, instant calculation)",
+      "method": "_RegenerateTagPendingMappingsCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will delete and then recreate the pending tags on the whole tag mappings cache, which is used for multiple kinds of tag searching, loading, and autocomplete counts. This is useful if you have 'ghost' pending tags or counts hanging around.\n\nIf you have a millions of tags, pending or current, it can take a long time, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [
+        {
+          "title": "regenerating tag mappings cache",
+          "text_1": "done!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag storage mappings cache (just pending tags, instant calculation)",
+      "method": "_RegenerateTagPendingMappingsCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will delete and then recreate the pending tags on the whole tag mappings cache, which is used for multiple kinds of tag searching, loading, and autocomplete counts. This is useful if you have 'ghost' pending tags or counts hanging around.\n\nIf you have a millions of tags, pending or current, it can take a long time, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        },
+        {
+          "kind": "buttons",
+          "title": "Which service?",
+          "message": "",
+          "choices": [
+            [
+              "all services",
+              null,
+              "Do it for everything. Can take a long time!"
+            ],
+            [
+              "downloader tags",
+              "service:downloader tags",
+              "downloader tags"
+            ],
+            [
+              "my tags",
+              "service:my tags",
+              "my tags"
+            ],
+            [
+              "second tags",
+              "service:second tags",
+              "second tags"
+            ]
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "command": "regenerate_tag_pending_mappings_cache",
+          "args": [],
+          "kwargs": {
+            "tag_service_key": null
+          }
+        }
+      ],
+      "reads": [],
+      "popups": [
+        {
+          "title": "regenerating tag pending mappings cache",
+          "text_1": "done!",
+          "text_2": "",
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": [
+        "regenerate_tag_pending_mappings_cache"
+      ]
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag display mappings cache (all, deferred siblings & parents calculation)",
+      "method": "_RegenerateTagDisplayMappingsCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will delete and then recreate the tag 'display' mappings cache, which is used for user-presented tag searching, loading, and autocomplete counts. This is useful if miscounting (particularly related to siblings/parents) has somehow occurred.\n\nIf you have a lot of tags and files, it can take a long time, during which the gui may hang. All siblings and parents will have to be resynced.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag display mappings cache (all, deferred siblings & parents calculation)",
+      "method": "_RegenerateTagDisplayMappingsCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will delete and then recreate the tag 'display' mappings cache, which is used for user-presented tag searching, loading, and autocomplete counts. This is useful if miscounting (particularly related to siblings/parents) has somehow occurred.\n\nIf you have a lot of tags and files, it can take a long time, during which the gui may hang. All siblings and parents will have to be resynced.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        },
+        {
+          "kind": "buttons",
+          "title": "Which service?",
+          "message": "",
+          "choices": [
+            [
+              "all services",
+              null,
+              "Do it for everything. Can take a long time!"
+            ],
+            [
+              "downloader tags",
+              "service:downloader tags",
+              "downloader tags"
+            ],
+            [
+              "my tags",
+              "service:my tags",
+              "my tags"
+            ],
+            [
+              "second tags",
+              "service:second tags",
+              "second tags"
+            ]
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "command": "regenerate_tag_display_mappings_cache",
+          "args": [],
+          "kwargs": {
+            "tag_service_key": null
+          }
+        }
+      ],
+      "reads": [
+        {
+          "command": "tag_display_maintenance_status",
+          "args": [
+            "service:downloader tags"
+          ]
+        },
+        {
+          "command": "tag_display_maintenance_status",
+          "args": [
+            "service:my tags"
+          ]
+        },
+        {
+          "command": "tag_display_maintenance_status",
+          "args": [
+            "service:second tags"
+          ]
+        }
+      ],
+      "popups": [
+        {
+          "title": "regenerating tag display mappings cache",
+          "text_1": "done!",
+          "text_2": "",
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": [
+        "regenerate_tag_display_mappings_cache"
+      ]
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag display mappings cache (just pending tags, instant calculation)",
+      "method": "_RegenerateTagDisplayPendingMappingsCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will delete and then recreate the pending tags on the tag 'display' mappings cache, which is used for user-presented tag searching, loading, and autocomplete counts. This is useful if you have 'ghost' pending tags or counts hanging around.\n\nIf you have a millions of tags, pending or current, it can take a long time, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag display mappings cache (just pending tags, instant calculation)",
+      "method": "_RegenerateTagDisplayPendingMappingsCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will delete and then recreate the pending tags on the tag 'display' mappings cache, which is used for user-presented tag searching, loading, and autocomplete counts. This is useful if you have 'ghost' pending tags or counts hanging around.\n\nIf you have a millions of tags, pending or current, it can take a long time, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        },
+        {
+          "kind": "buttons",
+          "title": "Which service?",
+          "message": "",
+          "choices": [
+            [
+              "all services",
+              null,
+              "Do it for everything. Can take a long time!"
+            ],
+            [
+              "downloader tags",
+              "service:downloader tags",
+              "downloader tags"
+            ],
+            [
+              "my tags",
+              "service:my tags",
+              "my tags"
+            ],
+            [
+              "second tags",
+              "service:second tags",
+              "second tags"
+            ]
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "command": "regenerate_tag_display_pending_mappings_cache",
+          "args": [],
+          "kwargs": {
+            "tag_service_key": null
+          }
+        }
+      ],
+      "reads": [],
+      "popups": [
+        {
+          "title": "regenerating tag display pending mappings cache",
+          "text_1": "done!",
+          "text_2": "",
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": [
+        "regenerate_tag_display_pending_mappings_cache"
+      ]
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag display mappings cache (missing file repopulation)",
+      "method": "_RepopulateTagDisplayMappingsCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will go through your mappings cache and fill in any missing files. It is radically faster than a full regen, and adds siblings and parents instantly, but it only solves the problem of missing file rows.\n\nIf you have a millions of tags, pending or current, it can take a long time, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag display mappings cache (missing file repopulation)",
+      "method": "_RepopulateTagDisplayMappingsCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will go through your mappings cache and fill in any missing files. It is radically faster than a full regen, and adds siblings and parents instantly, but it only solves the problem of missing file rows.\n\nIf you have a millions of tags, pending or current, it can take a long time, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        },
+        {
+          "kind": "buttons",
+          "title": "Which service?",
+          "message": "",
+          "choices": [
+            [
+              "all services",
+              null,
+              "Do it for everything. Can take a long time!"
+            ],
+            [
+              "downloader tags",
+              "service:downloader tags",
+              "downloader tags"
+            ],
+            [
+              "my tags",
+              "service:my tags",
+              "my tags"
+            ],
+            [
+              "second tags",
+              "service:second tags",
+              "second tags"
+            ]
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "command": "repopulate_tag_display_mappings_cache",
+          "args": [],
+          "kwargs": {
+            "tag_service_key": null
+          }
+        }
+      ],
+      "reads": [],
+      "popups": [
+        {
+          "title": "repopulating tag display mappings cache",
+          "text_1": "done!",
+          "text_2": "",
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": [
+        "repopulate_tag_display_mappings_cache"
+      ]
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag siblings lookup cache",
+      "method": "_RegenerateTagSiblingsLookupCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will delete and then recreate the tag siblings lookup cache, which is used for all basic tag sibling operations. This is useful if it has become damaged or otherwise desynchronised.\n\nIt should only take a second or two. It necessarily involves a regeneration of the tag parents lookup cache.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag siblings lookup cache",
+      "method": "_RegenerateTagSiblingsLookupCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will delete and then recreate the tag siblings lookup cache, which is used for all basic tag sibling operations. This is useful if it has become damaged or otherwise desynchronised.\n\nIt should only take a second or two. It necessarily involves a regeneration of the tag parents lookup cache.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [
+        {
+          "command": "regenerate_tag_siblings_and_parents_cache",
+          "args": [],
+          "kwargs": {}
+        }
+      ],
+      "reads": [],
+      "popups": [],
+      "accept": true,
+      "ran": [
+        "regenerate_tag_siblings_and_parents_cache"
+      ]
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag parents lookup cache",
+      "method": "_RegenerateTagParentsLookupCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will delete and then recreate the tag parents lookup cache, which is used for all basic tag parents operations. This is useful if it has become damaged or otherwise desynchronised.\n\nIt should only take a second or two.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag parents lookup cache",
+      "method": "_RegenerateTagParentsLookupCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will delete and then recreate the tag parents lookup cache, which is used for all basic tag parents operations. This is useful if it has become damaged or otherwise desynchronised.\n\nIt should only take a second or two.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [
+        {
+          "command": "regenerate_tag_parents_cache",
+          "args": [],
+          "kwargs": {}
+        }
+      ],
+      "reads": [],
+      "popups": [],
+      "accept": true,
+      "ran": [
+        "regenerate_tag_parents_cache"
+      ]
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag text search cache",
+      "method": "_RegenerateTagCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will delete and then recreate the fast search cache for one or all tag services.\n\nIf you have a lot of tags and files, it can take a little while, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless. It fixes missing autocomplete or tag search results.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag text search cache",
+      "method": "_RegenerateTagCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will delete and then recreate the fast search cache for one or all tag services.\n\nIf you have a lot of tags and files, it can take a little while, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless. It fixes missing autocomplete or tag search results.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        },
+        {
+          "kind": "buttons",
+          "title": "Which service?",
+          "message": "",
+          "choices": [
+            [
+              "all services",
+              null,
+              "Do it for everything. Can take a long time!"
+            ],
+            [
+              "downloader tags",
+              "service:downloader tags",
+              "downloader tags"
+            ],
+            [
+              "my tags",
+              "service:my tags",
+              "my tags"
+            ],
+            [
+              "second tags",
+              "service:second tags",
+              "second tags"
+            ]
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "command": "regenerate_tag_cache",
+          "args": [],
+          "kwargs": {
+            "tag_service_key": null
+          }
+        }
+      ],
+      "reads": [],
+      "popups": [
+        {
+          "title": "regenerating tag fast search cache",
+          "text_1": "done!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": [
+        "regenerate_tag_cache"
+      ]
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag text search cache (subtags repopulation)",
+      "method": "_RepopulateTagCacheMissingSubtags",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will repopulate the fast search cache's subtag search, filling in missing entries, for one or all tag services.\n\nIf you have a lot of tags and files, it can take a little while, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless. It fixes missing autocomplete or tag search results.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag text search cache (subtags repopulation)",
+      "method": "_RepopulateTagCacheMissingSubtags",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will repopulate the fast search cache's subtag search, filling in missing entries, for one or all tag services.\n\nIf you have a lot of tags and files, it can take a little while, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless. It fixes missing autocomplete or tag search results.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        },
+        {
+          "kind": "buttons",
+          "title": "Which service?",
+          "message": "",
+          "choices": [
+            [
+              "all services",
+              null,
+              "Do it for everything. Can take a long time!"
+            ],
+            [
+              "downloader tags",
+              "service:downloader tags",
+              "downloader tags"
+            ],
+            [
+              "my tags",
+              "service:my tags",
+              "my tags"
+            ],
+            [
+              "second tags",
+              "service:second tags",
+              "second tags"
+            ]
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "command": "repopulate_tag_cache_missing_subtags",
+          "args": [],
+          "kwargs": {
+            "tag_service_key": null
+          }
+        }
+      ],
+      "reads": [],
+      "popups": [
+        {
+          "title": "repopulate tag fast search cache subtags",
+          "text_1": "done!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": [
+        "repopulate_tag_cache_missing_subtags"
+      ]
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag text search cache (searchable subtag maps)",
+      "method": "_RegenerateTagCacheSearchableSubtagsMaps",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will regenerate the fast search cache's 'unusual character logic' lookup map, for one or all tag services.\n\nIf you have a lot of tags, it can take a little while, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless. It fixes missing autocomplete search results.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag text search cache (searchable subtag maps)",
+      "method": "_RegenerateTagCacheSearchableSubtagsMaps",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will regenerate the fast search cache's 'unusual character logic' lookup map, for one or all tag services.\n\nIf you have a lot of tags, it can take a little while, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless. It fixes missing autocomplete search results.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        },
+        {
+          "kind": "buttons",
+          "title": "Which service?",
+          "message": "",
+          "choices": [
+            [
+              "all services",
+              null,
+              "Do it for everything. Can take a long time!"
+            ],
+            [
+              "downloader tags",
+              "service:downloader tags",
+              "downloader tags"
+            ],
+            [
+              "my tags",
+              "service:my tags",
+              "my tags"
+            ],
+            [
+              "second tags",
+              "service:second tags",
+              "second tags"
+            ]
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "command": "regenerate_searchable_subtag_maps",
+          "args": [],
+          "kwargs": {
+            "tag_service_key": null
+          }
+        }
+      ],
+      "reads": [],
+      "popups": [
+        {
+          "title": "regenerate tag fast search cache searchable subtag map",
+          "text_1": "done!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": [
+        "regenerate_searchable_subtag_maps"
+      ]
+    },
+    {
+      "menu": "regenerate",
+      "label": "local hashes cache",
+      "method": "_RegenerateLocalHashCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will check and repair any bad rows in the local hashes cache, which keeps a small record of hashes for files on your hard drive. The cache isn't super important, but it speeds most operations up, and this routine fixes it when broken/desynced.\n\nIf you have a lot of files, it can take a minute, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "regenerate",
+      "label": "local hashes cache",
+      "method": "_RegenerateLocalHashCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will check and repair any bad rows in the local hashes cache, which keeps a small record of hashes for files on your hard drive. The cache isn't super important, but it speeds most operations up, and this routine fixes it when broken/desynced.\n\nIf you have a lot of files, it can take a minute, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [
+        {
+          "command": "regenerate_local_hash_cache",
+          "args": [],
+          "kwargs": {}
+        }
+      ],
+      "reads": [],
+      "popups": [
+        {
+          "title": "resynchronising local hashes cache",
+          "text_1": "Done with no errors found!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": [
+        "regenerate_local_hash_cache"
+      ]
+    },
+    {
+      "menu": "regenerate",
+      "label": "local tags cache",
+      "method": "_RegenerateLocalTagCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will delete and then recreate the local tag cache, which keeps a small record of tags for files on your hard drive. It isn't super important, but it speeds most operations up, and this routine fixes it when broken.\n\nIf you have a lot of tags and files, it can take a long time, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "regenerate",
+      "label": "local tags cache",
+      "method": "_RegenerateLocalTagCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will delete and then recreate the local tag cache, which keeps a small record of tags for files on your hard drive. It isn't super important, but it speeds most operations up, and this routine fixes it when broken.\n\nIf you have a lot of tags and files, it can take a long time, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [
+        {
+          "command": "regenerate_local_tag_cache",
+          "args": [],
+          "kwargs": {}
+        }
+      ],
+      "reads": [],
+      "popups": [
+        {
+          "title": "regenerating local tag cache",
+          "text_1": "done!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": [
+        "regenerate_local_tag_cache"
+      ]
+    },
+    {
+      "menu": "regenerate",
+      "label": "service info numbers",
+      "method": "_DeleteServiceInfo",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This clears the cached counts for things like the number of files or tags on a service. Due to unusual situations and little counting bugs, these numbers can sometimes become unsynced. Clearing them forces an accurate recount from source.\n\nSome GUI elements (_services->review_, mainly) may be slow the next time they launch. Especially if you clear for all services.",
+          "yes_label": "yes",
+          "no_label": "no"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "regenerate",
+      "label": "service info numbers",
+      "method": "_DeleteServiceInfo",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This clears the cached counts for things like the number of files or tags on a service. Due to unusual situations and little counting bugs, these numbers can sometimes become unsynced. Clearing them forces an accurate recount from source.\n\nSome GUI elements (_services->review_, mainly) may be slow the next time they launch. Especially if you clear for all services.",
+          "yes_label": "yes",
+          "no_label": "no"
+        },
+        {
+          "kind": "buttons",
+          "title": "Which service?",
+          "message": "",
+          "choices": [
+            [
+              "all services",
+              null,
+              "Do it for everything. Can take a long time!"
+            ],
+            [
+              "all known files",
+              "service:all known files",
+              "all known files"
+            ],
+            [
+              "all known tags",
+              "service:all known tags",
+              "all known tags"
+            ],
+            [
+              "art",
+              "service:art",
+              "art"
+            ],
+            [
+              "client api",
+              "service:client api",
+              "client api"
+            ],
+            [
+              "combined local file domains",
+              "service:combined local file domains",
+              "combined local file domains"
+            ],
+            [
+              "counter",
+              "service:counter",
+              "counter"
+            ],
+            [
+              "deleted from anywhere",
+              "service:deleted from anywhere",
+              "deleted from anywhere"
+            ],
+            [
+              "downloader tags",
+              "service:downloader tags",
+              "downloader tags"
+            ],
+            [
+              "favourites",
+              "service:favourites",
+              "favourites"
+            ],
+            [
+              "hydrus local file storage",
+              "service:hydrus local file storage",
+              "hydrus local file storage"
+            ],
+            [
+              "local notes",
+              "service:local notes",
+              "local notes"
+            ],
+            [
+              "my files",
+              "service:my files",
+              "my files"
+            ],
+            [
+              "my tags",
+              "service:my tags",
+              "my tags"
+            ],
+            [
+              "repository updates",
+              "service:repository updates",
+              "repository updates"
+            ],
+            [
+              "second tags",
+              "service:second tags",
+              "second tags"
+            ],
+            [
+              "stars",
+              "service:stars",
+              "stars"
+            ],
+            [
+              "trash",
+              "service:trash",
+              "trash"
+            ]
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "command": "delete_service_info",
+          "args": [],
+          "kwargs": {
+            "types_to_delete": null,
+            "service_key": null
+          }
+        }
+      ],
+      "reads": [],
+      "popups": [],
+      "accept": true,
+      "ran": [
+        "delete_service_info"
+      ]
+    },
+    {
+      "menu": "regenerate",
+      "label": "similar files search tree",
+      "method": "_RegenerateSimilarFilesTree",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will delete and then recreate the similar files search tree. This is useful if it has somehow become unbalanced and similar files searches are running slow.\n\nIf you have a lot of files, it can take a little while, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "regenerate",
+      "label": "similar files search tree",
+      "method": "_RegenerateSimilarFilesTree",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will delete and then recreate the similar files search tree. This is useful if it has somehow become unbalanced and similar files searches are running slow.\n\nIf you have a lot of files, it can take a little while, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [
+        {
+          "command": "regenerate_similar_files_tree",
+          "args": [],
+          "kwargs": {}
+        }
+      ],
+      "reads": [],
+      "popups": [
+        {
+          "title": "regenerating similar file search data",
+          "text_1": "done!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": [
+        "regenerate_similar_files_tree"
+      ]
+    },
+    {
+      "menu": "check and repair",
+      "label": "fix invalid tags",
+      "method": "_RepairInvalidTags",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will scan all your tags and repair any that are invalid. This might mean taking out unrenderable characters or cleaning up improper whitespace. If there is a tag collision once cleaned, it may add a (1)-style number on the end.\n\nIf you have a lot of tags, it can take a long time, during which the gui may hang. If it finds bad tags, you should restart the program once it is complete.\n\nIf you have not had tag rendering problems, there is no reason to run this.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "check and repair",
+      "label": "fix invalid tags",
+      "method": "_RepairInvalidTags",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will scan all your tags and repair any that are invalid. This might mean taking out unrenderable characters or cleaning up improper whitespace. If there is a tag collision once cleaned, it may add a (1)-style number on the end.\n\nIf you have a lot of tags, it can take a long time, during which the gui may hang. If it finds bad tags, you should restart the program once it is complete.\n\nIf you have not had tag rendering problems, there is no reason to run this.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [
+        {
+          "command": "repair_invalid_tags",
+          "args": [],
+          "kwargs": {
+            "job_status": "JobStatus"
+          }
+        }
+      ],
+      "reads": [],
+      "popups": [
+        {
+          "title": "repairing invalid tags",
+          "text_1": "Invalid tag scanning: No bad tags found!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": [
+        "repair_invalid_tags"
+      ]
+    },
+    {
+      "menu": "check and repair",
+      "label": "fix logically inconsistent mappings",
+      "method": "_FixLogicallyInconsistentMappings",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will check for tags that are occupying mutually exclusive states--either current & pending or deleted & petitioned.\n\nPlease run this if you attempt to upload some tags and get a related error. You may need some follow-up regeneration work to correct autocomplete or 'num pending' counts.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "check and repair",
+      "label": "fix logically inconsistent mappings",
+      "method": "_FixLogicallyInconsistentMappings",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will check for tags that are occupying mutually exclusive states--either current & pending or deleted & petitioned.\n\nPlease run this if you attempt to upload some tags and get a related error. You may need some follow-up regeneration work to correct autocomplete or 'num pending' counts.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        },
+        {
+          "kind": "buttons",
+          "title": "Which service?",
+          "message": "",
+          "choices": [
+            [
+              "all services",
+              null,
+              "Do it for everything. Can take a long time!"
+            ],
+            [
+              "downloader tags",
+              "service:downloader tags",
+              "downloader tags"
+            ],
+            [
+              "my tags",
+              "service:my tags",
+              "my tags"
+            ],
+            [
+              "second tags",
+              "service:second tags",
+              "second tags"
+            ]
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "command": "fix_logically_inconsistent_mappings",
+          "args": [],
+          "kwargs": {
+            "tag_service_key": null
+          }
+        }
+      ],
+      "reads": [
+        {
+          "command": "serialisable_names",
+          "args": [
+            19
+          ]
+        }
+      ],
+      "popups": [
+        {
+          "title": "fixing logically inconsistent mappings",
+          "text_1": "done!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        },
+        {
+          "title": null,
+          "text_1": "No inconsistent mappings found!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": [
+        "fix_logically_inconsistent_mappings"
+      ]
+    },
+    {
+      "menu": "check and repair",
+      "label": "repopulate truncated mappings tables",
+      "method": "_RepopulateMappingsTables",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "WARNING: Do not run this for no reason!\n\nIf you have significant local tags (e.g. 'my tags') storage, recently had a 'malformed' client.mappings.db file, and have since gone through clone/repair and now have a truncated file, this routine will attempt to recover missing tags from the smaller tag cache stored in client.caches.db.\n\nIt can only recover tags for files currently stored by your client. It will take some time, during which the gui may hang. Once it is done, you probably want to regenerate your tag mappings cache, so that you are completely synced again.",
+          "yes_label": "I have a reason to run this, let's do it--now choose which service",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "check and repair",
+      "label": "repopulate truncated mappings tables",
+      "method": "_RepopulateMappingsTables",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "WARNING: Do not run this for no reason!\n\nIf you have significant local tags (e.g. 'my tags') storage, recently had a 'malformed' client.mappings.db file, and have since gone through clone/repair and now have a truncated file, this routine will attempt to recover missing tags from the smaller tag cache stored in client.caches.db.\n\nIt can only recover tags for files currently stored by your client. It will take some time, during which the gui may hang. Once it is done, you probably want to regenerate your tag mappings cache, so that you are completely synced again.",
+          "yes_label": "I have a reason to run this, let's do it--now choose which service",
+          "no_label": "forget it"
+        },
+        {
+          "kind": "buttons",
+          "title": "Which service?",
+          "message": "",
+          "choices": [
+            [
+              "all services",
+              null,
+              "Do it for everything. Can take a long time!"
+            ],
+            [
+              "downloader tags",
+              "service:downloader tags",
+              "downloader tags"
+            ],
+            [
+              "my tags",
+              "service:my tags",
+              "my tags"
+            ],
+            [
+              "second tags",
+              "service:second tags",
+              "second tags"
+            ]
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "command": "repopulate_mappings_from_cache",
+          "args": [],
+          "kwargs": {
+            "tag_service_key": null,
+            "job_status": "JobStatus"
+          }
+        }
+      ],
+      "reads": [],
+      "popups": [
+        {
+          "title": null,
+          "text_1": "Done! Rows recovered: 0",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": [
+        "repopulate_mappings_from_cache"
+      ]
+    },
+    {
+      "menu": "check and repair",
+      "label": "resync combined deleted files",
+      "method": "_ResyncCombinedDeletedFiles",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will resynchronise the \"deleted from anywhere\" cache to the actual records in the database, ensuring that various tag searches over the deleted files domain give correct counts and file results. It isn't super important, but this routine fixes it if it is desynchronised.\n\nIt should not take all that long, but if you have a lot of deleted files, it can take a little while, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [
+        {
+          "title": null,
+          "text_1": "Done! Rows recovered: 0",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "check and repair",
+      "label": "resync combined deleted files",
+      "method": "_ResyncCombinedDeletedFiles",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will resynchronise the \"deleted from anywhere\" cache to the actual records in the database, ensuring that various tag searches over the deleted files domain give correct counts and file results. It isn't super important, but this routine fixes it if it is desynchronised.\n\nIt should not take all that long, but if you have a lot of deleted files, it can take a little while, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [
+        {
+          "command": "resync_combined_deleted_files",
+          "args": [],
+          "kwargs": {
+            "do_full_rebuild": true
+          }
+        }
+      ],
+      "reads": [],
+      "popups": [],
+      "accept": true,
+      "ran": [
+        "resync_combined_deleted_files"
+      ]
+    },
+    {
+      "menu": "check and repair",
+      "label": "resync tag mappings cache files",
+      "method": "_ResyncTagMappingsCacheFiles",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will scan your mappings cache for surplus or missing files and correct them. This is useful if you see ghost files or if searches miss files that have the tag.\n\nIf you have a lot of tags and files, it can take a long time, during which the gui may hang. It should be much faster than the full regen options though!\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "check and repair",
+      "label": "resync tag mappings cache files",
+      "method": "_ResyncTagMappingsCacheFiles",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will scan your mappings cache for surplus or missing files and correct them. This is useful if you see ghost files or if searches miss files that have the tag.\n\nIf you have a lot of tags and files, it can take a long time, during which the gui may hang. It should be much faster than the full regen options though!\n\nIf you do not have a specific reason to run this, it is pointless.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        },
+        {
+          "kind": "buttons",
+          "title": "Which service?",
+          "message": "",
+          "choices": [
+            [
+              "all services",
+              null,
+              "Do it for everything. Can take a long time!"
+            ],
+            [
+              "downloader tags",
+              "service:downloader tags",
+              "downloader tags"
+            ],
+            [
+              "my tags",
+              "service:my tags",
+              "my tags"
+            ],
+            [
+              "second tags",
+              "service:second tags",
+              "second tags"
+            ]
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "command": "resync_tag_mappings_cache_files",
+          "args": [],
+          "kwargs": {
+            "tag_service_key": null
+          }
+        }
+      ],
+      "reads": [],
+      "popups": [
+        {
+          "title": "resyncing tag mappings cache files",
+          "text_1": "done!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        },
+        {
+          "title": null,
+          "text_1": "All checks ok--no desynced mapping caches!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": [
+        "resync_tag_mappings_cache_files"
+      ]
+    },
+    {
+      "menu": "db maintenance",
+      "label": "analyze",
+      "method": "_AnalyzeDatabase",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_yes_no",
+          "message": "This will gather statistical information on the database's indices, helping the query planner perform efficiently. It typically happens automatically every few days, but you can force it here. If you have a large database, it will take a few minutes, during which your gui may hang. A popup message will show its status.\n\nA 'soft' analyze will only reanalyze those indices that are due for a check in the normal db maintenance cycle. If nothing is due, it will return immediately.\n\nA 'full' analyze will force a run over every index in the database. This can take substantially longer. If you do not have a specific reason to select this, it is probably pointless.",
+          "yes": [
+            [
+              "soft",
+              false
+            ],
+            [
+              "full",
+              true
+            ]
+          ],
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "db maintenance",
+      "label": "analyze",
+      "method": "_AnalyzeDatabase",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_yes_no",
+          "message": "This will gather statistical information on the database's indices, helping the query planner perform efficiently. It typically happens automatically every few days, but you can force it here. If you have a large database, it will take a few minutes, during which your gui may hang. A popup message will show its status.\n\nA 'soft' analyze will only reanalyze those indices that are due for a check in the normal db maintenance cycle. If nothing is due, it will return immediately.\n\nA 'full' analyze will force a run over every index in the database. This can take substantially longer. If you do not have a specific reason to select this, it is probably pointless.",
+          "yes": [
+            [
+              "soft",
+              false
+            ],
+            [
+              "full",
+              true
+            ]
+          ],
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [
+        {
+          "command": "file_maintenance_get_jobs",
+          "args": []
+        },
+        {
+          "command": "duplicates_auto_resolution_rules_with_counts",
+          "args": []
+        }
+      ],
+      "popups": [
+        {
+          "title": "database maintenance - analyzing",
+          "text_1": "done!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        },
+        {
+          "title": null,
+          "text_1": "Done!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": []
+    },
+    {
+      "menu": "db maintenance",
+      "label": "clear/fix orphan file records",
+      "method": "_ClearOrphanFileRecords",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "DO NOT RUN THIS UNLESS YOU KNOW YOU NEED TO\n\nThis will instruct the database to review its file records' integrity. If anything appears to be in a specific domain like \"my files\" but not an associated umbrella domain \"combined local file domains\", and the actual file also exists on disk, it will try to recover the record and fix the umbrella domain. If the file does not actually exist on disk, or the record is in the umbrella domain and not in the specific, or if recovery data cannot be found, the orphaned record will be deleted.\n\nYou typically do not ever see these files and they are basically harmless, but they can offset some file counts confusingly and may break other maintenance routines. You probably only need to run this if you can't process the apparent last handful of duplicate filter pairs or hydrus dev otherwise told you to try it.\n\nIt will create a popup message while it works and inform you of the number of orphan records found. It may lock up the client for a bit.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [
+        {
+          "title": "database maintenance - analyzing",
+          "text_1": "done!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "db maintenance",
+      "label": "clear/fix orphan file records",
+      "method": "_ClearOrphanFileRecords",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "DO NOT RUN THIS UNLESS YOU KNOW YOU NEED TO\n\nThis will instruct the database to review its file records' integrity. If anything appears to be in a specific domain like \"my files\" but not an associated umbrella domain \"combined local file domains\", and the actual file also exists on disk, it will try to recover the record and fix the umbrella domain. If the file does not actually exist on disk, or the record is in the umbrella domain and not in the specific, or if recovery data cannot be found, the orphaned record will be deleted.\n\nYou typically do not ever see these files and they are basically harmless, but they can offset some file counts confusingly and may break other maintenance routines. You probably only need to run this if you can't process the apparent last handful of duplicate filter pairs or hydrus dev otherwise told you to try it.\n\nIt will create a popup message while it works and inform you of the number of orphan records found. It may lock up the client for a bit.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [
+        {
+          "command": "clear_orphan_file_records",
+          "args": [],
+          "kwargs": {}
+        }
+      ],
+      "reads": [],
+      "popups": [
+        {
+          "title": "clear/fix orphan file records",
+          "text_1": "done!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        },
+        {
+          "title": null,
+          "text_1": "No orphan file records found!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": [
+        "clear_orphan_file_records"
+      ]
+    },
+    {
+      "menu": "db maintenance",
+      "label": "clear orphan URL mappings",
+      "method": "_ClearOrphanURLMappings",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "DO NOT RUN THIS UNLESS YOU KNOW YOU NEED TO\n\nThis will instruct the database to review its URL records' integrity. If a mapping exists without a master URL, the mapping will be removed. This is useful if your client.master.db has been damaged or truncated because of a partial backup rollback.\n\nIt will create a popup message while it works, but it will not have any feedback until it is complete. It may lock up the client for a bit.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "db maintenance",
+      "label": "clear orphan URL mappings",
+      "method": "_ClearOrphanURLMappings",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "DO NOT RUN THIS UNLESS YOU KNOW YOU NEED TO\n\nThis will instruct the database to review its URL records' integrity. If a mapping exists without a master URL, the mapping will be removed. This is useful if your client.master.db has been damaged or truncated because of a partial backup rollback.\n\nIt will create a popup message while it works, but it will not have any feedback until it is complete. It may lock up the client for a bit.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [
+        {
+          "command": "clear_orphan_url_mappings",
+          "args": [],
+          "kwargs": {}
+        }
+      ],
+      "reads": [],
+      "popups": [
+        {
+          "title": "clear orphan url mappings",
+          "text_1": "done!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "title": null,
+          "text_1": "No orphan url mappings found!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": [
+        "clear_orphan_url_mappings"
+      ]
+    },
+    {
+      "menu": "db maintenance",
+      "label": "clear orphan tables",
+      "method": "_ClearOrphanTables",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "DO NOT RUN THIS UNLESS YOU KNOW YOU NEED TO. MAKE A BACKUP BEFORE YOU RUN IT\n\nThis will instruct the database to review its service tables and delete any orphans. This will typically do nothing, but hydrus dev may tell you to run this, just to check. Be sure you have a recent backup before you run this--if it deletes something important by accident, you will want to roll back!\n\nIt will create popups if it finds anything to delete.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "db maintenance",
+      "label": "clear orphan tables",
+      "method": "_ClearOrphanTables",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "DO NOT RUN THIS UNLESS YOU KNOW YOU NEED TO. MAKE A BACKUP BEFORE YOU RUN IT\n\nThis will instruct the database to review its service tables and delete any orphans. This will typically do nothing, but hydrus dev may tell you to run this, just to check. Be sure you have a recent backup before you run this--if it deletes something important by accident, you will want to roll back!\n\nIt will create popups if it finds anything to delete.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [
+        {
+          "command": "clear_orphan_tables",
+          "args": [],
+          "kwargs": {}
+        }
+      ],
+      "reads": [],
+      "popups": [
+        {
+          "title": null,
+          "text_1": "No orphan tables!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": [
+        "clear_orphan_tables"
+      ]
+    },
+    {
+      "menu": "db maintenance",
+      "label": "clear orphan hashed serialisables",
+      "method": "_ClearOrphanHashedSerialisables",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "DO NOT RUN THIS UNLESS YOU KNOW YOU NEED TO. MAKE A BACKUP BEFORE YOU RUN IT\n\nThis force-runs a routine that regularly removes some spare data from the database. You most likely do not need to run it.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "db maintenance",
+      "label": "clear orphan hashed serialisables",
+      "method": "_ClearOrphanHashedSerialisables",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "DO NOT RUN THIS UNLESS YOU KNOW YOU NEED TO. MAKE A BACKUP BEFORE YOU RUN IT\n\nThis force-runs a routine that regularly removes some spare data from the database. You most likely do not need to run it.",
+          "yes_label": "do it",
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [
+        {
+          "title": null,
+          "text_1": "No orphans found!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "ran": []
+    },
+    {
+      "menu": "db maintenance",
+      "label": "get tables using definitions",
+      "method": "_GetTablesAndColumnsUsingDefinitions",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "buttons",
+          "title": "Select which content type to fetch for",
+          "message": "SUPER ADVANCED!\n\nThis will gather all the tables and columns that use the particular content type and put them in your clipboard in the format \"(schema_name.)table_name,column_name\". If you want to do mass SELECT or DELETE operations for each of a particular definition, use a multi-editor tool in a powerful text editor to edit all the lines at once (with Ctrl+D, usually).\n\nSome tables are referred to by \"external_x\" schema name, so when you have your commands written out, you will need to either remove the schema names; or use the connect.bat in the db dir, which sets up the correct names for you; or manually initialise your session like so:\n\n.open client.db\nATTACH \"client.caches.db\" as external_caches;\nATTACH \"client.master.db\" as external_master;\nATTACH \"client.mappings.db\" as external_mappings;",
+          "choices": [
+            [
+              "hash",
+              15,
+              "hash"
+            ],
+            [
+              "tag",
+              20,
+              "tag"
+            ]
+          ]
+        }
+      ],
+      "writes": [],
+      "reads": [],
+      "popups": [],
+      "accept": false,
+      "ran": []
+    },
+    {
+      "menu": "db maintenance",
+      "label": "get tables using definitions",
+      "method": "_GetTablesAndColumnsUsingDefinitions",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "buttons",
+          "title": "Select which content type to fetch for",
+          "message": "SUPER ADVANCED!\n\nThis will gather all the tables and columns that use the particular content type and put them in your clipboard in the format \"(schema_name.)table_name,column_name\". If you want to do mass SELECT or DELETE operations for each of a particular definition, use a multi-editor tool in a powerful text editor to edit all the lines at once (with Ctrl+D, usually).\n\nSome tables are referred to by \"external_x\" schema name, so when you have your commands written out, you will need to either remove the schema names; or use the connect.bat in the db dir, which sets up the correct names for you; or manually initialise your session like so:\n\n.open client.db\nATTACH \"client.caches.db\" as external_caches;\nATTACH \"client.master.db\" as external_master;\nATTACH \"client.mappings.db\" as external_mappings;",
+          "choices": [
+            [
+              "hash",
+              15,
+              "hash"
+            ],
+            [
+              "tag",
+              20,
+              "tag"
+            ]
+          ]
+        }
+      ],
+      "writes": [],
+      "reads": [
+        {
+          "command": "tables_and_columns_using_definitions",
+          "args": [
+            15
+          ]
+        }
+      ],
+      "popups": [],
+      "accept": true,
+      "read_error": "DBException",
+      "error": "DBException",
+      "ran": []
+    },
+    {
+      "menu": "db maintenance",
+      "label": "analyze",
+      "method": "_AnalyzeDatabase",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_yes_no",
+          "message": "This will gather statistical information on the database's indices, helping the query planner perform efficiently. It typically happens automatically every few days, but you can force it here. If you have a large database, it will take a few minutes, during which your gui may hang. A popup message will show its status.\n\nA 'soft' analyze will only reanalyze those indices that are due for a check in the normal db maintenance cycle. If nothing is due, it will return immediately.\n\nA 'full' analyze will force a run over every index in the database. This can take substantially longer. If you do not have a specific reason to select this, it is probably pointless.",
+          "yes": [
+            [
+              "soft",
+              false
+            ],
+            [
+              "full",
+              true
+            ]
+          ],
+          "no_label": "forget it"
+        }
+      ],
+      "writes": [],
+      "reads": [
+        {
+          "command": "tag_display_maintenance_status",
+          "args": [
+            "service:downloader tags"
+          ]
+        },
+        {
+          "command": "similar_files_maintenance_status",
+          "args": []
+        },
+        {
+          "command": "tag_display_maintenance_status",
+          "args": [
+            "service:my tags"
+          ]
+        },
+        {
+          "command": "tag_display_maintenance_status",
+          "args": [
+            "service:second tags"
+          ]
+        }
+      ],
+      "popups": [
+        {
+          "title": "database maintenance - analyzing",
+          "text_1": "done!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        },
+        {
+          "title": null,
+          "text_1": "Done!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "yes_index": 1,
+      "ran": []
+    },
+    {
+      "menu": "regenerate",
+      "label": "tag text search cache",
+      "method": "_RegenerateTagCache",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will delete and then recreate the fast search cache for one or all tag services.\n\nIf you have a lot of tags and files, it can take a little while, during which the gui may hang.\n\nIf you do not have a specific reason to run this, it is pointless. It fixes missing autocomplete or tag search results.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        },
+        {
+          "kind": "buttons",
+          "title": "Which service?",
+          "message": "",
+          "choices": [
+            [
+              "all services",
+              null,
+              "Do it for everything. Can take a long time!"
+            ],
+            [
+              "downloader tags",
+              "service:downloader tags",
+              "downloader tags"
+            ],
+            [
+              "my tags",
+              "service:my tags",
+              "my tags"
+            ],
+            [
+              "second tags",
+              "service:second tags",
+              "second tags"
+            ]
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "command": "regenerate_tag_cache",
+          "args": [],
+          "kwargs": {
+            "tag_service_key": "service:downloader tags"
+          }
+        }
+      ],
+      "reads": [],
+      "popups": [
+        {
+          "title": "regenerating tag fast search cache",
+          "text_1": "done!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "choice_index": 1,
+      "ran": [
+        "regenerate_tag_cache"
+      ]
+    },
+    {
+      "menu": "check and repair",
+      "label": "fix logically inconsistent mappings",
+      "method": "_FixLogicallyInconsistentMappings",
+      "call_kwargs": {},
+      "asked": [
+        {
+          "kind": "yes_no",
+          "message": "This will check for tags that are occupying mutually exclusive states--either current & pending or deleted & petitioned.\n\nPlease run this if you attempt to upload some tags and get a related error. You may need some follow-up regeneration work to correct autocomplete or 'num pending' counts.",
+          "yes_label": "do it--now choose which service",
+          "no_label": "forget it"
+        },
+        {
+          "kind": "buttons",
+          "title": "Which service?",
+          "message": "",
+          "choices": [
+            [
+              "all services",
+              null,
+              "Do it for everything. Can take a long time!"
+            ],
+            [
+              "downloader tags",
+              "service:downloader tags",
+              "downloader tags"
+            ],
+            [
+              "my tags",
+              "service:my tags",
+              "my tags"
+            ],
+            [
+              "second tags",
+              "service:second tags",
+              "second tags"
+            ]
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "command": "fix_logically_inconsistent_mappings",
+          "args": [],
+          "kwargs": {
+            "tag_service_key": "service:downloader tags"
+          }
+        }
+      ],
+      "reads": [],
+      "popups": [
+        {
+          "title": "fixing logically inconsistent mappings",
+          "text_1": "done!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        },
+        {
+          "title": null,
+          "text_1": "No inconsistent mappings found!",
+          "text_2": null,
+          "files": null,
+          "traceback": false,
+          "had_error": false,
+          "done": true,
+          "dismissed": false
+        }
+      ],
+      "accept": true,
+      "choice_index": 1,
+      "ran": [
+        "fix_logically_inconsistent_mappings"
+      ]
+    }
+  ]
+}

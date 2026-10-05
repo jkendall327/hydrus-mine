@@ -11,6 +11,7 @@ mod auto_resolution_review;
 mod auto_resolution_rules;
 mod checker_options;
 mod clipboard_urls;
+mod database_maintenance;
 mod datetime_editor;
 mod delete_files;
 mod downloader_definitions;

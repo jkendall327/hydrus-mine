@@ -1,0 +1,43 @@
+// A choice among buttons (the reference's `SelectFromListButtons`, and
+// `GetYesYesNo`): a message over a column of buttons, one per choice, and
+// optionally a "no" button. Driven by `src/choice_buttons.rs`.
+
+import { Button } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+export component ChoiceButtonsWindow inherits Window {
+    in property <string> window-title: "Select";
+    title: root.window-title;
+    preferred-width: 480px;
+    background: Theme.window;
+    in property <string> message;
+    in property <[string]> choices;
+    // empty: no "no" button
+    in property <string> no-label;
+    callback chosen(int);
+    callback cancelled();
+
+    FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape { root.cancelled(); return accept; }
+            reject
+        }
+        VerticalLayout {
+            padding: 10px;
+            spacing: 6px;
+            if root.message != "": Text {
+                text: root.message;
+                wrap: word-wrap;
+                color: Theme.text;
+            }
+            for choice[i] in root.choices: Button {
+                text: choice;
+                clicked => { root.chosen(i); }
+            }
+            if root.no-label != "": Button {
+                text: root.no-label;
+                clicked => { root.cancelled(); }
+            }
+        }
+    }
+}
