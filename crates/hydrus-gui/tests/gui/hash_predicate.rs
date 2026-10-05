@@ -282,6 +282,10 @@ fn cleanup_replaces_real_typed_text_and_owns_warning_acknowledgement() {
     window.invoke_text_edited(0, 2, "not hex".into());
     window.invoke_ok(0);
     assert!(window.get_notice_open());
+    assert_eq!(
+        window.get_notice_message(),
+        fixture["acceptance"][1]["warnings"][0].as_str().unwrap()
+    );
     let notice = windows.get(windows.count() - 1).unwrap();
     let pixels = headless::render(&notice, 550, 330);
     headless::save_png(

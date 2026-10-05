@@ -699,6 +699,7 @@ pub(crate) fn open(
                 Err(why) => {
                     if let Some(window) = weak.upgrade() {
                         if hash {
+                            let why = format!("Sorry, predicate was not valid: {why}");
                             if let Err(error) = notices.show(&why) {
                                 window.set_error(format!("{why}\n{error}").into());
                             }
