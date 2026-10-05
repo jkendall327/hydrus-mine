@@ -2,9 +2,10 @@
   "schema_version": 1,
   "agent": "normal-time-maintenance",
   "baseline_git_head": "bed06cfdb3fd224f934c0bb50d31e40e12a2b603",
-  "source_commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85",
+  "source_commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0",
   "implementation_commits": [
-    "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+    "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85",
+    "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
   ],
   "frozen_original_inventory": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
   "frozen_options_audit": {
@@ -35,7 +36,7 @@
       "before": "missing",
       "proposedStatus": "first_pass",
       "countAsCompletedLeaf": true,
-      "behavior": "Default-true staged checkbox, exact Qt Apply/Cancel/reopen, native-wins retained ClientOptions and future import, field-scoped save preserving the peer gate. Actual automatic worker admits once when current live GUI idle OR its saved normal-time flag is true; daemon with no GUI activity is normal time. A flag edit does not interrupt a pass already admitted, matching actual Qt [8,8] groups; shutdown stops before the next group. The real owned worker runs off UI, retains queue/import/current-membership/shared-media safety, and retires/wakes on accepted exit, rebind and last-owner drop. Physical captured waits remain outside the writer and final-pair waits remain intact. Hidden/retired Options cannot stage/save, declined exit preserves live work, successor owners consume the remaining real queue. Conditional finite-control FirstPass requires hosted validation; broader maintenance parents remain Partial.",
+      "behavior": "Default-true staged checkbox, exact Qt Apply/Cancel/reopen, native-wins retained ClientOptions and future import, field-scoped save preserving the peer gate. Actual automatic worker admits once when current live GUI idle OR its saved normal-time flag is true; daemon with no GUI activity is normal time. A flag edit does not interrupt a pass already admitted, matching actual Qt [8,8] groups; shutdown stops before the next group. The real owned worker runs off UI, retains queue/import/current-membership/shared-media safety, and retires/wakes on accepted exit, rebind and last-owner drop. Physical captured waits remain outside the writer and final-pair waits remain intact. Hidden/retired Options cannot stage/save, declined exit preserves live work, successor owners consume the remaining real queue. Conditional finite-control FirstPass requires hosted validation; broader maintenance parents remain Partial. A private Bound Owner makes dropped-binding retirement immediate despite retained Main callbacks/public Control; the dropped Main is discovered by its weak timer/poll.",
       "reference_source": {
         "relativepath": "hydrus/client/gui/panels/options/FilesAndTrashPanel.py",
         "line": 170,
@@ -48,7 +49,7 @@
           "line": 2242,
           "symbol": "|s| s.maintenance_gates.trash_normal,",
           "line_sha256": "5c0d1a94946d28072c906a2fada979172e5425c803d4247c2e704c09c2a1de40",
-          "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+          "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
         }
       ],
       "limits": [
@@ -64,7 +65,7 @@
       "before": "missing",
       "proposedStatus": "first_pass",
       "countAsCompletedLeaf": true,
-      "behavior": "Default-true staged checkbox, exact Qt Apply/Cancel/reopen, native-wins retained ClientOptions and future import, field-scoped save preserving the peer gate. Actual automatic worker admits once when current live GUI idle OR its saved normal-time flag is true; daemon with no GUI activity is normal time. A flag edit does not interrupt a pass already admitted, matching actual Qt [8,8] groups; shutdown stops before the next group. The real owned worker runs off UI, retains queue/import/current-membership/shared-media safety, and retires/wakes on accepted exit, rebind and last-owner drop. Physical captured waits remain outside the writer and final-pair waits remain intact. Hidden/retired Options cannot stage/save, declined exit preserves live work, successor owners consume the remaining real queue. Conditional finite-control FirstPass requires hosted validation; broader maintenance parents remain Partial.",
+      "behavior": "Default-true staged checkbox, exact Qt Apply/Cancel/reopen, native-wins retained ClientOptions and future import, field-scoped save preserving the peer gate. Actual automatic worker admits once when current live GUI idle OR its saved normal-time flag is true; daemon with no GUI activity is normal time. A flag edit does not interrupt a pass already admitted, matching actual Qt [8,8] groups; shutdown stops before the next group. The real owned worker runs off UI, retains queue/import/current-membership/shared-media safety, and retires/wakes on accepted exit, rebind and last-owner drop. Physical captured waits remain outside the writer and final-pair waits remain intact. Hidden/retired Options cannot stage/save, declined exit preserves live work, successor owners consume the remaining real queue. Conditional finite-control FirstPass requires hosted validation; broader maintenance parents remain Partial. A private Bound Owner makes dropped-binding retirement immediate despite retained Main callbacks/public Control; the dropped Main is discovered by its weak timer/poll.",
       "reference_source": {
         "relativepath": "hydrus/client/gui/panels/options/FilesAndTrashPanel.py",
         "line": 171,
@@ -77,7 +78,7 @@
           "line": 2247,
           "symbol": "|s| s.maintenance_gates.deferred_normal,",
           "line_sha256": "d7574b92e17969739836a70b6181ae1e465f57e44b47933b91ee0bdc724c3b95",
-          "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+          "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
         }
       ],
       "limits": [
@@ -95,238 +96,266 @@
       "line": 15,
       "symbol": "pub struct Preferences",
       "line_sha256": "373d023fffe3d1204eadbb5fe34e74a9fe3d7451eeb8676b7a53ed040046ce76",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-store/src/maintenance_gates.rs",
       "line": 38,
       "symbol": "pub fn from_legacy(",
       "line_sha256": "45934f85d2ad25c5548d1765fc3941e10df4f692bfe052dd0d38c1c5b5fcd18b",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-store/src/maintenance_gates.rs",
       "line": 53,
       "symbol": "pub fn allows(",
       "line_sha256": "446d8dbb35b5618e2c40de7085154115ca0faaac64378f613744d03ef2cb36f3",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-store/src/maintenance_gates.rs",
       "line": 60,
       "symbol": "pub fn save_changed(",
       "line_sha256": "08ed04e947dd2fe6b4d42591cd0b34a07f84f83a959a9f71f1220881d8cce709",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-store/src/maintenance_gates.rs",
       "line": 75,
       "symbol": "pub fn load(",
       "line_sha256": "d4f306aeea39dff3f571f7beaf1ea1ddae58efd8e524f63b9e0b0f63eb189b68",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-store/src/maintenance_gates.rs",
       "line": 99,
       "symbol": "fn retained_client_options_native_wins_reopen_and_corruption(",
       "line_sha256": "e02eb865f4a48fc8f3b18b9835c27d283843fd79706c83fd687ac5a8e64dc81c",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-store/src/import/decode.rs",
       "line": 132,
       "symbol": "&crate::maintenance_gates::Preferences::from_legacy(",
       "line_sha256": "09d94379a57101edd70d0c504d377b99a14ea29b5aaba9e929532d3f41a3dce7",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-gui-model/src/options.rs",
       "line": 53,
       "symbol": "(@save $conn:ident, $after:ident, $before:ident, maintenance_gates)",
       "line_sha256": "ae0450e6baa896ae18af78310467547db166cb8536b3f4700d446a23a4baf600",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-gui-model/src/options.rs",
       "line": 2242,
       "symbol": "|s| s.maintenance_gates.trash_normal,",
       "line_sha256": "5c0d1a94946d28072c906a2fada979172e5425c803d4247c2e704c09c2a1de40",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-gui-model/src/options.rs",
       "line": 2247,
       "symbol": "|s| s.maintenance_gates.deferred_normal,",
       "line_sha256": "d7574b92e17969739836a70b6181ae1e465f57e44b47933b91ee0bdc724c3b95",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-gui-model/tests/model/normal_time_maintenance.rs",
       "line": 30,
       "symbol": "fn recorded_flags_cancel_apply_reopen_and_live_peer_preservation(",
       "line_sha256": "eeb3bc3023ec52145063fec89d5729201f854da9b9588b081bccbd2e2c5af0b3",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-gui/src/maintenance_runtime.rs",
       "line": 59,
       "symbol": "pub struct Control(",
       "line_sha256": "79188bfe23cff1dcacf8fe5b0219ec841813caecc31cba7d455055f02327be7a",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-gui/src/maintenance_runtime.rs",
       "line": 51,
       "symbol": "impl Drop for Inner",
       "line_sha256": "04960560376b192e105731b8596503a8f80dc1539b62fc84832ff5b05a8d26ef",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
-    },
-    {
-      "relativepath": "crates/hydrus-gui/src/maintenance_runtime.rs",
-      "line": 135,
-      "symbol": "pub fn retire(",
-      "line_sha256": "43e9c0c65da4777f23d45d4e693d82ef07e9993d423551b9ffd583ca15974d2b",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-gui/src/maintenance_runtime.rs",
       "line": 146,
+      "symbol": "pub fn retire(",
+      "line_sha256": "43e9c0c65da4777f23d45d4e693d82ef07e9993d423551b9ffd583ca15974d2b",
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/maintenance_runtime.rs",
+      "line": 157,
       "symbol": "pub fn poll_at(",
       "line_sha256": "533b9f121cc64580c3b215ef60b3b5b55d2cb65fbb11dd6c897a441b8c9c4f81",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-gui/src/maintenance_runtime.rs",
-      "line": 198,
+      "line": 209,
       "symbol": "let idle = self.0.monitor.idle_at(now_ms);",
       "line_sha256": "38c289655e32fbb631807d7c1145875258628a68a013a882c54198adc083882b",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-gui/src/maintenance_runtime.rs",
-      "line": 170,
+      "line": 181,
       "symbol": "pending.task.is_finished()",
       "line_sha256": "bd62436f304cb14822ddc724c4d1244b0223c1a71d9e7fa3adb63f5f06836683",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-gui/src/maintenance_runtime.rs",
-      "line": 208,
+      "line": 219,
       "symbol": ".name(format!(\"gui-maintenance-{worker:?}\"))",
       "line_sha256": "fc9ed8d851cb91498ea354c513b2cc4d77ed9c74740d23152c4aa22b7e0ecf44",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-gui/src/lib.rs",
-      "line": 563,
+      "line": 564,
       "symbol": "let maintenance = maintenance_runtime::Control::bind(",
       "line_sha256": "3316debd0132ca38ddeb816c242743cf83330b3b3bd9608a17b7d3cba0eae07b",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-store/src/trash.rs",
       "line": 62,
       "symbol": "pub fn maintain_trash_with_control(",
       "line_sha256": "b040eadc31bd00fc4509861a6eec341c47fe97df2114a79310e4d830b0f01376",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-store/src/trash.rs",
       "line": 98,
       "symbol": "fn clear_some_owned(",
       "line_sha256": "a2dbbc01bcd4c03034343a85419341dc24c2cb6749803b300c23fef6bed7353f",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-store/src/trash.rs",
       "line": 362,
       "symbol": "fn cancelled_writer_admission_leaves_trash_and_physical_queue_untouched(",
       "line_sha256": "577600cff174467b110ba7e243241205f7d0620c5496d5f93e38769c0ca40457",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-store/src/maintenance.rs",
       "line": 83,
       "symbol": "pub fn purge_deleted_media_with_control(",
       "line_sha256": "58547543aa6b5e44d50f157ede1522741f2363ad154766c290242bef36594e63",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-store/src/maintenance.rs",
       "line": 189,
       "symbol": "if step.kept == 0 && !wait(period)",
       "line_sha256": "5fd5a57af2fd2cbe67b2c38ee5a556d8bf0e2a636b0c9758bc2868a76396ad5e",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-cli/src/trash_maintenance.rs",
       "line": 13,
       "symbol": "pub fn start(",
       "line_sha256": "46eb45eaf3728c54f65b5161a30b6b3895cf389e3421772e1ae88ed1fcc24694",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-cli/src/trash_maintenance.rs",
       "line": 67,
       "symbol": "pub async fn shutdown(",
       "line_sha256": "988aef14c36eef9ce443226b7cf777048a27ae5d9fd32382849bd61d74316c88",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-cli/src/trash_maintenance.rs",
       "line": 80,
       "symbol": "impl Drop for Worker",
       "line_sha256": "c7c20597ee894a7cdc1ed46a70735ae5cc0c7077c709b5b246a62f347cfe4a3e",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-cli/src/trash_maintenance.rs",
       "line": 90,
       "symbol": "async fn dropping_owner_wakes_idle_task_and_releases_store_without_restart(",
       "line_sha256": "10d31daac43e03ffd7fae3742a77d101a1aa02a5aeaddb8225949596457b4021",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-cli/src/physical_deletes.rs",
       "line": 23,
       "symbol": "if gates.allows(",
       "line_sha256": "09dd4e4ef7ef452ed2145cb9b3658b449dbadbf39ef6ce5a0d63c68473a877af",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-gui/tests/gui/normal_time_maintenance.rs",
       "line": 121,
       "symbol": "fn staged_controls_cancel_reopen_hidden_retired_and_peer_merge(",
       "line_sha256": "b1e08ba324cd2498ca749d5c1df14c7aee35c88dc20f0d6365c3f3c5ca0a6bb1",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-gui/tests/gui/normal_time_maintenance.rs",
       "line": 214,
       "symbol": "fn unchecked_normal_flags_block_real_workers_but_current_live_idle_admits_both(",
       "line_sha256": "e4fa9310c024f6f2d1f7134bd1e2d83911a6fb8d13b573b444f2a3f760d8838e",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-gui/tests/gui/normal_time_maintenance.rs",
       "line": 293,
       "symbol": "fn normal_time_apply_reaches_waiting_consumer_and_terminal_owner_wakes_without_successor(",
       "line_sha256": "ec83aa127499329cddf3f19bcd5bfc4452f663c79abd8e4c68c83bb2afd24c11",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "crates/hydrus-gui/tests/gui/normal_time_maintenance.rs",
       "line": 373,
       "symbol": "fn rebind_wakes_previous_pass_and_preserves_queued_pair_for_current_owner(",
       "line_sha256": "597aa037f23ef0a185a536dfbcf6f23c3446f751df9bb6cfe77821ed687229b9",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     },
     {
       "relativepath": "oracle/record_normal_time_maintenance.py",
       "line": 16,
       "symbol": "def record(session):",
       "line_sha256": "5d8f3da7e90a56971fc931a2718571d7065d1d7bdacdab73c7cc84b9f660e4bd",
-      "commit": "dd3a90961cf245f4b3c1c487e4f69b10f6d56c85"
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/maintenance_runtime.rs",
+      "line": 70,
+      "symbol": "pub(crate) struct Owner(",
+      "line_sha256": "26d7ee2714938d9a9af4d2eb742f308abbd68149bdebe0d928d461e60aa49da1",
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/maintenance_runtime.rs",
+      "line": 71,
+      "symbol": "impl Drop for Owner",
+      "line_sha256": "3806ad3163a6069fe80abc5fcf2967c2e112e3b78368233667e861a4c012f1dc",
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/src/lib.rs",
+      "line": 4634,
+      "symbol": "_maintenance_owner: maintenance.owner(),",
+      "line_sha256": "2feaa12717db5d31fa6405db3ea5cfebdad6d11b2a4eb0937d277776b7415ae9",
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
+    },
+    {
+      "relativepath": "crates/hydrus-gui/tests/gui/normal_time_maintenance.rs",
+      "line": 428,
+      "symbol": "fn dropped_binding_retires_retained_control_and_wakes_its_real_held_wait(",
+      "line_sha256": "ecc8644c80550b05cc6241cdc0f409d7e5bf8a23489c157bc6505abc962a8aca",
+      "commit": "09b0f05b3fddbcc1c79e25e18ed5fc56c472c5d0"
     }
   ],
   "consumer_reference_anchors": [
@@ -411,8 +440,8 @@
   "authored_native_artifact_count": 1,
   "validation": {
     "source_checks": "Direct rustfmt --check, git diff --check, Python recorder compilation, fixture entry/group/Apply invariants and cached Slint compilation passed; no Cargo/local Rust/mutation execution.",
-    "independent_review": "appearance_final_review independently accepted immutable dd3a90961 finite source and final packet: all 48 raw-line/symbol fingerprints, source/base/implementation pins, audit/base ledger/fixture/Qt PNG hashes, both240/51 completed arrays, no prior duplicates and exactly two conditional originals with parents0. Hosted Rust/native execution and authored Options render remain pending.",
-    "rust_tests": "Store retained/native-wins/reopen/corrupt policy and actual writer cancellation; model eight real Editor records + concurrent peer/wait merge; four native real Store/owned Monitor/Apply/idle/normal/hidden/retired/Cancel/accepted-close/held-wait/rebind/successor regressions; daemon Drop wake/store release authored only, hosted pending.",
+    "independent_review": "appearance_final_review independently accepted initial dd3a90961 and immutable Bound-owner correction09b0f05b3 plus final52-anchor repinned packet: source/implementation chain, audit/base ledger/fixture/QtPNG hashes, both240/51 arrays, exactly2conditional originals and parents0. Immediate Bound Drop and weak Main next-poll ownership limits are accurate; authored-only runtime and hosted Rust/native render pending.",
+    "rust_tests": "Store retained/native-wins/reopen/corrupt policy and actual writer cancellation; model eight real Editor records + concurrent peer/wait merge; five native real Store/owned Monitor/Apply/idle/normal/hidden/retired/Cancel/accepted-close/held-wait/rebind/successor/dropped-Bound-with-retained-Control/dropped-Main regressions; daemon Drop wake/store release authored only, hosted pending.",
     "render": "Actual Qt Options PNG inspected. One native Options PNG authored; hosted generation and render inspection pending."
   },
   "limits": [
@@ -421,7 +450,7 @@
     "Current synchronous filesystem IO or an admitted eight-file trash group may finish after cancellation. Retirement wakes physical waits and prevents later pair/group admissions without blocking the UI; late owner reports are discarded.",
     "Native trash writes retain 256-file batches and physical passes retain 1024 pairs/ten-minute cadence. Qt full scheduling/backend parity is not inferred from these two finite flags.",
     "Hosted exact-source Rust/Clippy/native execution and inspection of the authored Options PNG remain pending. Physical native tests use disposable copied media; none were executed locally.",
-    "The GUI owner uses a weak window and off-thread jobs capture no GUI state. Retained Control owns Monitor\u2192Pages\u2192Store until final owner drop; Drop cancels/wakes workers. GUI last-owner held-wait destruction is source-reviewed rather than directly replayed; explicit held-wait accepted-close/rebind and daemon owner Drop regressions are authored."
+    "The GUI owner uses a weak window and off-thread jobs capture no GUI state. Retained Control owns Monitor\u2192Pages\u2192Store until final owner drop. A private Bound Owner immediately retires work on binding drop despite retained Main callbacks/Control; weak owner timer or next poll detects a dropped Main. The actual held-wait dropped-Bound/fresh-successor regression and dropped-Main polling assertion are authored, not locally executed."
   ],
   "untouched_scope": "Exactly two conditional original Missing FirstPass proposals, zero parents/aliases. No canonical ledger/status writes, pushes or reference-source edits. Broader maintenance and idle families remain Partial."
 }
