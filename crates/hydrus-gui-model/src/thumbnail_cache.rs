@@ -17,6 +17,15 @@ pub struct Cache<T> {
     bytes: u64,
     policy: ThumbnailCacheSettings,
 }
+impl<T> std::fmt::Debug for Cache<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Cache")
+            .field("entries", &self.entries.len())
+            .field("bytes", &self.bytes)
+            .field("policy", &self.policy)
+            .finish_non_exhaustive()
+    }
+}
 impl<T> Cache<T> {
     /// Start an empty cache under its saved policy.
     pub fn new(policy: ThumbnailCacheSettings) -> Self {
