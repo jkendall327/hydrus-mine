@@ -5909,11 +5909,29 @@ fn related_weight_drafts_cancel_reopen_and_re_rank_an_already_open_service_panel
         .unwrap();
     let windows = headless::init();
     let mut page = hydrus_gui::SearchPage::new(store.clone());
+    // The Qt recorder passes all six media explicitly. The basic fixture's
+    // second file belongs only to "art", so the default "my files" search
+    // cannot supply the same six-target selection.
+    page.choose_location(hydrus_core::search::context::LocationContext::default());
     page.enter();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::single(page));
     ui.show().unwrap();
     bound.current.borrow().borrow_mut().select_files(&files);
+    assert_eq!(
+        bound
+            .current
+            .borrow()
+            .borrow()
+            .selected_files()
+            .into_iter()
+            .collect::<std::collections::BTreeSet<_>>(),
+        files
+            .iter()
+            .copied()
+            .collect::<std::collections::BTreeSet<_>>(),
+        "the real manage-tags owner must capture all six recorded media"
+    );
     ui.invoke_manage_tags_selected();
     let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
     let second = i32::try_from(
@@ -5924,6 +5942,7 @@ fn related_weight_drafts_cancel_reopen_and_re_rank_an_already_open_service_panel
             .unwrap(),
     )
     .unwrap();
+    assert_eq!(manage.get_window_title(), "manage tags for 6 files");
     manage.invoke_service_chosen(second);
     manage.set_related_display(false);
     manage.invoke_related_search();
