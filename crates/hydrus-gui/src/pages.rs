@@ -1126,6 +1126,24 @@ impl Pages {
         self.add(page);
     }
 
+    /// Open active-list predicates with the reference duplicate page's default
+    /// tag contexts, rather than inheriting the source search's tag service.
+    pub fn open_duplicates_predicates(
+        &mut self,
+        location: hydrus_search::LocationContext,
+        predicates: Vec<hydrus_search::Predicate>,
+        name: &str,
+    ) {
+        self.add(Page {
+            key: PageKey::random(),
+            name: name.into(),
+            content: PageContent::Duplicates {
+                duplicates: new_duplicates_page(location, predicates),
+                sort: None,
+            },
+        });
+    }
+
     /// Open the selected predicates as the two searches of a duplicate page.
     pub fn open_duplicates_with_context(
         &mut self,

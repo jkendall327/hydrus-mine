@@ -1048,6 +1048,50 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // a system predicate's editor, from the search box
     let search_or = search_or_window::Slot::default();
     window.set_search_or_open(false);
+    let active_search_launcher: active_predicates::Launch = Rc::new({
+        let change_pages = change_pages.clone();
+        let weak = window.as_weak();
+        let active = binding_active.clone();
+        let store = pages.borrow().store().clone();
+        move |location, batches, duplicate| {
+            let Some(window) = weak.upgrade() else { return };
+            if !active.get() || !window.window().is_visible() || !window.get_question().is_empty() {
+                return;
+            }
+            let activation: hydrus_store::settings::TagSearchActivation =
+                store.read(hydrus_store::settings::get).unwrap_or_default();
+            let viewing: hydrus_store::settings::FileViewingStatistics =
+                store.read(hydrus_store::settings::get).unwrap_or_default();
+            let text = hydrus_search::TextContext::from_store(&store.snapshot().services, &viewing);
+            let mut activate = activation.activate_main;
+            for predicates in batches {
+                if predicates.is_empty() || !active.get() || !window.window().is_visible() {
+                    break;
+                }
+                let name = hydrus_gui_model::active_predicates::routes::page_name(
+                    &predicates,
+                    &text,
+                    duplicate,
+                );
+                change_pages(&|pages| {
+                    if duplicate {
+                        pages.open_duplicates_predicates(
+                            location.clone(),
+                            predicates.clone(),
+                            &name,
+                        );
+                    } else {
+                        pages.open_search(location.clone(), predicates.clone(), &name);
+                    }
+                    Ok(())
+                });
+                if activate && active.get() && window.window().is_visible() {
+                    main_identity::activate_if_inactive(&window);
+                }
+                activate = false;
+            }
+        }
+    });
     active_predicates::bind(
         window,
         &predicate_editor,
@@ -1055,6 +1099,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         page.clone(),
         shown.clone(),
         binding_active.clone(),
+        active_search_launcher,
     );
 
     let review_files: Rc<dyn Fn(Vec<String>)> = Rc::new({

@@ -1,7 +1,10 @@
 //! Active-list selection and captured commands, with page-owned edit children.
 use crate::{ActivePredicateAction, MainWindow, PredicateEditorWindow, SearchPage};
 use hydrus_gui_model::{
-    active_predicates::{self, Command},
+    active_predicates::{
+        self, Command,
+        routes::{self, Route},
+    },
     list_selection::ListSelection,
     predicate_editors::{Context, Editor},
 };
@@ -12,12 +15,34 @@ use std::{
     rc::{Rc, Weak},
 };
 
+pub(crate) type Launch = Rc<dyn Fn(hydrus_search::LocationContext, Vec<Vec<Predicate>>, bool)>;
+
+#[derive(Clone, Copy)]
+enum Action {
+    Search(Command),
+    Route(Route),
+}
+impl Action {
+    fn id(self) -> i32 {
+        match self {
+            Self::Search(command) => command.id(),
+            Self::Route(route) => route.id(),
+        }
+    }
+    fn group(self) -> i32 {
+        match self {
+            Self::Search(_) => 2,
+            Self::Route(route) => route.group(),
+        }
+    }
+}
+
 #[derive(Default)]
 struct State {
     page: Weak<RefCell<SearchPage>>,
     predicates: Vec<Predicate>,
     selection: ListSelection<usize>,
-    menu: Vec<(Command, String)>,
+    menu: Vec<(Action, String)>,
     captured: Vec<Predicate>,
 }
 impl State {
@@ -49,15 +74,28 @@ impl State {
                 .map(|i| self.selection.is_selected(i))
                 .collect::<Vec<_>>(),
         )));
-        window.set_active_predicate_menu(ModelRc::new(VecModel::from(
-            self.menu
-                .iter()
-                .map(|(command, label)| ActivePredicateAction {
-                    id: command.id(),
-                    label: label.as_str().into(),
-                })
-                .collect::<Vec<_>>(),
-        )));
+        let actions = self
+            .menu
+            .iter()
+            .map(|(command, label)| ActivePredicateAction {
+                id: command.id(),
+                group: command.group(),
+                label: label.as_str().into(),
+            })
+            .collect::<Vec<_>>();
+        let group = |id| {
+            ModelRc::new(VecModel::from(
+                actions
+                    .iter()
+                    .filter(|a| a.group == id)
+                    .cloned()
+                    .collect::<Vec<_>>(),
+            ))
+        };
+        window.set_active_predicate_copy_menu(group(0));
+        window.set_active_predicate_open_menu(group(1));
+        window.set_active_predicate_search_menu(group(2));
+        window.set_active_predicate_menu(ModelRc::new(VecModel::from(actions)));
     }
 }
 fn context(page: &SearchPage) -> Context {
@@ -90,6 +128,7 @@ pub(crate) fn bind(
     page: impl Fn() -> Rc<RefCell<SearchPage>> + Clone + 'static,
     shown: impl Fn(bool) + Clone + 'static,
     active: Rc<Cell<bool>>,
+    launch: Launch,
 ) {
     let state = Rc::new(RefCell::new(State::default()));
     let binding_active = active.clone();
@@ -439,11 +478,23 @@ pub(crate) fn bind(
                 })
                 .cloned()
                 .collect::<Vec<_>>();
-            state.menu = active_predicates::menu(
+            state.menu = routes::menu(
                 &state.captured,
                 page.active_predicates(),
                 &page.text_context(),
-                editable.then_some(editable_terms.as_slice()),
+            )
+            .into_iter()
+            .map(|(route, label)| (Action::Route(route), label))
+            .collect();
+            state.menu.extend(
+                active_predicates::menu(
+                    &state.captured,
+                    page.active_predicates(),
+                    &page.text_context(),
+                    editable.then_some(editable_terms.as_slice()),
+                )
+                .into_iter()
+                .map(|(command, label)| (Action::Search(command), label)),
             );
             if let Some(window) = weak.upgrade() {
                 state.show(&window);
@@ -475,8 +526,32 @@ pub(crate) fn bind(
                     .find(|(command, _)| command.id() == id)
                     .map(|(command, _)| (*command, state.captured.clone()))
             };
-            if let Some((command, selected)) = chosen {
-                execute(command, selected);
+            if let Some((action, selected)) = chosen {
+                match action {
+                    Action::Search(command) => execute(command, selected),
+                    Action::Route(Route::Copy(copy)) => {
+                        let text = {
+                            let current = current.borrow();
+                            routes::copy_text(
+                                &selected,
+                                current.active_predicates(),
+                                copy,
+                                &current.text_context(),
+                            )
+                        };
+                        if !text.is_empty() {
+                            crate::copy_to_clipboard(&text);
+                        }
+                    }
+                    Action::Route(Route::Open(open)) => {
+                        let location = current.borrow().location().clone();
+                        launch(
+                            location,
+                            routes::searches(&selected, open),
+                            open == routes::Open::Duplicates,
+                        );
+                    }
+                }
             }
         }
     });

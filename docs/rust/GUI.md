@@ -3061,6 +3061,22 @@ callbacks to their parent, including nested OR and system editors.
 paths; authored native replay, hidden/page/rebind/Main-drop and last-owner child
 release checks await hosted execution and the new rendered PNG review.
 
+The active list also exposes inherited copy and open submenus. Copy preserves
+list order, deduplicates expanded OR members/subtags, supports underscore
+subtags and collapsed OR text, and exports full hashes rather than their display
+summary. Namespace/wildcard rows copy the reference’s raw pattern. Open creates
+an AND/OR search, one search per selected predicate, or a duplicate-filter page,
+keeping source file locations and each predicate’s existing value. New searches
+use saved creation defaults for the tag service; duplicate filters use their own
+reference default tag contexts. The first page may activate the main window
+according to the saved tag-search setting. Captured menus refuse hidden/modal,
+changed-page/query, accepted-close and rebound owners. `active_predicate_routes.json`
+records twelve real Qt selections, their clipboard/new-page publications, and a
+real new-page consumer. Authored native transport and ownership replay awaits
+hosted execution. The active list’s inherited “select files” method is a no-op
+in Qt (the media tag list owns the working override); it is not represented here
+as a new file-selection action.
+
 The file-size editor displays `<`, `≈`, `=`, `≠` and `>` as five radio choices,
 with bounded arrow navigation, Space and default Enter acceptance. Its amount
 stays within 0–1,048,576; selecting B/KB/MB/GB/TB changes the binary multiplier
