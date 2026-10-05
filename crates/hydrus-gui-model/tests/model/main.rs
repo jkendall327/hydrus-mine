@@ -31,6 +31,7 @@ mod folders;
 mod force_filetype;
 mod formula_editors;
 mod hash_predicate;
+mod image_cache;
 mod import_options_editor;
 mod import_options_overwrite;
 mod import_options_panel;

@@ -114,21 +114,21 @@ impl SlowStatements {
 /// Files decoded ahead of showing them, on a thread of their own.
 struct Stills {
     requests: Sender<(u128, HashId, bool)>,
-    results: Receiver<(u128, HashId, Option<(Pixels, Raster)>)>,
+    results: Receiver<(u128, HashId, Option<(Pixels, Arc<Raster>)>)>,
 }
 
 /// A file decoded: as shown, and whole.
 type Decoded = (slint::Image, Option<Arc<Raster>>);
 
-fn decoded(raster: Option<Raster>) -> Decoded {
+fn decoded(raster: Option<Arc<Raster>>) -> Decoded {
     (
-        raster.as_ref().map(crate::image).unwrap_or_default(),
-        raster.map(Arc::new),
+        raster.as_deref().map(crate::image).unwrap_or_default(),
+        raster,
     )
 }
 
 impl Stills {
-    fn new(store: &Arc<Store>) -> Self {
+    fn new(store: &Arc<Store>, image_cache: crate::image_cache::Handle) -> Self {
         let (requests, jobs) = crossbeam_channel::bounded::<(u128, HashId, bool)>(8);
         let (done, results) = crossbeam_channel::bounded(8);
         let store = Arc::clone(store);
@@ -136,7 +136,8 @@ impl Stills {
             .name("filter stills".into())
             .spawn(move || {
                 for (generation, id, normalise_icc) in jobs {
-                    let decoded = crate::viewer::still_with_icc(&store, id, normalise_icc)
+                    let decoded = image_cache
+                        .load(&store, id, normalise_icc)
                         .map(|r| (Pixels::new(&r), r));
                     if done.send((generation, id, decoded)).is_err() {
                         break;
@@ -161,13 +162,18 @@ struct State {
     shown: Option<(HashId, HashId)>,
     statements: Vec<Statement>,
     slow_done: bool,
-    /// Files decoded, the pair shown's and those coming up: as shown, and
-    /// whole, to draw sharply.
+    /// The current presentation only: whole source and shown pixels. Future
+    /// navigation reuse belongs exclusively to the policy-bound image cache.
     images: HashMap<HashId, Decoded>,
+    image_cache: crate::image_cache::Handle,
+    owns_cache: bool,
     normalise_icc: bool,
     image_generation: u128,
     /// Files asked of the stills thread and not yet back.
     requested: HashSet<HashId>,
+    /// Failed future requests are not retried on every timer tick. This holds
+    /// identities only, not decoded images or presentation ownership.
+    failed_prefetch: HashSet<HashId>,
     /// Video, audio and animations play, as in the media viewer.
     playback: Rc<Playback>,
     animator: Rc<crate::animation::Animator>,
@@ -179,14 +185,26 @@ struct State {
     merge_options: crate::merge_options_window::Slot,
 }
 
+impl Drop for State {
+    fn drop(&mut self) {
+        if self.owns_cache {
+            self.image_cache.retire();
+        }
+    }
+}
 impl State {
     /// Ask for the files coming up to be decoded, and forget the ones
     /// passed.
     fn prefetch(&mut self, stills: &Stills) {
         let upcoming: HashSet<HashId> = self.model.upcoming(PREFETCH_PAIRS).into_iter().collect();
-        self.images.retain(|id, _| upcoming.contains(id));
+        self.failed_prefetch.retain(|id| upcoming.contains(id));
+        self.images
+            .retain(|id, _| self.shown.is_some_and(|pair| pair.0 == *id));
         for id in upcoming {
             if !self.images.contains_key(&id)
+                && !self.failed_prefetch.contains(&id)
+                && !self.image_cache.contains(id)
+                && self.image_cache.prefetch_allowed(self.model.store(), id)
                 && self.requested.insert(id)
                 && stills
                     .requests
@@ -271,10 +289,11 @@ fn show(window: &DuplicateFilterWindow, state: &mut State) {
         return;
     };
     let newly_shown = state.shown != Some((shown, other));
+    state.images.retain(|id, _| *id == shown);
     let (image, raster) = state
         .images
         .entry(shown)
-        .or_insert_with(|| decoded(crate::viewer::still(state.model.store(), shown)))
+        .or_insert_with(|| decoded(state.image_cache.load_saved(state.model.store(), shown)))
         .clone();
     window.set_media(image);
     if !newly_shown {
@@ -438,11 +457,23 @@ pub(crate) fn open_filter(
     slot: &Rc<RefCell<Option<DuplicateFilterWindow>>>,
     exited_after_work: Option<Rc<dyn Fn()>>,
 ) -> Result<DuplicateFilterWindow, slint::PlatformError> {
+    open_filter_with_cache(model, step, slot, exited_after_work, None)
+}
+pub(crate) fn open_filter_with_cache(
+    model: DuplicateFilter,
+    step: anyhow::Result<Step>,
+    slot: &Rc<RefCell<Option<DuplicateFilterWindow>>>,
+    exited_after_work: Option<Rc<dyn Fn()>>,
+    cache: Option<crate::image_cache::Handle>,
+) -> Result<DuplicateFilterWindow, slint::PlatformError> {
     let window = DuplicateFilterWindow::new()?;
     window.set_reviewing(model.reviewing());
+    let owns_cache = cache.is_none();
+    let image_cache =
+        cache.unwrap_or_else(|| crate::image_cache::Handle::standalone(model.store()));
     let playback_store = model.store().clone();
     let slow = Rc::new(SlowStatements::new(model.store()));
-    let stills = Rc::new(Stills::new(model.store()));
+    let stills = Rc::new(Stills::new(model.store(), image_cache.clone()));
     let settings: hydrus_core::media_viewer::MediaViewerSettings = model
         .store()
         .read(hydrus_store::settings::get)
@@ -470,9 +501,12 @@ pub(crate) fn open_filter(
         statements: Vec::new(),
         slow_done: false,
         images: HashMap::new(),
+        image_cache,
+        owns_cache,
         normalise_icc,
         image_generation: rand::random(),
         requested: HashSet::new(),
+        failed_prefetch: HashSet::new(),
         playback: Playback::for_store(playback_store.clone()),
         animator: crate::animation::Animator::for_store(playback_store),
         zoomed,
@@ -556,6 +590,10 @@ pub(crate) fn open_filter(
                 if !state.viewing_stats.active() {
                     return;
                 }
+                let _ = state.image_cache.refresh_saved(state.model.store());
+                if state.owns_cache {
+                    state.image_cache.maintain();
+                }
                 if let Ok(policy) = state.model.store().read(hydrus_store::image_colour::load)
                     && state.normalise_icc != policy.normalise_icc
                 {
@@ -563,6 +601,7 @@ pub(crate) fn open_filter(
                     state.image_generation = rand::random();
                     state.images.clear();
                     state.requested.clear();
+                    state.failed_prefetch.clear();
                     let still = state.model.current().is_some_and(|(file, _)| {
                         let store = state.model.store();
                         crate::viewer::playable(store, file).is_none()
@@ -584,11 +623,16 @@ pub(crate) fn open_filter(
                     continue;
                 }
                 state.requested.remove(&id);
+                if decoded.is_none() {
+                    state.failed_prefetch.insert(id);
+                }
                 let entry = match decoded {
-                    Some((pixels, raster)) => (pixels.image(), Some(Arc::new(raster))),
+                    Some((pixels, raster)) => (pixels.image(), Some(raster)),
                     None => (slint::Image::default(), None),
                 };
-                state.images.insert(id, entry);
+                if state.shown.is_some_and(|pair| pair.0 == id) {
+                    state.images.insert(id, entry);
+                }
             }
             while let Ok((pair, made)) = slow.results.try_recv() {
                 let mut state = state.borrow_mut();
@@ -680,6 +724,9 @@ pub(crate) fn open_filter(
                 state.playback.close();
                 state.animator.stop();
                 state.zoomed.close();
+                if state.owns_cache {
+                    state.image_cache.retire();
+                }
             }
             if let Some(editor) = state.borrow().merge_options.borrow_mut().take() {
                 let _ = editor.hide();
@@ -1025,5 +1072,140 @@ mod colour_tests {
         );
         successor.invoke_close_requested();
         assert!(slot.borrow().is_none());
+    }
+}
+
+#[cfg(test)]
+mod image_cache_tests {
+    use super::*;
+    use hydrus_core::{Sha256, service::builtin_keys};
+    use hydrus_duplicates::potentials::PotentialsQuery;
+    use hydrus_search::{FileSearchContext, LocationContext};
+    use hydrus_store::{
+        duplicates::{FileScope, PairSearchKind, PixelDuplicates},
+        image_cache::Policy,
+        settings,
+    };
+    #[test]
+    fn current_pair_pixels_survive_cache_shrink_but_navigation_cannot_reuse_an_evicted_future_copy()
+    {
+        let legacy = hydrus_testkit::legacy_fixture("basic");
+        let dir = tempfile::tempdir().unwrap();
+        hydrus_store::import::import_legacy(
+            legacy.path(),
+            &dir.path().join(hydrus_store::store::DB_FILE_NAME),
+        )
+        .unwrap();
+        let store = Store::open(dir.path()).unwrap();
+        let fixture = hydrus_testkit::fixture_json("legacy_db/basic.manifest.json");
+        let id = |name: &str| {
+            let file = fixture["files"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|file| file["name"] == name)
+                .unwrap();
+            let hash: Sha256 = file["hash"].as_str().unwrap().parse().unwrap();
+            store
+                .read(|conn| hydrus_store::master::hash_id(conn, &hash))
+                .unwrap()
+                .unwrap()
+        };
+        let (a, b) = (id("png_alpha_00.png"), id("jpeg_00.jpg"));
+        let cache = crate::image_cache::Handle::standalone(&store);
+        let source = cache.load_saved(&store, a).unwrap();
+        let expected = crate::image(&source)
+            .to_rgba8()
+            .unwrap()
+            .as_bytes()
+            .to_vec();
+        assert!(cache.contains(a));
+        let result = store
+            .read(|conn| hydrus_store::media::load_basic(conn, &[a]))
+            .unwrap()
+            .remove(0);
+        let storage = store.snapshot().storage.clone();
+        let paths = [
+            storage
+                .file_path(&result.hash, result.info.as_ref().unwrap().mime)
+                .unwrap(),
+            storage.thumbnail_path(&result.hash).unwrap(),
+        ];
+        struct Restore(Vec<std::path::PathBuf>);
+        impl Drop for Restore {
+            fn drop(&mut self) {
+                for path in &self.0 {
+                    std::fs::rename(path.with_extension("cache-test-held"), path).unwrap();
+                }
+            }
+        }
+        let mut restore = Restore(Vec::new());
+        for path in paths {
+            if path.exists() {
+                std::fs::rename(&path, path.with_extension("cache-test-held")).unwrap();
+                restore.0.push(path);
+            }
+        }
+        let snapshot = store.snapshot();
+        let domain = snapshot.services.builtin(builtin_keys::MY_FILES).unwrap();
+        let search = FileSearchContext {
+            location: LocationContext::single(domain.key.clone()),
+            ..Default::default()
+        };
+        let query = PotentialsQuery {
+            scope: FileScope::Domains {
+                current: vec![domain.id],
+                deleted: vec![],
+            },
+            kind: PairSearchKind::OneFileMatchesOneSearch,
+            pixel_duplicates: PixelDuplicates::Allowed,
+            max_hamming_distance: 4,
+            search_1: search.clone(),
+            search_2: search,
+        };
+        let mut model = DuplicateFilter::for_pairs(store.clone(), query, vec![(a, b)]).unwrap();
+        let step = model.load_batch();
+        assert_eq!(model.current(), Some((a, b)));
+        let windows = crate::headless::init();
+        let slot = Rc::new(RefCell::new(None));
+        let window = open_filter_with_cache(model, step, &slot, None, Some(cache.clone())).unwrap();
+        *slot.borrow_mut() = Some(window.clone_strong());
+        assert_eq!(
+            window.get_media().to_rgba8().unwrap().as_bytes(),
+            expected,
+            "filter genuinely shares the already decoded full image after physical source disappearance"
+        );
+        store
+            .write(|ctx| {
+                settings::set(
+                    ctx.conn(),
+                    &Policy {
+                        bytes: 0,
+                        ..Policy::default()
+                    },
+                )
+            })
+            .unwrap();
+        cache.refresh_saved(&store).unwrap();
+        assert!(!cache.contains(a));
+        assert_eq!(
+            window.get_media().to_rgba8().unwrap().as_bytes(),
+            expected,
+            "current presentation outlives cache-owned bytes"
+        );
+        window.invoke_switch_media();
+        assert!(window.get_media().size().width > 0);
+        window.invoke_switch_media();
+        assert_eq!(
+            window.get_media().size().width,
+            0,
+            "future/past decoded copies cannot bypass evicted renderer ownership"
+        );
+        assert!(!cache.contains(a));
+        assert!(!cache.contains(b));
+        window.invoke_close_requested();
+        cache.retire();
+        drop(windows);
+        drop(restore);
     }
 }

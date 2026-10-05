@@ -3166,3 +3166,21 @@ refresh regression advances persisted deadlines to verify live removal without
 waiting on wall time. Broader toaster freeze/monitor/position and network backend
 families remain Partial. Hosted exact-source Rust/Clippy/native execution and
 three authored PNG inspections are pending; no local Rust validation was run.
+
+The three image-cache controls govern real decoded full-resolution raster reuse,
+not the preview's separate 64 MiB per-page accepted-frame snapshots or a viewer's
+current source/resize buffers. Accounting preserves Qt's pre-decode RGB estimate,
+loaded-footprint adjustment at access, strict admission equality, one-item soft
+overflow and strictly older last-access expiry. Raster references are shared
+without copying their pixel vectors; presentation references survive eviction.
+The cache is owned by one main GUI binding, not a process-global controller; filters
+opened independently by auto-resolution own their own policy-bound cache. Existing
+duplicate pair prefetch warms this cache and retains no separate future raster
+store. The total prefetch percentage, controller-wide sharing, image tiles,
+video buffers and complete Qt scheduling/rendering families remain Partial and
+receive no additional credit. Native failed full decodes use an uncached poster
+fallback instead of retaining Qt's synthetic error renderer. Injected public
+preview decoders keep their existing owned test/backend contract independently
+of normal decoded-cache admission. The screen-count caption is omitted when the
+backend has no monitor information (including the headless adapter); the pixel
+budget remains available. Runtime/native render validation remains hosted-only.

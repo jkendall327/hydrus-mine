@@ -278,6 +278,9 @@ pub use viewer::MediaViewer;
 /// and the media viewer while one is open.
 #[derive(Clone)]
 pub struct Bound {
+    /// Decoded image policy shared by this binding's actual still-image consumers.
+    pub image_cache: image_cache::Control,
+    _image_cache_owner: Rc<image_cache::Owner>,
     _gui_colour_actions: Rc<gui_colour_actions::Binding>,
     /// The displayed page preview, independent of the thumbnail grid/viewer.
     pub preview: preview_window::Monitor,
@@ -603,6 +606,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         first.borrow().store().clone(),
         binding_active.clone(),
     );
+    let image_cache =
+        image_cache::Control::bind(window, first.borrow().store(), binding_active.clone());
     let current = Rc::new(RefCell::new(first.clone()));
     gui_colours::bind(
         window.global::<Theme<'_>>(),
@@ -635,6 +640,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let pages = pages.clone();
             move |key, owner| pages.borrow().owns_preview(key, owner)
         }),
+        image_cache.handle(),
     );
     let local_transfer: local_transfer_window::Slot = Rc::default();
     let rows = Rc::new(ThumbnailRows::new(first));
@@ -646,6 +652,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     window.on_retire_external_launches({
         let maintenance = maintenance.clone();
         let debug_long_popup = debug_long_popup.clone();
+        let image_cache = image_cache.clone();
         let options = options.clone();
         let manage_tags = manage_tags.clone();
         let predicate_editor = predicate_editor.clone();
@@ -658,6 +665,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             binding_active.set(false);
             maintenance.retire();
             debug_long_popup.retire();
+            image_cache.retire();
             retire_colours();
             launcher.cancel();
             rows.retire();
@@ -1813,6 +1821,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     window.on_launch_filter({
+        let image_cache = image_cache.handle();
         let page = page.clone();
         let filter = filter.clone();
         let weak = window.as_weak();
@@ -1826,8 +1835,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 duplicate_filter::DuplicateFilter::for_page(page.store().clone(), duplicates)
                     .and_then(|mut model| {
                         let step = model.load_batch();
-                        filter_window::open_filter(model, step, &filter, None)
-                            .map_err(|e| anyhow::anyhow!("{e}"))
+                        filter_window::open_filter_with_cache(
+                            model,
+                            step,
+                            &filter,
+                            None,
+                            Some(image_cache.clone()),
+                        )
+                        .map_err(|e| anyhow::anyhow!("{e}"))
                     });
             match opened {
                 Ok(window) => *filter.borrow_mut() = Some(window),
@@ -2492,6 +2507,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             // file > options; once applied, what the options change is
             // shown again
             options: {
+                let image_cache = image_cache.clone();
                 let binding_active = binding_active.clone();
                 let pages = pages.clone();
                 let slot = options.clone();
@@ -2514,6 +2530,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     let store = pages.borrow().store().clone();
                     let thumbnails_before = store.snapshot().thumbnails;
                     let applied: Rc<dyn Fn()> = Rc::new({
+                        let image_cache = image_cache.clone();
                         let viewer = viewer.clone();
                         let pages = pages.clone();
                         let change_pages = change_pages.clone();
@@ -2521,6 +2538,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         let weak = weak.clone();
                         let store = store.clone();
                         move || {
+                            image_cache.refresh();
                             rows.set_cache_policy(
                                 store.read(hydrus_store::settings::get).unwrap_or_default(),
                             );
@@ -3069,11 +3087,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let weak = window.as_weak();
             let maintenance = maintenance.clone();
             let debug_long_popup = debug_long_popup.clone();
+            let image_cache = image_cache.clone();
             move || {
                 sidebar_layout.accepted_exit();
                 binding_active.set(false);
                 maintenance.retire();
                 debug_long_popup.retire();
+                image_cache.retire();
                 retire_colours();
                 rows.retire();
                 if let Some(window) = weak.upgrade() {
@@ -3864,6 +3884,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     window.on_archive_delete_filter({
+        let image_cache = image_cache.handle();
         let weak_main = window.as_weak();
         let page = page.clone();
         let archive_delete = archive_delete.clone();
@@ -3951,6 +3972,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 removed,
                 guard,
                 return_to,
+                image_cache.clone(),
             ) {
                 Ok(window) => *archive_delete.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open the archive/delete filter: {e}"),
@@ -3961,6 +3983,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // the media viewer on files not a page's (a duplicates rule's actioned
     // pair, say)
     *duplicates.open_viewer.borrow_mut() = Some(Rc::new({
+        let image_cache = image_cache.handle();
         let tag_search = viewer_tag_search.clone();
         let weak_main = window.as_weak();
         let reveal_viewer_exit = reveal_viewer_exit.clone();
@@ -3985,6 +4008,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let Some(model) = MediaViewer::new(store, files, start) else {
                 return;
             };
+            let model = model.with_image_cache(image_cache.clone());
             *viewing.borrow_mut() = Some((hydrus_core::pages::PageKey::random().0, None));
             let hooks = ViewerHooks {
                 tag_search: tag_search.clone(),
@@ -4016,6 +4040,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     }));
     window.on_thumbnail_activated({
+        let image_cache = image_cache.handle();
         let tag_search = viewer_tag_search.clone();
         let weak_main = window.as_weak();
         let origin_pages = pages.clone();
@@ -4058,6 +4083,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 return;
             };
             let model = model.with_location(page.location().clone());
+            let model = model.with_image_cache(image_cache.clone());
             *viewing.borrow_mut() = Some((hydrus_core::pages::PageKey::random().0, None));
             let hooks = ViewerHooks {
                 tag_search: tag_search.clone(),
@@ -4720,6 +4746,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     let debug_long_popup_owner = Rc::new(debug_long_popup.owner());
     Bound {
+        _image_cache_owner: image_cache.owner(),
+        image_cache,
         _gui_colour_actions: gui_colour_actions,
         preview,
         session_autosave,
@@ -5929,7 +5957,7 @@ fn open_viewer(
             }
             viewer_tag_search::refresh(&window, &model);
             // (for a file that plays, its thumbnail until the first frame)
-            let (shape, media) = (model.shape(), model.media().map(Arc::new));
+            let (shape, media) = (model.shape(), model.shared_media());
             let (playable, animation) = (model.playable(), model.animation());
             let (duration_ms, num_frames) = viewer::timing(model.store(), model.current());
             window.set_media(media.as_deref().map(image).unwrap_or_default());
@@ -6008,7 +6036,7 @@ fn open_viewer(
             {
                 return;
             }
-            let media = model.media().map(Arc::new);
+            let media = model.shared_media();
             window.set_media(media.as_deref().map(image).unwrap_or_default());
             // Replace decoded pixels/tiles without SetMedia, zoom reset or a
             // new viewing interval. Players consume policy on future frames.
@@ -7467,6 +7495,7 @@ pub mod network_job_control;
 
 pub mod namespace_sorts_window;
 
+pub mod image_cache;
 mod image_colour_watch;
 
 pub mod quick_export_directory;

@@ -140,6 +140,9 @@ macro_rules! settings {
             hydrus_store::settings::set($conn,&windows)?;
         }
     };
+    (@save $conn:ident, $after:ident, $before:ident, image_cache) => {
+        $after.image_cache.save_changed($conn, $before.image_cache, crate::image_cache::displayed($before.image_cache))?;
+    };
     (@save $conn:ident, $after:ident, $before:ident, thumbnail_cache) => {
         if $after.thumbnail_cache != $before.thumbnail_cache {
             let mut latest:hydrus_store::settings::ThumbnailCacheSettings=hydrus_store::settings::get($conn)?;
@@ -293,6 +296,7 @@ settings! {
     file_handling: FileHandlingSettings,
     file_view_removal: hydrus_store::settings::FileViewRemoval,
     thumbnail_cache: hydrus_store::settings::ThumbnailCacheSettings,
+    image_cache: hydrus_store::image_cache::Policy => hydrus_store::image_cache::load,
     file_maintenance: FileMaintenanceSettings,
     file_viewing: FileViewingStatistics,
     folders: FolderSettings,
@@ -3510,6 +3514,41 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             time(&[Unit::Days, Unit::Hours, Unit::Minutes], 300.0),
                             |s| s.thumbnail_cache.timeout as f64,
                             |s, v| s.thumbnail_cache.timeout = v as u64,
+                        ),
+                    ],
+                ),
+                Item::Box(
+                    "image cache",
+                    vec![
+                        opt(
+                            "Memory reserved for image cache:",
+                            Kind::Bytes,
+                            Rc::new(|s| {
+                                let (amount, unit) =
+                                    crate::thumbnail_cache::raw_separated(s.image_cache.bytes);
+                                Value::Bytes { amount, unit }
+                            }),
+                            Rc::new(|s, value| {
+                                if let Value::Bytes { amount, unit } = value {
+                                    s.image_cache.bytes =
+                                        crate::thumbnail_cache::combined(*amount, *unit);
+                                    Ok(())
+                                } else {
+                                    Err(wrong("image cache bytes"))
+                                }
+                            }),
+                        ),
+                        duration(
+                            "Image cache timeout:",
+                            time(&[Unit::Days, Unit::Hours, Unit::Minutes], 300.0),
+                            |s| s.image_cache.timeout as f64,
+                            |s, v| s.image_cache.timeout = v as u64,
+                        ),
+                        int(
+                            "Maximum image size (in % of cache) that can be cached:",
+                            (10, 50),
+                            |s| s.image_cache.percentage as i64,
+                            |s, v| s.image_cache.percentage = v as u64,
                         ),
                     ],
                 ),

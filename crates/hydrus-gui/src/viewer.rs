@@ -7,6 +7,7 @@ use hydrus_store::Store;
 
 pub struct MediaViewer {
     store: Arc<Store>,
+    image_cache: Option<crate::image_cache::Handle>,
     files: Vec<HashId>,
     index: usize,
     /// The file domains of the page it was opened from.
@@ -33,6 +34,7 @@ impl MediaViewer {
             store.read(hydrus_store::settings::get).unwrap_or_default();
         (index < files.len()).then_some(Self {
             store,
+            image_cache: None,
             files,
             index,
             location: hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
@@ -41,6 +43,17 @@ impl MediaViewer {
             random_history: Vec::new(),
             tag_display_type: presentation.viewer_display_type,
         })
+    }
+
+    pub(crate) fn with_image_cache(mut self, cache: crate::image_cache::Handle) -> Self {
+        self.image_cache = Some(cache);
+        self
+    }
+    pub(crate) fn shared_media(&self) -> Option<Arc<hydrus_media::Raster>> {
+        self.image_cache.as_ref().map_or_else(
+            || self.media().map(Arc::new),
+            |cache| cache.load_saved(&self.store, self.current()),
+        )
     }
 
     /// Viewing a page searching `location` (where deletions take its files
@@ -425,16 +438,28 @@ pub(crate) fn still_with_icc(
         .ok()?
         .into_iter()
         .next()?;
-    let snapshot = store.snapshot();
-    let full = result.info.as_ref().and_then(|info| {
-        let path = snapshot.storage.file_path(&result.hash, info.mime)?;
-        let bytes = std::fs::read(path).ok()?;
-        hydrus_media::decode_image_with_icc(&bytes, normalise_icc).ok()
-    });
-    full.or_else(|| {
-        let path = snapshot.storage.thumbnail_path(&result.hash)?;
-        hydrus_media::decode_image_with_icc(&std::fs::read(path).ok()?, normalise_icc).ok()
-    })
+    full_still_with_icc(store, &result, normalise_icc)
+        .or_else(|| thumbnail_still_with_icc(store, &result, normalise_icc))
+}
+pub(crate) fn full_still_with_icc(
+    store: &Store,
+    result: &hydrus_store::media::MediaResult,
+    normalise_icc: bool,
+) -> Option<hydrus_media::Raster> {
+    let info = result.info.as_ref()?;
+    let path = store
+        .snapshot()
+        .storage
+        .file_path(&result.hash, info.mime)?;
+    hydrus_media::decode_image_with_icc(&std::fs::read(path).ok()?, normalise_icc).ok()
+}
+pub(crate) fn thumbnail_still_with_icc(
+    store: &Store,
+    result: &hydrus_store::media::MediaResult,
+    normalise_icc: bool,
+) -> Option<hydrus_media::Raster> {
+    let path = store.snapshot().storage.thumbnail_path(&result.hash)?;
+    hydrus_media::decode_image_with_icc(&std::fs::read(path).ok()?, normalise_icc).ok()
 }
 
 /// Where a file is, if the reference plays its kind in mpv by default:

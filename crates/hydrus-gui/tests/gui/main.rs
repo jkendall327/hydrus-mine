@@ -203,6 +203,7 @@ mod sidebar_layout;
 mod hidden_page_preview;
 mod or_connector;
 
+mod image_cache;
 mod image_colour;
 
 mod debug_delayed_pages;

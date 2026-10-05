@@ -39,6 +39,7 @@ pub mod filetype_tree;
 pub mod folders;
 pub mod force_filetype;
 pub mod formula_editors;
+pub mod image_cache;
 pub mod import_options_editor;
 pub mod import_options_overwrite;
 pub mod import_options_panel;
