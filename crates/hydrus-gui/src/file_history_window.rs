@@ -2,17 +2,14 @@
 use crate::FileHistoryWindow;
 use hydrus_core::{ServiceKey, search::context::FileSearchContext};
 use hydrus_gui_model::file_history::{self as model, Chart};
+use hydrus_gui_model::file_history_worker::Worker;
 use hydrus_search::{TextContext, parse_api_search, predicate_text};
-use hydrus_store::{Store, content::DomainRoles, file_history::History};
+use hydrus_store::{Store, content::DomainRoles};
 use slint::{ComponentHandle as _, ModelRc, SharedString, Timer, TimerMode, VecModel};
 use std::{
     cell::{Cell, RefCell},
     rc::Rc,
-    sync::{
-        Arc,
-        atomic::{AtomicBool, Ordering},
-        mpsc,
-    },
+    sync::Arc,
     time::Duration,
 };
 pub type Slot = Rc<RefCell<Option<FileHistoryWindow>>>;
@@ -20,8 +17,7 @@ struct State {
     active: Cell<bool>,
     chart: RefCell<Chart>,
     context: RefCell<FileSearchContext>,
-    cancel: RefCell<Option<Arc<AtomicBool>>>,
-    receiver: RefCell<Option<mpsc::Receiver<Result<History, String>>>>,
+    worker: RefCell<Option<Worker>>,
 }
 fn paint(window: &FileHistoryWindow, state: &State) {
     let chart = state.chart.borrow();
@@ -47,6 +43,16 @@ pub fn open(
     store: &Arc<Store>,
     slot: &Slot,
     owner: Rc<dyn Fn() -> bool>,
+) -> Result<FileHistoryWindow, String> {
+    open_with_worker(store, slot, owner, Rc::new(Worker::start))
+}
+
+/// Explicit owner-supplied startup seam; failures remain visible and retryable.
+pub fn open_with_worker(
+    store: &Arc<Store>,
+    slot: &Slot,
+    owner: Rc<dyn Fn() -> bool>,
+    start: Rc<dyn Fn(Arc<Store>) -> std::io::Result<Worker>>,
 ) -> Result<FileHistoryWindow, String> {
     let predecessor = slot
         .borrow()
@@ -87,8 +93,7 @@ pub fn open(
         active: Cell::new(true),
         chart: RefCell::new(Chart::default()),
         context: RefCell::new(FileSearchContext::default()),
-        cancel: RefCell::new(None),
-        receiver: RefCell::new(None),
+        worker: RefCell::new(None),
     });
     let timer = Rc::new(Timer::default());
     let close = Rc::new({
@@ -100,10 +105,7 @@ pub fn open(
             if !state.active.replace(false) {
                 return;
             }
-            if let Some(cancel) = state.cancel.borrow_mut().take() {
-                cancel.store(true, Ordering::Release);
-            }
-            state.receiver.borrow_mut().take();
+            state.worker.borrow_mut().take();
             timer.stop();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
@@ -138,23 +140,35 @@ pub fn open(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if let Some(cancel) = state.cancel.borrow_mut().take() {
-                cancel.store(true, Ordering::Release);
+            let mut worker = state.worker.borrow_mut();
+            if worker.is_none() {
+                match start(store.clone()) {
+                    Ok(started) => *worker = Some(started),
+                    Err(error) => {
+                        window.set_loading(false);
+                        window.set_chart_visible(false);
+                        window.set_status(format!("could not load file history: {error}").into());
+                        return;
+                    }
+                }
             }
-            let cancel = Arc::new(AtomicBool::new(false));
-            *state.cancel.borrow_mut() = Some(cancel.clone());
-            window.set_loading(true);
-            window.set_chart_visible(false);
-            window.set_status("loading…".into());
-            let (send, receive) = mpsc::channel();
-            *state.receiver.borrow_mut() = Some(receive);
-            let context = state.context.borrow().clone();
-            let store = store.clone();
-            std::thread::spawn(move || {
-                let result =
-                    model::load(&store, &context, 7680, &cancel).map_err(|e| e.to_string());
-                let _ = send.send(result);
-            });
+            let result = worker
+                .as_mut()
+                .map(|worker| worker.submit(state.context.borrow().clone()));
+            match result {
+                Some(Ok(())) => {
+                    window.set_loading(true);
+                    window.set_chart_visible(false);
+                    window.set_status("loading…".into());
+                }
+                Some(Err(error)) => {
+                    worker.take();
+                    window.set_loading(false);
+                    window.set_chart_visible(false);
+                    window.set_status(error.into());
+                }
+                None => {}
+            }
         }
     });
     window.on_refresh({
@@ -312,10 +326,9 @@ pub fn open(
             if !valid() {
                 return;
             }
-            if let Some(cancel) = state.cancel.borrow_mut().take() {
-                cancel.store(true, Ordering::Release);
+            if let Some(worker) = state.worker.borrow_mut().as_mut() {
+                worker.cancel();
             }
-            state.receiver.borrow_mut().take();
             if let Some(w) = weak.upgrade() {
                 w.set_loading(false);
                 w.set_chart_visible(false);
@@ -331,16 +344,10 @@ pub fn open(
             if !valid() {
                 return;
             }
-            let result = state
-                .receiver
-                .borrow()
-                .as_ref()
-                .and_then(|r| r.try_recv().ok());
+            let result = state.worker.borrow_mut().as_mut().and_then(Worker::poll);
             let Some(result) = result else {
                 return;
             };
-            state.receiver.borrow_mut().take();
-            state.cancel.borrow_mut().take();
             let Some(w) = weak.upgrade() else {
                 return;
             };

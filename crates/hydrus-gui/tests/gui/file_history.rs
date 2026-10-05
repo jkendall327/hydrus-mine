@@ -131,5 +131,53 @@ fn history_frame_consumes_times_filters_and_ranges_without_touching_main_query_o
     current.invoke_refresh();
     assert!(!current.window().is_visible());
     assert!(slot.borrow().is_none());
+    ui.show().unwrap();
+    let attempts = Rc::new(std::cell::Cell::new(0));
+    let failed = file_history_window::open_with_worker(
+        &store,
+        &slot,
+        {
+            let weak = ui.as_weak();
+            Rc::new(move || weak.upgrade().is_some_and(|w| w.window().is_visible()))
+        },
+        {
+            let attempts = attempts.clone();
+            Rc::new(move |store| {
+                attempts.set(attempts.get() + 1);
+                if attempts.get() == 1 {
+                    Err(std::io::Error::other(
+                        "synthetic worker startup unavailable",
+                    ))
+                } else {
+                    hydrus_gui_model::file_history_worker::Worker::start(store)
+                }
+            })
+        },
+    )
+    .unwrap();
+    assert_eq!(attempts.get(), 1);
+    assert!(!failed.get_loading());
+    assert!(!failed.get_chart_visible());
+    assert!(
+        failed
+            .get_status()
+            .contains("synthetic worker startup unavailable")
+    );
+    assert!(failed.window().is_visible());
+    assert!(slot.borrow().is_some());
+    for _ in 0..100 {
+        failed.invoke_refresh();
+    }
+    wait(&failed);
+    assert_eq!(
+        attempts.get(),
+        2,
+        "one successful worker is reused for the refresh burst"
+    );
+    assert_eq!(failed.get_max_count(), 4);
+    failed.invoke_close_clicked();
+    failed.invoke_refresh();
+    assert!(slot.borrow().is_none());
+    assert_eq!(attempts.get(), 2);
     ui.hide().unwrap();
 }
