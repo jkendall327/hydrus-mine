@@ -946,16 +946,34 @@ fn more_suggestions_than_fit_scroll_rather_than_spill_over() {
     let all: Vec<_> = ui.get_suggestions().iter().collect();
     assert!(all.len() > 14, "{} suggestions", all.len());
 
-    // the first row, where highlighting it changes the window
-    ui.set_highlighted(-1);
+    // Read autocomplete paints its actual dense selection mask, as Qt paints
+    // selected terms. Mutating only `highlighted` leaves that mask unchanged.
+    ui.invoke_suggestion_selection_clicked(0, false, false);
+    assert!(ui.invoke_suggestions_deselected());
+    assert_eq!(ui.get_suggestion_selected().row_count(), all.len());
+    assert!(
+        ui.get_suggestion_selected()
+            .iter()
+            .all(|selected| !selected)
+    );
     let plain = draw();
-    ui.set_highlighted(0);
+    ui.invoke_suggestion_selection_clicked(0, false, false);
+    assert_eq!(ui.get_highlighted(), 0);
+    let selected: Vec<_> = ui.get_suggestion_selected().iter().collect();
+    assert_eq!(selected.len(), all.len());
+    assert!(selected[0]);
+    assert!(selected[1..].iter().all(|selected| !selected));
     let first = differing(&plain, &draw());
     let top = *first.first().expect("the highlight drawn");
     // twelve rows of 22 pixels show, under which the window is as it is
     // with no more than twelve suggestions
     let bottom = top + 12 * 22 + 2;
-    ui.set_highlighted(-1);
+    assert!(ui.invoke_suggestions_deselected());
+    assert!(
+        ui.get_suggestion_selected()
+            .iter()
+            .all(|selected| !selected)
+    );
     let everything = draw();
     ui.set_suggestions(slint::ModelRc::new(slint::VecModel::from(
         all[..12].to_vec(),
@@ -974,7 +992,13 @@ fn more_suggestions_than_fit_scroll_rather_than_spill_over() {
     // the last highlighted is scrolled into view
     ui.set_suggestions(slint::ModelRc::new(slint::VecModel::from(all.clone())));
     draw();
-    ui.set_highlighted(i32::try_from(all.len() - 1).unwrap());
+    let last = i32::try_from(all.len() - 1).unwrap();
+    ui.invoke_suggestion_selection_clicked(last, false, false);
+    assert_eq!(ui.get_highlighted(), last);
+    let selected: Vec<_> = ui.get_suggestion_selected().iter().collect();
+    assert_eq!(selected.len(), all.len());
+    assert!(selected[all.len() - 1]);
+    assert!(selected[..all.len() - 1].iter().all(|selected| !selected));
     let scrolled = differing(&everything, &draw());
     assert!(!scrolled.is_empty(), "the last suggestion not shown");
     assert!(
