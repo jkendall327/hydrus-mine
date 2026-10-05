@@ -3312,3 +3312,20 @@ GUI-local engine pattern rather than joining a separate daemon's running jobs;
 this does not establish shared-daemon global scheduling parity. Only the original
 “fetch a url” action is considered for conditional first-pass scope after review
 and hosted validation, with no parent/network-control-family promotion.
+
+Headless cleanup now requires an explicitly retained `headless::Windows` guard,
+marked `must_use`, until the UI scope ends. The former thread-local fallback hid
+components during TLS destruction and could release the last Store, whose writer
+Drop joins another thread. Windows holds the loader lock during TLS destructors,
+so that synchronization is prone to deadlock (Rust LocalKey platform-specific
+behavior). The fallback is removed on every platform; all 39 discarded initializer
+call sites at Third3f25 now retain a local guard. The other initializer/helper
+scopes were inspected: no window factory keeps a collector only until returning
+a window. Normal collector-clone ownership and Store durability are unchanged.
+The former discarded-collector lifetime regression now explicitly drops its
+collector before thread return, retains every Store/worker assertion and deadline,
+and proves the visible component is already released. A Windows-only five-minute
+CI step runs the three lifetime tests with uncaptured progress before the full
+default-parallel suite. The obsolete Windows run's last completed test does not
+identify its blocked test, and this source risk is not proof of that run's exact
+cause. No local Rust execution, mutation run or completion credit is claimed.

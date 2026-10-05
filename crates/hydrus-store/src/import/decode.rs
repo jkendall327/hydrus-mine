@@ -5686,6 +5686,7 @@ mod tests {
     #[test]
     fn real_client_ffmpeg_timeout_is_imported_without_clamping() {
         use crate::settings::Setting as _;
+        use hydrus_legacy::serialisable::SerialisableType;
         let source = hydrus_testkit::legacy_fixture("basic");
         let connection = rusqlite::Connection::open(source.path().join("client.db")).unwrap();
         let fixture = hydrus_testkit::fixture_json("ffmpeg_timeout.json");

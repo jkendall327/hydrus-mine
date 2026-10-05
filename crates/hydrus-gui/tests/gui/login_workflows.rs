@@ -830,7 +830,7 @@ fn domain_login_confirmation_saves_then_real_http_persists_session_and_outcome()
             )
         })
         .unwrap();
-    headless::init();
+    let _headless_windows = headless::init();
     let slots = hydrus_gui::login_domains_window::Slots::default();
     let window = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
     window.invoke_row_clicked(0, false, false);

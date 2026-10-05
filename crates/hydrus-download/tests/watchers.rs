@@ -201,9 +201,9 @@ fn state(store: &Store, queue: i64) -> WatcherState {
     watcher_state(&q).unwrap()
 }
 
-/// Wait until the watcher has checked `checks` times and has no files left
-/// to get.
-async fn wait_for(store: &Store, queue: i64, checks: usize) {
+/// Wait until the watcher has checked `checks` times, persisted its final
+/// checker state, and has no files left to get.
+async fn wait_for(store: &Store, runner: &QueueRunner, queue: i64, checks: usize) {
     for _ in 0..400 {
         let galleries = store
             .read(|conn| queues::gallery_seeds(conn, queue))
@@ -215,7 +215,10 @@ async fn wait_for(store: &Store, queue: i64, checks: usize) {
         let pending = store
             .read(|conn| queues::next_file_seed(conn, queue))
             .unwrap();
-        if checked >= checks && pending.is_none() {
+        // The gallery seed commits before the final WatcherState; the runner
+        // clears its status only after that final state has been persisted.
+        if checked >= checks && pending.is_none() && runner.status(queue).gallery_status.is_empty()
+        {
             return;
         }
         tokio::time::sleep(Duration::from_millis(50)).await;
@@ -263,7 +266,7 @@ async fn a_watcher_follows_a_thread_until_it_404s() {
     assert!(!new);
     assert_eq!(again.id, queue.id);
 
-    wait_for(&s.store, queue.id, 1).await;
+    wait_for(&s.store, &s.runner, queue.id, 1).await;
     let ok = SeedStatus::SuccessfulAndNew;
     assert_eq!(
         files(&s.store, queue.id),
@@ -277,7 +280,7 @@ async fn a_watcher_follows_a_thread_until_it_404s() {
     // a new post: the next check gets just that
     s.site.threads.lock().get_mut(&5).unwrap().push(3);
     check_soon(&s, queue.id);
-    wait_for(&s.store, queue.id, 2).await;
+    wait_for(&s.store, &s.runner, queue.id, 2).await;
     assert_eq!(
         files(&s.store, queue.id),
         [
@@ -290,7 +293,7 @@ async fn a_watcher_follows_a_thread_until_it_404s() {
     // the thread is deleted: the watcher stops
     s.site.threads.lock().remove(&5);
     check_soon(&s, queue.id);
-    wait_for(&s.store, queue.id, 3).await;
+    wait_for(&s.store, &s.runner, queue.id, 3).await;
     let st = state(&s.store, queue.id);
     assert_eq!(st.status, CheckerStatus::NotFound);
     assert!(st.checking_paused);
