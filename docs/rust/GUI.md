@@ -3871,9 +3871,9 @@ maintenance scheduling and idle/system-busy behavior remain Partial. Actual Qt
 controls and entry/shutdown paths are recorded; model, Store, daemon and native
 regressions are authored and await hosted execution.
 
-The automatic maintenance binding has a private retirement owner: dropping Bound
+The automatic maintenance binding has a private shared retirement owner: dropping the final Bound clone
 permanently cancels its workers even if the MainWindow callbacks or a public
 Control remain retained. A dropped MainWindow is detected by its weak-owner timer
 or the next poll; callbacks never substitute a successor window. An authored
-held-wait regression keeps the emitting main and Control alive, drops Bound,
+held-wait regression keeps the emitting main and Control alive, drops each Bound clone,
 checks the remaining queue and lets only a fresh binding consume its next pair.
