@@ -201,7 +201,7 @@ fn filter_content_pruning_reports_only_domain_departures_after_intervening_trash
     let files = ids(&store, &fixture);
     restore(&store, &files[..2], false);
     let source = store.snapshot().services.by_name("art").unwrap().clone();
-    let location = LocationContext::single(source.key);
+    let location = LocationContext::single(source.key.clone());
     store
         .write(|ctx| {
             settings::set(
