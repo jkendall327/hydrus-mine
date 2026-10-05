@@ -2792,6 +2792,10 @@ enters its predicate in the actual search; removing a predicate updates children
 Typing returns to results, while choosing a tab preserves the draft. Options
 Cancel/Apply and restored-page consumers are covered against
 `oracle/fixtures/read_tag_tabs.json`. Empty tabs retain the tab selector.
+Accepted favourite-menu edits publish a settings revision to other live read
+and detached write panes, preserving each owner's input. Locked read pages
+consume the pending revision after unlocking; cancelled detached editors stop
+their subscription.
 
 Downloader HTTP requests now perform domain login admission before acquiring a
 connection slot. Active most-specific login domains use current credentials and

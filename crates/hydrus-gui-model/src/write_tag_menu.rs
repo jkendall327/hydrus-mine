@@ -65,7 +65,8 @@ impl Action {
             None
         }
     }
-    /// Re-read inside the write: other windows' favourites must survive a delayed answer.
+    /// Re-read inside the write and publish it: other windows' favourites must survive
+    /// a delayed answer, and their live panes must notice the committed change.
     pub fn persist(&self, store: &Store) -> hydrus_store::Result<()> {
         if let Self::Regenerate { tags } = self {
             let tags: Vec<_> = tags.iter().filter_map(|tag| Tag::new(tag)).collect();
@@ -83,7 +84,7 @@ impl Action {
         let tag = tag.clone();
         let service = service.clone();
         let remove = *remove;
-        store.write(move |ctx| {
+        store.write_and_refresh(move |ctx| {
             let update = |tags: &mut Vec<String>| {
                 tags.retain(|t| t != &tag);
                 if !remove {

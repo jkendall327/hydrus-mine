@@ -396,13 +396,18 @@ fn read_batches_favourite_questions_write_drafts_and_owner_boundaries_replay_qt(
     child.invoke_tab_chosen(1);
     bound.current.borrow().borrow_mut().lock_search();
     let locked_query = bound.current.borrow().borrow().predicates();
-    store
-        .write(|ctx| {
-            let mut favourites: settings::FavouriteTags = settings::get(ctx.conn())?;
-            favourites.0.push("parity:live external".into());
-            settings::set(ctx.conn(), &favourites)
-        })
-        .unwrap();
+    // Use the real accepted favourite publisher. A plain Store::write changes the
+    // database without publishing the snapshot revision watched by live owners.
+    let revision = store.snapshot().revision;
+    hydrus_gui_model::write_tag_menu::Action::Favourite {
+        tag: "parity:live external".into(),
+        service: None,
+        remove: false,
+        question: None,
+    }
+    .persist(&store)
+    .unwrap();
+    assert!(store.snapshot().revision > revision);
     // The detached owner proves the notification ran while the main page was locked.
     for _ in 0..100 {
         slint::platform::update_timers_and_animations();
