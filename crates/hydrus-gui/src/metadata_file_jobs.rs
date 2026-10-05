@@ -28,6 +28,14 @@ impl Drop for Pending {
 /// Accepted jobs owned by one bound GUI, independent of its current dialogs.
 #[derive(Clone, Default)]
 pub struct Jobs(Rc<RefCell<Vec<Rc<Pending>>>>);
+impl std::fmt::Debug for Jobs {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("Jobs")
+            .field("running", &self.0.try_borrow().map(|jobs| jobs.len()).ok())
+            .finish_non_exhaustive()
+    }
+}
 impl Jobs {
     /// Number of finite jobs whose completion is still being collected.
     pub fn running(&self) -> usize {
