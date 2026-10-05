@@ -1,0 +1,371 @@
+{
+  "schema_version": 1,
+  "agent": "follow-preview-selection",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "base_checkout": "bd55ccda9",
+  "implementationCommits": [
+    "464283210a66235259f02058d8b0c55ed776e64b"
+  ],
+  "claims": [
+    {
+      "reference_id": "audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "change_kind": "implementation",
+      "implementationCommit": "464283210a66235259f02058d8b0c55ed776e64b",
+      "exactBehavior": "Independent false-default Ctrl preference optionally focuses newly added targets through the existing preview source; Ctrl deselection clears only its own current focus. Apply merges edited fields, Cancel preserves stored settings, and retained closed/rebound main callbacks are inert.",
+      "limits": [
+        "Exactly four frozen-original Missing leaves proposed; no parent, alias, renderer/fade/blurhash or ghost-navigation duplicate credit. Canonical ledger/progress/inventory/totals unchanged.",
+        "First-pass promotion requires independent source acceptance, exact hosted Rust/Clippy/native CI and inspection of thumbnail_preview_selection_options.png; native/Rust tests have not been run locally.",
+        "Existing owned still/poster preview workers, presentation, statistics and page lifetime remain the consumer. Broader animation/player/renderer parity is outside these four preferences. Sidebar hide-preview and thumbnail cache changes are independent integration slices."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 11,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "pub struct Preferences"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 1150,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "preview_selection.apply_legacy"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3737,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "\"On ctrl-selection"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/selection.rs",
+          "line": 88,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "pub fn hit_with_preview_focus"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/selection.rs",
+          "line": 227,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "pub fn move_focus_with_preview"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2442,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "fn preview_selection_has_duration"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2556,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "let eligible = |file|"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 3611,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "let reselect = {"
+        }
+      ],
+      "evidence": {
+        "reference": [
+          "oracle/record_thumbnail_preview_selection.py",
+          "oracle/fixtures/thumbnail_preview_selection.json",
+          "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+          "hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py",
+          "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py",
+          "hydrus/client/media/ClientMediaList.py"
+        ],
+        "tests": [
+          "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+          "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs"
+        ]
+      }
+    },
+    {
+      "reference_id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "change_kind": "implementation",
+      "implementationCommit": "464283210a66235259f02058d8b0c55ed776e64b",
+      "exactBehavior": "Ctrl child is enabled only with its own parent and keeps its saved value while disabled. Static-only accepts GetDurationMS None, rejecting singleton Some(0); collections use their positive aggregate duration rather than the preview representative. The actual live click gate reaches owned preview pixels and statistics.",
+      "limits": [
+        "Exactly four frozen-original Missing leaves proposed; no parent, alias, renderer/fade/blurhash or ghost-navigation duplicate credit. Canonical ledger/progress/inventory/totals unchanged.",
+        "First-pass promotion requires independent source acceptance, exact hosted Rust/Clippy/native CI and inspection of thumbnail_preview_selection_options.png; native/Rust tests have not been run locally.",
+        "Existing owned still/poster preview workers, presentation, statistics and page lifetime remain the consumer. Broader animation/player/renderer parity is outside these four preferences. Sidebar hide-preview and thumbnail cache changes are independent integration slices."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 11,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "pub struct Preferences"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 1150,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "preview_selection.apply_legacy"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3737,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "\"On ctrl-selection"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/selection.rs",
+          "line": 88,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "pub fn hit_with_preview_focus"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/selection.rs",
+          "line": 227,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "pub fn move_focus_with_preview"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2442,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "fn preview_selection_has_duration"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2556,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "let eligible = |file|"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 3611,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "let reselect = {"
+        }
+      ],
+      "evidence": {
+        "reference": [
+          "oracle/record_thumbnail_preview_selection.py",
+          "oracle/fixtures/thumbnail_preview_selection.json",
+          "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+          "hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py",
+          "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py",
+          "hydrus/client/media/ClientMediaList.py"
+        ],
+        "tests": [
+          "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+          "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs"
+        ]
+      }
+    },
+    {
+      "reference_id": "audit-options-thumbnails-interaction-on-shift-selection-focus-thumbnails-in-the-preview-window",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "change_kind": "implementation",
+      "implementationCommit": "464283210a66235259f02058d8b0c55ed776e64b",
+      "exactBehavior": "Independent false-default Shift preference optionally focuses anchored range endpoints and Shift-key navigation targets without changing selection anchor, last-hit priority, contraction or ghost restoration. Ctrl+Shift uses Shift range behavior; anchorless Shift fallback focuses unconditionally. Shift-all disables the existing ghost-navigation checkbox without clearing its value.",
+      "limits": [
+        "Exactly four frozen-original Missing leaves proposed; no parent, alias, renderer/fade/blurhash or ghost-navigation duplicate credit. Canonical ledger/progress/inventory/totals unchanged.",
+        "First-pass promotion requires independent source acceptance, exact hosted Rust/Clippy/native CI and inspection of thumbnail_preview_selection_options.png; native/Rust tests have not been run locally.",
+        "Existing owned still/poster preview workers, presentation, statistics and page lifetime remain the consumer. Broader animation/player/renderer parity is outside these four preferences. Sidebar hide-preview and thumbnail cache changes are independent integration slices."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 11,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "pub struct Preferences"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 1150,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "preview_selection.apply_legacy"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3737,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "\"On ctrl-selection"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/selection.rs",
+          "line": 88,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "pub fn hit_with_preview_focus"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/selection.rs",
+          "line": 227,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "pub fn move_focus_with_preview"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2442,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "fn preview_selection_has_duration"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2556,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "let eligible = |file|"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 3611,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "let reselect = {"
+        }
+      ],
+      "evidence": {
+        "reference": [
+          "oracle/record_thumbnail_preview_selection.py",
+          "oracle/fixtures/thumbnail_preview_selection.json",
+          "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+          "hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py",
+          "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py",
+          "hydrus/client/media/ClientMediaList.py"
+        ],
+        "tests": [
+          "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+          "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs"
+        ]
+      }
+    },
+    {
+      "reference_id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration-2",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "change_kind": "implementation",
+      "implementationCommit": "464283210a66235259f02058d8b0c55ed776e64b",
+      "exactBehavior": "Shift child is enabled only with its own parent and retains disabled values. Static-only uses the actual endpoint media duration for range and keyboard targets; rejected targets keep existing preview focus/pixels/viewing interval even when range contraction removes that file from selection. Collections and singleton zero retain Qt distinctions.",
+      "limits": [
+        "Exactly four frozen-original Missing leaves proposed; no parent, alias, renderer/fade/blurhash or ghost-navigation duplicate credit. Canonical ledger/progress/inventory/totals unchanged.",
+        "First-pass promotion requires independent source acceptance, exact hosted Rust/Clippy/native CI and inspection of thumbnail_preview_selection_options.png; native/Rust tests have not been run locally.",
+        "Existing owned still/poster preview workers, presentation, statistics and page lifetime remain the consumer. Broader animation/player/renderer parity is outside these four preferences. Sidebar hide-preview and thumbnail cache changes are independent integration slices."
+      ],
+      "sourceAnchors": [
+        {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 11,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "pub struct Preferences"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 1150,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "preview_selection.apply_legacy"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 3737,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "\"On ctrl-selection"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/selection.rs",
+          "line": 88,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "pub fn hit_with_preview_focus"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/selection.rs",
+          "line": 227,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "pub fn move_focus_with_preview"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2442,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "fn preview_selection_has_duration"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2556,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "let eligible = |file|"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 3611,
+          "commit": "464283210a66235259f02058d8b0c55ed776e64b",
+          "kind": "source",
+          "symbol": "let reselect = {"
+        }
+      ],
+      "evidence": {
+        "reference": [
+          "oracle/record_thumbnail_preview_selection.py",
+          "oracle/fixtures/thumbnail_preview_selection.json",
+          "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+          "hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py",
+          "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py",
+          "hydrus/client/media/ClientMediaList.py"
+        ],
+        "tests": [
+          "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+          "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs"
+        ]
+      }
+    }
+  ],
+  "validation": {
+    "referenceRecording": "Actual Qt2026-10-05 07:18:09\u201307:18:10 UTC under shared oracle lock; private basic fixture and duplicated real MediaResults with explicit None/0/1 durations. 16 dependency/save/reopen cases,192 real hit/range/keyboard states and focus publications,5 singleton/collection duration shapes. Normal shutdown. Reference sources unchanged.",
+    "fixtureIntegrity": "Python checked all16 policies,12 steps each,exactfalse defaults and child enable dependencies, duplicate labels, zero-duration distinction; serialized Qt options decode is authored in model regression.",
+    "referenceLimit": "Downstream preview movie-playback signal consumers disconnected only in this private recorder; actual focus publications and thumbnail selection code remain real. Unrelated sandbox Client API bind denial did not affect this scope. One augmented recorder attempt exited SIGBUS during shutdown; final recording completed normally with faulthandler enabled.",
+    "rustfmt": "Direct rustfmt --check passed on changed Rust sources; no Cargo build.",
+    "diffCheck": "git diff --check passed.",
+    "slintSyntax": "Cached Slint source compiler passed without warnings; no Cargo build.",
+    "rustTests": "Meaningful model/Store/page/native pointer/key, OptionsCancel/stale/reopen, duration/range/ghost/publication, owned preview pixels/statistics and closed/rebound owner regressions authored; not locally executed by owner instruction. Hosted exact-source CI pending.",
+    "renderedArtifactCount": 1,
+    "renderedArtifactFiles": [
+      "thumbnail_preview_selection_options.png"
+    ],
+    "renderedArtifacts": "Actual native four-control Options image authored, pending hosted generation and inspection.",
+    "sourceReview": "Independent bounded review requested; pending.",
+    "canonicalStatus": "Proposal packet only; no canonical writes, pushes or status/totals changes."
+  }
+}
