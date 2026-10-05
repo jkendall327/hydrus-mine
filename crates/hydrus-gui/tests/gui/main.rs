@@ -57,6 +57,7 @@ mod media_actions;
 mod media_shortcuts;
 mod media_sort;
 mod menu_bar;
+mod menu_choice_wheel;
 mod merge_options;
 mod mpv;
 mod namespace_colours;

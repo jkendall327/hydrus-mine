@@ -3102,3 +3102,39 @@ separate “refresh pages menu in five seconds” action remains absent and uncl
 the native Pages menu already regenerates Store/page facts on each opening, so
 this slice does not invent a refresh callback or promote that action, its parent,
 or broader diagnostics families.
+
+## Live wheel policy for represented menu choices
+
+The native GUI now reads the saved default-enabled MenuChoiceButton wheel
+preference per physical event. It cycles one choice by vertical sign, wraps,
+handles horizontal/zero-y events, and preserves single-choice signals and empty
+choice consumption. The shared wrapper delegates pointer expansion and popup/key
+selection to the existing Slint ComboBox. Its front wheel handler prevents that
+widget's independent focused-wheel behavior from bypassing the policy: ignored
+wheels temporarily disable the child during dispatch, then the containing handler
+restores it synchronously and rejects to the actual parent scroll area. No timer,
+process-global mutable preference, copied standard widget or new menu engine is
+introduced. Store import/load uses typed-native precedence over retained legacy
+ClientOptions, and staged Apply/Cancel preserves concurrent other settings.
+
+Only actual represented Qt MenuChoiceButton counterparts are wrapped: media
+order (not the ordinary media sort-type button), Options tag-sort controls and
+live ManageTags and manual-export tag sorting. Other ordinary ComboBoxes remain unchanged. Qt's absent
+native duplicate-filter grouping/potential-duplicate sort, metadata-importer
+tag-display and inline main/viewer TagSortControl surfaces remain outside this
+finite control scope and their broader families stay Partial. The per-row Options
+text/count-order memory correction is necessary reference behavior, with zero
+additional completion credit. Exactly one original wheel-preference leaf is
+proposed; no GUI/options parent, generic ComboBox or platform-menu credit.
+
+Actual Qt recording covers eleven handler cases, ten live TagSortControl transitions,
+three media-order events, staged defaults/Cancel/Apply/reopen and a saved false
+legacy tuple. The offscreen QWindow transport did not automatically forward an
+ignored child wheel to QScrollArea; the recorder explicitly delivers that ignored
+event to the unchanged real parent viewport and discloses this adapter. It is not
+an attestation of automatic Qt propagation. Authored native regressions use
+physical wheel/pointer/key events, actual Options ScrollView bubbling, real query
+and tag-row consumers, and owner retirement; their execution and exact-source
+PNG inspection are pending hosted CI. Pointer popup-row probing is bounded to a
+160px band covering the native two-row menu across widget styles and retains mandatory exact
+selection/results assertions.

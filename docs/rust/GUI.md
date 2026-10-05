@@ -3919,3 +3919,19 @@ permanently retire queued page requests. Overlaps share the existing popup timer
 without changing its dismissal pruning or delayed/long-text publications.
 Actual Qt hidden/minimized delivery is recorded in `debug_delayed_pages.json`;
 authored native query and lifecycle regressions await hosted execution.
+
+Options > gui now stages the default-enabled “Mouse wheel can "scroll" through
+menu buttons” preference. Saved changes reach already open represented menu
+choices: the main/file-default media order, both Options tag sorts, both
+ManageTags default sorts, the live ManageTags type/order/group/siblings controls,
+and the manual-export tag sidebar. One event moves one choice and wraps; positive vertical motion moves
+backward, while zero vertical motion (including horizontal wheels) moves forward.
+A single choice still publishes its signal, and an enabled empty choice consumes
+without selecting. Disabled wheels leave the choice unchanged and can scroll
+the actual Options scroll area. Ordinary pointer popup selection and native
+arrow/Return menu input remain available with the preference disabled. Hidden,
+modal-blocked, cancelled, rebound and accepted-close owners reject these new
+input routes. Options keeps independent text/count orders for each tag-sort row,
+as the real TagSortControl does. Actual Qt controls, saved legacy values and
+model/Store/native regressions cover this scope; hosted Rust and native rendered
+review remain pending.

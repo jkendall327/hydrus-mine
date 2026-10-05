@@ -1,3 +1,4 @@
+import { WheelMenuChoice, MenuChoiceFrame } from "menu_choice_wheel.slint";
 import { SortCollectCog, ContextCogServices, ContextCogItem } from "sort_collect_cog.slint";
 import { OpenExternallyTable } from "open_externally.slint";
 import { ExternalCallsTable } from "external_calls.slint";
@@ -208,6 +209,8 @@ export component OptionsWindow inherits Window {
     callback collect-toggled(int, int, bool);
     // (a tag sort's type, order or grouping: the row, which, the choice)
     callback tag-sort-chosen(int, int, int);
+    callback menu-choice-geometry(int,int,MenuChoiceFrame);
+    out property <length> options-scroll-y: option-scroll.content-y;
     in property <ContextCogServices> collect-cog-services;
     in property <[ContextCogItem]> collect-cog-extra;
     callback collect-cog-opened(int);
@@ -312,7 +315,7 @@ export component OptionsWindow inherits Window {
                         }
                     }
                 }
-                ScrollView {
+                option-scroll := ScrollView {
                     horizontal-stretch: 1;
                     VerticalLayout {
                         padding: 4px;
@@ -494,10 +497,11 @@ export component OptionsWindow inherits Window {
                                     current-index: row.index;
                                     selected => { root.sort-chosen(i, self.current-index); }
                                 }
-                                ComboBox {
+                                WheelMenuChoice {
+                                    changed frame => { root.menu-choice-geometry(i,1,self.frame); }
                                     model: row.orders;
                                     current-index: row.order-index;
-                                    selected => { root.order-chosen(i, self.current-index); }
+                                    selected(index) => { root.order-chosen(i, index); }
                                 }
                                 if row.sort-cog: Rectangle {
                                     height: 28px;
@@ -543,25 +547,29 @@ export component OptionsWindow inherits Window {
                             if row.kind == 12 || row.kind == 35: VerticalLayout {
                                 width: 260px;
                                 spacing: 2px;
-                                ComboBox {
+                                WheelMenuChoice {
+                                    changed frame => { root.menu-choice-geometry(i,0,self.frame); }
                                     model: row.items;
                                     current-index: row.index;
-                                    selected => { root.tag-sort-chosen(i, 0, self.current-index); }
+                                    selected(index) => { root.tag-sort-chosen(i, 0, index); }
                                 }
-                                ComboBox {
+                                WheelMenuChoice {
+                                    changed frame => { root.menu-choice-geometry(i,1,self.frame); }
                                     model: row.orders;
                                     current-index: row.order-index;
-                                    selected => { root.tag-sort-chosen(i, 1, self.current-index); }
+                                    selected(index) => { root.tag-sort-chosen(i, 1, index); }
                                 }
-                                if row.kind == 35 && row.sibling-sort-visible: ComboBox {
+                                if row.kind == 35 && row.sibling-sort-visible: WheelMenuChoice {
+                                    changed frame => { root.menu-choice-geometry(i,3,self.frame); }
                                     model: ["siblings", "tags"];
                                     current-index: row.sibling-sort-index;
-                                    selected => { root.tag-sort-chosen(i, 3, self.current-index); }
+                                    selected(index) => { root.tag-sort-chosen(i, 3, index); }
                                 }
-                                if row.grouped: ComboBox {
+                                if row.grouped: WheelMenuChoice {
+                                    changed frame => { root.menu-choice-geometry(i,2,self.frame); }
                                     model: row.groups;
                                     current-index: row.group-index;
-                                    selected => { root.tag-sort-chosen(i, 2, self.current-index); }
+                                    selected(index) => { root.tag-sort-chosen(i, 2, index); }
                                 }
                             }
                             if row.kind == 11: VerticalLayout {

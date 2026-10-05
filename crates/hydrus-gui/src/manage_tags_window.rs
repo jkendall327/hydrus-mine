@@ -389,6 +389,28 @@ pub(crate) fn open(
             }
         }),
     );
+    crate::menu_choice_wheel::bind(
+        window.global::<crate::MenuChoicePolicy<'_>>(),
+        model.borrow().store(),
+        Rc::new({
+            let active = active.clone();
+            let weak = window.as_weak();
+            let incremental = incremental_open.clone();
+            let pending = pending_paste.clone();
+            let menu = tag_menu.clone();
+            move || {
+                active.get()
+                    && !incremental.get()
+                    && pending.borrow().is_none()
+                    && !menu.busy()
+                    && weak.upgrade().is_some_and(|window| {
+                        window.window().is_visible()
+                            && window.get_question().is_empty()
+                            && window.get_tag_menu_question().is_empty()
+                    })
+            }
+        }),
+    );
     crate::write_tag_menu::bind!(window, tag_menu);
     window.on_context_menu({
         let tag_menu = tag_menu.clone();

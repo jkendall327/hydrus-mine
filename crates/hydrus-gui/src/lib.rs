@@ -89,6 +89,7 @@ pub(crate) mod manage_tags_window;
 mod manage_times_window;
 mod manage_urls_window;
 mod menu_bar;
+mod menu_choice_wheel;
 pub mod merge_options_window;
 mod metadata_file_jobs;
 pub mod mpv;
@@ -560,6 +561,30 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let predicate_editor: Rc<RefCell<Option<PredicateEditorWindow>>> = Rc::default();
 
     let pages = Rc::new(RefCell::new(pages));
+    menu_choice_wheel::bind(
+        window.global::<MenuChoicePolicy<'_>>(),
+        pages.borrow().store(),
+        Rc::new({
+            let active = binding_active.clone();
+            let weak = window.as_weak();
+            let options = Rc::downgrade(&options);
+            let manage_tags = Rc::downgrade(&manage_tags);
+            let predicate = menu_choice_wheel::occupied(&predicate_editor);
+            move || {
+                active.get()
+                    && !predicate()
+                    && !options
+                        .upgrade()
+                        .is_some_and(|slot| slot.borrow().is_some())
+                    && !manage_tags
+                        .upgrade()
+                        .is_some_and(|slot| slot.borrow().is_some())
+                    && weak.upgrade().is_some_and(|window| {
+                        window.window().is_visible() && window.get_question().is_empty()
+                    })
+            }
+        }),
+    );
     let session_autosave = session_autosave::bind(window, &pages);
     let maintenance = maintenance_runtime::Control::bind(
         window,

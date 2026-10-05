@@ -183,3 +183,5 @@ mod archive_delete_policies;
 
 mod radio_return;
 mod tag_namespace_order;
+
+mod menu_choice_wheel;

@@ -1,3 +1,4 @@
+import { WheelMenuChoice, MenuChoiceFrame } from "menu_choice_wheel.slint";
 export { OpenFileCallsWindow, ExternalRoutingChoiceWindow } from "open_externally.slint";
 export { ExternalCallWindow, ExternalCommandWindow, ExternalRule, ExternalDefaultsWindow } from "external_calls.slint";
 export { LocalTransferWindow } from "local_transfer.slint";
@@ -656,6 +657,8 @@ export component MainWindow inherits Window {
     in property <string> question;
     callback sort-chosen(int);
     callback order-chosen(int);
+    out property <MenuChoiceFrame> sort-order-frame: order-choice.frame;
+    out property <bool> sort-order-popup-open: order-choice.popup-open;
     callback search-edited(string);
     callback search-fetch();
     callback search-accepted();
@@ -1195,11 +1198,11 @@ export component MainWindow inherits Window {
                             current-index: root.sort-index;
                             selected => { root.sort-chosen(self.current-index); }
                         }
-                        ComboBox {
+                        order-choice := WheelMenuChoice {
                             width: 130px;
                             model: root.order-names;
                             current-index: root.order-index;
-                            selected => { root.order-chosen(self.current-index); }
+                            selected(index) => { root.order-chosen(index); }
                         }
                         if root.sort-cog-visible: SortCollectCog {
                             services: root.sort-cog-services; extra: root.sort-cog-extra;

@@ -494,6 +494,42 @@ pub(crate) fn open(
     );
     let external_table =
         crate::options_external_calls::bind(store, &window, &editor, &active, external_slots);
+    crate::menu_choice_wheel::bind(
+        window.global::<crate::MenuChoicePolicy<'_>>(),
+        store,
+        Rc::new({
+            let active = active.clone();
+            let weak = window.as_weak();
+            let blocked = [
+                tag_namespace_order.has_open.clone(),
+                gui_colour_list.has_open.clone(),
+                colour_list.has_open.clone(),
+                reason_queue.has_open.clone(),
+                frame_table.has_open.clone(),
+                external_table.has_open.clone(),
+                routing_table.has_open.clone(),
+                shortcuts.has_open.clone(),
+                crate::menu_choice_wheel::occupied(checker_slot),
+                crate::menu_choice_wheel::occupied(banner_slot),
+                crate::menu_choice_wheel::occupied(&regex_slot),
+                crate::menu_choice_wheel::occupied(&gallery_slot),
+                crate::menu_choice_wheel::occupied(&location_slot),
+                crate::menu_choice_wheel::occupied(&tag_slot),
+                crate::menu_choice_wheel::occupied(&import_slot),
+                crate::menu_choice_wheel::occupied(&namespace_slot),
+                crate::menu_choice_wheel::occupied(&suggested_slot.editor),
+                crate::menu_choice_wheel::occupied(&suggested_slot.tags),
+                crate::menu_choice_wheel::occupied(&suggested_slot.weights),
+            ];
+            move || {
+                active.get()
+                    && !blocked.iter().any(|open| open())
+                    && weak
+                        .upgrade()
+                        .is_some_and(|window| window.window().is_visible())
+            }
+        }),
+    );
     // (the rows are made anew only as the page changes: an edit leaves its
     // control as the user left it)
     let show_page = {
