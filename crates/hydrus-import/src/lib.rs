@@ -72,6 +72,19 @@ impl FileImporter {
     /// options at boot).
     pub fn new(store: Arc<Store>, tools: MediaTools) -> Self {
         apply_file_handling(&store);
+        let weak = Arc::downgrade(&store);
+        let tools = tools.with_icc_reader(Arc::new(move || {
+            let Some(store) = weak.upgrade() else {
+                return true;
+            };
+            match store.read(hydrus_store::image_colour::load) {
+                Ok(policy) => policy.normalise_icc,
+                Err(error) => {
+                    eprintln!("could not read image ICC policy: {error}");
+                    true
+                }
+            }
+        }));
         Self { store, tools }
     }
 

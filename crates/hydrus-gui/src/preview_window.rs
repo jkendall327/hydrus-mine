@@ -170,7 +170,8 @@ struct State {
     source: Source,
     owner_valid: OwnerValid,
     clock: RefCell<Clock>,
-    decoder: RefCell<Decoder>,
+    decoder: RefCell<Option<Decoder>>,
+    normalise_icc: Cell<bool>,
     canvases: RefCell<HashMap<PageKey, Rc<Canvas>>>,
     current: RefCell<Option<Rc<Canvas>>>,
     touch: Cell<u64>,
@@ -250,7 +251,12 @@ impl State {
             generation,
             restore,
         });
-        let decoder = self.decoder.borrow().clone();
+        let decoder = self.decoder.borrow().clone().unwrap_or_else(|| {
+            let normalise_icc = self.normalise_icc.get();
+            Arc::new(move |store: &Store, file| {
+                crate::viewer::still_with_icc(store, file, normalise_icc)
+            })
+        });
         let mut workers = self.workers.borrow_mut();
         if workers.is_none() {
             match Workers::new(&self.store) {
@@ -381,6 +387,28 @@ impl State {
             self.close();
             return;
         };
+        if let Ok(policy) = self.store.read(hydrus_store::image_colour::load)
+            && self.normalise_icc.replace(policy.normalise_icc) != policy.normalise_icc
+        {
+            if let Some(workers) = self.workers.borrow().as_ref() {
+                workers.clear_queued();
+            }
+            for canvas in self.canvases.borrow().values() {
+                canvas.pending.borrow_mut().take();
+                canvas.frame.borrow_mut().take();
+                canvas.failed.set(false);
+                canvas.retry.set(
+                    canvas.accepted.get().is_none()
+                        && canvas
+                            .requested
+                            .get()
+                            .is_some_and(|(_, file)| self.eligible(file)),
+                );
+            }
+            // Qt cache clear replaces renderers/tiles, never accepted media or
+            // the viewing interval. Obsolete generations cannot repopulate it.
+            Self::blank(&window);
+        }
         let source = (self.source)();
         let hide = self
             .store
@@ -461,6 +489,16 @@ impl State {
                 }
             }
         }
+        // Image-cache invalidation is independent of SetMedia admission. A
+        // retained accepted canvas still needs its new rendering while collapsed
+        // or globally hidden; this restores pixels without starting a view.
+        if let Some(file) = canvas.accepted.get()
+            && !canvas.failed.get()
+            && canvas.frame.borrow().is_none()
+            && canvas.pending.borrow().is_none()
+        {
+            self.submit(&canvas, file, true);
+        }
         if !window.window().is_visible() && hide {
             // The global flag rejects clears even while the whole window is
             // hidden. Keep each accepted canvas/interval owned until close.
@@ -508,8 +546,14 @@ impl State {
                 self.submit(&canvas, file, false);
             }
         } else if canvas.retry.get() && canvas.pending.borrow().is_none() {
-            if let Some((_, file)) = canvas.requested.get() {
+            if let Some((_, file)) = canvas
+                .requested
+                .get()
+                .filter(|(_, file)| self.eligible(*file))
+            {
                 self.submit(&canvas, file, false);
+            } else {
+                canvas.retry.set(false);
             }
         } else if canvas.accepted.get().is_some()
             && !canvas.failed.get()
@@ -567,13 +611,17 @@ impl Monitor {
         // The window owns this retirement callback. Rebinding retires its prior
         // preview before any successor callback/pixels can be published.
         window.invoke_preview_retired();
+        let policy = store
+            .read(hydrus_store::image_colour::load)
+            .unwrap_or_default();
         let state = Rc::new(State {
             window: window.as_weak(),
             store,
             source,
             owner_valid,
             clock: RefCell::new(Rc::new(|| TimestampMs::now().0)),
-            decoder: RefCell::new(Arc::new(crate::viewer::still)),
+            decoder: RefCell::new(None),
+            normalise_icc: Cell::new(policy.normalise_icc),
             canvases: RefCell::new(HashMap::new()),
             current: RefCell::new(None),
             touch: Cell::new(0),
@@ -641,7 +689,7 @@ impl Monitor {
     /// Supply a display decoder before requesting media; late replies stay request-owned.
     pub fn set_decoder(&self, decoder: Decoder) {
         if self.0.alive.get() {
-            *self.0.decoder.borrow_mut() = decoder;
+            *self.0.decoder.borrow_mut() = Some(decoder);
         }
     }
     /// Finish the displayed interval once after an accepted client close.

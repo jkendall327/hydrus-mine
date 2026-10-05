@@ -183,7 +183,7 @@ impl MediaViewer {
     /// The current file's frames, if the reference plays its kind with its
     /// own player (ugoiras and animated WebP).
     pub fn animation(&self) -> Option<hydrus_media::animation::Frames> {
-        animation(&self.store, self.current())
+        animation_owned(&self.store, self.current())
     }
 }
 
@@ -350,14 +350,55 @@ pub fn animation(store: &Store, id: HashId) -> Option<hydrus_media::animation::F
         return None;
     }
     let path = snapshot.storage.file_path(&result.hash, info.mime)?;
-    Frames::open(&path, info.mime, &result.notes, info.num_frames)
-        .map_err(|e| eprintln!("could not play {}: {e}", path.display()))
-        .ok()
+    let policy = store.read(hydrus_store::image_colour::load).ok()?;
+    Frames::open_with_icc(
+        &path,
+        info.mime,
+        &result.notes,
+        info.num_frames,
+        policy.normalise_icc,
+    )
+    .map_err(|e| eprintln!("could not play {}: {e}", path.display()))
+    .ok()
+}
+
+/// Existing native players read their owned Store policy before each future
+/// frame, preserving the animation timeline and media viewing interval.
+pub(crate) fn animation_owned(
+    store: &std::sync::Arc<Store>,
+    id: HashId,
+) -> Option<hydrus_media::animation::Frames> {
+    let frames = animation(store, id)?;
+    let weak = std::sync::Arc::downgrade(store);
+    Some(frames.with_icc_reader(std::sync::Arc::new(move || {
+        match weak
+            .upgrade()
+            .map(|store| store.read(hydrus_store::image_colour::load))
+        {
+            Some(Ok(policy)) => policy.normalise_icc,
+            Some(Err(error)) => {
+                eprintln!("could not read frame ICC policy: {error}");
+                true
+            }
+            None => true,
+        }
+    })))
 }
 
 /// A file as a still: an image decoded whole; anything else by its
 /// thumbnail.
 pub fn still(store: &Store, id: HashId) -> Option<hydrus_media::Raster> {
+    let policy = store.read(hydrus_store::image_colour::load).ok()?;
+    still_with_icc(store, id, policy.normalise_icc)
+}
+
+/// A worker captures policy at request admission so a later settings change
+/// cannot change the meaning of its request generation.
+pub(crate) fn still_with_icc(
+    store: &Store,
+    id: HashId,
+    normalise_icc: bool,
+) -> Option<hydrus_media::Raster> {
     let result = store
         .read(|conn| hydrus_store::media::load_basic(conn, &[id]))
         .ok()?
@@ -367,11 +408,11 @@ pub fn still(store: &Store, id: HashId) -> Option<hydrus_media::Raster> {
     let full = result.info.as_ref().and_then(|info| {
         let path = snapshot.storage.file_path(&result.hash, info.mime)?;
         let bytes = std::fs::read(path).ok()?;
-        hydrus_media::decode_image(&bytes).ok()
+        hydrus_media::decode_image_with_icc(&bytes, normalise_icc).ok()
     });
     full.or_else(|| {
         let path = snapshot.storage.thumbnail_path(&result.hash)?;
-        hydrus_media::decode_image(&std::fs::read(path).ok()?).ok()
+        hydrus_media::decode_image_with_icc(&std::fs::read(path).ok()?, normalise_icc).ok()
     })
 }
 

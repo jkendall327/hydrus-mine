@@ -374,9 +374,13 @@ impl PilImage {
     }
 
     /// `DequantizePILImage`: colour-normalise to sRGB and convert to RGB/RGBA.
-    fn dequantize(self) -> Result<PilImage> {
+    fn dequantize(self, normalise_icc: bool) -> Result<PilImage> {
         let mut img = self;
-        if let Some(profile) = img.icc_profile.clone().filter(|p| !p.is_empty()) {
+        if let Some(profile) = img
+            .icc_profile
+            .clone()
+            .filter(|p| normalise_icc && !p.is_empty())
+        {
             if let Some(converted) = icc::to_srgb(&img, &profile) {
                 img = converted;
             }
@@ -399,13 +403,19 @@ impl PilImage {
     }
 
     /// `GeneratePILImage(path)` from an opened image: rotate, then dequantize.
-    pub(crate) fn normalise(mut self) -> Result<PilImage> {
+    pub(crate) fn normalise(self) -> Result<PilImage> {
+        self.normalise_with_icc(true)
+    }
+
+    /// Snapshot the embedded-profile policy for this conversion. PNG gamma and
+    /// chromaticity fallback remain active when embedded profiles are ignored.
+    pub(crate) fn normalise_with_icc(mut self, normalise_icc: bool) -> Result<PilImage> {
         self.rotate_exif();
         let img = match self.normalise_high_bit_depth()? {
             Some(grey) => grey,
             None => self,
         };
-        img.dequantize()
+        img.dequantize(normalise_icc)
     }
 
     /// `GenerateNumPyImageFromPILImage`: the array, optionally without useless alpha.

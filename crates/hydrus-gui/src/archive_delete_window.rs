@@ -54,8 +54,10 @@ pub(crate) fn open(
         .read(hydrus_store::settings::get)
         .unwrap_or_default();
     let zoomed = crate::zoom_window!(window, settings);
+    let colour_watch = crate::image_colour_watch::Watch::new(model.borrow().store().clone());
     let close = {
         let viewing_stats = viewing_stats.clone();
+        let colour_watch = colour_watch.clone();
         let weak = window.as_weak();
         let slot = slot.clone();
         let playback = playback.clone();
@@ -64,6 +66,7 @@ pub(crate) fn open(
         move || {
             let Some(window) = weak.upgrade() else { return };
             viewing_stats.close();
+            colour_watch.close();
             playback.close();
             animator.stop();
             zoomed.close();
@@ -109,7 +112,7 @@ pub(crate) fn open(
             );
             let (playable, animation) = (
                 crate::viewer::playable(store, file),
-                crate::viewer::animation(store, file),
+                crate::viewer::animation_owned(store, file),
             );
             window.set_media(media.as_deref().map(crate::image).unwrap_or_default());
             let still = playable.is_none() && animation.is_none();
@@ -146,6 +149,50 @@ pub(crate) fn open(
             });
         }
     };
+    colour_watch.start(
+        Rc::new({
+            let weak = window.as_weak();
+            let slot = Rc::downgrade(slot);
+            let guard = guard.clone();
+            let viewing_stats = viewing_stats.clone();
+            move || {
+                guard()
+                    && viewing_stats.active()
+                    && weak.upgrade().is_some_and(|window| {
+                        window.window().is_visible()
+                            && slot.upgrade().is_some_and(|slot| {
+                                slot.borrow().as_ref().is_some_and(|current| {
+                                    std::ptr::eq(current.window(), window.window())
+                                })
+                            })
+                    })
+            }
+        }),
+        Rc::new({
+            let weak = window.as_weak();
+            let model = model.clone();
+            let zoomed = zoomed.clone();
+            move || {
+                let Some(window) = weak.upgrade() else {
+                    return;
+                };
+                let model = model.borrow();
+                let Some(file) = model.current() else {
+                    return;
+                };
+                let store = model.store();
+                let shape = crate::viewer::shape(store, file);
+                if crate::viewer::playable(store, file).is_some()
+                    || shape.is_some_and(|shape| hydrus_media::animation::Frames::plays(shape.0))
+                {
+                    return;
+                }
+                let media = crate::viewer::still(store, file).map(std::sync::Arc::new);
+                window.set_media(media.as_deref().map(crate::image).unwrap_or_default());
+                zoomed.refresh_still(crate::viewer::still_of(media, shape, true));
+            }
+        }),
+    );
     // after a decision: the next file, or, when done, ask (or, with
     // nothing to commit, close)
     let decided = {

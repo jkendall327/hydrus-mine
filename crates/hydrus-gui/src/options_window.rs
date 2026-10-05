@@ -1013,6 +1013,9 @@ pub(crate) fn open(
         let shortcuts_open = shortcuts.has_open.clone();
         move |i, checked| {
             if !active.get()
+                || !weak
+                    .upgrade()
+                    .is_some_and(|window| window.window().is_visible())
                 || colours_open()
                 || reasons_open()
                 || frames_open()

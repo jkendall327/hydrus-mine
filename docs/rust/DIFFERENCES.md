@@ -2770,3 +2770,33 @@ a fresh binding after accepted close, and advanced deletion emits from a visible
 main owner. Every existing assertion, count and deadline is preserved, with an
 additional real pending-viewer/session-replacement regression authored. Hosted
 execution remains pending; no local Rust/Cargo runs or new completion credit.
+
+The finite Media Playback embedded-ICC switch now has typed saved/imported
+state and actual decode consumers. Ignoring an embedded profile still follows
+Qt's separate PNG gamma/chromaticity fallback. A saved policy change refreshes
+accepted static rasters and sharp tiles without resetting zoom, focus or viewing
+intervals; asynchronous replies carry their admission policy/generation. The
+native owner watchers poll saved settings rather than using Qt's global cache
+publication bus. Stored reference/native thumbnails are profile-free, so the
+switch does not regenerate previously stored thumbnails or rewrite durable pixel
+hashes. Future imports and explicit maintenance conversions use the live setting.
+Native ugoira/WebP players preserve paused frames and use the current policy for
+future conversions; this does not promise cancellation of prefetched animation
+frames. The reference's static image-cache notifications do not subscribe its
+animation widget either.
+
+The recording covers deterministic embedded PNG/JPEG/WebP, PNG gamma and combined
+embedded-plus-gamma fallbacks, ordinary PNG/JPEG/GIF, composed animated WebP frames
+and profile-free thumbnail bytes. Existing format/plugin and mpv limitations
+remain: this control does not establish universal image-format/renderer parity.
+The browser eye menu still lacks its separate ICC action. Broader media rendering
+and playback parents remain Partial. Native regression/render source is authored
+for hosted validation; local checks used the actual Qt recorder, Python/source
+invariants, direct rustfmt and diff inspection only.
+
+“Allow loading of truncated images” remains Missing, with no inert native
+checkbox. Actual PIL accepts the authored short PNG/GIF/JPEG fixtures when enabled
+and reports damaged/truncated-file errors when disabled. The native PNG/GIF and
+other format decoders do not yet implement that shared permissive policy; a saved
+Boolean alone would not provide its real consumer behavior. The scoped evidence
+records this gap with zero completion credit.

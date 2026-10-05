@@ -113,8 +113,8 @@ impl SlowStatements {
 
 /// Files decoded ahead of showing them, on a thread of their own.
 struct Stills {
-    requests: Sender<HashId>,
-    results: Receiver<(HashId, Option<(Pixels, Raster)>)>,
+    requests: Sender<(u128, HashId, bool)>,
+    results: Receiver<(u128, HashId, Option<(Pixels, Raster)>)>,
 }
 
 /// A file decoded: as shown, and whole.
@@ -129,15 +129,16 @@ fn decoded(raster: Option<Raster>) -> Decoded {
 
 impl Stills {
     fn new(store: &Arc<Store>) -> Self {
-        let (requests, jobs) = crossbeam_channel::unbounded::<HashId>();
-        let (done, results) = crossbeam_channel::unbounded();
+        let (requests, jobs) = crossbeam_channel::bounded::<(u128, HashId, bool)>(8);
+        let (done, results) = crossbeam_channel::bounded(8);
         let store = Arc::clone(store);
         std::thread::Builder::new()
             .name("filter stills".into())
             .spawn(move || {
-                for id in jobs {
-                    let decoded = crate::viewer::still(&store, id).map(|r| (Pixels::new(&r), r));
-                    if done.send((id, decoded)).is_err() {
+                for (generation, id, normalise_icc) in jobs {
+                    let decoded = crate::viewer::still_with_icc(&store, id, normalise_icc)
+                        .map(|r| (Pixels::new(&r), r));
+                    if done.send((generation, id, decoded)).is_err() {
                         break;
                     }
                 }
@@ -163,6 +164,8 @@ struct State {
     /// Files decoded, the pair shown's and those coming up: as shown, and
     /// whole, to draw sharply.
     images: HashMap<HashId, Decoded>,
+    normalise_icc: bool,
+    image_generation: u128,
     /// Files asked of the stills thread and not yet back.
     requested: HashSet<HashId>,
     /// Video, audio and animations play, as in the media viewer.
@@ -183,8 +186,14 @@ impl State {
         let upcoming: HashSet<HashId> = self.model.upcoming(PREFETCH_PAIRS).into_iter().collect();
         self.images.retain(|id, _| upcoming.contains(id));
         for id in upcoming {
-            if !self.images.contains_key(&id) && self.requested.insert(id) {
-                let _ = stills.requests.send(id);
+            if !self.images.contains_key(&id)
+                && self.requested.insert(id)
+                && stills
+                    .requests
+                    .try_send((self.image_generation, id, self.normalise_icc))
+                    .is_err()
+            {
+                self.requested.remove(&id);
             }
         }
     }
@@ -261,10 +270,19 @@ fn show(window: &DuplicateFilterWindow, state: &mut State) {
         .or_insert_with(|| decoded(crate::viewer::still(state.model.store(), shown)))
         .clone();
     window.set_media(image);
+    if !newly_shown {
+        let store = state.model.store();
+        let shape = crate::viewer::shape(store, shown);
+        let still = crate::viewer::playable(store, shown).is_none()
+            && !shape.is_some_and(|shape| hydrus_media::animation::Frames::plays(shape.0));
+        state
+            .zoomed
+            .refresh_still(crate::viewer::still_of(raster.clone(), shape, still));
+    }
     if newly_shown {
         let store = state.model.store();
         let path = crate::viewer::playable(store, shown);
-        let animation = crate::viewer::animation(store, shown);
+        let animation = crate::viewer::animation_owned(store, shown);
         // going between a pair's files keeps the zoom and position; a new
         // pair starts at the first's default zoom, centred
         let shape = crate::viewer::shape(store, shown);
@@ -426,6 +444,11 @@ pub(crate) fn open_filter(
         )
     });
     crate::bind_zoom!(window, zoomed);
+    let normalise_icc = model
+        .store()
+        .read(hydrus_store::image_colour::load)
+        .unwrap_or_default()
+        .normalise_icc;
     let state = Rc::new(RefCell::new(State {
         viewing_stats: crate::viewing_tracking::CanvasTracker::new(
             model.store().clone(),
@@ -437,6 +460,8 @@ pub(crate) fn open_filter(
         statements: Vec::new(),
         slow_done: false,
         images: HashMap::new(),
+        normalise_icc,
+        image_generation: rand::random(),
         requested: HashSet::new(),
         playback: Playback::for_store(playback_store.clone()),
         animator: crate::animation::Animator::for_store(playback_store),
@@ -504,9 +529,42 @@ pub(crate) fn open_filter(
         let stills = stills.clone();
         move || {
             let Some(window) = weak.upgrade() else { return };
+            if !window.window().is_visible() {
+                return;
+            }
             refresh_colours(&window, &state.borrow());
-            while let Ok((id, decoded)) = stills.results.try_recv() {
+            {
                 let mut state = state.borrow_mut();
+                if !state.viewing_stats.active() {
+                    return;
+                }
+                if let Ok(policy) = state.model.store().read(hydrus_store::image_colour::load)
+                    && state.normalise_icc != policy.normalise_icc
+                {
+                    state.normalise_icc = policy.normalise_icc;
+                    state.image_generation = rand::random();
+                    state.images.clear();
+                    state.requested.clear();
+                    let still = state.model.current().is_some_and(|(file, _)| {
+                        let store = state.model.store();
+                        crate::viewer::playable(store, file).is_none()
+                            && !crate::viewer::shape(store, file).is_some_and(|shape| {
+                                hydrus_media::animation::Frames::plays(shape.0)
+                            })
+                    });
+                    // Image-cache notifications affect static image widgets;
+                    // paused animations retain their frame and playback session.
+                    if still {
+                        show(&window, &mut state);
+                    }
+                }
+                state.prefetch(&stills);
+            }
+            while let Ok((generation, id, decoded)) = stills.results.try_recv() {
+                let mut state = state.borrow_mut();
+                if generation != state.image_generation || !state.viewing_stats.active() {
+                    continue;
+                }
                 state.requested.remove(&id);
                 let entry = match decoded {
                     Some((pixels, raster)) => (pixels.image(), Some(Arc::new(raster))),

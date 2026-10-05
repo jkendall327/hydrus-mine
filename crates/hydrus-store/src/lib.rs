@@ -77,3 +77,5 @@ pub mod archive_repair;
 pub mod file_history;
 
 pub mod or_connector;
+
+pub mod image_colour;

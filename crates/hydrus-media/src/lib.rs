@@ -65,6 +65,12 @@ pub fn decode_image(data: &[u8]) -> error::Result<Raster> {
     tools::raster_from_bytes(data, true)
 }
 
+/// Decode with a captured embedded ICC profile policy. Ignoring an embedded
+/// profile still permits the reference's PNG gamma/chromaticity conversion.
+pub fn decode_image_with_icc(data: &[u8], normalise_icc: bool) -> error::Result<Raster> {
+    tools::raster_from_bytes_with_icc(data, true, normalise_icc)
+}
+
 /// OpenCV-exact resizes, exposed for tests and callers that need the
 /// reference's exact resampling (`cv2.resize` on u8 images).
 pub mod resample {

@@ -299,6 +299,7 @@ settings! {
     tag_presentation: TagPresentation,
     manage_tags_sort: hydrus_store::manage_tags_sort::Settings,
     or_connector: hydrus_store::or_connector::Connector => hydrus_store::or_connector::load,
+    image_colour: hydrus_store::image_colour::ImageColour => hydrus_store::image_colour::load,
     namespace_colours: hydrus_core::tag_presentation::NamespaceColours,
     sibling_connector_colours: hydrus_core::tag_presentation::SiblingConnectorColours,
     tag_summaries: hydrus_core::tag_summary::TagSummaries,
@@ -3008,6 +3009,14 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s, v| s.slideshow.long_overspill_percentage = v,
                         ),
                     ],
+                ),
+                boxed(
+                    "system",
+                    vec![check(
+                        "Apply image ICC Profile colour adjustments:",
+                        |settings| settings.image_colour.normalise_icc,
+                        |settings, value| settings.image_colour.normalise_icc = value,
+                    )],
                 ),
                 boxed(
                     "closing focus",

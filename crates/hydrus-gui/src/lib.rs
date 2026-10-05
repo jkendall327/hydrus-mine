@@ -5330,20 +5330,7 @@ fn open_viewer(
         move || native_cursor.menu_returned()
     });
     let native_focus = viewer_focus::NativeFocus::new(&window);
-    window.on_presentation_settings_changed({
-        let native_cursor = native_cursor.clone();
-        let native_focus = native_focus.clone();
-        let weak = window.as_weak();
-        let model = model.clone();
-        move || {
-            native_focus.watch_native();
-            native_cursor.refresh();
-            if let Some(window) = weak.upgrade() {
-                let model = model.borrow();
-                viewer_presentation::refresh(&window, model.store(), model.current());
-            }
-        }
-    });
+    let colour_watch = image_colour_watch::Watch::new(model.borrow().store().clone());
     // the zoom, in the top hover frame
     zoomed.watch({
         let weak = window.as_weak();
@@ -5646,6 +5633,53 @@ fn open_viewer(
         }
     };
     show();
+    let recolour: Rc<dyn Fn()> = Rc::new({
+        let weak = window.as_weak();
+        let owner_valid = owner_valid.clone();
+        let model = model.clone();
+        let zoomed = zoomed.clone();
+        move || {
+            if !owner_valid() {
+                return;
+            }
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let model = model.borrow();
+            let shape = model.shape();
+            if model.playable().is_some()
+                || shape.is_some_and(|shape| hydrus_media::animation::Frames::plays(shape.0))
+            {
+                return;
+            }
+            let media = model.media().map(Arc::new);
+            window.set_media(media.as_deref().map(image).unwrap_or_default());
+            // Replace decoded pixels/tiles without SetMedia, zoom reset or a
+            // new viewing interval. Players consume policy on future frames.
+            zoomed.refresh_still(viewer::still_of(media, shape, true));
+        }
+    });
+    colour_watch.start(owner_valid.clone(), recolour.clone());
+    window.on_presentation_settings_changed({
+        let native_cursor = native_cursor.clone();
+        let native_focus = native_focus.clone();
+        let weak = window.as_weak();
+        let model = model.clone();
+        let colour_watch = colour_watch.clone();
+        let recolour = recolour.clone();
+        let owner_valid = owner_valid.clone();
+        move || {
+            native_focus.watch_native();
+            native_cursor.refresh();
+            if let Some(window) = weak.upgrade() {
+                let model = model.borrow();
+                viewer_presentation::refresh(&window, model.store(), model.current());
+            }
+            if owner_valid() && colour_watch.changed() {
+                recolour();
+            }
+        }
+    });
     bind_zoom!(window, zoomed);
     viewer_drag::bind(&window, &viewing_stats, model.borrow().store());
     window.on_zoom_switch_requested({
@@ -6480,6 +6514,7 @@ fn open_viewer(
     let store = model.borrow().store().clone();
     window.on_close_requested({
         let viewing_stats = viewing_stats.clone();
+        let colour_watch = colour_watch.clone();
         let native_cursor = native_cursor.clone();
         let zoomed = zoomed.clone();
         let weak = window.as_weak();
@@ -6496,6 +6531,7 @@ fn open_viewer(
                 .is_some_and(|current| std::ptr::eq(current.window(), window.window()));
             external_launches.cancel();
             viewing_stats.close();
+            colour_watch.close();
             // Own resources belong to this viewer, even after another viewer
             // occupies the shared slot. Its close must not leave a shown Slint
             // component retaining its renderer or touch the successor's slot.
@@ -7082,3 +7118,5 @@ pub mod network_data_window;
 pub mod network_job_control;
 
 pub mod namespace_sorts_window;
+
+mod image_colour_watch;
