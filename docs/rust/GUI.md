@@ -3055,7 +3055,9 @@ width-based middle elision, and the experimental hide-navigation-tabs setting.
 Apply persists the choices and refreshes the existing nested notebooks without
 changing their pages or selection; Cancel leaves the open layout unchanged.
 Left/right labels rotate in their corresponding direction, and nested rows sit
-inside their parent row on each side. Full names remain available as hover text.
+inside their parent row on each side. Their labels are rasterized with the native
+font resolver so the software renderer paints the rotation too. Full names remain
+available as hover text.
 Tabs keep their full stored labels when space is scarce: enabled elision measures
 native glyphs and replaces the middle only for painting; disabled elision offers
 small scrolling arrows without reducing the label height.
@@ -3217,6 +3219,8 @@ The OR-row namespace text preserves named, missing and empty namespace choices;
 explicitly entering empty text selects the unnamespaced colour even when the
 saved legacy value was unset.
 Namespace colour Add preserves the reference list’s positional Shift-range bookkeeping after sorting, while selected namespaces follow their rows. Nested namespaces retain their literal trailing-colon label, as Qt paints them. Delete stays available for empty or protected selections and quietly leaves those rows alone. Namespace input also accepts the reference’s control-character whitespace trimming before reserved-name and duplicate checks.
+The sibling connector namespace editor reserves room for the full “use ideal tag
+colour” checkbox caption; its text input shrinks and scrolls within the Options row.
 
 Options > GUI > frame locations also stages the disable-rescue checkbox,
 rescued-position safety padding and its 0–100 pixel amount. Legacy preferences
