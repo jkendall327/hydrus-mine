@@ -3425,6 +3425,20 @@ manual save-last-session action and wider debug GUI/style families remain unclai
   list; "all files ever imported or deleted" isn't offered as a domain.
 - The files table is laid out as text columns rather than Qt's grid.
 
+## File maintenance > add new work
+
+- The search is a typed tag/system predicate box (as in file history), not
+  the reference's read autocomplete, and always searches the default local
+  file domain; there is no domain or tag-service button.
+- The description and "Jobs added!" show in the tab rather than as message
+  boxes.
+
+## Review current sibling/parent sync
+
+- hydrus-rs applies siblings and parents as it writes, so there is never
+  work to show: every service reads as synced and "work hard now!" never
+  appears. Repository "waiting on" lines can't arise without repositories.
+
 ## Idle-time maintenance
 
 - The GUI publishes its idle state to a marker file the daemon reads; without

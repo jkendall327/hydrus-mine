@@ -287,6 +287,10 @@ pub enum Command {
     /// Tags > sync's idle (`true`) or normal time switch.
     TagDisplaySync(bool),
     TagDisplaySyncNow,
+    /// Tags > sibling/parent sync > review current sibling/parent sync.
+    TagSyncReview,
+    /// Database > file maintenance > clear orphan files.
+    ClearOrphanFiles,
     /// Database > locations.
     Locations,
     /// A Database > backup entry.
@@ -1039,7 +1043,7 @@ fn database_menu(facts: &Facts) -> Entry {
                         facts.maintenance.during_active,
                     ),
                     SEP,
-                    todo(dots("clear orphan files")),
+                    item(dots("clear orphan files"), Command::ClearOrphanFiles),
                     SEP,
                     item(
                         dots("fix missing file archived times"),
@@ -1294,7 +1298,7 @@ fn tags_menu(facts: &Facts) -> Entry {
             menu(
                 "sync",
                 vec![
-                    todo("review current sibling/parent sync"),
+                    item("review current sibling/parent sync", Command::TagSyncReview),
                     SEP,
                     item("sync now", Command::TagDisplaySyncNow),
                     SEP,

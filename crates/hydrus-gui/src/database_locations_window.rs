@@ -78,7 +78,7 @@ impl State {
 
 fn show(window: &DatabaseLocationsWindow, state: &State) {
     let review = &state.review;
-    let thumbs = state.store.snapshot().thumbnails.clone();
+    let thumbs = state.store.snapshot().thumbnails;
     let estimates = model::thumbnail_estimates(
         review.total_files,
         thumbs.bounding_width,
@@ -408,7 +408,7 @@ fn act(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots, action
                     refresh();
                 })
             };
-            crate::granularity_window::open(&store, &granularity, changed);
+            crate::granularity_window::open(&store, &granularity, &changed);
             return;
         }
         _ => {}

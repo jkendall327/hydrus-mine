@@ -4135,8 +4135,18 @@ rebind and final binding drop cancel admission at the next file boundary. Hidden
 input and retained callbacks cannot target a successor review or Main binding.
 The actual Qt recording is file_maintenance_current.json; native/model/Store
 regressions and file-maintenance-current.png are authored and hosted execution
-and final rendered review remain pending. New scheduling/search and the parent
-maintenance family remain incomplete.
+and final rendered review remain pending. The parent maintenance family
+remains incomplete.
+
+The window's second tab, "add new work", picks files as the reference's does:
+"select files by search" takes typed predicates (one per line entered, each
+removable; none means everything) in the default local file domain, and "run
+this search" says "loading…" then "N files found"; "easy select" picks all
+media files or all repository update files. "add job" offers every job in the
+reference's order, "see description" shows the job's description and weight,
+and adding on more than 1,000 files asks "Are you sure you want to schedule
+"job" on N files?" (do it/forget it) before queueing it and saying "Jobs
+added!", refreshing the scheduled work.
 Accepted Clear/Refresh commands are serviced between fetched batches while the
 same actor retains its physical lease; Clear never races that actor's in-flight
 file results. Ordinary daemon passes defer on lease contention, and forced waits
@@ -4219,6 +4229,14 @@ with Options.
 Tags > sync's "sync tag display during idle time" and "during normal time"
 switch the same sibling/parent sync settings, and "sync now" says "Seems
 like we are all synced already!", as the reference does with no work left.
+Tags > sync > "review current sibling/parent sync" opens "tag display sync":
+the reference's explanation, a line saying when sync runs (green when it runs
+all the time, orange otherwise), and a tab (or listbook entry) per tag
+service, opened on the default tag service's and remembering a changed tab
+when the tag dialogs do. Each says "All synced!" and "N rules, all synced!"
+(sibling lookup rows plus parent ancestry rows, as the reference counts
+them) or "No siblings/parents applying to this service.", with a refresh
+button.
 Database > db maintenance's "work deferred delete jobs during idle time" and
 "during normal time" switch the deferred table delete settings likewise.
 
@@ -4371,4 +4389,16 @@ folder, says what granularity it looks like, and moves it likewise. Both
 report the files moved, the time, and any weird files or folders left
 alone. hydrus-store's `granularity` tests cover both ways, the scan, and an
 undone cancel.
+
+## Database > file maintenance > clear orphan files
+
+"clear orphan files" asks the reference's question with "move them
+somewhere", "delete them" and "forget it"; moving picks a folder. A worker
+then checks every prefix folder for files and thumbnails local file storage
+doesn't hold (and anything not named by a hash), in a cancellable "clearing
+orphans" popup ("checking f3a", "reviewed 1,200 files, found 3 orphans"),
+moves them (thumbnails into a `thumbnails` folder, renamed if taken) or
+deletes them, and ends "2 orphan files and 0 orphan thumbnails cleared!" or
+"no orphans found!". A client using another install's files in place refuses.
+hydrus-store's `orphan_files` test covers a stray file and thumbnail moved.
 

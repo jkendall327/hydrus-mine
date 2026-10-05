@@ -35,6 +35,9 @@ export global Theme {
     // a selected thumbnail's border
     out property <brush> accent: Palette.accent-background;
     out property <brush> error: self.dark ? #ff8a94 : #b00020;
+    // The reference stylesheet's HydrusValid and HydrusWarning text.
+    out property <brush> valid: self.dark ? #70d070 : #008000;
+    out property <brush> warning: self.dark ? #ffa040 : #b05000;
     // comparison statements for and against the file shown
     out property <brush> good: self.dark ? #7ed87e : #007000;
     out property <brush> bad: self.dark ? #ff8080 : #b00000;

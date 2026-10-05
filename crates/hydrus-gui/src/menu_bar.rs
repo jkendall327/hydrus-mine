@@ -782,6 +782,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::Debug(action) => (hooks.debug)(action),
         Command::Backup(action) => (hooks.backup)(action),
         Command::Locations => (hooks.locations)(),
+        Command::ClearOrphanFiles => crate::orphan_files_window::open(&store),
         Command::DebugFetchUrl => hooks.debug_fetch.open(),
         Command::DebugLongTextPopup => hooks.debug_long_popup.start(),
         Command::DebugForceIdleMode => {
@@ -822,6 +823,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             let report = hooks.pages.borrow().weight_report();
             crate::debug_actions::message("Information", &report);
         }
+        Command::TagSyncReview => crate::tag_sync_review_window::open(&store),
         Command::TagDisplaySyncNow => {
             let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
             #[allow(clippy::cast_precision_loss)] // (seconds)

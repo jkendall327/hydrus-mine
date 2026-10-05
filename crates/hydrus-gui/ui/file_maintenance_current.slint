@@ -1,4 +1,4 @@
-import { Button } from "std-widgets.slint";
+import { Button, ComboBox, LineEdit, TabWidget } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
 
@@ -24,10 +24,34 @@ export component FileMaintenanceWindow inherits Window {
     callback refresh-clicked();
     callback answered(bool);
     callback close-clicked();
+    // The "add new work" tab.
+    in property <string> new-explanation;
+    in property <[string]> predicates;
+    in-out property <string> search-input;
+    in property <string> search-status;
+    in property <bool> searching;
+    in property <string> files-label;
+    in property <[string]> job-labels;
+    in-out property <int> job-index;
+    in property <bool> can-add;
+    in property <string> new-question;
+    in property <string> information;
+    callback search-entered();
+    callback predicate-removed(int);
+    callback run-search();
+    callback easy-select(bool);
+    callback see-description();
+    callback add-job();
+    callback new-answered(bool);
+    callback information-closed();
     VerticalLayout {
         padding: 12px;
         spacing: 10px;
-        Text { text: "scheduled work"; color: Theme.text; font-weight: 700; }
+        TabWidget {
+        Tab {
+        title: "scheduled work";
+        VerticalLayout {
+        spacing: 10px;
         Text { text: root.explanation; wrap: word-wrap; color: Theme.text; }
         ListTable {
             columns: [{title: "job type", width: 400px, stretch: true}, {title: "due jobs", width: 180px, stretch: false}];
@@ -50,6 +74,60 @@ export component FileMaintenanceWindow inherits Window {
                 Button { text: "yes"; clicked => { root.answered(true); } }
                 Button { text: "no"; clicked => { root.answered(false); } }
             }
+        }
+        }
+        }
+        Tab {
+        title: "add new work";
+        VerticalLayout {
+            spacing: 10px;
+            Text { text: root.new-explanation; wrap: word-wrap; color: Theme.text; }
+            Text { text: "select files by search"; color: Theme.text; font-weight: 700; }
+            LineEdit {
+                text <=> root.search-input;
+                placeholder-text: "enter a predicate, as the client api parses it";
+                accepted => { root.search-entered(); }
+            }
+            for predicate[i] in root.predicates: HorizontalLayout {
+                spacing: 6px;
+                Text { text: predicate; color: Theme.text; vertical-alignment: center; }
+                Button { text: "remove"; clicked => { root.predicate-removed(i); } }
+            }
+            HorizontalLayout {
+                Text { text: root.search-status; color: Theme.text; vertical-alignment: center; horizontal-stretch: 1; }
+                Button { text: "run this search"; enabled: !root.searching; clicked => { root.run-search(); } }
+            }
+            Text { text: "easy select"; color: Theme.text; font-weight: 700; }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Button { text: "all media files"; enabled: !root.searching; clicked => { root.easy-select(false); } }
+                Button { text: "all repository update files"; enabled: !root.searching; clicked => { root.easy-select(true); } }
+            }
+            Text { text: "add job"; color: Theme.text; font-weight: 700; }
+            HorizontalLayout {
+                spacing: 6px;
+                Text { text: root.files-label; color: Theme.text; vertical-alignment: center; horizontal-stretch: 1; }
+                ComboBox { model: root.job-labels; current-index <=> root.job-index; }
+                Button { text: "see description"; clicked => { root.see-description(); } }
+                Button { text: "add job"; enabled: root.can-add && root.new-question == ""; clicked => { root.add-job(); } }
+            }
+            if root.new-question != "": VerticalLayout {
+                Text { text: root.new-question; color: Theme.text; wrap: word-wrap; }
+                HorizontalLayout {
+                    Button { text: "do it"; clicked => { root.new-answered(true); } }
+                    Button { text: "forget it"; clicked => { root.new-answered(false); } }
+                }
+            }
+            if root.information != "": VerticalLayout {
+                Text { text: root.information; color: Theme.text; wrap: word-wrap; }
+                HorizontalLayout {
+                    alignment: start;
+                    Button { text: "ok"; clicked => { root.information-closed(); } }
+                }
+            }
+        }
+        }
         }
         if root.error != "": Text { text: root.error; wrap: word-wrap; color: Theme.error; }
         Button { text: "close"; clicked => { root.close-clicked(); } }

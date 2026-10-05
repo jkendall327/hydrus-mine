@@ -42,7 +42,7 @@ fn show(window: &GranularityWindow, store: &Store) {
 }
 
 /// Open the window; `changed` runs after a client migration.
-pub(crate) fn open(store: &Arc<Store>, slots: &Slots, changed: Rc<dyn Fn()>) {
+pub(crate) fn open(store: &Arc<Store>, slots: &Slots, changed: &Rc<dyn Fn()>) {
     if let Some(window) = slots.borrow().window.as_ref() {
         let _ = window.show();
         return;
@@ -209,9 +209,13 @@ fn run(store: &Arc<Store>, slots: &Slots, changed: Rc<dyn Fn()>, job: Job, from:
         };
         let result: hydrus_store::Result<Outcome> = match &job {
             Job::Client => granularity::granularise_store(&store, from, to, &mut progress),
-            Job::Folder(path) => {
-                granularity::regranularise(&[path.clone()], &['f', 't'], from, to, &mut progress)
-            }
+            Job::Folder(path) => granularity::regranularise(
+                std::slice::from_ref(path),
+                &['f', 't'],
+                from,
+                to,
+                &mut progress,
+            ),
         };
         let seconds = i64::try_from(started.elapsed().as_secs()).unwrap_or(i64::MAX);
         let was_cancelled = cancelled.load(Ordering::Relaxed);

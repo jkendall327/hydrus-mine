@@ -39,6 +39,7 @@ pub mod menu_choice_wheel;
 pub mod metadata_jobs;
 pub mod network;
 pub mod network_runtime;
+pub mod orphan_files;
 pub mod page_layout;
 pub mod paths;
 pub mod pending;

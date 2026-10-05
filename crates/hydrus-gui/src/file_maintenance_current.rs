@@ -180,6 +180,7 @@ struct State {
     visible: Rc<dyn Fn() -> bool>,
     changed: Rc<dyn Fn(bool)>,
     redownload: Rc<dyn Fn(Vec<String>)>,
+    store: Arc<Store>,
     timer: Timer,
 }
 impl Drop for State {
@@ -222,6 +223,7 @@ impl Control {
         let (replies, recv) = mpsc::channel();
         let shutdown = Arc::new(AtomicBool::new(false));
         let stop = shutdown.clone();
+        let kept = store.clone();
         std::thread::Builder::new()
             .name("file maintenance".into())
             .spawn(move || {
@@ -263,6 +265,7 @@ impl Control {
             visible,
             changed,
             redownload,
+            store: kept,
             timer: Timer::default(),
         });
         let weak = Rc::downgrade(&state);
@@ -489,6 +492,18 @@ impl Control {
             close();
             slint::CloseRequestResponse::HideWindow
         });
+        crate::file_maintenance_new::bind(
+            &window,
+            &self.0.store,
+            Rc::new({
+                let weak = Rc::downgrade(&self.0);
+                move || {
+                    if let Some(state) = weak.upgrade() {
+                        let _ = state.commands.send(Command::Refresh);
+                    }
+                }
+            }),
+        );
         *self.0.slot.borrow_mut() = Some(window.clone_strong());
         self.paint();
         window.show().map_err(|e| e.to_string())?;

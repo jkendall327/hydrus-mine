@@ -58,6 +58,7 @@ mod namespace_colours;
 mod normal_time_maintenance;
 mod notes_preferences;
 mod options_dialog;
+mod orphan_files;
 mod page_chooser_options;
 mod page_navigation_options;
 mod physical_delete_delay;
@@ -126,6 +127,7 @@ mod sibling_connector;
 mod tag_dialog_defaults;
 mod tag_dialog_preferences;
 mod tag_suggestions;
+mod tag_sync_review;
 mod unselected_tag_cap;
 
 mod write_autocomplete;
@@ -165,6 +167,7 @@ mod archive_repair;
 
 mod file_history;
 mod file_maintenance_current;
+mod file_maintenance_new;
 mod related_weights;
 
 mod autocomplete_tabs;

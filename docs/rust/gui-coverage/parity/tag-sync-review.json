@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "agent": "tag-sync-review",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 1,
+  "claims": [
+    {
+      "id": "audit-media-menu-tags-review-current-sibling-parent-sync",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Tags > sync > review current sibling/parent sync: the 'tag display sync' window with the reference's message, the idle/active sync status line in valid/warning colours, a notebook or listbook tab per real tag service opened on default_tag_service_tab (saved on change when the tag dialogs remember it), each saying 'All synced!' and '{n} rules, all synced!' (sibling lookup rows plus parent ancestor rows) or 'No siblings/parents applying to this service.', with refresh.",
+      "source": [
+        "crates/hydrus-gui-model/src/tag_sync_review.rs",
+        "crates/hydrus-gui/src/tag_sync_review_window.rs",
+        "crates/hydrus-gui/ui/tag_sync_review.slint",
+        "crates/hydrus-store/src/display.rs",
+        "crates/hydrus-gui-model/src/main_menu.rs"
+      ],
+      "tests": [
+        "crates/hydrus-gui-model/tests/model/tag_sync_review.rs",
+        "crates/hydrus-store/src/display.rs::tests::rules_count_as_the_reference_s_lookup_rows"
+      ],
+      "limits": [
+        "hydrus-rs syncs as it writes: no outstanding work, so no progress gauge or work-hard button."
+      ]
+    }
+  ]
+}
