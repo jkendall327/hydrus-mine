@@ -5,7 +5,7 @@
 use hydrus_core::windows::{FrameLocation, WindowSettings, WindowState};
 use hydrus_gui_model::window_rescue::{self, Point, Rect, Screen};
 use hydrus_store::{Store, settings::WindowRescueSettings};
-use slint::winit_030::WinitWindowAccessor as _;
+use slint::winit_030::{EventResult, WinitWindowAccessor as _, winit::event::WindowEvent};
 
 /// The frames now.
 pub fn settings(store: &Store) -> WindowSettings {
@@ -46,10 +46,73 @@ pub fn place(window: &slint::Window, frame: &FrameLocation) {
 
 /// Place an implemented owner from its editable reference frame key.
 pub fn place_named(window: &slint::Window, store: &Store, name: &str) {
+    place_named_geometry(window, store, name);
+    watch_named_events(window, store, name, |_, _| EventResult::Propagate);
+}
+
+/// Placement for an owner whose combined event filter is already installed.
+pub fn place_named_geometry(window: &slint::Window, store: &Store, name: &str) {
     if let Some(frame) = settings(store).frame(name) {
         place(window, frame);
-        let rescue = store.read(hydrus_store::settings::get).unwrap_or_default();
-        watch_rescue(window, frame, name, rescue);
+    }
+}
+
+/// Install one owned filter. Winit's accessor replaces its previous filter;
+/// observers must compose here rather than register a second callback.
+pub(crate) fn watch_named_events(
+    window: &slint::Window,
+    store: &Store,
+    name: &str,
+    next: impl FnMut(&slint::Window, &WindowEvent) -> EventResult + 'static,
+) {
+    let opening = settings(store).frame(name).and_then(|frame| {
+        frame
+            .last_position
+            .filter(|_| frame.remember_position)
+            .map(|position| {
+                OpeningRescue::new(
+                    (i64::from(position.0), i64::from(position.1)),
+                    name,
+                    store.read(hydrus_store::settings::get).unwrap_or_default(),
+                )
+            })
+    });
+    let mut events = NamedEvents { opening, next };
+    window.on_winit_window_event(move |window, event| {
+        if events
+            .opening
+            .as_ref()
+            .is_some_and(|opening| !opening.finished)
+            && window.is_visible()
+        {
+            events.event(
+                window,
+                event,
+                native_screens(window).as_deref().unwrap_or_default(),
+                native_size(window).unwrap_or_default(),
+            )
+        } else {
+            (events.next)(window, event)
+        }
+    });
+}
+
+struct NamedEvents<F> {
+    opening: Option<OpeningRescue>,
+    next: F,
+}
+impl<F: FnMut(&slint::Window, &WindowEvent) -> EventResult> NamedEvents<F> {
+    fn event(
+        &mut self,
+        window: &slint::Window,
+        event: &WindowEvent,
+        screens: &[Screen],
+        size: (i64, i64),
+    ) -> EventResult {
+        if let Some(opening) = self.opening.as_mut() {
+            opening.observe_size(window, screens, size);
+        }
+        (self.next)(window, event)
     }
 }
 
@@ -75,16 +138,22 @@ impl OpeningRescue {
     /// The real opening consumer, also replayable with recorded screen geometry.
     /// A hidden or retired owner does not consume the pending opening decision.
     pub fn observe(&mut self, window: &slint::Window, screens: &[Screen]) -> Option<Point> {
-        if self.finished || !window.is_visible() || screens.is_empty() {
+        let size = state(window).size;
+        self.observe_size(window, screens, (i64::from(size.0), i64::from(size.1)))
+    }
+
+    fn observe_size(
+        &mut self,
+        window: &slint::Window,
+        screens: &[Screen],
+        size: (i64, i64),
+    ) -> Option<Point> {
+        if self.finished || !window.is_visible() || screens.is_empty() || size.0 <= 0 || size.1 <= 0
+        {
             return None;
         }
-        let size = state(window).size;
-        let result = window_rescue::safe_position(
-            self.desired,
-            Some((i64::from(size.0), i64::from(size.1))),
-            &self.settings,
-            screens,
-        )?;
+        let result =
+            window_rescue::safe_position(self.desired, Some(size), &self.settings, screens)?;
         self.finished = true;
         if result != self.desired {
             let (Ok(x), Ok(y)) = (i32::try_from(result.0), i32::try_from(result.1)) else {
@@ -101,26 +170,16 @@ impl OpeningRescue {
     }
 }
 
-fn watch_rescue(
-    window: &slint::Window,
-    frame: &FrameLocation,
-    name: &str,
-    settings: WindowRescueSettings,
-) {
-    let Some(position) = frame.last_position.filter(|_| frame.remember_position) else {
-        return;
-    };
-    let mut opening = OpeningRescue::new(
-        (i64::from(position.0), i64::from(position.1)),
-        name,
-        settings,
-    );
-    window.on_winit_window_event(move |window, _event| {
-        if let Some(screens) = native_screens(window) {
-            opening.observe(window, &screens);
-        }
-        slint::winit_030::EventResult::Propagate
-    });
+/// The filter runs before Slint updates its cached size for Resize/Redraw.
+/// Read the current native client area, and defer while it is still zero-sized.
+#[allow(clippy::cast_possible_truncation)]
+fn native_size(window: &slint::Window) -> Option<(i64, i64)> {
+    window.with_winit_window(|native| {
+        let size = native
+            .inner_size()
+            .to_logical::<f64>(f64::from(window.scale_factor()));
+        (size.width.round() as i64, size.height.round() as i64)
+    })
 }
 
 /// Winit has monitor bounds, but no portable work-area origin. Keep that native
@@ -191,5 +250,99 @@ pub fn switch_fullscreen(window: &slint::Window, maximised_before: &std::cell::C
     } else if !cfg!(target_os = "macos") {
         maximised_before.set(window.is_maximized());
         window.set_fullscreen(true);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use slint::ComponentHandle as _;
+    use std::{cell::RefCell, rc::Rc, time::Duration};
+
+    #[test]
+    fn opening_observer_and_batched_files_share_the_same_owned_filter() {
+        let _windows = crate::headless::init();
+        let owner = crate::OptionsWindow::new().unwrap();
+        owner
+            .window()
+            .set_size(slint::LogicalSize::new(100.0, 100.0));
+        owner.show().unwrap();
+        let screen = Screen {
+            geometry: Rect {
+                x: 0,
+                y: 0,
+                width: 800,
+                height: 600,
+            },
+            available_top_left: (0, 0),
+        };
+        let received = Rc::new(RefCell::new(Vec::new()));
+        let mut events = NamedEvents {
+            opening: Some(OpeningRescue::new(
+                (2000, 2000),
+                "main_gui",
+                WindowRescueSettings::default(),
+            )),
+            next: crate::drops::file_handler({
+                let received = received.clone();
+                move |paths| received.borrow_mut().push(paths)
+            }),
+        };
+        assert!(matches!(
+            events.event(
+                owner.window(),
+                &WindowEvent::Focused(true),
+                &[screen],
+                (0, 0)
+            ),
+            EventResult::Propagate
+        ));
+        assert!(!events.opening.as_ref().unwrap().finished);
+        assert!(matches!(
+            events.event(
+                owner.window(),
+                &WindowEvent::Focused(true),
+                &[screen],
+                (100, 100)
+            ),
+            EventResult::Propagate
+        ));
+        assert_eq!(state(owner.window()).position, (40, 40));
+        assert!(events.opening.as_ref().unwrap().finished);
+        for path in ["/synthetic/first.png", "/synthetic/second.png"] {
+            assert!(matches!(
+                events.event(
+                    owner.window(),
+                    &WindowEvent::DroppedFile(path.into()),
+                    &[screen],
+                    (100, 100)
+                ),
+                EventResult::PreventDefault
+            ));
+        }
+        assert!(received.borrow().is_empty());
+        std::thread::sleep(Duration::from_millis(110));
+        slint::platform::update_timers_and_animations();
+        assert_eq!(
+            *received.borrow(),
+            vec![vec![
+                "/synthetic/first.png".to_string(),
+                "/synthetic/second.png".to_string()
+            ]]
+        );
+        owner
+            .window()
+            .set_position(slint::LogicalPosition::new(123.0, 234.0));
+        assert!(matches!(
+            events.event(
+                owner.window(),
+                &WindowEvent::Focused(false),
+                &[screen],
+                (100, 100)
+            ),
+            EventResult::Propagate
+        ));
+        assert_eq!(state(owner.window()).position, (123, 234));
+        owner.hide().unwrap();
     }
 }

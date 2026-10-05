@@ -796,10 +796,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
-    drops::on_files_dropped(window.window(), {
-        let review_files = review_files.clone();
-        move |paths| review_files(paths)
-    });
+    windows::watch_named_events(
+        window.window(),
+        pages.borrow().store(),
+        "main_gui",
+        drops::file_handler({
+            let review_files = review_files.clone();
+            move |paths| review_files(paths)
+        }),
+    );
     // open the page chosen, if one was
     let chosen = {
         let chooser = chooser.clone();
