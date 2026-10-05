@@ -2380,7 +2380,7 @@ mod reload_tests {
             .write(|ctx| {
                 let rules = BandwidthSettings {
                     rules: vec![(
-                        NetworkContext::Global,
+                        NetworkContext::global(),
                         Rules::new([Rule::new(BandwidthType::Requests, Some(3600), 1)]),
                     )],
                     ..Default::default()
@@ -2389,7 +2389,7 @@ mod reload_tests {
             })
             .unwrap();
         engine.reload_settings().unwrap();
-        let contexts = vec![NetworkContext::Global];
+        let contexts = vec![NetworkContext::global()];
         let started = now();
         engine.bandwidth.lock().0.report_request(&contexts, started);
         let trackers = engine.bandwidth.lock().0.all_trackers();
@@ -2403,7 +2403,7 @@ mod reload_tests {
         engine
             .jobs
             .lock()
-            .insert(1, (job.clone(), contexts.clone()));
+            .insert(1, ((*job).clone(), contexts.clone()));
         let waiting = engine.wait_for_bandwidth(&contexts, true, None, &job);
         tokio::pin!(waiting);
         tokio::select! { result = &mut waiting => panic!("bandwidth wait completed: {result:?}"), () = tokio::time::sleep(Duration::from_millis(10)) => {} }
@@ -2466,7 +2466,7 @@ mod reload_tests {
         let job = Job::new();
         job.state.lock().bytes_read = 1536;
         job.state.lock().bytes_total = Some(243200);
-        engine.jobs.lock().insert(1, (job.clone(), Vec::new()));
+        engine.jobs.lock().insert(1, ((*job).clone(), Vec::new()));
         let waiting = engine.wait_for_gallery_token("format.example", kind, &job);
         tokio::pin!(waiting);
         tokio::select! { result = &mut waiting => panic!("pending token completed: {result:?}"), () = tokio::time::sleep(Duration::from_millis(10)) => {} }
