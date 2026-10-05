@@ -90,6 +90,7 @@ struct AsRead {
 
 /// The dialog's state while it is open.
 struct Open {
+    formatting: hydrus_store::settings::GuiFormatting,
     services: Arc<hydrus_store::store::Snapshot>,
     dialog: Subscriptions,
     /// Each subscription as read, by id.
@@ -144,6 +145,7 @@ fn read(store: &Store) -> hydrus_store::Result<Open> {
         }
         let naming: hydrus_core::pages::PageNameSettings = hydrus_store::settings::get(conn)?;
         Ok(Open {
+            formatting: hydrus_store::settings::get(conn)?,
             services: store.snapshot(),
             dialog: Subscriptions::new(loaded),
             read,
@@ -427,11 +429,11 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
     let now = now();
     let dialog = &open.dialog;
     let rows: Vec<TableRow> = dialog
-        .rows(now, open.short)
+        .rows_with_format(now, open.short, &open.formatting)
         .into_iter()
         .map(|(key, mut cells, selected)| {
             if let Some(subscription) = dialog.get(key) {
-                cells[8] = crate::import_options_editor::container_summary(
+                cells[8] = crate::import_options_editor::container_summary_with_format(
                     &subscription.settings.import_options,
                     &|key| {
                         hex::decode(key)
@@ -444,6 +446,7 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
                             })
                             .map_or_else(|| "unknown service".into(), |s| s.name.clone())
                     },
+                    &open.formatting,
                 );
             }
             let cells: Vec<SharedString> = cells.into_iter().map(Into::into).collect();

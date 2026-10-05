@@ -272,3 +272,88 @@ fn precision_reaches_existing_import_png_network_and_service_displays() {
         );
     }
 }
+
+#[test]
+fn recorded_summaries_previews_expiry_and_scheduling_variants_reach_existing_models() {
+    use hydrus_core::import_options::{FileFilteringOptions, ImportOptionsSlice};
+    use hydrus_gui_model::{
+        about::{Facts, about_with_format},
+        import_options_editor::{Kind, summary_with_format},
+        network_sessions, parser_test_data,
+        subscriptions_list::{QueryFacts, ShortSummary, query_row_with_format},
+        times_editor,
+    };
+    let fixture = hydrus_testkit::fixture_json("gui_format.json");
+    let now = fixture["now"].as_i64().unwrap();
+    let slice = ImportOptionsSlice {
+        file_filtering: Some(FileFilteringOptions {
+            min_size: Some(1536),
+            max_size: Some(243_200),
+            max_gif_size: Some(188_213_746),
+            ..FileFilteringOptions::default()
+        }),
+        ..ImportOptionsSlice::default()
+    };
+    for event in fixture["events"].as_array().unwrap() {
+        let p: GuiFormatting = serde_json::from_value(event["saved"].clone()).unwrap();
+        let consumer = &event["consumers"];
+        assert_eq!(
+            summary_with_format(Kind::FileFiltering, &slice, &str::to_owned, &p),
+            consumer["filtering_summary"].as_str().unwrap()
+        );
+        for preview in consumer["parser_previews"].as_array().unwrap() {
+            let input = preview["input"].as_str().unwrap();
+            let shown = parser_test_data::preview_with_format(input, None, &p);
+            assert_eq!(shown.description, preview["label"].as_str().unwrap());
+            assert!(shown.parse_enabled);
+            assert_eq!(preview["raw"], input);
+        }
+        for expiry in consumer["expiry"].as_array().unwrap() {
+            assert_eq!(
+                network_sessions::expiry_text_with_format(expiry["timestamp"].as_i64(), now, &p),
+                expiry["text"].as_str().unwrap()
+            );
+        }
+        for variant in consumer["variants"].as_array().unwrap() {
+            let at = variant["timestamp"].as_i64().unwrap();
+            assert_eq!(
+                gui_format::timestamp_minutes(&p, at, now),
+                variant["minutes"].as_str().unwrap()
+            );
+            assert_eq!(
+                gui_format::timestamp_exact(&p, at, now),
+                variant["exact"].as_str().unwrap()
+            );
+            // The actual time picker explicitly requests force_no_iso=True.
+            assert!(
+                times_editor::pretty_time(at * 1000, now, &jiff::tz::TimeZone::UTC).ends_with(
+                    &format!(" ({})", variant["forced_relative"].as_str().unwrap())
+                )
+            );
+        }
+        let ago = consumer["variants"][0]["timestamp"].as_i64().unwrap();
+        let expected = gui_format::timestamp(&p, Some(ago), now);
+        let facts = Facts {
+            boot_ms: ago * 1000,
+            now_ms: now * 1000,
+            ..Facts::default()
+        };
+        assert!(
+            about_with_format(&facts, None, &p).tabs[0]
+                .1
+                .contains(&format!("boot time: {expected} ("))
+        );
+        let future = now + 86_400;
+        let query = QueryFacts {
+            query_text: "format query".into(),
+            last_check_time: ago,
+            latest_added: ago,
+            next_check_time: future,
+            ..QueryFacts::default()
+        };
+        let row = query_row_with_format(&query, now, ShortSummary::default(), &p);
+        assert_eq!(row[3], expected);
+        assert_eq!(row[4], expected);
+        assert_eq!(row[5], gui_format::timestamp(&p, Some(future), now));
+    }
+}

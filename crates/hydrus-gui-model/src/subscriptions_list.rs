@@ -5,7 +5,7 @@
 //! `oracle/record_subscriptions_list.py`.
 
 use hydrus_core::numbers::human_int;
-use hydrus_core::time::{pretty_time_delta, timestamp_to_pretty_time_delta};
+use hydrus_core::time::pretty_time_delta;
 use hydrus_store::queues::{StatusCounts, file_log_short_status};
 
 /// The subscriptions list's columns (`COLUMN_LIST_SUBSCRIPTIONS`).
@@ -96,12 +96,28 @@ pub(crate) fn delta_exact(timestamp: i64, now: i64) -> String {
     }
 }
 
+pub(crate) fn delta_exact_with_format(
+    timestamp: i64,
+    now: i64,
+    formatting: &hydrus_store::settings::GuiFormatting,
+) -> String {
+    if formatting.iso {
+        crate::gui_format::timestamp(formatting, Some(timestamp), now)
+    } else {
+        delta_exact(timestamp, now)
+    }
+}
+
 /// A time as the lists write it: "n/a" for none, else how long ago.
-fn ago_or_na(timestamp: i64, now: i64) -> String {
+fn ago_or_na(
+    timestamp: i64,
+    now: i64,
+    formatting: &hydrus_store::settings::GuiFormatting,
+) -> String {
     if timestamp == 0 {
         "n/a".into()
     } else {
-        timestamp_to_pretty_time_delta(timestamp, now, " ago")
+        crate::gui_format::timestamp(formatting, Some(timestamp), now)
     }
 }
 
@@ -116,6 +132,17 @@ pub fn full_human_name(query_text: &str, display_name: Option<&str>) -> String {
 
 /// When a query checks next (`GetNextCheckStatusString`).
 pub fn next_check_status(query: &QueryFacts, now: i64) -> String {
+    next_check_status_with_format(
+        query,
+        now,
+        &hydrus_store::settings::GuiFormatting::default(),
+    )
+}
+pub fn next_check_status_with_format(
+    query: &QueryFacts,
+    now: i64,
+    formatting: &hydrus_store::settings::GuiFormatting,
+) -> String {
     if query.check_now {
         return "checking on dialog ok".into();
     }
@@ -126,7 +153,7 @@ pub fn next_check_status(query: &QueryFacts, now: i64) -> String {
     let next = if now > query.next_check_time {
         "imminent".to_owned()
     } else {
-        timestamp_to_pretty_time_delta(query.next_check_time, now, " ago")
+        crate::gui_format::timestamp(formatting, Some(query.next_check_time), now)
     };
     if query.paused {
         format!("paused, but would be {next}")
@@ -137,17 +164,30 @@ pub fn next_check_status(query: &QueryFacts, now: i64) -> String {
 
 /// A query's row in its subscription's list.
 pub fn query_row(query: &QueryFacts, now: i64, short: ShortSummary) -> Vec<String> {
+    query_row_with_format(
+        query,
+        now,
+        short,
+        &hydrus_store::settings::GuiFormatting::default(),
+    )
+}
+pub fn query_row_with_format(
+    query: &QueryFacts,
+    now: i64,
+    short: ShortSummary,
+    formatting: &hydrus_store::settings::GuiFormatting,
+) -> Vec<String> {
     vec![
         full_human_name(&query.query_text, query.display_name.as_deref()),
         if query.paused { "yes" } else { "" }.into(),
         if query.dead { "dead" } else { "ok" }.into(),
-        ago_or_na(query.latest_added, now),
+        ago_or_na(query.latest_added, now, formatting),
         if query.last_check_time == 0 {
             "(initial check has not yet occurred)".into()
         } else {
-            timestamp_to_pretty_time_delta(query.last_check_time, now, " ago")
+            crate::gui_format::timestamp(formatting, Some(query.last_check_time), now)
         },
-        next_check_status(query, now),
+        next_check_status_with_format(query, now, formatting),
         query.velocity.clone(),
         // (the bandwidth it waits on: not reckoned here)
         String::new(),
@@ -183,6 +223,19 @@ pub fn subscription_row(
     now: i64,
     short: ShortSummary,
 ) -> Vec<String> {
+    subscription_row_with_format(
+        subscription,
+        now,
+        short,
+        &hydrus_store::settings::GuiFormatting::default(),
+    )
+}
+pub fn subscription_row_with_format(
+    subscription: &SubscriptionFacts,
+    now: i64,
+    short: ShortSummary,
+    formatting: &hydrus_store::settings::GuiFormatting,
+) -> Vec<String> {
     let queries = &subscription.queries;
     let latest_added = queries.iter().map(|q| q.latest_added).max().unwrap_or(0);
     let last_checked = queries.iter().map(|q| q.last_check_time).max().unwrap_or(0);
@@ -192,7 +245,7 @@ pub fn subscription_row(
     } else {
         format!(
             "delayed--retrying {} - because: {}",
-            delta_exact(subscription.no_work_until, now),
+            delta_exact_with_format(subscription.no_work_until, now, formatting),
             subscription.no_work_until_reason
         )
     };
@@ -210,8 +263,8 @@ pub fn subscription_row(
             subscription.gug_name.clone()
         },
         subscription_status(queries),
-        ago_or_na(latest_added, now),
-        ago_or_na(last_checked, now),
+        ago_or_na(latest_added, now, formatting),
+        ago_or_na(last_checked, now, formatting),
         delay,
         file_log_short_status(&files, short.new, short.deleted),
         if subscription.paused { "yes" } else { "" }.into(),

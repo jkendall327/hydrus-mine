@@ -250,6 +250,17 @@ pub fn tab_label(kind: Kind, custom_summary: Option<&str>, source: &str) -> Stri
 /// names a service by its key (hex).
 /// The container summary shown in subscription rows and favourites menus.
 pub fn container_summary(slice: &ImportOptionsSlice, name: &dyn Fn(&str) -> String) -> String {
+    container_summary_with_format(
+        slice,
+        name,
+        &hydrus_store::settings::GuiFormatting::default(),
+    )
+}
+pub fn container_summary_with_format(
+    slice: &ImportOptionsSlice,
+    name: &dyn Fn(&str) -> String,
+    formatting: &hydrus_store::settings::GuiFormatting,
+) -> String {
     let kinds = Kind::ALL
         .into_iter()
         .filter(|kind| kind.is_set(slice))
@@ -257,7 +268,7 @@ pub fn container_summary(slice: &ImportOptionsSlice, name: &dyn Fn(&str) -> Stri
     let names = kinds.iter().map(|kind| kind.name()).collect::<Vec<_>>();
     let summaries = kinds
         .iter()
-        .map(|kind| summary(*kind, slice, name))
+        .map(|kind| summary_with_format(*kind, slice, name, formatting))
         .filter(|s| !s.is_empty())
         .collect::<Vec<_>>();
     if names.is_empty() {
@@ -270,6 +281,19 @@ pub fn container_summary(slice: &ImportOptionsSlice, name: &dyn Fn(&str) -> Stri
 }
 
 pub fn summary(kind: Kind, slice: &ImportOptionsSlice, name: &dyn Fn(&str) -> String) -> String {
+    summary_with_format(
+        kind,
+        slice,
+        name,
+        &hydrus_store::settings::GuiFormatting::default(),
+    )
+}
+pub fn summary_with_format(
+    kind: Kind,
+    slice: &ImportOptionsSlice,
+    name: &dyn Fn(&str) -> String,
+    formatting: &hydrus_store::settings::GuiFormatting,
+) -> String {
     use hydrus_core::import_options::PrefetchCheck as C;
     let mut parts: Vec<String> = Vec::new();
     match kind {
@@ -320,7 +344,7 @@ pub fn summary(kind: Kind, slice: &ImportOptionsSlice, name: &dyn Fn(&str) -> St
             if !o.allow_decompression_bombs {
                 parts.push("excludes decompression bombs".into());
             }
-            let bytes = hydrus_core::numbers::human_bytes;
+            let bytes = |size| crate::gui_format::bytes(formatting, size);
             let int = |n: u32| hydrus_core::numbers::human_int(u64::from(n));
             if let Some(n) = o.min_size.filter(|&n| n > 0) {
                 parts.push(format!("excludes < {}", bytes(n)));
@@ -554,12 +578,19 @@ impl Editor {
 
     /// The list's labels.
     pub fn labels(&self, name: &dyn Fn(&str) -> String) -> Vec<String> {
+        self.labels_with_format(name, &hydrus_store::settings::GuiFormatting::default())
+    }
+    pub fn labels_with_format(
+        &self,
+        name: &dyn Fn(&str) -> String,
+        formatting: &hydrus_store::settings::GuiFormatting,
+    ) -> Vec<String> {
         self.kinds
             .iter()
             .map(|&kind| {
                 let custom = self
                     .is_custom(kind)
-                    .then(|| summary(kind, &self.values, name));
+                    .then(|| summary_with_format(kind, &self.values, name, formatting));
                 tab_label(kind, custom.as_deref(), self.source(kind))
             })
             .collect()
