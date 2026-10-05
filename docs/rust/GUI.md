@@ -187,7 +187,14 @@ any column and selected as the reference's lists select, and warns when
 subscriptions are paused from the network menu. Its buttons delete the
 selected (asking "Remove all selected?"), duplicate them ("name (1)",
 with copies of their queries' file logs), merge those sharing a
-downloader (asking which is primary and its new name), separate one (in
+downloader (asking which is primary and its new name). Merge stages every
+group until all primary choices succeed: cancelling any primary leaves the
+list unchanged; cancelling a name keeps that primary's name and continues.
+Names are allocated after all absorbed owners go, with casefolded collisions
+against surviving original and newly chosen names. Overlapping query texts
+keep independent queue identities and both file and gallery histories on Apply,
+as recorded by `oracle/record_subscription_merge.py`; cancelling the list writes
+nothing. The dialog can also separate one (in
 half, into a subscription a query, named "base: query", or only some
 queries, ticked in a list, into one new subscription or one each), lowercase
 their queries' texts, deduplicate queries with the same text on the same
