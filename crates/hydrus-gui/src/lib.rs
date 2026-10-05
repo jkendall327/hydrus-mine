@@ -1282,9 +1282,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let active = binding_active.clone();
         move |page: Rc<RefCell<SearchPage>>| {
             if !active.get()
-                || main
-                    .upgrade()
-                    .is_none_or(|main| !main.window().is_visible())
+                || main.upgrade().is_none_or(|main| {
+                    !main.window().is_visible() || !main.get_question().is_empty()
+                })
             {
                 return;
             }
@@ -1320,9 +1320,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                             Rc::ptr_eq(&original, &current_page())
                                 && original.borrow().lock().is_none()
                         })
-                        && main
-                            .upgrade()
-                            .is_some_and(|window| window.window().is_visible())
+                        && main.upgrade().is_some_and(|window| {
+                            window.window().is_visible() && window.get_question().is_empty()
+                        })
                 }
             });
             let chosen: Rc<dyn Fn(Vec<hydrus_search::Predicate>)> = Rc::new({

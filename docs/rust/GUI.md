@@ -3004,7 +3004,7 @@ with bounded arrow navigation, Space and default Enter acceptance. Its amount
 stays within 0–1,048,576; selecting B/KB/MB/GB/TB changes the binary multiplier
 without converting the amount. Typed values and saved custom defaults retain
 the selected unit, including zero KB and unnormalised 1,024 B. Cancel leaves the
-search unchanged. Hidden owners refuse edits/acceptance; rebinding the main
+search unchanged. Hidden owners or a pending main question refuse edits/acceptance; rebinding the main
 window or accepting client exit cancels its owned predicate child. A declined
 exit leaves it live. `filesize_predicate.json` records actual Qt controls,
 30 database-query outcomes, numeric bounds, explicit-value reopening, keys and
