@@ -96,7 +96,8 @@ fn real_options_constructor_cancel_normalization_save_reopen_and_retained_cancel
             &pixels,
             1100,
             900,
-        );
+        )
+        .expect("save downloader timing options evidence");
         w.invoke_apply();
         assert_eq!(raw(&store.read(settings::get).unwrap()), case["saved"]);
         let reopened = options(&ui, &bound);
@@ -315,7 +316,8 @@ fn scheduler(watcher: bool) {
         &pixels,
         1100,
         700,
-    );
+    )
+    .expect("save downloader timing list evidence");
     // Current-page identity controls polling; offscreen pages keep their own deadline.
     let first_key = bound.pages.borrow().shown().key;
     ui.invoke_new_page();
