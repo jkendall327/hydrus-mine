@@ -33,10 +33,13 @@ impl<T: Copy + PartialEq> ListSelection<T> {
             .filter(|_| shift);
         match from {
             Some(from) => {
-                if !ctrl {
-                    self.selected.clear();
-                }
                 let (a, b) = (from.min(row), from.max(row));
+                if !ctrl {
+                    // Qt retains selection insertion order for survivors,
+                    // then appends newly selected range items (notably when
+                    // a range grows upwards from its already-selected anchor).
+                    self.selected.retain(|item| order[a..=b].contains(item));
+                }
                 for &o in &order[a..=b] {
                     if !self.selected.contains(&o) {
                         self.selected.push(o);
