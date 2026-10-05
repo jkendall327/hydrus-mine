@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "agent": "login-step-cookie-list",
+  "baseline_git_head": "167f58ab4",
+  "implementation_git_head": "6a02b97afd904ec7c3e46ea140138b55e210a898",
+  "implementation_commits": [
+    "6a02b97afd904ec7c3e46ea140138b55e210a898"
+  ],
+  "validation": {
+    "referenceRecording": "oracle/record_login_step_cookies.py executed the actual Qt EditLoginStepPanel and embedded StringMatchToStringMatchDictControl through the shared with-oracle lock on a fresh basic client. Final run 2026-10-05 04:32:40 UTC. Actual Add/Edit handlers and actual EditStringMatchPanel.GetValue were retained; only modal answers and delete confirmation were scripted. Reference sources unchanged; no external site contacted.",
+    "reference_assertions": "Embedded ancestry and box label, actual key/matching headers, Add/Edit/Delete controls, initial/default matcher tuples, sequential dialog titles, name/value cancellation, duplicate-looking independent matcher keys, sorted selected rows, declined/confirmed two-row deletion, full step serialization and unchanged original source serialization.",
+    "fixture_integrity": "Python syntax and nine-state fixture topology, title, selected-row and final-delete assertions passed. Recorder source ownership assertion passed in the actual Qt run.",
+    "cargo_fmt": "rustfmt --check passed on all four changed Rust files.",
+    "diff_check": "git diff --check passed.",
+    "slint_syntax": "Cached Slint source compiler passed without warnings; no Cargo build.",
+    "rust_tests": "Model/native regression sources authored; no local Cargo builds, Rust tests or mutation runs under the owner's instruction. Hosted CI execution pending.",
+    "rendered_artifacts": "Native regression will save login_step_embedded_cookies.png when hosted CI executes. Native rendered inspection remains pending.",
+    "canonical_status": "Proposed parent improvement only. No canonical inventory or completion ledger changed."
+  },
+  "claims": [
+    {
+      "id": "login-step",
+      "before": "missing",
+      "currentAssessmentBeforeChange": "partial",
+      "proposedStatus": "first_pass",
+      "changeKind": "parent_improvement",
+      "completionCredit": 0,
+      "exactBehavior": "The existing login step editor now embeds cookie matchers with the recorded key/matching columns and direct Add/Edit/Delete, row activation, Delete shortcut and independent extended selection. Add opens edit cookie name then edit match directly; Edit preloads the existing pair. Cancel at either stage preserves the complete original pair and its selection; successful completion sorts and selects the changed row, preserving examples and limits. Independent duplicate-looking matcher objects remain separate. Confirmed extended-selection deletion removes only selected rows; declining preserves rows and selection. All cookie changes stay in the step draft until Apply, and owner Cancel discards them, closes matcher descendants and prevents retired callbacks from modifying a reopened step. Existing script persistence and real loopback HTTP regression consume the edited embedded step cookie rule.",
+      "implementation_delta": "Replaced the owned cookie-list child route with a CookiesEditor inside StepEditor and direct native matcher routing. Existing shared script cookie-list code and login_script_window were left untouched. Adjacent cookie replay/consumer expectations now preserve matcher examples rather than constructing fixed matchers with reset examples, while retaining full serialized values and real HTTP assertions.",
+      "limits": [
+        "Hosted native execution and rendered inspection remain pending; proposed parent status requires root integration review after those checks.",
+        "login-step has original child login-step-content and is excluded from concrete leaf completion accounting. This change earns zero leaf credit and creates no new reference IDs or aliases.",
+        "Global script cookie-list topology remains a separately owned boundary. Existing shared matcher and parser limitations are unchanged."
+      ],
+      "source": [
+        "crates/hydrus-gui-model/src/login_workflows.rs:191",
+        "crates/hydrus-gui/src/login_step_window.rs:149",
+        "crates/hydrus-gui/src/login_step_window.rs:517",
+        "crates/hydrus-gui/ui/login_step.slint:76"
+      ],
+      "testAnchors": [
+        "crates/hydrus-gui-model/tests/model/login_workflows.rs:403",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:969",
+        "crates/hydrus-gui/tests/gui/login_workflows.rs:1208"
+      ],
+      "referenceRecording": {
+        "recorder": "oracle/record_login_step_cookies.py",
+        "fixture": "oracle/fixtures/login_step_cookies.json",
+        "referenceSources": [
+          "hydrus/client/gui/networking/ClientGUILogin.py:2111",
+          "hydrus/client/gui/ClientGUIStringControls.py:302",
+          "hydrus/client/gui/lists/ClientGUIListCtrl.py:1373"
+        ]
+      }
+    }
+  ],
+  "parent_status": "Original login-step parent improvement only; zero completion credit. Frozen before=missing is retained, and the already proposed login-step-content child receives no new claim. No canonical assessment, ledger or validated total changed."
+}
