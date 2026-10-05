@@ -77,6 +77,11 @@ macro_rules! settings {
             hydrus_store::settings::set($conn, &current)?;
         }
     };
+    (@save $conn:ident, $after:ident, $before:ident, thumbnail_preview_selection) => {
+        if $after.thumbnail_preview_selection != $before.thumbnail_preview_selection {
+            $after.thumbnail_preview_selection.save_changed($conn, &$before.thumbnail_preview_selection)?;
+        }
+    };
     (@save $conn:ident, $after:ident, $before:ident, windows) => {
         if $after.windows != $before.windows {
             let mut windows: WindowSettings = hydrus_store::settings::get($conn)?;
@@ -285,6 +290,7 @@ settings! {
     thumbnails: ThumbnailSettings,
     thumbnail_layout: ThumbnailLayout,
     thumbnail_navigation: hydrus_store::settings::ThumbnailNavigation,
+    thumbnail_preview_selection: hydrus_store::thumbnail_preview_selection::Preferences,
     thumbnail_ratings: ThumbnailRatingSettings,
     rating_context_sizes: hydrus_store::settings::RatingContextSizes,
     note_preferences: hydrus_store::settings::NotePreferences,
@@ -3787,9 +3793,41 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s, v| s.info_line.single_file_in_status_bar = v,
                         ),
                         check(
-                            "When shift-selecting, move the \"navigate from here\" position with it: ",
-                            |s| s.thumbnail_navigation.shift_moves_origin,
-                            |s, v| s.thumbnail_navigation.shift_moves_origin = v,
+                            "On ctrl-selection, focus thumbnails in the preview window: ",
+                            |s| s.thumbnail_preview_selection.ctrl_focus,
+                            |s, v| s.thumbnail_preview_selection.ctrl_focus = v,
+                        ),
+                        enabled(
+                            check(
+                                "  Only on files with no duration: ",
+                                |s| s.thumbnail_preview_selection.ctrl_only_static,
+                                |s, v| s.thumbnail_preview_selection.ctrl_only_static = v,
+                            ),
+                            |s| s.thumbnail_preview_selection.ctrl_focus,
+                        ),
+                        check(
+                            "On shift-selection, focus thumbnails in the preview window: ",
+                            |s| s.thumbnail_preview_selection.shift_focus,
+                            |s, v| s.thumbnail_preview_selection.shift_focus = v,
+                        ),
+                        enabled(
+                            check(
+                                "  Only on files with no duration: ",
+                                |s| s.thumbnail_preview_selection.shift_only_static,
+                                |s, v| s.thumbnail_preview_selection.shift_only_static = v,
+                            ),
+                            |s| s.thumbnail_preview_selection.shift_focus,
+                        ),
+                        enabled(
+                            check(
+                                "When shift-selecting, move the \"navigate from here\" position with it: ",
+                                |s| s.thumbnail_navigation.shift_moves_origin,
+                                |s, v| s.thumbnail_navigation.shift_moves_origin = v,
+                            ),
+                            |s| {
+                                !s.thumbnail_preview_selection.shift_focus
+                                    || s.thumbnail_preview_selection.shift_only_static
+                            },
                         ),
                         int(
                             "Do not scroll down on key navigation if thumbnail at least this % visible: ",

@@ -66,6 +66,7 @@ mod tag_filter_editor;
 mod tag_filter_favourites;
 mod thumbnail_cache;
 mod thumbnail_navigation;
+mod thumbnail_preview_selection;
 mod thumbnail_ratings;
 mod times_editor;
 mod urls_editor;

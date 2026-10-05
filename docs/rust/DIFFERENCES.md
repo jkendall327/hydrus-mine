@@ -324,7 +324,7 @@ search.
   manage tags dialogs' sorts (ours sort as the media viewer's list) and
   the namespace grouping list; on the ratings page, the example
   rating service's dropdown, the clickable examples, and the preview
-  window's and dialogs' sizes; and on the thumbnails page, fading, the blurhash fallback, focusing on ctrl- and shift-selection,
+  window's and dialogs' sizes; and on the thumbnails page, fading and the blurhash fallback,
   key navigation's scrolling, the scroll rate, the background image and
   the rendering tech). Options' tooltips aren't shown;
   a box's title is a heading over its options rather than a frame around
@@ -2658,3 +2658,19 @@ has no cached prior image to restore. This prevents pixels/statistics crossing p
 owners, but does not complete that original hide control. Broader sidebar/search,
 preview playback, hover/rating and structural Options parents remain Partial.
 No canonical inventory status or overnight completed ledger is edited here.
+
+
+The four thumbnail modifier-preview preferences now have typed legacy import,
+staged native Options controls and live Ctrl/Shift click and Shift-key consumers.
+Each duration-only child retains its value while disabled. The existing ghost
+navigation preference is disabled when Shift preview focus applies to every
+file, retaining its saved value. Eligibility uses the clicked media's duration:
+a singleton `Some(0)` has duration, while Qt's zero-sum collection has none;
+a collection's static preview representative does not bypass a timed member.
+Plain clicks and anchorless Shift fallback still focus normally. Rejected modifier
+targets retain the current preview, without reloading its pixels or restarting
+viewing time. The existing owned preview decode/statistics implementation remains
+the consumer; this adds no animation, fade, blurhash or renderer-family parity.
+Actual Qt recordings cover all sixteen Boolean policies and 192 selection steps,
+plus five private real-media duration shapes. Native rendering and Rust regressions
+are authored for hosted execution; no local Cargo or Rust tests were run.

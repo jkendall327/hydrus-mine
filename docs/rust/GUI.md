@@ -3228,6 +3228,18 @@ Key navigation uses the saved strict visibility threshold, Qt's reveal margin
 and the content-end clamp. Actual thumbnail wheel events use the saved rate,
 including ties-to-even rounding, zero and negative rates; malformed text retains
 the previous setting. The reference replay is `thumbnail_navigation.json`.
+The four independent Ctrl/Shift preview-focus checkboxes are also staged here.
+The no-duration child is enabled by its own parent and preserves its checked value
+while disabled. Shift focus on all files disables the existing ghost-navigation
+control without changing its saved value. Modifier additions and anchored ranges
+optionally focus their target, including Shift keyboard navigation. Ctrl removal
+clears only that item's current focus; plain clicks and anchorless Shift fallback
+focus normally. The duration restriction examines the clicked item (all members
+for a collection), keeping last hit and the range anchor independent from preview
+focus. The existing preview canvas supplies owned pixels and viewing intervals;
+accepted main-window close permanently retires these selection callbacks, while
+Cancel keeps them live. `thumbnail_preview_selection.json` records actual Qt
+checkbox dependencies, save/reopen, ranges, focus publications and duration shapes.
 The search sidebar’s sort cog appears for namespace and number-of-tags sorts.
 Its tag-service submenu groups local tags, repositories and all known tags;
 namespace sorts also offer display, multiple-media and single-media tag views.

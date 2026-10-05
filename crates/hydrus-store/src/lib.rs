@@ -56,6 +56,7 @@ pub mod tag_display_config;
 pub mod tag_editing;
 pub mod tag_migration;
 pub mod text;
+pub mod thumbnail_preview_selection;
 pub mod transfer;
 pub mod trash;
 pub mod urls;
