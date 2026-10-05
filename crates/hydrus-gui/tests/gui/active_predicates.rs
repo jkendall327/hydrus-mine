@@ -710,3 +710,57 @@ fn retained_or_system_child_does_not_keep_the_or_or_main_component_alive() {
     system.invoke_ok(0);
     system.invoke_cancel();
 }
+
+#[test]
+fn hidden_or_parent_reconciles_actual_system_and_nested_child_cancellation() {
+    let (_dir, store) = setup();
+    let _windows = headless::init();
+    let recording = hydrus_testkit::fixture_json("active_predicate_or.json");
+    let case = &recording["ors"][4];
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let context = FileSearchContext {
+        location: LocationContext::single(hydrus_core::ServiceKey::new(b"local files".to_vec())),
+        predicates: decoded(&case["before"]["predicates"]),
+        ..Default::default()
+    };
+    let bound = bind(
+        &ui,
+        Pages::single(SearchPage::restored(store, context, true, None, Vec::new())),
+    );
+    let child = active_or(&ui, &bound, &decoded(&case["selected"]), false);
+    child.invoke_edited("system:filesize".into());
+    child.invoke_enter(false);
+    assert!(child.get_blocked());
+    let system = bound
+        .search_or
+        .system
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    child.hide().unwrap();
+    system.invoke_cancel();
+    assert!(bound.search_or.system.borrow().is_none());
+    child.show().unwrap();
+    assert!(
+        !child.get_blocked(),
+        "system Cancel reconciles the still-owned hidden parent"
+    );
+    child.invoke_or_action(3);
+    let nested_slot = bound.search_or.child().unwrap();
+    let nested = nested_slot.borrow().as_ref().unwrap().clone_strong();
+    assert!(child.get_blocked());
+    child.hide().unwrap();
+    nested.invoke_cancel();
+    assert!(nested_slot.borrow().is_none());
+    child.show().unwrap();
+    assert!(
+        !child.get_blocked(),
+        "nested OR Cancel reconciles the still-owned hidden parent"
+    );
+    child.invoke_apply();
+    assert!(bound.search_or.borrow().is_none());
+    assert!(!ui.get_search_or_open());
+    ui.hide().unwrap();
+}
