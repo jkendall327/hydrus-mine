@@ -1724,9 +1724,9 @@ confirmation area for the reference's exact ordinary and notebook questions.
 The history-limit control and search-focus-on-switch preference reach the
 existing history menu and all five current text-input sidebars. Reference
 history menus additionally bold their newest entry; the native menu keeps its
-existing common item styling. Out-of-range values injected directly into the
-native options model are rejected while retaining the previous valid limit;
-both visible spinboxes constrain user input to 1–1000.
+existing common item styling. Out-of-range values supplied to the
+native options model are clamped to 1–1000, matching the reference spinboxes
+and keeping stored limits inside the visible bounds.
 
 Cursor autohide now acts on native cursor visibility through winit and retains
 the same Slint canvas cursor during redraws. Its owner uses the shared desktop
@@ -1736,12 +1736,8 @@ popup execution blocks timer dispatch until the menu returns; the actual show
 return starts a fresh wait so that elapsed menu time cannot hide the cursor
 immediately after closing. Native hover and
 volume controls remain eligible for the ordinary pointer instead of hiding it
-while their popup content is being used. Backend-specific MPV widget dragging
-and cursor anchoring remain separate gaps.
+while their popup content is being used. Backend-specific MPV widget dragging remains a separate gap.
 
-existing common item styling. Out-of-range values supplied to the
-native options model are clamped to 1–1000 when applied, matching the reference
-spinbox's clamping and keeping the stored limit inside the visible bounds.
 
 The parser-link chooser follows the recorded Qt order, current selection,
 separator no-op, and clear confirmation. Its native detached window has a
