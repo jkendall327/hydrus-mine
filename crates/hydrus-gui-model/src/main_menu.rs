@@ -262,6 +262,8 @@ pub enum Command {
     ClearThumbnailCache,
     /// Publish two real cards and grow their text/title at the recorded cadence.
     DebugLongTextPopup,
+    /// Save a private current snapshot and reconstruct fresh GUI pages asynchronously.
+    DebugReloadSession,
     /// Ordinary network-engine GET and captured response save/copy choices.
     DebugFetchUrl,
     /// Override the current owned live idle decision until toggled or retired.
@@ -1280,6 +1282,10 @@ fn help_menu(facts: &Facts) -> Entry {
                     menu(
                         "gui actions",
                         vec![
+                            item(
+                                "close and reload current gui session",
+                                Command::DebugReloadSession,
+                            ),
                             item("make a long text popup", Command::DebugLongTextPopup),
                             item(
                                 "make a new page in five seconds",

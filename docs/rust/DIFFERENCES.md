@@ -3352,3 +3352,14 @@ cancellable waiting job before physical admission; Qt first publishes after
 admitting its batch. Broader backend notification/error presentation and
 scheduler policy remain unclaimed. Rust/native execution and exact authored PNG
 inspection are pending; no canonical ledger, parent or scheduling/search claim.
+
+The debug current-session reload uses a unique private immutable snapshot row,
+not the reference's fixed user-visible temporary named session; concurrent reloads
+cannot overwrite one another's captured tree. Saving/loading runs off the UI
+thread and temporary rows are removed even when delivery is retired. An in-flight
+Store transaction completes and cleans its slot after retirement, but its reply
+cannot change pages. Snapshot capture and final reconstruction use the existing
+synchronous Store boundary on the UI thread; broader asynchronous session/large
+library optimizations remain outside this one debug action. Qt's observed first
+page/first-child and empty-thumbnail-selection reset is retained. The neighboring
+manual save-last-session action and wider debug GUI/style families remain unclaimed.

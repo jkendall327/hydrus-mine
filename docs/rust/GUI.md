@@ -4128,3 +4128,15 @@ invalid URL reports its error without suppressing other useful URLs.
 This current-work leaf remains Partial with zero completion credit: counts refresh
 only between native batches, independent-process Clear waits for its physical
 pass, and the waiting-for-lease popup is published before admission.
+
+Help > Debug > gui actions > close and reload current gui session saves an
+immutable ordered page/media/importer snapshot through the Store worker, then
+forcibly closes the current pages and constructs fresh page and queue identities.
+It asks no close question. As recorded from Qt, the first root page and each
+fresh notebook's first child are selected, and thumbnail selection clears. Old
+pages remain available through Undo with their original importer queues paused.
+Already admitted reloads complete while Main is hidden; rebind, accepted exit,
+Main destruction or final binding-clone release reject late delivery. The private
+saved reload slot is removed before reconstruction. The real Qt recorder is
+`oracle/record_debug_session_reload.py`; Store isolation and native reconstruction,
+importer, hidden/retired ownership replays are authored for hosted execution.

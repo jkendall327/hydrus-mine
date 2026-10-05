@@ -21,6 +21,7 @@ type ShownLines = Rc<RefCell<Vec<(Vec<MenuLine>, ModelRc<MenuLine>)>>>;
 /// What the menu bar works with.
 pub(crate) struct Hooks {
     pub debug_long_popup: crate::debug_long_popup::Control,
+    pub debug_session_reload: crate::debug_session_reload::Control,
     pub debug_fetch: crate::debug_fetch::Control,
     pub force_idle: crate::force_idle::Control,
     pub quick_export_directory: crate::quick_export_directory::Control,
@@ -688,6 +689,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::AppendSession(name) => change_pages(&|pages| pages.append_session(&name)),
         // asked first, then (any page objecting) asked again, as the
         // reference's `LoadGUISession` asks
+        Command::DebugReloadSession => hooks.debug_session_reload.start(),
         Command::ClearAndLoadSession(name) => {
             let pages = hooks.pages.clone();
             let change_pages = hooks.change_pages.clone();
