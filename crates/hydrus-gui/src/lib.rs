@@ -2437,7 +2437,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let Ok((pauses, live)) = read else { return };
             let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
             let (bytes, per_second) = session.borrow_mut().read(live, now);
-            window.set_status_network(status::bandwidth_status(bytes, per_second, &pauses).into());
+            window.set_status_network(
+                status::bandwidth_status_with_format(
+                    bytes,
+                    per_second,
+                    &pauses,
+                    &hydrus_gui_model::gui_format::preferences(&store),
+                )
+                .into(),
+            );
         }
     };
     network_shown();

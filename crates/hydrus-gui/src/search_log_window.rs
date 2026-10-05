@@ -21,10 +21,11 @@ use crate::file_log_window::columns;
 use crate::list_selection::ListSelection;
 use crate::main_menu::{self, PopupNode};
 use crate::popup_menu::{Chosen, Popup};
-use crate::search_log::{Action, LogFacts, delete_question, log_menu, row, row_menu};
+use crate::search_log::{Action, LogFacts, delete_question, log_menu, row_menu, row_with_format};
 use crate::{FileLogWindow, TableRow};
 
 struct State {
+    store: Arc<Store>,
     queue: i64,
     /// "search", or a watcher's "check".
     kind: &'static str,
@@ -97,12 +98,16 @@ fn read(store: &Store, state: &mut State) {
 
 fn show(window: &FileLogWindow, state: &State) {
     let now = now();
+    let formatting = hydrus_gui_model::gui_format::preferences(&state.store);
     let rows: Vec<TableRow> = state
         .seeds
         .iter()
         .enumerate()
         .map(|(i, seed)| {
-            let cells: Vec<SharedString> = row(seed, i, now).into_iter().map(Into::into).collect();
+            let cells: Vec<SharedString> = row_with_format(seed, i, now, &formatting)
+                .into_iter()
+                .map(Into::into)
+                .collect();
             TableRow {
                 cells: ModelRc::new(VecModel::from(cells)),
                 selected: state.selection.is_selected(seed.id),
@@ -289,6 +294,7 @@ pub(crate) fn act_on_queue(
     exchange: &crate::file_log_window::OpenFiles,
 ) {
     let mut state = State {
+        store: store.clone(),
         queue,
         kind: "search",
         read_only: false,
@@ -333,6 +339,7 @@ pub(crate) fn open(
     let alive = Rc::new(Cell::new(true));
     window.set_window_title(if watcher { "check log" } else { "search log" }.into());
     let state = Rc::new(RefCell::new(State {
+        store: store.clone(),
         queue,
         kind: if watcher { "check" } else { "search" },
         read_only: watcher || kind == Some(QueueKind::Subscription),

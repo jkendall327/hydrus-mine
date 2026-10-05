@@ -530,6 +530,16 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         gui.confirm_exit = value;
     }
     insert_setting(&mut input, &gui)?;
+    let mut formatting = crate::settings::GuiFormatting::default();
+    if let Some(options) = &options {
+        if let Some(&value) = options.booleans.get("always_show_iso_time") {
+            formatting.iso = value;
+        }
+        if let Some(&value) = options.integers.get("human_bytes_sig_figs") {
+            formatting.figures = u8::try_from(value.clamp(1, 6)).unwrap_or(3);
+        }
+    }
+    insert_setting(&mut input, &formatting)?;
     let mut preferences = crate::settings::OptionsPreferences::default();
     if let Some(options) = &options {
         if let Some(&value) = options.booleans.get("remember_options_window_panel") {

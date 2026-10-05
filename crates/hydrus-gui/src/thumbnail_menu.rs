@@ -469,7 +469,10 @@ pub fn info_menu(
     let mut label = format!(
         "{}, {}",
         crate::status::filetype_summary(&facts, items),
-        crate::status::total_size(&facts)
+        crate::status::total_size_with_format(
+            &facts,
+            &hydrus_gui_model::gui_format::preferences(store)
+        )
     );
     let mut entries = Vec::new();
     let snapshot = store.snapshot();
@@ -487,12 +490,13 @@ pub fn info_menu(
             store.read(|c| hydrus_store::media::load(c, &snapshot.services, None, &[file]))
             && let Some(media) = batch.results.pop()
         {
-            entries.extend(rows(crate::info_lines::info_lines(
+            entries.extend(rows(crate::info_lines::info_lines_with_format(
                 &media,
                 &snapshot.services,
                 settings,
                 now_ms,
                 false,
+                &hydrus_gui_model::gui_format::preferences(store),
             )));
         }
     }
