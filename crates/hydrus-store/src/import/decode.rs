@@ -333,10 +333,16 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     insert_setting(&mut input, &suggestions)?;
     let mut related = crate::related_tags::Settings::default();
     if let Some(options) = &options {
-        if let Some(rows) = options.related_tag_weights(false)? {
+        if let Some(rows) = options
+            .related_tag_weights(false)
+            .map_err(|e| StoreError::Invalid(format!("related tag search weights: {e}")))?
+        {
             related.weights.search = rows;
         }
-        if let Some(rows) = options.related_tag_weights(true)? {
+        if let Some(rows) = options
+            .related_tag_weights(true)
+            .map_err(|e| StoreError::Invalid(format!("related tag result weights: {e}")))?
+        {
             related.weights.result = rows;
         }
         if let Some(enabled) = options.booleans.get("show_related_tags") {
