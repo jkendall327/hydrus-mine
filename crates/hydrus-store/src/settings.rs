@@ -1162,6 +1162,27 @@ impl Setting for RatingContextSizes {
     const KEY: &'static str = "rating_context_sizes";
 }
 
+/// The ordinary window-position rescue preferences from Options > GUI.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct WindowRescueSettings {
+    pub disabled: bool,
+    pub add_padding: bool,
+    pub padding: u8,
+}
+impl Default for WindowRescueSettings {
+    fn default() -> Self {
+        Self {
+            disabled: false,
+            add_padding: true,
+            padding: 40,
+        }
+    }
+}
+impl Setting for WindowRescueSettings {
+    const KEY: &'static str = "window_rescue";
+}
+
 /// How a file's info lines read.
 impl Setting for hydrus_core::media_viewer::InfoLineSettings {
     const KEY: &'static str = "info_lines";

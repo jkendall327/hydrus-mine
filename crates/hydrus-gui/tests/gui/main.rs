@@ -153,3 +153,5 @@ mod file_history;
 
 mod autocomplete_tabs;
 mod related_weight_table;
+
+mod window_rescue;

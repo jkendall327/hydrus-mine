@@ -133,3 +133,5 @@ mod related_weights;
 
 mod autocomplete_tabs;
 mod external_calls;
+
+mod window_rescue;

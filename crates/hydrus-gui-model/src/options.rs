@@ -216,6 +216,7 @@ settings! {
     trash: TrashSettings,
     url_classes: UrlClassSettings,
     windows: WindowSettings,
+    window_rescue: hydrus_store::settings::WindowRescueSettings,
     viewer_canvas: ViewerCanvasSettings,
     viewer_background: ViewerBackgroundSettings,
     viewer_hovers: ViewerHoverSettings,
@@ -2089,6 +2090,22 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "frame locations",
                     vec![
+                        check(
+                            "BUGFIX: Disable off-screen window rescue: ",
+                            |s| s.window_rescue.disabled,
+                            |s, v| s.window_rescue.disabled = v,
+                        ),
+                        check(
+                            "When rescuing, add top-left safety padding:",
+                            |s| s.window_rescue.add_padding,
+                            |s, v| s.window_rescue.add_padding = v,
+                        ),
+                        int(
+                            "DEBUG: top-left padding to use (px): ",
+                            (0, 100),
+                            |s| i64::from(s.window_rescue.padding),
+                            |s, v| s.window_rescue.padding = u8::try_from(v).unwrap_or_default(),
+                        ),
                         check(
                             "Save media viewer window size and position on close: ",
                             |s| s.windows.save_media_viewer_on_close,

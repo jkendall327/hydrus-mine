@@ -168,10 +168,7 @@ impl Client {
         // where hydrus had it, and how big (maximised, by its default); kept
         // as it closes, as the reference keeps it
         let store = bound.pages.borrow().store().clone();
-        hydrus_gui::windows::place(
-            window.window(),
-            &hydrus_gui::windows::settings(&store).main_gui,
-        );
+        hydrus_gui::windows::place_named(window.window(), &store, "main_gui");
         window.show()?;
         Ok(Self {
             _window: window,
