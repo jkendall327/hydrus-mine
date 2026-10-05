@@ -313,3 +313,5 @@ were 400 ms and five pixels; recording those values does not prove a Winit
 fallback matches native Qt double-click or angleDelta semantics. Mouse remains
 Partial/0. Model/native persistence, Cancel/stale ownership and main/viewer
 consumer assertions are authored for hosted CI, without local Rust execution.
+
+`record_popup_question_layout.py` drives actual private Qt PopupMessage instances at fixed32, variable16 and fixed16 character caps, with a long question and clipboard/callable/cancel controls. It records card/control rectangles, the question label's actual non-wrapped policy and real Cancel results; the variable16 PNG is captured before Cancel. The serialized offscreen run completed cleanly 2026-10-05 12:54:13–12:54:16 UTC on a copied basic fixture (private API listener disabled). No reference handlers or geometry are replaced. Native full-button bounds/render/pointer regressions are authored for hosted execution, with no local Rust run.
