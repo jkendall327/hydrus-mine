@@ -78,6 +78,11 @@ impl FileStorage {
         Ok(storage)
     }
 
+    /// Hex characters in a prefix folder's name (2 or 3).
+    pub fn granularity(&self) -> usize {
+        self.granularity
+    }
+
     pub fn locations(&self) -> &[StorageLocation] {
         &self.locations
     }

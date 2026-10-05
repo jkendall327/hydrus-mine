@@ -59,6 +59,7 @@ impl std::fmt::Debug for Slots {
             .field("merge_options", &self.merge_options.borrow().is_some())
             .field("locations", &self.locations.borrow().is_some())
             .field("preview_filter", &self.preview_filter.borrow().is_some())
+            .field("open_files", &self.open_files.borrow().is_some())
             .finish()
     }
 }

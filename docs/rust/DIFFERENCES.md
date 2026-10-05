@@ -3510,3 +3510,12 @@ manual save-last-session action and wider debug GUI/style families remain unclai
   database directory (an imported client's); the reference requires its
   default `client_files`.
 
+## Database > locations
+
+- "manage granularity" (migrating between 2 and 3 hex characters, and
+  offline folders) isn't there yet; the granularity is only shown.
+- The prefix folder moved first is the first in order, not a random one.
+- The list selects one location; it sorts by location only.
+- The rebalance runs from a non-modal popup and the window stays open
+  (the reference closes the panel and shows a modal progress dialog).
+

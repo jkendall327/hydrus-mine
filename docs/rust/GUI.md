@@ -4342,3 +4342,22 @@ several locations shows "database is stored in multiple locations", whose
 note explains. `tests/model/database_backup.rs` and hydrus-store's
 `backup` tests cover the menu, texts, mirror, backup and restore.
 
+## Database > locations
+
+Database > locations opens the reference's "database locations" window: the
+advanced-use warning, the install, database and media/thumbnail size lines,
+and the media locations list (location, beneath db dir?, disk free space,
+current usage, weight, max size, ideal usage, with "DOES NOT EXIST" for a
+missing one). Locations can be added, weighted up or down, limited ("edit max
+size", or "no limit"), and removed (asking as the reference does; one still
+holding folders keeps weight 0 until emptied). A thumbnail location override
+can be set and cleared. The granularity line and "files need to be moved"
+show, and "move files now" asks for a run time (10/30 minutes, an hour, a
+custom number of minutes, or indefinitely), then moves prefix folders on a
+worker with a cancellable "rebalancing files" popup, as the reference's
+rebalancer chooses them (over-limit and removed locations first, then
+overweight ones to the most-free starving ones; thumbnails then follow their
+files or go to the override). hydrus-store's `storage_locations` tests cover
+the shares and a full rebalance; `tests/model/database_locations.rs` the
+rows and buttons.
+

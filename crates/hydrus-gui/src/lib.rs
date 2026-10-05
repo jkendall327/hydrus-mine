@@ -35,6 +35,7 @@ pub mod clipboard_monitor;
 pub mod command_palette_window;
 pub mod daemon;
 mod database_backup_window;
+mod database_locations_window;
 mod debug_actions;
 pub mod debug_fetch;
 pub mod debug_long_popup;
@@ -2883,6 +2884,19 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         archive_repair_window::open(pages.borrow().store(), &slot, changed, valid)
                     {
                         eprintln!("could not repair archive times: {error}");
+                    }
+                })
+            },
+            locations: {
+                let slots: database_locations_window::Slots = Rc::default();
+                let store = pages.borrow().store().clone();
+                let ask: menu_bar::Ask = {
+                    let ask = ask.clone();
+                    Rc::new(move |question, then| ask(Asked::Then(question, then)))
+                };
+                Rc::new(move || {
+                    if let Err(e) = database_locations_window::open(&store, ask.clone(), &slots) {
+                        eprintln!("could not open the locations: {e}");
                     }
                 })
             },

@@ -17,6 +17,7 @@ pub mod checker_options;
 pub mod clipboard_urls;
 pub mod collect;
 pub mod database_backup;
+pub mod database_locations;
 pub mod database_maintenance;
 pub mod datetime_editor;
 pub mod debug_actions;

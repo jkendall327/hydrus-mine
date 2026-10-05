@@ -13,6 +13,7 @@ mod checker_options;
 mod clipboard_urls;
 mod content_undo;
 mod database_backup;
+mod database_locations;
 mod database_maintenance;
 mod datetime_editor;
 mod debug_actions;

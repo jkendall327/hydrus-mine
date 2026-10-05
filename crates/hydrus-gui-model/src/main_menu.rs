@@ -287,6 +287,8 @@ pub enum Command {
     /// Tags > sync's idle (`true`) or normal time switch.
     TagDisplaySync(bool),
     TagDisplaySyncNow,
+    /// Database > locations.
+    Locations,
     /// A Database > backup entry.
     Backup(crate::database_backup::Action),
     /// Database > db maintenance's deferred delete idle (`true`) or normal
@@ -1013,7 +1015,7 @@ fn database_menu(facts: &Facts) -> Entry {
         vec![
             menu("backup", backup_entries(facts)),
             SEP,
-            todo(dots("locations")),
+            item(dots("locations"), Command::Locations),
             SEP,
             item("how boned am I?", Command::HowBoned),
             item("view file history", Command::FileHistory),

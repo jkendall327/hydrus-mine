@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "agent": "database-locations",
+  "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
+  "proposed_completed_count": 4,
+  "claims": [
+    {
+      "id": "audit-media-database-locations-paths",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database > locations: the database components lines and media locations list with free space, current/ideal usage (STATICGetIdealWeights), weight and max size; add location, increase/decrease weight, set max size (no limit), remove location with the reference's questions, thumbnail location override set/clear, and move files now with run-time choices, moving prefix folders by the reference's rebalance rules in a cancellable popup.",
+      "source": [
+        "crates/hydrus-store/src/storage_locations.rs",
+        "crates/hydrus-gui-model/src/database_locations.rs",
+        "crates/hydrus-gui/src/database_locations_window.rs",
+        "crates/hydrus-gui/ui/database_locations.slint"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/storage_locations.rs::tests",
+        "crates/hydrus-gui-model/tests/model/database_locations.rs"
+      ],
+      "limits": [
+        "Granularity migration not implemented; deterministic first prefix instead of random; single-column sort."
+      ]
+    },
+    {
+      "id": "audit-media-database-locations-max-size",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database > locations: the database components lines and media locations list with free space, current/ideal usage (STATICGetIdealWeights), weight and max size; add location, increase/decrease weight, set max size (no limit), remove location with the reference's questions, thumbnail location override set/clear, and move files now with run-time choices, moving prefix folders by the reference's rebalance rules in a cancellable popup.",
+      "source": [
+        "crates/hydrus-store/src/storage_locations.rs",
+        "crates/hydrus-gui-model/src/database_locations.rs",
+        "crates/hydrus-gui/src/database_locations_window.rs",
+        "crates/hydrus-gui/ui/database_locations.slint"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/storage_locations.rs::tests",
+        "crates/hydrus-gui-model/tests/model/database_locations.rs"
+      ],
+      "limits": [
+        "Granularity migration not implemented; deterministic first prefix instead of random; single-column sort."
+      ]
+    },
+    {
+      "id": "audit-media-database-locations-rebalance",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database > locations: the database components lines and media locations list with free space, current/ideal usage (STATICGetIdealWeights), weight and max size; add location, increase/decrease weight, set max size (no limit), remove location with the reference's questions, thumbnail location override set/clear, and move files now with run-time choices, moving prefix folders by the reference's rebalance rules in a cancellable popup.",
+      "source": [
+        "crates/hydrus-store/src/storage_locations.rs",
+        "crates/hydrus-gui-model/src/database_locations.rs",
+        "crates/hydrus-gui/src/database_locations_window.rs",
+        "crates/hydrus-gui/ui/database_locations.slint"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/storage_locations.rs::tests",
+        "crates/hydrus-gui-model/tests/model/database_locations.rs"
+      ],
+      "limits": [
+        "Granularity migration not implemented; deterministic first prefix instead of random; single-column sort."
+      ]
+    },
+    {
+      "id": "audit-media-database-locations-thumbnails",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "countAsCompletedLeaf": true,
+      "behavior": "Database > locations: the database components lines and media locations list with free space, current/ideal usage (STATICGetIdealWeights), weight and max size; add location, increase/decrease weight, set max size (no limit), remove location with the reference's questions, thumbnail location override set/clear, and move files now with run-time choices, moving prefix folders by the reference's rebalance rules in a cancellable popup.",
+      "source": [
+        "crates/hydrus-store/src/storage_locations.rs",
+        "crates/hydrus-gui-model/src/database_locations.rs",
+        "crates/hydrus-gui/src/database_locations_window.rs",
+        "crates/hydrus-gui/ui/database_locations.slint"
+      ],
+      "tests": [
+        "crates/hydrus-store/src/storage_locations.rs::tests",
+        "crates/hydrus-gui-model/tests/model/database_locations.rs"
+      ],
+      "limits": [
+        "Granularity migration not implemented; deterministic first prefix instead of random; single-column sort."
+      ]
+    }
+  ]
+}

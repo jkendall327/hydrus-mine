@@ -89,6 +89,8 @@ pub(crate) struct Hooks {
     pub debug: Rc<dyn Fn(hydrus_gui_model::debug_actions::Action)>,
     /// Run a Database > backup entry.
     pub backup: Rc<dyn Fn(hydrus_gui_model::database_backup::Action)>,
+    /// Open Database > locations.
+    pub locations: Rc<dyn Fn()>,
     pub file_history: Rc<dyn Fn()>,
     pub file_maintenance: Rc<dyn Fn()>,
     /// Toggle watcher or other recognised clipboard URL imports.
@@ -779,6 +781,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::ClearThumbnailCache => (hooks.clear_thumbnail_cache)(),
         Command::Debug(action) => (hooks.debug)(action),
         Command::Backup(action) => (hooks.backup)(action),
+        Command::Locations => (hooks.locations)(),
         Command::DebugFetchUrl => hooks.debug_fetch.open(),
         Command::DebugLongTextPopup => hooks.debug_long_popup.start(),
         Command::DebugForceIdleMode => {

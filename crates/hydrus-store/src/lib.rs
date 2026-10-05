@@ -61,6 +61,7 @@ pub mod settings;
 pub mod similar;
 pub mod stats;
 pub mod storage;
+pub mod storage_locations;
 pub mod store;
 pub mod string_conversion;
 pub mod subscription_quality;
