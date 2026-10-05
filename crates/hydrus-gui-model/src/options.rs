@@ -256,6 +256,7 @@ macro_rules! settings {
 }
 
 settings! {
+    preview_zoom: hydrus_store::preview_zoom::Settings => hydrus_store::preview_zoom::load,
     gui_colours: hydrus_store::gui_colours::Settings => hydrus_store::gui_colours::load,
     shortcuts: hydrus_core::shortcuts::Settings,
     external_calls: hydrus_core::external_calls::Manager,
@@ -2911,6 +2912,17 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                     .unwrap_or(0)
                             },
                             |s, i| s.media_viewer.default_zoom_type = ZOOM_TYPE_ORDER[i],
+                        ),
+                        choice(
+                            "Preview Viewer default zoom:",
+                            ZOOM_TYPES,
+                            |s| {
+                                ZOOM_TYPE_ORDER
+                                    .iter()
+                                    .position(|t| *t == s.preview_zoom.default_zoom)
+                                    .unwrap_or(0)
+                            },
+                            |s, i| s.preview_zoom.default_zoom = ZOOM_TYPE_ORDER[i],
                         ),
                         check(
                             "Re-center media on window resize:",

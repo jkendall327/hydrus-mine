@@ -3663,6 +3663,8 @@ Saved roles reach the existing thumbnail grid, autocomplete editor/results, acti
 
 The real Qt fixture `gui_coloursets.json` records all 26 RGB values, staged/Cancel/reopen/serialization, actual QColorDialog acceptance/rejection, clipboard parsing, four Help cases and thirteen real backend colour consumers. Native/model regressions additionally cover field merges, retained legacy fallback, hidden/rebound owners, physical deletion/restoration and role painting. Source-only checks are complete; hosted Rust/renderer checks and exact-source PNG review remain required.
 
+Media Playback > zoom and position now stages the separate “Preview Viewer default zoom:” choice: default for filetype, 100%, canvas fit, fill horizontally, fill vertically and canvas fill. Apply saves only the changed preview policy; Cancel and retired callbacks preserve it. New imports and retained legacy stores keep the preview override, with native settings taking precedence. Accepted still/poster previews use their real pane geometry and device pixel ratio, the file type’s preview scale rules and centered/clipped bounds. Saving alone leaves the current canvas alone; the next accepted media or actual resize reads the saved default. Cache/ICC replacements keep accepted geometry and viewing intervals. Full viewer zoom policy remains independent. The actual Qt controls and 48 MediaContainer geometries are recorded in `preview_default_zoom.json`; authored model/native persistence, admission and rendered geometry regressions await hosted CI.
+
 Thumbnail appearance now stages the reference fade, blurhash-recovery, renderer
 choice and background-file controls. File browsing uses the currently typed
 draft, preserves it on picker Cancel, and changes storage only on Apply. Blank

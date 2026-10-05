@@ -37,6 +37,7 @@ pub mod pending;
 pub mod popup_actions;
 pub mod popup_width;
 pub mod popups;
+pub mod preview_zoom;
 pub mod queues;
 pub mod regex_favourites;
 pub mod related_tags;

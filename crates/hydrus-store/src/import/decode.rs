@@ -805,6 +805,11 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         crate::gui_colours::Settings::from_legacy,
     );
     insert_setting(&mut input, &gui_colours)?;
+    let preview_zoom = options.as_ref().map_or_else(
+        crate::preview_zoom::Settings::default,
+        crate::preview_zoom::Settings::from_legacy,
+    );
+    insert_setting(&mut input, &preview_zoom)?;
 
     let mut note_preferences = crate::settings::NotePreferences::default();
     if let Some(options) = &options {

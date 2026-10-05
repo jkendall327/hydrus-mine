@@ -124,6 +124,11 @@ struct Frame {
     bytes: u64,
     touched: u64,
 }
+#[derive(Clone, Copy)]
+struct Projection {
+    viewport: (u32, u32, u32),
+    rect: (i32, i32, i32, i32),
+}
 struct Canvas {
     owner: Weak<RefCell<crate::SearchPage>>,
     tracker: RefCell<Tracker>,
@@ -135,6 +140,7 @@ struct Canvas {
     failed: Cell<bool>,
     requested_started_ms: Cell<Option<i64>>,
     frame: RefCell<Option<Frame>>,
+    projection: RefCell<Option<Projection>>,
     blocked: Cell<Option<Target>>,
     splitter_hidden: Cell<bool>,
     pending: RefCell<Option<Pending>>,
@@ -154,6 +160,7 @@ impl Canvas {
         self.failed.set(false);
         self.requested_started_ms.set(None);
         self.frame.borrow_mut().take();
+        self.projection.borrow_mut().take();
         self.track(None, now_ms);
     }
     fn close(&self, now_ms: i64) {
@@ -187,6 +194,8 @@ impl State {
         window.set_preview_media(slint::Image::default());
         window.set_preview_has_media(false);
         window.set_preview_loading(false);
+        window.set_preview_media_width(0.0);
+        window.set_preview_media_height(0.0);
     }
     fn trim_frames(&self) {
         let current = self.current.borrow().clone();
@@ -227,9 +236,56 @@ impl State {
             frame.touched = touched;
             window.set_preview_media(frame.image.clone());
             window.set_preview_has_media(true);
+            let viewport = (
+                window.get_sidebar_actual_width().round() as u32,
+                window.get_preview_actual_height().round() as u32,
+                window.window().scale_factor().to_bits(),
+            );
+            // Options alone does not reset an accepted canvas. New accepted
+            // media or real resize reads the saved preview default, as Qt does.
+            // Hidden snapshots and ICC/raster-cache replacements keep geometry.
+            if window.window().is_visible()
+                && !window.get_preview_splitter_hidden()
+                && viewport.0 > 0
+                && viewport.1 > 0
+                && canvas
+                    .projection
+                    .borrow()
+                    .as_ref()
+                    .is_none_or(|p| p.viewport != viewport)
+                && let Some(file) = canvas.accepted.get()
+                && let Some((mime, resolution)) = crate::viewer::shape(&self.store, file)
+            {
+                let settings = self
+                    .store
+                    .read(hydrus_store::settings::get)
+                    .unwrap_or_default();
+                let policy = self
+                    .store
+                    .read(hydrus_store::preview_zoom::load)
+                    .unwrap_or_default();
+                let rect = hydrus_gui_model::preview_zoom::rect(
+                    &settings,
+                    policy.default_zoom,
+                    mime,
+                    resolution,
+                    (viewport.0, viewport.1),
+                    f64::from(f32::from_bits(viewport.2)),
+                );
+                *canvas.projection.borrow_mut() = Some(Projection { viewport, rect });
+            }
+            if let Some(projection) = *canvas.projection.borrow() {
+                let (x, y, width, height) = projection.rect;
+                window.set_preview_media_x(x as f32);
+                window.set_preview_media_y(y as f32);
+                window.set_preview_media_width(width as f32);
+                window.set_preview_media_height(height as f32);
+            }
         } else {
             window.set_preview_media(slint::Image::default());
             window.set_preview_has_media(false);
+            window.set_preview_media_width(0.0);
+            window.set_preview_media_height(0.0);
         }
         window.set_preview_loading(canvas.pending.borrow().is_some());
         self.trim_frames();
@@ -450,6 +506,7 @@ impl State {
                         failed: Cell::new(false),
                         requested_started_ms: Cell::new(None),
                         frame: RefCell::new(None),
+                        projection: RefCell::new(None),
                         blocked: Cell::new(None),
                         splitter_hidden: Cell::new(window.get_preview_splitter_hidden()),
                         pending: RefCell::new(None),
