@@ -3866,3 +3866,5 @@ finite scope, including real Enter Text blank/whitespace Apply and Cancel
 handlers with their “apply”/“cancel” buttons. Hosted Rust execution and native PNG review remain pending.
 
 Popup cards now measure their body at the resolved card width before the outer stack allocates their height. The narrow long-question regression checks all five actual action-button bounds, the rendered lower stop border and a pointer delivered near that lower edge; the fixed-width and width-cap checks remain. This is a layout repair with no new coverage claim. Native execution is pending hosted CI.
+
+Help → Debug → GUI actions now offers “make a popup in five seconds”. Each activation queues the exact reference message without publishing early; overlapping activations keep separate deadlines and independent dismissible jobs. Existing delayed work progresses while Main is hidden, while new hidden-window launches are refused. The existing debug producer owns the timer and permanently cancels pending work on accepted exit, rebind and owner destruction; Exit Cancel preserves it. Authored native deadline/Store/toaster/ownership regressions await hosted CI.

@@ -261,6 +261,8 @@ pub enum Command {
     ClearThumbnailCache,
     /// Publish two real cards and grow their text/title at the recorded cadence.
     DebugLongTextPopup,
+    /// Publish the actual delayed message after five seconds.
+    DebugDelayedTextPopup,
     CullViewingStatistics,
     FileHistory,
     /// Forget a repository's pending content, asking first.
@@ -1253,7 +1255,13 @@ fn help_menu(facts: &Facts) -> Entry {
                 vec![
                     menu(
                         "gui actions",
-                        vec![item("make a long text popup", Command::DebugLongTextPopup)],
+                        vec![
+                            item("make a long text popup", Command::DebugLongTextPopup),
+                            item(
+                                "make a popup in five seconds",
+                                Command::DebugDelayedTextPopup,
+                            ),
+                        ],
                     ),
                     menu(
                         "memory actions",

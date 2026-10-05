@@ -1,4 +1,4 @@
-//! The real Help > Debug long-text producer, owned by one main-window binding.
+//! Real Help > Debug popup producers, owned by one main-window binding.
 use std::{
     cell::{Cell, RefCell},
     collections::BTreeSet,
@@ -11,6 +11,9 @@ use hydrus_store::{Store, popups};
 use slint::ComponentHandle as _;
 
 use crate::MainWindow;
+
+const DELAYED_MESSAGE: &str = "This is a delayed popup message.";
+const DELAY: Duration = Duration::from_secs(5);
 
 const WORDS: [&str; 5] = ["test", "a", "longish", "statictext", "m8"];
 type Clock = Rc<dyn Fn() -> Duration>;
@@ -32,6 +35,7 @@ struct State {
     clock: RefCell<Clock>,
     word: RefCell<Word>,
     pending: RefCell<Vec<Update>>,
+    delayed: RefCell<Vec<Duration>>,
     published: RefCell<Rc<dyn Fn()>>,
 }
 impl State {
@@ -42,8 +46,41 @@ impl State {
         self.active.set(false);
         self.timer.stop();
         self.pending.borrow_mut().clear();
+        self.delayed.borrow_mut().clear();
     }
-    fn tick(&self) {
+    // One weak single-shot timer follows the earliest owned deadline across
+    // both producers; admitting another launch never postpones existing work.
+    // Preserve the long producer's 200 ms liveness/dismissal poll even when
+    // its only remaining update is a future title (or MainWindow disappears).
+    fn arm(self: &Rc<Self>) {
+        if !self.live() {
+            self.retire();
+            return;
+        }
+        let next = self
+            .pending
+            .borrow()
+            .iter()
+            .map(|update| update.due)
+            .chain(self.delayed.borrow().iter().copied())
+            .min();
+        let Some(next) = next else {
+            self.timer.stop();
+            return;
+        };
+        let now = (self.clock.borrow().clone())();
+        let weak = Rc::downgrade(self);
+        self.timer.start(
+            slint::TimerMode::SingleShot,
+            next.saturating_sub(now).min(Duration::from_millis(200)),
+            move || {
+                if let Some(state) = weak.upgrade() {
+                    state.tick();
+                }
+            },
+        );
+    }
+    fn tick(self: &Rc<Self>) {
         if !self.live() {
             self.retire();
             return;
@@ -66,16 +103,18 @@ impl State {
         self.pending
             .borrow_mut()
             .retain(|update| keys.contains(&update.key));
-        if self.pending.borrow().is_empty() {
-            self.timer.stop();
-            return;
-        }
         let now = (self.clock.borrow().clone())();
         let (mut due, pending): (Vec<_>, Vec<_>) = std::mem::take(&mut *self.pending.borrow_mut())
             .into_iter()
             .partition(|update| update.due <= now);
         *self.pending.borrow_mut() = pending;
-        if due.is_empty() {
+        let (delayed_due, delayed_pending): (Vec<_>, Vec<_>) =
+            std::mem::take(&mut *self.delayed.borrow_mut())
+                .into_iter()
+                .partition(|due| *due <= now);
+        *self.delayed.borrow_mut() = delayed_pending;
+        if due.is_empty() && delayed_due.is_empty() {
+            self.arm();
             return;
         }
         due.sort_by_key(|update| update.due);
@@ -98,6 +137,14 @@ impl State {
                     removed.insert(update.key);
                 }
             }
+            for _ in delayed_due {
+                popups::add(
+                    ctx.conn(),
+                    &popups::Job::text(DELAYED_MESSAGE, now as f64),
+                    now,
+                )?;
+                changed = true;
+            }
             Ok((removed, changed))
         });
         match result {
@@ -109,9 +156,7 @@ impl State {
                     let published = self.published.borrow().clone();
                     published();
                 }
-                if self.pending.borrow().is_empty() {
-                    self.timer.stop();
-                }
+                self.arm();
             }
             Err(error) => {
                 self.retire();
@@ -140,6 +185,7 @@ impl std::fmt::Debug for Control {
         f.debug_struct("DebugLongPopup")
             .field("active", &self.0.active.get())
             .field("pending", &self.pending_updates())
+            .field("delayed", &self.pending_delayed_popups())
             .finish_non_exhaustive()
     }
 }
@@ -162,6 +208,7 @@ impl Control {
             clock: RefCell::new(Rc::new(move || started.elapsed())),
             word: RefCell::new(Rc::new(|| rand::random_range(0..WORDS.len()))),
             pending: RefCell::default(),
+            delayed: RefCell::default(),
             published: RefCell::new(Rc::new(|| {})),
         }))
     }
@@ -170,7 +217,8 @@ impl Control {
     }
     /// Replace this owner's monotonic clock before starting a sequence.
     pub fn set_clock(&self, clock: Clock) {
-        if self.0.live() && self.0.pending.borrow().is_empty() {
+        if self.0.live() && self.0.pending.borrow().is_empty() && self.0.delayed.borrow().is_empty()
+        {
             *self.0.clock.borrow_mut() = clock;
         }
     }
@@ -182,6 +230,24 @@ impl Control {
     }
     pub fn pending_updates(&self) -> usize {
         self.0.pending.borrow().len()
+    }
+    pub fn pending_delayed_popups(&self) -> usize {
+        self.0.delayed.borrow().len()
+    }
+    /// The actual GUI action queues no JobStatus until its five-second deadline.
+    pub fn start_delayed_popup(&self) {
+        if !self.0.live()
+            || !self
+                .0
+                .window
+                .upgrade()
+                .is_some_and(|window| window.window().is_visible())
+        {
+            return;
+        }
+        let now = (self.0.clock.borrow().clone())();
+        self.0.delayed.borrow_mut().push(now + DELAY);
+        self.0.arm();
     }
     pub fn timer_running(&self) -> bool {
         self.0.timer.running()
@@ -239,17 +305,6 @@ impl Control {
         self.0.pending.borrow_mut().extend(updates);
         let published = self.0.published.borrow().clone();
         published();
-        if !self.0.timer.running() {
-            let state = Rc::downgrade(&self.0);
-            self.0.timer.start(
-                slint::TimerMode::Repeated,
-                Duration::from_millis(200),
-                move || {
-                    if let Some(state) = state.upgrade() {
-                        state.tick();
-                    }
-                },
-            );
-        }
+        self.0.arm();
     }
 }
