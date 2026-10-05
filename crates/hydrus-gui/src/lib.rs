@@ -608,7 +608,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 pages.note_shown();
                 (result, pages.current())
             };
-            let after = after_change.borrow().clone();
+            let after = after_change
+                .borrow()
+                .as_ref()
+                .and_then(std::rc::Weak::upgrade);
             if let Some(after) = after {
                 after();
             }
@@ -739,7 +742,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 pages.note_shown();
                 pages.current()
             };
-            let after = after_change.borrow().clone();
+            let after = after_change
+                .borrow()
+                .as_ref()
+                .and_then(std::rc::Weak::upgrade);
             if let Some(after) = after {
                 after();
             }
@@ -2574,7 +2580,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         },
         &palette_dispatcher,
     );
-    *after_change.borrow_mut() = Some(menu_titles_shown.clone());
+    // The titles own menu hooks, whose page-changing callbacks own this slot.
+    // The window/menu timer keep titles alive; this back-edge must not do so.
+    *after_change.borrow_mut() = Some(Rc::downgrade(&menu_titles_shown));
     // (and the status bar's network part, from the daemon's word)
     let network_shown = {
         let pages = pages.clone();
@@ -4324,7 +4332,7 @@ struct MenuTarget<'a> {
 type ChangePages = Rc<dyn Fn(&dyn Fn(&mut Pages) -> Result<(), String>)>;
 
 /// What runs after the pages change, once there is something to.
-type AfterChange = Rc<RefCell<Option<Rc<dyn Fn()>>>>;
+type AfterChange = Rc<RefCell<Option<std::rc::Weak<dyn Fn()>>>>;
 
 /// The viewer's menu shown: each entry's action and label by id, the
 /// file's URLs it was built from, and the file (which its entries act on,

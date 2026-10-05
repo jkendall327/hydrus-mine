@@ -2612,3 +2612,11 @@ already drops its prior exit timer references; the added guard also protects a
 retained timer or close continuation. Native regressions cover a retained timer,
 full main-window rebind, hidden acceptance and accepted close/re-show. Hosted
 execution remains pending; this adds no original leaf proposal.
+
+The main menu's page-change callback slot now holds a weak reference to its
+title callback: the title callback owns menu hooks which own that same slot.
+Live window callbacks and the menu timer retain the title callback, while the
+weak back-edge permits pages, rows and workers to retire with their owners.
+Native regressions assert release before thread exit and retain the existing
+two-second Store-release deadline. Hosted execution is pending; no local Rust
+build or test was run. This ownership repair adds no original leaf proposal.

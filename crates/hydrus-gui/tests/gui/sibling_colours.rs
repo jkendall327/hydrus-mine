@@ -322,13 +322,20 @@ fn options_cancel_retired_apply_reopen_and_all_segmented_native_consumers() {
             )
         })
         .unwrap();
-    for _ in 0..100 {
-        slint::platform::update_timers_and_animations();
-        if child.get_suggestions().iter().any(|row| {
+    let has_custom_connector = |rows: &ModelRc<ListText>| {
+        rows.iter().any(|row| {
             row.parts
                 .iter()
-                .any(|part| rgb(part.colour) == [153, 101, 21])
-        }) {
+                .any(|part| part.text == " → " && rgb(part.colour) == [153, 101, 21])
+        })
+    };
+    for _ in 0..100 {
+        slint::platform::update_timers_and_animations();
+        // Each visible owner starts its own timer. The earlier Write Tags tick
+        // does not imply the later Manage Tags observer has repainted yet.
+        if has_custom_connector(&child.get_suggestions())
+            && has_custom_connector(&manage.get_tags())
+        {
             break;
         }
         std::thread::sleep(std::time::Duration::from_millis(10));

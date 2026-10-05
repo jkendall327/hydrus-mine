@@ -75,3 +75,53 @@ fn thread_exit_releases_bound_workers_when_the_collector_is_discarded() {
         "completed native worker ownership releases its Store"
     );
 }
+
+#[test]
+fn completed_bound_menus_release_their_pages_rows_and_workers_before_thread_exit() {
+    let weak_store = std::thread::spawn(|| {
+        let (_directories, store) = crate::subscriptions::store();
+        let weak_store = Arc::downgrade(&store);
+        let windows = headless::init();
+        let mut owners = Vec::new();
+        for _ in 0..3 {
+            let ui = MainWindow::new().unwrap();
+            let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+            ui.show().unwrap();
+            ui.invoke_search_edited("system:everything".into());
+            ui.invoke_search_accepted();
+            // Exercise the page-change/title hook while its live owners exist.
+            let first = bound.current.borrow().clone();
+            bound.pages.borrow_mut().new_search_page();
+            ui.invoke_tab_chosen(0, 1);
+            assert!(!std::rc::Rc::ptr_eq(&first, &bound.current.borrow()));
+            owners.push((
+                std::rc::Rc::downgrade(&bound.pages),
+                std::rc::Rc::downgrade(&bound.rows),
+                ui.as_weak(),
+            ));
+            drop(bound);
+            drop(ui);
+        }
+        // Normal headless window ownership ends here; this does not retire the
+        // menu hook manually or clear models/callbacks to conceal a cycle.
+        drop(windows);
+        for (pages, rows, component) in owners {
+            assert!(component.upgrade().is_none());
+            assert!(pages.upgrade().is_none(), "menu hooks must release pages");
+            assert!(rows.upgrade().is_none(), "menu hooks must release loaders");
+        }
+        drop(store);
+        weak_store
+    })
+    .join()
+    .unwrap();
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(2);
+    while weak_store.strong_count() != 0 && std::time::Instant::now() < deadline {
+        std::thread::sleep(std::time::Duration::from_millis(5));
+    }
+    assert_eq!(
+        weak_store.strong_count(),
+        0,
+        "all completed stores are released"
+    );
+}
