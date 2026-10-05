@@ -255,7 +255,7 @@ export component NotebookNavigation inherits Rectangle {
                 root.pointer(2,-1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y,event.modifiers.shift);
             }
         }
-        changed has-hover => { if !self.has-hover { root.hovered("",0px,0px,false); } }
+        changed has-hover => { if !self.has-hover { root.pointer(4,-1,0px,0px,false); } }
     }
 }
 

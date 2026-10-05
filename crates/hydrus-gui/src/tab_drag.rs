@@ -229,6 +229,11 @@ pub(crate) fn bind(window: &MainWindow, pages: &Rc<RefCell<Pages>>, change: Chan
                         window.invoke_tab_drag_hovered("".into(), x, y, false);
                     }
                 }
+                4 => {
+                    // Hover leaving the viewport does not cancel a captured gesture.
+                    window.set_tab_drag_hover_key("".into());
+                    window.invoke_tab_drag_hovered("".into(), x, y, false);
+                }
                 _ => {
                     state.borrow_mut().pointer.cancel();
                     window.set_tab_drag_active(false);

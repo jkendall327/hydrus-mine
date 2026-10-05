@@ -170,8 +170,27 @@ fn real_wheel_replays_qt_selection_and_staged_scroll_overflow_without_changing_s
     assert!(clipped.x > ui.get_tab_navigation_x() + ui.get_tab_navigation_width());
     pointer(&native, visible, 2);
     assert_eq!(ui.get_tab_tooltip(), original.pages[0].name.as_str());
+    assert_eq!(
+        ui.get_tab_drag_hover_key(),
+        original.pages[0].key.to_hex().as_str()
+    );
+    native.dispatch_event(slint::platform::WindowEvent::PointerExited);
+    assert!(ui.get_tab_tooltip().is_empty());
+    assert!(ui.get_tab_drag_hover_key().is_empty());
+    pointer(&native, visible, 2);
     pointer(&native, visible, 0);
     std::thread::sleep(std::time::Duration::from_millis(110));
+    pointer(&native, visible, 2);
+    assert!(ui.get_tab_drag_active());
+    let outside_bar = TabRect {
+        y: ui.get_tab_navigation_y() + ui.get_tab_navigation_height() + 20.0,
+        ..visible
+    };
+    pointer(&native, outside_bar, 2);
+    assert!(ui.get_tab_drag_active(), "bar hover exit retains capture");
+    assert!(ui.get_tab_drag_hover_key().is_empty());
+    pointer(&native, visible, 2);
+    assert!(ui.get_tab_drag_active(), "bar reentry retains capture");
     pointer(&native, clipped, 2);
     assert!(ui.get_tab_drag_active());
     assert_eq!(bound.pages.borrow().shown().key, original.pages[0].key);
