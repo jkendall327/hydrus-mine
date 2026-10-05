@@ -129,7 +129,7 @@ pub fn separated(bytes: u64) -> (i64, usize) {
 /// Raw decomposition before BytesControl's spinbox normalization, for changed-value comparison.
 pub fn raw_separated(mut bytes: u64) -> (i64, usize) {
     let mut unit = 0;
-    while bytes % 1024 == 0 && unit < 4 {
+    while bytes.is_multiple_of(1024) && unit < 4 {
         bytes /= 1024;
         unit += 1;
     }
