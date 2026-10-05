@@ -176,6 +176,44 @@ fn real_saved_policy_preserves_current_media_and_intervals_then_retires_final_bo
             percentage: 50
         }
     );
+    // An existing suggested-tags descendant still owns input even after a
+    // retained parent page callback exposes the image-cache rows.
+    let child_owned = options(&ui, &bound);
+    let suggestions = child_owned
+        .get_pages()
+        .iter()
+        .position(|page| page.text == "tag suggestions")
+        .unwrap();
+    child_owned.invoke_page_chosen(i32::try_from(suggestions).unwrap());
+    child_owned.invoke_related_weights_clicked();
+    let weights = bound
+        .options_suggested_tags_slot
+        .weights
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let speed = child_owned
+        .get_pages()
+        .iter()
+        .position(|page| page.text == "speed and memory")
+        .unwrap();
+    child_owned.invoke_page_chosen(i32::try_from(speed).unwrap());
+    child_owned.invoke_number_edited(row(&child_owned, BYTES), 0);
+    child_owned.invoke_choice_chosen(row(&child_owned, BYTES), 0);
+    child_owned.invoke_number_edited(row(&child_owned, PERCENT), 10);
+    child_owned.invoke_field_edited(row(&child_owned, TIMEOUT), 2, 10);
+    weights.invoke_cancel();
+    assert!(bound.options_suggested_tags_slot.weights.borrow().is_none());
+    child_owned.invoke_apply();
+    assert_eq!(
+        store.read(image_cache::load).unwrap(),
+        Policy {
+            bytes: 100,
+            timeout: 300,
+            percentage: 50
+        }
+    );
     let saved = options(&ui, &bound);
     let percent = row(&saved, PERCENT);
     saved.invoke_number_edited(percent, 10);
