@@ -29,7 +29,9 @@ pub(super) fn seeded(fixture: &Value) -> ([tempfile::TempDir; 2], Arc<Store>, Se
             for row in corpus.as_array().unwrap() {
                 let tag = hydrus_store::master::intern_tag(
                     w.conn(),
-                    &Tag::new(row["tag"].as_str().unwrap()).unwrap(),
+                    // These are the recorder's direct database mapping values, not
+                    // user entry text that should pass through tag cleaning again.
+                    &Tag::from_clean(row["tag"].as_str().unwrap()),
                 )?;
                 let hashes = row["hashes"]
                     .as_array()
