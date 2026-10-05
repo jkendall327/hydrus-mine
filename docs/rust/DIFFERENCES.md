@@ -1978,7 +1978,7 @@ preview minimum/maximum fields, with the same cap-before-minimum and duration-ti
 policy. Successful raster presentation accepts the original request timestamp;
 unrenderable files and loading placeholders are rejected rather than counted as
 views. Qt accepts media before its player/decoder renders. The native canvas does
-not yet reproduce preview audio/video playback, embed/external buttons, zoom,
+not yet reproduce preview audio/video playback, embed/external buttons, interactive zoom/pan,
 hovers or rating controls. These broader preview parents remain Partial. Owned
 page/request generations retire late decoded frames and rebound-window callbacks;
 hidden/cleared media and accepted client close finish once. Actual Qt boundary
@@ -2871,6 +2871,8 @@ Rust/native render regressions are authored for hosted validation; local checks
 used actual Qt, Python/source invariants, rustfmt and diff inspection only.
 
 The native legacy **colours** controls and Help **darkmode** action affect the thirteen represented painted roles rather than switching the application style or OS theme, matching Qt's legacy override policy. Native RGB picking uses three bounded channels and a swatch with OK/Cancel; Qt QColorDialog additionally offers HSV/HTML, palette history and its platform picker. The structural coloursets family retains this topology boundary and earns no concrete-leaf credit. Generic controls keep the native application palette; Qt QSS support and whole-platform palette editing are separate unfinished style work. Synthetic preview status text remains native status UI, without claiming a Qt canvas text counterpart. Saved role propagation is owner-local and bounded to 250ms; no process-global mutable colour preferences are introduced.
+
+The preview default-zoom control now reaches existing accepted still/poster geometry, including per-filetype preview scale rules, DPR and centered overflow clipping. It does not add interactive preview zoom/pan or player/embed controls. Qt chooses media before decoder completion; native geometry is sampled only after a successful accepted raster and retains the original request timestamp. Saving a choice alone preserves the current image, while actual pane resize reads the new default; unrelated Options and ICC/cache replacements do not reset it. Native resize follows the current preview default; the separate viewer zoom-lock controls still apply to full viewers. Actual Qt geometry/control evidence is recorded; native/model tests and exported PNG review remain pending hosted CI. Broader preview/media-playback families retain their existing Partial boundaries and earn no parent credit.
 
 Thumbnail appearance: saved blurhash fallback and the editable/browsable
 background path now reach real native loader and viewport consumers. Existing

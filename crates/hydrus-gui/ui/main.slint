@@ -302,6 +302,10 @@ export component MainWindow inherits Window {
     changed layout-available-width => {root.sidebar-measured();}
     changed layout-available-height => {root.sidebar-measured();}
     in property <image> preview-media;
+    in property <length> preview-media-x;
+    in property <length> preview-media-y;
+    in property <length> preview-media-width;
+    in property <length> preview-media-height;
     in property <bool> preview-has-media;
     in property <bool> preview-loading;
     in-out property <bool> preview-splitter-hidden;
@@ -1444,7 +1448,8 @@ export component MainWindow inherits Window {
                         visible:!root.preview-splitter-hidden;
                         background: Theme.colour(10,Theme.window);
                         border-width: 1px; border-color: Theme.border;
-                        Image { source: root.preview-media; image-fit: contain; }
+                        clip: true;
+                        Image { x:root.preview-media-x;y:root.preview-media-y;width:root.preview-media-width;height:root.preview-media-height;source:root.preview-media;image-fit:fill; }
                         if !root.preview-has-media: Text { text: root.preview-loading ? "loading preview" : "no preview available"; color: Theme.text; horizontal-alignment: center; vertical-alignment: center; }
                     }
                 }

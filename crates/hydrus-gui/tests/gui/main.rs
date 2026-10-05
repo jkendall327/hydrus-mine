@@ -172,6 +172,7 @@ mod file_history;
 mod autocomplete_tabs;
 mod gui_colours;
 mod gui_format;
+mod preview_default_zoom;
 mod related_weight_table;
 
 mod external_calls;

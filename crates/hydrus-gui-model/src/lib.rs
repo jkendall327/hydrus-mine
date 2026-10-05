@@ -61,6 +61,7 @@ pub mod page_tree;
 pub mod png_export;
 pub mod predicate_editors;
 pub mod predicate_history;
+pub mod preview_zoom;
 pub mod rating_sizes;
 pub mod ratings;
 pub mod ratings_editor;
