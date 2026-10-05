@@ -210,8 +210,8 @@ search.
   Apply and separate supplied values for repeated system families. Immutable
   terms are preserved and invertible terms have flip buttons. Active-list
   remove/invert/OR merge or dissolve/namespace commands reach the query. Populated
-  OR editing, start-OR and inherited open/copy/file-selection/tag-maintenance
-  branches remain missing, so the original action earns no completion credit.
+  OR controls embedded in a mixed edit, inherited open/copy/file-selection/
+  tag-maintenance branches and their associated transports remain missing, so the original action earns no completion credit.
   Single system editors keep their existing per-panel OK/star topology. Selection
   is cleared when query terms change, whereas Qt selects newly edited terms. A
   page transition cancels the child rather than retaining a modal editor behind

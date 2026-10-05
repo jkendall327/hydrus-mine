@@ -482,3 +482,231 @@ fn mixed_same_family_panels_reopen_distinct_supplied_values_and_apply_both() {
     );
     ui.hide().unwrap();
 }
+
+fn active_or(
+    ui: &MainWindow,
+    bound: &hydrus_gui::Bound,
+    selected: &[hydrus_search::Predicate],
+    start: bool,
+) -> hydrus_gui::SearchOrWindow {
+    let current = bound.current.borrow().borrow().active_predicates().to_vec();
+    for (i, p) in selected.iter().enumerate() {
+        let row =
+            i32::try_from(current.iter().position(|candidate| candidate == p).unwrap()).unwrap();
+        ui.invoke_active_predicate_clicked(row, i != 0, false);
+    }
+    if start {
+        let row = i32::try_from(current.iter().position(|p| p == &selected[0]).unwrap()).unwrap();
+        ui.invoke_active_predicate_menu_opened(row);
+        let command = hydrus_gui_model::active_predicates::Command::StartOr.id();
+        assert!(
+            ui.get_active_predicate_menu()
+                .iter()
+                .any(|item| item.id == command)
+        );
+        ui.invoke_active_predicate_menu_chosen(command);
+    } else {
+        ui.invoke_active_predicate_activated(false, true);
+    }
+    assert!(ui.get_search_or_open());
+    bound.search_or.borrow().as_ref().unwrap().clone_strong()
+}
+#[test]
+fn populated_or_and_start_or_replay_all_ten_actual_qt_apply_cancel_shapes() {
+    use std::collections::HashSet;
+    let (_dir, store) = setup();
+    let windows = headless::init();
+    let recording = hydrus_testkit::fixture_json("active_predicate_or.json");
+    assert_eq!(recording["ors"].as_array().unwrap().len(), 10);
+    for case in recording["ors"].as_array().unwrap() {
+        let ui = MainWindow::new().unwrap();
+        ui.show().unwrap();
+        let context = FileSearchContext {
+            location: LocationContext::single(hydrus_core::ServiceKey::new(
+                b"local files".to_vec(),
+            )),
+            predicates: decoded(&case["before"]["predicates"]),
+            ..Default::default()
+        };
+        let bound = bind(
+            &ui,
+            Pages::single(SearchPage::restored(
+                store.clone(),
+                context,
+                true,
+                None,
+                Vec::new(),
+            )),
+        );
+        let selected = decoded(&case["selected"]);
+        let child = active_or(
+            &ui,
+            &bound,
+            &selected,
+            case["command"] == "start_or_predicate",
+        );
+        let keep = case["or_keep"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|v| v.as_u64().unwrap() as usize)
+            .collect::<Vec<_>>();
+        let initial = child.get_predicates().row_count();
+        assert_eq!(initial, if case["name"] == "start_single" { 1 } else { 2 });
+        for i in (0..initial).rev() {
+            if !keep.contains(&i) {
+                child.invoke_remove(i32::try_from(i).unwrap());
+            }
+        }
+        if case["name"] == "edit_or" && case["accepted"] == true {
+            let adapter = windows.get(windows.count() - 1).unwrap();
+            let pixels = headless::render(&adapter, 900, 600);
+            headless::save_png(
+                &hydrus_testkit::artifacts_dir().join("active-predicate-populated-or.png"),
+                &pixels,
+                900,
+                600,
+            )
+            .unwrap();
+            assert!(pixels.iter().any(|p| p.r != p.g));
+        }
+        if case["accepted"] == true {
+            child.invoke_apply();
+        } else {
+            child.invoke_cancel();
+        }
+        assert!(bound.search_or.borrow().is_none());
+        assert!(!ui.get_search_or_open());
+        assert_eq!(
+            bound
+                .current
+                .borrow()
+                .borrow()
+                .active_predicates()
+                .iter()
+                .cloned()
+                .collect::<HashSet<_>>(),
+            decoded(&case["after"]["predicates"])
+                .into_iter()
+                .collect::<HashSet<_>>(),
+            "{} {}",
+            case["name"],
+            case["accepted"]
+        );
+        ui.hide().unwrap();
+    }
+}
+#[test]
+fn retained_populated_or_hidden_page_rebind_and_destroyed_main_cannot_publish() {
+    let (_dir, store) = setup();
+    let _windows = headless::init();
+    let recording = hydrus_testkit::fixture_json("active_predicate_or.json");
+    let case = &recording["ors"][4];
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let context = FileSearchContext {
+        location: LocationContext::single(hydrus_core::ServiceKey::new(b"local files".to_vec())),
+        predicates: decoded(&case["before"]["predicates"]),
+        ..Default::default()
+    };
+    let bound = bind(
+        &ui,
+        Pages::single(SearchPage::restored(
+            store.clone(),
+            context.clone(),
+            true,
+            None,
+            Vec::new(),
+        )),
+    );
+    let selected = decoded(&case["selected"]);
+    let before = bound.current.borrow().borrow().active_predicates().to_vec();
+    let child = active_or(&ui, &bound, &selected, false);
+    child.hide().unwrap();
+    child.invoke_remove(0);
+    child.invoke_edited("hidden:wrong".into());
+    child.invoke_apply();
+    assert!(bound.search_or.borrow().is_some());
+    assert_eq!(bound.current.borrow().borrow().active_predicates(), before);
+    child.show().unwrap();
+    assert_eq!(child.get_predicates().row_count(), 2);
+    let original = bound.current.borrow().clone();
+    bound.pages.borrow_mut().new_search_page();
+    ui.invoke_tab_chosen(0, 1);
+    assert!(bound.search_or.borrow().is_none());
+    ui.invoke_tab_chosen(0, 0);
+    child.show().unwrap();
+    child.invoke_remove(0);
+    child.invoke_apply();
+    assert_eq!(original.borrow().active_predicates(), before);
+    child.hide().unwrap();
+    let stale = active_or(&ui, &bound, &selected, false);
+    let successor = bind(
+        &ui,
+        Pages::single(SearchPage::restored(
+            store.clone(),
+            context,
+            true,
+            None,
+            Vec::new(),
+        )),
+    );
+    assert!(!ui.get_search_or_open());
+    stale.invoke_apply();
+    let live = active_or(&ui, &successor, &selected, false);
+    stale.invoke_cancel();
+    assert!(
+        ui.get_search_or_open(),
+        "retired close cannot release the successor OR guard"
+    );
+    assert!(successor.search_or.borrow().is_some());
+    let current = successor.current.borrow().clone();
+    let after = current.borrow().active_predicates().to_vec();
+    drop(ui);
+    live.invoke_remove(0);
+    live.invoke_apply();
+    assert_eq!(current.borrow().active_predicates(), after);
+    assert!(successor.search_or.borrow().is_none());
+}
+
+#[test]
+fn retained_or_system_child_does_not_keep_the_or_or_main_component_alive() {
+    let (_dir, store) = setup();
+    let _windows = headless::init();
+    let recording = hydrus_testkit::fixture_json("active_predicate_or.json");
+    let case = &recording["ors"][4];
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let context = FileSearchContext {
+        location: LocationContext::single(hydrus_core::ServiceKey::new(b"local files".to_vec())),
+        predicates: decoded(&case["before"]["predicates"]),
+        ..Default::default()
+    };
+    let bound = bind(
+        &ui,
+        Pages::single(SearchPage::restored(store, context, true, None, Vec::new())),
+    );
+    let child = active_or(&ui, &bound, &decoded(&case["selected"]), false);
+    child.invoke_edited("system:filesize".into());
+    child.invoke_enter(false);
+    let system = bound
+        .search_or
+        .system
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let weak_or = child.as_weak();
+    let weak_main = ui.as_weak();
+    drop(child);
+    drop(bound);
+    drop(ui);
+    assert!(weak_main.upgrade().is_none());
+    assert!(
+        weak_or.upgrade().is_none(),
+        "the owned system child has only weak callbacks to its OR owner"
+    );
+    system.invoke_number_edited(0, 2, 99);
+    system.invoke_ok(0);
+    system.invoke_cancel();
+}

@@ -734,13 +734,6 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     };
     duplicates_sidebar::bind(window, &duplicates, page.clone());
     sidebar_context_cog::bind(window, page.clone(), shown.clone());
-    active_predicates::bind(
-        window,
-        &predicate_editor,
-        page.clone(),
-        shown.clone(),
-        binding_active.clone(),
-    );
     // change the pages, then show whichever page is now shown; a change
     // that can't be made says why
     // (the menu bar's titles, shown again after a change)
@@ -1054,6 +1047,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let menu_favourites: Rc<RefCell<Vec<hydrus_core::pages::FavouriteSearch>>> = Rc::default();
     // a system predicate's editor, from the search box
     let search_or = search_or_window::Slot::default();
+    window.set_search_or_open(false);
+    active_predicates::bind(
+        window,
+        &predicate_editor,
+        &search_or,
+        page.clone(),
+        shown.clone(),
+        binding_active.clone(),
+    );
+
     let review_files: Rc<dyn Fn(Vec<String>)> = Rc::new({
         let slot = review_imports.clone();
         let tagging = filename_tagging.clone();
@@ -1377,7 +1380,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let page = page.clone();
         let shown = shown.clone();
         let open_editor = open_editor.clone();
+        let active = binding_active.clone();
         move |action| {
+            if !active.get() {
+                return;
+            }
             let current = page();
             if slot.borrow().is_some() {
                 return;
@@ -1403,12 +1410,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     let original = Rc::downgrade(&current);
                     let page = page.clone();
                     let weak = weak.clone();
+                    let active = active.clone();
                     move || {
-                        original.upgrade().is_some_and(|original| {
-                            Rc::ptr_eq(&original, &page()) && original.borrow().lock().is_none()
-                        }) && weak
-                            .upgrade()
-                            .is_some_and(|window| window.window().is_visible())
+                        active.get()
+                            && original.upgrade().is_some_and(|original| {
+                                Rc::ptr_eq(&original, &page()) && original.borrow().lock().is_none()
+                            })
+                            && weak
+                                .upgrade()
+                                .is_some_and(|window| window.window().is_visible())
                     }
                 });
                 let applied: search_or_window::Applied = Rc::new({
@@ -1430,8 +1440,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                             window.set_search_or_open(true);
                         }
                         let weak = weak.clone();
+                        let active = active.clone();
                         child.on_closed(move || {
-                            if let Some(window) = weak.upgrade() {
+                            if active.get()
+                                && let Some(window) = weak.upgrade()
+                            {
                                 window.set_search_or_open(false);
                                 window.set_search_focus_requests(
                                     window.get_search_focus_requests() + 1,
