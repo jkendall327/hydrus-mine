@@ -4,8 +4,8 @@
 //! a package is decoded completely before its caller can stage any changes.
 
 mod encode;
-pub mod import_options;
 pub mod external_calls;
+pub mod import_options;
 pub mod logins;
 pub mod processing;
 pub mod routers;
