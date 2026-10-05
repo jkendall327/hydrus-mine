@@ -556,8 +556,8 @@ fn rating_examples_replay_qt_samples_live_configuration_and_no_saved_values() {
                 assert_eq!(value, expected["rating"]);
                 if let Sample::IncDec(value) = sample {
                     assert_eq!(
-                        rating_example::counter_width(12.0, *value),
-                        expected["icon"][0].as_f64().unwrap()
+                        rating_example::counter_width(12.0, *value).to_bits(),
+                        expected["icon"][0].as_f64().unwrap().to_bits()
                     );
                 }
             }

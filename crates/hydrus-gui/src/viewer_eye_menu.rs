@@ -195,29 +195,29 @@ pub(crate) fn bind(
                 }
                 3 => change::<ViewerEyeMenuSettings>(&store, |s| s.start_on_top = !s.start_on_top),
                 4 => change::<ViewerEyeMenuSettings>(&store, |s| {
-                    s.start_on_top_while_playing = !s.start_on_top_while_playing
+                    s.start_on_top_while_playing = !s.start_on_top_while_playing;
                 }),
                 5 => change::<ViewerEyeMenuSettings>(&store, |s| {
-                    s.start_frameless = !s.start_frameless
+                    s.start_frameless = !s.start_frameless;
                 }),
                 6 => change::<ViewerBackgroundSettings>(&store, |s| s.tags = !s.tags),
                 7 => change::<ViewerBackgroundSettings>(&store, |s| s.information = !s.information),
                 8 => change::<ViewerBackgroundSettings>(&store, |s| s.ratings = !s.ratings),
                 9 => change::<ViewerBackgroundSettings>(&store, |s| s.notes = !s.notes),
                 10 => change::<ViewerHoverSettings>(&store, |s| {
-                    s.index_background = !s.index_background
+                    s.index_background = !s.index_background;
                 }),
                 11 => change::<ViewerFocusSettings>(&store, |s| {
-                    s.hovers_require_focus = !s.hovers_require_focus
+                    s.hovers_require_focus = !s.hovers_require_focus;
                 }),
                 12 => change::<ViewerHoverSettings>(&store, |s| s.tags = !s.tags),
                 13 => change::<ViewerHoverSettings>(&store, |s| s.ratings = !s.ratings),
                 14 => change::<ViewerHoverSettings>(&store, |s| s.notes = !s.notes),
                 15 => change::<ViewerCanvasSettings>(&store, |s| {
-                    s.transparency_checkerboard = !s.transparency_checkerboard
+                    s.transparency_checkerboard = !s.transparency_checkerboard;
                 }),
                 16 => change::<ViewerCanvasSettings>(&store, |s| {
-                    s.transparency_greenscreen = !s.transparency_greenscreen
+                    s.transparency_greenscreen = !s.transparency_greenscreen;
                 }),
                 _ => return,
             };
