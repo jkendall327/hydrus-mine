@@ -268,7 +268,7 @@ impl SearchPage {
             presented: std::collections::HashSet::new(),
             gallery: None,
             watchers: None,
-            importer_list_deadline: Default::default(),
+            importer_list_deadline: hydrus_gui_model::downloader_update_times::Deadline::default(),
             importer_status_clock: Rc::new(crate::downloader_update_times::now),
             gallery_detail: None,
             watcher_detail: None,
