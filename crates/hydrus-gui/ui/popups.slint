@@ -134,7 +134,11 @@ export component PopupStack inherits Rectangle {
                         going: popup.gauge-2-going;
                     }
                     if popup.has-question: VerticalLayout {
-                        Text { text: popup.question; wrap: word-wrap; }
+                        Text {
+                            max-width: card.cap - 4px;
+                            text: popup.question;
+                            wrap: word-wrap;
+                        }
                         HorizontalLayout {
                             Button { text: "yes"; clicked => { root.answer(popup.key,popup.action-owner,popup.question-token,popup.gui-owner,true); } }
                             Button { text: "no"; clicked => { root.answer(popup.key,popup.action-owner,popup.question-token,popup.gui-owner,false); } }
