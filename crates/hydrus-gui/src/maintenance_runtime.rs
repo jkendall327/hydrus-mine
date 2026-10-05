@@ -65,6 +65,14 @@ impl std::fmt::Debug for Control {
             .finish_non_exhaustive()
     }
 }
+/// Dropping the binding retires work even if callbacks or a Control are retained.
+#[derive(Debug)]
+pub(crate) struct Owner(Control);
+impl Drop for Owner {
+    fn drop(&mut self) {
+        self.0.retire();
+    }
+}
 fn index(worker: Worker) -> usize {
     match worker {
         Worker::Trash => 0,
@@ -114,6 +122,9 @@ impl Control {
                 }
             });
         control
+    }
+    pub(crate) fn owner(&self) -> Owner {
+        Owner(self.clone())
     }
     /// Captured owner start time allows deterministic replay of real admissions.
     pub fn started_ms(&self) -> i64 {

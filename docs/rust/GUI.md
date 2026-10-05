@@ -3885,3 +3885,10 @@ controls and entry/shutdown paths are recorded; model, Store, daemon and native
 regressions are authored and await hosted execution.
 
 Help → Debug → GUI actions now offers “make a popup in five seconds”. Each activation queues the exact reference message without publishing early; overlapping activations keep separate deadlines and independent dismissible jobs. Existing delayed work progresses while Main is hidden, while new hidden-window launches are refused. The existing debug producer owns the timer and permanently cancels pending work on accepted exit, rebind and owner destruction; Exit Cancel preserves it. Authored native deadline/Store/toaster/ownership regressions await hosted CI.
+
+The automatic maintenance binding has a private retirement owner: dropping Bound
+permanently cancels its workers even if the MainWindow callbacks or a public
+Control remain retained. A dropped MainWindow is detected by its weak-owner timer
+or the next poll; callbacks never substitute a successor window. An authored
+held-wait regression keeps the emitting main and Control alive, drops Bound,
+checks the remaining queue and lets only a fresh binding consume its next pair.

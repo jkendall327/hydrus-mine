@@ -3080,3 +3080,10 @@ regressions and one Options artifact await hosted execution and render inspectio
 No local Cargo/Rust validation was run; no parent completion is proposed.
 
 The delayed debug-popup action reuses the main binding’s owned producer instead of a process-wide background scheduler. Its clock is monotonic and each launch has a five-second deadline; event-loop delivery can occur later. A weak single-shot timer follows the nearest deadline, capped to the existing 200 ms liveness/dismissal poll, preserving long-popup pruning. Cancellation on GUI retirement is explicit; already-published completed jobs remain independently dismissible. The real Qt recorder uses the genuine scheduler and real elapsed observations, while native authored regressions use an owned deterministic clock; these are distinct evidence boundaries, with native runtime/rendering still hosted-only. Other Debug actions and import-favourites deletion’s recorded single-row reference exception remain outside this leaf.
+
+The automatic maintenance binding has a private retirement owner: dropping Bound
+permanently cancels its workers even if the MainWindow callbacks or a public
+Control remain retained. A dropped MainWindow is detected by its weak-owner timer
+or the next poll; callbacks never substitute a successor window. An authored
+held-wait regression keeps the emitting main and Control alive, drops Bound,
+checks the remaining queue and lets only a fresh binding consume its next pair.
