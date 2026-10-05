@@ -357,4 +357,47 @@ fn read_batches_favourite_questions_write_drafts_and_owner_boundaries_replay_qt(
         assert!(applied.borrow().is_empty());
         assert!(slot.borrow().is_none());
     }
+    // External accepted settings refresh both live panes, preserving each caller's draft.
+    ui.invoke_search_edited("main retained input".into());
+    ui.invoke_autocomplete_tab_chosen(1);
+    let slot = hydrus_gui::write_tag_window::Slot::default();
+    let child = hydrus_gui::write_tag_window::open(
+        &store,
+        key,
+        &[],
+        "live tab refresh",
+        &slot,
+        Rc::new(|_| {}),
+        Rc::new(|| {}),
+    )
+    .unwrap();
+    child.invoke_edited("write retained input".into());
+    child.invoke_tab_chosen(1);
+    store
+        .write(|ctx| {
+            let mut favourites: settings::FavouriteTags = settings::get(ctx.conn())?;
+            favourites.0.push("parity:live external".into());
+            settings::set(ctx.conn(), &favourites)
+        })
+        .unwrap();
+    let contains_live = || {
+        ui.get_suggestions()
+            .iter()
+            .any(|row| row.text == "parity:live external")
+            && child
+                .get_suggestions()
+                .iter()
+                .any(|row| row.text == "parity:live external")
+    };
+    for _ in 0..100 {
+        slint::platform::update_timers_and_animations();
+        if contains_live() {
+            break;
+        }
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    }
+    assert!(contains_live());
+    assert_eq!(ui.get_search_text(), "main retained input");
+    assert_eq!(child.get_text(), "write retained input");
+    child.invoke_cancel();
 }
