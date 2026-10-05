@@ -3237,7 +3237,8 @@ clears only that item's current focus; plain clicks and anchorless Shift fallbac
 focus normally. The duration restriction examines the clicked item (all members
 for a collection), keeping last hit and the range anchor independent from preview
 focus. The existing preview canvas supplies owned pixels and viewing intervals;
-accepted main-window close permanently retires these selection callbacks, while
+hidden main-window callbacks leave selection/focus unchanged; re-show stays live.
+An accepted main-window close permanently retires these selection callbacks, while
 Cancel keeps them live. `thumbnail_preview_selection.json` records actual Qt
 checkbox dependencies, save/reopen, ranges, focus publications and duration shapes.
 The search sidebar’s sort cog appears for namespace and number-of-tags sorts.
