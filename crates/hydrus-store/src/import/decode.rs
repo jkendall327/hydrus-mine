@@ -129,7 +129,10 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     let legacy_options = db.legacy_options()?;
     insert_setting(
         &mut input,
-        &crate::maintenance_gates::Preferences::from_legacy(&options),
+        &options.as_ref().map_or_else(
+            crate::maintenance_gates::Preferences::default,
+            crate::maintenance_gates::Preferences::from_legacy,
+        ),
     )?;
     insert_setting(
         &mut input,
@@ -3404,6 +3407,47 @@ mod tests {
             [dump.into_bytes()],
         )
         .unwrap();
+    }
+
+    #[test]
+    fn maintenance_gates_import_present_and_absent_client_options() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "maintain_trash_in_normal_time"], [0, true]]"#,
+                    r#"[[0, "maintain_trash_in_normal_time"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "deferred_file_deletes_in_normal_time"], [0, true]]"#,
+                    r#"[[0, "deferred_file_deletes_in_normal_time"], [0, false]]"#,
+                ),
+            ],
+        );
+        let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        let saved: crate::maintenance_gates::Preferences =
+            serde_json::from_value(input.settings["maintenance_gates"].clone()).unwrap();
+        assert!(!saved.trash_normal && !saved.deferred_normal);
+        let conn = rusqlite::Connection::open(source.path().join("client.db")).unwrap();
+        assert_eq!(
+            conn.execute(
+                "DELETE FROM json_dumps WHERE dump_type = ?",
+                [i64::from(
+                    hydrus_legacy::serialisable::SerialisableType::CLIENT_OPTIONS.0
+                )]
+            )
+            .unwrap(),
+            1
+        );
+        drop(conn);
+        let db = LegacyDb::open(source.path()).unwrap();
+        assert!(db.client_options().unwrap().is_none());
+        let input = decode_input(&db).unwrap();
+        let saved: crate::maintenance_gates::Preferences =
+            serde_json::from_value(input.settings["maintenance_gates"].clone()).unwrap();
+        assert_eq!(saved, crate::maintenance_gates::Preferences::default());
+        assert!(saved.trash_normal && saved.deferred_normal);
     }
 
     #[test]
