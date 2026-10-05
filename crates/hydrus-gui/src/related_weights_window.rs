@@ -62,7 +62,7 @@ pub fn open(
             )));
             window.set_result(editor.result);
             window.set_can_delete(editor.can_delete());
-            window.set_can_edit(!editor.selection().is_empty());
+            window.set_can_edit(editor.selection().len() == 1);
             match question.borrow().as_ref() {
                 None => {
                     window.set_phase(0);

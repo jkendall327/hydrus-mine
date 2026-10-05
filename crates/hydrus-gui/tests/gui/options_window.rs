@@ -5998,6 +5998,31 @@ fn related_weight_drafts_cancel_reopen_and_re_rank_an_already_open_service_panel
         .unwrap()
         .clone_strong();
     let count = child.get_rows().row_count();
+    let selection_fixture = &f["selection_buttons"];
+    for (index, case) in selection_fixture.as_array().unwrap().iter().enumerate() {
+        if index > 0 {
+            let label = if index == 1 {
+                "'source' tags"
+            } else {
+                "'context' tags"
+            };
+            let row = child
+                .get_rows()
+                .iter()
+                .position(|row| row.cells.row_data(0).unwrap() == label)
+                .unwrap();
+            child.invoke_clicked(i32::try_from(row).unwrap(), index == 2, false);
+        }
+        assert_eq!(
+            child.get_can_edit(),
+            case["buttons"]["edit"].as_bool().unwrap()
+        );
+        assert_eq!(
+            child.get_can_delete(),
+            case["buttons"]["delete"].as_bool().unwrap()
+        );
+    }
+
     child.invoke_action("add".into());
     child.set_namespace(":".into());
     child.invoke_action("accept-question".into());

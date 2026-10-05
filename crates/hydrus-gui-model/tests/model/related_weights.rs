@@ -216,3 +216,121 @@ fn options_acceptance_merges_only_weights_and_preserves_live_unrelated_preferenc
     assert!(!reopened.enabled);
     assert_eq!(reopened.concurrence_percent, 11);
 }
+
+#[test]
+fn binary64_result_rounding_and_sibling_contexts_replay_the_actual_db() {
+    use hydrus_core::{Sha256, Tag};
+    use hydrus_store::{
+        content::{
+            MappingAction,
+            tag_relations::{self, RelationAction, RelationUpdate},
+        },
+        display::RelationKind,
+    };
+    let (_dirs, store) =
+        super::options_dialog::fixture_store(&hydrus_testkit::fixture_json("options_dialog.json"));
+    let (service, key) = {
+        let snapshot = store.snapshot();
+        let service = snapshot.services.by_name("second tags").unwrap();
+        (service.id, service.key.clone())
+    };
+    store
+        .write_content(move |writer| {
+            let files: Vec<_> = (0..100u8)
+                .map(|i| hydrus_store::master::intern_hash(writer.conn(), &Sha256([i; 32])))
+                .collect::<hydrus_store::Result<_>>()?;
+            for (tag, files) in [
+                ("round:search", &files[..1]),
+                ("round:alias", &files[..1]),
+                ("round:result", files.as_slice()),
+            ] {
+                let tag = hydrus_store::master::intern_tag(writer.conn(), &Tag::new(tag).unwrap())?;
+                writer.update_mappings(service, &MappingAction::Add, tag, files)?;
+            }
+            let local: Vec<hydrus_core::HashId> = writer
+                .conn()
+                .prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT 2")?
+                .query_map([], |row| row.get(0))?
+                .collect::<rusqlite::Result<_>>()?;
+            assert_eq!(local.len(), 2);
+            for (tag, file) in [
+                ("scope:ideal", local[0]),
+                ("scope:alias", local[1]),
+                ("scope:direct", local[0]),
+                ("scope:aliasresult", local[1]),
+            ] {
+                let tag = hydrus_store::master::intern_tag(writer.conn(), &Tag::new(tag).unwrap())?;
+                writer.update_mappings(service, &MappingAction::Add, tag, &[file])?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    tag_relations::apply(
+        &store,
+        RelationKind::Siblings,
+        ["round", "scope"]
+            .into_iter()
+            .map(|namespace| RelationUpdate {
+                service,
+                left: Tag::new(&format!("{namespace}:alias")).unwrap(),
+                right: Tag::new(&format!(
+                    "{namespace}:{}",
+                    if namespace == "round" {
+                        "search"
+                    } else {
+                        "ideal"
+                    }
+                ))
+                .unwrap(),
+                action: RelationAction::Add,
+            })
+            .collect(),
+    )
+    .unwrap();
+    let f = hydrus_testkit::fixture_json("related_tag_weights.json");
+    for case in f["rounding"].as_array().unwrap() {
+        let request = Query {
+            service: key.clone(),
+            searches: serde_json::from_value(case["searches"].clone()).unwrap(),
+            local: false,
+            display: case["display"].as_bool().unwrap(),
+            weights: Weights {
+                search: vec![("".into(), 0), (":".into(), 0), ("round:".into(), 100)],
+                result: vec![("".into(), 0), (":".into(), 0), ("round:".into(), 29)],
+            },
+            concurrence_percent: 6,
+        };
+        let result = hydrus_store::related_tags::query(&store, &request, &|| false).unwrap();
+        assert_eq!(serde_json::json!(result), case["rows"]);
+        let rounding = result
+            .iter()
+            .find(|row| row.tag == "round:result")
+            .unwrap()
+            .score;
+        assert!(
+            matches!(rounding, 28 | 57),
+            "binary64 multiplication truncates below the exact rational integer"
+        );
+    }
+    for case in f["scope"].as_array().unwrap() {
+        let request = Query {
+            service: key.clone(),
+            searches: vec!["scope:alias".into(), "scope:ideal".into()],
+            local: case["local"].as_bool().unwrap(),
+            display: case["display"].as_bool().unwrap(),
+            weights: Weights {
+                search: vec![("".into(), 0), (":".into(), 0), ("scope:".into(), 100)],
+                result: vec![("".into(), 0), (":".into(), 0), ("scope:".into(), 100)],
+            },
+            concurrence_percent: 6,
+        };
+        let result = hydrus_store::related_tags::query(&store, &request, &|| false).unwrap();
+        assert_eq!(
+            serde_json::json!(result),
+            case["rows"],
+            "local={} display={}",
+            request.local,
+            request.display
+        );
+    }
+}
