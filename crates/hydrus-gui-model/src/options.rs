@@ -42,6 +42,10 @@ use hydrus_store::tag_editing::TagEditingSettings;
 use hydrus_store::trash::TrashSettings;
 use rusqlite::Connection;
 
+fn normalise_idle_timeout(seconds: Option<u64>) -> Option<u64> {
+    seconds.map(|seconds| (seconds / 60).clamp(1, 1000) * 60)
+}
+
 macro_rules! settings {
     (@save $conn:ident, $after:ident, $before:ident, related_tags) => {
         if $after.related_tags.weights != $before.related_tags.weights {
@@ -141,7 +145,11 @@ macro_rules! settings {
                 (&mut latest.mouse_seconds, $after.gui_idle.mouse_seconds, $before.gui_idle.mouse_seconds),
                 (&mut latest.api_seconds, $after.gui_idle.api_seconds, $before.gui_idle.api_seconds),
             ] {
-                if value != before {
+                // An unchanged Qt control still normalises imported seconds.
+                // Such an implicit edit must not overwrite a newer live value.
+                if value != before
+                    && (value != normalise_idle_timeout(before) || *field == before)
+                {
                     *field = value;
                 }
             }
@@ -3647,6 +3655,16 @@ pub fn applied(
                 problems.push(why);
             }
         }
+    }
+    // The three idle controls expose minute values, so Qt UpdateOptions writes
+    // their displayed floor/bounds even when the user did not edit a control.
+    // Keep the imported raw seconds until this explicit acceptance boundary.
+    for seconds in [
+        &mut out.gui_idle.user_seconds,
+        &mut out.gui_idle.mouse_seconds,
+        &mut out.gui_idle.api_seconds,
+    ] {
+        *seconds = normalise_idle_timeout(*seconds);
     }
     (out, problems)
 }

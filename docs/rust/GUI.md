@@ -3236,7 +3236,10 @@ Options > maintenance and processing includes separate browsing, mouse movement
 and Client API idle timeouts under “when to run high cpu jobs > idle”. Each accepts
 1–1000 minutes or its own ignore checkbox. Defaults are 30 minutes for browsing,
 10 for mouse movement and ignored API activity; imported values retain their
-stored seconds and the editor displays whole minutes as Qt does. Apply updates
+stored seconds and the editor displays whole minutes as Qt does. Unchanged Apply
+saves those displayed minute bounds, while Cancel preserves the original seconds.
+Implicit normalization preserves a newer value written while Options was open.
+Apply updates
 the existing running idle-only session autosave gate; Cancel keeps the saved
 thresholds. Reopening ignored controls restores the reference's hidden one-minute
 value. The controls are disabled when the stored idle-enable flag is off. Mouse
