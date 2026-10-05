@@ -1914,7 +1914,12 @@ not yet reproduce preview audio/video playback, embed/external buttons, zoom,
 hovers or rating controls. These broader preview parents remain Partial. Owned
 page/request generations retire late decoded frames and rebound-window callbacks;
 hidden/cleared media and accepted client close finish once. Actual Qt boundary
-recording and authored display/store regressions are in `preview_viewing_intervals`.
+recording and authored display/store regressions are in `preview_viewing_intervals`. The still/poster decoder uses a lazy
+two-worker pool with one coalesced queued request and bounded replies, preserving
+the existing held-decode successor behavior. Close drops queued decoder snapshots;
+idle workers retain only Weak Store references and active synchronous decodes
+release their Store before replying. Native coalescing/timestamp and resource
+retirement regressions are authored for hosted CI; no local Rust execution.
 
 Read-search favourites and children now reach actual page predicates, queries,
 shared settings and restored contexts. Their selector is a native dropdown

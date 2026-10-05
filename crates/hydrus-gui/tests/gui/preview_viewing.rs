@@ -586,6 +586,142 @@ fn native_page_generation_same_file_restore_and_late_decode_cannot_publish_to_su
 }
 
 #[test]
+fn preview_workers_bound_slow_decodes_and_coalesce_the_latest_owned_target() {
+    use std::sync::atomic::{AtomicUsize, Ordering};
+    let fixture = hydrus_testkit::fixture_json("preview_viewing_intervals.json");
+    let (_directories, store) = store();
+    let _windows = headless::init();
+    save_settings(&store, true, None, None);
+    let first = file(&store, fixture["file"].as_str().unwrap());
+    let other = file(
+        &store,
+        fixture["events"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|event| event["event"] == "live-settings-change")
+            .unwrap()["shown"]
+            .as_str()
+            .unwrap(),
+    );
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    let clock = Rc::new(Cell::new(100));
+    bound.preview.set_clock(Rc::new({
+        let clock = clock.clone();
+        move || clock.get()
+    }));
+    let active = Arc::new(AtomicUsize::new(0));
+    let maximum = Arc::new(AtomicUsize::new(0));
+    let old_calls = Arc::new(AtomicUsize::new(0));
+    let latest_calls = Arc::new(AtomicUsize::new(0));
+    let (entered, entry) = crossbeam_channel::bounded(2);
+    let (release, released) = crossbeam_channel::bounded(2);
+    bound.preview.set_decoder(Arc::new({
+        let active = active.clone();
+        let maximum = maximum.clone();
+        let calls = old_calls.clone();
+        move |_, id| {
+            let count = active.fetch_add(1, Ordering::SeqCst) + 1;
+            maximum.fetch_max(count, Ordering::SeqCst);
+            calls.fetch_add(1, Ordering::SeqCst);
+            entered.send(id).unwrap();
+            released
+                .recv_timeout(std::time::Duration::from_secs(5))
+                .unwrap();
+            active.fetch_sub(1, Ordering::SeqCst);
+            Some(hydrus_media::Raster::new(1, 1, 3, vec![10; 3]).unwrap())
+        }
+    }));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    ui.show().unwrap();
+    request(&ui, &bound, first);
+    assert_eq!(
+        entry
+            .recv_timeout(std::time::Duration::from_secs(5))
+            .unwrap(),
+        first
+    );
+    clock.set(200);
+    request(&ui, &bound, other);
+    assert_eq!(
+        entry
+            .recv_timeout(std::time::Duration::from_secs(5))
+            .unwrap(),
+        other
+    );
+    bound.preview.set_decoder(Arc::new({
+        let active = active.clone();
+        let maximum = maximum.clone();
+        let calls = latest_calls.clone();
+        move |_, id| {
+            let count = active.fetch_add(1, Ordering::SeqCst) + 1;
+            maximum.fetch_max(count, Ordering::SeqCst);
+            calls.fetch_add(1, Ordering::SeqCst);
+            assert_eq!(
+                id, other,
+                "only the latest queued target reaches its decoder snapshot"
+            );
+            active.fetch_sub(1, Ordering::SeqCst);
+            Some(hydrus_media::Raster::new(3, 1, 3, vec![80; 9]).unwrap())
+        }
+    }));
+    for index in 0..64 {
+        clock.set(500 + index);
+        request(&ui, &bound, if index % 2 == 0 { first } else { other });
+    }
+    assert_eq!(active.load(Ordering::SeqCst), 2);
+    assert_eq!(old_calls.load(Ordering::SeqCst), 2);
+    assert_eq!(latest_calls.load(Ordering::SeqCst), 0);
+    assert!(ui.get_preview_loading());
+    assert!(!ui.get_preview_has_media());
+    release.send(()).unwrap();
+    release.send(()).unwrap();
+    wait_image(&ui, &bound.preview);
+    assert_eq!(ui.get_preview_media().size().width, 3);
+    assert!(
+        maximum.load(Ordering::SeqCst) <= 2,
+        "actual concurrent decoders stay bounded"
+    );
+    assert_eq!(old_calls.load(Ordering::SeqCst), 2);
+    assert_eq!(latest_calls.load(Ordering::SeqCst), 1);
+    clock.set(2000);
+    bound.preview.close();
+    let stats = store
+        .read(|conn| hydrus_store::media::viewing_stats(conn, &[first, other]))
+        .unwrap();
+    let previews = stats
+        .iter()
+        .filter(|stats| stats.canvas == CanvasType::Preview)
+        .collect::<Vec<_>>();
+    assert_eq!(
+        previews.len(),
+        1,
+        "obsolete and queued loading intervals create no views"
+    );
+    assert_eq!(
+        (
+            previews[0].views,
+            previews[0].viewtime_ms,
+            previews[0].last_viewed.unwrap().0
+        ),
+        (1, 1437, 563)
+    );
+    request(&ui, &bound, first);
+    assert!(!ui.get_preview_loading());
+    assert!(!ui.get_preview_has_media());
+    assert_eq!(
+        latest_calls.load(Ordering::SeqCst),
+        1,
+        "close permanently retires the pool"
+    );
+}
+
+#[test]
 fn rejected_preview_decode_never_counts_a_thumbnail_selection_or_loading_placeholder() {
     let fixture = hydrus_testkit::fixture_json("preview_viewing_intervals.json");
     let (_directories, store) = store();
