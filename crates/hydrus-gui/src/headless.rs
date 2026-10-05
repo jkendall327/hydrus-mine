@@ -34,23 +34,14 @@ impl Drop for Collected {
         self.windows.get_mut().clear();
     }
 }
-#[derive(Default)]
-struct Cleanup(RefCell<Vec<Weak<Registry>>>);
-impl Drop for Cleanup {
-    fn drop(&mut self) {
-        // init() registers after Slint initializes its thread-local context,
-        // so this runs first. It also covers callers discarding init's result.
-        for registry in self.0.get_mut().iter().filter_map(Weak::upgrade) {
-            registry.hide_all();
-        }
-    }
-}
-thread_local! {
-    static CLEANUP: Cleanup = Cleanup::default();
-}
-
 /// Every window made so far, in order. The last collector hides and releases
-/// its adapters, including visible components retained by Slint.
+/// its adapters, including visible components retained by Slint. Keep a collector
+/// alive for the entire UI scope and release it before returning from that thread.
+/// A helper returning windows must pass the collector to its caller too.
+///
+/// Cleanup must not run from a thread-local destructor: releasing callbacks can
+/// drop a Store and join its writer, which deadlocks under Windows' loader lock.
+#[must_use = "retain the collector for the entire UI scope, then drop it before thread return"]
 #[derive(Clone, Default)]
 pub struct Windows(Rc<Collected>);
 
@@ -114,7 +105,8 @@ impl Platform for Headless {
 }
 
 /// Make this process draw its windows headless (call once, before creating
-/// any window, on the thread that will use them).
+/// any window, on the thread that will use them). Retain the returned collector
+/// until every window in that UI scope has finished; drop it before thread exit.
 pub fn init() -> Windows {
     let windows = Windows::default();
     slint::platform::set_platform(Box::new(Headless {
@@ -122,12 +114,6 @@ pub fn init() -> Windows {
         collector: Rc::downgrade(&windows.0),
     }))
     .expect("no platform was set yet");
-    CLEANUP.with(|cleanup| {
-        cleanup
-            .0
-            .borrow_mut()
-            .push(Rc::downgrade(&windows.0.registry));
-    });
     windows
 }
 

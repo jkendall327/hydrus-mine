@@ -46,12 +46,13 @@ fn last_collector_hides_visible_components_and_releases_callbacks_and_store() {
 }
 
 #[test]
-fn thread_exit_releases_bound_workers_when_the_collector_is_discarded() {
+fn explicit_ui_scope_teardown_releases_bound_workers_before_thread_exit() {
     let weak_store = std::thread::spawn(|| {
         let (_directories, store) = crate::subscriptions::store();
         let weak_store = Arc::downgrade(&store);
-        headless::init();
+        let windows = headless::init();
         let ui = MainWindow::new().unwrap();
+        let weak_component = ui.as_weak();
         let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
         ui.show().unwrap();
         ui.invoke_search_edited("system:everything".into());
@@ -59,12 +60,19 @@ fn thread_exit_releases_bound_workers_when_the_collector_is_discarded() {
         drop(bound);
         drop(ui);
         drop(store);
+        eprintln!("headless lifetime: explicit UI cleanup begins before thread return");
+        drop(windows);
+        assert!(
+            weak_component.upgrade().is_none(),
+            "the explicit collector releases the visible component before TLS destruction"
+        );
+        eprintln!("headless lifetime: UI cleanup completed; returning from the UI thread");
         weak_store
     })
     .join()
     .unwrap();
     // Owned workers may finish a current read after cancellation, but must not
-    // retain their Store indefinitely after the GUI thread/context has ended.
+    // retain their Store indefinitely after explicit UI cleanup/thread return.
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(2);
     while weak_store.strong_count() != 0 && std::time::Instant::now() < deadline {
         std::thread::sleep(std::time::Duration::from_millis(5));
