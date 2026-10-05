@@ -188,3 +188,4 @@ mod local_transfer;
 mod sidebar_layout;
 
 mod hidden_page_preview;
+mod or_connector;

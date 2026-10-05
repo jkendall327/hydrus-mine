@@ -298,6 +298,7 @@ settings! {
     sorts: SortSettings,
     tag_presentation: TagPresentation,
     manage_tags_sort: hydrus_store::manage_tags_sort::Settings,
+    or_connector: hydrus_store::or_connector::Connector => hydrus_store::or_connector::load,
     namespace_colours: hydrus_core::tag_presentation::NamespaceColours,
     sibling_connector_colours: hydrus_core::tag_presentation::SiblingConnectorColours,
     tag_summaries: hydrus_core::tag_summary::TagSummaries,
@@ -3631,6 +3632,14 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                 |s, value| s.sibling_connector_colours.namespace = value,
                             ),
                             |s| !s.sibling_connector_colours.fade,
+                        ),
+                        text(
+                            "OR connecting string (on one line): ",
+                            |s| s.or_connector.text.clone(),
+                            |s, value| {
+                                value.clone_into(&mut s.or_connector.text);
+                                Ok(())
+                            },
                         ),
                         opt(
                             "Namespace for the OR top row: ",

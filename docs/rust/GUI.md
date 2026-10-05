@@ -3570,3 +3570,12 @@ permanently retires the old scheduler. The actual Qt controls, save/reopen and
 strict/forced gallery/watcher deadlines are recorded in `downloader_update_times.json`
 and its reference PNG. Native/model/store regressions and three native snapshots
 are authored for hosted validation.
+
+Tag Presentation > other rendering now includes “OR connecting string (on one
+line)”. Apply saves its raw text; Cancel discards the draft. Blank, whitespace,
+Unicode and previously saved multiline text survive reopening and legacy import.
+This matches the reference editor: Qt currently leaves its custom connector
+renderer disabled, so saving this field preserves existing OR labels, colours
+and copy/export syntax. Namespace formatting and the OR top-row colour remain
+independent live settings. Hidden, cancelled, rebound and closed Options owners
+cannot save a connector draft.
