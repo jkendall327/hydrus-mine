@@ -4,7 +4,7 @@ use crate::{Result, popups};
 use rusqlite::{Connection, OptionalExtension as _, params};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Request {
     Call,
     Answer { question: [u8; 32], answer: bool },
@@ -146,7 +146,7 @@ fn request_inner(
         params![
             key.as_slice(),
             owner.as_slice(),
-            gui_owner.map(|owner| owner.as_slice()),
+            gui_owner.map(<[u8; 32]>::as_slice),
             serde_json::to_string(&request)?
         ],
     )?;
