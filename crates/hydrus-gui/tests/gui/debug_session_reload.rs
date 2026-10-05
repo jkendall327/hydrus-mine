@@ -363,7 +363,13 @@ fn hidden_new_launch_cancelled_exit_rebind_and_shared_final_drop_ownership() {
     fresh.show().unwrap();
     let dropped_main = bind(&fresh, Pages::open(store).unwrap());
     dropped_main.debug_session_reload.start();
+    let weak_main = fresh.as_weak();
+    fresh.hide().unwrap();
     drop(fresh);
+    assert!(
+        weak_main.upgrade().is_none(),
+        "actual Main component is destroyed"
+    );
     dropped_main.debug_session_reload.poll();
     assert_eq!(dropped_main.debug_session_reload.pending(), 0);
 }
