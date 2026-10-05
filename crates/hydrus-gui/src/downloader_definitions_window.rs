@@ -352,7 +352,7 @@ pub fn open(
                     match crate::downloader_interchange_window::open(
                         &exchange,
                         action == "import",
-                        definitions,
+                        &definitions,
                         preview,
                         applied,
                     ) {

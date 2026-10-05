@@ -60,7 +60,7 @@ pub type Apply<T = Definition> = Rc<dyn Fn(Vec<T>) -> Result<(), String>>;
 pub fn open(
     slots: &Slots,
     importing: bool,
-    definitions: Vec<Definition>,
+    definitions: &[Definition],
     preview: Preview,
     applied: Apply,
 ) -> Result<DownloaderExchangeWindow, String> {
@@ -85,7 +85,7 @@ pub fn open_subscriptions(
     store: &Arc<Store>,
     slots: &Slots,
     importing: bool,
-    subscriptions: Vec<hydrus_downloader_exchange::subscriptions::Subscription>,
+    subscriptions: &[hydrus_downloader_exchange::subscriptions::Subscription],
     preview: Preview<hydrus_downloader_exchange::subscriptions::Subscription>,
     applied: Apply<hydrus_downloader_exchange::subscriptions::Subscription>,
 ) -> Result<DownloaderExchangeWindow, String> {
@@ -94,7 +94,7 @@ pub fn open_subscriptions(
         None
     } else {
         Some((
-            subscriptions::encode_text(&subscriptions).map_err(|e| e.to_string())?,
+            subscriptions::encode_text(subscriptions).map_err(|e| e.to_string())?,
             subscriptions.len(),
         ))
     };
@@ -139,7 +139,7 @@ pub fn open_external_calls(
     store: &Arc<Store>,
     slots: &Slots,
     importing: bool,
-    calls: Vec<hydrus_core::external_calls::Callable>,
+    calls: &[hydrus_core::external_calls::Callable],
     preview: Preview<hydrus_core::external_calls::Callable>,
     applied: Apply<hydrus_core::external_calls::Callable>,
 ) -> Result<DownloaderExchangeWindow, String> {
@@ -147,7 +147,7 @@ pub fn open_external_calls(
     let export = if importing {
         None
     } else {
-        Some(codec::encode_text(&calls).map_err(|e| e.to_string())?)
+        Some(codec::encode_text(calls).map_err(|e| e.to_string())?)
     };
     let count = calls.len();
     let w = open_objects(
@@ -198,7 +198,7 @@ struct Codec<T> {
 pub fn open_steps(
     slots: &Slots,
     importing: bool,
-    steps: Vec<hydrus_core::url::strings::ProcessingStep>,
+    steps: &[hydrus_core::url::strings::ProcessingStep],
     applied: Apply<hydrus_core::url::strings::ProcessingStep>,
 ) -> Result<DownloaderExchangeWindow, String> {
     use hydrus_downloader_exchange::processing;
@@ -233,7 +233,7 @@ pub fn open_steps(
 pub fn open_login_scripts(
     slots: &Slots,
     importing: bool,
-    scripts: Vec<hydrus_parse::login::LoginScript>,
+    scripts: &[hydrus_parse::login::LoginScript],
     preview: Preview<hydrus_parse::login::LoginScript>,
     applied: Apply<hydrus_parse::login::LoginScript>,
 ) -> Result<DownloaderExchangeWindow, String> {
@@ -268,7 +268,7 @@ pub fn open_login_scripts(
 pub fn open_subsidiaries(
     slots: &Slots,
     importing: bool,
-    parsers: Vec<hydrus_parse::content::SubsidiaryPageParser>,
+    parsers: &[hydrus_parse::content::SubsidiaryPageParser],
     preview: Preview<hydrus_parse::content::SubsidiaryPageParser>,
     applied: Apply<hydrus_parse::content::SubsidiaryPageParser>,
 ) -> Result<DownloaderExchangeWindow, String> {
@@ -303,7 +303,7 @@ pub fn open_subsidiaries(
 pub fn open_routers(
     slots: &Slots,
     importing: bool,
-    routers: Vec<hydrus_parse::sidecar::Router>,
+    routers: &[hydrus_parse::sidecar::Router],
     preview: Preview<hydrus_parse::sidecar::Router>,
     applied: Apply<hydrus_parse::sidecar::Router>,
 ) -> Result<DownloaderExchangeWindow, String> {
@@ -339,7 +339,7 @@ pub fn open_routers_with_store(
     store: &Arc<Store>,
     slots: &Slots,
     importing: bool,
-    routers: Vec<hydrus_parse::sidecar::Router>,
+    routers: &[hydrus_parse::sidecar::Router],
     preview: Preview<hydrus_parse::sidecar::Router>,
     applied: Apply<hydrus_parse::sidecar::Router>,
 ) -> Result<DownloaderExchangeWindow, String> {
@@ -347,8 +347,7 @@ pub fn open_routers_with_store(
         None
     } else {
         Some((
-            hydrus_downloader_exchange::routers::encode_text(&routers)
-                .map_err(|e| e.to_string())?,
+            hydrus_downloader_exchange::routers::encode_text(routers).map_err(|e| e.to_string())?,
             routers.len(),
         ))
     };
@@ -370,7 +369,7 @@ pub fn open_subsidiaries_with_store(
     store: &Arc<Store>,
     slots: &Slots,
     importing: bool,
-    parsers: Vec<hydrus_parse::content::SubsidiaryPageParser>,
+    parsers: &[hydrus_parse::content::SubsidiaryPageParser],
     preview: Preview<hydrus_parse::content::SubsidiaryPageParser>,
     applied: Apply<hydrus_parse::content::SubsidiaryPageParser>,
 ) -> Result<DownloaderExchangeWindow, String> {
@@ -378,7 +377,7 @@ pub fn open_subsidiaries_with_store(
         None
     } else {
         Some((
-            hydrus_downloader_exchange::subsidiaries::encode_text(&parsers)
+            hydrus_downloader_exchange::subsidiaries::encode_text(parsers)
                 .map_err(|e| e.to_string())?,
             parsers.len(),
         ))
@@ -443,7 +442,7 @@ fn attach_png(
 fn open_objects<T: Clone + 'static>(
     slots: &Slots,
     importing: bool,
-    definitions: Vec<T>,
+    definitions: &[T],
     preview: Preview<T>,
     applied: Apply<T>,
     codec: Codec<T>,
@@ -467,7 +466,7 @@ fn open_objects<T: Clone + 'static>(
     }
     if !importing {
         w.set_text(
-            (codec.encode_text)(&definitions)
+            (codec.encode_text)(definitions)
                 .map_err(|e| e.to_string())?
                 .into(),
         );
@@ -527,7 +526,7 @@ fn open_objects<T: Clone + 'static>(
                     }
                     "paste" => w.set_text(crate::from_clipboard()?.into()),
                     "copy" if !w.get_text().is_empty() => {
-                        crate::copy_to_clipboard(w.get_text().as_str())
+                        crate::copy_to_clipboard(w.get_text().as_str());
                     }
                     "import-jsons" | "import-pngs" if importing && w.get_json_enabled() => {
                         let png = action == "import-pngs";
@@ -732,7 +731,7 @@ pub fn package(
             next.save(&store).map_err(|e| e.to_string())
         }
     });
-    let window = open(slots, importing, definitions.clone(), preview, applied)?;
+    let window = open(slots, importing, &definitions, preview, applied)?;
     window.set_json_enabled(true);
     if !importing {
         let choice_count = definitions.len();

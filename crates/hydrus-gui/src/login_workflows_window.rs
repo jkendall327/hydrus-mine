@@ -1212,7 +1212,7 @@ pub fn open_scripts(store: &Arc<Store>, slots: &Slots) -> Result<LoginScriptsWin
                 let preview: crate::downloader_interchange_window::Preview<LoginScript> = Rc::new(|scripts| Ok(format!("{} login script(s) to add. Names and keys are made unique on acceptance.\n\n{}", scripts.len(), scripts.iter().map(|script| script.name.as_str()).collect::<Vec<_>>().join("\n"))));
                 let accepted: crate::downloader_interchange_window::Apply<LoginScript> = Rc::new({ let weak = weak.clone(); let editor = editor.clone(); let active = active.clone(); move |scripts| { if !active.get() { return Err("The script list has closed.".into()); } for script in scripts { editor.borrow_mut().put(None, script); }
         if let Some(window) = weak.upgrade() { show_scripts(&window, &editor.borrow()); } Ok(()) } });
-                match crate::downloader_interchange_window::open_login_scripts(&exchange, importing, scripts, preview, accepted) { Ok(child) => { window.set_child_open(true); let weak = weak.clone(); child.on_closed(move || { if let Some(window) = weak.upgrade() { window.set_child_open(false); } }); } Err(error) => window.set_error(error.into()) }
+                match crate::downloader_interchange_window::open_login_scripts(&exchange, importing, &scripts, preview, accepted) { Ok(child) => { window.set_child_open(true); let weak = weak.clone(); child.on_closed(move || { if let Some(window) = weak.upgrade() { window.set_child_open(false); } }); } Err(error) => window.set_error(error.into()) }
             }
             _ => {}
         }

@@ -1495,7 +1495,7 @@ pub fn open_routers(
                 }
             });
             match crate::downloader_interchange_window::open_routers_with_store(
-                &store, &slots.exchange, importing, routers, preview, applied,
+                &store, &slots.exchange, importing, &routers, preview, applied,
             ) {
                 Ok(child) => {
                     let refresh = refresh.clone();

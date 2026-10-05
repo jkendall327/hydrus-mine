@@ -639,7 +639,7 @@ pub fn open(
                 "import-content" | "export-content" => {
                     use hydrus_gui_model::downloader_interchange::{Definition, Native};
                     let importing = action == "import-content";
-                    let definitions = editor
+                    let definitions: Vec<_> = editor
                         .borrow()
                         .selection
                         .in_order(&editor.borrow().order())
@@ -677,7 +677,7 @@ pub fn open(
                     match crate::downloader_interchange_window::open(
                         &exchange,
                         importing,
-                        definitions,
+                        &definitions,
                         preview,
                         accepted,
                     ) {

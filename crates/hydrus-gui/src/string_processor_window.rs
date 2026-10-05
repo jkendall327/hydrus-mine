@@ -258,7 +258,7 @@ pub fn open(
             let result = crate::downloader_interchange_window::open_steps(
                 &slots.exchange,
                 importing,
-                steps,
+                &steps,
                 applied,
             );
             if let Some(window) = weak.upgrade() {
