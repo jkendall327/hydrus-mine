@@ -9,6 +9,12 @@ use serde_json::{Value, json};
 use std::sync::Arc;
 
 pub fn seed(fixture: &Value) -> (tempfile::TempDir, Arc<Store>, Vec<HashId>) {
+    let ([_legacy, directory], store, files) = seed_owned(fixture);
+    (directory, store, files)
+}
+
+/// Native viewer/decoder consumers retain the extracted physical files as well.
+pub fn seed_owned(fixture: &Value) -> ([tempfile::TempDir; 2], Arc<Store>, Vec<HashId>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let directory = tempfile::tempdir().unwrap();
     hydrus_store::import::import_legacy(
@@ -78,7 +84,7 @@ pub fn seed(fixture: &Value) -> (tempfile::TempDir, Arc<Store>, Vec<HashId>) {
             Ok(hashes.iter().map(|hash| ids[hash]).collect())
         })
         .unwrap();
-    (directory, store, files)
+    ([legacy, directory], store, files)
 }
 
 pub fn preferences(options: &hydrus_store::tag_editing::TagEditingSettings) -> Value {

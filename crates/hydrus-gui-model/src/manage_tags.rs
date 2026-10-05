@@ -24,6 +24,7 @@ pub struct TagRow {
 }
 
 pub struct ManageTags {
+    sorts: Vec<crate::manage_tags_sort::Control>,
     store: Arc<Store>,
     files: Vec<HashId>,
     location: hydrus_core::search::context::LocationContext,
@@ -53,6 +54,19 @@ impl std::fmt::Debug for ManageTags {
 impl ManageTags {
     /// Manage `files`' tags; `None` without files or local tag services.
     pub fn new(store: Arc<Store>, files: Vec<HashId>) -> Option<Self> {
+        Self::new_at(
+            store,
+            files,
+            hydrus_store::manage_tags_sort::Context::SearchPage,
+        )
+    }
+
+    /// Capture this presentation context's default for every owned service tab.
+    pub fn new_at(
+        store: Arc<Store>,
+        files: Vec<HashId>,
+        context: hydrus_store::manage_tags_sort::Context,
+    ) -> Option<Self> {
         if files.is_empty() {
             return None;
         }
@@ -101,7 +115,13 @@ impl ManageTags {
         );
         input.set_context_tags(stored[service].keys().cloned());
         let suggestion_preferences = store.read(hydrus_store::settings::get).unwrap_or_default();
+        let defaults: hydrus_store::manage_tags_sort::Settings =
+            store.read(hydrus_store::settings::get).unwrap_or_default();
         Some(Self {
+            sorts: vec![
+                crate::manage_tags_sort::Control::new(defaults.get(context));
+                services.len()
+            ],
             staged: vec![BTreeMap::new(); services.len()],
             store,
             files,
@@ -126,6 +146,12 @@ impl ManageTags {
     /// Selected file IDs used to launch migration.
     pub fn files(&self) -> &[HashId] {
         &self.files
+    }
+    pub fn sort_control(&self) -> &crate::manage_tags_sort::Control {
+        &self.sorts[self.service]
+    }
+    pub fn choose_sort(&mut self, part: usize, index: usize) {
+        self.sorts[self.service].choose(part, index);
     }
     /// Stable key of the active tag service.
     pub fn migration_service_key(&self) -> Option<hydrus_core::ServiceKey> {
@@ -323,7 +349,7 @@ impl ManageTags {
         }
     }
     /// Storage rows include current counts and, when shown, deleted counts,
-    /// sorted as the media viewer's list is; each as (logical tag, row).
+    /// Sorted under this dialog service's captured/local policy; each logical tag and row.
     fn plain_rows(&self) -> Vec<(String, String)> {
         use hydrus_core::tag_sort::sort_tags;
         let presentation: hydrus_core::tag_presentation::TagPresentation = self
@@ -339,16 +365,50 @@ impl ManageTags {
         for tag in deleted.keys() {
             tags.entry(tag.clone()).or_default();
         }
-        let mut rows: Vec<(String, usize)> = tags.into_iter().collect();
+        let rows: Vec<(String, usize)> = tags.into_iter().collect();
+        let sort = self.sort_control().value;
+        let mut best: BTreeMap<String, String> =
+            if sort.use_siblings && self.dialog_preferences.tag_list_show_siblings {
+                let snapshot = self.store.snapshot();
+                let graph = snapshot.display.get(self.services[self.service].0);
+                self.store
+                    .read(|conn| {
+                        let mut best = BTreeMap::new();
+                        for (tag, _) in &rows {
+                            if let Some(id) =
+                                hydrus_store::master::tag_id(conn, &Tag::from_clean(tag.clone()))?
+                            {
+                                let ideal = graph.ideal(id);
+                                let text = hydrus_store::master::tags(conn, &[ideal])?;
+                                if let Some(text) = text.get(&ideal) {
+                                    best.insert(tag.clone(), text.as_str().to_owned());
+                                }
+                            }
+                        }
+                        Ok(best)
+                    })
+                    .unwrap_or_default()
+            } else {
+                BTreeMap::new()
+            };
+        // Keep the effective key on each owned row: sorting borrows that row's
+        // key while retaining its original logical storage tag and count.
+        let mut rows: Vec<_> = rows
+            .into_iter()
+            .map(|(tag, count)| {
+                let key = best.remove(&tag).unwrap_or_else(|| tag.clone());
+                (tag, count, key)
+            })
+            .collect();
         sort_tags(
-            &presentation.media_viewer_sort,
+            &sort.order,
             &mut rows,
-            |(tag, _)| tag,
-            |(_, n)| *n as u64,
+            |(_, _, key)| key,
+            |(tag, n, _)| (*n + deleted.get(tag).map_or(0, BTreeSet::len)) as u64,
             &presentation.user_namespaces,
         );
         rows.into_iter()
-            .map(|(tag, n)| {
+            .map(|(tag, n, _)| {
                 let mut row = presentation.render(&tag);
                 if n > 0 {
                     row.push_str(&format!(" ({})", hydrus_core::numbers::human_int(n as u64)));

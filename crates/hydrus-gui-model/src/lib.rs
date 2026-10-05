@@ -46,6 +46,7 @@ pub mod list_selection;
 pub mod local_import;
 pub mod main_menu;
 pub mod manage_tags;
+pub mod manage_tags_sort;
 pub mod media_actions;
 pub mod merge_options_editor;
 pub mod merge_summary;

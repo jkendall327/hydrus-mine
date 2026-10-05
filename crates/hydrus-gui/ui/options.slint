@@ -67,6 +67,8 @@ export struct OptionRow {
     group-index: int,
     grouped: bool,
     sort-cog: bool,
+    sibling-sort-visible: bool,
+    sibling-sort-index: int,
 }
 
 // a whole number typed in a small box
@@ -502,7 +504,7 @@ export component OptionsWindow inherits Window {
                                     }
                                 }
                             }
-                            if row.kind == 12: VerticalLayout {
+                            if row.kind == 12 || row.kind == 35: VerticalLayout {
                                 width: 260px;
                                 spacing: 2px;
                                 ComboBox {
@@ -514,6 +516,11 @@ export component OptionsWindow inherits Window {
                                     model: row.orders;
                                     current-index: row.order-index;
                                     selected => { root.tag-sort-chosen(i, 1, self.current-index); }
+                                }
+                                if row.kind == 35 && row.sibling-sort-visible: ComboBox {
+                                    model: ["siblings", "tags"];
+                                    current-index: row.sibling-sort-index;
+                                    selected => { root.tag-sort-chosen(i, 3, self.current-index); }
                                 }
                                 if row.grouped: ComboBox {
                                     model: row.groups;

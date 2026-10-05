@@ -3533,3 +3533,16 @@ preserves concurrent size saves and the exit switch; Cancel discards the draft.
 New pages and restore/reveal consume the saved hide flag. Existing accepted preview
 media survives refused SetMedia/clear calls on that same page while globally hidden;
 page-owner transitions still retire the shared native raster (see DIFFERENCES.md).
+
+Tag Sort now includes independent opening defaults for search-page and media-viewer
+Manage Tags dialogs. Both stage tag/subtag/count, text or count order, siblings/tags,
+and namespace grouping in the reference's four-row Options order. Apply saves the
+changed context; Cancel preserves it, and reopening restores it. Each local tag
+service tab captures its opening sort and offers the same choices within the
+Manage Tags window. Switching sort types remembers separate text and count
+orders. A later default change affects new dialogs; an open dialog retains its
+local sort. Search launch uses the selected files; viewer F3 uses its current file.
+Logical storage tags retain their labels, counts and segmented namespace/sibling
+colours while sorting can use their sibling ideals. The actual Qt recording
+`manage_tags_sort.json` covers 72 combinations and both captured-dialog lifetimes;
+`manage_tags_sort_options.png` shows the actual controls.

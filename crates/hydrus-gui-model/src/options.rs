@@ -53,6 +53,14 @@ macro_rules! settings {
     (@save $conn:ident, $after:ident, $before:ident, page_layout) => {
         hydrus_store::page_layout::save_changed($conn, &$after.page_layout, &$before.page_layout)?;
     };
+    (@save $conn:ident, $after:ident, $before:ident, manage_tags_sort) => {
+        if $after.manage_tags_sort != $before.manage_tags_sort {
+            let mut latest: hydrus_store::manage_tags_sort::Settings = hydrus_store::settings::get($conn)?;
+            if $after.manage_tags_sort.search_page != $before.manage_tags_sort.search_page { latest.search_page = $after.manage_tags_sort.search_page; }
+            if $after.manage_tags_sort.media_viewer != $before.manage_tags_sort.media_viewer { latest.media_viewer = $after.manage_tags_sort.media_viewer; }
+            hydrus_store::settings::set($conn, &latest)?;
+        }
+    };
     (@save $conn:ident, $after:ident, $before:ident, popup_width) => {
         hydrus_store::popup_width::save_changed($conn, &$after.popup_width, &$before.popup_width)?;
     };
@@ -284,6 +292,7 @@ settings! {
     slideshow: SlideshowSettings,
     sorts: SortSettings,
     tag_presentation: TagPresentation,
+    manage_tags_sort: hydrus_store::manage_tags_sort::Settings,
     namespace_colours: hydrus_core::tag_presentation::NamespaceColours,
     sibling_connector_colours: hydrus_core::tag_presentation::SiblingConnectorColours,
     tag_summaries: hydrus_core::tag_summary::TagSummaries,
@@ -313,6 +322,7 @@ settings! {
 /// An option's value as its control holds it.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Value {
+    ManageTagsSort(crate::manage_tags_sort::Control),
     Bytes {
         amount: i64,
         unit: usize,
@@ -381,6 +391,7 @@ pub enum Value {
 /// What kind of control an option has.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Kind {
+    ManageTagsSort,
     /// Reference byte amount plus B/KB/MB/GB/TB multiplier.
     Bytes,
     Shortcuts,
@@ -3660,10 +3671,42 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         |s| s.tag_presentation.search_page_sort,
                         |s, v| s.tag_presentation.search_page_sort = v,
                     ),
+                    opt(
+                        "Default tag sort in search page manage tags dialogs: ",
+                        Kind::ManageTagsSort,
+                        Rc::new(|s| {
+                            Value::ManageTagsSort(crate::manage_tags_sort::Control::new(
+                                s.manage_tags_sort.search_page,
+                            ))
+                        }),
+                        Rc::new(|s, value| match value {
+                            Value::ManageTagsSort(control) => {
+                                s.manage_tags_sort.search_page = control.value;
+                                Ok(())
+                            }
+                            _ => Err(wrong("search-page Manage Tags sort")),
+                        }),
+                    ),
                     tag_sort(
                         "Default tag sort in the media viewer: ",
                         |s| s.tag_presentation.media_viewer_sort,
                         |s, v| s.tag_presentation.media_viewer_sort = v,
+                    ),
+                    opt(
+                        "Default tag sort in media viewer manage tags dialogs: ",
+                        Kind::ManageTagsSort,
+                        Rc::new(|s| {
+                            Value::ManageTagsSort(crate::manage_tags_sort::Control::new(
+                                s.manage_tags_sort.media_viewer,
+                            ))
+                        }),
+                        Rc::new(|s, value| match value {
+                            Value::ManageTagsSort(control) => {
+                                s.manage_tags_sort.media_viewer = control.value;
+                                Ok(())
+                            }
+                            _ => Err(wrong("media-viewer Manage Tags sort")),
+                        }),
                     ),
                 ],
             )],
@@ -4441,10 +4484,12 @@ impl Editor {
     /// A tag sort's type, order or grouping chosen (`part` 0, 1 or 2; each
     /// by its place among its choices).
     pub fn tag_sort(&mut self, row: usize, part: usize, index: usize) {
-        if let Some(i) = self.option_at(row)
-            && let Value::TagSort(sort) = &self.values[self.page][i]
-        {
-            self.values[self.page][i] = Value::TagSort(tag_sort_chosen(sort, part, index));
+        if let Some(i) = self.option_at(row) {
+            match &mut self.values[self.page][i] {
+                Value::TagSort(sort) => *sort = tag_sort_chosen(sort, part, index),
+                Value::ManageTagsSort(control) => control.choose(part, index),
+                _ => {}
+            }
         }
     }
 

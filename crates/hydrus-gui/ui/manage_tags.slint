@@ -5,7 +5,7 @@ import { PaintedTagText } from "tag_text.slint";
 // through the suggestions. Changes wait: enter with nothing typed (or
 // "apply") applies them, escape (or "cancel") forgets them.
 
-import { Button, ListView } from "std-widgets.slint";
+import { Button, ComboBox, ListView } from "std-widgets.slint";
 import { WriteTagInput, TagMenuOverlay } from "write_autocomplete.slint";
 import { Question } from "favourites.slint";
 import { MenuPane } from "main_menu.slint";
@@ -38,6 +38,12 @@ export component ManageTagsWindow inherits Window {
     out property <float> service-content-offset: services.content-offset;
     in-out property <int> service-index;
     in property <[ListText]> tags;
+    in property <int> sort-type;
+    in property <int> sort-order;
+    in property <int> sort-group;
+    in property <int> sort-siblings;
+    callback sort-chosen(int,int);
+    out property <bool> sort-enabled: root.question == "" && root.tag-menu-panes.length == 0 && root.tag-menu-question == "";
     in property <string> deleted-count-label;
     in property <bool> deleted-count-visible;
     in property <bool> show-deleted;
@@ -114,6 +120,12 @@ export component ManageTagsWindow inherits Window {
               VerticalLayout {
                 padding: 8px;
                 spacing: 6px;
+                VerticalLayout {
+                    ComboBox { enabled:root.sort-enabled;model:["sort by tag","sort by subtag","sort by count"];current-index:root.sort-type;selected=>{root.sort-chosen(0,self.current-index);} }
+                    ComboBox { enabled:root.sort-enabled;model:root.sort-type == 2 ? ["most first","fewest first"] : ["a-z","z-a"];current-index:root.sort-order;selected=>{root.sort-chosen(1,self.current-index);} }
+                    if root.sort-type != 2: ComboBox { enabled:root.sort-enabled;model:["siblings","tags"];current-index:root.sort-siblings;selected=>{root.sort-chosen(3,self.current-index);} }
+                    if root.sort-type != 1: ComboBox { enabled:root.sort-enabled;model:["no grouping","namespace (a-z)","namespace (user)"];current-index:root.sort-group;selected=>{root.sort-chosen(2,self.current-index);} }
+                }
                 Rectangle {
                     border-width: 1px;
                     border-color: Theme.border;

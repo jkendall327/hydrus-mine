@@ -312,6 +312,37 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
             (theirs["widget"] != "MediaSortControl" || ours.is_none() || buttons != ours)
                 .then(|| format!("sort {shown:?}"))
         }
+        (Kind::ManageTagsSort, Value::ManageTagsSort(control)) => {
+            use hydrus_gui_model::options::{TAG_SORT_GROUPS, TAG_SORT_TYPES, tag_sort_orders};
+            let sort = &control.value.order;
+            let mut ours: Vec<&str> = TAG_SORT_TYPES
+                .iter()
+                .filter(|(_, kind)| *kind == sort.sort_type)
+                .map(|(label, _)| *label)
+                .collect();
+            let (orders, index) = tag_sort_orders(sort);
+            ours.push(orders[index]);
+            if sort.sort_type != hydrus_core::tag_sort::TagSortType::Count {
+                ours.push(if control.value.use_siblings {
+                    "siblings"
+                } else {
+                    "tags"
+                });
+            }
+            if sort.sort_type != hydrus_core::tag_sort::TagSortType::Subtag {
+                ours.extend(
+                    TAG_SORT_GROUPS
+                        .iter()
+                        .filter(|(_, group)| *group == sort.group_by)
+                        .map(|(label, _)| *label),
+                );
+            }
+            let shown: Option<Vec<&str>> = theirs["tag_sort"]
+                .as_array()
+                .map(|values| values.iter().filter_map(Json::as_str).collect());
+            (theirs["widget"] != "TagSortControl" || shown.as_ref() != Some(&ours))
+                .then(|| format!("manage tag sort {ours:?}"))
+        }
         (Kind::TagSort, Value::TagSort(sort)) => {
             // (the choices it shows: its type, its order, and its grouping
             // where the type groups)
