@@ -2825,11 +2825,14 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                 "only propagate if vertical scrollbar has not been used recently",
                                 "propagate immediately after vertical scrollbar hits an end (Qt default)",
                             ],
-                            |settings| settings.viewer_tag_scroll.0.code(),
+                            |settings| usize::from(settings.viewer_tag_scroll.0.code()),
                             |settings, value| {
-                                settings.viewer_tag_scroll.0 =
-                                    hydrus_store::settings::TagWheelPropagation::from_code(value)
-                                        .unwrap_or_default();
+                                settings.viewer_tag_scroll.0 = u16::try_from(value)
+                                    .ok()
+                                    .and_then(
+                                        hydrus_store::settings::TagWheelPropagation::from_code,
+                                    )
+                                    .unwrap_or_default();
                             },
                         ),
                     ],

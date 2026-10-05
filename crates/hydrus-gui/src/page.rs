@@ -2176,9 +2176,10 @@ impl SearchPage {
         // '*' and 'system:' remain part of the stored tag rather than search syntax.
         let predicates: Vec<_> = selected
             .into_iter()
-            .filter_map(|row| Tag::new(&row.predicate))
-            .map(|tag| Predicate::Tag {
-                tag,
+            .map(|row| Predicate::Tag {
+                // The pane already holds a stored literal tag. Cleaning it again
+                // would strip a leading system: namespace from legacy values.
+                tag: Tag::from_clean(row.predicate),
                 inclusive: true,
             })
             .collect();

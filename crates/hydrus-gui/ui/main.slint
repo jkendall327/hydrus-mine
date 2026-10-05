@@ -883,7 +883,7 @@ export component MainWindow inherits Window {
             if event.kind == PointerEventKind.down { root.session-user-activity(); }
         }
     // the main window's shortcuts, whatever has the keyboard
-    FocusScope {
+    shortcut-keys := FocusScope {
         width: 100%;
         height: 100%;
         capture-key-released(event) => { root.tab-drag-shift=event.modifiers.shift; return reject; }
@@ -1020,7 +1020,13 @@ export component MainWindow inherits Window {
                     shift: root.tab-drag-shift;
                     hover-key: root.tab-drag-hover-key;
                     geometry(key,parent,level,index,x,y,w,h) => { root.tab-geometry(key,parent,level,index,x,y,w,h); root.tab-geometry-measured(key,parent,level,index,x,y,w,h); }
-                    pointer(action,button,x,y,shift) => { root.tab-pointer(action,button,x,y,shift); }
+                    pointer(action,button,x,y,shift) => {
+                        // TouchArea does not acquire keyboard focus. Keep a stable
+                        // owner for Escape/Shift even if hover changes the sidebar.
+                        if action == 0 { root.tab-drag-shift = shift; }
+                        root.tab-pointer(action,button,x,y,shift);
+                        if action == 0 || root.tab-drag-active { shortcut-keys.focus(); }
+                    }
                     vertical: parent.vertical-tabs;
                     clockwise: root.tab-alignment == 2;
                     reverse-levels: root.tab-alignment == 2 || root.tab-alignment == 3;

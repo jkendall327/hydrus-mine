@@ -490,6 +490,24 @@ fn literal_batches_and_empty_activation_preserve_typed_tags_query_and_or_history
     let (_dirs, store, key) = super::read_autocomplete::seeded(&fixture);
     let tags: Vec<String> =
         serde_json::from_value(fixture["literal_cases"][0]["tags"].clone()).unwrap();
+    // The recorder writes these literal values through ContentUpdate directly.
+    // Keep the native seed adapter faithful before testing AND/OR/query consumers.
+    for literal in &tags {
+        assert!(
+            store
+                .read(|conn| hydrus_store::master::tag_id(
+                    conn,
+                    &hydrus_core::Tag::from_clean(literal)
+                ))
+                .unwrap()
+                .is_some()
+        );
+    }
+    assert_eq!(
+        hydrus_core::Tag::new("system:inbox").unwrap().as_str(),
+        "inbox",
+        "entry cleaning remains separate from activation of an existing typed tag"
+    );
     store
         .write(move |ctx| settings::set(ctx.conn(), &settings::FavouriteTags(tags)))
         .unwrap();

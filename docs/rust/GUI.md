@@ -3078,8 +3078,9 @@ without clearing input drafts. A hidden, replaced, locked or switched read owner
 cannot accept a delayed favourite answer. The shared favourite editor remains
 an Options draft: child Apply stages it, parent Cancel discards it. Favourite and
 child tags containing wildcard or system-looking text remain literal inclusive
-tag predicates. Enter with no selected rows leaves the active query and OR draft
-unchanged. Locked read panes defer external settings refresh until unlocked.
+tag predicates, preserving already-stored values such as `system:inbox` without
+reapplying entry cleaning. Enter with no selected rows leaves the active query
+and OR draft unchanged. Locked read panes defer external settings refresh until unlocked.
 Options > thumbnails > interaction now stages the Shift-selection keyboard
 origin, visible-percentage threshold and scroll-rate text. Apply updates the live
 grid; Cancel preserves saved settings and reopening uses them. The origin choice
