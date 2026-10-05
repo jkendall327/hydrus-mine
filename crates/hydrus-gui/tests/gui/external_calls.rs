@@ -179,7 +179,7 @@ fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner()
 fn list_duplicate_defaults_delete_capture_and_options_persistence() {
     let (_dirs, store) = store();
     let original = seed(&store);
-    headless::init();
+    let _headless_windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let w = open(&ui, &bound);
@@ -326,7 +326,7 @@ fn list_duplicate_defaults_delete_capture_and_options_persistence() {
 #[test]
 fn imported_reference_calls_review_cancel_and_saved_process_test_consumer() {
     let (_dirs, store) = store();
-    headless::init();
+    let _headless_windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let w = open(&ui, &bound);
@@ -415,7 +415,7 @@ fn reopened_saved_process_uses_real_editor_inputs_and_owned_test_call_worker() {
     store
         .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &write))
         .unwrap();
-    headless::init();
+    let _headless_windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let w = open(&ui, &bound);
@@ -480,7 +480,7 @@ fn duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_an
     store
         .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &manager))
         .unwrap();
-    headless::init();
+    let _headless_windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let oracle: serde_json::Value = serde_json::from_str(include_str!(
@@ -573,7 +573,7 @@ fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_chan
     store
         .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &manager))
         .unwrap();
-    headless::init();
+    let _headless_windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let w = open(&ui, &bound);
@@ -868,7 +868,7 @@ fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retiremen
         }
     });
     let (_dirs, store) = store();
-    headless::init();
+    let _headless_windows = headless::init();
     let original = seed(&store);
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
