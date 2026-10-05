@@ -143,7 +143,7 @@ fn real_menu_clear_and_cull_read_live_rules_preserve_declines_and_reopen() {
 
 #[test]
 fn retired_hidden_and_successor_owners_cannot_clear_or_cull_current_records() {
-    headless::init();
+    let _headless_windows = headless::init();
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
     seed(&store);
@@ -198,7 +198,7 @@ fn retired_hidden_and_successor_owners_cannot_clear_or_cull_current_records() {
 
 #[test]
 fn closing_and_dropping_the_question_releases_its_timer_owner() {
-    headless::init();
+    let _headless_windows = headless::init();
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
     let slot = Rc::new(RefCell::new(None));
