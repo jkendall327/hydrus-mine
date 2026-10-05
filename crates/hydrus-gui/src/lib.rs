@@ -4556,6 +4556,13 @@ pub fn set_clipboard_reader(reader: impl Fn() -> Result<Option<String>, String> 
     CLIPBOARD_READER.with(|slot| *slot.borrow_mut() = Some(Rc::new(reader)));
 }
 
+/// Restore normal clipboard reads after an injected transport failure.
+pub fn clear_clipboard_reader() {
+    CLIPBOARD_READER.with(|slot| {
+        let _ = slot.borrow_mut().take();
+    });
+}
+
 /// Give what is copied to `clipper` rather than the clipboard (for tests,
 /// which shouldn't touch it), on this thread.
 pub fn set_clipper(clipper: impl Fn(&Clip) + 'static) {

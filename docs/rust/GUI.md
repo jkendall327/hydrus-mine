@@ -3142,6 +3142,17 @@ copies and aborts the remainder. Add Defaults exposes both “add them all” an
 “select from a list”, with the reference platform question and factory calls.
 Selected defaults gain fresh keys and names alongside the prior selection.
 
+The owned command child edits the first of multiple selected parameters, keeps
+added rows unselected, captures delete selections, and reorders adjacent selected
+rows at either boundary. Its focused parameter list supports extended selection,
+arrow/Home/End navigation, select-all, selected-text copy and Delete (also
+Backspace on macOS). Preview and full-template copy use cleaned parameters while
+pasted raw rows remain visible until Apply. Paste asks the exact unsorted summary
+question, including quoted, empty, repeated-space and Unicode text; declining it
+keeps the draft. Clipboard failures use an owned Error/ok notice. Copy and accepted
+paste show the reference's brief feedback. Parent Cancel and retired children
+cannot publish drafts; accepted arguments persist and feed actual token expansion.
+
 Supported process calls expose enabled input rules, tokens and the existing
 string-processor child, an ordered command-argument editor, timeout/flags and
 preview/test inputs. Reopening a saved process and pressing its Test Call runs
