@@ -268,7 +268,7 @@ fn pending_eleventh_card_snapshots_on_admission_and_row_removal_keeps_old_polici
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
-    let _bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     for i in 0..11 {
         add(&store, &format!("synthetic popup {i}"), false);
     }
@@ -336,7 +336,7 @@ fn pending_eleventh_card_snapshots_on_admission_and_row_removal_keeps_old_polici
         "displaced row cannot report into its successor"
     );
     let current = ui.get_popups().row_data(0).unwrap();
-    drop(_bound);
+    drop(bound);
     ui.invoke_popup_card_measured(0, current.key.clone(), current.gui_owner.clone(), 1.0, 2.0);
     assert_eq!(
         measurements(),
