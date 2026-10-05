@@ -899,6 +899,7 @@ fn numerical_examples_drag_and_fraction_text_use_the_whole_widget_hit_area() {
         // geometry must describe that paint immediately, not the previous size.
         headless::render(&window, 680, 1000);
         let wider_hit_width = edit.get_first_preview_width();
+        assert_eq!(edit.window().size(), slint::PhysicalSize::new(680, 1000));
         headless::render(&window, 640, 1000);
         let x = edit.get_first_preview_x();
         let y = edit.get_first_preview_y() + edit.get_first_preview_height() / 2.0;
@@ -908,6 +909,9 @@ fn numerical_examples_drag_and_fraction_text_use_the_whole_widget_hit_area() {
             "hit geometry must follow the most recently painted layout: side={side}, wider={wider_hit_width}, width={width}"
         );
         assert!(width > 200.0 && y > 0.0 && y < 1000.0);
+        // The label, padding and vertical scrollbar keep their widths at this
+        // height; all 40 additional pixels belong to the trailing hit area.
+        assert!((wider_hit_width - width - 40.0).abs() < 1.0);
         assert_eq!(
             edit.window().size(),
             slint::PhysicalSize::new(640, 1000),
