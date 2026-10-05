@@ -1552,7 +1552,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let files_changed: Rc<dyn Fn()> = Rc::new({
         let rows = rows.clone();
         let shown = shown.clone();
+        let binding_active = binding_active.clone();
         move || {
+            if !binding_active.get() {
+                return;
+            }
             rows.forget_files();
             shown(false);
         }
@@ -1724,7 +1728,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let remove_from = remove_from.clone();
         let shown = shown.clone();
         let delete_files = delete_files.clone();
+        let binding_active = binding_active.clone();
         move |asked: Asked| {
+            if !binding_active.get() {
+                return;
+            }
             let owner = page();
             let removed = remove_from(owner.clone());
             let store = owner.borrow().store().clone();
@@ -1741,7 +1749,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     let owner = owner.clone();
                     let page = page.clone();
                     let weak = weak.clone();
-                    move || weak.upgrade().is_some() && Rc::ptr_eq(&owner, &page())
+                    let binding_active = binding_active.clone();
+                    move || {
+                        binding_active.get()
+                            && weak
+                                .upgrade()
+                                .is_some_and(|window| window.window().is_visible())
+                            && Rc::ptr_eq(&owner, &page())
+                    }
                 });
                 let applied: delete_files_window::AppliedChoice = Rc::new({
                     let store = store.clone();
@@ -3826,6 +3841,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let transfer_target = transfer_target.clone();
         let local_transfer = local_transfer.clone();
         let remove_from = remove_from.clone();
+        let binding_active = binding_active.clone();
         let current = current.clone();
         let page = page.clone();
         let menu_state = menu_state.clone();
@@ -3958,9 +3974,12 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                                 let owner = owner.clone();
                                 let current = current.clone();
                                 let weak = weak.clone();
+                                let binding_active = binding_active.clone();
                                 move || {
-                                    weak.upgrade()
-                                        .is_some_and(|window| window.window().is_visible())
+                                    binding_active.get()
+                                        && weak
+                                            .upgrade()
+                                            .is_some_and(|window| window.window().is_visible())
                                         && Rc::ptr_eq(&owner, &current.borrow())
                                 }
                             });

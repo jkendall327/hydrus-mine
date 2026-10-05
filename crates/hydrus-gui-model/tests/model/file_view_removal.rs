@@ -45,7 +45,7 @@ fn restore(store: &Store, files: &[HashId], two: bool) {
                 source,
                 &files
                     .iter()
-                    .map(|&id| (id, Some(1234567890000)))
+                    .map(|&id| (id, Some(1_234_567_890_000)))
                     .collect::<Vec<_>>(),
             )?;
             w.delete_files(dest, &files, None)?;
@@ -54,7 +54,7 @@ fn restore(store: &Store, files: &[HashId], two: bool) {
                     dest,
                     &files
                         .iter()
-                        .map(|&id| (id, Some(1234567890000)))
+                        .map(|&id| (id, Some(1_234_567_890_000)))
                         .collect::<Vec<_>>(),
                 )?;
             }

@@ -82,7 +82,7 @@ fn reset(store: &Store, files: &[HashId]) {
                 source,
                 &files
                     .iter()
-                    .map(|&id| (id, Some(1234567890000)))
+                    .map(|&id| (id, Some(1_234_567_890_000)))
                     .collect::<Vec<_>>(),
             )?;
             w.delete_files(dest, &files, None)?;
@@ -359,7 +359,7 @@ fn live_trash_policy_uses_actual_membership_and_move_menu_only_removes_source() 
     let dest = store.snapshot().services.by_name("my files").unwrap().id;
     let file = files[2];
     store
-        .write_content(move |w| w.add_files(dest, &[(file, Some(1234567890000))]))
+        .write_content(move |w| w.add_files(dest, &[(file, Some(1_234_567_890_000))]))
         .unwrap();
     let location = hydrus_search::LocationContext::single(
         store.snapshot().services.get(source).unwrap().key.clone(),
@@ -617,4 +617,92 @@ fn mixed_already_trash_advanced_choice_and_locked_physical_noop_retain_unaffecte
             .unwrap()[&file]
             .contains(&roles.local_file_storage)
     );
+}
+
+#[test]
+fn retained_delete_and_transfer_children_cannot_mutate_a_rebound_main_window() {
+    let _windows = headless::init();
+    for transfer in [false, true] {
+        let (_dir, store) = store();
+        let files = ids(&store);
+        reset(&store, &files);
+        if !transfer {
+            store
+                .write(|ctx| {
+                    settings::set(
+                        ctx.conn(),
+                        &settings::DeletionPreferences {
+                            advanced: true,
+                            ..Default::default()
+                        },
+                    )
+                })
+                .unwrap();
+        }
+        let ui = MainWindow::new().unwrap();
+        let original = bind(
+            &ui,
+            Pages::single(super::common::all_local_page(store.clone())),
+        );
+        ui.show().unwrap();
+        ui.invoke_search_edited("system:everything".into());
+        ui.invoke_search_accepted();
+        let owner = original.current.borrow().clone();
+        owner.borrow_mut().select_files(&files[..1]);
+        let stale_accept: Rc<dyn Fn()> = if transfer {
+            ui.invoke_thumbnail_menu_requested(-1);
+            let action = ui
+                .get_thumbnail_menu()
+                .locations_move
+                .iter()
+                .find(|row| row.label.starts_with("from art to my files"))
+                .unwrap()
+                .id;
+            ui.invoke_menu_chosen(action);
+            let child = original
+                .local_transfer
+                .borrow()
+                .as_ref()
+                .unwrap()
+                .clone_strong();
+            Rc::new(move || child.invoke_answer(true))
+        } else {
+            ui.invoke_delete_selected();
+            let child = original
+                .delete_files
+                .borrow()
+                .as_ref()
+                .unwrap()
+                .clone_strong();
+            let action = child
+                .get_actions()
+                .iter()
+                .position(|label| label.contains("from art"))
+                .unwrap();
+            child.invoke_action_selected(action as i32);
+            Rc::new(move || child.invoke_accept_deletion())
+        };
+        let domains = store
+            .read(|conn| hydrus_store::media::current_domains(conn, &files))
+            .unwrap();
+        let owner_files = owner.borrow().files();
+        let successor = bind(
+            &ui,
+            Pages::single(super::common::all_local_page(store.clone())),
+        );
+        ui.invoke_search_edited("successor query draft".into());
+        let successor_files = successor.current.borrow().borrow().files();
+        stale_accept();
+        assert_eq!(
+            store
+                .read(|conn| hydrus_store::media::current_domains(conn, &files))
+                .unwrap(),
+            domains,
+            "retired child must not delete or transfer content"
+        );
+        assert_eq!(owner.borrow().files(), owner_files);
+        assert_eq!(successor.current.borrow().borrow().files(), successor_files);
+        assert_eq!(ui.get_search_text(), "successor query draft");
+        ui.hide().unwrap();
+    }
 }
