@@ -3,8 +3,8 @@
 
 Drive the actual query sidebar list and actual EditPredicatesPanel. Only modal
 exec answers and foreground control changes are scripted; menu publication is
-captured before popup transport. Unsupported native simple/batch/OR editing is
-recorded to keep this original action's remaining scope explicit.
+captured before popup transport. Simple/mixed dialog edits and parser vetoes are also recorded; OR and
+inherited actions remain separately bounded. --mixed-only writes that fixture.
 """
 import json, os, shutil, sys, time
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -37,7 +37,7 @@ def record(session):
     inbox = P.Predicate(P.PREDICATE_TYPE_SYSTEM_INBOX)
     archive = P.Predicate(P.PREDICATE_TYPE_SYSTEM_ARCHIVE)
     group = P.Predicate(P.PREDICATE_TYPE_OR_CONTAINER, [alpha,beta])
-    events, edits = [], []
+    events, edits, mixed = [], [], []
     old_exec, old_popup, old_thread = Windows.DialogEdit.exec, Core.core().PopupMenu, c.CallToThread
     c.CallToThread = lambda fn,*args,**kw: None if fn == AC.ReadFetch else old_thread(fn,*args,**kw)
     plan = None
@@ -57,13 +57,22 @@ def record(session):
         plan['title'] = dialog.windowTitle()
         plan['panels'] = [type(p).__name__ for p in panels]
         plan['initial'] = [p.GetSerialisableTuple() for p in dialog._panel.GetValue()]
+        plan['initial_labels'] = [p.ToString(with_count=False) for p in dialog._panel.GetValue()]
+        plan['invertible_before'] = [b.text() for b in dialog._panel._invertible_pred_buttons]
+        for panel, text in zip([p for p in panels if type(p).__name__ == 'PanelPredicateSimpleTagTypes'], plan.get('simple', [])):
+            panel._simple_tag_text.setText(text)
+        for button in dialog._panel._invertible_pred_buttons:
+            if plan.get('flip'): button.click()
+        for panel, value in zip([p for p in panels if type(p).__name__ == 'PanelPredicateSystemSize'], plan.get('sizes', [])):
+            panel._sign.SetValue('>'); panel._bytes.SetSeparatedValue(value,1024)
         if plan['mutate_size']:
             panel = next(p for p in panels if type(p).__name__ == 'PanelPredicateSystemSize')
             panel._sign.SetValue('>');panel._bytes.SetSeparatedValue(11,1024)
         plan['value'] = [p.GetSerialisableTuple() for p in dialog._panel.GetValue()]
+        plan['invertible_after'] = [b.text() for b in dialog._panel._invertible_pred_buttons]
         if plan.get('screenshot'):
             dialog.resize(800,400);dialog.show();QC.QCoreApplication.processEvents()
-            assert dialog.grab().save(os.path.join(HERE,'fixtures/active_predicate_editor_qt.png'))
+            assert dialog.grab().save(os.path.join(HERE,'fixtures/' + plan.get('png','active_predicate_editor_qt.png')))
         return QW.QDialog.DialogCode.Accepted if plan['accepted'] else QW.QDialog.DialogCode.Rejected
     Windows.DialogEdit.exec = dialog_exec
     def replay():
@@ -96,16 +105,38 @@ def record(session):
             for accepted in [False,True]:
                 set_values([predicate,inbox],[predicate]);plan={'name':name,'accepted':accepted,'mutate_size':name=='size','screenshot':name=='size' and accepted}
                 plan['before']=snapshot();box._EditPredicates([predicate]);plan['after']=snapshot();edits.append(plan)
-        return {'events':events,'edits':edits,'custom_size_default':('>',99,1024*1024)}
+        simple_cases=[]
+        from hydrus.client.gui.search import ClientGUIPredicatesSingle as Simple
+        for value in ['', '-', '---', ':', ':*', 'series:', '-series:*', '--series:alpha*', 'a:b:c', '*', '  tag  ', '---blue eyes', 'series:*tail', 'a::']:
+            try:
+                predicate=Simple.GetPredicateFromSimpleTagText(value)
+                simple_cases.append({'text':value,'predicate':predicate.GetSerialisableTuple()})
+            except Exception as error:
+                simple_cases.append({'text':value,'error':str(error)})
+        smaller=P.Predicate(P.PREDICATE_TYPE_SYSTEM_SIZE, ('>',3,1024))
+        everything=P.Predicate(P.PREDICATE_TYPE_SYSTEM_EVERYTHING)
+        batches=[('simple_tag',[alpha],['-series:*'],[],False),('simple_wildcard',[P.Predicate(P.PREDICATE_TYPE_WILDCARD,'series:active*')],['series:beta'],[],False),('two_sizes',[size,smaller],[],[11,17],False),('mixed',[size,alpha,inbox,everything],['--series:edited*'],[11],True)]
+        for name,selected,texts,sizes,flip in batches:
+            for accepted in [False,True]:
+                values=selected+[beta]
+                set_values(values,selected)
+                menus.clear();box.ShowMenuFromSignal(QC.QPoint(1,1))
+                plan={'name':name,'selected':[p.GetSerialisableTuple() for p in selected],'accepted':accepted,'mutate_size':False,'simple':texts,'sizes':sizes,'flip':flip,'before':snapshot(),'menu':menus[-1],'screenshot':name=='mixed' and accepted,'png':'active_predicate_mixed_qt.png'}
+                box._EditPredicates(selected);plan['after']=snapshot();mixed.append(plan)
+        return {'events':events,'edits':edits,'custom_size_default':('>',99,1024*1024),'mixed':mixed,'simple_cases':simple_cases}
+
     try: return qt(replay)
     finally:
         Windows.DialogEdit.exec=old_exec;Core.core().PopupMenu=old_popup;c.CallToThread=old_thread
 
 
 if __name__ == '__main__':
+    mixed_only='--mixed-only' in sys.argv
     db = record_api.unpack_fixture('basic')
     try:
         result = run_client(db, record)
-        with open(os.path.join(HERE,'fixtures/active_predicate_edit.json'),'w') as stream:
+        if mixed_only: result={key:result[key] for key in ['mixed','simple_cases','custom_size_default']}
+        filename='active_predicate_mixed.json' if mixed_only else 'active_predicate_edit.json'
+        with open(os.path.join(HERE,'fixtures',filename),'w') as stream:
             json.dump(result,stream,indent=2,ensure_ascii=False);stream.write('\n')
     finally: shutil.rmtree(db)

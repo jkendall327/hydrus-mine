@@ -34,7 +34,7 @@ pub fn menu(
     selected: &[Predicate],
     current: &[Predicate],
     text: &TextContext,
-    editable: bool,
+    editable: Option<&[Predicate]>,
 ) -> Vec<(Command, String)> {
     if selected.is_empty() {
         return Vec::new();
@@ -45,7 +45,12 @@ pub fn menu(
         "selected".into()
     };
     let mut out = Vec::new();
-    if editable {
+    if let Some(editable) = editable {
+        let description = if editable.len() == 1 {
+            predicate_text(&editable[0], text)
+        } else {
+            format!("{} search terms", editable.len())
+        };
         out.push((Command::Edit, format!("edit {description}")));
     }
     out.push((
