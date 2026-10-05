@@ -101,8 +101,15 @@ def record(session):
             deleted_context=context.Duplicate();deleted_context.SetLocationContext(context.GetLocationContext().GetDeletedInverse())
             selected_deleted=c.Read('file_query_ids',file_search_context=deleted_context,apply_implicit_limit=False)
             selected_hashes=lambda ids:sorted(h.hex()for h in c.Read('hash_ids_to_hashes',ids).values())
+            old_limit=c.new_options.GetNoneableInteger('forced_search_limit')
+            try:
+                c.new_options.SetNoneableInteger('forced_search_limit',1)
+                limited=c.Read('file_query_ids',file_search_context=context)
+                uncapped=c.Read('file_history',8,file_search_context=context)
+                implicit_limit_case=dict(limit=1,ordinary_count=len(limited),history=uncapped)
+            finally:c.new_options.SetNoneableInteger('forced_search_limit',old_limit)
             widgets=[dict(type=w.metaObject().className(),text=w.text())for w in panel.findChildren(QW.QAbstractButton)]
-            return dict(events=events,compact=compact,filtered_compact=filtered,buttons=widgets,context=context.GetSerialisableTuple(),filter_tag='parity:history-selected',requested_filter_hash_indices=[0,2,4],selected_current=selected_hashes(selected_current),selected_deleted=selected_hashes(selected_deleted),num_steps=7680)
+            return dict(events=events,compact=compact,filtered_compact=filtered,buttons=widgets,context=context.GetSerialisableTuple(),filter_tag='parity:history-selected',requested_filter_hash_indices=[0,2,4],selected_current=selected_hashes(selected_current),selected_deleted=selected_hashes(selected_deleted),num_steps=7680,implicit_limit_case=implicit_limit_case)
         finally:
             ClientGUIAsync.AsyncQtJob=old_job
             if frame is not None:frame.close()

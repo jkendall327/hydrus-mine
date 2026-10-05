@@ -123,6 +123,26 @@ pub fn search_files(
     search_with_strategy(conn, snapshot, search, sort, clock, context::Strategy::Auto)
 }
 
+/// Run a review/maintenance query without the normal implicit search cap.
+/// Explicit system:limit predicates still apply, as in reference file history.
+pub fn search_files_without_implicit_limit(
+    conn: &Connection,
+    snapshot: &Snapshot,
+    search: &FileSearchContext,
+    sort: FileSort,
+    clock: &Clock,
+) -> Result<Vec<HashId>> {
+    search_with_limits(
+        conn,
+        snapshot,
+        search,
+        sort,
+        clock,
+        context::Strategy::Auto,
+        false,
+    )
+}
+
 /// Sort `files` by `sort` as a search in `search`'s file and tag domains
 /// would (its predicates are not used): for a page whose files were not
 /// found by searching, or were found earlier.
@@ -197,14 +217,27 @@ fn search_with_strategy(
     clock: &Clock,
     strategy: context::Strategy,
 ) -> Result<Vec<HashId>> {
+    search_with_limits(conn, snapshot, search, sort, clock, strategy, true)
+}
+
+fn search_with_limits(
+    conn: &Connection,
+    snapshot: &Snapshot,
+    search: &FileSearchContext,
+    sort: FileSort,
+    clock: &Clock,
+    strategy: context::Strategy,
+    implicit_limit: bool,
+) -> Result<Vec<HashId>> {
     let env = context::Env::new(conn, snapshot, search, clock, strategy)?;
     let (expr, explicit_limit) = plan::build(&env, &search.predicates)?;
     let limit = match explicit_limit {
         Some(value) => Some(value),
-        None => {
+        None if implicit_limit => {
             hydrus_store::settings::get::<hydrus_store::settings::FileSearchSettings>(conn)?
                 .implicit_limit
         }
+        None => None,
     };
     if limit == Some(0) {
         return Ok(Vec::new());
