@@ -244,6 +244,8 @@ component ThumbnailGrid inherits ListView {
     out property <int> page-rows: max(1, floor(self.visible-height / self.span-height));
     // a click on a file (-1 for none), with ctrl or shift held
     callback clicked(int, bool, bool);
+    callback navigation-scroll(float,float,float,float,float) -> float;
+    callback wheel-scroll(float,float,float) -> float;
     callback activated(int);
     // a right-click on a file (-1 for none), where in the window
     callback menu-requested(int, length, length);
@@ -253,12 +255,9 @@ component ThumbnailGrid inherits ListView {
     // scroll so the file at `index` shows
     public function scroll-to(index: int) {
         let span = root.span-height;
-        let top = floor(index / root.columns) * span;
-        if (top < -root.content-y) {
-            root.content-y = -top;
-        } else if (top + span > -root.content-y + root.visible-height) {
-            root.content-y = -(top + span - root.visible-height);
-        }
+        let top = floor(index / root.columns) * span + root.margin;
+        root.content-y = -root.navigation-scroll(top / 1px, span / 1px,
+            -root.content-y / 1px, root.visible-height / 1px, root.content-height / 1px) * 1px;
     }
 
     // which of a row's `count` thumbnails is at (x, y), or -1 for a
@@ -431,6 +430,10 @@ component ThumbnailGrid inherits ListView {
         // double-click's second click would land on one that never saw the
         // first
         TouchArea {
+            scroll-event(event) => {
+                root.content-y = -max(0, min(max(0,(root.content-height - root.visible-height) / 1px), root.wheel-scroll(event.delta-y / 1px,root.visible-height / 1px,-root.content-y / 1px))) * 1px;
+                return accept;
+            }
             pointer-event(event) => {
                 if (event.kind == PointerEventKind.down) {
                     root.ctrl = event.modifiers.control;
@@ -843,6 +846,9 @@ export component MainWindow inherits Window {
     // start (0), back one (1), forward one (3) or to the end (4)
     callback rearrange(int);
     callback move-focus(int, bool, int, int) -> int;
+    in property <int> thumbnail-wheel-step;
+    callback thumbnail-scroll-target(float,float,float,float,float) -> float;
+    callback thumbnail-wheel-target(float,float,float) -> float;
     // the right-click menu: asked for on a file (-1 for none), then shown;
     // an entry chosen
     in property <ThumbnailMenu> thumbnail-menu;
@@ -851,6 +857,10 @@ export component MainWindow inherits Window {
     callback columns-changed(int);
     // how many thumbnails fit across the grid
     out property <int> grid-columns: grid.columns;
+    out property <length> grid-origin-x: grid.absolute-position.x;
+    out property <length> grid-origin-y: grid.absolute-position.y;
+    out property <length> grid-visible-height: grid.visible-height;
+    out property <length> grid-content-height: grid.content-height;
     changed grid-columns => { root.columns-changed(self.grid-columns); }
 
     // Capture motion before forwarding input to the interactive children.
@@ -1945,6 +1955,8 @@ export component MainWindow inherits Window {
                             width: 100%;
                             height: 100%;
                             rows: root.thumbnail-rows;
+                            navigation-scroll(top,span,offset,viewport,content) => { return root.thumbnail-scroll-target(top,span,offset,viewport,content); }
+                            wheel-scroll(delta,viewport,offset) => { return root.thumbnail-wheel-target(delta,viewport,offset); }
                             thumbnail-width: root.thumbnail-width;
                             thumbnail-height: root.thumbnail-height;
                             border: root.thumbnail-border;

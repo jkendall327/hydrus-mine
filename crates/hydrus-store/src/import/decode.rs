@@ -1023,6 +1023,24 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             layout.margin = margin;
         }
         insert_setting(&mut input, &layout)?;
+        let mut navigation = crate::settings::ThumbnailNavigation::default();
+        if let Some(&value) = options
+            .booleans
+            .get("on_shift_click_move_ghost_focus_to_last_hit")
+        {
+            navigation.shift_moves_origin = value;
+        }
+        if let Some(value) = options
+            .integers
+            .get("thumbnail_visibility_scroll_percent")
+            .and_then(|&value| u8::try_from(value).ok())
+        {
+            navigation.visibility_percent = value;
+        }
+        if let Some(value) = options.strings.get("thumbnail_scroll_rate") {
+            navigation.scroll_rate.clone_from(value);
+        }
+        insert_setting(&mut input, &navigation)?;
         let mut search_defaults = crate::settings::SearchDefaults::default();
         if let Some(key) = options.keys.get("default_tag_service_search_page") {
             search_defaults.tag_service = ServiceKey::new(key.clone());

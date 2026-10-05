@@ -3077,3 +3077,12 @@ read and detached write owners refresh changed favourites/children limits
 without clearing input drafts. A hidden, replaced, locked or switched read owner
 cannot accept a delayed favourite answer. The shared favourite editor remains
 an Options draft: child Apply stages it, parent Cancel discards it.
+Options > thumbnails > interaction now stages the Shift-selection keyboard
+origin, visible-percentage threshold and scroll-rate text. Apply updates the live
+grid; Cancel preserves saved settings and reopening uses them. The origin choice
+keeps preview focus separate from the last hit, so a plain movement key can start
+from the most recent Shift-selected file without changing the selection rules.
+Key navigation uses the saved strict visibility threshold, Qt's reveal margin
+and the content-end clamp. Actual thumbnail wheel events use the saved rate,
+including ties-to-even rounding, zero and negative rates; malformed text retains
+the previous setting. The reference replay is `thumbnail_navigation.json`.

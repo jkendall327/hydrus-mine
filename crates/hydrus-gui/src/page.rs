@@ -2496,9 +2496,18 @@ impl SearchPage {
         columns: usize,
         page_rows: usize,
     ) -> Option<usize> {
-        let moved = self
-            .selection
-            .move_focus(&self.results, to, shift, columns, page_rows);
+        let navigation: hydrus_store::settings::ThumbnailNavigation = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        let moved = self.selection.move_focus_with_last_hit(
+            &self.results,
+            to,
+            shift,
+            columns,
+            page_rows,
+            navigation.shift_moves_origin,
+        );
         self.count_tags();
         moved
     }

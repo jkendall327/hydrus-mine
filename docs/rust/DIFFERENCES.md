@@ -2152,3 +2152,25 @@ decoration/display-mode, drag, or asynchronous child-query menus. Basic OR
 children share selection/broadcast but retain their existing context-menu
 boundary. Manage Tags' independently owned suggestion/related workers are
 unchanged. Broader shared read/write autocomplete parents remain Partial.
+The three thumbnail-navigation preferences have real staged/imported/persisted
+controls and existing keyboard/wheel consumers. Preview-focus options remain
+Missing because there is no native preview canvas; the broader thumbnail family
+remains Partial. Default selection behavior and its range/ghost invariants use
+the existing API; the optional last-hit origin is a separate live path.
+
+The native regular grid implements vertical reveal and wheel scrolling. It uses
+Winit's 60px normalization for one line tick and Qt's recorded default of three
+wheel lines, with a page cap. Smooth physical-pixel deltas use that same scale;
+platform-specific wheel-line settings, Qt's fractional wheel accumulator,
+horizontal scrolling and wheel input directly over the native scrollbar remain
+outside this slice. Non-finite/out-of-signed-int-range rates retain the previous
+step without reproducing Qt's conversion exception; raw accepted rate text stays
+saved. Malformed floating-point text silently preserves the previous setting,
+including Unicode decimal digits and correctly placed underscores.
+
+The real Qt recorder disables MPV availability only in its private offscreen
+process, avoiding a fatal GPU-log callback that blocks initialization. Thumbnail
+selection, scroll, Options and rate decision handlers remain unchanged; preview
+playback is not recorded. Native real pointer/key/wheel replays and the
+`thumbnail-navigation.png` capture are authored for hosted CI. No local Cargo
+builds/tests or mutation runs were performed.

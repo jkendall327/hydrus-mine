@@ -123,6 +123,7 @@ pub mod tag_migration_window;
 pub(crate) mod tag_relationships_window;
 pub mod tag_suggestions_window;
 pub mod thumbnail_menu;
+mod thumbnail_navigation;
 mod thumbnails;
 mod unlock;
 mod viewer;
@@ -413,6 +414,11 @@ fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store, rows: &T
     let layout = store
         .read(hydrus_store::settings::get::<hydrus_store::settings::ThumbnailLayout>)
         .unwrap_or_default();
+    thumbnail_navigation::show(
+        window,
+        store,
+        settings.bounding_height + 2 * layout.border + 2 * layout.margin,
+    );
     let border = layout.border as f32;
     let (width, height) = (
         settings.bounding_width + 2 * layout.border,
@@ -3402,6 +3408,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             });
         }
     });
+    thumbnail_navigation::bind(window, current.borrow().borrow().store());
     window.on_move_focus({
         let reselect = reselect.clone();
         move |to, shift, columns, page_rows| {
