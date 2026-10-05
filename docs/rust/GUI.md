@@ -3443,3 +3443,7 @@ exit retires the main route after confirmation; cancelling exit keeps it live.
 A closed viewer’s canvas retires keyboard, mouse and partial wheel dispatch,
 even if a retained handle is shown again. Fresh bindings and other live viewers
 keep their own routes.
+
+Main-window menu titles refresh after page changes while the window is live.
+Releasing the window and its binding also releases its pages and thumbnail
+loaders, including windows opened by native headless tests.
