@@ -222,6 +222,7 @@ fn the_archive_delete_filter_shows_the_top_line_too() {
     let store: Arc<Store> = Store::open(native.path()).unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("system:inbox".into());
     ui.invoke_search_accepted();

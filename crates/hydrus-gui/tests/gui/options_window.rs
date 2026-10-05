@@ -4833,6 +4833,7 @@ fn viewing_timing_options_reach_real_viewer_and_archive_filter_lifetimes() {
     filter.invoke_keep();
     assert!(!filter.get_question().is_empty());
     filter.invoke_forget();
+    filter.invoke_forget_answered(true);
     assert!(bound.archive_delete.borrow().is_none());
     assert_eq!(
         stats(file).views,
