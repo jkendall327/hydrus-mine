@@ -3076,4 +3076,7 @@ favourite/most-used add and confirmed removal actions as write panes. Visible
 read and detached write owners refresh changed favourites/children limits
 without clearing input drafts. A hidden, replaced, locked or switched read owner
 cannot accept a delayed favourite answer. The shared favourite editor remains
-an Options draft: child Apply stages it, parent Cancel discards it.
+an Options draft: child Apply stages it, parent Cancel discards it. Favourite and
+child tags containing wildcard or system-looking text remain literal inclusive
+tag predicates. Enter with no selected rows leaves the active query and OR draft
+unchanged. Locked read panes defer external settings refresh until unlocked.

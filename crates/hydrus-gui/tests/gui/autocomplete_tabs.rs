@@ -394,6 +394,8 @@ fn read_batches_favourite_questions_write_drafts_and_owner_boundaries_replay_qt(
     .unwrap();
     child.invoke_edited("write retained input".into());
     child.invoke_tab_chosen(1);
+    bound.current.borrow().borrow_mut().lock_search();
+    let locked_query = bound.current.borrow().borrow().predicates();
     store
         .write(|ctx| {
             let mut favourites: settings::FavouriteTags = settings::get(ctx.conn())?;
@@ -401,6 +403,32 @@ fn read_batches_favourite_questions_write_drafts_and_owner_boundaries_replay_qt(
             settings::set(ctx.conn(), &favourites)
         })
         .unwrap();
+    // The detached owner proves the notification ran while the main page was locked.
+    for _ in 0..100 {
+        slint::platform::update_timers_and_animations();
+        if child
+            .get_suggestions()
+            .iter()
+            .any(|row| row.text == "parity:live external")
+        {
+            break;
+        }
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    }
+    assert!(
+        child
+            .get_suggestions()
+            .iter()
+            .any(|row| row.text == "parity:live external")
+    );
+    assert!(
+        !ui.get_suggestions()
+            .iter()
+            .any(|row| row.text == "parity:live external")
+    );
+    assert_eq!(bound.current.borrow().borrow().predicates(), locked_query);
+    bound.current.borrow().borrow_mut().unlock();
+    // No tab switch or further settings write: unlocking must consume the deferred revision.
     let contains_live = || {
         ui.get_suggestions()
             .iter()
@@ -421,4 +449,121 @@ fn read_batches_favourite_questions_write_drafts_and_owner_boundaries_replay_qt(
     assert_eq!(ui.get_search_text(), "main retained input");
     assert_eq!(child.get_text(), "write retained input");
     child.invoke_cancel();
+}
+
+fn tag_shape(predicates: &[hydrus_core::search::predicate::Predicate]) -> Value {
+    use hydrus_core::search::predicate::Predicate;
+    let mut values: Vec<_> = predicates
+        .iter()
+        .map(|predicate| match predicate {
+            Predicate::Tag {
+                tag,
+                inclusive: true,
+            } => json!({"kind": "tag", "value": tag.as_str()}),
+            Predicate::Or(children) => {
+                let mut tags: Vec<_> = children
+                    .iter()
+                    .map(|child| {
+                        let Predicate::Tag {
+                            tag,
+                            inclusive: true,
+                        } = child
+                        else {
+                            panic!("literal pane must broadcast inclusive tags, got {child:?}");
+                        };
+                        tag.as_str().to_owned()
+                    })
+                    .collect();
+                tags.sort();
+                json!({"kind": "or", "value": tags})
+            }
+            other => panic!("literal pane must not parse tag text as search syntax: {other:?}"),
+        })
+        .collect();
+    values.sort_by_key(|value| value["value"].to_string());
+    json!(values)
+}
+
+#[test]
+fn literal_batches_and_empty_activation_preserve_typed_tags_query_and_or_history() {
+    let fixture = hydrus_testkit::fixture_json("autocomplete_tab_selection.json");
+    let (_dirs, store, key) = super::read_autocomplete::seeded(&fixture);
+    let tags: Vec<String> =
+        serde_json::from_value(fixture["literal_cases"][0]["tags"].clone()).unwrap();
+    store
+        .write(move |ctx| settings::set(ctx.conn(), &settings::FavouriteTags(tags)))
+        .unwrap();
+    headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(SearchPage::restored(
+            store,
+            FileSearchContext {
+                location: LocationContext::single(ServiceKey::new(
+                    hydrus_core::service::builtin_keys::MY_FILES,
+                )),
+                tags: TagContext::new(key, true, true),
+                predicates: Vec::new(),
+            },
+            false,
+            None,
+            Vec::new(),
+        )),
+    );
+    for case in fixture["literal_cases"].as_array().unwrap() {
+        let count = bound.current.borrow().borrow().predicates().len();
+        for index in (0..count).rev() {
+            ui.invoke_remove_predicate(i32::try_from(index).unwrap());
+        }
+        ui.invoke_autocomplete_tab_chosen(1);
+        ui.invoke_suggestions_deselected();
+        let empty_history = bound.pages.borrow().predicate_history();
+        for shift in [false, true] {
+            ui.invoke_suggestions_activated(shift);
+            assert!(bound.current.borrow().borrow().predicates().is_empty());
+            assert!(bound.current.borrow().borrow().or_terms().is_none());
+            assert_eq!(bound.pages.borrow().predicate_history(), empty_history);
+        }
+        ui.invoke_suggestions_select_all();
+        ui.invoke_suggestions_activated(case["shift"].as_bool().unwrap());
+        let page = bound.current.borrow().clone();
+        assert_eq!(
+            tag_shape(&page.borrow().favourite_to_save().unwrap().search.predicates),
+            case["active"]
+        );
+        assert_eq!(
+            tag_shape(page.borrow().or_terms().unwrap_or(&[])),
+            case["draft"]
+        );
+        ui.invoke_search_edited("empty batch retained input".into());
+        assert!(ui.invoke_suggestions_deselected());
+        for attempt in case["empty_attempts"].as_array().unwrap() {
+            let history = bound.pages.borrow().predicate_history();
+            ui.invoke_suggestions_activated(attempt["shift"].as_bool().unwrap());
+            assert_eq!(attempt["activated"], false);
+            assert_eq!(
+                tag_shape(&page.borrow().favourite_to_save().unwrap().search.predicates),
+                attempt["active"]
+            );
+            assert_eq!(
+                tag_shape(page.borrow().or_terms().unwrap_or(&[])),
+                attempt["draft"]
+            );
+            assert_eq!(bound.pages.borrow().predicate_history(), history);
+            assert_eq!(ui.get_search_text(), "empty batch retained input");
+        }
+        ui.invoke_suggestions_select_all();
+        if case["shift"] == true {
+            ui.invoke_suggestions_activated(false);
+        }
+        assert_eq!(
+            tag_shape(&page.borrow().favourite_to_save().unwrap().search.predicates),
+            case["committed"]
+        );
+        ui.invoke_refresh_page();
+        assert_eq!(json!(page.borrow().results().len()), case["query_count"]);
+        ui.invoke_flip_synchronised();
+    }
 }

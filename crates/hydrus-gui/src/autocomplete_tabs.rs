@@ -148,8 +148,14 @@ pub(crate) fn bind(
         Rc::new({
             let menu = menu.clone();
             let weak = window.as_weak();
+            let page = page.clone();
             move || {
                 !menu.busy()
+                    && {
+                        let current = page();
+                        let current = current.borrow();
+                        current.lock().is_none() && current.note().is_none()
+                    }
                     && weak.upgrade().is_some_and(|window| {
                         window.window().is_visible() && !window.get_search_or_open()
                     })

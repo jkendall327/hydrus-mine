@@ -19,6 +19,24 @@
       "hashes": [
         "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
       ]
+    },
+    {
+      "tag": "parity:star*",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ]
+    },
+    {
+      "tag": "parity:*",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ]
+    },
+    {
+      "tag": "system:inbox",
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+      ]
     }
   ],
   "parents": [
@@ -585,6 +603,160 @@
         "parity:tabs beta"
       ],
       "text": ""
+    }
+  ],
+  "literal_cases": [
+    {
+      "shift": false,
+      "tags": [
+        "parity:*",
+        "parity:star*",
+        "system:inbox"
+      ],
+      "active": [
+        {
+          "kind": "tag",
+          "value": "parity:*"
+        },
+        {
+          "kind": "tag",
+          "value": "parity:star*"
+        },
+        {
+          "kind": "tag",
+          "value": "system:inbox"
+        }
+      ],
+      "draft": [],
+      "empty_attempts": [
+        {
+          "shift": false,
+          "activated": false,
+          "active": [
+            {
+              "kind": "tag",
+              "value": "parity:*"
+            },
+            {
+              "kind": "tag",
+              "value": "parity:star*"
+            },
+            {
+              "kind": "tag",
+              "value": "system:inbox"
+            }
+          ],
+          "draft": []
+        },
+        {
+          "shift": true,
+          "activated": false,
+          "active": [
+            {
+              "kind": "tag",
+              "value": "parity:*"
+            },
+            {
+              "kind": "tag",
+              "value": "parity:star*"
+            },
+            {
+              "kind": "tag",
+              "value": "system:inbox"
+            }
+          ],
+          "draft": []
+        }
+      ],
+      "committed": [
+        {
+          "kind": "tag",
+          "value": "parity:*"
+        },
+        {
+          "kind": "tag",
+          "value": "parity:star*"
+        },
+        {
+          "kind": "tag",
+          "value": "system:inbox"
+        }
+      ],
+      "query_count": 1
+    },
+    {
+      "shift": true,
+      "tags": [
+        "parity:*",
+        "parity:star*",
+        "system:inbox"
+      ],
+      "active": [],
+      "draft": [
+        {
+          "kind": "tag",
+          "value": "parity:*"
+        },
+        {
+          "kind": "tag",
+          "value": "parity:star*"
+        },
+        {
+          "kind": "tag",
+          "value": "system:inbox"
+        }
+      ],
+      "empty_attempts": [
+        {
+          "shift": false,
+          "activated": false,
+          "active": [],
+          "draft": [
+            {
+              "kind": "tag",
+              "value": "parity:*"
+            },
+            {
+              "kind": "tag",
+              "value": "parity:star*"
+            },
+            {
+              "kind": "tag",
+              "value": "system:inbox"
+            }
+          ]
+        },
+        {
+          "shift": true,
+          "activated": false,
+          "active": [],
+          "draft": [
+            {
+              "kind": "tag",
+              "value": "parity:*"
+            },
+            {
+              "kind": "tag",
+              "value": "parity:star*"
+            },
+            {
+              "kind": "tag",
+              "value": "system:inbox"
+            }
+          ]
+        }
+      ],
+      "committed": [
+        {
+          "kind": "or",
+          "value": [
+            "parity:*",
+            "parity:star*",
+            "system:inbox"
+          ]
+        }
+      ],
+      "query_count": 1
     }
   ]
 }
