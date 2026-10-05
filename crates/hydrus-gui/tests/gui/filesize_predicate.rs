@@ -214,6 +214,11 @@ fn hidden_cancelled_rebound_and_accepted_closed_main_cannot_accept_a_retained_si
         .write(move |writer| settings::set(writer.conn(), &gui))
         .unwrap();
     ui.window().dispatch_event(WindowEvent::CloseRequested);
+    assert!(!ui.get_question().is_empty());
+    child.invoke_number_edited(0, 2, 99);
+    child.invoke_ok(0);
+    assert_eq!(fields(&child).row_data(2).unwrap().value, 200);
+    assert!(successor.current.borrow().borrow().predicates().is_empty());
     ui.invoke_answer(false);
     assert!(child.window().is_visible());
     ui.window().dispatch_event(WindowEvent::CloseRequested);
