@@ -796,3 +796,247 @@ fn hidden_or_parent_reconciles_actual_system_and_nested_child_cancellation() {
     assert!(!ui.get_search_or_open());
     ui.hide().unwrap();
 }
+
+fn capture_routes(
+    ui: &MainWindow,
+    bound: &hydrus_gui::Bound,
+    selected: &[hydrus_search::Predicate],
+) {
+    let current = bound.current.borrow().clone();
+    let text = current.borrow().text_context();
+    for (i, predicate) in selected.iter().enumerate() {
+        ui.invoke_active_predicate_clicked(
+            index(ui, &hydrus_search::predicate_text(predicate, &text)),
+            i > 0,
+            false,
+        );
+    }
+    ui.invoke_active_predicate_menu_opened(index(
+        ui,
+        &hydrus_search::predicate_text(&selected[0], &text),
+    ));
+}
+
+#[test]
+fn real_inherited_menus_publish_exact_qt_clipboard_text_and_open_owned_pages() {
+    use hydrus_core::pages::PageContent;
+    use hydrus_gui::Clip;
+    use std::{cell::RefCell, collections::HashSet, rc::Rc};
+    let (_dir, store) = setup();
+    let _windows = headless::init();
+    let recording = hydrus_testkit::fixture_json("active_predicate_routes.json");
+    let copied = Rc::new(RefCell::new(Vec::<Clip>::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| copied.borrow_mut().push(clip.clone())
+    });
+    for case in recording["cases"].as_array().unwrap() {
+        let ui = MainWindow::new().unwrap();
+        ui.show().unwrap();
+        let context = FileSearchContext {
+            location: LocationContext::single(hydrus_core::ServiceKey::new(
+                b"local files".to_vec(),
+            )),
+            predicates: decoded(&case["current"]),
+            tags: hydrus_search::TagContext::new(
+                hydrus_search::TagContext::default().service,
+                true,
+                false,
+            ),
+        };
+        let bound = bind(
+            &ui,
+            Pages::single(SearchPage::restored(
+                store.clone(),
+                context.clone(),
+                true,
+                None,
+                Vec::new(),
+            )),
+        );
+        let selected = decoded(&case["selected"]);
+        capture_routes(&ui, &bound, &selected);
+        let captured = ui.get_active_predicate_menu().iter().collect::<Vec<_>>();
+        for actual in case["actions"].as_array().unwrap() {
+            let group = if actual["group"] == "copy" { 0 } else { 1 };
+            let action = captured
+                .iter()
+                .find(|a| a.group == group && a.label.as_str() == actual["label"].as_str().unwrap())
+                .unwrap();
+            if group == 0 {
+                copied.borrow_mut().clear();
+                ui.invoke_active_predicate_menu_chosen(action.id);
+                assert_eq!(
+                    *copied.borrow(),
+                    [Clip::Text(
+                        actual["publications"][0]["text"]
+                            .as_str()
+                            .unwrap()
+                            .to_owned()
+                    )],
+                    "{} {}",
+                    case["name"],
+                    action.label
+                );
+                assert_eq!(
+                    bound.current.borrow().borrow().active_predicates(),
+                    context.predicates
+                );
+            } else {
+                // Restore the real source before each command. A successful
+                // launch changes the current page and invalidates its old menu.
+                ui.invoke_tab_chosen(0, 0);
+                capture_routes(&ui, &bound, &selected);
+                let before = bound.pages.borrow().session().pages.len();
+                ui.invoke_active_predicate_menu_chosen(action.id);
+                let pages = bound.pages.borrow();
+                let new = &pages.session().pages[before..];
+                let publications = actual["publications"].as_array().unwrap();
+                assert_eq!(
+                    new.len(),
+                    publications.len(),
+                    "{} {}",
+                    case["name"],
+                    action.label
+                );
+                for page in new {
+                    let published = publications
+                        .iter()
+                        .find(|p| p["name"].as_str().unwrap() == page.name)
+                        .unwrap();
+                    let predicates = decoded(&published["predicates"]);
+                    let check = |search: &FileSearchContext| {
+                        assert_eq!(search.location, context.location);
+                        assert_eq!(
+                            search.predicates.iter().cloned().collect::<HashSet<_>>(),
+                            predicates.iter().cloned().collect()
+                        );
+                        assert!(
+                            search.tags.include_pending,
+                            "new pages use creation defaults rather than source tag policy"
+                        );
+                    };
+                    match &page.content {
+                        PageContent::Search { search, .. } => check(search),
+                        PageContent::Duplicates { duplicates, .. } => {
+                            check(&duplicates.search.search_1);
+                            check(&duplicates.search.search_2);
+                        }
+                        _ => panic!("inherited route opened an unrelated page"),
+                    }
+                }
+                assert_eq!(pages.shown().key, new.last().unwrap().key);
+                drop(pages);
+                if case["name"] == "inbox" && publications[0]["topic"] == "new_page_query" {
+                    assert_eq!(
+                        bound.current.borrow().borrow().results().len(),
+                        recording["search_consumer"]["query_count"]
+                            .as_u64()
+                            .unwrap() as usize
+                    );
+                    assert_eq!(
+                        bound
+                            .current
+                            .borrow()
+                            .borrow()
+                            .tag_context()
+                            .service
+                            .to_hex(),
+                        recording["search_consumer"]["default_tag_key"]
+                            .as_str()
+                            .unwrap()
+                    );
+                }
+                ui.invoke_tab_chosen(0, 0);
+                capture_routes(&ui, &bound, &selected);
+            }
+        }
+        ui.hide().unwrap();
+    }
+    hydrus_gui::set_clipper(|_| {});
+}
+
+#[test]
+fn inherited_routes_refuse_hidden_question_child_page_and_retired_main_owners() {
+    use hydrus_gui_model::active_predicates::routes::{Copy, Open, Route};
+    use std::{cell::RefCell, rc::Rc};
+    let (_dir, store) = setup();
+    let _windows = headless::init();
+    store
+        .write(|tx| {
+            let mut settings: hydrus_store::settings::GuiSettings =
+                hydrus_store::settings::get(tx.conn())?;
+            settings.confirm_exit = true;
+            hydrus_store::settings::set(tx.conn(), &settings)
+        })
+        .unwrap();
+    let (ui, bound) = main(&store);
+    add(&ui, "series:active alpha");
+    let selected = bound.current.borrow().borrow().active_predicates().to_vec();
+    let copied = Rc::new(RefCell::new(Vec::<hydrus_gui::Clip>::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| copied.borrow_mut().push(clip.clone())
+    });
+    let copy = Route::Copy(Copy::Selected).id();
+    let open = Route::Open(Open::Search).id();
+    capture_routes(&ui, &bound, &selected);
+    ui.hide().unwrap();
+    ui.invoke_active_predicate_menu_chosen(copy);
+    ui.invoke_active_predicate_menu_chosen(open);
+    ui.show().unwrap();
+    ui.set_question("owned question".into());
+    ui.invoke_active_predicate_menu_chosen(copy);
+    ui.invoke_active_predicate_menu_chosen(open);
+    ui.set_question("".into());
+    ui.invoke_active_predicate_activated(false, true);
+    let child = bound
+        .predicate_editor
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    ui.invoke_active_predicate_menu_chosen(copy);
+    ui.invoke_active_predicate_menu_chosen(open);
+    child.invoke_cancel();
+    assert!(copied.borrow().is_empty());
+    assert_eq!(bound.pages.borrow().session().pages.len(), 1);
+    bound.pages.borrow_mut().new_search_page();
+    ui.invoke_tab_chosen(0, 1);
+    ui.invoke_tab_chosen(0, 0);
+    ui.invoke_active_predicate_menu_chosen(copy);
+    ui.invoke_active_predicate_menu_chosen(open);
+    assert!(
+        copied.borrow().is_empty(),
+        "A→B→A cannot resurrect a captured menu"
+    );
+    assert_eq!(bound.pages.borrow().session().pages.len(), 2);
+    capture_routes(&ui, &bound, &selected);
+    ui.window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    ui.invoke_answer(false);
+    ui.invoke_active_predicate_menu_chosen(copy);
+    assert_eq!(
+        copied.borrow().len(),
+        1,
+        "declined exit keeps the captured owner live"
+    );
+    copied.borrow_mut().clear();
+    ui.window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    ui.invoke_answer(true);
+    ui.show().unwrap();
+    ui.invoke_active_predicate_menu_chosen(copy);
+    ui.invoke_active_predicate_menu_chosen(open);
+    assert!(
+        copied.borrow().is_empty(),
+        "accepted close is permanent despite retained GUI/Bound"
+    );
+    assert_eq!(bound.pages.borrow().session().pages.len(), 2);
+    let successor = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_active_predicate_menu_chosen(copy);
+    ui.invoke_active_predicate_menu_chosen(open);
+    assert!(copied.borrow().is_empty());
+    assert_eq!(successor.pages.borrow().session().pages.len(), 1);
+    hydrus_gui::set_clipper(|_| {});
+}

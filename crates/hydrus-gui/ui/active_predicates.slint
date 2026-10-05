@@ -1,10 +1,12 @@
 import { ScrollView } from "std-widgets.slint";
 import { ListText, Theme } from "theme.slint";
-export struct ActivePredicateAction { id: int, label: string }
+export struct ActivePredicateAction { id: int, group: int, label: string }
 export component ActivePredicates inherits Rectangle {
     in property <[ListText]> rows;
     in property <[bool]> selected;
     in property <[ActivePredicateAction]> actions;
+    in property <[ActivePredicateAction]> copy-actions;
+    in property <[ActivePredicateAction]> open-actions;
     callback clicked(int,bool,bool);
     callback activated(bool,bool);
     callback menu-opened(int);
@@ -27,7 +29,11 @@ export component ActivePredicates inherits Rectangle {
                     Text { x:4px; width:parent.width - 8px; text:row.text; color:row.colour;vertical-alignment:center;overflow:elide; }
                     context := ContextMenuArea {
                         enabled:false;
-                        Menu { title:"search";for action in root.actions: MenuItem {title:action.label;activated=>{root.menu-chosen(action.id);}} }
+                        Menu {
+                            Menu { title:"copy";for action in root.copy-actions: MenuItem {title:action.label;activated=>{root.menu-chosen(action.id);}} }
+                            Menu { title:"open";for action in root.open-actions: MenuItem {title:action.label;activated=>{root.menu-chosen(action.id);}} }
+                            Menu { title:"search";for action in root.actions: MenuItem {title:action.label;activated=>{root.menu-chosen(action.id);}} }
+                        }
                         touch := TouchArea {
                             double-clicked => {
                                 // Qt reselects a Ctrl double-clicked row if the first click removed it.

@@ -419,6 +419,9 @@ export component MainWindow inherits Window {
     in property <[ListText]> predicates;
     in property <[bool]> active-predicate-selected;
     in property <[ActivePredicateAction]> active-predicate-menu;
+    in property <[ActivePredicateAction]> active-predicate-copy-menu;
+    in property <[ActivePredicateAction]> active-predicate-open-menu;
+    in property <[ActivePredicateAction]> active-predicate-search-menu;
     in property <[ListText]> tags;
     in property <string> selection-tags-title: "selection tags";
     in property <[ListText]> suggestions;
@@ -1288,7 +1291,7 @@ export component MainWindow inherits Window {
                             y: 3px;
                             width: parent.width - 6px;
                             height: parent.height - 6px;
-                            rows:root.predicates;selected:root.active-predicate-selected;actions:root.active-predicate-menu;
+                            rows:root.predicates;selected:root.active-predicate-selected;actions:root.active-predicate-search-menu;copy-actions:root.active-predicate-copy-menu;open-actions:root.active-predicate-open-menu;
                             clicked(i,ctrl,shift)=>{root.active-predicate-clicked(i,ctrl,shift);}
                             activated(ctrl,shift)=>{root.active-predicate-activated(ctrl,shift);}
                             menu-opened(i)=>{root.active-predicate-menu-opened(i);}

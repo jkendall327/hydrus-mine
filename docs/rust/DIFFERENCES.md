@@ -210,8 +210,13 @@ search.
   Apply and separate supplied values for repeated system families. Immutable
   terms are preserved and invertible terms have flip buttons. Active-list
   remove/invert/OR merge or dissolve/namespace commands reach the query. Populated
-  OR controls embedded in a mixed edit, inherited open/copy/file-selection/
-  tag-maintenance branches and their associated transports remain missing, so the original action earns no completion credit.
+  OR controls embedded in a mixed edit, inherited sibling/parent editors and
+  their asynchronous relationship information, favourite/most-used tags and
+  maintenance branches remain missing, so the original action earns no completion
+  credit. Inherited copy/open transports now work, including collapsed OR copying
+  and real AND/OR/per-predicate/duplicate-filter pages. Per-predicate pages open
+  in native list order; Qt iterates its selected-term set. Qt’s active-list file
+  selection handler is an inherited no-op, distinct from its media-list handler.
   Single system editors keep their existing per-panel OK/star topology. Selection
   is cleared when query terms change, whereas Qt selects newly edited terms. A
   page transition cancels the child rather than retaining a modal editor behind

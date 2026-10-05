@@ -1,4 +1,5 @@
 //! Captured active-list search commands and exact edit deltas.
+pub mod routes;
 use hydrus_core::sort::human_sort_key;
 use hydrus_search::{Predicate, TextContext, predicate_text};
 

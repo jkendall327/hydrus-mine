@@ -211,3 +211,89 @@ fn mixed_controls_replay_real_qt_values_row_order_cancel_and_parser_vetoes() {
         }
     }
 }
+
+#[test]
+fn actual_qt_inherited_copy_payloads_and_page_routes_match_all_recorded_selections() {
+    use hydrus_gui_model::active_predicates::routes::{self, Route};
+    let recording = hydrus_testkit::fixture_json("active_predicate_routes.json");
+    assert_eq!(recording["cases"].as_array().unwrap().len(), 12);
+    for case in recording["cases"].as_array().unwrap() {
+        let current = predicates(&case["current"]);
+        let raw_selected = predicates(&case["selected"]);
+        let selected = current
+            .iter()
+            .filter(|p| raw_selected.contains(p))
+            .cloned()
+            .collect::<Vec<_>>();
+        let menu = routes::menu(&selected, &current, &TextContext::default());
+        let recorded = case["actions"].as_array().unwrap();
+        assert_eq!(menu.len(), recorded.len(), "{}", case["name"]);
+        for ((route, label), actual) in menu.iter().zip(recorded) {
+            assert_eq!(label, actual["label"].as_str().unwrap(), "{}", case["name"]);
+            assert_eq!(
+                if route.group() == 0 { "copy" } else { "open" },
+                actual["group"].as_str().unwrap()
+            );
+            match *route {
+                Route::Copy(copy) => {
+                    let payload =
+                        routes::copy_text(&selected, &current, copy, &TextContext::default());
+                    assert_eq!(
+                        payload,
+                        actual["publications"][0]["text"].as_str().unwrap(),
+                        "{} {label}",
+                        case["name"]
+                    );
+                }
+                Route::Open(open) => {
+                    let batches = routes::searches(&selected, open);
+                    let actual_batches = actual["publications"].as_array().unwrap();
+                    assert_eq!(batches.len(), actual_batches.len());
+                    // Qt obtains open batches from its selected-term set. Match
+                    // each real page by its values, without assuming set order.
+                    for batch in batches {
+                        let actual = actual_batches
+                            .iter()
+                            .find(|a| set(predicates(&a["predicates"])) == set(batch.clone()))
+                            .unwrap();
+                        assert_eq!(
+                            routes::page_name(
+                                &batch,
+                                &TextContext::default(),
+                                open == routes::Open::Duplicates
+                            ),
+                            actual["name"].as_str().unwrap()
+                        );
+                        assert_eq!(
+                            actual["topic"].as_str().unwrap(),
+                            if open == routes::Open::Duplicates {
+                                "new_page_duplicates"
+                            } else {
+                                "new_page_query"
+                            }
+                        );
+                    }
+                }
+            }
+        }
+        assert_eq!(
+            case["select_files_publications"],
+            serde_json::json!([]),
+            "the actual active-list inherited handler is a no-op"
+        );
+    }
+    let raised = recording["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["name"] == "two_tags_raise")
+        .unwrap();
+    let each = raised["actions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|a| a["label"] == "open new search pages for each in selection")
+        .unwrap();
+    assert_eq!(each["publications"][0]["activate"], true);
+    assert_eq!(each["publications"][1]["activate"], false);
+}
