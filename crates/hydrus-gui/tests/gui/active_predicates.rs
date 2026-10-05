@@ -171,6 +171,19 @@ fn captured_menu_and_populated_child_cannot_edit_hidden_replaced_rebound_or_drop
     ui.invoke_active_predicate_menu_chosen(invert);
     assert_eq!(bound.current.borrow().borrow().predicates(), before);
     ui.show().unwrap();
+    ui.invoke_search_or_action(3);
+    assert!(ui.get_search_or_open());
+    ui.invoke_active_predicate_clicked(index(&ui, "system:filesize < 7KB"), false, false);
+    ui.invoke_active_predicate_activated(false, true);
+    ui.invoke_active_predicate_menu_chosen(invert);
+    assert!(
+        bound.predicate_editor.borrow().is_none(),
+        "owned OR child blocks a parent active editor"
+    );
+    assert_eq!(bound.current.borrow().borrow().predicates(), before);
+    let or_child = bound.search_or.borrow().as_ref().unwrap().clone_strong();
+    or_child.invoke_cancel();
+    assert!(!ui.get_search_or_open());
     let child = editor(&ui, &bound);
     child.invoke_number_edited(0, 2, 11);
     child.hide().unwrap();
