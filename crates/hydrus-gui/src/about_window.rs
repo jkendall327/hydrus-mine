@@ -28,17 +28,15 @@ pub(crate) fn note_boot() {
 }
 
 /// `ffmpeg -version`'s version ("ffmpeg version 6.1.1 Copyright ...").
-fn ffmpeg_version() -> Option<String> {
-    let exe = hydrus_media::ffmpeg::Ffmpeg::default();
-    let out = std::process::Command::new(exe.executable())
-        .arg("-version")
-        .output()
-        .ok()?;
-    let text = String::from_utf8_lossy(&out.stdout);
-    let first = text.lines().next()?;
-    first
-        .strip_prefix("ffmpeg version ")
-        .map(|rest| rest.split(' ').next().unwrap_or(rest).to_owned())
+fn ffmpeg_version(store: &Store) -> Option<String> {
+    let policy = store
+        .read(hydrus_store::ffmpeg_policy::load)
+        .unwrap_or_default();
+    hydrus_media::Ffmpeg::default()
+        .timeout(policy.timeout())
+        .version()
+        .ok()
+        .flatten()
 }
 
 /// What the window says, from this process and its store.
@@ -64,7 +62,7 @@ pub fn facts(store: &Store) -> Facts {
         version: env!("CARGO_PKG_VERSION").to_owned(),
         arch: std::env::consts::ARCH.to_owned(),
         os,
-        ffmpeg: ffmpeg_version(),
+        ffmpeg: ffmpeg_version(store),
         sqlite,
         boot_ms: *BOOT_MS.get_or_init(now_ms),
         now_ms: now_ms(),

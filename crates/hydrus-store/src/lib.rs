@@ -89,6 +89,7 @@ pub mod file_history;
 
 pub mod or_connector;
 
+pub mod ffmpeg_policy;
 pub mod image_cache;
 pub mod image_colour;
 

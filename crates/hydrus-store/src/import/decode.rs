@@ -758,6 +758,10 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         )?;
         insert_setting(
             &mut input,
+            &crate::ffmpeg_policy::FfmpegPolicy::from_legacy(options),
+        )?;
+        insert_setting(
+            &mut input,
             &crate::image_colour::ImageColour::from_legacy(options),
         )?;
         insert_setting(
@@ -5670,6 +5674,31 @@ mod tests {
             highlighted_any |= highlighted.is_some();
         }
         assert!(highlighted_any);
+    }
+
+    #[test]
+    fn real_client_ffmpeg_timeout_is_imported_without_clamping() {
+        use crate::settings::Setting as _;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let connection = rusqlite::Connection::open(source.path().join("client.db")).unwrap();
+        let fixture = hydrus_testkit::fixture_json("ffmpeg_timeout.json");
+        let tuple = &fixture["legacy"];
+        connection
+            .execute(
+                "UPDATE json_dumps SET version=?,dump=? WHERE dump_type=?",
+                rusqlite::params![
+                    tuple[1].as_i64().unwrap(),
+                    tuple[2].to_string(),
+                    u32::from(SerialisableType::CLIENT_OPTIONS.0)
+                ],
+            )
+            .unwrap();
+        drop(connection);
+        let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        let decoded: crate::ffmpeg_policy::FfmpegPolicy =
+            serde_json::from_value(input.settings[crate::ffmpeg_policy::FfmpegPolicy::KEY].clone())
+                .unwrap();
+        assert_eq!(decoded.seconds, 1);
     }
 
     #[test]

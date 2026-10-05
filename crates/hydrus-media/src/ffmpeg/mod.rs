@@ -19,10 +19,22 @@ use crate::error::{MediaError, Result};
 use crate::text::python_splitlines;
 
 /// How to run ffmpeg.
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct Ffmpeg {
     exe: PathBuf,
     timeout: Duration,
+    fixed_timeout: bool,
+    timeout_reader: Option<std::sync::Arc<dyn Fn() -> Duration + Send + Sync>>,
+}
+
+impl std::fmt::Debug for Ffmpeg {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Ffmpeg")
+            .field("exe", &self.exe)
+            .field("timeout", &self.timeout)
+            .field("fixed_timeout", &self.fixed_timeout)
+            .finish_non_exhaustive()
+    }
 }
 
 impl Default for Ffmpeg {
@@ -34,6 +46,8 @@ impl Default for Ffmpeg {
                 "ffmpeg"
             }),
             timeout: Duration::from_secs(15),
+            fixed_timeout: false,
+            timeout_reader: None,
         }
     }
 }
@@ -60,7 +74,43 @@ impl Ffmpeg {
     #[must_use]
     pub fn timeout(mut self, timeout: Duration) -> Self {
         self.timeout = timeout;
+        self.fixed_timeout = true;
+        self.timeout_reader = None;
         self
+    }
+
+    /// Supply an owned live policy for default-timeout calls. Explicit
+    /// [`Self::timeout`] configurations keep their fixed deadline.
+    #[must_use]
+    pub fn with_timeout_reader(
+        mut self,
+        reader: std::sync::Arc<dyn Fn() -> Duration + Send + Sync>,
+    ) -> Self {
+        if !self.fixed_timeout {
+            self.timeout_reader = Some(reader);
+        }
+        self
+    }
+
+    fn call_timeout(&self) -> Duration {
+        self.timeout_reader
+            .as_ref()
+            .map_or(self.timeout, |reader| reader())
+    }
+
+    /// Read the version through the same bounded process path as metadata.
+    /// Unrecognised version output has no version, as the About window expects.
+    pub fn version(&self) -> Result<Option<String>> {
+        let output = self.run(&["-version".into()])?;
+        if output.timed_out {
+            return Err(MediaError::damaged("ffmpeg took too long to respond"));
+        }
+        let text = String::from_utf8_lossy(&output.stdout);
+        Ok(text
+            .lines()
+            .next()
+            .and_then(|line| line.strip_prefix("ffmpeg version "))
+            .map(|rest| rest.split(' ').next().unwrap_or(rest).to_owned()))
     }
 
     /// The executable this runs.
@@ -83,6 +133,8 @@ impl Ffmpeg {
 
     /// Run to completion (or timeout), capturing stdout and stderr.
     pub(crate) fn run(&self, args: &[OsString]) -> Result<Output> {
+        // Capture before spawning; edits cannot shorten or extend this process.
+        let timeout = self.call_timeout();
         let mut cmd = self.command(args);
         cmd.stdout(Stdio::piped()).stderr(Stdio::piped());
         let mut child = self.spawn(cmd)?;
@@ -103,7 +155,7 @@ impl Ffmpeg {
             });
         }
         drop(tx);
-        let deadline = Instant::now() + self.timeout;
+        let deadline = Instant::now() + timeout;
         let mut stdout = Vec::new();
         let mut stderr = Vec::new();
         let mut timed_out = false;
@@ -264,4 +316,122 @@ fn check_ffmpeg_error(lines: &[String]) -> Result<()> {
         return Err(MediaError::damaged("FFMPEG could not parse."));
     }
     Ok(())
+}
+
+#[cfg(all(test, unix))]
+mod deadline_tests {
+    use super::*;
+    use std::io::Write as _;
+    use std::sync::{
+        Arc,
+        atomic::{AtomicU64, Ordering},
+    };
+
+    fn quoted(path: &Path) -> String {
+        format!("'{}'", path.to_string_lossy().replace('\'', "'\\''"))
+    }
+    fn transport(dir: &Path) -> (Ffmpeg, PathBuf, PathBuf) {
+        use std::os::unix::fs::PermissionsExt as _;
+        let fifo = dir.join("release");
+        assert!(
+            Command::new("mkfifo")
+                .arg(&fifo)
+                .status()
+                .unwrap()
+                .success()
+        );
+        let marker = dir.join("pid");
+        let exe = dir.join("ffmpeg");
+        std::fs::write(&exe, format!("#!/bin/sh\nprintf '%s' \"$$\" > {}\nread -r reply < {}\nif [ \"$1\" = '-version' ]; then printf 'ffmpeg version authored Copyright local\\n'; else printf 'ffmpeg version authored\\nInput #0, authored, from local:\\n' >&2; fi\n",quoted(&marker),quoted(&fifo))).unwrap();
+        std::fs::set_permissions(&exe, std::fs::Permissions::from_mode(0o755)).unwrap();
+        (Ffmpeg::with_executable(exe), marker, fifo)
+    }
+    fn started(marker: &Path) -> String {
+        let deadline = Instant::now() + Duration::from_secs(3);
+        loop {
+            if let Ok(pid) = std::fs::read_to_string(marker)
+                && !pid.is_empty()
+            {
+                return pid;
+            }
+            assert!(
+                Instant::now() < deadline,
+                "real subprocess must publish its PID"
+            );
+            thread::sleep(Duration::from_millis(1));
+        }
+    }
+    #[test]
+    fn actual_metadata_timeout_kills_and_reaps_the_admitted_child() {
+        let dir = tempfile::tempdir().unwrap();
+        let (ffmpeg, marker, _) = transport(dir.path());
+        let error = ffmpeg
+            .timeout(Duration::from_secs(1))
+            .info_lines(Path::new("authored"), None)
+            .unwrap_err();
+        assert_eq!(
+            error.to_string(),
+            "damaged or unusual file: ffmpeg could not read file info quick enough!"
+        );
+        let pid = started(&marker);
+        let alive = Command::new("kill")
+            .args(["-0", &pid])
+            .stderr(Stdio::null())
+            .status()
+            .unwrap();
+        assert!(
+            !alive.success(),
+            "return must follow kill and wait, leaving no live/zombie child"
+        );
+    }
+    #[test]
+    fn version_deadline_is_captured_once_and_explicit_fixed_configuration_wins() {
+        let dir = tempfile::tempdir().unwrap();
+        let (ffmpeg, marker, fifo) = transport(dir.path());
+        let policy = Arc::new(AtomicU64::new(2_000));
+        let reader = policy.clone();
+        let ffmpeg = ffmpeg.with_timeout_reader(Arc::new(move || {
+            Duration::from_millis(reader.load(Ordering::SeqCst))
+        }));
+        let current = ffmpeg.clone();
+        let (done, result) = mpsc::channel();
+        let worker = thread::spawn(move || done.send(current.version()).unwrap());
+        started(&marker);
+        policy.store(20, Ordering::SeqCst);
+        assert!(
+            matches!(
+                result.recv_timeout(Duration::from_millis(60)),
+                Err(mpsc::RecvTimeoutError::Timeout)
+            ),
+            "an already-running call must retain its original deadline"
+        );
+        writeln!(
+            std::fs::OpenOptions::new().write(true).open(&fifo).unwrap(),
+            "complete"
+        )
+        .unwrap();
+        assert_eq!(
+            result
+                .recv_timeout(Duration::from_secs(2))
+                .unwrap()
+                .unwrap(),
+            Some("authored".into())
+        );
+        worker.join().unwrap();
+        assert!(
+            ffmpeg
+                .version()
+                .unwrap_err()
+                .to_string()
+                .contains("ffmpeg took too long to respond")
+        );
+        let fixed = ffmpeg
+            .timeout(Duration::from_millis(90))
+            .with_timeout_reader(Arc::new(|| Duration::ZERO));
+        assert_eq!(fixed.call_timeout(), Duration::from_millis(90));
+        let configured = Ffmpeg::default()
+            .with_timeout_reader(Arc::new(|| Duration::from_secs(8)))
+            .timeout(Duration::from_secs(7));
+        assert_eq!(configured.call_timeout(), Duration::from_secs(7));
+    }
 }

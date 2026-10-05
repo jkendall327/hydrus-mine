@@ -85,6 +85,14 @@ impl FileImporter {
                 }
             }
         }));
+        let weak = Arc::downgrade(&store);
+        let tools = tools.with_ffmpeg_timeout_reader(Arc::new(move || {
+            let policy = weak
+                .upgrade()
+                .and_then(|store| store.read(hydrus_store::ffmpeg_policy::load).ok())
+                .unwrap_or_default();
+            policy.timeout()
+        }));
         Self { store, tools }
     }
 

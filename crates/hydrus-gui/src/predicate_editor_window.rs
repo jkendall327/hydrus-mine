@@ -195,7 +195,9 @@ impl State {
 
 /// The file whose path the clipboard holds: its pixel and perceptual
 /// hashes, as the reference's "Paste image!" takes them.
-fn pasted_hashes() -> Result<(hydrus_core::Sha256, Vec<hydrus_core::PerceptualHash>), String> {
+fn pasted_hashes(
+    store: &Arc<Store>,
+) -> Result<(hydrus_core::Sha256, Vec<hydrus_core::PerceptualHash>), String> {
     let text = arboard::Clipboard::new()
         .and_then(|mut c| c.get_text())
         .map_err(|_| "Did not see an image bitmap or a file path in the clipboard!".to_owned())?;
@@ -203,7 +205,9 @@ fn pasted_hashes() -> Result<(hydrus_core::Sha256, Vec<hydrus_core::PerceptualHa
     if !path.is_file() {
         return Err("Sorry, that clipboard text did not look like a valid file path!".into());
     }
-    hydrus_media::MediaTools::new().similar_search_hashes(&path)
+    hydrus_import::FileImporter::new(store.clone(), hydrus_media::MediaTools::new())
+        .tools()
+        .similar_search_hashes(&path)
 }
 
 /// The recent predicates kept in `store`.
@@ -624,6 +628,7 @@ pub(crate) fn open(
     });
     let pending_question = Rc::new(RefCell::new(None));
     window.on_pressed({
+        let store = store.clone();
         let edit = edit.clone();
         let pending_question = pending_question.clone();
         let weak = window.as_weak();
@@ -638,7 +643,7 @@ pub(crate) fn open(
                     }
                     None
                 }
-                Pressed::Paste => match pasted_hashes() {
+                Pressed::Paste => match pasted_hashes(&store) {
                     Ok((pixel, perceptual)) => {
                         panel.paste_hashes(&pixel, &perceptual);
                         None
