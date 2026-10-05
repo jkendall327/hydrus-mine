@@ -64,7 +64,7 @@ def record(session):
    return old_thread(fn,*args,**kwargs)
   Finish.GetFinishArchiveDeleteFilteringAnswer=finish;c.CallToThread=thread
   try:
-   for all_domains,delay,page,members in itertools.product((False,True),(False,True),('source','both','combined','all'),(1,2)):
+   for all_domains,delay,page,members in itertools.product((False,True),(False,True),('source','both','combined','all','mixed','same_deleted'),(1,2)):
     c.new_options.SetBoolean(names[0],all_domains);c.new_options.SetBoolean(names[1],delay)
     results=[]
     for original_result in originals:
@@ -73,9 +73,9 @@ def record(session):
      times=result.GetTimesManager();times.SetFileModifiedTimestampMS(1234567890000)
      for key in manager.GetCurrent():times.SetImportedTimestampMS(key,1234567890000)
      results.append(result)
-    keys={'source':[source],'both':[source,dest],'combined':[CC.COMBINED_LOCAL_FILE_DOMAINS_SERVICE_KEY],'all':[CC.COMBINED_FILE_SERVICE_KEY]}[page]
+    keys={'source':[source],'both':[source,dest],'combined':[CC.COMBINED_LOCAL_FILE_DOMAINS_SERVICE_KEY],'all':[CC.COMBINED_FILE_SERVICE_KEY],'mixed':[source],'same_deleted':[source]}[page]
     frame=ClientGUICanvasFrame.CanvasFrame(c.gui);frames.append(frame)
-    canvas=Canvas.CanvasMediaListFilterArchiveDelete(frame,os.urandom(32),ClientLocation.LocationContext(current_service_keys=set(keys)),results)
+    canvas=Canvas.CanvasMediaListFilterArchiveDelete(frame,os.urandom(32),ClientLocation.LocationContext(current_service_keys=set(keys),deleted_service_keys={dest} if page=='mixed' else {source} if page=='same_deleted' else set()),results)
     frame.SetCanvas(canvas);frame.showNormal();frame.resize(1000,700);QW.QApplication.processEvents()
     media=canvas._media_list.GetSortedMedia();canvas.SetMedia(media[0]);canvas._kept={media[0]};canvas._deleted={media[1]}
     current=dict(all=all_domains,delay=delay,page=page,members=members,pick=1 if not all_domains and members==2 else 0)

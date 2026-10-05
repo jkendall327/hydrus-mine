@@ -48,6 +48,8 @@ export component ArchiveDeleteWindow inherits Window {
         && pointer.mouse-x >= root.width * 0.2 && pointer.mouse-x <= root.width * 0.8;
     out property <bool> tags-showing: pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
 
+    callback owner-valid() -> bool;
+    callback retire();
     callback keep();
     callback delete();
     callback back();

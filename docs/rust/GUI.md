@@ -3708,5 +3708,7 @@ question, and back returns to filtering. Settings stage/Cancel/reopen independen
 merge only changed fields, import real ClientOptions keys and preserve older
 retained values when the native key is absent. Closed, rebound, hidden and pending
 child owners cannot commit; owned timers stop on resume/close and cannot enable a
-successor's buttons. Actual Qt recorded 32 finish cases and both independent
+successor's buttons. Actual Qt recorded 48 finish cases and both independent
 controls; Rust/native regressions and finish PNGs await hosted validation.
+
+Repeated main F12 brings the same active filter and its finish/Forget question forward; it never replaces an unanswered owner. Retired source pages are discarded before opening a fresh filter. Mixed current/deleted search scopes retain their complete context identity and exact label, so their current-only deletion alternatives and activation delay are not collapsed.

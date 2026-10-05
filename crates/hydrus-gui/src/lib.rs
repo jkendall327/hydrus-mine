@@ -3693,6 +3693,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     window.on_archive_delete_filter({
+        let weak_main = window.as_weak();
         let page = page.clone();
         let archive_delete = archive_delete.clone();
         let binding_active = binding_active.clone();
@@ -3701,12 +3702,23 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let current = current.clone();
         let shown = shown.clone();
         move || {
+            if !binding_active.get()
+                || !weak_main
+                    .upgrade()
+                    .is_some_and(|window| window.window().is_visible())
+            {
+                return;
+            }
             let previous = archive_delete
                 .borrow()
                 .as_ref()
                 .map(slint::ComponentHandle::clone_strong);
             if let Some(previous) = previous {
-                previous.invoke_forget();
+                if previous.invoke_owner_valid() {
+                    let _ = previous.show();
+                    return;
+                }
+                previous.invoke_retire();
             }
             let owner = page();
             let removed = remove_from(owner.clone());

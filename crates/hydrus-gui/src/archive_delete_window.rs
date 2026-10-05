@@ -163,6 +163,15 @@ pub(crate) fn open(
             slot.borrow_mut().take();
         }
     };
+    window.on_owner_valid({
+        let parent_guard = parent_guard.clone();
+        let viewing_stats = viewing_stats.clone();
+        move || viewing_stats.active() && parent_guard()
+    });
+    window.on_retire({
+        let close = close.clone();
+        move || close()
+    });
     // show the file to decide on; with none left, ask
     let show = {
         let viewing_stats = viewing_stats.clone();

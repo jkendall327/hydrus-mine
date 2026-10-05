@@ -85,11 +85,33 @@ fn actual_multiple_choices_refuse_early_commit_then_delete_only_selected_domain(
     let windows = headless::init();
     let (ui, bound) = ui(&store, &files, ids[0]);
     let filter = open_filter(&ui, &bound);
+    ui.invoke_archive_delete_filter();
+    assert!(
+        std::ptr::eq(
+            bound.archive_delete.borrow().as_ref().unwrap().window(),
+            filter.window()
+        ),
+        "repeated launch retains active filtering owner"
+    );
+    assert_eq!(filter.get_caption(), "1/2");
     filter.invoke_keep();
+    ui.invoke_archive_delete_filter();
+    assert_eq!(
+        filter.get_caption(),
+        "2/2",
+        "existing decisions survive repeated launch"
+    );
     let started = Instant::now();
     filter.invoke_delete();
     assert_eq!(filter.get_commit_labels().row_count(), 3);
     assert!(!filter.get_commit_ready());
+    let labels = filter.get_commit_labels().iter().collect::<Vec<_>>();
+    ui.invoke_archive_delete_filter();
+    assert!(!filter.get_commit_ready());
+    assert_eq!(
+        filter.get_commit_labels().iter().collect::<Vec<_>>(),
+        labels
+    );
     let before = store
         .read(|conn| hydrus_store::media::current_domains(conn, &files))
         .unwrap();
@@ -174,6 +196,15 @@ fn saved_all_domains_single_choice_and_forget_question_are_owned_across_rebind()
     assert!(filter.get_commit_ready());
     filter.invoke_forget();
     assert!(filter.get_forget_question());
+    ui.invoke_archive_delete_filter();
+    assert!(filter.get_forget_question());
+    assert!(
+        std::ptr::eq(
+            bound.archive_delete.borrow().as_ref().unwrap().window(),
+            filter.window()
+        ),
+        "repeated launch must not orphan Forget question"
+    );
     let caption = filter.get_caption();
     filter.invoke_resume();
     filter.invoke_delete();

@@ -2895,5 +2895,5 @@ Qt obtains those secondary choices from set iteration; the page/all-local priori
 labels, scope counts and selected transaction remain equivalent. Arbitrary broader
 archive/delete viewer/shortcut topology is not claimed. Stale replaced service keys
 reject the entire transaction instead of selecting a replacement domain. Actual
-Qt controls and 32 finish paths were recorded; source checks and authored tests
+Qt controls and 48 finish paths were recorded; source checks and authored tests
 are separate from pending hosted Rust and exact-source native PNG review.
