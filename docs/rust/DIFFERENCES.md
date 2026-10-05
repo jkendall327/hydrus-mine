@@ -2118,6 +2118,10 @@ native font metrics and equal overflow budgets differ from Qt's tab allocation,
 so the exact retained substring at a given pixel width can differ. Middle fitting
 preserves Unicode scalar boundaries, but does not yet preserve combining-grapheme
 clusters. Labels and persisted page names are never replaced by fitted text.
+Slint's software renderer does not implement item rotation. Vertical tab labels
+therefore use SVG text resolved by Slint's own native font context and rasterized
+with the appropriate quarter turn, preserving native font size, fitted labels,
+selection weight and palette colour. Horizontal tabs retain native Text items.
 Native hover text always supplies the cleaned full page name (joined lines,
 maximum 256 characters); Qt may retain an empty or older tooltip when its stored
 tab text did not change. Small native overflow arrows replace Qt's styled arrows.
