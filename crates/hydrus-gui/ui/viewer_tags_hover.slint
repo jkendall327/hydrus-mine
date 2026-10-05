@@ -2,6 +2,9 @@ import { ListText } from "theme.slint";
 // Persistent geometry and hit target, with a clipped, vertically scrollable list.
 export component ViewerTagsHover inherits Rectangle {
     in property <[ListText]> tags;
+    in property <[string]> identities;
+    in property <string> file;
+    callback search(string,string);
     in-out property <length> offset;
     out property <length> row-height: probe.preferred-height + 2px;
     out property <length> maximum: max(0px, self.tags.length * self.row-height + 12px - self.height);
@@ -22,6 +25,14 @@ export component ViewerTagsHover inherits Rectangle {
         overflow: elide;
     }
     touch := TouchArea {
+        pointer-event(event) => {
+            if event.button == PointerEventButton.middle && event.kind == PointerEventKind.down {
+                let index = floor((self.mouse-y - 6px + min(root.offset,root.maximum)) / root.row-height);
+                if index >= 0 && index < root.identities.length {
+                    root.search(root.file,root.identities[index]);
+                }
+            }
+        }
         scroll-event(event) => { root.wheel(event.delta-y / 1px,event.modifiers.control,self.mouse-x,self.mouse-y); accept }
     }
     // The scrollbar is part of the live hover, so long tag lists remain usable.

@@ -187,6 +187,9 @@ export component MediaViewerWindow inherits Window {
     out property <length> tag-row-height: tags-hover.row-height;
     callback tag-wheel(float,bool,length,length);
     callback tag-media-changed();
+    in property <[string]> tag-identities;
+    in property <string> tag-file;
+    callback tag-search-requested(string,string);
     // the file's notes, for the right hover frame under the ratings, shown
     // while the pointer is over it
     in property <[NoteRow]> notes;
@@ -1415,6 +1418,9 @@ export component MediaViewerWindow inherits Window {
             width: root.width * 0.2;
             height: root.height;
             tags: root.tags;
+            identities: root.tag-identities;
+            file: root.tag-file;
+            search(file,tag) => { root.tag-search-requested(file,tag); }
             offset <=> root.tag-scroll-offset;
             wheel(delta,control,x,y) => { root.tag-wheel(delta,control,x,y); }
         }

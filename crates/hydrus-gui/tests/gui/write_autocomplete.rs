@@ -624,6 +624,7 @@ fn tag_menu_launches_native_search_and_duplicate_pages_with_recorded_predicates(
         .key
         .clone();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let slot = hydrus_gui::write_tag_window::Slot::default();
     let window = hydrus_gui::write_tag_window::open(

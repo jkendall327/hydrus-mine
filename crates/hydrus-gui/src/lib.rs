@@ -77,6 +77,7 @@ pub mod login_script_controls;
 pub mod login_step_window;
 pub mod login_test_window;
 pub mod login_workflows_window;
+mod main_identity;
 mod manage_notes_window;
 mod manage_ratings_window;
 pub(crate) mod manage_tags_window;
@@ -152,6 +153,7 @@ mod viewer_eye_menu;
 pub mod viewer_focus;
 pub mod viewer_menu;
 mod viewer_presentation;
+mod viewer_tag_search;
 mod viewer_tag_wheel;
 pub mod viewing_maintenance_window;
 mod viewing_tracking;
@@ -495,6 +497,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let pages = Rc::new(RefCell::new(pages));
     let session_autosave = session_autosave::bind(window, &pages);
     let first = pages.borrow_mut().current();
+    main_identity::bind(
+        window,
+        first.borrow().store().clone(),
+        binding_active.clone(),
+    );
     let current = Rc::new(RefCell::new(first.clone()));
     let sidebar_layout = sidebar_layout::Binding::bind(window, pages.clone(), current.clone());
     let preview = preview_window::Monitor::bind(
@@ -719,7 +726,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     };
     // Tag-list menus publish through weak main-window/page handles.
-    write_tag_menu::install_search_launcher(Rc::new({
+    let tag_search_launcher: write_tag_menu::SearchLauncher = Rc::new({
+        let binding_active = binding_active.clone();
         let local_transfer = Rc::downgrade(&local_transfer);
         let pages = Rc::downgrade(&pages);
         let current = Rc::downgrade(&current);
@@ -729,6 +737,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let scrolls = Rc::downgrade(&scrolls);
         let weak = window.as_weak();
         move |location, tags, predicates, duplicate| {
+            if !binding_active.get() {
+                return;
+            }
             let (
                 Some(window),
                 Some(pages),
@@ -749,6 +760,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             else {
                 return;
             };
+            if !window.window().is_visible() {
+                return;
+            }
             // OR groups keep their structure in the search. Visit their tags
             // only to name the new page, just as for top-level AND predicates.
             let mut pending = predicates.iter().collect::<Vec<_>>();
@@ -807,7 +821,47 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             refresh(&window, &current.borrow().borrow());
             duplicates.show(&window, &current.borrow().borrow());
         }
-    }));
+    });
+    write_tag_menu::install_search_launcher(tag_search_launcher.clone());
+    let viewer_tag_search: viewer_tag_search::Launch = Rc::new({
+        let weak = window.as_weak();
+        let active = binding_active.clone();
+        let store = current.borrow().borrow().store().clone();
+        move |location, pages| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if !active.get() || !window.window().is_visible() || !window.get_question().is_empty() {
+                return;
+            }
+            let settings: hydrus_store::settings::TagSearchActivation =
+                store.read(hydrus_store::settings::get).unwrap_or_default();
+            let defaults: hydrus_store::settings::SearchDefaults =
+                store.read(hydrus_store::settings::get).unwrap_or_default();
+            let service = if store
+                .snapshot()
+                .services
+                .by_key(&defaults.tag_service)
+                .is_ok()
+            {
+                defaults.tag_service
+            } else {
+                hydrus_core::search::context::TagContext::default().service
+            };
+            let tags = hydrus_core::search::context::TagContext::new(service, true, true);
+            let mut activate = settings.activate_main;
+            for predicates in pages {
+                if predicates.is_empty() || !active.get() || !window.window().is_visible() {
+                    break;
+                }
+                tag_search_launcher(location.clone(), tags.clone(), predicates, false);
+                if activate && active.get() && window.window().is_visible() {
+                    main_identity::activate_if_inactive(&window);
+                }
+                activate = false;
+            }
+        }
+    });
     window.on_tab_chosen({
         let change_pages = change_pages.clone();
         move |level, index| {
@@ -3610,6 +3664,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // the media viewer on files not a page's (a duplicates rule's actioned
     // pair, say)
     *duplicates.open_viewer.borrow_mut() = Some(Rc::new({
+        let tag_search = viewer_tag_search.clone();
         let weak_main = window.as_weak();
         let reveal_viewer_exit = reveal_viewer_exit.clone();
         let page = page.clone();
@@ -3635,6 +3690,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             };
             *viewing.borrow_mut() = Some((hydrus_core::pages::PageKey::random().0, None));
             let hooks = ViewerHooks {
+                tag_search: tag_search.clone(),
                 deletion: viewer_deletion.clone(),
                 closing_owner: viewer_closing::Owner::new(
                     None,
@@ -3663,6 +3719,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     }));
     window.on_thumbnail_activated({
+        let tag_search = viewer_tag_search.clone();
         let weak_main = window.as_weak();
         let origin_pages = pages.clone();
         let reveal_viewer_exit = reveal_viewer_exit.clone();
@@ -3706,6 +3763,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let model = model.with_location(page.location().clone());
             *viewing.borrow_mut() = Some((hydrus_core::pages::PageKey::random().0, None));
             let hooks = ViewerHooks {
+                tag_search: tag_search.clone(),
                 deletion: viewer_deletion.clone(),
                 closing_owner,
                 viewing: viewing.clone(),
@@ -5190,6 +5248,7 @@ type OpenOnFiles = Rc<dyn Fn(Arc<hydrus_store::Store>, Vec<HashId>, Rc<dyn Fn()>
 /// What a viewer tells its page of, and how it opens manage tags and
 /// notes.
 struct ViewerHooks {
+    tag_search: viewer_tag_search::Launch,
     deletion: delete_files_window::Slot,
     closing_owner: Rc<viewer_closing::Owner>,
     /// The viewer and the file it shows, for the Client API.
@@ -5240,6 +5299,7 @@ fn open_viewer(
     use slint::winit_030::WinitWindowAccessor as _;
 
     let ViewerHooks {
+        tag_search,
         deletion: viewer_delete,
         closing_owner,
         viewing,
@@ -5278,6 +5338,13 @@ fn open_viewer(
         hydrus_core::CanvasType::MediaViewer,
     );
     let model = Rc::new(RefCell::new(model));
+    viewer_tag_search::bind(
+        &window,
+        model.clone(),
+        viewing_stats.clone(),
+        owner_valid.clone(),
+        tag_search,
+    );
     viewer_eye_menu::bind(
         &window,
         model.borrow().store(),
@@ -5387,17 +5454,15 @@ fn open_viewer(
         }
     };
     window.on_refresh_tags({
+        let tracker = viewing_stats.clone();
         let model = model.clone();
         let weak = window.as_weak();
         move || {
+            if !tracker.active() {
+                return;
+            }
             if let Some(window) = weak.upgrade() {
-                let tags = model
-                    .borrow()
-                    .tag_rows()
-                    .into_iter()
-                    .map(|(row, rgb)| list_text(&row, rgb))
-                    .collect::<Vec<_>>();
-                window.set_tags(ModelRc::new(VecModel::from(tags)));
+                viewer_tag_search::refresh(&window, &model.borrow());
             }
         }
     });
@@ -5565,12 +5630,7 @@ fn open_viewer(
             if last_tag_file.replace(Some(model.current())) != Some(model.current()) {
                 window.invoke_tag_media_changed();
             }
-            let tags: Vec<ListText> = model
-                .tag_rows()
-                .iter()
-                .map(|(row, rgb)| list_text(row, *rgb))
-                .collect();
-            window.set_tags(ModelRc::new(VecModel::from(tags)));
+            viewer_tag_search::refresh(&window, &model);
             // (for a file that plays, its thumbnail until the first frame)
             let (shape, media) = (model.shape(), model.media().map(Arc::new));
             let (playable, animation) = (model.playable(), model.animation());
@@ -6925,18 +6985,7 @@ pub(crate) fn download_line(line: &hydrus_store::live::JobLine) -> DownloadLine 
 }
 
 fn refresh(window: &MainWindow, page: &SearchPage) {
-    let gui = page
-        .store()
-        .read(hydrus_store::settings::get::<hydrus_store::settings::GuiSettings>)
-        .unwrap_or_default();
-    window.set_window_title(
-        format!(
-            "{} {}",
-            gui.application_display_name,
-            env!("CARGO_PKG_VERSION")
-        )
-        .into(),
-    );
+    window.invoke_refresh_application_title();
     window.set_note(page.note().unwrap_or_default().into());
     let importer = page.importer();
     window.set_importing(importer.is_some());

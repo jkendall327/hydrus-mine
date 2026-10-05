@@ -1624,8 +1624,25 @@ media follow the reference. Preview and duplicate-filter hover preferences are
 separate unclaimed controls.
 
 Write-tag open-search and duplicate-page actions now have a main-window consumer
-and real session/query contexts. The optional reference setting that raises the
-main window on tag-search activation is still absent; its default is off.
+and real session/query contexts. The optional default-off main-window activation
+setting is now imported and staged in Options. A real viewer hover middle-click
+creates a single canonical-tag search with its original location and saved default
+tag service. Its captured main incarnation and current file/canvas lifetime prevent
+retained actions from dispatching through a successor's global launcher. The
+owned batch consumer samples the setting once and requests activation for only
+its first page, as Qt does. Windows/macOS/X11 use Winit's real focus/raise request
+and active-window check; Wayland `focus_window` is unsupported by Winit, so this
+control remains Partial with zero completion credit. Native multi-tag selection,
+OR/multi-page viewer menus and activation from child manage/write tag lists are
+also outside this slice. Headless request counters do not prove an OS focus grant.
+
+Application display name remains an existing Partial refinement, with zero new
+credit: unchanged Apply now normalizes raw empty imported names, Cancel preserves
+them, whitespace remains literal, and title refresh belongs to the current live
+main binding. Qt updates QApplication's display name and resets every existing
+top-level title; native child-window application identity and platform decoration
+integration remain unfinished. The actual offscreen Qt fixture observes unchanged
+child `windowTitle`/native title alongside the changed QApplication display name.
 
 
 Native idle tracking covers input in every desktop window through the event-loop

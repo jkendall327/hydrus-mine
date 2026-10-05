@@ -321,6 +321,17 @@ impl Setting for GuiSettings {
     const KEY: &'static str = "gui_settings";
 }
 
+/// Activation requested by the first page created from a viewer tag search.
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct TagSearchActivation {
+    pub activate_main: bool,
+}
+
+impl Setting for TagSearchActivation {
+    const KEY: &'static str = "tag_search_activation";
+}
+
 /// The options window’s opening page and search placement.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

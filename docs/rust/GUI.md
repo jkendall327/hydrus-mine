@@ -570,7 +570,19 @@ text that may be none has the reference's "none" box. The window opens on
 when edits are canceled. The gui page lets the search appear above or below the
 pages on reopening. The gui page also edits the application name (including
 the reference’s empty-name fallback) and exit confirmation. The main title uses
-that name and the Rust version. Exit and the window close button ask the recorded
+that name and the Rust version. Raw imported empty names remain empty on Cancel;
+unchanged Apply accepts the reference fallback, and field-scoped saving preserves
+concurrent exit changes and externally replaced names. Main-title refresh reads
+the current binding's Store and permanently stops after accepted close.
+The gui page also saves the default-off switch to the main window when a viewer
+tag search creates a page. Middle-clicking a single hover tag creates a real
+search using its canonical identity, originating file location and saved default
+tag service; display connector/underscore substitutions never become predicates.
+Enabled activation requests use native focus/raise on Windows, macOS and X11,
+skipping already-active native windows. Closed/re-shown viewers, stale file
+payloads, hidden owners and retired main bindings refuse searches; a declined
+main close leaves the producer live. Wayland activation and multi-tag/child-list
+activation remain unfinished. Exit and the window close button ask the recorded
 yes/no question when enabled, automatically accepting after 15 seconds; declining
 keeps the client open. Exit callbacks and their timeout require the current visible
 main binding; retired callbacks cannot answer a successor's identical question or
