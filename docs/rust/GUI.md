@@ -3556,3 +3556,17 @@ Logical storage tags retain their labels, counts and segmented namespace/sibling
 colours while sorting can use their sibling ideals. The actual Qt recording
 `manage_tags_sort.json` covers 72 combinations and both captured-dialog lifetimes;
 `manage_tags_sort_options.png` shows the actual controls.
+
+Speed and Memory > download pages update now stages the four experimental gallery
+and watcher list-update controls: seconds/milliseconds with a 250 ms minimum and
+denominators 1–99, defaulting to one second and 30. Apply accepts displayed imported
+bounds and saves each field independently; Cancel retains raw imports. Only the
+visible current downloader page polls its list/totals on the 250 ms GUI timer. Each
+deadline uses the currently displayed row count and the saved minimum/denominator;
+equality waits for the next tick. Explicit importer actions force an update.
+Highlighted file/job controls, tab progress and close checks stay current while
+the list waits. Hidden windows pause list reads, while rebinding or accepted close
+permanently retires the old scheduler. The actual Qt controls, save/reopen and
+strict/forced gallery/watcher deadlines are recorded in `downloader_update_times.json`
+and its reference PNG. Native/model/store regressions and three native snapshots
+are authored for hosted validation.

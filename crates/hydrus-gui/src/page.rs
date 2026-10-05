@@ -95,6 +95,10 @@ pub struct SearchPage {
     gallery: Option<GalleryView>,
     /// A watcher page's watchers (the importer is the one it shows).
     watchers: Option<WatcherView>,
+    importer_list_deadline: hydrus_gui_model::downloader_update_times::Deadline,
+    importer_status_clock: crate::downloader_update_times::Clock,
+    gallery_detail: Option<crate::gallery::GalleryQuery>,
+    watcher_detail: Option<crate::watcher::WatcherRow>,
 }
 
 /// What reading a downloader page's importer again changed.
@@ -264,6 +268,10 @@ impl SearchPage {
             presented: std::collections::HashSet::new(),
             gallery: None,
             watchers: None,
+            importer_list_deadline: Default::default(),
+            importer_status_clock: Rc::new(crate::downloader_update_times::now),
+            gallery_detail: None,
+            watcher_detail: None,
         }
     }
 
@@ -1218,6 +1226,63 @@ impl SearchPage {
     /// and the files it brought since, added at the page's end (as the
     /// reference presents them to its page). What changed.
     pub fn refresh_import(&mut self) -> ImportRefresh {
+        let now = (self.importer_status_clock)();
+        let changed = self.refresh_import_status_at(now, true).unwrap_or(false);
+        match self.read_import(false) {
+            ImportRefresh::Nothing if changed => ImportRefresh::Status,
+            refreshed => refreshed,
+        }
+    }
+
+    /// Independent highlighted file/job controls and newly presented files.
+    pub fn refresh_import_details(&mut self) -> ImportRefresh {
+        self.read_import(false)
+    }
+
+    /// Some means a list refresh occurred; the Boolean reports changed row data.
+    pub fn refresh_import_status_at(&mut self, now: f64, force: bool) -> Option<bool> {
+        use hydrus_store::downloader_update_times::{Kind, Preferences};
+        let (kind, items) = match (&self.gallery, &self.watchers) {
+            (Some(gallery), _) => (Kind::Gallery, gallery.queries.len()),
+            (_, Some(watchers)) => (Kind::Watcher, watchers.watchers.len()),
+            _ => return None,
+        };
+        if force {
+            self.importer_list_deadline.force();
+        }
+        if !self.importer_list_deadline.due(now) {
+            return None;
+        }
+        let preferences: Preferences = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        let (minimum, denominator) = preferences.policy(kind);
+        self.importer_list_deadline
+            .advance(now, minimum, denominator, items);
+        let changed = self.read_import_lists();
+        self.gallery_detail = self
+            .gallery
+            .as_ref()
+            .and_then(|view| view.state.highlighted.and_then(|queue| view.query(queue)))
+            .cloned();
+        self.watcher_detail = self
+            .watchers
+            .as_ref()
+            .and_then(|view| view.state.highlighted.and_then(|queue| view.watcher(queue)))
+            .cloned();
+        Some(changed)
+    }
+
+    pub(crate) fn set_import_status_clock(&mut self, clock: crate::downloader_update_times::Clock) {
+        self.importer_status_clock = clock;
+    }
+
+    pub fn next_import_status_time(&self) -> f64 {
+        self.importer_list_deadline.next()
+    }
+
+    fn read_import_lists(&mut self) -> bool {
         let gallery_changed = match &mut self.gallery {
             Some(gallery) => self.store.read(|c| gallery.refresh(c)).unwrap_or_else(|e| {
                 eprintln!("could not read the gallery page's searches: {e}");
@@ -1225,7 +1290,7 @@ impl SearchPage {
             }),
             None => false,
         };
-        let gallery_changed = gallery_changed
+        gallery_changed
             || match &mut self.watchers {
                 Some(watchers) => {
                     let now = now();
@@ -1240,11 +1305,24 @@ impl SearchPage {
                         })
                 }
                 None => false,
-            };
-        match self.read_import(false) {
-            ImportRefresh::Nothing if gallery_changed => ImportRefresh::Status,
-            refreshed => refreshed,
-        }
+            }
+    }
+
+    pub fn highlighted_gallery(&self) -> Option<&crate::gallery::GalleryQuery> {
+        let gallery = self.gallery.as_ref()?;
+        let queue = gallery.state.highlighted?;
+        self.gallery_detail
+            .as_ref()
+            .filter(|row| row.queue == queue)
+            .or_else(|| gallery.query(queue))
+    }
+    pub fn highlighted_watcher(&self) -> Option<&crate::watcher::WatcherRow> {
+        let watchers = self.watchers.as_ref()?;
+        let queue = watchers.state.highlighted?;
+        self.watcher_detail
+            .as_ref()
+            .filter(|row| row.queue == queue)
+            .or_else(|| watchers.watcher(queue))
     }
 
     fn read_import(&mut self, first: bool) -> ImportRefresh {
@@ -1276,7 +1354,23 @@ impl SearchPage {
             gallery_paused: row.as_ref().is_some_and(|q| q.gallery_paused),
             options: row.map(|q| q.options).unwrap_or_default(),
         };
-        let status_changed = self.importer.as_ref() != Some(&now);
+        let gallery_detail = self.gallery.as_ref().and_then(|_| {
+            self.store
+                .read(|conn| crate::gallery::GalleryQuery::read(conn, queue))
+                .ok()
+                .flatten()
+        });
+        let watcher_detail = self.watchers.as_ref().and_then(|_| {
+            self.store
+                .read(|conn| crate::watcher::WatcherRow::read(conn, queue))
+                .ok()
+                .flatten()
+        });
+        let status_changed = self.importer.as_ref() != Some(&now)
+            || self.gallery_detail != gallery_detail
+            || self.watcher_detail != watcher_detail;
+        self.gallery_detail = gallery_detail;
+        self.watcher_detail = watcher_detail;
         self.importer = Some(now);
         let arrived: Vec<HashId> = presented
             .into_iter()
@@ -1854,11 +1948,38 @@ impl SearchPage {
     /// How far the page's importing has got: its done and total imports
     /// (none for a page that doesn't import).
     pub fn import_progress(&self) -> (usize, usize) {
-        if let Some(gallery) = &self.gallery {
-            return crate::gallery::value_range(&gallery.queries);
-        }
-        if let Some(watchers) = &self.watchers {
-            return crate::watcher::value_range(&watchers.watchers);
+        let queues = self
+            .gallery
+            .as_ref()
+            .map(|view| &view.queues)
+            .or_else(|| self.watchers.as_ref().map(|view| &view.queues));
+        if let Some(queues) = queues {
+            // Tabs consume live aggregate counters, independently of expensive row/status refresh.
+            return self
+                .store
+                .read(|conn| {
+                    queues.iter().try_fold((0, 0), |(done, total), &queue| {
+                        let (value, range) = hydrus_store::queues::file_log_value_range(
+                            &hydrus_store::queues::file_seed_counts(conn, queue)?,
+                        );
+                        Ok(if value == range {
+                            (done, total)
+                        } else {
+                            (done + value, total + range)
+                        })
+                    })
+                })
+                .unwrap_or_else(|_| {
+                    self.gallery
+                        .as_ref()
+                        .map(|view| crate::gallery::value_range(&view.queries))
+                        .or_else(|| {
+                            self.watchers
+                                .as_ref()
+                                .map(|view| crate::watcher::value_range(&view.watchers))
+                        })
+                        .unwrap_or_default()
+                });
         }
         self.importer.as_ref().map_or((0, 0), Importer::progress)
     }
@@ -1866,10 +1987,42 @@ impl SearchPage {
     /// Why closing the page needs asking about, for a downloader page.
     pub fn close_veto(&self, confirm_non_empty: bool) -> Option<String> {
         if let Some(gallery) = &self.gallery {
-            return crate::gallery::close_veto(&gallery.queries, confirm_non_empty);
+            let queries = self
+                .store
+                .read(|conn| {
+                    gallery
+                        .queues
+                        .iter()
+                        .map(|&queue| crate::gallery::GalleryQuery::read(conn, queue))
+                        .collect::<hydrus_store::Result<Vec<_>>>()
+                })
+                .ok();
+            return match queries {
+                Some(queries) => crate::gallery::close_veto(
+                    &queries.into_iter().flatten().collect::<Vec<_>>(),
+                    confirm_non_empty,
+                ),
+                None => crate::gallery::close_veto(&gallery.queries, confirm_non_empty),
+            };
         }
         if let Some(watchers) = &self.watchers {
-            return crate::watcher::close_veto(&watchers.watchers, confirm_non_empty);
+            let rows = self
+                .store
+                .read(|conn| {
+                    watchers
+                        .queues
+                        .iter()
+                        .map(|&queue| crate::watcher::WatcherRow::read(conn, queue))
+                        .collect::<hydrus_store::Result<Vec<_>>>()
+                })
+                .ok();
+            return match rows {
+                Some(rows) => crate::watcher::close_veto(
+                    &rows.into_iter().flatten().collect::<Vec<_>>(),
+                    confirm_non_empty,
+                ),
+                None => crate::watcher::close_veto(&watchers.watchers, confirm_non_empty),
+            };
         }
         self.importer.as_ref()?.close_veto(confirm_non_empty)
     }

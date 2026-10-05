@@ -11,6 +11,7 @@ pub mod counts;
 pub mod delete_lock;
 pub mod display;
 pub mod domains;
+pub mod downloader_update_times;
 pub mod duplicates;
 pub mod error;
 pub mod file_maintenance;

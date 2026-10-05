@@ -11,6 +11,7 @@ mod clipboard_urls;
 mod datetime_editor;
 mod delete_files;
 mod downloader_definitions;
+mod downloader_update_times;
 mod duplicate_colours;
 mod duplicates_page;
 mod edit_subscription;

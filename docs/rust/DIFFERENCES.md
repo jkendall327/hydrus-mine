@@ -2712,3 +2712,18 @@ existing segmented colours. Broader Manage Tags transactions, repository tag
 services, immediate viewer commits, and tag-sort parent families remain Partial;
 this slice claims only the two default-sort controls. Model, import and native
 regressions are authored for hosted CI. No local Cargo/Rust/mutation runs occurred.
+
+The four experimental download-page update preferences now reach owned native
+gallery/watcher list status and sorting. This throttles presentation reads rather
+than importer/network work. The reference formula samples displayed items before
+refresh, uses `max(minimum_ms / 1000, items / denominator)`, falls back to one second
+for a zero denominator, and updates only after the pending deadline has passed.
+Saved changes affect the next period without resetting that deadline; explicit
+refresh resets it to zero. The native uses the existing current-page identity,
+a weak window and permanent binding retirement instead of Qt sidebar objects;
+there is no added worker or asynchronous list completion. Highlighted jobs and
+independent aggregate/close consumers still read live Store state. Four original
+Missing controls are proposed conditionally on hosted native/model/Store execution
+and render review. Other speed/memory, download pages and Options parents remain
+Partial; no canonical status or parent credit changes. No local Cargo/Rust or
+mutation tests were run.
