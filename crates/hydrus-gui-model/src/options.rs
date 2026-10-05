@@ -2978,6 +2978,13 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     )],
                 ),
                 boxed(
+                    "drag and drop",
+                    vec![kept_check(
+                        "When DnDing a URL onto the program, switch to the page where it lands:",
+                        "show_destination_page_when_dnd_url",
+                    )],
+                ),
+                boxed(
                     "work slots",
                     vec![
                         int(
@@ -3011,13 +3018,6 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s, v| s.import_work_slots.misc = v,
                         ),
                     ],
-                ),
-                boxed(
-                    "drag and drop",
-                    vec![kept_check(
-                        "When DnDing a URL onto the program, switch to the page where it lands:",
-                        "show_destination_page_when_dnd_url",
-                    )],
                 ),
             ],
         ),
