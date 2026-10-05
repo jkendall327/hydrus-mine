@@ -105,7 +105,7 @@ def record(session):
             publications.clear()
             box._SelectFilesWithTags('AND')
             assert not publications
-            cases.append({'name': name, 'current': [p.GetSerialisableTuple() for p in box.GetPredicates()],
+            cases.append({'name': name, 'current': [p.GetSerialisableTuple() for term in box._ordered_terms for p in term.GetSearchPredicates()],
                           'selected': [p.GetSerialisableTuple() for p in selected], 'actions': actions,
                           'select_files_publications': []})
     try:
