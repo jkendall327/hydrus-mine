@@ -17,6 +17,32 @@ pub trait Setting: Serialize + DeserializeOwned + Default {
     const KEY: &'static str;
 }
 
+/// The duplicate canvas's independent A/B background adjustments and native
+/// transparency policy. Zero is retained from reference defaults until an
+/// Options Apply normalizes its displayed spin box to one.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct DuplicateColourSettings {
+    pub intensity_a: Option<u8>,
+    pub intensity_b: Option<u8>,
+    pub checkerboard: bool,
+    /// Imported active override colour; otherwise the default canvas white.
+    pub background: crate::services::Rgb,
+}
+impl Default for DuplicateColourSettings {
+    fn default() -> Self {
+        Self {
+            intensity_a: Some(0),
+            intensity_b: Some(3),
+            checkerboard: true,
+            background: crate::services::Rgb([255; 3]),
+        }
+    }
+}
+impl Setting for DuplicateColourSettings {
+    const KEY: &'static str = "duplicate_colours";
+}
+
 impl Setting for ThumbnailSettings {
     const KEY: &'static str = "thumbnails";
 }

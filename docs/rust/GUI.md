@@ -3039,3 +3039,15 @@ one pending request; rapid refreshes do not start more threads. Closing drops
 the request channel and pending/result slots without joining on the UI thread.
 A worker startup failure leaves the window usable, displays the error and allows
 Refresh to retry.
+
+The duplicate filter's Options page includes the separate A/B background
+light/dark intensities (1–9 or “do not change”) and its independent transparency
+checkerboard preference. They remain drafts until Apply; Cancel retains saved
+zero values, while Apply saves the spin box's displayed minimum of one, as Qt
+does. Existing duplicate-filter canvases, including rule previews/reviews, read
+the saved preferences live. Pair switching applies A/B to the original ordered
+pair, and transparent media show the reference's 16 px checkerboard or shared
+greenscreen brush only within their image box. Imported active override canvas
+colours are preserved. `duplicate_colours.json` records actual Qt controls,
+143 QColor adjustment cases and eight A/B painter outcomes; model, Options
+owner and native filter painter regressions replay those outputs.

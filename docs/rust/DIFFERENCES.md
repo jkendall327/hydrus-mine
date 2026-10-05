@@ -2101,3 +2101,14 @@ Superseded work is cancelled and only the latest live request can publish. The
 current search executor still finishes an in-flight query before checking the
 cancellation flag; closing drops results and the worker exits afterward without
 blocking the UI. Thread startup is fallible and displays a retryable error.
+
+Duplicate-filter background A/B intensity controls and the independent
+transparency policy now reach the native duplicate canvas. Saved reference
+zero is retained until Options Apply normalises the displayed value; None is
+preserved. The adjustment follows QColor's 16-bit HSV rounding, including
+black's initial lightness and saturation reduction on overflow. The normal
+base is canvas white or an imported active override background. Arbitrary QSS
+stylesheet palettes and the broader colour Options editor remain Partial, as
+do other duplicate-filter presentation/actions. This slice does not claim
+those parent rows. Actual Qt recording ran on 2026-10-05; Rust regression
+source was authored but awaits hosted CI (no local Cargo execution).

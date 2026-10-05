@@ -204,11 +204,43 @@ fn key_order(key: &str) -> usize {
         .unwrap_or(usize::MAX)
 }
 
+fn refresh_colours(window: &DuplicateFilterWindow, state: &State) {
+    if !state.viewing_stats.active() {
+        return;
+    }
+    let store = state.model.store();
+    let settings: hydrus_store::settings::DuplicateColourSettings =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    let native: hydrus_store::settings::ViewerCanvasSettings =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    let pair = state.model.current();
+    let transparent = pair.is_some_and(|(shown, _)| {
+        state
+            .model
+            .facts(shown)
+            .is_some_and(|facts| facts.has_transparency)
+    });
+    let colour = hydrus_gui_model::duplicate_colours::background(
+        &settings,
+        pair.is_some(),
+        state.model.showing_file_a(),
+    );
+    window.set_canvas_background(
+        slint::Color::from_rgb_u8(colour.0[0], colour.0[1], colour.0[2]).into(),
+    );
+    window.set_transparency_mode(hydrus_gui_model::duplicate_colours::transparency(
+        &settings,
+        transparent,
+        native.transparency_greenscreen,
+    ));
+}
+
 /// Show the state in the window.
 fn show(window: &DuplicateFilterWindow, state: &mut State) {
     if !state.viewing_stats.active() {
         return;
     }
+    refresh_colours(window, state);
     state
         .viewing_stats
         .show(state.model.current().map(|(shown, _)| shown));
@@ -472,6 +504,7 @@ pub(crate) fn open_filter(
         let stills = stills.clone();
         move || {
             let Some(window) = weak.upgrade() else { return };
+            refresh_colours(&window, &state.borrow());
             while let Ok((id, decoded)) = stills.results.try_recv() {
                 let mut state = state.borrow_mut();
                 state.requested.remove(&id);
@@ -756,4 +789,165 @@ pub(crate) fn open_filter(
     });
     window.show()?;
     Ok(window)
+}
+
+#[cfg(test)]
+mod colour_tests {
+    use super::*;
+    use hydrus_core::{Sha256, service::builtin_keys};
+    use hydrus_duplicates::potentials::PotentialsQuery;
+    use hydrus_search::{FileSearchContext, LocationContext};
+    use hydrus_store::{
+        duplicates::{FileScope, PairSearchKind, PixelDuplicates},
+        settings::{self, DuplicateColourSettings, ViewerCanvasSettings},
+    };
+    use serde_json::json;
+
+    #[test]
+    fn live_pair_switch_preferences_and_painter_replay_qt_then_retire() {
+        let fixture = hydrus_testkit::fixture_json("duplicate_colours.json");
+        let manifest = hydrus_testkit::fixture_json("legacy_db/basic.manifest.json");
+        let legacy = hydrus_testkit::legacy_fixture("basic");
+        let native = tempfile::tempdir().unwrap();
+        hydrus_store::import::import_legacy(
+            legacy.path(),
+            &native.path().join(hydrus_store::store::DB_FILE_NAME),
+        )
+        .unwrap();
+        let store = Store::open(native.path()).unwrap();
+        let id = |name: &str| {
+            let file = manifest["files"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|file| file["name"] == name)
+                .unwrap();
+            let hash: Sha256 = file["hash"].as_str().unwrap().parse().unwrap();
+            store
+                .read(|conn| hydrus_store::master::hash_id(conn, &hash))
+                .unwrap()
+                .unwrap()
+        };
+        let a = id("png_alpha_00.png");
+        let b = id("jpeg_00.jpg");
+        let snapshot = store.snapshot();
+        let service = snapshot.services.builtin(builtin_keys::MY_FILES).unwrap();
+        let search = FileSearchContext {
+            location: LocationContext::single(service.key.clone()),
+            ..FileSearchContext::default()
+        };
+        let query = PotentialsQuery {
+            scope: FileScope::Domains {
+                current: vec![service.id],
+                deleted: vec![],
+            },
+            kind: PairSearchKind::OneFileMatchesOneSearch,
+            pixel_duplicates: PixelDuplicates::Allowed,
+            max_hamming_distance: 4,
+            search_1: search.clone(),
+            search_2: search,
+        };
+        let mut model =
+            DuplicateFilter::for_pairs(store.clone(), query.clone(), vec![(a, b)]).unwrap();
+        let step = model.load_batch();
+        assert_eq!(model.current(), Some((a, b)));
+        assert!(model.facts(a).unwrap().has_transparency);
+        assert!(!model.facts(b).unwrap().has_transparency);
+        let windows = crate::headless::init();
+        let slot = Rc::new(RefCell::new(None));
+        let window = open_filter(model, step, &slot, None).unwrap();
+        *slot.borrow_mut() = Some(window.clone_strong());
+        window
+            .window()
+            .set_size(slint::LogicalSize::new(800.0, 600.0));
+        let adapter = windows.get(0).unwrap();
+        let mut showing_a = true;
+        for case in fixture["canvas"].as_array().unwrap() {
+            let preferences = DuplicateColourSettings {
+                intensity_a: serde_json::from_value(case["a"].clone()).unwrap(),
+                intensity_b: serde_json::from_value(case["b"].clone()).unwrap(),
+                checkerboard: case["checker"].as_bool().unwrap(),
+                ..DuplicateColourSettings::default()
+            };
+            let green = case["green"].as_bool().unwrap();
+            store
+                .write(move |tx| {
+                    settings::set(tx.conn(), &preferences)?;
+                    let mut native: ViewerCanvasSettings = settings::get(tx.conn())?;
+                    native.transparency_greenscreen = green;
+                    settings::set(tx.conn(), &native)
+                })
+                .unwrap();
+            // Preferences reach an already open owner, without switching or reopening.
+            std::thread::sleep(Duration::from_millis(35));
+            slint::platform::update_timers_and_animations();
+            let wanted = case["file_a"].as_bool().unwrap();
+            if wanted != showing_a {
+                window.invoke_switch_media();
+                showing_a = wanted;
+            }
+            let rgb: [u8; 3] = serde_json::from_value(case["colour"].clone()).unwrap();
+            assert_eq!(
+                window.get_canvas_background(),
+                slint::Brush::from(slint::Color::from_rgb_u8(rgb[0], rgb[1], rgb[2]))
+            );
+            let _ = crate::headless::render(&adapter, 800, 600);
+            // Isolate the same background paint as Qt's StaticImage._DrawBackground
+            // with a transparent probe; real frozen media metadata chooses the mode.
+            window.set_media(slint::Image::from_rgba8(slint::SharedPixelBuffer::<
+                slint::Rgba8Pixel,
+            >::new(64, 64)));
+            window.set_sharp_shown(false);
+            window.set_media_x(100.0);
+            window.set_media_y(100.0);
+            window.set_media_width(64.0);
+            window.set_media_height(64.0);
+            let pixels = crate::headless::render_snapshot(&adapter, 800, 600);
+            for (position, expected) in case["pixels"].as_object().unwrap() {
+                let (x, y) = position.split_once(',').unwrap();
+                let x = x.parse::<usize>().unwrap() + 100;
+                let y = y.parse::<usize>().unwrap() + 100;
+                let offset = (y * 800 + x) * 4;
+                assert_eq!(
+                    json!(pixels[offset..offset + 3]),
+                    *expected,
+                    "{case}, {position}"
+                );
+            }
+            let outside = (110 * 800 + 80) * 4;
+            assert_eq!(
+                &pixels[outside..outside + 3],
+                &rgb,
+                "backdrop is clipped to the image"
+            );
+        }
+        window.invoke_close_requested();
+        assert!(slot.borrow().is_none());
+        let retired = window.get_canvas_background();
+        let preferences = DuplicateColourSettings {
+            intensity_a: Some(9),
+            intensity_b: Some(9),
+            checkerboard: false,
+            ..DuplicateColourSettings::default()
+        };
+        store
+            .write(move |tx| settings::set(tx.conn(), &preferences))
+            .unwrap();
+        let mut model = DuplicateFilter::for_pairs(store.clone(), query, vec![(a, b)]).unwrap();
+        let step = model.load_batch();
+        let successor = open_filter(model, step, &slot, None).unwrap();
+        *slot.borrow_mut() = Some(successor.clone_strong());
+        window.invoke_switch_media();
+        window.invoke_close_requested();
+        std::thread::sleep(Duration::from_millis(35));
+        slint::platform::update_timers_and_animations();
+        assert_eq!(window.get_canvas_background(), retired);
+        assert!(slot.borrow().is_some());
+        assert_eq!(
+            successor.get_canvas_background(),
+            slint::Brush::from(slint::Color::from_rgb_u8(91, 91, 91))
+        );
+        successor.invoke_close_requested();
+        assert!(slot.borrow().is_none());
+    }
 }
