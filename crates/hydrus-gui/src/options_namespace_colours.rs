@@ -1,19 +1,61 @@
-//! Staged Options namespace rows and explicitly owned add/delete questions.
+//! Staged Options namespace rows and explicitly owned questions and warning notices.
 use crate::{NamespaceColourRow, OptionsWindow, SessionDialog};
 use hydrus_gui_model::{namespace_colours, options::Editor};
-use slint::{ComponentHandle as _, ModelRc, VecModel};
+use slint::{ComponentHandle, ModelRc, VecModel};
 use std::{
     cell::{Cell, RefCell},
     rc::Rc,
 };
 
-/// Options' owned namespace Enter Text or deletion question.
+/// Options' owned namespace Enter Text, deletion question or warning notice.
 pub type Slot = Rc<RefCell<Option<SessionDialog>>>;
 pub(crate) struct Binding {
     pub show: Rc<dyn Fn()>,
     pub cancel: Rc<dyn Fn()>,
     pub has_open: Rc<dyn Fn() -> bool>,
 }
+// Warnings follow the completed Enter Text question in the same private owner slot.
+fn warning_notice(child: &Slot, show: &Rc<dyn Fn()>, message: &str) -> Result<(), String> {
+    let notice = SessionDialog::new().map_err(|error| error.to_string())?;
+    notice.set_window_title("Warning".into());
+    notice.set_message(message.into());
+    notice.set_notice_only(true);
+    notice.set_notice_ok_label("OK".into());
+    let alive = Rc::new(Cell::new(true));
+    let close: Rc<dyn Fn()> = Rc::new({
+        let child = Rc::downgrade(child);
+        let weak = notice.as_weak();
+        let show = show.clone();
+        move || {
+            if !alive.replace(false) {
+                return;
+            }
+            if let Some(notice) = weak.upgrade() {
+                let _ = notice.hide();
+            }
+            if let Some(child) = child.upgrade() {
+                child.borrow_mut().take();
+            }
+            show();
+        }
+    });
+    notice.on_cancelled({
+        let close = close.clone();
+        move || close()
+    });
+    notice.window().on_close_requested(move || {
+        close();
+        slint::CloseRequestResponse::HideWindow
+    });
+    *child.borrow_mut() = Some(notice.clone_strong());
+    if let Err(error) = notice.show() {
+        notice.invoke_cancelled();
+        return Err(error.to_string());
+    }
+    show();
+    Ok(())
+}
+
 pub(crate) fn bind(
     window: &OptionsWindow,
     editor: &Rc<RefCell<Editor>>,
@@ -101,8 +143,17 @@ pub(crate) fn bind(
             if !adding && question.is_none() {
                 return;
             }
-            let Ok(dialog) = SessionDialog::new() else {
-                return;
+            if let Some(window) = weak.upgrade() {
+                window.set_namespace_colour_error("".into());
+            }
+            let dialog = match SessionDialog::new() {
+                Ok(dialog) => dialog,
+                Err(error) => {
+                    if let Some(window) = weak.upgrade() {
+                        window.set_namespace_colour_error(error.to_string().into());
+                    }
+                    return;
+                }
             };
             dialog.set_message(question.unwrap_or("Enter the namespace.").into());
             dialog.set_asking_name(adding);
@@ -132,24 +183,26 @@ pub(crate) fn bind(
                 let child_active = child_active.clone();
                 let close = close.clone();
                 let weak = weak.clone();
+                let child = Rc::downgrade(&child);
+                let show = show.clone();
                 move |text| {
                     if !adding || !valid() || !child_active.get() {
                         return;
                     }
                     let result = list.borrow_mut().add_random(text.as_str());
+                    close();
                     if let Err(warning) = result {
-                        if let Some(window) = weak.upgrade() {
-                            window.set_error(warning.into());
+                        if let Some(child) = child.upgrade()
+                            && let Err(error) = warning_notice(&child, &show, warning)
+                            && let Some(window) = weak.upgrade()
+                        {
+                            window.set_namespace_colour_error(format!("{warning}\n{error}").into());
                         }
                     } else {
                         editor
                             .borrow_mut()
                             .set_namespace_colours(list.borrow().values());
-                        if let Some(window) = weak.upgrade() {
-                            window.set_error("".into());
-                        }
                     }
-                    close();
                 }
             });
             dialog.on_answered({
@@ -183,7 +236,7 @@ pub(crate) fn bind(
             if let Err(error) = dialog.show() {
                 dialog.invoke_cancelled();
                 if let Some(window) = weak.upgrade() {
-                    window.set_error(error.to_string().into());
+                    window.set_namespace_colour_error(error.to_string().into());
                 }
             }
             show();

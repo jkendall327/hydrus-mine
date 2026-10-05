@@ -33,6 +33,9 @@ impl Editor {
         match namespace {
             None => "namespaced tags".into(),
             Some("") => "unnamespaced tags".into(),
+            // Qt prettifies only slices containing exactly one colon. A nested
+            // namespace plus its final colon remains a literal tag slice.
+            Some(namespace) if namespace.contains(':') => format!("{namespace}:"),
             Some(namespace) => format!("'{namespace}' tags"),
         }
     }

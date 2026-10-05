@@ -3,7 +3,9 @@
 
 Actual Options handlers drive input normalization, warnings, protected mixed
 selection, exact No/Yes deletion, private draft cancellation and saved reopen.
-Random RGB generation is scripted only to make accepted add output reproducible.
+Warnings use actual QMessageBox.warning with a Qt timer recording its visible
+message, title, parent and Ok-only buttons before acknowledging it. Random RGB
+generation is scripted only to make accepted add output reproducible.
 The real read autocomplete list resolves the OR header colour for each saved
 namespace choice. No reference files, remote services or media files change.
 """
@@ -11,7 +13,7 @@ import json, os, sys, tempfile
 HERE=os.path.dirname(os.path.abspath(__file__));sys.path.insert(0,HERE)
 OUT=os.path.join(HERE,'fixtures','namespace_colour_controls.json')
 def record(session):
-    from qtpy import QtWidgets as QW
+    from qtpy import QtWidgets as QW, QtCore as QC
     from hydrus.core import HydrusConstants as HC, HydrusExceptions
     from hydrus.client.gui import ClientGUIDialogsQuick as Quick,ClientGUIDialogsMessage as Message
     from hydrus.client.gui.panels.options import TagPresentationPanel as Module
@@ -24,14 +26,23 @@ def record(session):
         original=c.new_options;old_colours=dict(HC.options['namespace_colours'])
         old_enter=Quick.EnterText;old_warning=Message.ShowWarning;old_yes=Quick.GetYesNo;old_random=Module.random.randint
         draft=original.Duplicate();c.new_options=draft
-        answer={'text':'','yes':False,'cancel':False};questions=[];warnings=[];rgb=iter([12,34,56]*50)
+        answer={'text':'','yes':False,'cancel':False};questions=[];warnings=[];warning_dialogs=[];rgb=iter([12,34,56]*50)
         def enter(win,message,*args,**kwargs):
             questions.append(message)
             if answer['cancel']:raise HydrusExceptions.CancelledException()
             return answer['text']
         Quick.EnterText=enter
         Quick.GetYesNo=lambda win,message,*args,**kwargs:(questions.append(message) or (QW.QDialog.DialogCode.Accepted if answer['yes'] else QW.QDialog.DialogCode.Rejected))
-        Message.ShowWarning=lambda win,message,*args,**kwargs:warnings.append(message)
+        def warning(win,message,*args,**kwargs):
+            warnings.append(message)
+            def acknowledge():
+                dialog=QW.QApplication.activeModalWidget()
+                assert isinstance(dialog,QW.QMessageBox)
+                warning_dialogs.append(dict(title=dialog.windowTitle(),message=dialog.text(),parent_is_panel=dialog.parent() is win,button_labels=[button.text() for button in dialog.buttons()],ok_only=dialog.standardButtons()==QW.QMessageBox.StandardButton.Ok))
+                dialog.accept()
+            QC.QTimer.singleShot(0,acknowledge)
+            old_warning(win,message,*args,**kwargs)
+        Message.ShowWarning=warning
         Module.random.randint=lambda low,high:next(rgb)
         def rows(panel):
             return [dict(namespace=t.GetNamespace(),label=t.GetCopyableTexts()[0],rgb=list(t.GetNamespaceAndColour()[1])) for t in panel._namespace_colours._ordered_terms]
@@ -40,8 +51,8 @@ def record(session):
         try:
             panel=Module.TagPresentationPanel(c.gui,draft);initial=rows(panel);events=[]
             for text,cancel in [('unused',True),('',False),(':',False),(' SYSTEM: ',False),(' -Parity Artists::: ',False),('parity artists',False),('::::',False),(' Artist:Inner: ',False),('\u001c:\u001c',False),('\u001c \u001f',False),('series:\u001c',False)]:
-                answer.update(text=text,cancel=cancel);questions.clear();warnings.clear();panel._AddNamespaceColour()
-                events.append(dict(action='add',input=text,cancel=cancel,questions=list(questions),warnings=list(warnings),rows=rows(panel),durable=values(),delete_enabled=panel._delete_namespace_colour.isEnabled()))
+                answer.update(text=text,cancel=cancel);questions.clear();warnings.clear();warning_dialogs.clear();panel._AddNamespaceColour()
+                events.append(dict(action='add',input=text,cancel=cancel,questions=list(questions),warnings=list(warnings),warning_dialogs=list(warning_dialogs),rows=rows(panel),durable=values(),delete_enabled=panel._delete_namespace_colour.isEnabled()))
             # A default and unnamespaced row are selected along with deletable rows.
             selected=[None,'','creator','parity artists']
             panel._namespace_colours._DeselectAll()

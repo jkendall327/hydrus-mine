@@ -2190,8 +2190,11 @@ playback is not recorded. Native real pointer/key/wheel replays and the
 builds/tests or mutation runs were performed.
 
 The namespace-colour Add/Delete and OR-row namespace preferences now have staged
-Options controls and real list consumers. Native warnings appear in the Options
-error area after its owned Enter Text child closes; Qt uses a warning dialog.
+Options controls and real list consumers. Rejected namespace input closes its
+Enter Text child and opens an owned Warning notice with the exact Qt message and
+an OK acknowledgement. Parent Apply stays blocked until acknowledgement; parent
+Cancel closes and retires either child. If a native child cannot open, a dedicated
+namespace-list message displays the failure, retaining any rejected-input warning.
 The broader namespace-colour editor stays Partial: colour-picker editing,
 inherited list menus, and keyboard navigation are not added here. Native active
 OR predicates retain their existing single-line layout and use the configured
