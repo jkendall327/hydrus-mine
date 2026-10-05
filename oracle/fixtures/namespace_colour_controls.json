@@ -91,6 +91,7 @@
         "Enter the namespace."
       ],
       "warnings": [],
+      "warning_dialogs": [],
       "rows": [
         {
           "namespace": "character",
@@ -259,6 +260,17 @@
       ],
       "warnings": [
         "Sorry, that namespace means unnamespaced/default namespaced, which are already listed."
+      ],
+      "warning_dialogs": [
+        {
+          "title": "Warning",
+          "message": "Sorry, that namespace means unnamespaced/default namespaced, which are already listed.",
+          "parent_is_panel": true,
+          "button_labels": [
+            "OK"
+          ],
+          "ok_only": true
+        }
       ],
       "rows": [
         {
@@ -429,6 +441,17 @@
       "warnings": [
         "Sorry, that namespace means unnamespaced/default namespaced, which are already listed."
       ],
+      "warning_dialogs": [
+        {
+          "title": "Warning",
+          "message": "Sorry, that namespace means unnamespaced/default namespaced, which are already listed.",
+          "parent_is_panel": true,
+          "button_labels": [
+            "OK"
+          ],
+          "ok_only": true
+        }
+      ],
       "rows": [
         {
           "namespace": "character",
@@ -598,6 +621,17 @@
       "warnings": [
         "Sorry, that namespace is already listed!"
       ],
+      "warning_dialogs": [
+        {
+          "title": "Warning",
+          "message": "Sorry, that namespace is already listed!",
+          "parent_is_panel": true,
+          "button_labels": [
+            "OK"
+          ],
+          "ok_only": true
+        }
+      ],
       "rows": [
         {
           "namespace": "character",
@@ -765,6 +799,7 @@
         "Enter the namespace."
       ],
       "warnings": [],
+      "warning_dialogs": [],
       "rows": [
         {
           "namespace": "character",
@@ -942,6 +977,17 @@
       ],
       "warnings": [
         "Sorry, that namespace is already listed!"
+      ],
+      "warning_dialogs": [
+        {
+          "title": "Warning",
+          "message": "Sorry, that namespace is already listed!",
+          "parent_is_panel": true,
+          "button_labels": [
+            "OK"
+          ],
+          "ok_only": true
+        }
       ],
       "rows": [
         {
@@ -1121,6 +1167,17 @@
       "warnings": [
         "Sorry, that namespace is already listed!"
       ],
+      "warning_dialogs": [
+        {
+          "title": "Warning",
+          "message": "Sorry, that namespace is already listed!",
+          "parent_is_panel": true,
+          "button_labels": [
+            "OK"
+          ],
+          "ok_only": true
+        }
+      ],
       "rows": [
         {
           "namespace": "character",
@@ -1297,6 +1354,7 @@
         "Enter the namespace."
       ],
       "warnings": [],
+      "warning_dialogs": [],
       "rows": [
         {
           "namespace": "character",
@@ -1483,6 +1541,17 @@
       ],
       "warnings": [
         "Sorry, that namespace means unnamespaced/default namespaced, which are already listed."
+      ],
+      "warning_dialogs": [
+        {
+          "title": "Warning",
+          "message": "Sorry, that namespace means unnamespaced/default namespaced, which are already listed.",
+          "parent_is_panel": true,
+          "button_labels": [
+            "OK"
+          ],
+          "ok_only": true
+        }
       ],
       "rows": [
         {
@@ -1671,6 +1740,17 @@
       "warnings": [
         "Sorry, that namespace means unnamespaced/default namespaced, which are already listed."
       ],
+      "warning_dialogs": [
+        {
+          "title": "Warning",
+          "message": "Sorry, that namespace means unnamespaced/default namespaced, which are already listed.",
+          "parent_is_panel": true,
+          "button_labels": [
+            "OK"
+          ],
+          "ok_only": true
+        }
+      ],
       "rows": [
         {
           "namespace": "character",
@@ -1857,6 +1937,17 @@
       ],
       "warnings": [
         "Sorry, that namespace is already listed!"
+      ],
+      "warning_dialogs": [
+        {
+          "title": "Warning",
+          "message": "Sorry, that namespace is already listed!",
+          "parent_is_panel": true,
+          "button_labels": [
+            "OK"
+          ],
+          "ok_only": true
+        }
       ],
       "rows": [
         {

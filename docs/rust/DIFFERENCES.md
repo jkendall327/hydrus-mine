@@ -2198,8 +2198,11 @@ playback is not recorded. Native real pointer/key/wheel replays and the
 builds/tests or mutation runs were performed.
 
 The namespace-colour Add/Delete and OR-row namespace preferences now have staged
-Options controls and real list consumers. Native warnings appear in the Options
-error area after its owned Enter Text child closes; Qt uses a warning dialog.
+Options controls and real list consumers. Rejected namespace input closes its
+Enter Text child and opens an owned Warning notice with the exact Qt message and
+an OK acknowledgement. Parent Apply stays blocked until acknowledgement; parent
+Cancel closes and retires either child. If a native child cannot open, a dedicated
+namespace-list message displays the failure, retaining any rejected-input warning.
 The broader namespace-colour editor stays Partial: colour-picker editing,
 inherited list menus, and keyboard navigation are not added here. Native active
 OR predicates retain their existing single-line layout and use the configured
@@ -2302,8 +2305,10 @@ remains Partial because the reference polls the system-wide cursor and native
 tracking only observes movement in application windows. This does not implement
 high-CPU maintenance scheduling, CPU-busy detection or the broader idle settings.
 Ignored controls reopen with a hidden one-minute value, matching the recorded
-Qt constructor/multiplier behavior. Options saves merge only edited idle fields
-so unrelated live changes survive. Native timing/persistence/Cancel/PNG tests are
+Qt constructor/multiplier behavior. Unchanged Apply normalizes raw imported
+seconds to the displayed floor/bounds (0/59/119 to 60; 60060 to 60000). Cancel
+keeps raw seconds. Explicit edits merge independently; implicit normalization
+does not overwrite a newer value saved while the dialog was open. Native timing/persistence/Cancel/PNG tests are
 authored for hosted CI; only the actual Qt recorder and source checks ran locally.
 
 The external-command argument and template-clipboard controls are replayed against

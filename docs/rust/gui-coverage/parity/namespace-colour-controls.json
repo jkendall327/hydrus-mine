@@ -5,7 +5,8 @@
   "implementation_commits": [
     "450ace03afa28614c418a424d5e07f9d5522ce20",
     "ea3acf63769ed8a4e4c08d8fcd2877967ba83880",
-    "539548bc6d6a45ad69b716294d8c84914828c155"
+    "539548bc6d6a45ad69b716294d8c84914828c155",
+    "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
   ],
   "completed_original_leaves_proposed": 3,
   "claims": [
@@ -16,43 +17,61 @@
       "proposedStatus": "first_pass",
       "proposed_status": "first_pass",
       "change_kind": "implementation",
-      "exactBehavior": "Options stages a new namespace with the exact Enter the namespace. prompt, lower/strip/trailing-colon and shared garbage cleanup, exact reserved/default and duplicate warnings, and fresh random RGB. Cancel changes neither list nor saved settings; accepted Add changes only the parent draft until Apply. Saved/reopened colours drive real media tag rows. Pending child blocks Apply, hidden owner rejects acceptance, parent Cancel retires callbacks, and retained old Cancel cannot clear a successor slot. Initial strip includes Python control-character whitespace U+001C\u2013U+001F. Sorted Add preserves selected namespace identities while retaining numeric last-hit, Shift anchor, and range bookkeeping, as recorded for Shift/Ctrl+Shift contraction.",
+      "exactBehavior": "Options stages a new namespace with the exact Enter the namespace. prompt, lower/strip/trailing-colon and shared garbage cleanup, exact reserved/default and duplicate warnings, and fresh random RGB. Cancel changes neither list nor saved settings; accepted Add changes only the parent draft until Apply. Saved/reopened colours drive real media tag rows. Pending child blocks Apply, hidden owner rejects acceptance, parent Cancel retires callbacks, and retained old Cancel cannot clear a successor slot. Initial strip includes Python control-character whitespace U+001C\u2013U+001F. Sorted Add preserves selected namespace identities while retaining numeric last-hit, Shift anchor, and range bookkeeping, as recorded for Shift/Ctrl+Shift contraction. Nested colon namespaces retain the literal namespace plus trailing-colon label (artist:inner:) and sort by that painted text. Invalid input closes Enter Text then opens an owned Warning notice with the exact message and sole OK button; acknowledgement releases the child slot, parent Apply is blocked, parent Cancel retires it, and stale question/notice callbacks cannot mutate or clear a successor.",
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/namespace_colours.rs",
-          "line": 66,
-          "symbol": "pub fn add(",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "line": 32,
+          "symbol": "fn label(namespace:",
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/namespace_colours.rs",
-          "line": 112,
+          "line": 70,
+          "symbol": "pub fn add(",
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/namespace_colours.rs",
+          "line": 116,
           "symbol": "pub fn removal_question(",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui/src/options_namespace_colours.rs",
-          "line": 17,
+          "line": 59,
           "symbol": "pub(crate) fn bind(",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/options.rs",
-          "line": 209,
+          "line": 231,
           "symbol": "namespace_colours: hydrus_core",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/options.rs",
-          "line": 3156,
+          "line": 3330,
           "symbol": "Namespace for the OR top row:",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui/ui/namespace_colours.slint",
           "line": 4,
           "symbol": "export component NamespaceColourList",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/options_namespace_colours.rs",
+          "line": 18,
+          "symbol": "fn warning_notice(",
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/session_dialog.slint",
+          "line": 21,
+          "symbol": "in property <string> notice-ok-label:",
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         }
       ],
       "test_anchors": [
@@ -60,32 +79,32 @@
           "relativepath": "crates/hydrus-gui-model/tests/model/namespace_colours.rs",
           "line": 20,
           "symbol": "fn qt_namespace_add_normalization",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/namespace_colours.rs",
-          "line": 60,
+          "line": 62,
           "symbol": "fn actual_namespace_questions",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/namespace_colours.rs",
           "line": 141,
           "symbol": "fn sorted_add_keeps",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         }
       ],
       "referenceRecording": {
         "script": "oracle/record_namespace_colour_controls.py",
         "fixture": "oracle/fixtures/namespace_colour_controls.json",
-        "commit": "539548bc6d6a45ad69b716294d8c84914828c155",
-        "executed_at": "2026-10-05 02:15:20 UTC",
-        "result": "Executed real TagPresentationPanel handlers on copied basic fixture with actual read autocomplete ListBoxItemPredicate colour consumer. Recorded cancelled Add, reserved/duplicate namespace warnings, case/space/trailing colon/leading garbage cleanup, mixed protected/deletable selection, exact Delete all selected colours? No/Yes, private draft cancellation, accepted legacy colour-map update and reopened rows. OR colour cases record named, absent, empty and newly added namespace choices with actual OR header and child RGB rows. Only randomness is scripted to RGB 12/34/56 for reproducible fixture output; production native Add uses fresh random channels. Qt child dialogs are scripted to answer questions; actual handlers, normalization, list mutations, Options save/reopen and colour resolution are unchanged. Controller options and legacy map restored at end. Expected sandbox local API listen warnings are unrelated to the direct Qt/DB capture. Precision rerun additionally records U+001C\u2013U+001F initial whitespace stripping, enabled Delete for mixed/protected/empty selections with exact no-question protected/empty results, Add sorting after a plain hit and existing Shift/Ctrl+Shift ranges followed by contraction and post-Delete anchor reset. Explicit empty OR text is recorded before any named preference, distinguishing legacy None from the first edited empty string."
+        "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9",
+        "executed_at": "2026-10-05 04:10:36 UTC",
+        "result": "Executed real TagPresentationPanel handlers on copied basic fixture with actual read autocomplete ListBoxItemPredicate colour consumer. Recorded cancelled Add, reserved/duplicate namespace warnings, case/space/trailing colon/leading garbage cleanup, mixed protected/deletable selection, exact Delete all selected colours? No/Yes, private draft cancellation, accepted legacy colour-map update and reopened rows. OR colour cases record named, absent, empty and newly added namespace choices with actual OR header and child RGB rows. Only randomness is scripted to RGB 12/34/56 for reproducible fixture output; production native Add uses fresh random channels. Qt child dialogs are scripted to answer questions; actual handlers, normalization, list mutations, Options save/reopen and colour resolution are unchanged. Controller options and legacy map restored at end. Expected sandbox local API listen warnings are unrelated to the direct Qt/DB capture. Precision rerun additionally records U+001C\u2013U+001F initial whitespace stripping, enabled Delete for mixed/protected/empty selections with exact no-question protected/empty results, Add sorting after a plain hit and existing Shift/Ctrl+Shift ranges followed by contraction and post-Delete anchor reset. Explicit empty OR text is recorded before any named preference, distinguishing legacy None from the first edited empty string. Namespace CI repair rerun additionally drives the actual QMessageBox.warning, recording its Warning title, exact message, panel ownership and sole OK button before a Qt timer acknowledges it. Every previous fixture field is unchanged; the existing nested artist:inner row remains literal artist:inner: in lexical display order. Native warning acknowledgement/Apply blocking, parent cancellation, visibility and stale question/notice callbacks are authored for hosted execution."
       },
       "limitations": [
         "Only these three original finite leaves are proposed; namespace editor/other rendering/Tag Presentation parents remain Partial.",
         "Full colour-picker editing, inherited colour-list menus and keyboard navigation remain outside this slice.",
-        "Native warnings appear in the parent Options error area after the owned Enter Text child closes, rather than a separate Qt warning dialog.",
+        "Native Warning notices use the exact Qt title/message/OK button and the same Options-owned private child slot. Child launch failures appear in a dedicated namespace-list message; Qt icons and platform messagebox decoration are not replicated.",
         "Native OR active predicates retain a single-line row, coloured using the recorded OR header namespace. Expanded header/independently coloured child topology remains a broader Partial boundary.",
         "Inactive Qt OR connecting string preference is not implemented or counted; actual source still uses fixed OR text.",
         "Hosted model/native regressions and PNG authored but not executed locally; no Cargo builds/tests, mutation runs, pushes or canonical inventory edits."
@@ -102,39 +121,57 @@
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/namespace_colours.rs",
-          "line": 66,
-          "symbol": "pub fn add(",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "line": 32,
+          "symbol": "fn label(namespace:",
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/namespace_colours.rs",
-          "line": 112,
+          "line": 70,
+          "symbol": "pub fn add(",
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/namespace_colours.rs",
+          "line": 116,
           "symbol": "pub fn removal_question(",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui/src/options_namespace_colours.rs",
-          "line": 17,
+          "line": 59,
           "symbol": "pub(crate) fn bind(",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/options.rs",
-          "line": 209,
+          "line": 231,
           "symbol": "namespace_colours: hydrus_core",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/options.rs",
-          "line": 3156,
+          "line": 3330,
           "symbol": "Namespace for the OR top row:",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui/ui/namespace_colours.slint",
           "line": 4,
           "symbol": "export component NamespaceColourList",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/options_namespace_colours.rs",
+          "line": 18,
+          "symbol": "fn warning_notice(",
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/session_dialog.slint",
+          "line": 21,
+          "symbol": "in property <string> notice-ok-label:",
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         }
       ],
       "test_anchors": [
@@ -142,32 +179,32 @@
           "relativepath": "crates/hydrus-gui-model/tests/model/namespace_colours.rs",
           "line": 20,
           "symbol": "fn qt_namespace_add_normalization",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/namespace_colours.rs",
-          "line": 60,
+          "line": 62,
           "symbol": "fn actual_namespace_questions",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/namespace_colours.rs",
           "line": 141,
           "symbol": "fn sorted_add_keeps",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         }
       ],
       "referenceRecording": {
         "script": "oracle/record_namespace_colour_controls.py",
         "fixture": "oracle/fixtures/namespace_colour_controls.json",
-        "commit": "539548bc6d6a45ad69b716294d8c84914828c155",
-        "executed_at": "2026-10-05 02:15:20 UTC",
-        "result": "Executed real TagPresentationPanel handlers on copied basic fixture with actual read autocomplete ListBoxItemPredicate colour consumer. Recorded cancelled Add, reserved/duplicate namespace warnings, case/space/trailing colon/leading garbage cleanup, mixed protected/deletable selection, exact Delete all selected colours? No/Yes, private draft cancellation, accepted legacy colour-map update and reopened rows. OR colour cases record named, absent, empty and newly added namespace choices with actual OR header and child RGB rows. Only randomness is scripted to RGB 12/34/56 for reproducible fixture output; production native Add uses fresh random channels. Qt child dialogs are scripted to answer questions; actual handlers, normalization, list mutations, Options save/reopen and colour resolution are unchanged. Controller options and legacy map restored at end. Expected sandbox local API listen warnings are unrelated to the direct Qt/DB capture. Precision rerun additionally records U+001C\u2013U+001F initial whitespace stripping, enabled Delete for mixed/protected/empty selections with exact no-question protected/empty results, Add sorting after a plain hit and existing Shift/Ctrl+Shift ranges followed by contraction and post-Delete anchor reset. Explicit empty OR text is recorded before any named preference, distinguishing legacy None from the first edited empty string."
+        "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9",
+        "executed_at": "2026-10-05 04:10:36 UTC",
+        "result": "Executed real TagPresentationPanel handlers on copied basic fixture with actual read autocomplete ListBoxItemPredicate colour consumer. Recorded cancelled Add, reserved/duplicate namespace warnings, case/space/trailing colon/leading garbage cleanup, mixed protected/deletable selection, exact Delete all selected colours? No/Yes, private draft cancellation, accepted legacy colour-map update and reopened rows. OR colour cases record named, absent, empty and newly added namespace choices with actual OR header and child RGB rows. Only randomness is scripted to RGB 12/34/56 for reproducible fixture output; production native Add uses fresh random channels. Qt child dialogs are scripted to answer questions; actual handlers, normalization, list mutations, Options save/reopen and colour resolution are unchanged. Controller options and legacy map restored at end. Expected sandbox local API listen warnings are unrelated to the direct Qt/DB capture. Precision rerun additionally records U+001C\u2013U+001F initial whitespace stripping, enabled Delete for mixed/protected/empty selections with exact no-question protected/empty results, Add sorting after a plain hit and existing Shift/Ctrl+Shift ranges followed by contraction and post-Delete anchor reset. Explicit empty OR text is recorded before any named preference, distinguishing legacy None from the first edited empty string. Namespace CI repair rerun additionally drives the actual QMessageBox.warning, recording its Warning title, exact message, panel ownership and sole OK button before a Qt timer acknowledges it. Every previous fixture field is unchanged; the existing nested artist:inner row remains literal artist:inner: in lexical display order. Native warning acknowledgement/Apply blocking, parent cancellation, visibility and stale question/notice callbacks are authored for hosted execution."
       },
       "limitations": [
         "Only these three original finite leaves are proposed; namespace editor/other rendering/Tag Presentation parents remain Partial.",
         "Full colour-picker editing, inherited colour-list menus and keyboard navigation remain outside this slice.",
-        "Native warnings appear in the parent Options error area after the owned Enter Text child closes, rather than a separate Qt warning dialog.",
+        "Native Warning notices use the exact Qt title/message/OK button and the same Options-owned private child slot. Child launch failures appear in a dedicated namespace-list message; Qt icons and platform messagebox decoration are not replicated.",
         "Native OR active predicates retain a single-line row, coloured using the recorded OR header namespace. Expanded header/independently coloured child topology remains a broader Partial boundary.",
         "Inactive Qt OR connecting string preference is not implemented or counted; actual source still uses fixed OR text.",
         "Hosted model/native regressions and PNG authored but not executed locally; no Cargo builds/tests, mutation runs, pushes or canonical inventory edits."
@@ -184,39 +221,57 @@
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/namespace_colours.rs",
-          "line": 66,
-          "symbol": "pub fn add(",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "line": 32,
+          "symbol": "fn label(namespace:",
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/namespace_colours.rs",
-          "line": 112,
+          "line": 70,
+          "symbol": "pub fn add(",
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/namespace_colours.rs",
+          "line": 116,
           "symbol": "pub fn removal_question(",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui/src/options_namespace_colours.rs",
-          "line": 17,
+          "line": 59,
           "symbol": "pub(crate) fn bind(",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/options.rs",
-          "line": 209,
+          "line": 231,
           "symbol": "namespace_colours: hydrus_core",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/options.rs",
-          "line": 3156,
+          "line": 3330,
           "symbol": "Namespace for the OR top row:",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui/ui/namespace_colours.slint",
           "line": 4,
           "symbol": "export component NamespaceColourList",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/options_namespace_colours.rs",
+          "line": 18,
+          "symbol": "fn warning_notice(",
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/session_dialog.slint",
+          "line": 21,
+          "symbol": "in property <string> notice-ok-label:",
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         }
       ],
       "test_anchors": [
@@ -224,32 +279,32 @@
           "relativepath": "crates/hydrus-gui-model/tests/model/namespace_colours.rs",
           "line": 20,
           "symbol": "fn qt_namespace_add_normalization",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/namespace_colours.rs",
-          "line": 60,
+          "line": 62,
           "symbol": "fn actual_namespace_questions",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/namespace_colours.rs",
           "line": 141,
           "symbol": "fn sorted_add_keeps",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         }
       ],
       "referenceRecording": {
         "script": "oracle/record_namespace_colour_controls.py",
         "fixture": "oracle/fixtures/namespace_colour_controls.json",
-        "commit": "539548bc6d6a45ad69b716294d8c84914828c155",
-        "executed_at": "2026-10-05 02:15:20 UTC",
-        "result": "Executed real TagPresentationPanel handlers on copied basic fixture with actual read autocomplete ListBoxItemPredicate colour consumer. Recorded cancelled Add, reserved/duplicate namespace warnings, case/space/trailing colon/leading garbage cleanup, mixed protected/deletable selection, exact Delete all selected colours? No/Yes, private draft cancellation, accepted legacy colour-map update and reopened rows. OR colour cases record named, absent, empty and newly added namespace choices with actual OR header and child RGB rows. Only randomness is scripted to RGB 12/34/56 for reproducible fixture output; production native Add uses fresh random channels. Qt child dialogs are scripted to answer questions; actual handlers, normalization, list mutations, Options save/reopen and colour resolution are unchanged. Controller options and legacy map restored at end. Expected sandbox local API listen warnings are unrelated to the direct Qt/DB capture. Precision rerun additionally records U+001C\u2013U+001F initial whitespace stripping, enabled Delete for mixed/protected/empty selections with exact no-question protected/empty results, Add sorting after a plain hit and existing Shift/Ctrl+Shift ranges followed by contraction and post-Delete anchor reset. Explicit empty OR text is recorded before any named preference, distinguishing legacy None from the first edited empty string."
+        "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9",
+        "executed_at": "2026-10-05 04:10:36 UTC",
+        "result": "Executed real TagPresentationPanel handlers on copied basic fixture with actual read autocomplete ListBoxItemPredicate colour consumer. Recorded cancelled Add, reserved/duplicate namespace warnings, case/space/trailing colon/leading garbage cleanup, mixed protected/deletable selection, exact Delete all selected colours? No/Yes, private draft cancellation, accepted legacy colour-map update and reopened rows. OR colour cases record named, absent, empty and newly added namespace choices with actual OR header and child RGB rows. Only randomness is scripted to RGB 12/34/56 for reproducible fixture output; production native Add uses fresh random channels. Qt child dialogs are scripted to answer questions; actual handlers, normalization, list mutations, Options save/reopen and colour resolution are unchanged. Controller options and legacy map restored at end. Expected sandbox local API listen warnings are unrelated to the direct Qt/DB capture. Precision rerun additionally records U+001C\u2013U+001F initial whitespace stripping, enabled Delete for mixed/protected/empty selections with exact no-question protected/empty results, Add sorting after a plain hit and existing Shift/Ctrl+Shift ranges followed by contraction and post-Delete anchor reset. Explicit empty OR text is recorded before any named preference, distinguishing legacy None from the first edited empty string. Namespace CI repair rerun additionally drives the actual QMessageBox.warning, recording its Warning title, exact message, panel ownership and sole OK button before a Qt timer acknowledges it. Every previous fixture field is unchanged; the existing nested artist:inner row remains literal artist:inner: in lexical display order. Native warning acknowledgement/Apply blocking, parent cancellation, visibility and stale question/notice callbacks are authored for hosted execution."
       },
       "limitations": [
         "Only these three original finite leaves are proposed; namespace editor/other rendering/Tag Presentation parents remain Partial.",
         "Full colour-picker editing, inherited colour-list menus and keyboard navigation remain outside this slice.",
-        "Native warnings appear in the parent Options error area after the owned Enter Text child closes, rather than a separate Qt warning dialog.",
+        "Native Warning notices use the exact Qt title/message/OK button and the same Options-owned private child slot. Child launch failures appear in a dedicated namespace-list message; Qt icons and platform messagebox decoration are not replicated.",
         "Native OR active predicates retain a single-line row, coloured using the recorded OR header namespace. Expanded header/independently coloured child topology remains a broader Partial boundary.",
         "Inactive Qt OR connecting string preference is not implemented or counted; actual source still uses fixed OR text.",
         "Hosted model/native regressions and PNG authored but not executed locally; no Cargo builds/tests, mutation runs, pushes or canonical inventory edits."
@@ -257,11 +312,12 @@
     }
   ],
   "executed_checks": [
-    "Actual Qt recorder via shared with-oracle lock",
-    "Warning-aware cached Slint source compiler",
-    "cargo fmt --all (formatting only)",
+    "Actual Qt recorder through shared with-oracle lock, with real Warning messageboxes and automatic Qt acknowledgement",
+    "Verified every previous fixture field unchanged after warning-topology extension",
+    "Warning-aware cached Slint source compiler (passed)",
+    "rustfmt on changed Rust sources (formatting only)",
     "git diff --check",
-    "Python recorder syntax"
+    "Python recorder syntax and JSON evidence anchor validation"
   ],
   "nativeComponents": [
     {
@@ -271,7 +327,7 @@
       "status": "partial",
       "groups": [
         "Colour-painted namespace list; reversible Ctrl/Shift selection; selected terms move on Add sorting while numeric Shift range state remains",
-        "Add > owned SessionDialog Enter Text; exact normalization/warnings; random RGB",
+        "Add > owned SessionDialog Enter Text > actual Qt Warning/OK notice for rejected input; literal nested-colon labels; exact normalization; random RGB",
         "Delete > owned SessionDialog question; mixed protected rows; No/Yes; enabled protected/empty no-op",
         "Options parent Apply/Cancel; explicit Bound.options_colour_child inspection and retirement",
         "Other rendering > OR row namespace choice; actual media tag/OR consumers"
@@ -284,39 +340,57 @@
       "source_anchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/namespace_colours.rs",
-          "line": 66,
-          "symbol": "pub fn add(",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "line": 32,
+          "symbol": "fn label(namespace:",
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/namespace_colours.rs",
-          "line": 112,
+          "line": 70,
+          "symbol": "pub fn add(",
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/namespace_colours.rs",
+          "line": 116,
           "symbol": "pub fn removal_question(",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui/src/options_namespace_colours.rs",
-          "line": 17,
+          "line": 59,
           "symbol": "pub(crate) fn bind(",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/options.rs",
-          "line": 209,
+          "line": 231,
           "symbol": "namespace_colours: hydrus_core",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/options.rs",
-          "line": 3156,
+          "line": 3330,
           "symbol": "Namespace for the OR top row:",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui/ui/namespace_colours.slint",
           "line": 4,
           "symbol": "export component NamespaceColourList",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/options_namespace_colours.rs",
+          "line": 18,
+          "symbol": "fn warning_notice(",
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/session_dialog.slint",
+          "line": 21,
+          "symbol": "in property <string> notice-ok-label:",
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         }
       ],
       "test_anchors": [
@@ -324,25 +398,25 @@
           "relativepath": "crates/hydrus-gui-model/tests/model/namespace_colours.rs",
           "line": 20,
           "symbol": "fn qt_namespace_add_normalization",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/namespace_colours.rs",
-          "line": 60,
+          "line": 62,
           "symbol": "fn actual_namespace_questions",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         },
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/namespace_colours.rs",
           "line": 141,
           "symbol": "fn sorted_add_keeps",
-          "commit": "539548bc6d6a45ad69b716294d8c84914828c155"
+          "commit": "29f851246e4e9b35430adbcfd3ed7598452aeeb9"
         }
       ],
       "remaining": [
         "Only these three original finite leaves are proposed; namespace editor/other rendering/Tag Presentation parents remain Partial.",
         "Full colour-picker editing, inherited colour-list menus and keyboard navigation remain outside this slice.",
-        "Native warnings appear in the parent Options error area after the owned Enter Text child closes, rather than a separate Qt warning dialog.",
+        "Native Warning notices use the exact Qt title/message/OK button and the same Options-owned private child slot. Child launch failures appear in a dedicated namespace-list message; Qt icons and platform messagebox decoration are not replicated.",
         "Native OR active predicates retain a single-line row, coloured using the recorded OR header namespace. Expanded header/independently coloured child topology remains a broader Partial boundary.",
         "Inactive Qt OR connecting string preference is not implemented or counted; actual source still uses fixed OR text.",
         "Hosted model/native regressions and PNG authored but not executed locally; no Cargo builds/tests, mutation runs, pushes or canonical inventory edits."
@@ -350,6 +424,7 @@
     }
   ],
   "screenshots_authored": [
-    "CARGO_TARGET_TMPDIR/namespace-colours-draft.png"
+    "CARGO_TARGET_TMPDIR/namespace-colours-draft.png",
+    "CARGO_TARGET_TMPDIR/namespace-colours-warning.png"
   ]
 }

@@ -48,6 +48,8 @@ fn namespace_label(namespace: &Value) -> String {
         "namespaced tags".to_owned()
     } else if namespace == "" {
         "unnamespaced tags".to_owned()
+    } else if namespace.as_str().unwrap().contains(':') {
+        format!("{}:", namespace.as_str().unwrap())
     } else {
         format!("'{}' tags", namespace.as_str().unwrap())
     }
@@ -156,7 +158,53 @@ fn actual_namespace_questions_cancel_retired_owners_reopen_and_live_colours_repl
                 child.invoke_name_entered(event["input"].as_str().unwrap().into());
             }
             if let Some(warning) = event["warnings"].as_array().unwrap().first() {
-                assert_eq!(options.get_error(), warning.as_str().unwrap());
+                let notice = bound
+                    .options_colour_child
+                    .borrow()
+                    .as_ref()
+                    .unwrap()
+                    .clone_strong();
+                assert!(notice.get_notice_only());
+                assert!(!notice.get_asking_name());
+                let recorded = &event["warning_dialogs"][0];
+                assert_eq!(recorded["parent_is_panel"], true);
+                assert_eq!(recorded["ok_only"], true);
+                assert_eq!(
+                    json!([notice.get_notice_ok_label().as_str()]),
+                    recorded["button_labels"]
+                );
+                assert_eq!(
+                    notice.get_window_title(),
+                    recorded["title"].as_str().unwrap()
+                );
+                assert_eq!(notice.get_message(), warning.as_str().unwrap());
+                assert_eq!(notice.get_message(), recorded["message"].as_str().unwrap());
+                assert!(notice.window().is_visible());
+                assert!(options.get_namespace_colour_child_open());
+                assert_eq!(options.get_namespace_colour_error(), "");
+                child.invoke_name_entered("retired invalid question".into());
+                child.invoke_cancelled();
+                assert!(notice.window().is_visible());
+                assert!(bound.options_colour_child.borrow().is_some());
+                options.invoke_apply();
+                assert!(
+                    bound.options.borrow().is_some(),
+                    "warning blocks parent Apply"
+                );
+                let native = windows.get(windows.count() - 1).unwrap();
+                let pixels = headless::render(&native, 520, 200);
+                assert!(pixels.chunks_exact(4).any(|pixel| pixel != &pixels[..4]));
+                headless::save_png(
+                    &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                        .join("namespace-colours-warning.png"),
+                    &pixels,
+                    520,
+                    200,
+                )
+                .unwrap();
+                notice.invoke_cancelled();
+                assert!(!notice.window().is_visible());
+                assert!(!options.get_namespace_colour_child_open());
             }
         } else {
             if event["clear_selection"] == true {
@@ -245,6 +293,26 @@ fn actual_namespace_questions_cancel_retired_owners_reopen_and_live_colours_repl
         labels(&options),
         expected_labels(&fixture["cancelled_rows"])
     );
+    // A warning is owned by the same parent Cancel/stale boundary as its question.
+    options.invoke_namespace_colour_action("add".into());
+    let rejected = bound
+        .options_colour_child
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    rejected.invoke_name_entered("".into());
+    let retired_warning = bound
+        .options_colour_child
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert!(retired_warning.get_notice_only());
+    options.invoke_cancel();
+    assert!(!retired_warning.window().is_visible());
+    assert!(bound.options_colour_child.borrow().is_none());
+    let options = open(&ui, &bound);
     options.invoke_namespace_colour_action("add".into());
     let retired = bound
         .options_colour_child
@@ -264,6 +332,9 @@ fn actual_namespace_questions_cancel_retired_owners_reopen_and_live_colours_repl
         .unwrap()
         .clone_strong();
     retired.invoke_cancelled();
+    retired_warning.invoke_cancelled();
+    retired_warning.invoke_name_entered("retired warning namespace".into());
+    retired_warning.invoke_answered(true);
     assert!(
         bound.options_colour_child.borrow().is_some(),
         "retired close cannot clear successor slot"

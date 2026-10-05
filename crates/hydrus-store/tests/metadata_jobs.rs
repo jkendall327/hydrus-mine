@@ -51,7 +51,7 @@ impl Effects for Script<'_> {
                 .write({
                     let key = *key;
                     let now = self.now();
-                    move |ctx| popups::update(ctx.conn(), &key, now, |job| job.cancel())
+                    move |ctx| popups::update(ctx.conn(), &key, now, popups::Job::cancel)
                 })
                 .unwrap()
                 .is_some();
@@ -64,7 +64,7 @@ impl Effects for Script<'_> {
             let now = self.now();
             self.store
                 .write(move |ctx| {
-                    popups::update(ctx.conn(), &key, now, |job| job.cancel())?;
+                    popups::update(ctx.conn(), &key, now, popups::Job::cancel)?;
                     Ok(())
                 })
                 .unwrap();
@@ -86,7 +86,7 @@ fn files(store: &Arc<Store>, count: usize) -> Vec<File> {
         file_modified: None,
         pixel_hash: None,
         blurhash: None,
-        flags: Default::default(),
+        flags: hydrus_store::media::FileFlags::default(),
     };
     let files = store
         .write_content(move |writer| {
@@ -113,7 +113,7 @@ fn files(store: &Arc<Store>, count: usize) -> Vec<File> {
             .unwrap();
         fs::create_dir_all(path.parent().unwrap()).unwrap();
         fs::write(&path, b"owned metadata fixture").unwrap();
-        let time = UNIX_EPOCH + Duration::from_secs(1234567890);
+        let time = UNIX_EPOCH + Duration::from_secs(1_234_567_890);
         fs::File::options()
             .write(true)
             .open(path)
@@ -158,7 +158,7 @@ fn actual_qt_worker_inputs_replay_files_cancellation_progress_and_copy_cleanup()
         } else {
             Request::Modified {
                 files: files.clone(),
-                milliseconds: 1700000000123,
+                milliseconds: 1_700_000_000_123,
                 step: 250,
             }
         };
@@ -170,7 +170,7 @@ fn actual_qt_worker_inputs_replay_files_cancellation_progress_and_copy_cleanup()
                         writer.set_file_time(
                             &[id],
                             &hydrus_store::content::FileTime::FileModified,
-                            1700000000123 + i64::try_from(index).unwrap() * 250,
+                            1_700_000_000_123 + i64::try_from(index).unwrap() * 250,
                         )?;
                     }
                     Ok(())
@@ -224,13 +224,13 @@ fn actual_qt_worker_inputs_replay_files_cancellation_progress_and_copy_cleanup()
                 assert_eq!(fs::read(&destination).unwrap(), b"owned metadata fixture");
                 assert_eq!(
                     destination.metadata().unwrap().modified().unwrap(),
-                    UNIX_EPOCH + Duration::from_secs(1234567890)
+                    UNIX_EPOCH + Duration::from_secs(1_234_567_890)
                 );
             }
             if source.exists() && !effects.fallback {
                 assert_eq!(
                     source.metadata().unwrap().accessed().unwrap(),
-                    UNIX_EPOCH + Duration::from_secs(1234567890)
+                    UNIX_EPOCH + Duration::from_secs(1_234_567_890)
                 );
             }
             if !force {
@@ -245,7 +245,7 @@ fn actual_qt_worker_inputs_replay_files_cancellation_progress_and_copy_cleanup()
                     .unwrap();
                 assert_eq!(
                     database_ms,
-                    1700000000123 + i64::try_from(index).unwrap() * 250,
+                    1_700_000_000_123 + i64::try_from(index).unwrap() * 250,
                     "disk cancellation never rolls back DB changes"
                 );
             }

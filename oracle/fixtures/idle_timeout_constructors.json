@@ -1,0 +1,154 @@
+{
+  "cases": [
+    {
+      "raw": 0,
+      "controls": [
+        {
+          "number": 1,
+          "none": false,
+          "seconds": 60
+        },
+        {
+          "number": 1,
+          "none": false,
+          "seconds": 60
+        },
+        {
+          "number": 1,
+          "none": false,
+          "seconds": 60
+        }
+      ],
+      "abandoned": [
+        0,
+        0,
+        0
+      ],
+      "accepted": [
+        60,
+        60,
+        60
+      ]
+    },
+    {
+      "raw": 59,
+      "controls": [
+        {
+          "number": 1,
+          "none": false,
+          "seconds": 60
+        },
+        {
+          "number": 1,
+          "none": false,
+          "seconds": 60
+        },
+        {
+          "number": 1,
+          "none": false,
+          "seconds": 60
+        }
+      ],
+      "abandoned": [
+        59,
+        59,
+        59
+      ],
+      "accepted": [
+        60,
+        60,
+        60
+      ]
+    },
+    {
+      "raw": 119,
+      "controls": [
+        {
+          "number": 1,
+          "none": false,
+          "seconds": 60
+        },
+        {
+          "number": 1,
+          "none": false,
+          "seconds": 60
+        },
+        {
+          "number": 1,
+          "none": false,
+          "seconds": 60
+        }
+      ],
+      "abandoned": [
+        119,
+        119,
+        119
+      ],
+      "accepted": [
+        60,
+        60,
+        60
+      ]
+    },
+    {
+      "raw": 60060,
+      "controls": [
+        {
+          "number": 1000,
+          "none": false,
+          "seconds": 60000
+        },
+        {
+          "number": 1000,
+          "none": false,
+          "seconds": 60000
+        },
+        {
+          "number": 1000,
+          "none": false,
+          "seconds": 60000
+        }
+      ],
+      "abandoned": [
+        60060,
+        60060,
+        60060
+      ],
+      "accepted": [
+        60000,
+        60000,
+        60000
+      ]
+    },
+    {
+      "raw": null,
+      "controls": [
+        {
+          "number": 1,
+          "none": true,
+          "seconds": null
+        },
+        {
+          "number": 1,
+          "none": true,
+          "seconds": null
+        },
+        {
+          "number": 1,
+          "none": true,
+          "seconds": null
+        }
+      ],
+      "abandoned": [
+        null,
+        null,
+        null
+      ],
+      "accepted": [
+        null,
+        null,
+        null
+      ]
+    }
+  ]
+}

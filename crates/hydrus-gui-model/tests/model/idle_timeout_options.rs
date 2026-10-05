@@ -200,3 +200,126 @@ fn saved_timeout_choices_replay_strict_qt_boot_activity_and_ignore_gates() {
         );
     }
 }
+
+#[test]
+fn raw_imported_seconds_normalise_only_on_unchanged_acceptance_as_qt_does() {
+    let fixture = hydrus_testkit::fixture_json("idle_timeout_constructors.json");
+    for case in fixture["cases"].as_array().unwrap() {
+        let directory = tempfile::tempdir().unwrap();
+        let store = Store::open(directory.path()).unwrap();
+        let raw = case["raw"].as_u64();
+        store
+            .write(move |ctx| {
+                settings::set(
+                    ctx.conn(),
+                    &GuiIdleSettings {
+                        user_seconds: raw,
+                        mouse_seconds: raw,
+                        api_seconds: raw,
+                        ..GuiIdleSettings::default()
+                    },
+                )
+            })
+            .unwrap();
+        let before = store.read(Settings::load).unwrap();
+        let (draft, rows) = editor(before.clone());
+        let shown = snapshot(&draft, &rows);
+        for (shown, expected) in shown
+            .as_array()
+            .unwrap()
+            .iter()
+            .zip(case["controls"].as_array().unwrap())
+        {
+            for field in ["number", "none", "seconds"] {
+                assert_eq!(shown[field], expected[field]);
+            }
+        }
+        drop(draft);
+        let cancelled = store.read(settings::get::<GuiIdleSettings>).unwrap();
+        assert_eq!(
+            serde_json::json!([
+                cancelled.user_seconds,
+                cancelled.mouse_seconds,
+                cancelled.api_seconds
+            ]),
+            case["abandoned"]
+        );
+        let (draft, _) = editor(before.clone());
+        let (after, _, errors) = draft.applied();
+        assert!(errors.is_empty());
+        assert_eq!(
+            serde_json::json!([
+                after.gui_idle.user_seconds,
+                after.gui_idle.mouse_seconds,
+                after.gui_idle.api_seconds
+            ]),
+            case["accepted"]
+        );
+        assert_eq!(
+            store.read(Settings::load).unwrap().gui_idle,
+            before.gui_idle
+        );
+        store
+            .write(move |ctx| after.save(ctx.conn(), &before))
+            .unwrap();
+        let reopened = Store::open(directory.path()).unwrap();
+        let saved = reopened.read(settings::get::<GuiIdleSettings>).unwrap();
+        assert_eq!(
+            serde_json::json!([saved.user_seconds, saved.mouse_seconds, saved.api_seconds]),
+            case["accepted"]
+        );
+    }
+}
+
+#[test]
+fn implicit_idle_normalisation_preserves_newer_fields_and_explicit_edits_still_apply() {
+    for explicit in [false, true] {
+        let directory = tempfile::tempdir().unwrap();
+        let store = Store::open(directory.path()).unwrap();
+        store
+            .write(|ctx| {
+                settings::set(
+                    ctx.conn(),
+                    &GuiIdleSettings {
+                        enabled: true,
+                        user_seconds: Some(119),
+                        mouse_seconds: Some(0),
+                        api_seconds: Some(60060),
+                    },
+                )
+            })
+            .unwrap();
+        let before = store.read(Settings::load).unwrap();
+        let (mut draft, rows) = editor(before.clone());
+        if explicit {
+            draft.number(rows[0], 2);
+        }
+        let (after, _, errors) = draft.applied();
+        assert!(errors.is_empty());
+        store
+            .write(|ctx| {
+                settings::set(
+                    ctx.conn(),
+                    &GuiIdleSettings {
+                        enabled: false,
+                        user_seconds: Some(300),
+                        mouse_seconds: Some(0),
+                        api_seconds: Some(777),
+                    },
+                )
+            })
+            .unwrap();
+        store
+            .write(move |ctx| after.save(ctx.conn(), &before))
+            .unwrap();
+        assert_eq!(
+            store.read(settings::get::<GuiIdleSettings>).unwrap(),
+            GuiIdleSettings {
+                enabled: false,
+                user_seconds: Some(if explicit { 120 } else { 300 }),
+                mouse_seconds: Some(60),
+                api_seconds: Some(777),
+            }
+        );
+    }
+}

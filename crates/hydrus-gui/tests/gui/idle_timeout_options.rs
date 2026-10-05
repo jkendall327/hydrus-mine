@@ -172,3 +172,66 @@ fn staged_timeouts_change_live_browsing_mouse_api_and_autosave_gates_only_after_
     .unwrap();
     reopened.invoke_cancel();
 }
+
+#[test]
+fn unchanged_options_acceptance_normalises_raw_seconds_and_changes_the_existing_live_gate() {
+    let (_dirs, store) = crate::subscriptions::store();
+    store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &GuiIdleSettings {
+                    enabled: true,
+                    user_seconds: Some(119),
+                    mouse_seconds: None,
+                    api_seconds: None,
+                },
+            )
+        })
+        .unwrap();
+    headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let activity = bound.session_autosave.next().unwrap();
+    bound.session_autosave.user_at(activity);
+    assert!(!bound.session_autosave.idle_at(activity + 60_001));
+    let cancelled = open(&ui, &bound);
+    assert_eq!(
+        cancelled
+            .get_rows()
+            .row_data(usize::try_from(row(&cancelled, 0)).unwrap())
+            .unwrap()
+            .number,
+        1
+    );
+    cancelled.invoke_cancel();
+    assert_eq!(
+        store
+            .read(settings::get::<GuiIdleSettings>)
+            .unwrap()
+            .user_seconds,
+        Some(119)
+    );
+    assert!(!bound.session_autosave.idle_at(activity + 60_001));
+    let accepted = open(&ui, &bound);
+    accepted.invoke_apply();
+    assert_eq!(
+        store
+            .read(settings::get::<GuiIdleSettings>)
+            .unwrap()
+            .user_seconds,
+        Some(60)
+    );
+    assert!(!bound.session_autosave.idle_at(activity + 60_000));
+    assert!(bound.session_autosave.idle_at(activity + 60_001));
+    let reopened = open(&ui, &bound);
+    assert_eq!(
+        reopened
+            .get_rows()
+            .row_data(usize::try_from(row(&reopened, 0)).unwrap())
+            .unwrap()
+            .number,
+        1
+    );
+    reopened.invoke_cancel();
+}
