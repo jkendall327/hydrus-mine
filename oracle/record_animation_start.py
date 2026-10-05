@@ -69,7 +69,9 @@ def record(session):
             for raw, typed, apply in [(0.119, 72, False), (.119, 72, True), (-.1, None, True),
                                        (0, None, True), (.119, None, True),
                                        (.3333, None, True), (.999, None, True),
-                                       (1, None, True), (1.2, None, True)]:
+                                       (1, None, True), (1.2, None, True),
+                                       (0, 29, True), (0, 57, True), (0, 58, True),
+                                       (.29, 29, True), (.29, None, True)]:
                 HC.options[key] = raw
                 panel = MediaPlaybackPanel.MediaPlaybackPanel(c.gui)
                 displayed = panel._animation_start_position.value()

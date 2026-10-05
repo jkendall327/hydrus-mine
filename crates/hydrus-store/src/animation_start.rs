@@ -49,13 +49,15 @@ impl Preferences {
         (frame.is_finite() && frame >= 0.0 && frame < usize::MAX as f64).then_some(frame as usize)
     }
     pub fn save_changed(&self, conn: &Connection, before: &Self) -> Result<()> {
-        let mut latest = load(conn)?;
-        let normalized = Self {
-            fraction: f64::from(self.percent()) / 100.0,
+        let latest = load(conn)?;
+        let normalized_before = Self {
+            fraction: f64::from(before.percent()) / 100.0,
         };
-        if self != before || (normalized != *before && latest == *before) {
-            latest = normalized;
-            settings::set(conn, &latest)?;
+        // The editor always accepts the displayed integer once, including on
+        // unchanged Apply. Compare with that displayed original to distinguish
+        // implicit normalization from an edit without re-truncating0.29 to0.28.
+        if (self != &normalized_before || latest == *before) && self != &latest {
+            settings::set(conn, self)?;
         }
         Ok(())
     }

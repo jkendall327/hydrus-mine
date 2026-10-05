@@ -128,6 +128,19 @@ fn constructor_cancel_hidden_and_retired_controls_then_real_next_media_initial_s
         "hidden edit refused; visible unchanged Apply normalizes the raw constructor"
     );
     let (window, row) = options(&ui, &bound);
+    window.invoke_number_edited(row, 29);
+    window.invoke_apply();
+    assert_eq!(store.read(animation_start::load).unwrap().fraction, 0.29);
+    let (window, row) = options(&ui, &bound);
+    assert_eq!(window.get_rows().row_data(row as usize).unwrap().number, 28);
+    window.invoke_number_edited(row, 29);
+    window.invoke_apply();
+    assert_eq!(
+        store.read(animation_start::load).unwrap().fraction,
+        0.29,
+        "actual typed29 must not be truncated twice even if it equals raw saved fraction"
+    );
+    let (window, row) = options(&ui, &bound);
     window.invoke_number_edited(row, 100);
     let adapter = windows.get(windows.count() - 1).unwrap();
     let pixels = headless::render(&adapter, 900, 640);

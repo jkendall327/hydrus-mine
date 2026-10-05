@@ -1669,7 +1669,11 @@ instead of assuming ordinary unanchored movement. Wider touch and mouse-control
 families remain independently scoped. Media Playback's animation start percentage
 now stages and imports the old YAML fraction, preserving it on Cancel. Apply
 normalizes the spinbox's truncated/clamped0–100 value while retaining concurrent
-unrelated changes. Native WebP/ugoira viewers and the existing archive/duplicate
+unrelated changes. Saving preserves the actual spinbox integer: typed29/57/58 save
+0.29/0.57/0.58, while reopening truncates those floating values to28/56/57 in Qt.
+Unchanged Apply writes the displayed value, and an explicit29 edit over raw0.29
+still saves0.29. Fourteen actual staged control cases cover this boundary. Native
+WebP/ugoira viewers and the existing archive/duplicate
 filters seek their readers before the first decoded frame. As actually observed
 in v688, the index uses the previous widget's frame count: fresh/cleared widgets
 start at zero, and reused ones use `int((previous_count-1)*fraction)` before
