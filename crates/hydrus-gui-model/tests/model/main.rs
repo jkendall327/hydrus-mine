@@ -189,3 +189,5 @@ mod tag_namespace_order;
 
 mod menu_choice_wheel;
 mod popup_freeze;
+
+mod viewer_prefetch;

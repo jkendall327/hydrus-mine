@@ -5684,6 +5684,36 @@ fn open_viewer(
         hydrus_core::CanvasType::MediaViewer,
     );
     let model = Rc::new(RefCell::new(model));
+    let warm_valid: Rc<dyn Fn() -> bool> = Rc::new({
+        let weak = window.as_weak();
+        let slot = Rc::downgrade(slot);
+        let active = viewing_stats.active_flag();
+        move || {
+            active.get()
+                && weak.upgrade().is_some_and(|window| {
+                    slot.upgrade().is_some_and(|slot| {
+                        slot.borrow()
+                            .as_ref()
+                            .is_some_and(|current| std::ptr::eq(current.window(), window.window()))
+                    })
+                })
+        }
+    });
+    let warm_store = model.borrow().store().clone();
+    let warm_cache = model.borrow_mut().prefetch_cache();
+    let warm = viewer_prefetch::Control::new(
+        &warm_store,
+        warm_cache,
+        warm_valid.clone(),
+        Rc::new({
+            let model = Rc::downgrade(&model);
+            move |preferences| {
+                model
+                    .upgrade()
+                    .map_or_else(Vec::new, |model| model.borrow().prefetch_files(preferences))
+            }
+        }),
+    );
     viewer_tag_search::bind(
         &window,
         model.clone(),
@@ -5940,6 +5970,8 @@ fn open_viewer(
     viewer_tag_wheel::bind(&window, &viewing_stats, model.borrow().store());
     let last_tag_file = Rc::new(std::cell::Cell::new(None));
     let show = {
+        let warm = warm.clone();
+        let warm_valid = warm_valid.clone();
         let last_tag_file = last_tag_file.clone();
         let viewing_stats = viewing_stats.clone();
         let model = model.clone();
@@ -6027,6 +6059,9 @@ fn open_viewer(
             show_scanbar(0.0);
             drop(model);
             show_ratings();
+            if warm_valid() {
+                warm.refresh();
+            }
             show_info();
         }
     };
@@ -6911,6 +6946,7 @@ fn open_viewer(
     });
     let store = model.borrow().store().clone();
     window.on_close_requested({
+        let warm = warm.clone();
         let viewing_stats = viewing_stats.clone();
         let colour_watch = colour_watch.clone();
         let native_cursor = native_cursor.clone();
@@ -6928,6 +6964,8 @@ fn open_viewer(
                 .as_ref()
                 .is_some_and(|current| std::ptr::eq(current.window(), window.window()));
             external_launches.cancel();
+            warm.retire();
+            model.borrow().retire_prefetch_cache();
             viewing_stats.close();
             colour_watch.close();
             // Own resources belong to this viewer, even after another viewer
@@ -7511,5 +7549,6 @@ pub mod namespace_sorts_window;
 
 pub mod image_cache;
 mod image_colour_watch;
+mod viewer_prefetch;
 
 pub mod quick_export_directory;

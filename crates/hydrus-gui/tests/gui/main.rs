@@ -217,3 +217,5 @@ mod quick_export_directory;
 mod archive_delete_policies;
 
 mod radio_return;
+
+mod viewer_prefetch;

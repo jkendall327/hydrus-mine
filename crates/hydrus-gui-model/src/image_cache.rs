@@ -72,6 +72,10 @@ impl<T> Cache<T> {
     pub fn remove_if(&mut self, id: HashId, matches: impl FnOnce(&T) -> bool) {
         self.lru.remove_if(id, matches);
     }
+    /// Atomically free only finished renderers for one allowed prefetch miss.
+    pub fn try_flush_finished_space(&mut self, bytes: u64, finished: impl Fn(&T) -> bool) -> bool {
+        self.lru.try_flush_finished_space(bytes, finished)
+    }
     /// Release soft overflow and strictly expired idle renderers.
     pub fn maintain(&mut self, now: Duration) {
         self.lru.maintain(now);

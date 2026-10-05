@@ -4011,3 +4011,27 @@ Winit cannot read minimized state on Wayland, and the separate other-display
 freeze option is absent. Focus loss is not used as a freeze signal. Actual Qt
 recording covers twelve queue/window states and five Options states; authored
 Rust/native regressions and native rendered review await hosted execution.
+
+Options → speed and memory now stages the per-viewer image-cache percentage
+(default 25%, 10–50%) and previous/next image-prefetch counts (defaults 2/3,
+0–50), with the reference pixel estimate and over-budget warning. Cancel,
+reopen, imported ClientOptions, typed native precedence and per-field concurrent
+saves apply to these controls. A passive normalization does not overwrite a
+concurrent explicit setting. Retained hidden Options or a parent with an owned
+child cannot stage these values.
+
+Normal media viewers and archive/delete filters warm their real saved circular
+neighbourhood: next precedes previous at each distance, encountered neighbours
+are suppressed, and the current image prefix is retained exactly. The duplicate
+filter uses the same percentage for its current pair and future pairs; its
+separate pair-count control remains absent, while its imported/default value is
+respected. Each owner creates at most one warm worker lazily. A pass counts ready
+images' actual bytes, waits off the UI on pending renderers, and admits at most
+one miss. Finished-renderer notifications resume the captured navigation pass.
+Only finished cache entries may be evicted for prefetch; insufficient space
+leaves all entries intact. Hidden viewers may continue warming, matching Qt.
+Close, replacement, rebind and final binding drop retire admission. Warming
+never publishes SetMedia or starts viewing intervals. Current rendering shares
+ready Arc rasters; when a warm decode is pending, the existing synchronous
+current decoder proceeds independently. Authored Rust/native regressions and
+final native render review await hosted execution.

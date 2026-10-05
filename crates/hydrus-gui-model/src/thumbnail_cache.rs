@@ -119,6 +119,35 @@ impl<T> Cache<T> {
             self.order.retain(|key| *key != id);
         }
     }
+    /// Prefetch frees only finished entries, atomically, and requires strictly
+    /// more free space than the incoming estimate. Failed attempts delete none.
+    pub fn try_flush_finished_space(&mut self, bytes: u64, finished: impl Fn(&T) -> bool) -> bool {
+        let mut free = i128::from(self.policy.bytes) - i128::from(self.bytes);
+        if free > i128::from(bytes) {
+            return true;
+        }
+        let mut remove = Vec::new();
+        for id in &self.order {
+            let Some(entry) = self.entries.get(id) else {
+                continue;
+            };
+            if !finished(&entry.value) {
+                continue;
+            }
+            remove.push(*id);
+            free += i128::from(entry.bytes);
+            if free > i128::from(bytes) {
+                break;
+            }
+        }
+        if free <= i128::from(bytes) {
+            return false;
+        }
+        for id in remove {
+            self.remove_if(id, |_| true);
+        }
+        true
+    }
     /// Drop oldest overflow and entries strictly older than the timeout.
     pub fn maintain(&mut self, now: Duration) {
         while self.bytes > self.policy.bytes {

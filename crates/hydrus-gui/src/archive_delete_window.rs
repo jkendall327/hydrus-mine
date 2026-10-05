@@ -54,6 +54,36 @@ pub(crate) fn open(
         viewing_stats.active_flag(),
     );
     let model = Rc::new(RefCell::new(model));
+    let warm_valid: Rc<dyn Fn() -> bool> = Rc::new({
+        let weak = window.as_weak();
+        let slot = Rc::downgrade(slot);
+        let active = viewing_stats.active_flag();
+        let parent = parent_guard.clone();
+        move || {
+            active.get()
+                && parent()
+                && weak.upgrade().is_some_and(|window| {
+                    slot.upgrade().is_some_and(|slot| {
+                        slot.borrow()
+                            .as_ref()
+                            .is_some_and(|current| std::ptr::eq(current.window(), window.window()))
+                    })
+                })
+        }
+    });
+    let warm = crate::viewer_prefetch::Control::new(
+        model.borrow().store(),
+        image_cache.clone(),
+        warm_valid.clone(),
+        Rc::new({
+            let model = Rc::downgrade(&model);
+            move |preferences| {
+                model
+                    .upgrade()
+                    .map_or_else(Vec::new, |model| model.borrow().prefetch_files(preferences))
+            }
+        }),
+    );
     let playback = playback::Playback::for_store(model.borrow().store().clone());
     let animator = animation::Animator::for_store(model.borrow().store().clone());
     let settings: hydrus_core::media_viewer::MediaViewerSettings = model
@@ -132,6 +162,7 @@ pub(crate) fn open(
         }
     });
     let close = {
+        let warm = warm.clone();
         let viewing_stats = viewing_stats.clone();
         let colour_watch = colour_watch.clone();
         let weak = window.as_weak();
@@ -145,6 +176,7 @@ pub(crate) fn open(
             let Some(window) = weak.upgrade() else { return };
             finish_timer.stop();
             finish_choices.borrow_mut().take();
+            warm.retire();
             viewing_stats.close();
             colour_watch.close();
             playback.close();
@@ -175,6 +207,8 @@ pub(crate) fn open(
     });
     // show the file to decide on; with none left, ask
     let show = {
+        let warm = warm.clone();
+        let warm_valid = warm_valid.clone();
         let viewing_stats = viewing_stats.clone();
         let model = model.clone();
         let weak = window.as_weak();
@@ -203,7 +237,7 @@ pub(crate) fn open(
             let store = model.store();
             let (shape, media) = (
                 crate::viewer::shape(store, file),
-                image_cache.load_saved(store, file),
+                image_cache.load_current_saved(store, file),
             );
             let (playable, animation) = (
                 crate::viewer::playable(store, file),
@@ -243,6 +277,9 @@ pub(crate) fn open(
                     window.set_media(image);
                 }
             });
+            if warm_valid() {
+                warm.refresh();
+            }
         }
     };
     colour_watch.start(
@@ -283,7 +320,7 @@ pub(crate) fn open(
                 {
                     return;
                 }
-                let media = image_cache.load_saved(store, file);
+                let media = image_cache.load_current_saved(store, file);
                 window.set_media(media.as_deref().map(crate::image).unwrap_or_default());
                 zoomed.refresh_still(crate::viewer::still_of(media, shape, true));
             }

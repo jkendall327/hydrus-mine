@@ -3235,3 +3235,31 @@ removal cadence. Three historical setup show() calls were added to the existing
 popup replay and session-warning owners; every assertion/deadline is unchanged.
 All new Rust/native regressions and the restored-toaster native PNG are authored
 only, with hosted physical/platform/runtime/render verification pending.
+
+### Viewer image-prefetch controls (source proposal, runtime pending)
+
+The three original concrete speed/memory controls—per-viewer cache percentage,
+previous count and next count—now reach the actual media viewer, archive/delete
+filter and duplicate filter through the owned decoded-raster cache. Actual Qt
+recording contains 78 circular neighbour orders, five control save/reopen cases,
+six real image-renderer readiness/budget traces, six finished-only atomic flush
+boundaries, five filetype display-action cases, and shown/hidden Canvas calls.
+The supporting Qt controls PNG was individually inspected. Equality is allowed
+by the prefetch planner but excluded by strict cache admission; successful
+uncached equality decodes can consequently repeat on readiness, as Qt does.
+Ready accesses recount actual RGB/RGBA bytes, unknown-resolution misses stop the
+ordered pass, and a blocked first candidate does not admit later small files.
+
+This is the represented GeneralImage full-resolution raster path. Qt's global
+renderer object graph, image-project codecs, GPU/tile caches and video renderer
+prefetch remain broader Partial boundaries. The native per-owner warm worker
+uses the existing disk decoder and shared Arc cache; current native rendering
+remains synchronous and can perform an independent duplicate decode while warm
+work is pending, rather than adopting Qt's shared asynchronous current renderer.
+Decode failure keeps the native blank/fallback behavior, without introducing
+Qt's error-placeholder renderer. Current presentation and accepted preview-page
+snapshots are not prefetch-budget bytes and are never evicted by warming. No
+prefetch family, tile/delay/duplicate-count control or parent credit is proposed.
+The three control proposals are conditional on independent source review and
+exact hosted Rust/native/physical/rendered validation; canonical coverage is
+unchanged.

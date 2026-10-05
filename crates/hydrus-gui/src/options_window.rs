@@ -81,10 +81,17 @@ fn refresh_byte_row(
 }
 
 fn image_cache_row(row: &Row) -> bool {
-    matches!(row, Row::Opt { option, .. } if matches!(option.label, "Memory reserved for image cache:" | "Image cache timeout:" | "Maximum image size (in % of cache) that can be cached:"))
+    matches!(row, Row::Opt { option, .. } if matches!(option.label, "Memory reserved for image cache:" | "Image cache timeout:" | "Maximum image size (in % of cache) that can be cached:" | "Maximum % of cache that will be prefetched per media viewer:" | "Num previous to prefetch in Media Viewer:" | "Num next to prefetch in Media Viewer:"))
 }
 fn refresh_image_cache_rows(window: &OptionsWindow, editor: &Editor) {
     let policy = editor.applied().0;
+    window.set_prefetch_warning(
+        hydrus_gui_model::viewer_prefetch::warning(
+            policy.image_cache.bytes,
+            policy.viewer_prefetch,
+        )
+        .into(),
+    );
     for (index, row) in editor.rows().iter().enumerate() {
         if !image_cache_row(row) {
             continue;
@@ -99,7 +106,18 @@ fn refresh_image_cache_rows(window: &OptionsWindow, editor: &Editor) {
                 })
                 .unwrap_or_default()
                 .into();
-        } else if shown.kind == 2 {
+        } else if shown.kind == 2
+            && matches!(row,Row::Opt {option,..} if option.label=="Maximum % of cache that will be prefetched per media viewer:")
+        {
+            shown.unit = hydrus_gui_model::viewer_prefetch::percentage_estimate(
+                policy.image_cache.bytes,
+                policy.viewer_prefetch.percentage,
+                policy.info_line.nice_resolutions,
+            )
+            .into();
+        } else if shown.kind == 2
+            && matches!(row,Row::Opt {option,..} if option.label=="Maximum image size (in % of cache) that can be cached:")
+        {
             shown.unit = hydrus_gui_model::image_cache::percentage_estimate(
                 policy.image_cache,
                 policy.info_line.nice_resolutions,

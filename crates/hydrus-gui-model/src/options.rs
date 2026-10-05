@@ -140,6 +140,9 @@ macro_rules! settings {
             hydrus_store::settings::set($conn,&windows)?;
         }
     };
+    (@save $conn:ident, $after:ident, $before:ident, viewer_prefetch) => {
+        $after.viewer_prefetch.save_changed($conn,$before.viewer_prefetch)?;
+    };
     (@save $conn:ident, $after:ident, $before:ident, image_cache) => {
         $after.image_cache.save_changed($conn, $before.image_cache, crate::image_cache::displayed($before.image_cache))?;
     };
@@ -297,6 +300,7 @@ settings! {
     file_view_removal: hydrus_store::settings::FileViewRemoval,
     thumbnail_cache: hydrus_store::settings::ThumbnailCacheSettings,
     image_cache: hydrus_store::image_cache::Policy => hydrus_store::image_cache::load,
+    viewer_prefetch: hydrus_store::viewer_prefetch::Preferences => hydrus_store::viewer_prefetch::load,
     file_maintenance: FileMaintenanceSettings,
     file_viewing: FileViewingStatistics,
     folders: FolderSettings,
@@ -3550,6 +3554,29 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             (10, 50),
                             |s| s.image_cache.percentage as i64,
                             |s, v| s.image_cache.percentage = v as u64,
+                        ),
+                        int(
+                            "Maximum % of cache that will be prefetched per media viewer:",
+                            (10, 50),
+                            |s| s.viewer_prefetch.percentage as i64,
+                            |s, v| s.viewer_prefetch.percentage = v as u64,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "image prefetch",
+                    vec![
+                        int(
+                            "Num previous to prefetch in Media Viewer:",
+                            (0, 50),
+                            |s| s.viewer_prefetch.previous as i64,
+                            |s, v| s.viewer_prefetch.previous = v as u64,
+                        ),
+                        int(
+                            "Num next to prefetch in Media Viewer:",
+                            (0, 50),
+                            |s| s.viewer_prefetch.next as i64,
+                            |s, v| s.viewer_prefetch.next = v as u64,
                         ),
                     ],
                 ),

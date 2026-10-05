@@ -107,6 +107,23 @@ impl ArchiveDeleteFilter {
         self.files.get(self.index).copied()
     }
 
+    /// Current-prefix circular neighbours use the viewer's independently saved counts.
+    pub fn prefetch_files(
+        &self,
+        preferences: hydrus_store::viewer_prefetch::Preferences,
+    ) -> Vec<HashId> {
+        let Some(current) = self.current() else {
+            return Vec::new();
+        };
+        let mut files = vec![current];
+        files.extend(crate::viewer_prefetch::neighbours(
+            &self.files,
+            self.index,
+            preferences.previous,
+            preferences.next,
+        ));
+        files
+    }
     pub fn is_done(&self) -> bool {
         self.index >= self.files.len()
     }

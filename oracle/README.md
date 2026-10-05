@@ -319,3 +319,12 @@ consumer assertions are authored for hosted CI, without local Rust execution.
 `record_popup_question_layout.py` drives actual private Qt PopupMessage instances at fixed32, variable16 and fixed16 character caps, with a long question and clipboard/callable/cancel controls. It records card/control rectangles, the question label's actual non-wrapped policy and real Cancel results; the variable16 PNG is captured before Cancel. The serialized offscreen run completed cleanly 2026-10-05 12:54:13–12:54:16 UTC on a copied basic fixture (private API listener disabled). No reference handlers or geometry are replaced. Native full-button bounds/render/pointer regressions are authored for hosted execution, with no local Rust run.
 
 `record_debug_delayed_popup.py` triggers the genuine Help/debug QAction twice one second apart, forwards the real controller CallLater and pub unchanged, and records actual background SingleJob deadlines/publications while Main is hidden. The real message manager presents both jobs after re-show; its populated PNG is `debug_delayed_popup.png`. Exact delay arguments are five seconds; observed arrivals were 5054.124 ms and 6002.523 ms after the first launch (second launch1001.516 ms). The unmodified reference scheduler/clock ran cleanly 2026-10-05 13:14:50–13:14:59 UTC under the shared oracle lock on a fresh private basic fixture with its API listener disabled. No fake delayed tasks or JobStatus setters are drained. Native exact-deadline, overlap, persistence, long-producer coexistence and lifetime tests are authored only; no local Rust execution.
+
+`record_viewer_prefetch.py` records the three real SpeedAndMemoryPanel spinboxes,
+caption/warning, serialized save/reopen and Cancel, actual CanvasMediaListNavigable
+circular neighbour order and hidden/shown `_MaintainNeighbourPrefetch`, and real
+ImageRendererCache/DataCache one-miss/readiness and atomic finished-only flush
+behavior. Real PIL initialization uses the existing image_cache PNG corpus;
+only renderer CallToThread is held to expose pending work. Detached cache clocks
+and suppressed automatic finished-image event delivery make explicit passes
+replayable without editing the reference or changing decoder policy.
