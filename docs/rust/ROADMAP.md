@@ -64,13 +64,14 @@ unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in
 [gui-coverage/README.md](gui-coverage/README.md).
 
-Continuous source work now proposes 99 further original leaf completions over
+Continuous source work now proposes 100 further original leaf completions over
 that validated 240 checkpoint: 53 on `codex/parity-more-controls`, five more
 on the dependent `codex/parity-next-details` branch, and 13 more on
 `codex/parity-preview-and-launching`, plus nine on
 `codex/parity-popup-and-file-views`, and 12 more on
 `codex/parity-cache-and-favourites`, and seven more on
-`codex/parity-tag-sort-and-refresh`. The 71-control branch adds two preview viewing-time
+`codex/parity-tag-sort-and-refresh`, and one on
+`codex/parity-image-and-window-controls`. The 71-control branch adds two preview viewing-time
 controls, two saved formatting controls with backend consumers, one keyboard
 capture control, and eight ordered Open Externally routing controls. It includes tab
 appearance/drag, notebook tree, notes, rating sizes, archive repair, duplicate
@@ -105,7 +106,13 @@ and mouse idle tracking remains Partial because it observes application windows.
 Broader external
 call/editor boundaries also remain Partial. Inspect the current branch with
 `python3 scripts/gui_burndown.py --commit HEAD`; do not substitute its proposed
-total of 339 for the validated 240 ledger. New work and diagnostics continue
+total of 340 for the validated 240 ledger. The newest leaf adds the saved embedded-ICC policy with real importer, preview,
+viewer and maintenance consumers. The viewer tag-list now opens owned search
+pages and requests main-window activation on supported native platforms; that
+activation remains Partial because Wayland activation is unresolved. Application
+name raw-empty acceptance and field-specific merging refine its existing Partial
+assessment without earning another completion. Truncated-image loading remains
+Missing, with no inert checkbox or credit. New work and diagnostics continue
 while hosted validation runs, as authorized by the owner.
 
 The next breadth work, in the owner's existing order:
