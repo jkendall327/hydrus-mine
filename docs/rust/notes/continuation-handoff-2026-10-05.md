@@ -20,16 +20,17 @@ IPFS and account administration remain outside the owner's priorities.
 
 ## Merge chain
 
-1. [PR #37](https://github.com/jkendall327/hydrus-mine/pull/37),
-   `codex/parity-follow-through` into `master`: already ready. Its code source
+1. [PR #37](https://github.com/jkendall327/hydrus-mine/pull/37)
+   is already merged by the owner into `master` as `4d537a23679dbae5c810b66ecfe2245f021b9a24`.
+   Its code source
    `028fd72f4a3cb747e7588d0987bbb99dd83d53f7` passed all four old full CI jobs
    in [run482](https://github.com/jkendall327/hydrus-mine/actions/runs/37242969868).
    The later head `215814c2b6358f66a2b00920359d617e1a5d6c7b` changes only
    inventories, evidence, accounting and offline HTML.
 2. [PR #57](https://github.com/jkendall327/hydrus-mine/pull/57),
    `codex/parity-prefetch-and-selected-records`, consolidates all continuation
-   work. Its base is PR37's branch until PR37 lands; then retarget it to `master`
-   before merging. Its final cheap-check result is linked in the PR description.
+   work and now directly targets `master`. It is the only remaining PR to merge.
+   Its final cheap-check result is linked in the PR description.
    Full validation is deliberately deferred under the policy above.
 
 Historical drafts #43–#56 are superseded; do not merge them separately. Original
