@@ -112,6 +112,7 @@ fn manage_tags_launches_selected_scope_and_refreshes_after_background_delete() {
     let (_dirs, store) = crate::subscriptions::store();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(
         &ui,
         Pages::single(hydrus_gui::SearchPage::new(store.clone())),

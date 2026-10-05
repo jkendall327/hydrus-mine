@@ -198,6 +198,7 @@ fn real_incremental_child_replays_cancel_apply_memory_and_blocks_parent_mutation
     let _ = fixture::snapshot(&mut prior);
     // Single-file dialogs omit the actual ± launcher, rather than fabricating a child.
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(
         &ui,
         Pages::single(SearchPage::fixed(

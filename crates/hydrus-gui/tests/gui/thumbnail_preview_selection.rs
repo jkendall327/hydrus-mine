@@ -292,6 +292,20 @@ fn staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retiremen
     assert_eq!(views(ids[0]), 1);
     assert_eq!(views(ids[1]), 1);
     assert_eq!(views(ids[2]), 2);
+    let hidden_owner = bound.current.borrow().borrow().selected_items();
+    let hidden_focus = bound.current.borrow().borrow().focused();
+    ui.hide().unwrap();
+    ui.invoke_thumbnail_clicked(0, false, false);
+    assert_eq!(ui.invoke_move_focus(1, true, 5, 4), -1);
+    ui.invoke_select_none();
+    bound.preview.refresh();
+    assert_eq!(
+        bound.current.borrow().borrow().selected_items(),
+        hidden_owner
+    );
+    assert_eq!(bound.current.borrow().borrow().focused(), hidden_focus);
+    assert!(!ui.get_preview_has_media());
+    ui.show().unwrap();
     ui.window().dispatch_event(WindowEvent::CloseRequested);
     ui.invoke_answer(false);
     assert!(ui.window().is_visible());

@@ -34,6 +34,7 @@ fn several_thumbnails_are_selected_and_acted_on() {
     let store: Arc<Store> = Store::open(native.path()).unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    slint::ComponentHandle::show(&ui).unwrap();
     let bound = bind(
         &ui,
         Pages::single(super::common::all_local_page(store.clone())),
@@ -243,6 +244,7 @@ fn borders_and_margins_lay_the_grid_out() {
         .unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    slint::ComponentHandle::show(&ui).unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("system:inbox".into());
     ui.invoke_search_accepted();

@@ -30,6 +30,7 @@ fn remembered_tag_service_survives_native_cancel_without_saving_staged_tags() {
     let initial: TagEditingSettings = store.read(settings::get).unwrap();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();

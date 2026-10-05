@@ -2736,6 +2736,7 @@ fn favourite_tags_child_replays_reference_and_waits_for_parent_apply() {
     let original = store.read(settings::get::<FavouriteTags>).unwrap();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     for apply in [false, true] {
         open(&ui);
@@ -4666,6 +4667,7 @@ fn viewing_timing_options_reach_real_viewer_and_archive_filter_lifetimes() {
     };
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(
         &ui,
         Pages::single(super::common::all_local_page(store.clone())),

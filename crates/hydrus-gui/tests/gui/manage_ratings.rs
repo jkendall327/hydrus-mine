@@ -79,6 +79,7 @@ fn ratings_are_set_copied_pasted_and_applied_as_the_reference_does() {
     let key = |name: &str| services.by_name(name).unwrap().key.to_hex();
     let (favourites, stars, counter) = (id("favourites"), id("stars"), id("counter"));
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();

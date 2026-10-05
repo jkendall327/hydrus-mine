@@ -94,6 +94,7 @@ fn urls_are_added_removed_and_edited_as_the_reference_does() {
         move || pasted.borrow().clone()
     });
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();

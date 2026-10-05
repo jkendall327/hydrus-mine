@@ -543,6 +543,7 @@ fn the_pages_are_kept_for_the_client_api_and_do_what_it_asks() {
     assert_eq!(pages.shown().key, b.key);
     let _windows = headless::init();
     let window = MainWindow::new().unwrap();
+    window.show().unwrap();
     let bound = bind(&window, pages);
     let kept = |key: &PageKey| {
         let key = *key;

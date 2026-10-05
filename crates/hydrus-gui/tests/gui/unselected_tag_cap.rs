@@ -127,6 +127,7 @@ fn real_options_apply_cancel_reopen_counts_sorted_items_and_uncapped_selection()
     let (_directory, store, files) = fixture::seed(&recorded);
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
     let bound = bind(
         &ui,
         Pages::single(profile(store.clone(), files.clone(), &recorded["cases"][0])),

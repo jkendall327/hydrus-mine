@@ -3664,12 +3664,17 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // a change to the selection draws the rows it changed, and counts the
     // selection's tags
     let reselect = {
+        let weak = window.as_weak();
         let binding_active = binding_active.clone();
         let page = page.clone();
         let rows = rows.clone();
         let shown = shown.clone();
         move |change: &dyn Fn(&mut SearchPage) -> Option<usize>| {
-            if !binding_active.get() {
+            if !binding_active.get()
+                || !weak
+                    .upgrade()
+                    .is_some_and(|window| window.window().is_visible())
+            {
                 return None;
             }
             let page = page();
