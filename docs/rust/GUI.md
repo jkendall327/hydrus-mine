@@ -2844,6 +2844,22 @@ covers480 manager outputs,18 duration widget states and actual displayed canvas
 intervals; native integration renders the Options page and covers Apply,
 Cancel/reopen, real timed viewer caps, filter navigation and stale callbacks.
 
+The main page now displays its focused local file in an owned still/poster
+preview beneath the sidebar. Its separate Preview statistics consume the saved
+minimum and maximum fields (5s/60s by default), including “count every view” and
+“no limit”. Accepted displayed frames keep the original request timestamp;
+loading placeholders and rejected decodes count nothing. Re-selecting the same
+focused file keeps one interval. Page changes, clear, hide and accepted client
+close finish it, while a declined client close keeps it running. Revealing a
+hidden preview splitter waits for a fresh focus change; restoring a page restores
+its focused file. Settings are read at finish, with cap-before-minimum and the
+duration-times-five extension, and Preview rows persist independently of media
+viewer rows. Late frames and callbacks cannot reach a replacement page/request
+or rebound owner. Actual Qt Options, manager and CanvasPanel transitions are
+recorded in `preview_viewing_intervals.json`; native model/display/store regressions
+are authored for hosted CI. Preview playback, audio, zoom and hover/rating controls
+remain Partial.
+
 Search-page autocomplete now shares results, favourites and children tabs in
 both its embedded and floating layouts. Favourites show the full saved list;
 children show count-ranked descendants of top-level search tags, exclude tags
@@ -3059,7 +3075,7 @@ the Dialog preferences for like/numerical graphics, their outlines and counter
 height, with counter width expanding for long values. Held right-button movement
 clears without rating stars; held left movement rates the dialog's draft. All
 four service-editor examples read their corresponding saved sizing preferences.
-The Preview Window preferences have no native preview-canvas consumer yet.
+The still/poster preview has no rating controls consuming Preview Window sizing yet.
 
 Numerical rating examples also continue a held Left drag across a Right
 press/release while the pointer remains in the sample; a right-only drag does not

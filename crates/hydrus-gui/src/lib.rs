@@ -101,6 +101,7 @@ pub mod png_export_window;
 mod popup_menu;
 mod popups;
 pub mod predicate_editor_window;
+pub mod preview_window;
 pub mod regex_favourites_window;
 mod related_tags_worker;
 pub mod related_weights_window;
@@ -246,6 +247,8 @@ pub use viewer::MediaViewer;
 /// and the media viewer while one is open.
 #[derive(Clone)]
 pub struct Bound {
+    /// The displayed page preview, independent of the thumbnail grid/viewer.
+    pub preview: preview_window::Monitor,
     pub pages: Rc<RefCell<Pages>>,
     pub current: Rc<RefCell<Rc<RefCell<SearchPage>>>>,
     pub rows: Rc<ThumbnailRows>,
@@ -470,6 +473,21 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let session_autosave = session_autosave::bind(window, &pages);
     let first = pages.borrow_mut().current();
     let current = Rc::new(RefCell::new(first.clone()));
+    let preview = preview_window::Monitor::bind(
+        window,
+        first.borrow().store().clone(),
+        Rc::new({
+            let current = current.clone();
+            let pages = pages.clone();
+            move || {
+                let key = pages.borrow().shown().key;
+                let current = current.borrow();
+                let page = current.borrow();
+                let item = *page.results().get(page.focused()?)?;
+                Some((key, *page.files_of(item).first()?))
+            }
+        }),
+    );
     let local_transfer: local_transfer_window::Slot = Rc::default();
     let rows = Rc::new(ThumbnailRows::new(first));
     window.set_thumbnail_rows(ModelRc::from(rows.clone()));
@@ -500,6 +518,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
 
     // after a change to the page shown, show it; `true` if its files changed
     let shown = {
+        let preview = preview.clone();
         let current = current.clone();
         let weak = window.as_weak();
         let rows = rows.clone();
@@ -508,6 +527,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             if let Some(window) = weak.upgrade() {
                 refresh(&window, &current.borrow().borrow());
                 duplicates.show(&window, &current.borrow().borrow());
+                preview.refresh();
                 if files {
                     rows.reset();
                 }
@@ -1713,6 +1733,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         Rc::new({
             let ask = ask.clone();
             move |question, then| ask(Asked::Then(question, then))
+        }),
+        Rc::new({
+            let preview = preview.clone();
+            move || preview.close()
         }),
     );
     // (the status bar counts the selection's inbox)
@@ -4033,6 +4057,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     Bound {
+        preview,
         session_autosave,
         pages,
         current,

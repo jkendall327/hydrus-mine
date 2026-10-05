@@ -466,6 +466,13 @@ component ThumbnailGrid inherits ListView {
 }
 
 export component MainWindow inherits Window {
+    in property <image> preview-media;
+    in property <bool> preview-has-media;
+    in property <bool> preview-loading;
+    in-out property <bool> preview-splitter-hidden;
+    callback preview-retired();
+    callback preview-presentation-changed();
+    changed preview-splitter-hidden => { root.preview-presentation-changed(); }
     // how far the thumbnails are scrolled (each page keeps its own)
     in-out property <length> grid-scroll <=> grid.content-y;
     in property <string> window-title: "hydrus-rs";
@@ -1047,6 +1054,10 @@ export component MainWindow inherits Window {
                 y: root.tab-alignment == 0 ? page-frame.tab-space : 0px;
                 width: page-frame.width - page-frame.tree-space - (page-frame.vertical-tabs ? page-frame.tab-space : 0px);
                 height: page-frame.height - (!page-frame.vertical-tabs ? page-frame.tab-space : 0px);
+                VerticalLayout {
+                    width: root.gallery-page || root.watcher-page ? 400px : 300px;
+                    VerticalLayout {
+                        vertical-stretch: 1;
                 if root.gallery-page: VerticalBox {
                     width: 400px;
                     alignment: start;
@@ -1556,6 +1567,20 @@ export component MainWindow inherits Window {
                     search-tags := TagList {
                         tags: root.tags;
                         activated(i) => { root.tag-activated(i); }
+                    }
+                }
+                    }
+                    Button {
+                        text: root.preview-splitter-hidden ? "show preview" : "hide preview";
+                        clicked => { root.preview-splitter-hidden = !root.preview-splitter-hidden; }
+                    }
+                    if !root.preview-splitter-hidden: Rectangle {
+                        preferred-height: 200px;
+                        min-height: 80px;
+                        background: Theme.window;
+                        border-width: 1px; border-color: Theme.border;
+                        Image { source: root.preview-media; image-fit: contain; }
+                        if !root.preview-has-media: Text { text: root.preview-loading ? "loading preview" : "no preview available"; color: Theme.text; horizontal-alignment: center; vertical-alignment: center; }
                     }
                 }
                 // the thumbnails' shortcuts, once a click gives them the
