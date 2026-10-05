@@ -1044,12 +1044,14 @@ fn shared_cookie_list_owns_matchers_and_stages_both_script_and_step_consumers() 
     assert!(saved.scripts[0].required_cookies.iter().any(|row| row.name
         == hydrus_core::url::strings::StringMatch {
             kind: hydrus_core::url::strings::MatchKind::Fixed("probe".into()),
+            example: "probe".into(),
             ..hydrus_core::url::strings::StringMatch::any()
         }));
     let mut expected_value = original.scripts[0].steps[1].required_cookies[0]
         .value
         .clone();
     expected_value.kind = hydrus_core::url::strings::MatchKind::Fixed("updated".into());
+    expected_value.example = "updated".into();
     assert_eq!(
         saved.scripts[0].steps[1].required_cookies[0].value,
         expected_value
