@@ -625,6 +625,8 @@ fn rebind_retires_preview_under_predecessor_splitter_before_successor_hides_it()
         &ui,
         Pages::single(super::common::all_local_page(store.clone())),
     );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
     render(&windows.get(0).unwrap());
     assert!(!ui.get_preview_splitter_hidden());
     let now = Rc::new(Cell::new(1000));
