@@ -2132,3 +2132,11 @@ it does not replace reference decision handlers or claim platform drag behavior.
 Native pointer/Shift/Cancel/media/reopen replays and the saved transfer PNG are
 authored for hosted CI; no local Cargo builds or tests were run.
 Related-tag weights use native owned drafts and inline namespace/weight question panes rather than Qt modal child frames. Native Manage Tags now offers related suggestions for its captured service/files, local/all-known domains and storage/display graphs. Its single coalescing worker computes the full corpus cosine scores, applies the recorded two weight stages and integer truncations, then returns the first 100 base-score candidates. Qt additionally samples large search-tag populations under configurable quick/medium/thorough time budgets; native does not implement those budgets, selected-main-tag search/exclusion mode, alternate tag-context service, repository Manage Tags, or file-lookup scripts. These wider suggested-tab/default-page families remain Partial; importing duration values does not make their controls usable. Default-page fallback excludes unavailable panels and per-service notebook selection is retained within the owner. Numerical floating-point edge behavior beyond the fresh small-corpus ranking fixture remains unverified.
+The native router rejects captured pointer releases outside the live bar viewport,
+including clipped tab rectangles and its reserved arrow area. The Qt overflow
+probe records that raw `QTabBar.tabAt` can return a clipped tab index for an
+off-viewport coordinate; this is a lookup probe, not proof of OS drop dispatch
+there. Native viewport rejection is an explicit capture boundary, with platform
+drop routing still outside the claim. Real Slint Move-event replays also retain
+the press across `pointer-event(Move)` followed by `moved`, and preserve ordinary
+unpressed tooltip hover.

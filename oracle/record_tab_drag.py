@@ -111,8 +111,10 @@ def record(session):
             before=[bar.tabRect(i).x() for i in range(bar.count())];point=QC.QPointF(20,10)
             event=QG.QWheelEvent(point,QC.QPointF(bar.mapToGlobal(point.toPoint())),QC.QPoint(),QC.QPoint(0,delta),QC.Qt.MouseButton.NoButton,QC.Qt.KeyboardModifier.NoModifier,QC.Qt.ScrollPhase.NoScrollPhase,False)
             bar.wheelEvent(event);settle();overflow.append(dict(delta=delta,before=before,after=[bar.tabRect(i).x() for i in range(bar.count())],selected=bar.currentIndex()))
+        clipped_point=bar.tabRect(bar.count()-1).center()
+        clipped_hit=dict(point=[clipped_point.x(),clipped_point.y()],viewport=[bar.width(),bar.height()],inside=bar.rect().contains(clipped_point),tab_at=bar.tabAt(clipped_point),selected=bar.currentIndex())
         overflow_book.hide();overflow_book.deleteLater()
-        return dict(keys=KEYS,labels=labels,defaults=defaults,cancelled=cancelled,saved=saved,reopened=reopen,navigation=navigation,wheels=wheels,drops=drops,transfers=transfers,launches=launches,overflow=overflow,limits=['synthetic QDropEvent source bar seam; native OS drag loop not recorded','QDrag exec instrumentation records offered drag MIME while preserving real source-start decisions'])
+        return dict(keys=KEYS,labels=labels,defaults=defaults,cancelled=cancelled,saved=saved,reopened=reopen,navigation=navigation,wheels=wheels,drops=drops,transfers=transfers,launches=launches,overflow=overflow,clipped_hit=clipped_hit,limits=['synthetic QDropEvent source bar seam; native OS drag loop not recorded','QDrag exec instrumentation records offered drag MIME while preserving real source-start decisions'])
     try:return c.CallBlockingToQt(c.gui,drive)
     finally:c.new_options=original
 
