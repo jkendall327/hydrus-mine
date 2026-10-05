@@ -209,6 +209,7 @@ settings! {
     tag_summaries: hydrus_core::tag_summary::TagSummaries,
     thumbnails: ThumbnailSettings,
     thumbnail_layout: ThumbnailLayout,
+    thumbnail_navigation: hydrus_store::settings::ThumbnailNavigation,
     thumbnail_ratings: ThumbnailRatingSettings,
     rating_context_sizes: hydrus_store::settings::RatingContextSizes,
     note_preferences: hydrus_store::settings::NotePreferences,
@@ -3329,11 +3330,34 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 ),
                 boxed(
                     "interaction",
-                    vec![check(
-                        "When a single thumbnail is selected, show the media viewer's normal top hover file text in the status bar: ",
-                        |s| s.info_line.single_file_in_status_bar,
-                        |s, v| s.info_line.single_file_in_status_bar = v,
-                    )],
+                    vec![
+                        check(
+                            "When a single thumbnail is selected, show the media viewer's normal top hover file text in the status bar: ",
+                            |s| s.info_line.single_file_in_status_bar,
+                            |s, v| s.info_line.single_file_in_status_bar = v,
+                        ),
+                        check(
+                            "When shift-selecting, move the \"navigate from here\" position with it: ",
+                            |s| s.thumbnail_navigation.shift_moves_origin,
+                            |s, v| s.thumbnail_navigation.shift_moves_origin = v,
+                        ),
+                        int(
+                            "Do not scroll down on key navigation if thumbnail at least this % visible: ",
+                            (1, 99),
+                            |s| i64::from(s.thumbnail_navigation.visibility_percent),
+                            |s, v| s.thumbnail_navigation.visibility_percent = v as u8,
+                        ),
+                        text(
+                            "EXPERIMENTAL: Scroll thumbnails at this rate per scroll tick: ",
+                            |s| s.thumbnail_navigation.scroll_rate.clone(),
+                            |s, v| {
+                                if crate::thumbnail_navigation::parse_rate(v).is_some() {
+                                    v.clone_into(&mut s.thumbnail_navigation.scroll_rate);
+                                }
+                                Ok(())
+                            },
+                        ),
+                    ],
                 ),
             ],
         ),

@@ -59,6 +59,11 @@ impl Selection {
             .collect()
     }
 
+    /// The last hit remains independent from the preview focus.
+    pub fn last_hit(&self) -> Option<HashId> {
+        self.last_hit
+    }
+
     pub fn focused(&self) -> Option<HashId> {
         self.focused
     }
@@ -167,6 +172,19 @@ impl Selection {
         columns: usize,
         page_rows: usize,
     ) -> Option<usize> {
+        self.move_focus_with_last_hit(sorted, to, shift, columns, page_rows, false)
+    }
+
+    /// The optional last-hit origin also applies to non-Shift movement keys.
+    pub fn move_focus_with_last_hit(
+        &mut self,
+        sorted: &[HashId],
+        to: Move,
+        shift: bool,
+        columns: usize,
+        page_rows: usize,
+        use_last_hit: bool,
+    ) -> Option<usize> {
         let last = sorted.len().checked_sub(1)?;
         if let Move::Home | Move::End = to {
             let index = if to == Move::Home { 0 } else { last };
@@ -177,7 +195,12 @@ impl Selection {
         // (`_MediaToUseWhenMovingFocus`, the reference's defaults; the arms
         // in its order of preference, so two alike stay apart)
         #[allow(clippy::match_same_arms)]
-        let from = match (shift, self.last_hit, self.focused, self.ghost) {
+        let from = match (
+            shift || use_last_hit,
+            self.last_hit,
+            self.focused,
+            self.ghost,
+        ) {
             (true, Some(hit), _, _) => hit,
             (_, _, Some(focused), _) => focused,
             (_, _, None, Some(ghost)) => {

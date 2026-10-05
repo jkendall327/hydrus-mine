@@ -80,6 +80,7 @@ mod subscriptions_duplicate;
 mod subscriptions_separate;
 mod thumbnail_icons;
 mod thumbnail_menu;
+mod thumbnail_navigation;
 mod thumbnail_ratings;
 mod thumbnail_selection;
 mod unlock;

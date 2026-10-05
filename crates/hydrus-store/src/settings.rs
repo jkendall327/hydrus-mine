@@ -47,6 +47,27 @@ impl Setting for ThumbnailSettings {
     const KEY: &'static str = "thumbnails";
 }
 
+/// Live thumbnail keyboard origin, visibility threshold and raw wheel-rate text.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ThumbnailNavigation {
+    pub shift_moves_origin: bool,
+    pub visibility_percent: u8,
+    pub scroll_rate: String,
+}
+impl Default for ThumbnailNavigation {
+    fn default() -> Self {
+        Self {
+            shift_moves_origin: false,
+            visibility_percent: 75,
+            scroll_rate: "1.0".into(),
+        }
+    }
+}
+impl Setting for ThumbnailNavigation {
+    const KEY: &'static str = "thumbnail_navigation";
+}
+
 /// Favourite tags offered by autocomplete.
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
 pub struct FavouriteTags(pub Vec<String>);

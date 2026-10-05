@@ -3066,3 +3066,13 @@ end; enabled scrolling moves the overflowing bar's viewport and preserves page
 selection. This works on horizontal and vertical notebook rows; Apply refreshes
 the live bars and Cancel leaves saved settings unchanged.
 Options > tag suggestions opens an owned related-weight draft with separate search/suggested namespace tables. Reserved and duplicate namespace warnings, 0–10,000 percent values, protected catch-all rows, add/edit/delete, and question Cancel follow the recorded Qt editor. Child Apply stages the tables; parent Apply persists them, while parent Cancel closes and invalidates the child. Already-open Manage Tags related lists re-query saved weight changes through one owned worker. Related suggestions preserve score order, filter tags already present on all captured files, and only add mappings when activated.
+
+Options > thumbnails > interaction now stages the Shift-selection keyboard
+origin, visible-percentage threshold and scroll-rate text. Apply updates the live
+grid; Cancel preserves saved settings and reopening uses them. The origin choice
+keeps preview focus separate from the last hit, so a plain movement key can start
+from the most recent Shift-selected file without changing the selection rules.
+Key navigation uses the saved strict visibility threshold, Qt's reveal margin
+and the content-end clamp. Actual thumbnail wheel events use the saved rate,
+including ties-to-even rounding, zero and negative rates; malformed text retains
+the previous setting. The reference replay is `thumbnail_navigation.json`.
