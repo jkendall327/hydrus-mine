@@ -1201,7 +1201,7 @@ impl Setting for RatingContextSizes {
 }
 
 /// The ordinary window-position rescue preferences from Options > GUI.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]
 pub struct WindowRescueSettings {
     pub disabled: bool,
@@ -1222,7 +1222,7 @@ impl Setting for WindowRescueSettings {
 }
 
 /// Shared GUI timestamp/byte presentation; callers own formatting, not globals.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]
 pub struct GuiFormatting {
     pub iso: bool,
