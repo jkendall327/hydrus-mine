@@ -139,10 +139,11 @@ pub fn move_extension(from: &Path, to: &Path, effects: &dyn Effects) -> io::Resu
 
 fn copy_extension(from: &Path, to: &Path) -> io::Result<()> {
     let source = fs::metadata(from)?;
-    if let Ok(destination) = fs::metadata(to) {
-        if source.len() == destination.len() && source.modified()? == destination.modified()? {
-            return Ok(());
-        }
+    if let Ok(destination) = fs::metadata(to)
+        && source.len() == destination.len()
+        && source.modified()? == destination.modified()?
+    {
+        return Ok(());
     }
     fs::copy(from, to)?;
     let times = fs::FileTimes::new()
@@ -221,14 +222,14 @@ impl Reporting<'_> {
         if self.published {
             self.store.write(move |ctx| {
                 popups::update(ctx.conn(), &key, now, |job| {
-                    job.finish_and_dismiss(None, now)
+                    job.finish_and_dismiss(None, now);
                 })?;
                 Ok(())
             })?;
         }
         if let Some(error) = error {
             let mut job = popups::Job::text(error, now as f64);
-            job.status_title = self.job.status_title.clone();
+            job.status_title.clone_from(&self.job.status_title);
             job.had_error = true;
             self.store
                 .write(move |ctx| popups::add(ctx.conn(), &job, now))?;
@@ -261,10 +262,10 @@ pub fn run(
         published: false,
         force: matches!(request, Request::Force { .. }),
     };
-    if let Request::Force { files, .. } = request {
-        if files.len() > 64 {
-            reporting.publish().map_err(|e| e.to_string())?;
-        }
+    if let Request::Force { files, .. } = request
+        && files.len() > 64
+    {
+        reporting.publish().map_err(|e| e.to_string())?;
     }
     // Keep completion/cleanup outside the operation's early error paths.
     let result = (|| -> Result<(), String> {
