@@ -50,6 +50,9 @@ fn normalise_idle_timeout(seconds: Option<u64>) -> Option<u64> {
 }
 
 macro_rules! settings {
+    (@save $conn:ident, $after:ident, $before:ident, tag_presentation) => {
+        crate::tag_namespace_order::save_presentation($conn, &$after.tag_presentation, &$before.tag_presentation)?;
+    };
     (@save $conn:ident, $after:ident, $before:ident, animation_start) => {
         $after.animation_start.save_changed($conn, &$before.animation_start)?;
     };
@@ -420,6 +423,7 @@ pub enum Value {
     RelatedWeights(hydrus_store::related_tags::Weights),
     ImportOptions(crate::import_options_panel::Value),
     NamespaceSorts(Vec<PageSort>),
+    TagNamespaceOrder(Vec<String>),
     TagBanner(hydrus_core::tag_summary::TagSummaryGenerator),
     ProviderOrder(Vec<Provider>),
     TagService(hydrus_core::ServiceKey),
@@ -512,6 +516,7 @@ pub enum Kind {
     /// The transactional manager page, including simple-mode presentation.
     ImportOptions,
     NamespaceSorts,
+    TagNamespaceOrder,
     TagBanner(crate::tag_banner::Target),
     /// Inline staged command-palette provider queue.
     ProviderOrder,
@@ -3881,6 +3886,25 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             _ => Err(wrong("media-viewer Manage Tags sort")),
                         }),
                     ),
+                    boxed(
+                        "namespace grouping sort",
+                        vec![opt(
+                            crate::tag_namespace_order::DESCRIPTION,
+                            Kind::TagNamespaceOrder,
+                            Rc::new(|settings| {
+                                Value::TagNamespaceOrder(
+                                    settings.tag_presentation.user_namespaces.clone(),
+                                )
+                            }),
+                            Rc::new(|settings, value| match value {
+                                Value::TagNamespaceOrder(namespaces) => {
+                                    settings.tag_presentation.user_namespaces = namespaces;
+                                    Ok(())
+                                }
+                                _ => Err(wrong("namespace grouping order")),
+                            }),
+                        )],
+                    ),
                 ],
             )],
         ),
@@ -4834,6 +4858,26 @@ impl Editor {
                     *value = Value::TagBanner(draft);
                     return;
                 }
+            }
+        }
+    }
+
+    /// Raw order preserves empty entries, case, whitespace and duplicate namespaces.
+    pub fn edited_tag_namespace_order(&self) -> Vec<String> {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| match value {
+                Value::TagNamespaceOrder(namespaces) => Some(namespaces.clone()),
+                _ => None,
+            })
+            .unwrap_or_else(|| self.before.tag_presentation.user_namespaces.clone())
+    }
+    pub fn set_tag_namespace_order(&mut self, namespaces: Vec<String>) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::TagNamespaceOrder(_)) {
+                *value = Value::TagNamespaceOrder(namespaces);
+                return;
             }
         }
     }

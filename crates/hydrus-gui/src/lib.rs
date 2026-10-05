@@ -99,6 +99,7 @@ pub mod options_gui_colours;
 pub mod options_namespace_colours;
 pub mod options_open_externally;
 mod options_palette;
+pub mod options_tag_namespace_order;
 mod options_window;
 mod page;
 mod pages;

@@ -321,6 +321,9 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                     out.text =
                         crate::domains::location_label(&store.snapshot().services, location).into();
                 }
+                (Kind::TagNamespaceOrder, Value::TagNamespaceOrder(_)) => {
+                    out.kind = 37;
+                }
                 (Kind::GuiColours, Value::GuiColours(_)) => {
                     out.kind = 36;
                 }
@@ -462,6 +465,7 @@ pub(crate) fn open(
         .collect();
     window.set_pages(ModelRc::new(VecModel::from(names)));
     let show_providers = crate::options_palette::bind(&window, &editor, &active);
+    let tag_namespace_order = crate::options_tag_namespace_order::bind(&window, &editor, &active);
     let reason_queue = crate::options_deletion::bind(&window, &editor, &active, reason_slot);
     let gui_colour_list = crate::options_gui_colours::bind(&window, &editor, &active);
     let colour_list =
@@ -495,6 +499,7 @@ pub(crate) fn open(
     let show_page = {
         let show_routing = routing_table.show.clone();
         let show_external = external_table.show.clone();
+        let show_tag_namespace_order = tag_namespace_order.show.clone();
         let show_gui_colours = gui_colour_list.show.clone();
         let show_colours = colour_list.show.clone();
         let cog_target = cog_target.clone();
@@ -519,6 +524,7 @@ pub(crate) fn open(
             window.set_rows(ModelRc::new(VecModel::from(rows)));
             show_providers();
             drop(state);
+            show_tag_namespace_order();
             show_gui_colours();
             show_colours();
             show_routing();
@@ -556,6 +562,7 @@ pub(crate) fn open(
         let location_slot = location_slot.clone();
         let tag_slot = tag_slot.clone();
         let active = active.clone();
+        let cancel_tag_namespace_order = tag_namespace_order.cancel.clone();
         let cancel_gui_colours = gui_colour_list.cancel.clone();
         let cancel_colours = colour_list.cancel.clone();
         let cancel_reasons = reason_queue.cancel.clone();
@@ -575,6 +582,7 @@ pub(crate) fn open(
             if let Some(child) = child {
                 child.invoke_cancel();
             }
+            cancel_tag_namespace_order();
             cancel_gui_colours();
             cancel_colours();
             cancel_reasons();
@@ -631,12 +639,14 @@ pub(crate) fn open(
         let matches = matches.clone();
         let show_page = show_page.clone();
         let weak = window.as_weak();
+        let tag_namespace_open = tag_namespace_order.has_open.clone();
         let gui_colours_open = gui_colour_list.has_open.clone();
         let routing_open = routing_table.has_open.clone();
         let shortcuts_open = shortcuts.has_open.clone();
         let regex_slot = regex_slot.clone();
         move |i| {
-            if gui_colours_open()
+            if tag_namespace_open()
+                || gui_colours_open()
                 || routing_open()
                 || shortcuts_open()
                 || crate::regex_favourites_window::has_open(&regex_slot)
@@ -827,12 +837,14 @@ pub(crate) fn open(
         let active = active.clone();
         let weak = window.as_weak();
         let store = store.clone();
+        let tag_namespace_open = tag_namespace_order.has_open.clone();
         let gui_colours_open = gui_colour_list.has_open.clone();
         let routing_open = routing_table.has_open.clone();
         let shortcuts_open = shortcuts.has_open.clone();
         move || {
             if !active.get()
                 || !weak.upgrade().is_some_and(|w| w.window().is_visible())
+                || tag_namespace_open()
                 || gui_colours_open()
                 || routing_open()
                 || shortcuts_open()
@@ -988,6 +1000,7 @@ pub(crate) fn open(
         let show_page = show_page.clone();
         let weak = window.as_weak();
         let active = active.clone();
+        let tag_namespace_open = tag_namespace_order.has_open.clone();
         let gui_colours_open = gui_colour_list.has_open.clone();
         let routing_open = routing_table.has_open.clone();
         let shortcuts_open = shortcuts.has_open.clone();
@@ -1000,7 +1013,8 @@ pub(crate) fn open(
             {
                 return;
             }
-            if gui_colours_open()
+            if tag_namespace_open()
+                || gui_colours_open()
                 || routing_open()
                 || shortcuts_open()
                 || crate::regex_favourites_window::has_open(&regex_slot)
@@ -1017,6 +1031,7 @@ pub(crate) fn open(
         }
     });
     window.on_check_toggled({
+        let show_tag_namespace_order = tag_namespace_order.show.clone();
         let show_gui_colours = gui_colour_list.show.clone();
         let editor = editor.clone();
         let weak = window.as_weak();
@@ -1024,6 +1039,7 @@ pub(crate) fn open(
         let colours_open = colour_list.has_open.clone();
         let reasons_open = reason_queue.has_open.clone();
         let frames_open = frame_table.has_open.clone();
+        let tag_namespace_open = tag_namespace_order.has_open.clone();
         let gui_colours_open = gui_colour_list.has_open.clone();
         let routing_open = routing_table.has_open.clone();
         let external_open = external_table.has_open.clone();
@@ -1040,6 +1056,7 @@ pub(crate) fn open(
                 || frames_open()
                 || external_open()
                 || shortcuts_open()
+                || tag_namespace_open()
                 || gui_colours_open()
                 || routing_open()
                 || !matches!(
@@ -1050,6 +1067,7 @@ pub(crate) fn open(
                 return;
             }
             editor.borrow_mut().check(at(i), checked);
+            show_tag_namespace_order();
             show_gui_colours();
             if let Some(window) = weak.upgrade() {
                 for (index, row) in editor.borrow().rows().iter().enumerate() {
@@ -1395,11 +1413,15 @@ pub(crate) fn open(
     // a tag sort's type, order or grouping; the row shows the type's
     // orders, and grouping only where the type groups
     window.on_tag_sort_chosen({
+        let tag_namespace_open = tag_namespace_order.has_open.clone();
         let session_choices = session_choices.clone();
         let editor = editor.clone();
         let store = store.clone();
         let weak = window.as_weak();
         move |i, part, index| {
+            if tag_namespace_open() {
+                return;
+            }
             let Some(window) = weak.upgrade() else { return };
             let mut editor = editor.borrow_mut();
             editor.tag_sort(at(i), at(part), at(index));
@@ -1470,6 +1492,7 @@ pub(crate) fn open(
         let colours_open = colour_list.has_open.clone();
         let reasons_open = reason_queue.has_open.clone();
         let frames_open = frame_table.has_open.clone();
+        let tag_namespace_open = tag_namespace_order.has_open.clone();
         let gui_colours_open = gui_colour_list.has_open.clone();
         let routing_open = routing_table.has_open.clone();
         let external_open = external_table.has_open.clone();
@@ -1493,6 +1516,7 @@ pub(crate) fn open(
                 || frames_open()
                 || external_open()
                 || shortcuts_open()
+                || tag_namespace_open()
                 || gui_colours_open()
                 || routing_open()
                 || crate::regex_favourites_window::has_open(&regex_slot)

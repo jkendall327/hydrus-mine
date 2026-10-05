@@ -177,3 +177,5 @@ mod duplicates_progress;
 mod quick_export_directory;
 
 mod archive_delete_policies;
+
+mod tag_namespace_order;

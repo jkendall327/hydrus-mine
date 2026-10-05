@@ -155,3 +155,5 @@ pub mod window_rescue;
 
 pub mod gui_format;
 pub mod viewer_tag_wheel;
+
+pub mod tag_namespace_order;
