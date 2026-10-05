@@ -38,7 +38,7 @@ fn exact_constructor_fields_unchanged_apply_cancel_legacy_and_concurrent_field_m
     for case in fixture["controls"].as_array().unwrap() {
         let imported = preferences(&case["imported"]);
         store
-            .write(|ctx| settings::set(ctx.conn(), &imported))
+            .write(move |ctx| settings::set(ctx.conn(), &imported))
             .unwrap();
         let before = store.read(Settings::load).unwrap();
         let mut draft = Editor::new(before.clone());
@@ -71,7 +71,9 @@ fn exact_constructor_fields_unchanged_apply_cancel_legacy_and_concurrent_field_m
             before,
             "cancel/drop cannot normalize raw imports"
         );
-        store.write(|ctx| after.save(ctx.conn(), &before)).unwrap();
+        store
+            .write(move |ctx| after.save(ctx.conn(), &before))
+            .unwrap();
         let reopened = Store::open(directory.path()).unwrap();
         assert_eq!(raw(&reopened.read(settings::get).unwrap()), case["saved"]);
     }
@@ -103,9 +105,10 @@ fn exact_constructor_fields_unchanged_apply_cancel_legacy_and_concurrent_field_m
         gallery_denominator: 5,
         ..before.clone()
     };
+    let saved_concurrent = concurrent.clone();
     store
-        .write(|ctx| {
-            settings::set(ctx.conn(), &concurrent)?;
+        .write(move |ctx| {
+            settings::set(ctx.conn(), &saved_concurrent)?;
             accepted.save_changed(ctx.conn(), &before, &normalised(&before))
         })
         .unwrap();
