@@ -200,7 +200,7 @@ impl Worker {
                         match result {
                             Outcome::Decoded => {}
                             Outcome::Wait(pending) => {
-                                pending.wait(|| owned.valid(generation) && cache.active())
+                                pending.wait(|| owned.valid(generation) && cache.active());
                             }
                             Outcome::Stop => break,
                         }
