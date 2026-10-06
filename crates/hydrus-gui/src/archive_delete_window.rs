@@ -11,6 +11,21 @@ use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 use crate::archive_delete::ArchiveDeleteFilter;
 use crate::{ArchiveDeleteWindow, ListText, Removed, animation, list_text, playback};
 
+// Slint timer instants have millisecond precision; admission keeps the full delay.
+const COMMIT_DELAY: Duration = Duration::from_millis(1200);
+
+fn commit_delay_remaining(deadline: Option<Instant>, now: Instant) -> Duration {
+    deadline.map_or(Duration::ZERO, |deadline| {
+        deadline.saturating_duration_since(now)
+    })
+}
+
+fn timer_interval(remaining: Duration) -> Duration {
+    Duration::from_millis(
+        u64::try_from(remaining.as_nanos().div_ceil(1_000_000)).unwrap_or(u64::MAX),
+    )
+}
+
 /// Open the filter's window; it forgets itself from `slot` when closed,
 /// and tells `removed` of files committing deleted out of the page.
 pub(crate) fn open(
@@ -94,7 +109,7 @@ pub(crate) fn open(
     let zoomed = crate::zoom_window!(window, settings);
     let colour_watch = crate::image_colour_watch::Watch::new(model.borrow().store().clone());
     let finish_choices = Rc::new(RefCell::new(
-        None::<(Vec<crate::archive_delete::DeletionChoice>, Instant, bool)>,
+        None::<(Vec<crate::archive_delete::DeletionChoice>, Option<Instant>)>,
     ));
     let finish_timer = Rc::new(slint::Timer::default());
     let ask_finish: Rc<dyn Fn()> = Rc::new({
@@ -135,29 +150,50 @@ pub(crate) fn open(
             window.set_question(model.question().into());
             window.set_forget_question(false);
             window.set_commit_ready(!delayed);
-            *choices.borrow_mut() = Some((options, Instant::now(), delayed));
+            let deadline = delayed.then(|| Instant::now() + COMMIT_DELAY);
+            *choices.borrow_mut() = Some((options, deadline));
             if delayed {
                 let weak = weak.clone();
                 let slot = slot.clone();
                 let parent_guard = parent_guard.clone();
                 let viewing_stats = viewing_stats.clone();
-                timer.start(
-                    slint::TimerMode::SingleShot,
-                    Duration::from_millis(1200),
-                    move || {
-                        if viewing_stats.active()
-                            && parent_guard()
-                            && let Some(window) = weak.upgrade()
-                            && slot.upgrade().is_some_and(|slot| {
-                                slot.borrow().as_ref().is_some_and(|current| {
-                                    std::ptr::eq(current.window(), window.window())
-                                })
+                let choices = choices.clone();
+                let weak_timer = Rc::downgrade(&timer);
+                timer.start(slint::TimerMode::Repeated, COMMIT_DELAY, move || {
+                    let Some(timer) = weak_timer.upgrade() else {
+                        return;
+                    };
+                    let Some(window) = weak.upgrade() else {
+                        timer.stop();
+                        return;
+                    };
+                    if !viewing_stats.active()
+                        || !parent_guard()
+                        || !slot.upgrade().is_some_and(|slot| {
+                            slot.borrow().as_ref().is_some_and(|current| {
+                                std::ptr::eq(current.window(), window.window())
                             })
-                        {
-                            window.set_commit_ready(true);
-                        }
-                    },
-                );
+                        })
+                    {
+                        timer.stop();
+                        return;
+                    }
+                    let remaining = choices
+                        .borrow()
+                        .as_ref()
+                        .map(|(_, deadline)| commit_delay_remaining(*deadline, Instant::now()));
+                    let Some(remaining) = remaining else {
+                        timer.stop();
+                        return;
+                    };
+                    if remaining.is_zero() {
+                        timer.stop();
+                        window.set_commit_ready(true);
+                    } else {
+                        // An early rounded Slint tick cannot enable a refused button.
+                        timer.set_interval(timer_interval(remaining));
+                    }
+                });
             }
         }
     });
@@ -494,10 +530,10 @@ pub(crate) fn open(
                 return;
             }
             let choices = finish_choices.borrow();
-            let Some((options, started, delayed)) = choices.as_ref() else {
+            let Some((options, deadline)) = choices.as_ref() else {
                 return;
             };
-            if *delayed && started.elapsed() < Duration::from_millis(1200) {
+            if !commit_delay_remaining(*deadline, Instant::now()).is_zero() {
                 return;
             }
             let Ok(index) = usize::try_from(index) else {

@@ -129,3 +129,10 @@ before Return. The palette-only screenshot test disables independent legacy
 colour overrides without relaxing its pixel threshold. Manual export exposes
 the existing sort controls' measured frames directly, following Manage Tags;
 wheel tests continue sending native pointer events and asserting exact results.
+
+Archive/delete readiness and commit now share one precise deadline. An early
+millisecond-rounded Slint timer tick rearms for the remaining delay rather than
+enabling a button whose commit guard still refuses it. The minimum 1200ms delay,
+owner/visibility checks and transaction assertions remain unchanged. Independent
+source review confirms timer rearming and ownership; runtime confirmation of the
+reported failure remains pending.
