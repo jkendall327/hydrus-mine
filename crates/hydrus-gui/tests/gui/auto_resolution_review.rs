@@ -438,3 +438,24 @@ fn settle(window: &hydrus_gui::AutoResolutionReviewWindow) {
         std::thread::sleep(std::time::Duration::from_millis(20));
     }
 }
+
+#[test]
+fn a_failed_denial_keeps_pending_pairs_and_reports_the_error() {
+    let recorded = hydrus_testkit::fixture_json("auto_resolution_review.json");
+    let _windows = headless::init();
+    let opened = opened();
+    let name = recorded["reviewed"].as_str().unwrap();
+    let window = review(&opened.ui, &opened.bound, name);
+    let before = window.get_rows().row_count();
+    assert!(before > 0);
+    opened.store.write(|ctx| {
+        ctx.conn().execute_batch("CREATE TRIGGER reject_denial BEFORE UPDATE ON dup_auto_pairs BEGIN SELECT RAISE(ABORT, 'injected denial failure'); END;")?;
+        Ok(())
+    }).unwrap();
+    window.invoke_row_clicked(0, false, false);
+    window.invoke_deny();
+    settle(&window);
+    assert_eq!(window.get_rows().row_count(), before);
+    assert!(window.get_label().contains("injected denial failure"));
+    window.invoke_close_window();
+}

@@ -1,0 +1,242 @@
+[
+  {
+    "component": "ArchiveRepairWindow",
+    "id": "dialog.database.archive-repair",
+    "action": "add",
+    "source": {
+      "path": "crates/hydrus-gui/ui/archive_repair.slint",
+      "line": 3,
+      "line_sha256": "198d1af8ce21eb2fe8b7ff0cd7b2cb26ee781d504d6bb184f6034ebf8a8d3aef"
+    }
+  },
+  {
+    "component": "ChoiceButtonsWindow",
+    "id": "dialog.shared.choice-buttons",
+    "action": "add",
+    "source": {
+      "path": "crates/hydrus-gui/ui/choice_buttons.slint",
+      "line": 8,
+      "line_sha256": "4ddbf92ce4d345fe3c527bfbfaace1f6b200be08058ae76bda54ad4ae1106bd8"
+    }
+  },
+  {
+    "component": "DatabaseLocationsWindow",
+    "id": "dialog.database.locations",
+    "action": "add",
+    "source": {
+      "path": "crates/hydrus-gui/ui/database_locations.slint",
+      "line": 11,
+      "line_sha256": "2f9daa56a8746456926a76dfd3bc3a4e7d4baefab1ae10c133cd03e06765939c"
+    }
+  },
+  {
+    "component": "LocationMaxSizeWindow",
+    "id": "audit.media.database.locations.max-size",
+    "action": "update",
+    "source": {
+      "path": "crates/hydrus-gui/ui/database_locations.slint",
+      "line": 119,
+      "line_sha256": "be2adef4130f657dcd5ebea0744b2d8666b20d2843f2f3102ae7a5d5c40baf73"
+    }
+  },
+  {
+    "component": "GranularityWindow",
+    "id": "audit.media.database.locations.granularity",
+    "action": "update",
+    "source": {
+      "path": "crates/hydrus-gui/ui/database_locations.slint",
+      "line": 151,
+      "line_sha256": "3f36e767998f2a6dcef28e4ff40dd18040df24b78de19868d8a344028a30307b"
+    }
+  },
+  {
+    "component": "DebugFetchWindow",
+    "id": "dialog.debug.fetch-url",
+    "action": "add",
+    "source": {
+      "path": "crates/hydrus-gui/ui/debug_fetch.slint",
+      "line": 3,
+      "line_sha256": "b5275fc814f96931003af3165cfd0f5fc3999f76aa25906945f7de2c3875d246"
+    }
+  },
+  {
+    "component": "EditValueWindow",
+    "id": "dialog.shared.edit-value",
+    "action": "add",
+    "source": {
+      "path": "crates/hydrus-gui/ui/edit_value.slint",
+      "line": 8,
+      "line_sha256": "718d08e038a774e488ecbaf70c23aa979879e263a3b476954ae37632a776c201"
+    }
+  },
+  {
+    "component": "ExternalCallWindow",
+    "id": "audit.options.nested.external-call",
+    "action": "update",
+    "source": {
+      "path": "crates/hydrus-gui/ui/external_calls.slint",
+      "line": 47,
+      "line_sha256": "127d718e6d61d76f77ffd494c68348c7031891599717a988ce08b7a93a09401c"
+    }
+  },
+  {
+    "component": "ExternalCommandWindow",
+    "id": "audit.options.nested.external-call.command",
+    "action": "update",
+    "source": {
+      "path": "crates/hydrus-gui/ui/external_calls.slint",
+      "line": 124,
+      "line_sha256": "e389b0800058e7691df79024bf0c81d451e49cf2772d42c6101bac45651e3282"
+    }
+  },
+  {
+    "component": "ExternalDefaultsWindow",
+    "id": "dialog.external-call.defaults",
+    "action": "add",
+    "source": {
+      "path": "crates/hydrus-gui/ui/external_calls.slint",
+      "line": 191,
+      "line_sha256": "f94aeb65649524761f7051775dd2ba389e2884034a161ef3c37b37a4ef4dc6ca"
+    }
+  },
+  {
+    "component": "FileHistoryWindow",
+    "id": "dialog.database.file-history",
+    "action": "add",
+    "source": {
+      "path": "crates/hydrus-gui/ui/file_history.slint",
+      "line": 3,
+      "line_sha256": "4aef795aa7d197caa572b537c3d890542e191fe6109205b965df2d31ff19b64a"
+    }
+  },
+  {
+    "component": "FileMaintenanceWindow",
+    "id": "dialog.database.file-maintenance",
+    "action": "add",
+    "source": {
+      "path": "crates/hydrus-gui/ui/file_maintenance_current.slint",
+      "line": 5,
+      "line_sha256": "8e3d2fb804251947edbbee84c9774e4ee112df91a75891884456cfe64d3dfe04"
+    }
+  },
+  {
+    "component": "GuiColourPickerWindow",
+    "id": "dialog.shared.rgb-colour",
+    "action": "add",
+    "source": {
+      "path": "crates/hydrus-gui/ui/gui_coloursets.slint",
+      "line": 48,
+      "line_sha256": "759d87a9023481d786417481cf5ff9c9fee2ecdd7606cdb5fd68c15ffed56b72"
+    }
+  },
+  {
+    "component": "HowBonedWindow",
+    "id": "dialog.database.how-boned",
+    "action": "add",
+    "source": {
+      "path": "crates/hydrus-gui/ui/how_boned.slint",
+      "line": 10,
+      "line_sha256": "16e58146f0bd87d9ce65aba5918a931b53ea6180006117a0d1798e55fbfb6754"
+    }
+  },
+  {
+    "component": "LocalTransferWindow",
+    "id": "dialog.media.local-transfer",
+    "action": "add",
+    "source": {
+      "path": "crates/hydrus-gui/ui/local_transfer.slint",
+      "line": 3,
+      "line_sha256": "8aef37be12a21017767b2e6fe7f6cefc4ea7e0d50977fc93a10a07587326aaba"
+    }
+  },
+  {
+    "component": "MediaViewWindow",
+    "id": "dialog.options.media-view",
+    "action": "add",
+    "source": {
+      "path": "crates/hydrus-gui/ui/media_views.slint",
+      "line": 43,
+      "line_sha256": "22d0e9add0db73e3bcdea406b94673725eb3820c39567f409d4006ef506d3745"
+    }
+  },
+  {
+    "component": "OpenFileCallsWindow",
+    "id": "audit.options.nested.open-file-call-list",
+    "action": "update",
+    "source": {
+      "path": "crates/hydrus-gui/ui/open_externally.slint",
+      "line": 37,
+      "line_sha256": "0930222b1df3097eac784d41afb136880f896f162707956c4e173fdc8c148bd3"
+    }
+  },
+  {
+    "component": "ExternalRoutingChoiceWindow",
+    "id": "dialog.external-call.routing-choice",
+    "action": "add",
+    "source": {
+      "path": "crates/hydrus-gui/ui/open_externally.slint",
+      "line": 56,
+      "line_sha256": "e34bccfbb0bafe73f99c42ae86f84c52d67a1e424abe23dbab168ea8a8bb79af"
+    }
+  },
+  {
+    "component": "RelatedWeightsWindow",
+    "id": "audit.options.nested.tag-suggestions.weights",
+    "action": "update",
+    "source": {
+      "path": "crates/hydrus-gui/ui/related_weights.slint",
+      "line": 4,
+      "line_sha256": "5c9a5df7743fa19201d0d4574872fdd202e6aa99f69a674ff18a30b0c7c0da02"
+    }
+  },
+  {
+    "component": "ShortcutSetWindow",
+    "id": "audit.options.nested.shortcuts-set",
+    "action": "update",
+    "source": {
+      "path": "crates/hydrus-gui/ui/shortcuts.slint",
+      "line": 3,
+      "line_sha256": "c627164d2cdb1cfcdc04d811966a176295320600f720c95ba25afc80370ff045"
+    }
+  },
+  {
+    "component": "ShortcutCommandWindow",
+    "id": "audit.options.nested.shortcuts-command",
+    "action": "update",
+    "source": {
+      "path": "crates/hydrus-gui/ui/shortcuts.slint",
+      "line": 62,
+      "line_sha256": "c6f21bff185f9bc35df1a470912e1685e36318b2d23de4c1445688e782bb3175"
+    }
+  },
+  {
+    "component": "MostUsedTagsWindow",
+    "id": "dialog.options.most-used-tags",
+    "action": "add",
+    "source": {
+      "path": "crates/hydrus-gui/ui/tag_suggestions.slint",
+      "line": 53,
+      "line_sha256": "477b38dff6d7f04b7dbed04c5e1d5d48492265f7097d06c765e16c9f20d86019"
+    }
+  },
+  {
+    "component": "TagSyncReviewWindow",
+    "id": "dialog.tags.sync-review",
+    "action": "add",
+    "source": {
+      "path": "crates/hydrus-gui/ui/tag_sync_review.slint",
+      "line": 6,
+      "line_sha256": "a8dd054de5c237e5122e8d118d10906dc621c7f1b02d3a91805889bb8cb9fbb3"
+    }
+  },
+  {
+    "component": "VacuumReviewWindow",
+    "id": "audit.media.database.maintenance.vacuum",
+    "action": "update",
+    "source": {
+      "path": "crates/hydrus-gui/ui/vacuum_review.slint",
+      "line": 6,
+      "line_sha256": "d6fedfd7ccc85ab14437e1e36bd4ddbed09838d1564a7192882647d4e95b19a2"
+    }
+  }
+]

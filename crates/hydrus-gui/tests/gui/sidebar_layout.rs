@@ -270,6 +270,11 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
         .write(|ctx| {
             let mut s: settings::GuiSettings = settings::get(ctx.conn())?;
             s.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(ctx.conn(), &shutdown)?;
             settings::set(ctx.conn(), &s)
         })
         .unwrap();

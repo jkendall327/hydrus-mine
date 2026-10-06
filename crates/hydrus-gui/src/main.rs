@@ -22,19 +22,7 @@ fn main() -> Result<()> {
         .filter(|arg| !arg.to_string_lossy().starts_with('-'))
         .ok_or_else(|| anyhow!("usage: hydrus-gui <store directory>"))?
         .into();
-    // a backup asked to be restored before this start (the reference's
-    // restart after "restore from a database backup")
-    if let Some((from, media)) = hydrus_store::backup::take_restore_request(&dir) {
-        eprintln!("restoring the backup at {}", from.display());
-        hydrus_store::backup::restore(&dir, &from, &media, &mut |text| eprintln!("{text}"))
-            .with_context(|| format!("restoring the backup at {}", from.display()))?;
-    }
-    let store =
-        Store::open(&dir).with_context(|| format!("opening the store at {}", dir.display()))?;
-    // one client at a time on a store, as the reference allows one on its
-    // database; held before the session is read, so what the Client API
-    // asks of the pages from now on waits for this client
-    let _open = lock_client(&dir)?;
+    let (store, _open) = open_store(&dir)?;
     let lock: LockPassword = store
         .read(hydrus_store::settings::get)
         .context("reading the lock password")?;
@@ -197,6 +185,19 @@ impl Client {
     }
 }
 
+/// Acquire the desktop lease before restoring or opening the database.
+/// A competing client cannot consume or execute a queued restore request.
+fn open_store(dir: &std::path::Path) -> Result<(Arc<Store>, std::fs::File)> {
+    std::fs::create_dir_all(dir)
+        .with_context(|| format!("creating the store directory {}", dir.display()))?;
+    let open = lock_client(dir)?;
+    hydrus_store::backup::restore_pending(dir, &mut |text| eprintln!("{text}"))
+        .with_context(|| format!("restoring the pending backup in {}", dir.display()))?;
+    let store =
+        Store::open(dir).with_context(|| format!("opening the store at {}", dir.display()))?;
+    Ok((store, open))
+}
+
 /// Take the lock the client holds while it is open: a second client on the
 /// store is refused. (Retried for a moment, as the daemon looks at it now
 /// and then.)
@@ -217,4 +218,53 @@ fn save(pages: &mut Pages) -> hydrus_store::Result<()> {
         .duration_since(UNIX_EPOCH)
         .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX));
     pages.save(now)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_second_client_cannot_restore_or_consume_a_pending_request() {
+        let home = tempfile::tempdir().unwrap();
+        let source = tempfile::tempdir().unwrap();
+        std::fs::write(
+            home.path().join(hydrus_store::store::DB_FILE_NAME),
+            b"original",
+        )
+        .unwrap();
+        std::fs::write(
+            source.path().join(hydrus_store::store::DB_FILE_NAME),
+            b"replacement",
+        )
+        .unwrap();
+        hydrus_store::backup::request_restore(
+            home.path(),
+            source.path(),
+            &home.path().join("client_files"),
+        )
+        .unwrap();
+        let _held = hydrus_store::store::lock_gui(home.path()).unwrap().unwrap();
+        assert!(open_store(home.path()).is_err());
+        assert_eq!(
+            std::fs::read(home.path().join(hydrus_store::store::DB_FILE_NAME)).unwrap(),
+            b"original"
+        );
+        assert!(
+            hydrus_store::backup::restore_request(home.path())
+                .unwrap()
+                .is_some()
+        );
+    }
+
+    #[test]
+    fn opening_a_new_store_holds_the_gui_lease() {
+        let parent = tempfile::tempdir().unwrap();
+        let dir = parent.path().join("new-store");
+        let (store, lease) = open_store(&dir).unwrap();
+        assert!(hydrus_store::store::lock_gui(&dir).unwrap().is_none());
+        drop(store);
+        drop(lease);
+        assert!(hydrus_store::store::lock_gui(&dir).unwrap().is_some());
+    }
 }

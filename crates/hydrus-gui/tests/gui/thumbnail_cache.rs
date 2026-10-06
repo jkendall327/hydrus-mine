@@ -257,7 +257,16 @@ fn staged_exact_byte_units_timeout_policy_clear_reopen_and_incarnation_retiremen
     );
     let mut gui = saved_gui(&store);
     gui.confirm_exit = true;
-    store.write(move |w| settings::set(w.conn(), &gui)).unwrap();
+    store
+        .write(move |w| {
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(w.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(w.conn(), &shutdown)?;
+            settings::set(w.conn(), &gui)
+        })
+        .unwrap();
     ui.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
     ui.invoke_answer(false);

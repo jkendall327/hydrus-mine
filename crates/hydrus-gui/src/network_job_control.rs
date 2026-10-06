@@ -85,12 +85,23 @@ impl Errors {
         window.set_error_text(text.into());
         let close = Rc::new({
             let owner = Rc::downgrade(&self.0);
+            let weak = window.as_weak();
             move || {
-                if let Some(owner) = owner.upgrade()
-                    && let Some(window) = owner.borrow_mut().take()
-                {
-                    let _ = window.hide();
+                let Some(window) = weak.upgrade() else {
+                    return;
+                };
+                if let Some(owner) = owner.upgrade() {
+                    let owns_slot = owner
+                        .borrow()
+                        .as_ref()
+                        .is_some_and(|current| std::ptr::eq(current.window(), window.window()));
+                    if owns_slot {
+                        owner.borrow_mut().take();
+                    }
                 }
+                // Retained callbacks can hide only their own window, even after
+                // cancellation or replacement installs a successor in the slot.
+                let _ = window.hide();
             }
         });
         window.on_close_clicked({

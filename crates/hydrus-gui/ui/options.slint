@@ -770,7 +770,7 @@ export component OptionsWindow inherits Window {
                 alignment: end;
                 Button {
                     text: "apply";
-                    enabled: !root.regex-child-open && !root.shortcuts-child-open && !root.routing-child-open;
+                    enabled: !root.regex-child-open && !root.shortcuts-child-open && !root.routing-child-open && !root.media-view-child-open;
                     clicked => { root.apply(); }
                 }
                 Button {

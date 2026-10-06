@@ -4247,6 +4247,14 @@ on a mismatch, and saves the lock the startup unlock window checks. Recorded by
 `oracle/record_set_password.py`; `tests/model/set_password.rs` replays its
 scripted answers.
 
+
+The native password dialog admits text only at its text-entry step and yes/no
+only at the current clear confirmation. Cancel, window close and replacement
+retire its callbacks; hidden dialogs or dropped dialog slots cannot change the
+password. `tests/gui/set_password.rs` replays all six recorded outcomes through
+the actual dialog and Store, verifies persisted results after reopening, and
+covers retained cancelled/closed/hidden/replaced callbacks.
+
 Database > how boned am I? opens "review your fate": a file domain and typed
 predicates on the left, and on the right Mr. Bones (or his special message) over
 the files, views and duplicates tabs, worded as the reference's. A single plain
@@ -4305,6 +4313,9 @@ over 50 files) and runs on the selected files off the UI thread, or schedules
 them in the file maintenance queue. Clearing asks, then deletes only the selected
 files' viewing records. The labels and descriptions are dumped by
 `oracle/dump_regen_jobs.py` and checked in `tests/model/thumbnail_maintenance.rs`.
+Immediate work filters the captured selection before taking each queue batch;
+already queued files outside that selection do not consume its budget. A busy
+physical-maintenance worker defers the newly queued work.
 
 ## Shutdown maintenance, restart and exit/force maintenance
 
@@ -4340,6 +4351,9 @@ switches, scaling, half/double zooms and interpolation qualities, enabled as
 `_UpdateControls` enables them; "delete" removes specific filetypes but never the
 classes. Edits stay in the Options draft until Apply. Dumped by
 `oracle/dump_media_view_options.py`; `tests/model/media_view_options.rs`.
+Options Apply waits for its open media editor. Cancelled or replaced children,
+and children whose Options owner is hidden, cannot stage an edit or open a
+successor from a retained callback.
 
 ## Duplicates page filtering
 
@@ -4414,7 +4428,12 @@ picks again. "restore from a database backup" picks a backup, asks, and
 restarts, restoring it before the store opens. A client with media in
 several locations shows "database is stored in multiple locations", whose
 note explains. `tests/model/database_backup.rs` and hydrus-store's
-`backup` tests cover the menu, texts, mirror, backup and restore.
+`backup` tests cover the menu, texts, mirror, backup and restore. Restore rejects
+its own database directory and waits until startup owns the GUI lock; an active
+serving process prevents it. The replacement database is copied before the old
+one is changed, and a failed restore retains its request for retry. The backup
+tests cover rejected aliases, failed copies, request retention and serving locks;
+startup tests cover the competing GUI and a new-store lease.
 
 ## Database > locations
 
@@ -4458,3 +4477,38 @@ deletes them, and ends "2 orphan files and 0 orphan thumbnails cleared!" or
 "no orphans found!". A client using another install's files in place refuses.
 hydrus-store's `orphan_files` test covers a stray file and thumbnail moved.
 
+
+## Validation pass: backup and migration failures
+
+Cancelled backups report an incomplete operation and do not advance the last
+successful backup time. Cancellation is checked between media files; the current
+SQLite backup or file copy finishes before cancellation can be observed.
+Unlike the reference's unconditional completion text, cancellation is not presented
+as a successful backup.
+
+Client granularity migration records the destination chosen by the physical mover,
+including prefixes merged from different storage locations. An in-memory move
+journal restores exact original paths on cancellation, move failure or database
+publication failure; existing destination files are never overwritten. A process
+crash or failure during rollback still requires manual recovery from a backup.
+
+Failed duplicate auto-resolution approvals/denials reload actual pending pairs
+and display the error, preserving unprocessed pairs after a partially committed
+batch. The delayed popup remains a bounded implementation: it is checked between
+chunks and cannot appear while the first long-running chunk is in progress.
+
+## Validation pass: pending dialog ownership
+
+Database maintenance questions and service choices now belong to their Main
+binding. No, Cancel, native close, hidden input, rebind, accepted client exit and
+final Bound release retire pending admission; retained callbacks cannot write or
+displace another dialog. An already admitted worker may finish after its window
+closes. Vacuum additionally requires a currently pending confirmation and eligible
+selection, and accepts it only once. These repairs do not establish complete
+reference parity for every maintenance command.
+
+The shutdown maintenance question treats Cancel/native close as abandoning exit;
+No and timed auto-no register skipped work and continue. Password dialogs accept
+text only at a text step and Yes only at the current clear confirmation. Retired
+password dialogs cannot change the lock. Network-error close callbacks hide only
+their own window, preserving a replacement error.

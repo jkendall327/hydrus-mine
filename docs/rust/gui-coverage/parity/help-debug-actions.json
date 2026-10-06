@@ -2,7 +2,7 @@
   "schema_version": 1,
   "agent": "help-debug-actions",
   "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
-  "proposed_completed_count": 12,
+  "proposed_completed_count": 5,
   "claims": [
     {
       "id": "audit-options-help-debug-action-flush-log",
@@ -28,8 +28,8 @@
     {
       "id": "audit-options-help-debug-action-force-database-commit",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Help > debug gains profiling's what is this?, the delayed modal popups, QMessageBox, make some popups, reset multi-column list settings (question), save last session, flush log, force database commit, show env, simulate program exit signal and clear all rendering caches, in the recorded menu order.",
       "source": [
         "crates/hydrus-gui-model/src/debug_actions.rs",
@@ -44,7 +44,13 @@
       ],
       "limits": [
         "Modal popups are ordinary popups; some popups omits callback and network-job popups; no column widths to reset."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Menu/model-only evidence; defining action modality/state reset/full popup/cache consumers absent or checkpoint callback fails inside transaction.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-6.md"
+      }
     },
     {
       "id": "audit-options-help-debug-action-show-env",
@@ -91,8 +97,8 @@
     {
       "id": "audit-options-help-debug-action-make-a-qmessagebox",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Help > debug gains profiling's what is this?, the delayed modal popups, QMessageBox, make some popups, reset multi-column list settings (question), save last session, flush log, force database commit, show env, simulate program exit signal and clear all rendering caches, in the recorded menu order.",
       "source": [
         "crates/hydrus-gui-model/src/debug_actions.rs",
@@ -107,13 +113,19 @@
       ],
       "limits": [
         "Modal popups are ordinary popups; some popups omits callback and network-job popups; no column widths to reset."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Menu/model-only evidence; defining action modality/state reset/full popup/cache consumers absent or checkpoint callback fails inside transaction.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-6.md"
+      }
     },
     {
       "id": "audit-options-help-debug-action-make-a-modal-popup-in-five-seconds",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Help > debug gains profiling's what is this?, the delayed modal popups, QMessageBox, make some popups, reset multi-column list settings (question), save last session, flush log, force database commit, show env, simulate program exit signal and clear all rendering caches, in the recorded menu order.",
       "source": [
         "crates/hydrus-gui-model/src/debug_actions.rs",
@@ -128,13 +140,19 @@
       ],
       "limits": [
         "Modal popups are ordinary popups; some popups omits callback and network-job popups; no column widths to reset."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Menu/model-only evidence; defining action modality/state reset/full popup/cache consumers absent or checkpoint callback fails inside transaction.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-6.md"
+      }
     },
     {
       "id": "audit-options-help-debug-action-make-a-non-cancellable-modal-popup-in-five-seconds",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Help > debug gains profiling's what is this?, the delayed modal popups, QMessageBox, make some popups, reset multi-column list settings (question), save last session, flush log, force database commit, show env, simulate program exit signal and clear all rendering caches, in the recorded menu order.",
       "source": [
         "crates/hydrus-gui-model/src/debug_actions.rs",
@@ -149,13 +167,19 @@
       ],
       "limits": [
         "Modal popups are ordinary popups; some popups omits callback and network-job popups; no column widths to reset."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Menu/model-only evidence; defining action modality/state reset/full popup/cache consumers absent or checkpoint callback fails inside transaction.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-6.md"
+      }
     },
     {
       "id": "audit-options-help-debug-action-make-some-popups",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Help > debug gains profiling's what is this?, the delayed modal popups, QMessageBox, make some popups, reset multi-column list settings (question), save last session, flush log, force database commit, show env, simulate program exit signal and clear all rendering caches, in the recorded menu order.",
       "source": [
         "crates/hydrus-gui-model/src/debug_actions.rs",
@@ -170,13 +194,19 @@
       ],
       "limits": [
         "Modal popups are ordinary popups; some popups omits callback and network-job popups; no column widths to reset."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Menu/model-only evidence; defining action modality/state reset/full popup/cache consumers absent or checkpoint callback fails inside transaction.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-6.md"
+      }
     },
     {
       "id": "audit-options-help-debug-action-reset-multi-column-list-settings-to-default",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Help > debug gains profiling's what is this?, the delayed modal popups, QMessageBox, make some popups, reset multi-column list settings (question), save last session, flush log, force database commit, show env, simulate program exit signal and clear all rendering caches, in the recorded menu order.",
       "source": [
         "crates/hydrus-gui-model/src/debug_actions.rs",
@@ -191,7 +221,13 @@
       ],
       "limits": [
         "Modal popups are ordinary popups; some popups omits callback and network-job popups; no column widths to reset."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Menu/model-only evidence; defining action modality/state reset/full popup/cache consumers absent or checkpoint callback fails inside transaction.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-6.md"
+      }
     },
     {
       "id": "audit-options-help-debug-action-save-last-session-gui-session",
@@ -217,8 +253,8 @@
     {
       "id": "audit-options-help-debug-action-clear-all-rendering-caches",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Help > debug gains profiling's what is this?, the delayed modal popups, QMessageBox, make some popups, reset multi-column list settings (question), save last session, flush log, force database commit, show env, simulate program exit signal and clear all rendering caches, in the recorded menu order.",
       "source": [
         "crates/hydrus-gui-model/src/debug_actions.rs",
@@ -233,7 +269,13 @@
       ],
       "limits": [
         "Modal popups are ordinary popups; some popups omits callback and network-job popups; no column widths to reset."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Menu/model-only evidence; defining action modality/state reset/full popup/cache consumers absent or checkpoint callback fails inside transaction.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-6.md"
+      }
     },
     {
       "id": "audit-options-help-debug-action-what-is-this",

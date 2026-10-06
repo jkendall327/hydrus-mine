@@ -1,0 +1,46 @@
+{
+  "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+  "branch": "codex/full-validation",
+  "initial_ci_run": 37396014073,
+  "status": "in_progress",
+  "manifest_count": 153,
+  "prior_validated_completions": 240,
+  "initial_proposed_additional_completions": 267,
+  "policy": "No mutation testing. Hosted full validation; one local build at a time. New claims remain unvalidated until exact-source CI, source review and rendered review.",
+  "reviews": "review-1.md through review-6.md; these source reviews refer to the initial checkpoint unless later fixes are stated.",
+  "pending": [
+    "Complete CI triage and fixes",
+    "Review native renders against oracle PNGs",
+    "Obtain one exact green source checkpoint",
+    "Publish reviewed original leaves and regenerate coverage report"
+  ],
+  "local_validation": {
+    "backup_tests": "9 passed including restore",
+    "granularity_tests": "6 passed",
+    "strict_store_clippy": "passed: all targets, -D warnings",
+    "shortcut_import": "passed",
+    "selected_store": "1 passed",
+    "selected_importer": "2 passed",
+    "main_menu": "13 passed",
+    "popup_producer": "1 passed",
+    "strict_repair_clippy": "passed: hydrus-store, hydrus-import, hydrus-download, hydrus-gui-model all targets, -D warnings"
+  },
+  "integrated_review_batches": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "source_reviews_complete": true,
+  "remaining_proposed_additional_completions": 142,
+  "initial_ci_model_lane": "failed: 4 stale menu assertions, retired popup owner assertion, shortcut default-set assertion",
+  "native_source_census": {
+    "exported_windows": 121,
+    "previously_opaque": 24,
+    "curated_hierarchy_proposed": true,
+    "rendered_review": "pending"
+  },
+  "initial_ci_compiler_lane": "failed: 42 GUI integration-test diagnostics; all reported sites repaired, hosted recheck pending"
+}

@@ -73,7 +73,7 @@ fn actual_existing_size_cancel_unchanged_and_edit_reach_reference_query_counts()
     add(&ui, "system:filesize < 7KB");
     let main_adapter = windows.get(windows.count() - 1).unwrap();
     let pixels = headless::render(&main_adapter, 1000, 800);
-    assert!(pixels.iter().any(|pixel| pixel.r != pixel.g));
+    assert!(pixels.chunks_exact(4).any(|pixel| pixel[0] != pixel[1]));
     let position = slint::LogicalPosition::new(
         ui.get_active_predicate_list_x() + 6.0,
         ui.get_active_predicate_list_y() + 11.0,
@@ -363,7 +363,7 @@ fn mixed_apply_is_atomic_and_hidden_cancel_rebind_preserve_all_original_terms() 
         480,
     )
     .unwrap();
-    assert!(pixels.iter().any(|p| p.r != p.g));
+    assert!(pixels.chunks_exact(4).any(|pixel| pixel[0] != pixel[1]));
     child.invoke_cancel();
     assert_eq!(bound.current.borrow().borrow().active_predicates(), before);
     let child = mixed_editor(&ui, &bound, &selected);
@@ -570,7 +570,7 @@ fn populated_or_and_start_or_replay_all_ten_actual_qt_apply_cancel_shapes() {
                 600,
             )
             .unwrap();
-            assert!(pixels.iter().any(|p| p.r != p.g));
+            assert!(pixels.chunks_exact(4).any(|pixel| pixel[0] != pixel[1]));
         }
         if case["accepted"] == true {
             child.invoke_apply();
@@ -805,18 +805,22 @@ fn capture_routes(
     selected: &[hydrus_search::Predicate],
 ) {
     let current = bound.current.borrow().clone();
-    let text = current.borrow().text_context();
-    for (i, predicate) in selected.iter().enumerate() {
-        ui.invoke_active_predicate_clicked(
-            index(ui, &hydrus_search::predicate_text(predicate, &text)),
-            i > 0,
-            false,
-        );
+    let page = current.borrow();
+    let labels = page.predicates();
+    let row = |predicate: &hydrus_search::Predicate| {
+        let position = page
+            .active_predicates()
+            .iter()
+            .position(|value| value == predicate)
+            .unwrap();
+        index(ui, &labels[position])
+    };
+    let selected_rows: Vec<_> = selected.iter().map(row).collect();
+    drop(page);
+    for (i, &row) in selected_rows.iter().enumerate() {
+        ui.invoke_active_predicate_clicked(row, i > 0, false);
     }
-    ui.invoke_active_predicate_menu_opened(index(
-        ui,
-        &hydrus_search::predicate_text(&selected[0], &text),
-    ));
+    ui.invoke_active_predicate_menu_opened(selected_rows[0]);
 }
 
 #[test]
@@ -969,6 +973,11 @@ fn inherited_routes_refuse_hidden_question_child_page_and_retired_main_owners() 
             let mut settings: hydrus_store::settings::GuiSettings =
                 hydrus_store::settings::get(tx.conn())?;
             settings.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(tx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(tx.conn(), &shutdown)?;
             hydrus_store::settings::set(tx.conn(), &settings)
         })
         .unwrap();

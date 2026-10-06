@@ -3502,10 +3502,10 @@ manual save-last-session action and wider debug GUI/style families remain unclai
 
 ## Thumbnail manage > maintenance
 
-- "Do it now" queues the job for the selected files and runs that job type's
-  due work at once, so other files already queued for the same job type may run
-  with them. There is no popup of its progress, and the focused file isn't
-  cleared from the preview first.
+- "Do it now" queues the job for the selected files and restricts immediate
+  due work to that captured selection. If another physical-maintenance worker
+  holds the lease, the queued work is deferred. There is no popup of its
+  progress, and the focused file isn't cleared from the preview first.
 
 ## Shutdown maintenance
 
@@ -3573,6 +3573,17 @@ manual save-last-session action and wider debug GUI/style families remain unclai
   database directory (an imported client's); the reference requires its
   default `client_files`.
 
+- Restoring refuses the store's own directory, including aliases. Startup takes
+  the GUI lock before restoring or opening the database, and restore refuses an
+  active serving process. It stages the database copy before changing the old
+  database or SQLite sidecars, and removes the restart request only after a
+  successful restore. Failed source copies preserve the old database and media.
+  Media mirroring and the final database/sidecar replacement are not one atomic
+  transaction: a later mirror/install failure or process crash can require
+  manual recovery. A retained request can be retried after fixing its source or
+  stopping the serving process, or cancelled by removing
+  `restore_from_backup.txt` while the client is closed.
+
 ## Database > locations
 
 - "manage granularity" runs its progress in an ordinary popup rather than
@@ -3582,3 +3593,38 @@ manual save-last-session action and wider debug GUI/style families remain unclai
 - The rebalance runs from a non-modal popup and the window stays open
   (the reference closes the panel and shows a modal progress dialog).
 
+
+## Validation pass: backup and migration failures
+
+Cancelled backups report an incomplete operation and do not advance the last
+successful backup time. Cancellation is checked between media files; the current
+SQLite backup or file copy finishes before cancellation can be observed.
+Unlike the reference's unconditional completion text, cancellation is not presented
+as a successful backup.
+
+Client granularity migration records the destination chosen by the physical mover,
+including prefixes merged from different storage locations. An in-memory move
+journal restores exact original paths on cancellation, move failure or database
+publication failure; existing destination files are never overwritten. A process
+crash or failure during rollback still requires manual recovery from a backup.
+
+Failed duplicate auto-resolution approvals/denials reload actual pending pairs
+and display the error, preserving unprocessed pairs after a partially committed
+batch. The delayed popup remains a bounded implementation: it is checked between
+chunks and cannot appear while the first long-running chunk is in progress.
+
+## Validation pass: pending dialog ownership
+
+Database maintenance questions and service choices now belong to their Main
+binding. No, Cancel, native close, hidden input, rebind, accepted client exit and
+final Bound release retire pending admission; retained callbacks cannot write or
+displace another dialog. An already admitted worker may finish after its window
+closes. Vacuum additionally requires a currently pending confirmation and eligible
+selection, and accepts it only once. These repairs do not establish complete
+reference parity for every maintenance command.
+
+The shutdown maintenance question treats Cancel/native close as abandoning exit;
+No and timed auto-no register skipped work and continue. Password dialogs accept
+text only at a text step and Yes only at the current clear confirmation. Retired
+password dialogs cannot change the lock. Network-error close callbacks hide only
+their own window, preserving a replacement error.

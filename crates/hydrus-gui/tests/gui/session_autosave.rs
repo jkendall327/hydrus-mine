@@ -98,6 +98,8 @@ fn applied_idle_and_period_controls_drive_real_archives_with_unchanged_suppressi
                     user_seconds: Some(10),
                     mouse_seconds: None,
                     api_seconds: None,
+                    busy_cpu_percent: 50,
+                    busy_cpu_count: None,
                 },
             )
         })
@@ -155,6 +157,8 @@ fn actual_key_and_pointer_events_reset_idle_and_other_startup_stops_autosave() {
                     user_seconds: Some(1800),
                     mouse_seconds: Some(600),
                     api_seconds: None,
+                    busy_cpu_percent: 50,
+                    busy_cpu_count: None,
                 },
             )
         })
@@ -221,6 +225,8 @@ fn auxiliary_native_window_events_reset_only_input_idle_and_preserve_autosave_re
                     user_seconds: Some(1800),
                     mouse_seconds: Some(600),
                     api_seconds: None,
+                    busy_cpu_percent: 50,
+                    busy_cpu_count: None,
                 },
             )?;
             settings::set(
@@ -277,6 +283,8 @@ fn non_page_api_activity_marker_drives_idle_retry_and_expiry_after_reopen() {
                     user_seconds: None,
                     mouse_seconds: None,
                     api_seconds: Some(600),
+                    busy_cpu_percent: 50,
+                    busy_cpu_count: None,
                 },
             )?;
             settings::set(

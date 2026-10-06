@@ -73,6 +73,7 @@ struct Work {
     rows: Vec<usize>,
     status: Arc<std::sync::Mutex<String>>,
     done: Arc<std::sync::atomic::AtomicBool>,
+    error: Arc<std::sync::Mutex<Option<String>>>,
 }
 
 fn now() -> i64 {
@@ -186,6 +187,8 @@ impl State {
             crate::auto_resolution_review::action_progress(approve, 0, pairs.len()),
         ));
         let done = Arc::new(std::sync::atomic::AtomicBool::new(false));
+        let error = Arc::new(std::sync::Mutex::new(None));
+        let thread_error = error.clone();
         let (store, rule_id) = (self.store.clone(), self.rule_id);
         let (thread_status, thread_done) = (status.clone(), done.clone());
         std::thread::spawn(move || {
@@ -196,7 +199,9 @@ impl State {
                 approve,
                 &thread_status,
             ) {
-                eprintln!("could not record the decisions: {e}");
+                *thread_error
+                    .lock()
+                    .unwrap_or_else(std::sync::PoisonError::into_inner) = Some(e.to_string());
             }
             thread_done.store(true, std::sync::atomic::Ordering::Release);
         });
@@ -205,6 +210,7 @@ impl State {
             rows: rows.to_vec(),
             status,
             done,
+            error,
         });
     }
 
@@ -705,7 +711,21 @@ pub(crate) fn open(
                     let Some(work) = state.work.take() else {
                         return;
                     };
-                    state.finish_decide(&work.rows, work.approve);
+                    let error = work
+                        .error
+                        .lock()
+                        .unwrap_or_else(std::sync::PoisonError::into_inner)
+                        .take();
+                    if let Some(error) = error {
+                        // Earlier chunks may have committed. Reload actual pending
+                        // pairs instead of removing every requested row as successful.
+                        state.fetch(PENDING);
+                        state.stale[ACTIONED] = true;
+                        state.stale[DENIED] = true;
+                        state.labels[PENDING] = format!("could not record the decisions: {error}");
+                    } else {
+                        state.finish_decide(&work.rows, work.approve);
+                    }
                     window.set_working(false);
                     window.set_approve_text("approve".into());
                     window.set_deny_text("deny".into());

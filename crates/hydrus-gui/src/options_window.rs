@@ -1667,6 +1667,7 @@ pub(crate) fn open(
         });
     });
     window.on_apply({
+        let media_views_open = media_views.has_open.clone();
         let regex_slot = regex_slot.clone();
         let suggested_slot = suggested_slot.clone();
         let colours_open = colour_list.has_open.clone();
@@ -1691,6 +1692,7 @@ pub(crate) fn open(
                 || !weak
                     .upgrade()
                     .is_some_and(|window| window.window().is_visible())
+                || media_views_open()
                 || colours_open()
                 || reasons_open()
                 || frames_open()

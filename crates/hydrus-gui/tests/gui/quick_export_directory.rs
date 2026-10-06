@@ -5,7 +5,7 @@ use hydrus_store::{
     settings::{self, ExportSettings},
 };
 use slint::{ComponentHandle as _, Model as _};
-use std::{cell::RefCell, path::Path, rc::Rc, sync::Arc};
+use std::{cell::RefCell, path::Path, rc::Rc};
 fn choose(ui: &MainWindow, pane: i32, label: &str) {
     let lines = ui.get_menu_panes().row_data(pane as usize).unwrap().lines;
     let index = lines.iter().position(|row| row.label == label).unwrap();

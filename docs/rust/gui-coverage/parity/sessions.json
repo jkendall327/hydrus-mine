@@ -1019,7 +1019,7 @@
       "before": "missing",
       "proposedStatus": "first_pass",
       "exactBehavior": "Display seven canonical caller defaults in the recorded reverse canonical sort order, exact custom summaries, extended selection and stable sorting; own an isolated manager until outer Apply.",
-      "countAsCompletedLeaf": true,
+      "countAsCompletedLeaf": false,
       "implementationCommit": "7d089e8d",
       "limits": [
         "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
@@ -1084,6 +1084,12 @@
           "kind": "reference_fixture"
         },
         "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      },
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "structural_no_credit",
+        "reason": "Structural parent dialog has original leaf children; remove parent completion credit (scoped first_pass behavior may remain). This ID is absent from the prior validated milestone.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-3.md"
       }
     },
     {
@@ -1381,7 +1387,7 @@
       "before": "missing",
       "proposedStatus": "first_pass",
       "exactBehavior": "List only installed post/watchable/gallery classes with recorded names/type/custom-summary columns; distinguish absent override from an empty override and keep stable class keys through selection/sort/edit/apply.",
-      "countAsCompletedLeaf": true,
+      "countAsCompletedLeaf": false,
       "implementationCommit": "7d089e8d",
       "limits": [
         "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
@@ -1446,6 +1452,12 @@
           "kind": "reference_fixture"
         },
         "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      },
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "structural_no_credit",
+        "reason": "Structural parent dialog has original leaf children; remove parent completion credit (scoped first_pass behavior may remain). This ID is absent from the prior validated milestone.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-3.md"
       }
     },
     {
@@ -1670,7 +1682,7 @@
       "before": "missing",
       "proposedStatus": "first_pass",
       "exactBehavior": "Show recorded named-container summaries and stable profile identity/selection, including updates from the shared staged star menus; persist/reopen only after the parent Options Apply.",
-      "countAsCompletedLeaf": true,
+      "countAsCompletedLeaf": false,
       "implementationCommit": "7d089e8d",
       "limits": [
         "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
@@ -1735,6 +1747,12 @@
           "kind": "reference_fixture"
         },
         "observed": "Actual Qt ImportOptionsPanel: three lists, 31 scripted button steps with exact questions/cancel results; 20 actual caller/simple/URL-context editor lists and fallback sources; real documentation-menu callback; outer staged Apply/reopen, unique names, and recorded single-delete exception."
+      },
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "structural_no_credit",
+        "reason": "Structural parent dialog has original leaf children; remove parent completion credit (scoped first_pass behavior may remain). This ID is absent from the prior validated milestone.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-3.md"
       }
     },
     {
@@ -2294,7 +2312,7 @@
       "proposedStatus": "first_pass",
       "countAsCompletedLeaf": true,
       "implementationCommit": "aa5290f5",
-      "exactBehavior": "Staged integer control defaults to 100 with limits 1\u20131000. Apply caps Pages History visible entries, numbered newest-first, retaining all backing history and Clear History. Cancel leaves the stored value unchanged; legacy import/reopening preserve it; out-of-range model input clamps to the same 1\u20131000 bounds as the recorded Qt spinbox.",
+      "exactBehavior": "Staged integer control defaults to 100 with limits 1–1000. Apply caps Pages History visible entries, numbered newest-first, retaining all backing history and Clear History. Cancel leaves the stored value unchanged; legacy import/reopening preserve it; out-of-range model input clamps to the same 1–1000 bounds as the recorded Qt spinbox.",
       "limits": [],
       "sourceAnchors": [
         {
@@ -2823,7 +2841,7 @@
       }
     }
   ],
-  "completedOriginalLeafCount": 12,
+  "completedOriginalLeafCount": 32,
   "validation": {
     "reference": "Real-client recorder completed cleanly.",
     "local": [
@@ -2843,7 +2861,7 @@
       "name": "ImportOptionsPanelWindow",
       "file": "crates/hydrus-gui/ui/import_options_panel.slint",
       "title": "import options",
-      "preferredSize": "980 \u00d7 850",
+      "preferredSize": "980 × 850",
       "controls": [
         "Help submenu: open tl;dr / open the import options help",
         "keep this panel simple :^)",
@@ -3040,10 +3058,10 @@
       "name": "NamespaceSortsWindow",
       "file": "crates/hydrus-gui/ui/namespace_sorts.slint",
       "title": "namespace file sorting / Enter text / select tag view to sort on",
-      "preferredSize": "760 \u00d7 580",
+      "preferredSize": "760 × 580",
       "controls": [
         "Ordered ListTable with extended selection and row activation",
-        "add / edit / \u2191 / X / \u2193",
+        "add / edit / ↑ / X / ↓",
         "Exact text question with escaped current/default namespaces",
         "Advanced display/multiple-media/single-media tag-view choices",
         "Frozen Remove N selected? Yes/No question",

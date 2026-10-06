@@ -53,8 +53,11 @@ pub(super) fn owned() -> (
     Vec<(HashId, std::path::PathBuf)>,
 ) {
     let (dirs, store) = super::namespace_sorts::store();
+    let database = store.dir().join(hydrus_store::store::DB_FILE_NAME);
+    // The transfer updates storage locations directly; reopen their snapshot.
+    drop(store);
     transfer_media(
-        &store,
+        &database,
         &dirs[1].path().join("owned-media"),
         TransferMode::Copy,
     )
@@ -261,6 +264,8 @@ fn unchecked_normal_flags_block_real_workers_but_current_live_idle_admits_both()
                     user_seconds: None,
                     mouse_seconds: None,
                     api_seconds: None,
+                    busy_cpu_percent: 50,
+                    busy_cpu_count: None,
                 },
             )
         })
@@ -327,6 +332,11 @@ fn normal_time_apply_reaches_waiting_consumer_and_terminal_owner_wakes_without_s
         .write(|ctx| {
             let mut gui: settings::GuiSettings = settings::get(ctx.conn())?;
             gui.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(ctx.conn(), &shutdown)?;
             settings::set(ctx.conn(), &gui)
         })
         .unwrap();

@@ -203,7 +203,7 @@ fn real_saved_policy_preserves_current_media_and_intervals_then_retires_final_bo
     child_owned.invoke_choice_chosen(row(&child_owned, BYTES), 0);
     child_owned.invoke_number_edited(row(&child_owned, PERCENT), 10);
     child_owned.invoke_field_edited(row(&child_owned, TIMEOUT), 2, 10);
-    weights.invoke_cancel();
+    weights.invoke_action("cancel".into());
     assert!(bound.options_suggested_tags_slot.weights.borrow().is_none());
     child_owned.invoke_apply();
     assert_eq!(

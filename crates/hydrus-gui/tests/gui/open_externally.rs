@@ -590,7 +590,14 @@ fn saved_routes_reach_main_and_live_viewer_os_fallback_and_missing_owned_notice(
     let mut gui_settings = store.read(settings::get::<settings::GuiSettings>).unwrap();
     gui_settings.confirm_exit = true;
     store
-        .write(move |ctx| settings::set(ctx.conn(), &gui_settings))
+        .write(move |ctx| {
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(ctx.conn(), &shutdown)?;
+            settings::set(ctx.conn(), &gui_settings)
+        })
         .unwrap();
     ui.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);

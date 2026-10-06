@@ -2,13 +2,13 @@
   "schema_version": 1,
   "agent": "namespace-colour-edit",
   "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
-  "proposed_completed_count": 2,
+  "proposed_completed_count": 0,
   "claims": [
     {
       "id": "audit-options-tag-presentation-namespace-colours-edit",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Options namespace colours edit: each selected entry (defaults included) opens the colour picker in turn, OK recolours it in the Options draft, Cancel keeps it.",
       "source": [
         "crates/hydrus-gui-model/src/namespace_colours.rs",
@@ -20,13 +20,19 @@
       ],
       "limits": [
         "Native RGB spin picker rather than QColorDialog."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Direct model recolour assertion lacks newly claimed sequential picker acceptance/cancellation/consumer reference evidence.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-5.md"
+      }
     },
     {
       "id": "audit-options-tag-presentation-namespace-colours-namespace-colours-editor",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Options namespace colours edit: each selected entry (defaults included) opens the colour picker in turn, OK recolours it in the Options draft, Cancel keeps it.",
       "source": [
         "crates/hydrus-gui-model/src/namespace_colours.rs",
@@ -38,7 +44,13 @@
       ],
       "limits": [
         "Native RGB spin picker rather than QColorDialog."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Direct model recolour assertion lacks newly claimed sequential picker acceptance/cancellation/consumer reference evidence.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-5.md"
+      }
     }
   ]
 }

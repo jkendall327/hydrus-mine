@@ -37,7 +37,7 @@ fn menu(ui: &MainWindow, title: &str, label: &str) {
     ui.invoke_menu_title_pressed(i32::try_from(title).unwrap(), 20.0, 22.0);
     let lines = ui.get_menu_panes().row_data(0).unwrap().lines;
     let index = lines.iter().position(|value| value.label == label).unwrap();
-    assert!(lines.row_data(index).unwrap().enabled);
+    assert!(lines.row_data(index).unwrap().usable);
     ui.invoke_menu_line_clicked(0, i32::try_from(index).unwrap(), 0.0, 0.0, 0.0);
 }
 fn open(ui: &MainWindow, bound: &hydrus_gui::Bound) -> OptionsWindow {
@@ -642,7 +642,11 @@ fn fresh_local_membership_live_roles_and_existing_owned_windows_paint_without_pa
     .unwrap();
     viewer.set_media(slint::Image::default());
     viewer.set_sharp_shown(false);
-    viewer.set_index_background_text("1/1".into());
+    // The passive index is computed from the same public inputs used by the viewer.
+    viewer.set_draw_index_background(true);
+    viewer.set_caption("1/1".into());
+    viewer.set_zoom_text("100%".into());
+    assert_eq!(viewer.get_index_background_text().as_str(), "100% - 1/1");
     let viewer_pixels = headless::render(&windows.get(viewer_index).unwrap(), 800, 600);
     for (role, minimum) in [(10, 1000), (11, 4)] {
         let rgb = saved.active()[role].0;

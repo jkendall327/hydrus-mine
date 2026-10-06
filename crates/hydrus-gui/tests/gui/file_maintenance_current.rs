@@ -1,4 +1,5 @@
 //! Real menu, queue writes/runners/toaster and named URL destination ownership.
+use hydrus_core::HashId;
 use hydrus_gui::{Bound, FileMaintenanceWindow, MainWindow, Pages, bind, headless};
 use hydrus_store::{
     Store,
@@ -19,13 +20,13 @@ fn pump(mut ready: impl FnMut() -> bool) {
     }
     assert!(ready(), "owned asynchronous work did not settle");
 }
-fn seed(store: &Arc<Store>) -> Vec<i64> {
+fn seed(store: &Arc<Store>) -> Vec<HashId> {
     let files = store
         .read(|conn| {
             let mut query = conn.prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT 3")?;
             Ok(query
                 .query_map([], |row| row.get(0))?
-                .collect::<rusqlite::Result<Vec<i64>>>()?)
+                .collect::<rusqlite::Result<Vec<HashId>>>()?)
         })
         .unwrap();
     let captured = files.clone();
@@ -335,6 +336,11 @@ fn pending_exit_decline_and_accepted_exit_are_owned_boundaries_for_review_callba
             let mut settings: hydrus_store::settings::GuiSettings =
                 hydrus_store::settings::get(ctx.conn())?;
             settings.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(ctx.conn(), &shutdown)?;
             hydrus_store::settings::set(ctx.conn(), &settings)
         })
         .unwrap();

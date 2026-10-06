@@ -347,10 +347,10 @@ fn actual_advanced_delete_action_reason_defaults_and_retained_owners_follow_live
         )
         .unwrap();
         let action = w.get_selected_action() as usize;
-        let settings::DeletionAction::Domain(key) = &draft.choices[action].action else {
+        let settings::DeletionAction::Domain(domain_key) = &draft.choices[action].action else {
             panic!("only logical local-domain deletion is replayed")
         };
-        let domain = store.snapshot().services.by_key(key).unwrap().id;
+        let domain = store.snapshot().services.by_key(domain_key).unwrap().id;
         assert!(current(&store, file, domain));
         if case["kind"] == "delete_reason" {
             assert!(w.get_reason_enabled());

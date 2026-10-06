@@ -2,13 +2,13 @@
   "schema_version": 1,
   "agent": "database-vacuum",
   "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
-  "proposed_completed_count": 1,
+  "proposed_completed_count": 0,
   "claims": [
     {
       "id": "audit-media-database-maintenance-vacuum-run",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database > db maintenance > review vacuum data: the reference's explanation, a row per database file with size, internal free space and percentage, last vacuum ('never done' / time ago), 'can vacuum?' ('yes!' or CheckHasSpaceForDBTransaction's reason) and GetApproxVacuumIntoDuration's 'N to M' estimate; 'vacuum' enabled when every selected file can be vacuumed, asks 'Do vacuum now? Estimated time to vacuum is ...' (do it/forget it), then closes and vacuums off the UI thread with the 'database maintenance - vacuum' popup, recording vacuum_timestamps.",
       "source": [
         "crates/hydrus-store/src/vacuum.rs",
@@ -23,7 +23,13 @@
       ],
       "limits": [
         "One database file; in-place VACUUM with the store paused rather than VACUUM INTO and swap."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Unguarded true-answer callback can run without a live pending question, repeatedly, after close/hide or against a successor; no native ownership/decline/failure regression or recorded reference GUI fixture. Partial/0 pending repair.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-4.md"
+      }
     }
   ]
 }

@@ -237,7 +237,14 @@ fn hidden_cancelled_rebound_and_accepted_closed_main_cannot_accept_a_retained_si
     let mut gui: settings::GuiSettings = store.read(settings::get).unwrap();
     gui.confirm_exit = true;
     store
-        .write(move |writer| settings::set(writer.conn(), &gui))
+        .write(move |writer| {
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(writer.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(writer.conn(), &shutdown)?;
+            settings::set(writer.conn(), &gui)
+        })
         .unwrap();
     ui.window().dispatch_event(WindowEvent::CloseRequested);
     assert!(!ui.get_question().is_empty());

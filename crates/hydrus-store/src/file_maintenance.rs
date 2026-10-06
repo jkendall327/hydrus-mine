@@ -317,14 +317,44 @@ pub fn due_jobs_of(
     now_s: i64,
     wanted: &dyn Fn(JobType) -> bool,
 ) -> Result<Vec<(HashId, Vec<JobType>)>> {
+    due_jobs_inner(conn, now_s, wanted, None)
+}
+
+/// Due jobs restricted to the captured files before applying the 256-file batch
+/// limit. An empty selection admits no work; unrelated backlog cannot displace it.
+pub fn due_jobs_of_files(
+    conn: &Connection,
+    now_s: i64,
+    wanted: &dyn Fn(JobType) -> bool,
+    files: &[HashId],
+) -> Result<Vec<(HashId, Vec<JobType>)>> {
+    due_jobs_inner(conn, now_s, wanted, Some(files))
+}
+
+fn due_jobs_inner(
+    conn: &Connection,
+    now_s: i64,
+    wanted: &dyn Fn(JobType) -> bool,
+    files: Option<&[HashId]>,
+) -> Result<Vec<(HashId, Vec<JobType>)>> {
+    let selected = files.map(crate::master::id_array);
     for job in JobType::RUN_ORDER.into_iter().filter(|&j| wanted(j)) {
-        let hash_ids: Vec<HashId> = conn
-            .prepare_cached(
+        let hash_ids: Vec<HashId> = if let Some(selected) = &selected {
+            conn.prepare_cached(
+                "SELECT hash_id FROM file_maintenance_jobs
+                 WHERE job_type = ?1 AND time_can_start < ?2
+                 AND hash_id IN rarray(?3) LIMIT 256",
+            )?
+            .query_map(params![job.code(), now_s, selected], |r| r.get(0))?
+            .collect::<rusqlite::Result<_>>()?
+        } else {
+            conn.prepare_cached(
                 "SELECT hash_id FROM file_maintenance_jobs
                  WHERE job_type = ?1 AND time_can_start < ?2 LIMIT 256",
             )?
             .query_map(params![job.code(), now_s], |r| r.get(0))?
-            .collect::<rusqlite::Result<_>>()?;
+            .collect::<rusqlite::Result<_>>()?
+        };
         if hash_ids.is_empty() {
             continue;
         }
@@ -617,6 +647,55 @@ pub fn jobs_for(conn: &Connection, hash_id: HashId) -> Result<HashSet<JobType>> 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn selected_admission_precedes_batch_limit_and_preserves_due_type_rules() {
+        let mut conn = Connection::open_in_memory().unwrap();
+        crate::schema::configure(&conn).unwrap();
+        crate::schema::migrate(&mut conn).unwrap();
+        let backlog: Vec<_> = (1..=300).map(HashId).collect();
+        add_jobs(&conn, &backlog, JobType::HasTransparency, 0).unwrap();
+        add_jobs(&conn, &[HashId(1000)], JobType::HasTransparency, 0).unwrap();
+        add_jobs(&conn, &[HashId(1000), HashId(1001)], JobType::HasExif, 0).unwrap();
+        add_jobs(&conn, &[HashId(1001)], JobType::HasTransparency, 200).unwrap();
+        let selected = [HashId(1000), HashId(1001), HashId(1000)];
+        let wanted = |job| matches!(job, JobType::HasTransparency | JobType::HasExif);
+        let global = due_jobs_of(&conn, 200, &wanted).unwrap();
+        assert_eq!(global.len(), 256);
+        assert!(
+            global.iter().all(|(id, _)| backlog.contains(id)),
+            "selection lies beyond the global batch"
+        );
+        assert_eq!(
+            due_jobs_of_files(&conn, 200, &wanted, &selected).unwrap(),
+            [(
+                HashId(1000),
+                vec![JobType::HasTransparency, JobType::HasExif]
+            )]
+        );
+        assert!(
+            due_jobs_of_files(&conn, 200, &wanted, &[])
+                .unwrap()
+                .is_empty()
+        );
+        assert!(
+            due_jobs_of_files(&conn, 200, &|job| job == JobType::OtherHashes, &selected)
+                .unwrap()
+                .is_empty()
+        );
+        assert_eq!(
+            due_jobs_of_files(&conn, 200, &|job| job == JobType::HasExif, &selected).unwrap(),
+            [
+                (HashId(1000), vec![JobType::HasExif]),
+                (HashId(1001), vec![JobType::HasExif])
+            ]
+        );
+        assert_eq!(
+            job_counts(&conn, 200).unwrap()[&JobType::HasTransparency],
+            (301, 1),
+            "reading a selected batch must not consume backlog or future jobs"
+        );
+    }
 
     #[test]
     fn captured_cancel_clears_due_and_future_types_and_keeps_unselected_work() {

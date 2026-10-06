@@ -2,13 +2,13 @@
   "schema_version": 1,
   "agent": "database-backup",
   "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
-  "proposed_completed_count": 3,
+  "proposed_completed_count": 0,
   "claims": [
     {
       "id": "audit-media-database-backup-path",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database > backup: set up/change the backup location with the reference's explanation, directory checks and questions; update database backup (with last-time label) asking, saving the session and backing up the database plus mirroring media in a cancellable popup; restore from a database backup picking a directory, asking, and restarting to restore before the store opens; the multiple-locations note.",
       "source": [
         "crates/hydrus-store/src/backup.rs",
@@ -25,13 +25,19 @@
       ],
       "limits": [
         "One native database file instead of the reference's four; online backup without closing the database; non-modal progress."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "No reference-backed native picker/cancel/failure/restart replay; restore runs before the GUI lock, removes its request early and deletes the live database before copying. Backup cancellation also reports success at the reviewed checkpoint.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-3.md"
+      }
     },
     {
       "id": "audit-media-database-backup-update",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database > backup: set up/change the backup location with the reference's explanation, directory checks and questions; update database backup (with last-time label) asking, saving the session and backing up the database plus mirroring media in a cancellable popup; restore from a database backup picking a directory, asking, and restarting to restore before the store opens; the multiple-locations note.",
       "source": [
         "crates/hydrus-store/src/backup.rs",
@@ -48,13 +54,19 @@
       ],
       "limits": [
         "One native database file instead of the reference's four; online backup without closing the database; non-modal progress."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "No reference-backed native picker/cancel/failure/restart replay; restore runs before the GUI lock, removes its request early and deletes the live database before copying. Backup cancellation also reports success at the reviewed checkpoint.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-3.md"
+      }
     },
     {
       "id": "audit-media-menu-database-restore-from-a-database-backup",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database > backup: set up/change the backup location with the reference's explanation, directory checks and questions; update database backup (with last-time label) asking, saving the session and backing up the database plus mirroring media in a cancellable popup; restore from a database backup picking a directory, asking, and restarting to restore before the store opens; the multiple-locations note.",
       "source": [
         "crates/hydrus-store/src/backup.rs",
@@ -71,7 +83,13 @@
       ],
       "limits": [
         "One native database file instead of the reference's four; online backup without closing the database; non-modal progress."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "No reference-backed native picker/cancel/failure/restart replay; restore runs before the GUI lock, removes its request early and deletes the live database before copying. Backup cancellation also reports success at the reviewed checkpoint.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-3.md"
+      }
     }
   ]
 }

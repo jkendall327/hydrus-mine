@@ -302,6 +302,11 @@ fn stale_file_hidden_closed_reshown_and_rebound_viewers_cannot_launch() {
         .write(|ctx| {
             let mut policy: GuiSettings = settings::get(ctx.conn())?;
             policy.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(ctx.conn(), &shutdown)?;
             settings::set(ctx.conn(), &policy)
         })
         .unwrap();

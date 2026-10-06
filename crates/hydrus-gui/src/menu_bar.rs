@@ -91,6 +91,8 @@ pub(crate) struct Hooks {
     pub backup: Rc<dyn Fn(hydrus_gui_model::database_backup::Action)>,
     /// Open Database > locations.
     pub locations: Rc<dyn Fn()>,
+    /// Open this binding's owned vacuum review.
+    pub review_vacuum: Rc<dyn Fn()>,
     pub file_history: Rc<dyn Fn()>,
     pub file_maintenance: Rc<dyn Fn()>,
     /// Toggle watcher or other recognised clipboard URL imports.
@@ -823,7 +825,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             let report = hooks.pages.borrow().weight_report();
             crate::debug_actions::message("Information", &report);
         }
-        Command::ReviewVacuum => crate::vacuum_review_window::open(&store),
+        Command::ReviewVacuum => (hooks.review_vacuum)(),
         Command::TagSyncReview => crate::tag_sync_review_window::open(&store),
         Command::TagDisplaySyncNow => {
             let now = hydrus_core::time::TimestampMs::now().millis() / 1000;

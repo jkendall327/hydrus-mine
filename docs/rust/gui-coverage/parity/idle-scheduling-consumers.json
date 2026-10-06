@@ -2,13 +2,13 @@
   "schema_version": 1,
   "agent": "idle-scheduling-consumers",
   "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
-  "proposed_completed_count": 3,
+  "proposed_completed_count": 0,
   "claims": [
     {
       "id": "audit-media-menu-database-work-file-jobs-during-idle-time",
       "before": "partial",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database > file maintenance > work file jobs during idle time, the duplicates preparation tab's search during idle/normal time, and the auto-resolution idle/normal switches now reach a consumer that tells idle from normal time: hydrus serve reads the client's published idle state (idle_state marker) and paces each loop with its idle or normal setting (Pace::choose), so idle-only work no longer runs during normal use.",
       "source": [
         "crates/hydrus-cli/src/main.rs",
@@ -20,13 +20,19 @@
       ],
       "limits": [
         "Idle state comes from the GUI's published marker; a server without a client is never idle."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Source reads idle marker and chooses gates, but no reference-backed execution asserts each original similar-search/file-jobs/auto-resolution worker consumer across idle/normal transitions.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-1.md"
+      }
     },
     {
       "id": "audit-media-preparation-scheduling",
       "before": "partial",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database > file maintenance > work file jobs during idle time, the duplicates preparation tab's search during idle/normal time, and the auto-resolution idle/normal switches now reach a consumer that tells idle from normal time: hydrus serve reads the client's published idle state (idle_state marker) and paces each loop with its idle or normal setting (Pace::choose), so idle-only work no longer runs during normal use.",
       "source": [
         "crates/hydrus-cli/src/main.rs",
@@ -38,13 +44,19 @@
       ],
       "limits": [
         "Idle state comes from the GUI's published marker; a server without a client is never idle."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Source reads idle marker and chooses gates, but no reference-backed execution asserts each original similar-search/file-jobs/auto-resolution worker consumer across idle/normal transitions.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-1.md"
+      }
     },
     {
       "id": "audit-media-rule-sidebar-scheduling",
       "before": "partial",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database > file maintenance > work file jobs during idle time, the duplicates preparation tab's search during idle/normal time, and the auto-resolution idle/normal switches now reach a consumer that tells idle from normal time: hydrus serve reads the client's published idle state (idle_state marker) and paces each loop with its idle or normal setting (Pace::choose), so idle-only work no longer runs during normal use.",
       "source": [
         "crates/hydrus-cli/src/main.rs",
@@ -56,7 +68,13 @@
       ],
       "limits": [
         "Idle state comes from the GUI's published marker; a server without a client is never idle."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Source reads idle marker and chooses gates, but no reference-backed execution asserts each original similar-search/file-jobs/auto-resolution worker consumer across idle/normal transitions.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-1.md"
+      }
     }
   ]
 }

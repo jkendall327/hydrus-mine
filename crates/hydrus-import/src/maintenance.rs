@@ -106,6 +106,31 @@ impl FileImporter {
             limit,
             max_weight,
             wanted,
+            None,
+            &|| true,
+            MaintenanceCallbacks {
+                before_batch: &mut || Ok(()),
+                before_job: &mut |_| {},
+                committed: &mut |_| {},
+            },
+        )
+    }
+
+    /// Run only captured files, as the thumbnail menu's `RunJobImmediately`
+    /// does. Selection applies at queue admission, before any batch limit.
+    /// Like ordinary maintenance, this pass defers if the file lease is busy.
+    pub fn run_file_maintenance_for_files(
+        &self,
+        files: &[HashId],
+        limit: u64,
+        max_weight: u64,
+        wanted: &dyn Fn(JobType) -> bool,
+    ) -> Result<MaintenanceReport> {
+        self.run_file_maintenance_inner::<false>(
+            limit,
+            max_weight,
+            wanted,
+            Some(files),
             &|| true,
             MaintenanceCallbacks {
                 before_batch: &mut || Ok(()),
@@ -148,7 +173,35 @@ impl FileImporter {
         continue_work: &dyn Fn() -> bool,
         callbacks: MaintenanceCallbacks<'_>,
     ) -> Result<MaintenanceReport> {
-        self.run_file_maintenance_inner::<true>(limit, max_weight, wanted, continue_work, callbacks)
+        self.run_file_maintenance_inner::<true>(
+            limit,
+            max_weight,
+            wanted,
+            None,
+            continue_work,
+            callbacks,
+        )
+    }
+
+    /// A selected forced pass with the same lease wait, cancellation and commit
+    /// hooks as the global forced pass. Other files' due work stays queued.
+    pub fn run_file_maintenance_for_files_with_callbacks(
+        &self,
+        files: &[HashId],
+        limit: u64,
+        max_weight: u64,
+        wanted: &dyn Fn(JobType) -> bool,
+        continue_work: &dyn Fn() -> bool,
+        callbacks: MaintenanceCallbacks<'_>,
+    ) -> Result<MaintenanceReport> {
+        self.run_file_maintenance_inner::<true>(
+            limit,
+            max_weight,
+            wanted,
+            Some(files),
+            continue_work,
+            callbacks,
+        )
     }
 
     fn run_file_maintenance_inner<const WAIT: bool>(
@@ -156,6 +209,7 @@ impl FileImporter {
         limit: u64,
         max_weight: u64,
         wanted: &dyn Fn(JobType) -> bool,
+        files: Option<&[HashId]>,
         continue_work: &dyn Fn() -> bool,
         callbacks: MaintenanceCallbacks<'_>,
     ) -> Result<MaintenanceReport> {
@@ -189,9 +243,10 @@ impl FileImporter {
         let mut attempted = 0;
         while report.total() < limit && report.weight < max_weight {
             (before_batch)()?;
-            let due: Vec<(HashId, Vec<JobType>)> = self
-                .store
-                .read(|conn| file_maintenance::due_jobs_of(conn, now_s(), wanted))?;
+            let due: Vec<(HashId, Vec<JobType>)> = self.store.read(|conn| match files {
+                Some(files) => file_maintenance::due_jobs_of_files(conn, now_s(), wanted, files),
+                None => file_maintenance::due_jobs_of(conn, now_s(), wanted),
+            })?;
             if due.is_empty() {
                 break;
             }

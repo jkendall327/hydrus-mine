@@ -1,0 +1,72 @@
+[
+  {
+    "manifest": "docs/rust/gui-coverage/parity/clear-orphan-files.json",
+    "id": "audit-media-database-clear-orphan-files",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "No reference-backed orphan safety/cancel/delete workflow assertions; sole Store test creates no kept file."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-granularity.json",
+    "id": "audit-media-database-locations-granularity-client",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Original source has split-location publication and rollback defects; reference-backed native cancel/pause/offline workflow assertions absent. Root source repair separately pending review/CI."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-granularity.json",
+    "id": "audit-media-database-locations-granularity-offline",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Original source has split-location publication and rollback defects; reference-backed native cancel/pause/offline workflow assertions absent. Root source repair separately pending review/CI."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/file-maintenance-new-work.json",
+    "id": "audit-media-database-maintenance-search",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "No reference-backed workflow assertions; retained hidden/new-tab callbacks can schedule jobs after owner closes."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/file-maintenance-new-work.json",
+    "id": "audit-media-database-maintenance-schedule",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "No reference-backed workflow assertions; retained hidden/new-tab callbacks can schedule jobs after owner closes."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/namespace-colour-edit.json",
+    "id": "audit-options-tag-presentation-namespace-colours-edit",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Direct model recolour assertion lacks newly claimed sequential picker acceptance/cancellation/consumer reference evidence."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/namespace-colour-edit.json",
+    "id": "audit-options-tag-presentation-namespace-colours-namespace-colours-editor",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Direct model recolour assertion lacks newly claimed sequential picker acceptance/cancellation/consumer reference evidence."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/options-reference-rows.json",
+    "id": "audit-options-media-playback-mpv-debug-loop-playlist-instead-of-loop-file-in-mpv",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Rows/defaults are recorded but mpv consumer command, playback/reopen/cancel/failure assertions absent."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/options-reference-rows.json",
+    "id": "audit-options-media-playback-mpv-preferred-audio-output-device",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Rows/defaults are recorded but mpv consumer command, playback/reopen/cancel/failure assertions absent."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/urls-force-metadata-refetch.json",
+    "id": "audit-media-context-missing-refetch",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "No actual reference recording or consumer regression; cited test checks menu labels only."
+  }
+]

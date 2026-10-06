@@ -2,13 +2,13 @@
   "schema_version": 1,
   "agent": "thumbnail-maintenance",
   "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
-  "proposed_completed_count": 2,
+  "proposed_completed_count": 0,
   "claims": [
     {
       "id": "audit-media-context-missing-maintenance",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Thumbnail menu manage > maintenance (all 27 file maintenance jobs in the reference order with its questions, now/later over 50 files, running through the native file maintenance importer) and manage > viewing stats > clear for the selected files.",
       "source": [
         "crates/hydrus-gui-model/src/thumbnail_maintenance.rs",
@@ -22,13 +22,19 @@
       ],
       "limits": [
         "Run-now runs that job type's whole due queue; no progress popup."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native selected-maintenance drains arbitrary same-type global backlog; both maintenance/stats questions accept retained affirmative callbacks after cancel. Model tests cover labels/questions only, not native selected IDs/cancel/reopen.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-1.md"
+      }
     },
     {
       "id": "audit-media-context-missing-stats",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Thumbnail menu manage > maintenance (all 27 file maintenance jobs in the reference order with its questions, now/later over 50 files, running through the native file maintenance importer) and manage > viewing stats > clear for the selected files.",
       "source": [
         "crates/hydrus-gui-model/src/thumbnail_maintenance.rs",
@@ -42,7 +48,13 @@
       ],
       "limits": [
         "Run-now runs that job type's whole due queue; no progress popup."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native selected-maintenance drains arbitrary same-type global backlog; both maintenance/stats questions accept retained affirmative callbacks after cancel. Model tests cover labels/questions only, not native selected IDs/cancel/reopen.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-1.md"
+      }
     }
   ]
 }

@@ -168,7 +168,7 @@ fn options_cancel_hidden_modal_save_reopen_and_live_hidden_viewer_warming_leave_
     modal.invoke_number_edited(row(&modal, NEXT), 2);
     modal.invoke_number_edited(row(&modal, PREVIOUS), 2);
     modal.invoke_number_edited(row(&modal, PERCENT), 10);
-    weights.invoke_cancel();
+    weights.invoke_action("cancel".into());
     modal.invoke_apply();
     assert_eq!(store.read(viewer_prefetch::load).unwrap().next, 0);
     let saved = options(&ui, &bound);

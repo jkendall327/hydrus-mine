@@ -202,6 +202,11 @@ fn physical_media_order_changes_results_and_native_pointer_still_opens_and_choos
         .write(|writer| {
             let mut value: settings::GuiSettings = settings::get(writer.conn())?;
             value.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(writer.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(writer.conn(), &shutdown)?;
             settings::set(writer.conn(), &value)
         })
         .unwrap();
@@ -422,6 +427,11 @@ fn options_staging_saved_policy_bubbling_and_retired_roots_are_owned() {
         .write(|writer| {
             let mut value: settings::GuiSettings = settings::get(writer.conn())?;
             value.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(writer.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(writer.conn(), &shutdown)?;
             settings::set(writer.conn(), &value)
         })
         .unwrap();

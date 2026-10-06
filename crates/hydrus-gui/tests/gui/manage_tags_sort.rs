@@ -352,7 +352,14 @@ fn rebind_and_accepted_exit_retire_visible_sort_children_and_old_viewer_launcher
     let mut gui: hydrus_store::settings::GuiSettings = store.read(settings::get).unwrap();
     gui.confirm_exit = true;
     store
-        .write(move |ctx| settings::set(ctx.conn(), &gui))
+        .write(move |ctx| {
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(ctx.conn(), &shutdown)?;
+            settings::set(ctx.conn(), &gui)
+        })
         .unwrap();
     ui.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
