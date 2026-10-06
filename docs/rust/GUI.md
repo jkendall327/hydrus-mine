@@ -4521,9 +4521,9 @@ Validation repairs now invalidate cached thumbnail colours when the stylesheet
 changes and hide an exact retired colour picker on repeated Cancel. Wheel
 controls publish their initial measured geometry as well as later changes.
 These repairs passed full Linux replay at `56b93ae49` (696 GUI tests).
-Completion credit remains limited to the 86 independently reviewed original
-leaves banked across five checkpoints, with the latest
-[326-item checkpoint](gui-coverage/checkpoints/9bec37964/README.md);
+Completion credit remains limited to the 91 independently reviewed original
+leaves banked across six checkpoints, with the latest
+[331-item checkpoint](gui-coverage/checkpoints/c768fef48/README.md);
 other repaired behavior retains its scoped assessment.
 
 The two Speed and Memory cache-percentage helpers now have their own wrapped
@@ -4547,17 +4547,19 @@ Full Linux execution at `9bec37964` and fresh independent review approve these
 seven scoped leaves: 326 signed off, 86 new across five October 6 checkpoints,
 and 49 candidates pending. All 697 GUI tests pass without ignored tests.
 
-The next bounded validation batch moves the three long idle-ignore captions onto
+The five-candidate validation batch moves the three long idle-ignore captions onto
 separate lines beneath their numeric controls; other Noneable-number layouts
 stay unchanged. New regressions measure actual caption/control bounds and
 checked/enabled/value states at the preferred and existing capture sizes.
 Browsing/API thresholds remain the two selected idle candidates; mouse-idle
 system-wide observation remains outside scope. Full Linux execution and fresh
-render review are required before any additional completion credit.
+independent render review at `c768fef48` approve the two selected thresholds.
 
 Preview minimum/maximum replay now exports freshly opened default and saved
 Options states while retaining its controlled viewing clock and interval
 assertions. Thumbnail-cache replay exports the actual nested clear-action menu
 and a reloaded consumer after asserting immediate clearing without a question
-or preference write. These three candidates remain pending the next full Linux
-validation and independent rendered review.
+or preference write. Full Linux validation and independent rendered review
+approve these three candidates at `c768fef48`. The checkpoint publishes 331
+signed-off leaves, 91 new across six October 6 checkpoints, with 44 pending;
+all 698 GUI and 67 media tests pass. The earlier compile-only failure is retained.

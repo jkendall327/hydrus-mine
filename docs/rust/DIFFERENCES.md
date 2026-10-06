@@ -3636,9 +3636,9 @@ Validation repairs now invalidate cached thumbnail colours when the stylesheet
 changes and hide an exact retired colour picker on repeated Cancel. Wheel
 controls publish their initial measured geometry as well as later changes.
 These repairs passed full Linux replay at `56b93ae49` (696 GUI tests).
-Completion credit remains limited to the 86 independently reviewed original
-leaves banked across five checkpoints, with the latest
-[326-item checkpoint](gui-coverage/checkpoints/9bec37964/README.md);
+Completion credit remains limited to the 91 independently reviewed original
+leaves banked across six checkpoints, with the latest
+[331-item checkpoint](gui-coverage/checkpoints/c768fef48/README.md);
 other repaired behavior retains its scoped assessment.
 
 Speed and Memory helper overlap and favourites capture setup are repaired and
@@ -3662,15 +3662,24 @@ pending. The preceding paragraph records the earlier checkpoint; picker and
 checkbox blockers are now resolved. Idle clipping and clear-action evidence
 remain in the next bounded batch.
 
-The next idle layout repair preserves complete ignore captions and their existing
+The idle layout repair preserves complete ignore captions and their existing
 None/enabled interlocks. Its two-line presentation differs from Qt's horizontal
 Noneable control. Only browsing/API threshold candidates are under validation;
 mouse movement is still observed in application windows rather than globally.
-No additional approval is claimed before full Linux replay and render review.
+Full Linux replay and fresh independent review at `c768fef48` approve only the
+two selected thresholds. Constructor-state observations do not claim physical
+checkbox input, and the unrelated CPU ignore caption remains clipped.
 
-The next preview and thumbnail-clear evidence additions do not change product
+The preview and thumbnail-clear evidence additions do not change product
 behavior. Preview captures show freshly bound default/saved Options states;
 controlled interval timing, cap-before-minimum and cancellation checks remain.
 The clear-menu and reloaded-thumbnail captures supplement cache-state assertions;
 images alone do not establish access-history reset, generation or memory parity.
 Qt/native storage accounting and preview-acceptance differences remain scoped.
+
+Full Linux execution and fresh independent review at `c768fef48` approve the
+two preview controls and clear-thumbnail-cache action alongside the two idle
+thresholds: 331 signed off, 91 new across six October 6 checkpoints, 44 pending.
+The earlier compile-only E0373 failure is retained; the repaired run passes all
+698 GUI and 67 media tests. No matching Qt Options/menu images or full-pixel
+parity are claimed. Prior checkpoint paragraphs remain historical records.

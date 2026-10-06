@@ -3,12 +3,12 @@
 The pass started from merged source `3702cdbee99473cfd7af073aa044fe847f78f405`.
 The prior checkpoint validated `028fd72f` (240 original leaves).
 
-The latest October 6 checkpoint validates `9bec37964` and publishes **326 signed-off
-original leaves: 7 new in this batch, 86 across today's five checkpoints,
-49 candidates still pending**. Full Linux validation
-passed, including all 697 native GUI tests, and the selected seven received fresh
+The latest October 6 checkpoint validates `c768fef48` and publishes **331 signed-off
+original leaves: 5 new in this batch, 91 across today's six checkpoints,
+44 candidates still pending**. Full Linux validation
+passed, including all 698 native GUI tests, and the selected five received fresh
 rendered/behavioral review. Windows/macOS are deferred.
-[Durable checkpoint evidence](../checkpoints/9bec37964/README.md) retains the
+[Durable checkpoint evidence](../checkpoints/c768fef48/README.md) retains the
 selected images, logs, hashes and review limits. The notes below preserve the
 chronological investigation and failed-run history.
 Source review of all 153 parity manifests is recorded in `review-1.md` through
@@ -18,7 +18,7 @@ previously validated IDs. Structural parents may retain a scoped assessment but
 receive no completed-leaf credit.
 The supplemental `demotions-render-evidence.json` defers seven further claims
 whose defining native behavior lacks assertions, initially leaving 135 candidates.
-Eighty-six are now published; 49 remain unresolved. No pending candidate receives
+Ninety-one are now published; 44 remain unresolved. No pending candidate receives
 completion credit. Favourites was withheld from the preceding batch because its
 capture disagreed with the selected service; actual dropdown input and fresh
 review resolved that blocker in the preceding checkpoint.
