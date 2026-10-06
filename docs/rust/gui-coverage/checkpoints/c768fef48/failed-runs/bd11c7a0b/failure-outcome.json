@@ -1,0 +1,33 @@
+{
+  "source_commit": "bd11c7a0b00f63c646e03b512bf3e722e7153ec8",
+  "run_id": 37497882722,
+  "conclusion": "failure",
+  "publication_eligible": false,
+  "gui_tests_executed": false,
+  "reason": "GUI test binary compilation failed with E0373 in new idle-test setup; no runtime GUI result or native images",
+  "corrected_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+  "required_jobs": [
+    {
+      "id": 112387028178,
+      "name": "parity-models",
+      "conclusion": "success",
+      "failed_steps": []
+    },
+    {
+      "id": 112387028757,
+      "name": "check",
+      "conclusion": "failure",
+      "failed_steps": [
+        "clippy",
+        "test"
+      ]
+    }
+  ],
+  "files": {
+    "clippy.log": "2e37a6aa56a60c3e21d6574d36b823579ca8dd77281a9acfa9fcd145488d4938",
+    "linux-full.log": "2221a405158b67754a44c0725403d5766b712cea42ce3a79ad4f2d0c4bf08839",
+    "parity-models.log": "16d1e7d0663d3d8ba7eb7cdcb4c367615b0f1fadf2d95ea89c2806d4437ad35c",
+    "run-latest.json": "5f80e33582eaf874a6fc5be442c324959ef923937beb913081415769d532adc7",
+    "jobs-latest.json": "4cc5390ae5b4ce14bf98d054bbe235e3c54a4453d94d389db8db818781eb867a"
+  }
+}

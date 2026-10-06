@@ -1,0 +1,23 @@
+{
+  "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+  "run_id": 37504670811,
+  "conclusion": "success",
+  "validation_scope": "linux",
+  "clippy_seconds": 644,
+  "test_compile_seconds": 731,
+  "gui_tests": {
+    "passed": 698,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 229.18
+  },
+  "media_tests": {
+    "passed": 67,
+    "failed": 0,
+    "ignored": 0,
+    "seconds": 1.01
+  },
+  "native_artifact_id": 11433007448,
+  "native_images": 283,
+  "log_sha256": "37a115da72cd6531d043aa9c4845d651465d00d70d6e26beb073458ddda3d214"
+}

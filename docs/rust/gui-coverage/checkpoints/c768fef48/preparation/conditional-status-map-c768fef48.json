@@ -1,0 +1,347 @@
+{
+  "schema_version": 1,
+  "baseline_source_commit": "19f29307cb1e7bb7d1e35772e0f0107d655852ef",
+  "repair_source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27",
+  "run_id": 37504670811,
+  "state": "exactsource conditional literal mapping NOT applied; fullCI and fresh reviews pending",
+  "input_patch": "/workspace/validation-reviews/next5/subset-preflight-c768fef48/subset-proposal-patch.json",
+  "input_sha256": "a4b88c9f8cabc387fb08531674269a1c37ff51b3117015206c0a23840ef23c86",
+  "selected_ids": [
+    "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-general-browsing-activity-has-occurred-in-the-past",
+    "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-client-api-requests-in-the-past",
+    "audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view",
+    "audit-options-file-viewing-statistics-cap-any-view-on-the-preview-viewer-to-this-maximum-time",
+    "audit-options-help-debug-action-clear-thumbnail-cache"
+  ],
+  "mandatory_preconditions": [
+    "Exact corrected source c768fef48120cdf529656285b8b77aac1a5b8e27, fullLinux run37504670811: strict Linux check plus parity-models must complete green. Source/schema preparation is not execution approval.",
+    "Exact-source strict Linux check fmt/Clippy/full workspace tests/ratchet and parity-models reference/backend tests must pass; source policy defers Windows/macOS.",
+    "Fresh native artifact with defining five controls/clear-action surface; independent actual image+behavior review at exact source/run/hash.",
+    "Root actual native inspection and final normalized patch/source census digest approval; staged browser and preservation checks."
+  ],
+  "conditional_operations": [
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-general-browsing-activity-has-occurred-in-the-past",
+      "field": "limitations",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Native Rust replay and PNG capture are authored, awaiting hosted CI; they were not executed locally.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-general-browsing-activity-has-occurred-in-the-past",
+      "field": "limitations",
+      "original_index": 2,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-general-browsing-activity-has-occurred-in-the-past",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-general-browsing-activity-has-occurred-in-the-past",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-general-browsing-activity-has-occurred-in-the-past",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-client-api-requests-in-the-past",
+      "field": "limitations",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Native Rust replay and PNG capture are authored, awaiting hosted CI; they were not executed locally.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-client-api-requests-in-the-past",
+      "field": "limitations",
+      "original_index": 2,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-client-api-requests-in-the-past",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-client-api-requests-in-the-past",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-client-api-requests-in-the-past",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Authored Rust model/native/store regressions await hosted CI; no local Cargo build, Rust test or mutation run.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "replace_exact_list_item",
+      "before": "Only this exact original Missing control is proposed; no parent or additional preview/focus/rating leaf is promoted.",
+      "conditional_after": "Only this exact original preview minimum control is in scope; no parent or additional preview/focus/rating leaf receives credit.",
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-file-viewing-statistics-cap-any-view-on-the-preview-viewer-to-this-maximum-time",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Authored Rust model/native/store regressions await hosted CI; no local Cargo build, Rust test or mutation run.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-file-viewing-statistics-cap-any-view-on-the-preview-viewer-to-this-maximum-time",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "replace_exact_list_item",
+      "before": "Only the exact original Missing maximum control is proposed. Broader Options/preview/statistics parents remain Partial.",
+      "conditional_after": "Only the exact original preview maximum control is in scope. Broader Options/preview/statistics parents remain Partial.",
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-file-viewing-statistics-cap-any-view-on-the-preview-viewer-to-this-maximum-time",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-file-viewing-statistics-cap-any-view-on-the-preview-viewer-to-this-maximum-time",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-file-viewing-statistics-cap-any-view-on-the-preview-viewer-to-this-maximum-time",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-file-viewing-statistics-cap-any-view-on-the-preview-viewer-to-this-maximum-time",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-help-debug-action-clear-thumbnail-cache",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "replace_exact_list_item",
+      "before": "Exactly three original frozen Missing leaves receive bounded first-pass proposals. Speed and Memory, thumbnail-cache and Help/debug parents remain Partial; no alias/new ID, image/tile/prefetch/video cache or other debug action is counted.",
+      "conditional_after": "Only the original clear-thumbnail-cache action is in scope. Speed and Memory, thumbnail-cache and Help/debug parents remain Partial; no alias/new ID, image/tile/prefetch/video cache or other debug action receives credit from this action.",
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-help-debug-action-clear-thumbnail-cache",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Authored model/store/native regressions await hosted CI. No local Cargo build, Rust tests, mutation tests, pushes or canonical inventory writes were performed.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-help-debug-action-clear-thumbnail-cache",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-help-debug-action-clear-thumbnail-cache",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-help-debug-action-clear-thumbnail-cache",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    },
+    {
+      "id": "audit-options-help-debug-action-clear-thumbnail-cache",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "After actual exact-source fullCI and fresh approval reconcile only pending/preparation wording; retain real behavior/provenance/parent and excluded-control boundaries."
+    }
+  ],
+  "preserved_limitations": [
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-general-browsing-activity-has-occurred-in-the-past",
+      "field": "limitations",
+      "original_index": 0,
+      "before": "This completes only this editable threshold plus its existing native idle eligibility consumer. It does not claim high-CPU maintenance execution, CPU-busy detection, idle enable/debug/shutdown controls, or the parent options family.",
+      "disposition": "preserve exactly"
+    },
+    {
+      "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-no-client-api-requests-in-the-past",
+      "field": "limitations",
+      "original_index": 0,
+      "before": "This completes only this editable threshold plus its existing native idle eligibility consumer. It does not claim high-CPU maintenance execution, CPU-busy detection, idle enable/debug/shutdown controls, or the parent options family.",
+      "disposition": "preserve exactly"
+    },
+    {
+      "id": "audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view",
+      "field": "limitations",
+      "original_index": 1,
+      "before": "The native preview displays full still images and media posters, with failed decodes rejected. Qt accepts media before player decoding. Preview audio/video playback, embed/external buttons, zoom, hovers and ratings remain Partial and are not claimed.",
+      "disposition": "preserve exactly"
+    },
+    {
+      "id": "audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view",
+      "field": "limitations",
+      "original_index": 2,
+      "before": "Native interval writes commit at boundaries rather than buffering Qt's 60-second manager flush. Existing explicit Client API and media/filter consumers keep their paths.",
+      "disposition": "preserve exactly"
+    },
+    {
+      "id": "audit-options-file-viewing-statistics-cap-any-view-on-the-preview-viewer-to-this-maximum-time",
+      "field": "limitations",
+      "original_index": 1,
+      "before": "The preview is a bounded still/poster presentation. Playback, audio, embed/external buttons, zoom, hover and rating controls remain Partial; no broader preview claim is proposed.",
+      "disposition": "preserve exactly"
+    },
+    {
+      "id": "audit-options-file-viewing-statistics-cap-any-view-on-the-preview-viewer-to-this-maximum-time",
+      "field": "limitations",
+      "original_index": 2,
+      "before": "Native writes at interval boundaries rather than Qt's buffered flush; rejected rendering is explicitly uncounted.",
+      "disposition": "preserve exactly"
+    },
+    {
+      "id": "audit-options-help-debug-action-clear-thumbnail-cache",
+      "field": "limitations",
+      "original_index": 1,
+      "before": "Reference ThumbnailCache is process-wide. Native cache is owned by one main GUI incarnation and shared across its pages; separate main windows do not share raster entries. Apply updates the currently owned cache immediately. Rebind and accepted exit retire rows and cancel their staged Options owner, while declined exit preserves both.",
+      "disposition": "preserve exactly"
+    },
+    {
+      "id": "audit-options-help-debug-action-clear-thumbnail-cache",
+      "field": "limitations",
+      "original_index": 2,
+      "before": "Native cache accounts decoded RGB/RGBA buffer bytes and 128 bytes for a missing-thumbnail entry. Reference HydrusBitmap may store compressed data. Renderer-held image clones, loader queues, metadata/icon caches and total process/GPU memory are outside this finite accounted budget. As in reference, admission may overflow by one incoming entry until maintenance; this is not a hard total-memory ceiling.",
+      "disposition": "preserve exactly"
+    },
+    {
+      "id": "audit-options-help-debug-action-clear-thumbnail-cache",
+      "field": "limitations",
+      "original_index": 3,
+      "before": "Timeout uses monotonic last access and strict older-than expiry. Existing 25ms owned main collection ticks perform maintenance without requiring a new thumbnail request. Native inline day/hour/minute editing preserves untouched raw 299 seconds and enforces 300 seconds once edited; the reference duration-popup geometry remains outside this slice.",
+      "disposition": "preserve exactly"
+    }
+  ],
+  "assessment_changes": 0,
+  "metadata_reconciliation": "Root supplies selected-only exact frozen source, passed currentCI/run/platform metadata and perID independent fresh review evidence only after actual gates. Historical metadata remains unchanged now.",
+  "approval": false,
+  "ci_passed": false,
+  "native_render_review_passed": false,
+  "source_commit": "c768fef48120cdf529656285b8b77aac1a5b8e27"
+}
