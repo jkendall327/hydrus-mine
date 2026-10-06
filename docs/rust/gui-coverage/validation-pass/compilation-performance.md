@@ -51,6 +51,31 @@ A tiny independent Cargo probe confirmed the workspace-build artifact contract.
 Hosted execution of the changed guard is still pending; no Windows time saving
 is claimed yet.
 
+## Linux compiler and lint diagnostics
+
+The separate workspace `cargo check` pass is removed. All-target strict Clippy
+performs type checking and linting before test code generation, retains
+`--locked --keep-going` and denied warnings, and uploads diagnostics immediately.
+Workspace tests still run after a lint failure, and the platform/reference lanes
+and parity ratchet remain required.
+
+The tradeoff is failure feedback: an upstream lint can prevent Clippy from
+reaching a dependent target whose type errors a preceding check might have
+reported. Independent targets still receive diagnostics, and the subsequent
+test compilation provides further compiler feedback. Green validation still
+requires every original compiler/lint/test gate covered by Clippy and tests.
+The old check's 16m48s is not a measured saving; work formerly cached by it may
+move into Clippy. Compare the complete replacement sequence before attributing
+elapsed-time improvement.
+
+The evidence collector reads the workflow at the requested source commit.
+Historical workflows declaring `compiler diagnostics` still require its success;
+the Windows lifetime replay and four publication jobs remain mandatory. Nine
+collector tests pass, including historical-step enforcement and rejection of
+wrong-source, missing, duplicate or failed required evidence. Clippy artifacts
+now contain both compiler and lint diagnostics; they are not labelled as proof
+of a separate check command.
+
 ## Cache inventory and cleanup
 
 Exact Swatinem cache hits skip saving, even when `cache-workspace-crates` was
@@ -82,8 +107,17 @@ partial timings are preserved and excluded from successful-build comparisons.
 Fontconfig header, linker and runtime preflight then passed using the existing
 installation, and the corrected cold measurement started with an empty target.
 
-Generated-UI extraction, cache retention/freshness and the separate Linux
-check/Clippy passes remain under investigation. Their benefits will be reported
-only after measurements. In particular, removing the check step cannot simply
-be credited with its entire old duration: Clippy may then perform work previously
-cached by check.
+That second attempt completed Slint generation in 6.535 seconds and emitted
+86,680,537 bytes / 796,709 newline characters of generated Rust (SHA-256
+`89ab5f7a7e6748ea51c3ce3e653e2c3d3946303d86d75af337fceb570c6452ab`).
+This is current-source evidence; the older 35 MB sample is not the current size.
+The subsequent Rust compilation was stopped after 27m14s by a conservative raw
+cgroup-headroom guard at 4.86 GiB sampled process-group RSS. OOM counters stayed
+zero; a simultaneous conservative estimate including clean inactive file cache
+showed about 8 GiB available. This was a measurement-policy stop, not evidence
+of an OOM or a successful cold build. A new empty-target measurement accounts
+for clean inactive cache while retaining memory, disk, OOM and wall-clock bounds.
+
+Generated-UI extraction and cache retention/freshness remain under investigation.
+Their benefits and the complete revised CI sequence will be reported only after
+measurements.
