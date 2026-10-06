@@ -627,7 +627,7 @@ mod tests {
         let token = Arc::new(());
         let weak = Arc::downgrade(&token);
         let blocked = frames().with_icc_reader(Arc::new(move || {
-            let _held = &token;
+            std::hint::black_box(&token);
             true
         }));
         animator.play_with_metadata(Some(blocked), Some(3), true, |_| {

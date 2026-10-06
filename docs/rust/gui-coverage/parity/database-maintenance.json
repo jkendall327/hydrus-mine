@@ -2,13 +2,13 @@
   "schema_version": 1,
   "agent": "database-maintenance",
   "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
-  "proposed_completed_count": 18,
+  "proposed_completed_count": 0,
   "claims": [
     {
       "id": "audit-media-menu-database-analyze",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database menu maintenance entry: reference question and buttons, Which service? chooser where the reference asks it, the native equivalent job off the UI thread and the reference's titled/result popups.",
       "source": [
         "crates/hydrus-store/src/db_maintenance.rs",
@@ -26,13 +26,19 @@
       "limits": [
         "Native derived data differs from the reference's caches (DIFFERENCES.md, Database maintenance entries).",
         "No progress text or cancellation during a job."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-2.md"
+      }
     },
     {
       "id": "audit-media-menu-database-clear-fix-orphan-file-records",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database menu maintenance entry: reference question and buttons, Which service? chooser where the reference asks it, the native equivalent job off the UI thread and the reference's titled/result popups.",
       "source": [
         "crates/hydrus-store/src/db_maintenance.rs",
@@ -50,13 +56,19 @@
       "limits": [
         "Native derived data differs from the reference's caches (DIFFERENCES.md, Database maintenance entries).",
         "No progress text or cancellation during a job."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-2.md"
+      }
     },
     {
       "id": "audit-media-menu-database-clear-orphan-url-mappings",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database menu maintenance entry: reference question and buttons, Which service? chooser where the reference asks it, the native equivalent job off the UI thread and the reference's titled/result popups.",
       "source": [
         "crates/hydrus-store/src/db_maintenance.rs",
@@ -74,13 +86,19 @@
       "limits": [
         "Native derived data differs from the reference's caches (DIFFERENCES.md, Database maintenance entries).",
         "No progress text or cancellation during a job."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-2.md"
+      }
     },
     {
       "id": "audit-media-menu-database-clear-orphan-tables",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database menu maintenance entry: reference question and buttons, Which service? chooser where the reference asks it, the native equivalent job off the UI thread and the reference's titled/result popups.",
       "source": [
         "crates/hydrus-store/src/db_maintenance.rs",
@@ -98,13 +116,19 @@
       "limits": [
         "Native derived data differs from the reference's caches (DIFFERENCES.md, Database maintenance entries).",
         "No progress text or cancellation during a job."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-2.md"
+      }
     },
     {
       "id": "audit-media-menu-database-get-tables-using-definitions",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database menu maintenance entry: reference question and buttons, Which service? chooser where the reference asks it, the native equivalent job off the UI thread and the reference's titled/result popups.",
       "source": [
         "crates/hydrus-store/src/db_maintenance.rs",
@@ -122,13 +146,19 @@
       "limits": [
         "Native derived data differs from the reference's caches (DIFFERENCES.md, Database maintenance entries).",
         "No progress text or cancellation during a job."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-2.md"
+      }
     },
     {
       "id": "audit-media-database-repair-invalid-tags",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database menu maintenance entry: reference question and buttons, Which service? chooser where the reference asks it, the native equivalent job off the UI thread and the reference's titled/result popups.",
       "source": [
         "crates/hydrus-store/src/db_maintenance.rs",
@@ -146,13 +176,19 @@
       "limits": [
         "Native derived data differs from the reference's caches (DIFFERENCES.md, Database maintenance entries).",
         "No progress text or cancellation during a job."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-2.md"
+      }
     },
     {
       "id": "audit-media-menu-database-check-and-repair-fix-logically-inconsistent-mappings",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database menu maintenance entry: reference question and buttons, Which service? chooser where the reference asks it, the native equivalent job off the UI thread and the reference's titled/result popups.",
       "source": [
         "crates/hydrus-store/src/db_maintenance.rs",
@@ -170,13 +206,19 @@
       "limits": [
         "Native derived data differs from the reference's caches (DIFFERENCES.md, Database maintenance entries).",
         "No progress text or cancellation during a job."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-2.md"
+      }
     },
     {
       "id": "audit-media-menu-database-check-and-repair-resync-tag-mappings-cache-files",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database menu maintenance entry: reference question and buttons, Which service? chooser where the reference asks it, the native equivalent job off the UI thread and the reference's titled/result popups.",
       "source": [
         "crates/hydrus-store/src/db_maintenance.rs",
@@ -194,13 +236,19 @@
       "limits": [
         "Native derived data differs from the reference's caches (DIFFERENCES.md, Database maintenance entries).",
         "No progress text or cancellation during a job."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-2.md"
+      }
     },
     {
       "id": "audit-media-menu-database-regenerate-tag-storage-mappings-cache-all-with-deferred-siblings-parents-calculation",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database menu maintenance entry: reference question and buttons, Which service? chooser where the reference asks it, the native equivalent job off the UI thread and the reference's titled/result popups.",
       "source": [
         "crates/hydrus-store/src/db_maintenance.rs",
@@ -218,13 +266,19 @@
       "limits": [
         "Native derived data differs from the reference's caches (DIFFERENCES.md, Database maintenance entries).",
         "No progress text or cancellation during a job."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-2.md"
+      }
     },
     {
       "id": "audit-media-menu-database-regenerate-tag-storage-mappings-cache-just-pending-tags-instant-calculation",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database menu maintenance entry: reference question and buttons, Which service? chooser where the reference asks it, the native equivalent job off the UI thread and the reference's titled/result popups.",
       "source": [
         "crates/hydrus-store/src/db_maintenance.rs",
@@ -242,13 +296,19 @@
       "limits": [
         "Native derived data differs from the reference's caches (DIFFERENCES.md, Database maintenance entries).",
         "No progress text or cancellation during a job."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-2.md"
+      }
     },
     {
       "id": "audit-media-menu-database-regenerate-tag-display-mappings-cache-all-deferred-siblings-parents-calculation",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database menu maintenance entry: reference question and buttons, Which service? chooser where the reference asks it, the native equivalent job off the UI thread and the reference's titled/result popups.",
       "source": [
         "crates/hydrus-store/src/db_maintenance.rs",
@@ -266,13 +326,19 @@
       "limits": [
         "Native derived data differs from the reference's caches (DIFFERENCES.md, Database maintenance entries).",
         "No progress text or cancellation during a job."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-2.md"
+      }
     },
     {
       "id": "audit-media-menu-database-regenerate-tag-display-mappings-cache-just-pending-tags-instant-calculation",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database menu maintenance entry: reference question and buttons, Which service? chooser where the reference asks it, the native equivalent job off the UI thread and the reference's titled/result popups.",
       "source": [
         "crates/hydrus-store/src/db_maintenance.rs",
@@ -290,13 +356,19 @@
       "limits": [
         "Native derived data differs from the reference's caches (DIFFERENCES.md, Database maintenance entries).",
         "No progress text or cancellation during a job."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-2.md"
+      }
     },
     {
       "id": "audit-media-menu-database-regenerate-tag-display-mappings-cache-missing-file-repopulation",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database menu maintenance entry: reference question and buttons, Which service? chooser where the reference asks it, the native equivalent job off the UI thread and the reference's titled/result popups.",
       "source": [
         "crates/hydrus-store/src/db_maintenance.rs",
@@ -314,13 +386,19 @@
       "limits": [
         "Native derived data differs from the reference's caches (DIFFERENCES.md, Database maintenance entries).",
         "No progress text or cancellation during a job."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-2.md"
+      }
     },
     {
       "id": "audit-media-menu-database-regenerate-tag-siblings-lookup-cache",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database menu maintenance entry: reference question and buttons, Which service? chooser where the reference asks it, the native equivalent job off the UI thread and the reference's titled/result popups.",
       "source": [
         "crates/hydrus-store/src/db_maintenance.rs",
@@ -338,13 +416,19 @@
       "limits": [
         "Native derived data differs from the reference's caches (DIFFERENCES.md, Database maintenance entries).",
         "No progress text or cancellation during a job."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-2.md"
+      }
     },
     {
       "id": "audit-media-menu-database-regenerate-tag-parents-lookup-cache",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database menu maintenance entry: reference question and buttons, Which service? chooser where the reference asks it, the native equivalent job off the UI thread and the reference's titled/result popups.",
       "source": [
         "crates/hydrus-store/src/db_maintenance.rs",
@@ -362,13 +446,19 @@
       "limits": [
         "Native derived data differs from the reference's caches (DIFFERENCES.md, Database maintenance entries).",
         "No progress text or cancellation during a job."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-2.md"
+      }
     },
     {
       "id": "audit-media-menu-database-regenerate-tag-text-search-cache",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database menu maintenance entry: reference question and buttons, Which service? chooser where the reference asks it, the native equivalent job off the UI thread and the reference's titled/result popups.",
       "source": [
         "crates/hydrus-store/src/db_maintenance.rs",
@@ -386,13 +476,19 @@
       "limits": [
         "Native derived data differs from the reference's caches (DIFFERENCES.md, Database maintenance entries).",
         "No progress text or cancellation during a job."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-2.md"
+      }
     },
     {
       "id": "audit-media-menu-database-regenerate-tag-text-search-cache-subtags-repopulation",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database menu maintenance entry: reference question and buttons, Which service? chooser where the reference asks it, the native equivalent job off the UI thread and the reference's titled/result popups.",
       "source": [
         "crates/hydrus-store/src/db_maintenance.rs",
@@ -410,13 +506,19 @@
       "limits": [
         "Native derived data differs from the reference's caches (DIFFERENCES.md, Database maintenance entries).",
         "No progress text or cancellation during a job."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-2.md"
+      }
     },
     {
       "id": "audit-media-menu-database-regenerate-tag-text-search-cache-searchable-subtag-maps",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database menu maintenance entry: reference question and buttons, Which service? chooser where the reference asks it, the native equivalent job off the UI thread and the reference's titled/result popups.",
       "source": [
         "crates/hydrus-store/src/db_maintenance.rs",
@@ -434,7 +536,13 @@
       "limits": [
         "Native derived data differs from the reference's caches (DIFFERENCES.md, Database maintenance entries).",
         "No progress text or cancellation during a job."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-2.md"
+      }
     }
   ]
 }

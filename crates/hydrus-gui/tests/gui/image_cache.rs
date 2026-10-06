@@ -85,7 +85,7 @@ fn real_saved_policy_preserves_current_media_and_intervals_then_retires_final_bo
         .map(|name| {
             let result = importer
                 .import_path(
-                    &hydrus_testkit::fixture_path(&format!("image_cache/{name}")),
+                    &hydrus_testkit::fixture_path(format!("image_cache/{name}")),
                     &FileImportOptions::default(),
                 )
                 .unwrap();
@@ -203,7 +203,7 @@ fn real_saved_policy_preserves_current_media_and_intervals_then_retires_final_bo
     child_owned.invoke_choice_chosen(row(&child_owned, BYTES), 0);
     child_owned.invoke_number_edited(row(&child_owned, PERCENT), 10);
     child_owned.invoke_field_edited(row(&child_owned, TIMEOUT), 2, 10);
-    weights.invoke_cancel();
+    weights.invoke_action("cancel".into());
     assert!(bound.options_suggested_tags_slot.weights.borrow().is_none());
     child_owned.invoke_apply();
     assert_eq!(
@@ -348,4 +348,172 @@ fn real_saved_policy_preserves_current_media_and_intervals_then_retires_final_bo
     visible.invoke_cancel();
     successor.preview.close();
     viewer.invoke_close_requested();
+}
+
+// Value/persistence regressions above remain intact. This one measures the
+// native layout failure they cannot see: wrapped helpers must own space before
+// the next actual control/heading, even at the preferred Options opening size.
+#[test]
+fn speed_memory_helpers_own_wrapped_space_at_preferred_and_capture_sizes() {
+    use hydrus_store::viewer_prefetch;
+    use std::{cell::RefCell, collections::HashMap};
+
+    const PREFETCH_PERCENT: &str = "Maximum % of cache that will be prefetched per media viewer:";
+    const PREVIOUS: &str = "Num previous to prefetch in Media Viewer:";
+    const NEXT: &str = "Num next to prefetch in Media Viewer:";
+    const PAIRS: &str = "Num pairs to prefetch in Duplicate Filter:";
+    let (_dirs, store) = crate::subscriptions::store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    let counts = viewer_prefetch::Preferences::default();
+    let mut warning_heights = HashMap::new();
+    // Both a long over-capacity warning and the short success caption; 1GB
+    // also produces the long percentage-estimate numbers in the shared captures.
+    for (case, bytes) in [("long", 100), ("short", 1024 * 1024 * 1024)] {
+        let cache = Policy {
+            bytes,
+            timeout: 300,
+            percentage: 50,
+        };
+        store
+            .write(move |ctx| {
+                settings::set(ctx.conn(), &cache)?;
+                settings::set(ctx.conn(), &counts)
+            })
+            .unwrap();
+        for (width, height) in [(900, 640), (1100, 650), (1100, 850), (1100, 900)] {
+            let window = options(&ui, &bound);
+            let rows_before: Vec<_> = window
+                .get_rows()
+                .iter()
+                .map(|r| (r.kind, r.label, r.number, r.unit, r.index))
+                .collect();
+            assert_eq!(
+                window.get_prefetch_warning().as_str(),
+                hydrus_gui_model::viewer_prefetch::warning(cache.bytes, counts)
+            );
+            let stored_percent = row(&window, PERCENT);
+            let prefetch_percent = row(&window, PREFETCH_PERCENT);
+            let previous = row(&window, PREVIOUS);
+            let next = row(&window, NEXT);
+            let pairs = row(&window, PAIRS);
+            let prefetch_heading = row(&window, "image prefetch");
+            let tile_heading = row(&window, "image tile cache");
+            let required = [
+                (stored_percent, "number"),
+                (stored_percent, "estimate"),
+                (prefetch_percent, "number"),
+                (prefetch_percent, "estimate"),
+                (previous, "number"),
+                (next, "number"),
+                (pairs, "number"),
+                (pairs, "warning"),
+                (prefetch_heading, "heading"),
+                (tile_heading, "heading"),
+            ];
+            let frames = Rc::new(RefCell::new(HashMap::<
+                (i32, String),
+                hydrus_gui::MenuChoiceFrame,
+            >::new()));
+            let native = windows.get(windows.count() - 1).unwrap();
+            // Settle the requested viewport before enabling the initial-frame
+            // observer; callbacks must not publish the window's opening size.
+            headless::render(&native, width, height);
+            window.on_speed_memory_geometry({
+                let frames = frames.clone();
+                move |index, role, frame| {
+                    frames.borrow_mut().insert((index, role.to_string()), frame);
+                }
+            });
+            window.set_measure_speed_memory_layout(true);
+            let started = Instant::now();
+            let pixels = loop {
+                let pixels = headless::render(&native, width, height);
+                if required
+                    .iter()
+                    .all(|(index, role)| frames.borrow().contains_key(&(*index, (*role).into())))
+                {
+                    break pixels;
+                }
+                assert!(
+                    started.elapsed() < Duration::from_secs(2),
+                    "native helper/control/heading frames must publish at {width}x{height}"
+                );
+                std::thread::yield_now();
+            };
+            let measured = frames.borrow();
+            let frame = |index, role: &str| measured.get(&(index, role.into())).unwrap();
+            for &(index, role) in &required {
+                let f = frame(index, role);
+                assert!([f.x, f.y, f.w, f.h].into_iter().all(f32::is_finite));
+                assert!(f.w > 0.0 && f.h > 0.0, "{role} needs actual allocated area");
+                assert!(
+                    f.x >= 0.0 && f.x + f.w <= width as f32,
+                    "{role} stays within actual viewport width"
+                );
+            }
+            let separated = |upper: &hydrus_gui::MenuChoiceFrame,
+                             lower: &hydrus_gui::MenuChoiceFrame| {
+                assert!(
+                    upper.y + upper.h < lower.y,
+                    "caption/control rectangles must leave positive vertical space: {upper:?} then {lower:?} at {width}x{height}"
+                );
+            };
+            separated(
+                frame(stored_percent, "number"),
+                frame(stored_percent, "estimate"),
+            );
+            separated(
+                frame(stored_percent, "estimate"),
+                frame(prefetch_percent, "number"),
+            );
+            separated(
+                frame(prefetch_percent, "number"),
+                frame(prefetch_percent, "estimate"),
+            );
+            separated(
+                frame(prefetch_percent, "estimate"),
+                frame(prefetch_heading, "heading"),
+            );
+            separated(
+                frame(prefetch_heading, "heading"),
+                frame(previous, "number"),
+            );
+            separated(frame(previous, "number"), frame(next, "number"));
+            separated(frame(next, "number"), frame(pairs, "number"));
+            separated(frame(pairs, "number"), frame(pairs, "warning"));
+            separated(frame(pairs, "warning"), frame(tile_heading, "heading"));
+            warning_heights.insert((case, width), frame(pairs, "warning").h);
+            drop(measured);
+            assert_eq!(
+                window
+                    .get_rows()
+                    .iter()
+                    .map(|r| (r.kind, r.label, r.number, r.unit, r.index))
+                    .collect::<Vec<_>>(),
+                rows_before,
+                "measurement/resize cannot alter row identities, callbacks' indices or displayed values/text"
+            );
+            headless::save_png(
+                &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                    .join(format!("speed-memory-helpers-{case}-{width}x{height}.png")),
+                &pixels,
+                width,
+                height,
+            )
+            .unwrap();
+            window.invoke_cancel();
+            assert_eq!(store.read(image_cache::load).unwrap(), cache);
+            assert_eq!(store.read(viewer_prefetch::load).unwrap(), counts);
+        }
+    }
+    assert!(
+        warning_heights[&("long", 900)] > warning_heights[&("short", 900)],
+        "preferred-width capture must actually exercise a wrapped warning"
+    );
 }

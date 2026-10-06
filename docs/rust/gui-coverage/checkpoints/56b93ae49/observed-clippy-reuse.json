@@ -1,0 +1,20 @@
+{
+  "scope": "Ordinary validation observation; not a controlled cold-build or isolated extraction benchmark",
+  "previous": {
+    "source": "f9bc77be873c4394b9ad0a2662867e1cae745e88",
+    "run": 37422951212,
+    "cargo_seconds": 378,
+    "ui_changed": true,
+    "generated_ui_compiled": true,
+    "log_sha256": "fc171fc6aacc65504897b2a01734fbe3eff7f9bb8a2258631bd39d72e091b43e"
+  },
+  "current": {
+    "source": "56b93ae49337356aa4f81c79b12171397278247b",
+    "run": 37425380545,
+    "cargo_seconds": 89,
+    "ui_changed": false,
+    "generated_ui_compiled": false,
+    "log_sha256": "51fa55c4fc03f92a0d55e9d0cfe2381a817cc84a5210e2572900d9e81daf0e24"
+  },
+  "remaining": "Full Linux validation subsequently passed at this exact source/run. Completion credit still requires independent rendered review and publication."
+}

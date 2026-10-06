@@ -2,7 +2,7 @@
   "schema_version": 1,
   "agent": "shortcut-sets",
   "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
-  "proposed_completed_count": 5,
+  "proposed_completed_count": 1,
   "claims": [
     {
       "id": "audit-options-shortcuts-built-in-hydrus-shortcut-sets-edit",
@@ -29,8 +29,8 @@
     {
       "id": "audit-options-shortcuts-built-in-hydrus-shortcut-sets-restore-defaults",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Options > shortcuts: the built-in shortcut sets list (pretty names in shortcut_names_sorted order, number of shortcuts) with edit (set editor with the reserved name locked and its description) and restore defaults (choice of GetDefaultShortcuts sets; the missing-set information or the wipe question, then the default set restored); the custom user sets list with the reference's note, add ('new shortcuts'), edit/rename and delete ('Remove all selected?'), names de-duplicated as GetNonDupeName does; help. New clients start with the reference's eleven default sets (107 bindings).",
       "source": [
         "crates/hydrus-gui-model/src/shortcut_sets.rs",
@@ -46,13 +46,19 @@
       ],
       "limits": [
         "Only commands with native executors can be chosen and run; custom sets are not yet activated in the media viewer."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Helper-only restore/delete assertions omit actual chooser/confirmation Cancel and persisted native reopening.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-6.md"
+      }
     },
     {
       "id": "audit-options-shortcuts-custom-user-sets-add",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Options > shortcuts: the built-in shortcut sets list (pretty names in shortcut_names_sorted order, number of shortcuts) with edit (set editor with the reserved name locked and its description) and restore defaults (choice of GetDefaultShortcuts sets; the missing-set information or the wipe question, then the default set restored); the custom user sets list with the reference's note, add ('new shortcuts'), edit/rename and delete ('Remove all selected?'), names de-duplicated as GetNonDupeName does; help. New clients start with the reference's eleven default sets (107 bindings).",
       "source": [
         "crates/hydrus-gui-model/src/shortcut_sets.rs",
@@ -68,13 +74,19 @@
       ],
       "limits": [
         "Only commands with native executors can be chosen and run; custom sets are not yet activated in the media viewer."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "c881a9290b89009ddc3145578489dd02607b0aef",
+        "disposition": "deferred",
+        "reason": "shortcut_sets.json only records pure naming examples/default metadata, not reference or native custom Add/Cancel/save/reopen boundaries; no existing actual custom editor replay.",
+        "review": "docs/rust/gui-coverage/validation-pass/render-evidence-review.md"
+      }
     },
     {
       "id": "audit-options-shortcuts-custom-user-sets-delete",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Options > shortcuts: the built-in shortcut sets list (pretty names in shortcut_names_sorted order, number of shortcuts) with edit (set editor with the reserved name locked and its description) and restore defaults (choice of GetDefaultShortcuts sets; the missing-set information or the wipe question, then the default set restored); the custom user sets list with the reference's note, add ('new shortcuts'), edit/rename and delete ('Remove all selected?'), names de-duplicated as GetNonDupeName does; help. New clients start with the reference's eleven default sets (107 bindings).",
       "source": [
         "crates/hydrus-gui-model/src/shortcut_sets.rs",
@@ -90,13 +102,19 @@
       ],
       "limits": [
         "Only commands with native executors can be chosen and run; custom sets are not yet activated in the media viewer."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Helper-only restore/delete assertions omit actual chooser/confirmation Cancel and persisted native reopening.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-6.md"
+      }
     },
     {
       "id": "audit-options-shortcuts-custom-user-sets-edit",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Options > shortcuts: the built-in shortcut sets list (pretty names in shortcut_names_sorted order, number of shortcuts) with edit (set editor with the reserved name locked and its description) and restore defaults (choice of GetDefaultShortcuts sets; the missing-set information or the wipe question, then the default set restored); the custom user sets list with the reference's note, add ('new shortcuts'), edit/rename and delete ('Remove all selected?'), names de-duplicated as GetNonDupeName does; help. New clients start with the reference's eleven default sets (107 bindings).",
       "source": [
         "crates/hydrus-gui-model/src/shortcut_sets.rs",
@@ -112,7 +130,13 @@
       ],
       "limits": [
         "Only commands with native executors can be chosen and run; custom sets are not yet activated in the media viewer."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "c881a9290b89009ddc3145578489dd02607b0aef",
+        "disposition": "deferred",
+        "reason": "No recorded/custom editor native Edit/Cancel/save/reopen replay or corresponding reference UI render; shared built-in editor cannot establish custom name-editing surface.",
+        "review": "docs/rust/gui-coverage/validation-pass/render-evidence-review.md"
+      }
     }
   ]
 }

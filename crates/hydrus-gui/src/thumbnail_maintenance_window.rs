@@ -60,12 +60,13 @@ fn run_now(store: &Arc<Store>, files: Vec<HashId>, job: JobType, changed: Rc<dyn
         .name("thumbnail-maintenance".into())
         .spawn(move || {
             let n = files.len() as u64;
+            let selected = files.clone();
             let queued = store.write(move |ctx| {
                 hydrus_store::file_maintenance::add_jobs(ctx.conn(), &files, job, 0)
             });
             let ran = queued.map_err(|e| e.to_string()).and_then(|()| {
                 hydrus_import::FileImporter::new(store.clone(), hydrus_media::MediaTools::new())
-                    .run_file_maintenance_of(n, u64::MAX, &|j| j == job)
+                    .run_file_maintenance_for_files(&selected, n, u64::MAX, &|j| j == job)
                     .map_err(|e| e.to_string())
             });
             if let Err(error) = ran {

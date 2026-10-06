@@ -179,12 +179,21 @@ fn actual_checkbox_relabels_visible_preparation_without_changing_work_and_future
         .write(|c| {
             let mut gui: settings::GuiSettings = settings::get(c.conn())?;
             gui.confirm_exit = false;
-            settings::set(c.conn(), &gui)
+            settings::set(c.conn(), &gui)?;
+            // This boundary tests completed exit, independently of due maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(c.conn())?;
+            shutdown.action = 0;
+            settings::set(c.conn(), &shutdown)
         })
         .unwrap();
     let _ = ui
         .window()
         .dispatch_event_with_result(slint::platform::WindowEvent::CloseRequested);
+    assert!(
+        !ui.window().is_visible(),
+        "completed exit precedes retained callbacks"
+    );
     retired.show().unwrap();
     retired.invoke_check_toggled(row, false);
     retired.invoke_apply();

@@ -96,6 +96,288 @@ fn controlled_fixture() -> ([tempfile::TempDir; 2], std::sync::Arc<Store>, Vec<H
     ([legacy, native], store, files)
 }
 
+/// A real Store backlog of 300 media records followed by 270 selected records.
+/// Their PDF transparency flag is stale: this metadata job must clear it without
+/// needing external tools or file bytes. Every row also has future unrelated work.
+fn selected_backlog_fixture() -> (
+    [tempfile::TempDir; 2],
+    std::sync::Arc<Store>,
+    Vec<HashId>,
+    Vec<HashId>,
+) {
+    let (guards, store, _) = controlled_fixture();
+    let (backlog, selected) = store
+        .write(|ctx| {
+            let mut all = Vec::new();
+            for n in 0_u32..570 {
+                let id = HashId(100_000 + n);
+                let mut hash = [19_u8; 32];
+                hash[..4].copy_from_slice(&n.to_le_bytes());
+                ctx.conn().execute(
+                    "INSERT INTO hashes (hash_id, sha256) VALUES (?1, ?2)",
+                    params![id, hash.as_slice()],
+                )?;
+                ctx.conn().execute(
+                    "INSERT INTO files (hash_id, size, mime, flags) VALUES (?1, 100, ?2, ?3)",
+                    params![
+                        id,
+                        hydrus_core::Mime::ApplicationPdf.code(),
+                        hydrus_store::media::FileFlags::TRANSPARENCY
+                    ],
+                )?;
+                all.push(id);
+            }
+            hydrus_store::file_maintenance::add_jobs(
+                ctx.conn(),
+                &all,
+                JobType::HasTransparency,
+                0,
+            )?;
+            hydrus_store::file_maintenance::add_jobs(
+                ctx.conn(),
+                &all,
+                JobType::HasIccProfile,
+                i64::MAX,
+            )?;
+            let selected = all.split_off(300);
+            hydrus_store::file_maintenance::add_jobs(ctx.conn(), &selected, JobType::HasExif, 0)?;
+            Ok((all, selected))
+        })
+        .unwrap();
+    (guards, store, backlog, selected)
+}
+fn queued_rows(store: &Store) -> BTreeSet<(HashId, i64, i64)> {
+    store
+        .read(|conn| {
+            Ok(conn
+                .prepare("SELECT hash_id, job_type, time_can_start FROM file_maintenance_jobs")?
+                .query_map([], |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)))?
+                .collect::<rusqlite::Result<_>>()?)
+        })
+        .unwrap()
+}
+/// Reference ClientDBFilesMaintenance._ScheduleJobsForChangedAppearance:
+/// changing transparency schedules exactly these three jobs for that file.
+fn appearance_followups(files: &[HashId]) -> BTreeSet<(HashId, i64, i64)> {
+    files
+        .iter()
+        .flat_map(|&id| {
+            [
+                JobType::ForceThumbnail,
+                JobType::PixelHash,
+                JobType::PerceptualHashes,
+            ]
+            .map(|job| (id, job.code(), 0))
+        })
+        .collect()
+}
+
+fn transparency_flags(store: &Store, files: &[HashId]) -> Vec<u32> {
+    store
+        .read(|conn| {
+            let mut query = conn.prepare("SELECT flags FROM files WHERE hash_id = ?1")?;
+            files
+                .iter()
+                .map(|id| query.query_row([id], |row| row.get(0)).map_err(Into::into))
+                .collect()
+        })
+        .unwrap()
+}
+
+#[test]
+fn selected_immediate_work_skips_global_backlog_before_limit_and_commits_only_selection() {
+    let (_guards, store, backlog, selected) = selected_backlog_fixture();
+    let before = queued_rows(&store);
+    let global = store
+        .read(|conn| {
+            hydrus_store::file_maintenance::due_jobs_of(conn, i64::MAX, &|job| {
+                job == JobType::HasTransparency
+            })
+        })
+        .unwrap();
+    assert_eq!(global.len(), 256);
+    assert!(
+        global.iter().all(|(id, _)| backlog.contains(id)),
+        "a post-filtered global batch would admit none of the selection"
+    );
+    let importer = FileImporter::new(store.clone(), MediaTools::new());
+    assert_eq!(
+        importer
+            .run_file_maintenance_for_files(&[], u64::MAX, u64::MAX, &|_| true)
+            .unwrap()
+            .total(),
+        0
+    );
+    assert_eq!(
+        queued_rows(&store),
+        before,
+        "empty selection must not drain global jobs"
+    );
+    // Include a duplicate captured ID; queue admission must remain one job/file.
+    let mut captured = selected.clone();
+    captured.push(selected[0]);
+    let report = importer
+        .run_file_maintenance_for_files(&captured, selected.len() as u64, u64::MAX, &|job| {
+            job == JobType::HasTransparency
+        })
+        .unwrap();
+    assert_eq!(
+        report.done,
+        [(JobType::HasTransparency, selected.len() as u64)].into()
+    );
+    assert_eq!(
+        report.total(),
+        270,
+        "selected work crosses the 256-file batch boundary"
+    );
+    assert_eq!(
+        transparency_flags(&store, &selected),
+        vec![0; selected.len()]
+    );
+    assert_eq!(
+        transparency_flags(&store, &backlog),
+        vec![hydrus_store::media::FileFlags::TRANSPARENCY; backlog.len()],
+        "unselected media metadata must not change"
+    );
+    let mut expected: BTreeSet<_> = before
+        .into_iter()
+        .filter(|(id, job, _)| !selected.contains(id) || *job != JobType::HasTransparency.code())
+        .collect();
+    expected.extend(appearance_followups(&selected));
+    assert_eq!(
+        queued_rows(&store),
+        expected,
+        "original unselected/unwanted/future work survives; exactly three appearance jobs are added per changed selected file"
+    );
+    let reopened = Store::open(store.dir()).unwrap();
+    assert_eq!(queued_rows(&reopened), expected);
+    assert_eq!(
+        transparency_flags(&reopened, &selected),
+        vec![0; selected.len()]
+    );
+}
+
+#[test]
+fn selected_runner_keeps_lease_budget_and_cancellation_boundaries() {
+    use hydrus_import::maintenance::MaintenanceCallbacks;
+    use std::cell::Cell;
+    let (_guards, store, backlog, selected) = selected_backlog_fixture();
+    let importer = FileImporter::new(store.clone(), MediaTools::new());
+    let before = queued_rows(&store);
+    let lease = hydrus_store::store::lock_file_maintenance(store.dir())
+        .unwrap()
+        .unwrap();
+    assert_eq!(
+        importer
+            .run_file_maintenance_for_files(&selected, u64::MAX, u64::MAX, &|_| true)
+            .unwrap()
+            .total(),
+        0,
+        "ordinary selected work must defer under the shared lease"
+    );
+    assert_eq!(queued_rows(&store), before);
+    let mut gauge_calls = 0;
+    let cancelled = importer
+        .run_file_maintenance_for_files_with_callbacks(
+            &selected,
+            u64::MAX,
+            u64::MAX,
+            &|_| true,
+            &|| false,
+            MaintenanceCallbacks {
+                before_batch: &mut || Ok(()),
+                before_job: &mut |_| gauge_calls += 1,
+                committed: &mut |_| panic!("pre-cancelled pass must not commit"),
+            },
+        )
+        .unwrap();
+    assert_eq!(
+        cancelled.total(),
+        0,
+        "forced selected work cancels before waiting for lease"
+    );
+    assert_eq!(gauge_calls, 0);
+    drop(lease);
+    let active = Cell::new(true);
+    let mut progress = Vec::new();
+    let report = importer
+        .run_file_maintenance_for_files_with_callbacks(
+            &selected,
+            u64::MAX,
+            u64::MAX,
+            &|job| job == JobType::HasTransparency,
+            &|| active.get(),
+            MaintenanceCallbacks {
+                before_batch: &mut || {
+                    assert!(hydrus_store::store::lock_file_maintenance(store.dir())?.is_none());
+                    Ok(())
+                },
+                before_job: &mut |_| {},
+                committed: &mut |report| {
+                    progress.push(report.total());
+                    active.set(false);
+                },
+            },
+        )
+        .unwrap();
+    assert_eq!(report.total(), 1);
+    assert_eq!(
+        progress,
+        [1],
+        "cancel after durable commit preserves the next selected file"
+    );
+    assert_eq!(transparency_flags(&store, &selected[..1]), [0]);
+    assert_eq!(
+        transparency_flags(&store, &selected[1..]),
+        vec![hydrus_store::media::FileFlags::TRANSPARENCY; selected.len() - 1]
+    );
+    assert_eq!(
+        transparency_flags(&store, &backlog),
+        vec![hydrus_store::media::FileFlags::TRANSPARENCY; backlog.len()]
+    );
+    let mut expected: BTreeSet<_> = before
+        .into_iter()
+        .filter(|(id, job, _)| *id != selected[0] || *job != JobType::HasTransparency.code())
+        .collect();
+    expected.extend(appearance_followups(&selected[..1]));
+    assert_eq!(
+        queued_rows(&store),
+        expected,
+        "only the committed file may schedule appearance jobs after cancellation"
+    );
+    assert!(
+        hydrus_store::store::lock_file_maintenance(store.dir())
+            .unwrap()
+            .is_some()
+    );
+    let budget = importer
+        .run_file_maintenance_for_files(
+            &selected[1..],
+            u64::MAX,
+            JobType::HasTransparency.weight(),
+            &|job| job == JobType::HasTransparency,
+        )
+        .unwrap();
+    assert_eq!(budget.total(), 1);
+    assert_eq!(budget.weight, JobType::HasTransparency.weight());
+    expected.remove(&(selected[1], JobType::HasTransparency.code(), 0));
+    expected.extend(appearance_followups(&selected[1..2]));
+    assert_eq!(
+        queued_rows(&store),
+        expected,
+        "one-budget pass changes only one further selected file and adds only its reference appearance jobs"
+    );
+    assert_eq!(transparency_flags(&store, &selected[..2]), [0, 0]);
+    assert_eq!(
+        transparency_flags(&store, &selected[2..]),
+        vec![hydrus_store::media::FileFlags::TRANSPARENCY; selected.len() - 2]
+    );
+    assert_eq!(
+        transparency_flags(&store, &backlog),
+        vec![hydrus_store::media::FileFlags::TRANSPARENCY; backlog.len()]
+    );
+}
+
 #[test]
 fn ordinary_contended_pass_defers_without_waiting_or_consuming_jobs() {
     let (_guards, store, files) = controlled_fixture();

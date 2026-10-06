@@ -2,13 +2,13 @@
   "schema_version": 1,
   "agent": "clear-orphan-files",
   "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
-  "proposed_completed_count": 1,
+  "proposed_completed_count": 0,
   "claims": [
     {
       "id": "audit-media-database-clear-orphan-files",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database > file maintenance > clear orphan files: the reference's question with move/delete/forget it, a folder picker for moving, then a cancellable 'clearing orphans' popup scanning every prefix folder for files and thumbnails not held by local file storage (_IsAnOrphan), moving (thumbnails into a thumbnails subfolder, non-conflicting names) or deleting them, and the reference's final line.",
       "source": [
         "crates/hydrus-store/src/orphan_files.rs",
@@ -23,7 +23,13 @@
       ],
       "limits": [
         "No repositories, so nothing is kept for pending uploads; refuses for in-place shared media."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "No reference-backed orphan safety/cancel/delete workflow assertions; sole Store test creates no kept file.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-5.md"
+      }
     }
   ]
 }

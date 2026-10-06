@@ -1261,12 +1261,27 @@ pub(crate) fn open(
         let store = store.clone();
         let active = active.clone();
         move |i, n| {
-            if editor.borrow().rows().get(at(i)).is_some_and(image_cache_row) && image_controls_blocked() { return; }
-            let start = matches!(editor.borrow().rows().get(at(i)), Some(Row::Opt { option, .. }) if option.label == "Start animations this % in:");
-            if start && (!active.get() || !weak.upgrade().is_some_and(|window| window.window().is_visible())) { return; }
+            if !active.get()
+                || !weak
+                    .upgrade()
+                    .is_some_and(|window| window.window().is_visible())
+            {
+                return;
+            }
+            if editor
+                .borrow()
+                .rows()
+                .get(at(i))
+                .is_some_and(image_cache_row)
+                && image_controls_blocked()
+            {
+                return;
+            }
             editor.borrow_mut().number(at(i), i64::from(n));
             refresh_byte_row(&weak, &editor, &store, i);
-            if let Some(window) = weak.upgrade() { refresh_image_cache_rows(&window, &editor.borrow()); }
+            if let Some(window) = weak.upgrade() {
+                refresh_image_cache_rows(&window, &editor.borrow());
+            }
         }
     });
     window.on_none_toggled({
@@ -1667,6 +1682,7 @@ pub(crate) fn open(
         });
     });
     window.on_apply({
+        let media_views_open = media_views.has_open.clone();
         let regex_slot = regex_slot.clone();
         let suggested_slot = suggested_slot.clone();
         let colours_open = colour_list.has_open.clone();
@@ -1691,6 +1707,7 @@ pub(crate) fn open(
                 || !weak
                     .upgrade()
                     .is_some_and(|window| window.window().is_visible())
+                || media_views_open()
                 || colours_open()
                 || reasons_open()
                 || frames_open()

@@ -1,0 +1,128 @@
+[
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-locations.json",
+    "id": "audit-media-database-locations-paths",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "No executed oracle/native boundary tests; retained cancelled max-size/runtime/confirmation owners can still write/start work."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-locations.json",
+    "id": "audit-media-database-locations-max-size",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "No executed oracle/native boundary tests; retained cancelled max-size/runtime/confirmation owners can still write/start work."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-locations.json",
+    "id": "audit-media-database-locations-rebalance",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "No executed oracle/native boundary tests; retained cancelled max-size/runtime/confirmation owners can still write/start work."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-locations.json",
+    "id": "audit-media-database-locations-thumbnails",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "No executed oracle/native boundary tests; retained cancelled max-size/runtime/confirmation owners can still write/start work."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/help-debug-actions.json",
+    "id": "audit-options-help-debug-action-force-database-commit",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Menu/model-only evidence; defining action modality/state reset/full popup/cache consumers absent or checkpoint callback fails inside transaction."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/help-debug-actions.json",
+    "id": "audit-options-help-debug-action-make-a-qmessagebox",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Menu/model-only evidence; defining action modality/state reset/full popup/cache consumers absent or checkpoint callback fails inside transaction."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/help-debug-actions.json",
+    "id": "audit-options-help-debug-action-make-a-modal-popup-in-five-seconds",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Menu/model-only evidence; defining action modality/state reset/full popup/cache consumers absent or checkpoint callback fails inside transaction."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/help-debug-actions.json",
+    "id": "audit-options-help-debug-action-make-a-non-cancellable-modal-popup-in-five-seconds",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Menu/model-only evidence; defining action modality/state reset/full popup/cache consumers absent or checkpoint callback fails inside transaction."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/help-debug-actions.json",
+    "id": "audit-options-help-debug-action-make-some-popups",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Menu/model-only evidence; defining action modality/state reset/full popup/cache consumers absent or checkpoint callback fails inside transaction."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/help-debug-actions.json",
+    "id": "audit-options-help-debug-action-reset-multi-column-list-settings-to-default",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Menu/model-only evidence; defining action modality/state reset/full popup/cache consumers absent or checkpoint callback fails inside transaction."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/help-debug-actions.json",
+    "id": "audit-options-help-debug-action-clear-all-rendering-caches",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Menu/model-only evidence; defining action modality/state reset/full popup/cache consumers absent or checkpoint callback fails inside transaction."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/media-view-options.json",
+    "id": "audit-options-media-playback-per-filetype-handling-add",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Static/model-only evidence omits parent lifecycle/persisted consumers; cancelled edit can apply into active parent and stale Add chooser can spawn child."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/media-view-options.json",
+    "id": "audit-options-media-playback-per-filetype-handling-edit",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Static/model-only evidence omits parent lifecycle/persisted consumers; cancelled edit can apply into active parent and stale Add chooser can spawn child."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/media-view-options.json",
+    "id": "audit-options-media-playback-per-filetype-handling-delete",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Static/model-only evidence omits parent lifecycle/persisted consumers; cancelled edit can apply into active parent and stale Add chooser can spawn child."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/shortcut-sets.json",
+    "id": "audit-options-shortcuts-built-in-hydrus-shortcut-sets-restore-defaults",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Helper-only restore/delete assertions omit actual chooser/confirmation Cancel and persisted native reopening."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/shortcut-sets.json",
+    "id": "audit-options-shortcuts-custom-user-sets-delete",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Helper-only restore/delete assertions omit actual chooser/confirmation Cancel and persisted native reopening."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/tab-menu-selectable-pages.json",
+    "id": "audit-options-tabs-context-action-2120-selectable-page",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "No recording; cited test strips count/progress labels and never dispatches actual selecting consumer."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/thumbnail-file-relationships.json",
+    "id": "audit-media-context-missing-duplicates",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Whole leaf omits custom merge/collections/viewer/king-domain behavior; no oracle/native dispatch/Cancel coverage."
+  }
+]

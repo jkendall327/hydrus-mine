@@ -606,14 +606,36 @@ mod tests {
         working.show();
         working.finish_and_dismiss_after(3);
         let completed = shown(&store).remove(0);
+        let owner = completed
+            .action_owner
+            .expect("the producer owns its live actions");
         let deadline = completed.dismiss_at.unwrap();
         assert!(completed.done && !completed.dismissed && !completed.cancellable);
+        let owner_count = || {
+            store
+                .read(|conn| {
+                    Ok(conn.query_row(
+                        "SELECT COUNT(*) FROM popup_action_owners WHERE job_key = ?1 AND owner = ?2",
+                        (&completed.key[..], &owner[..]),
+                        |row| row.get::<_, i64>(0),
+                    )?)
+                })
+                .unwrap()
+        };
+        assert_eq!(owner_count(), 1);
         drop(working);
+        assert_eq!(
+            owner_count(),
+            0,
+            "dropping the producer retires its actions"
+        );
+        let mut retired = completed.clone();
+        retired.action_owner = None;
         assert_eq!(
             store
                 .read(|conn| popups::get(conn, &completed.key, deadline))
                 .unwrap(),
-            Some(completed.clone())
+            Some(retired)
         );
         assert!(
             store

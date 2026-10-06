@@ -1,0 +1,142 @@
+[
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-backup.json",
+    "id": "audit-media-database-backup-path",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "No reference-backed native picker/cancel/failure/restart replay; restore runs before the GUI lock, removes its request early and deletes the live database before copying. Backup cancellation also reports success at the reviewed checkpoint."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-backup.json",
+    "id": "audit-media-database-backup-update",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "No reference-backed native picker/cancel/failure/restart replay; restore runs before the GUI lock, removes its request early and deletes the live database before copying. Backup cancellation also reports success at the reviewed checkpoint."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-backup.json",
+    "id": "audit-media-menu-database-restore-from-a-database-backup",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "No reference-backed native picker/cancel/failure/restart replay; restore runs before the GUI lock, removes its request early and deletes the live database before copying. Backup cancellation also reports success at the reviewed checkpoint."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-password-and-bones.json",
+    "id": "audit-media-database-clear-password",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Password callbacks lack retirement guards and no native persisted clear/cancel test exists; HowBoned replay covers only empty-predicate domains, with no typed-predicate/Stop/stale/reopen assertions."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-password-and-bones.json",
+    "id": "audit-media-menu-database-how-boned-am-i",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Password callbacks lack retirement guards and no native persisted clear/cancel test exists; HowBoned replay covers only empty-predicate domains, with no typed-predicate/Stop/stale/reopen assertions."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/duplicates-preparation-maintenance.json",
+    "id": "audit-media-preparation-numbers",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Tree and number cache actions are accepted no-ops; cited synthetic resync helper test does not replay menus/questions/cancellation or prove live consumer/preservation behavior."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/duplicates-preparation-maintenance.json",
+    "id": "audit-media-preparation-tree",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Tree and number cache actions are accepted no-ops; cited synthetic resync helper test does not replay menus/questions/cancellation or prove live consumer/preservation behavior."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/duplicates-preparation-maintenance.json",
+    "id": "audit-media-preparation-storage-resync",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Tree and number cache actions are accepted no-ops; cited synthetic resync helper test does not replay menus/questions/cancellation or prove live consumer/preservation behavior."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/file-exit-completion.json",
+    "id": "audit-options-menu-menu-file-exit",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Whole-flow claim exceeds model decisions and initial-question stale callback assertion; maintenance question timeout/No/Cancel, persistence, restart and failure flow are not replayed together."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/folder-run-menu-regressions.json",
+    "id": "audit-options-menu-menu-file-check-all",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Direct flag helper, menu generator and worker tests are separate; no recorded menu-dispatch replay proves the reference paused warning/wake behavior reaches live folder consumers."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/folder-run-menu-regressions.json",
+    "id": "audit-options-menu-menu-file-check-import-folder-now-folder",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Direct flag helper, menu generator and worker tests are separate; no recorded menu-dispatch replay proves the reference paused warning/wake behavior reaches live folder consumers."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/folder-run-menu-regressions.json",
+    "id": "audit-options-menu-menu-file-run-all",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Direct flag helper, menu generator and worker tests are separate; no recorded menu-dispatch replay proves the reference paused warning/wake behavior reaches live folder consumers."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/folder-run-menu-regressions.json",
+    "id": "audit-options-menu-menu-file-run-export-folder-now-folder",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Direct flag helper, menu generator and worker tests are separate; no recorded menu-dispatch replay proves the reference paused warning/wake behavior reaches live folder consumers."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/rule-preview-pair-menu.json",
+    "id": "audit-media-preview-context",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Cited review-actions model assertions never drive preview row selection/menu/new-page/deleted-file consumer; no preview recording/native replay is supplied."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/sessions.json",
+    "id": "audit-options-import-options-default-import-options-editor-list",
+    "status": "first_pass",
+    "countAsCompletedLeaf": false,
+    "reason": "Structural parent dialog has original leaf children; remove parent completion credit (scoped first_pass behavior may remain). This ID is absent from the prior validated milestone."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/sessions.json",
+    "id": "audit-options-import-options-url-class-import-options-editor-list",
+    "status": "first_pass",
+    "countAsCompletedLeaf": false,
+    "reason": "Structural parent dialog has original leaf children; remove parent completion credit (scoped first_pass behavior may remain). This ID is absent from the prior validated milestone."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/sessions.json",
+    "id": "audit-options-import-options-favourites-profiles-editor-list",
+    "status": "first_pass",
+    "countAsCompletedLeaf": false,
+    "reason": "Structural parent dialog has original leaf children; remove parent completion credit (scoped first_pass behavior may remain). This ID is absent from the prior validated milestone."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/tags-sync-menu.json",
+    "id": "audit-media-menu-tags-sync-now",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Idle/normal settings have no consumer; sync-now popup architecture-specific slice has no actual popup dispatch assertion in cited menu-generator test."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/tags-sync-menu.json",
+    "id": "audit-media-menu-tags-sync-tag-display-during-idle-time",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Idle/normal settings have no consumer; sync-now popup architecture-specific slice has no actual popup dispatch assertion in cited menu-generator test."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/tags-sync-menu.json",
+    "id": "audit-media-menu-tags-sync-tag-display-during-normal-time",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Idle/normal settings have no consumer; sync-now popup architecture-specific slice has no actual popup dispatch assertion in cited menu-generator test."
+  }
+]

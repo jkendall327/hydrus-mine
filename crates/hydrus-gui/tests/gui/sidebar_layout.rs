@@ -270,6 +270,11 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
         .write(|ctx| {
             let mut s: settings::GuiSettings = settings::get(ctx.conn())?;
             s.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(ctx.conn(), &shutdown)?;
             settings::set(ctx.conn(), &s)
         })
         .unwrap();
@@ -443,13 +448,48 @@ fn live_hide_setting_keeps_accepted_preview_refuses_replacements_and_collapse_re
     hide(&w, false);
     w.invoke_apply();
     sidebar(&ui, RESTORE);
-    // Qt revealing the splitter leaves an empty canvas. Observe that transition
-    // before the next selection, rather than folding both into one refresh.
+    // Actual Qt restore retains accepted media and its original viewing start,
+    // even though thumbnail focus was cleared while globally hidden.
+    let recorded = &f["preview_restore_probe"];
+    let before = &recorded[0];
+    let restored = recorded
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|step| step["action"] == "after restore event settle")
+        .unwrap();
+    assert!(recorded.as_array().unwrap().iter().all(|step| {
+        step["page"]["accepted"] == before["page"]["accepted"]
+            && step["page"]["start"] == before["page"]["start"]
+            && step["interval_cursor"] == before["interval_cursor"]
+    }));
+    assert_eq!(
+        restored["page"]["accepted"],
+        serde_json::json!(hash.to_hex())
+    );
+    assert_eq!(restored["page"]["canvas_visible"], true);
+    assert!(restored["page"]["focused"].is_null());
     render(&native);
     bound.preview.refresh();
     assert!(!ui.get_preview_splitter_hidden());
     assert!(bound.current.borrow().borrow().focused().is_none());
-    assert!(!ui.get_preview_has_media());
+    assert!(
+        ui.get_preview_has_media(),
+        "restore retains the Qt accepted canvas"
+    );
+    assert_eq!(bound.preview.displayed_file(), Some(first));
+    assert_eq!(ui.get_preview_media().size(), size);
+    assert_eq!(
+        store
+            .read(|c| Ok(c.query_row(
+                "SELECT count(*) FROM file_viewing_stats WHERE canvas_type=1",
+                [],
+                |r| r.get::<_, i64>(0)
+            )?))
+            .unwrap(),
+        0,
+        "restore does not finish the accepted interval"
+    );
     ui.invoke_thumbnail_clicked(index as i32, false, false);
     let started = std::time::Instant::now();
     while ui.get_preview_loading() {
@@ -458,6 +498,22 @@ fn live_hide_setting_keeps_accepted_preview_refuses_replacements_and_collapse_re
         std::thread::sleep(std::time::Duration::from_millis(5));
     }
     assert!(ui.get_preview_has_media());
+    let probe = f["preview_restore_selection_probe"].as_array().unwrap();
+    let recorded_step = |action: &str| probe.iter().find(|step| step["action"] == action).unwrap();
+    let restore = recorded_step("after restore event settle before next selection");
+    let selected = recorded_step("after next selection settle");
+    let collapsed = recorded_step("after final collapse settle");
+    assert_eq!(selected["page"]["accepted"], restore["page"]["accepted"]);
+    assert_eq!(selected["page"]["start"], restore["page"]["start"]);
+    assert_eq!(selected["interval_cursor"], restore["interval_cursor"]);
+    assert!(collapsed["page"]["accepted"].is_null());
+    assert!(collapsed["page"]["focused"].is_null());
+    assert_eq!(collapsed["page"]["selected"], selected["page"]["selected"]);
+    assert_eq!(
+        collapsed["interval_cursor"].as_u64().unwrap(),
+        selected["interval_cursor"].as_u64().unwrap() + 1
+    );
+    assert_eq!(bound.preview.displayed_file(), Some(first));
     let selection = bound.current.borrow().borrow().selected_files();
     clock.set(3000);
     ui.invoke_sidebar_collapsed(ui.get_layout_page_key(), ui.get_layout_epoch(), true);
@@ -591,7 +647,12 @@ fn pressed_old_handle_cannot_resize_same_key_successor_binding_or_same_session_r
         .write(|ctx| {
             let mut s: settings::GuiSettings = settings::get(ctx.conn())?;
             s.confirm_exit = false;
-            settings::set(ctx.conn(), &s)
+            settings::set(ctx.conn(), &s)?;
+            // This boundary tests completed exit, independently of due maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            settings::set(ctx.conn(), &shutdown)
         })
         .unwrap();
     ui.window().dispatch_event(E::CloseRequested);

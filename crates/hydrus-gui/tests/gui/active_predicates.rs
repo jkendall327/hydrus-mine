@@ -73,7 +73,7 @@ fn actual_existing_size_cancel_unchanged_and_edit_reach_reference_query_counts()
     add(&ui, "system:filesize < 7KB");
     let main_adapter = windows.get(windows.count() - 1).unwrap();
     let pixels = headless::render(&main_adapter, 1000, 800);
-    assert!(pixels.iter().any(|pixel| pixel.r != pixel.g));
+    assert!(pixels.chunks_exact(4).any(|pixel| pixel[0] != pixel[1]));
     let position = slint::LogicalPosition::new(
         ui.get_active_predicate_list_x() + 6.0,
         ui.get_active_predicate_list_y() + 11.0,
@@ -234,19 +234,33 @@ fn captured_menu_and_populated_child_cannot_edit_hidden_replaced_rebound_or_drop
 }
 
 #[test]
-fn dropping_the_last_owner_releases_a_populated_editor_without_cancel() {
+fn dropping_hidden_components_releases_a_populated_editor_without_cancel_cycle() {
     let (_dir, store) = setup();
-    let _windows = headless::init();
+    let windows = headless::init();
     let (ui, bound) = main(&store);
     add(&ui, "system:filesize < 7KB");
     let child = editor(&ui, &bound);
     let weak_child = child.as_weak();
+    let weak_slot = std::rc::Rc::downgrade(&bound.predicate_editor);
+    let weak_main = ui.as_weak();
     ui.hide().unwrap();
     drop(ui);
+    assert!(weak_main.upgrade().is_none());
     drop(bound);
     assert!(
         weak_child.upgrade().is_some(),
         "retained child is still live"
+    );
+    // Scope this to callback cycles: shown Slint windows retain components.
+    // Automatic child closure on parent destruction needs separate coverage.
+    child.hide().unwrap();
+    // The collector also owns Main's adapter. Its platform close handler
+    // retains the accepted-exit callback and therefore the child slot, even
+    // after Main's component dies. Release that independent external owner.
+    drop(windows);
+    assert!(
+        weak_slot.upgrade().is_none(),
+        "the retained child callbacks must not keep their owning slot alive"
     );
     drop(child);
     assert!(
@@ -363,7 +377,7 @@ fn mixed_apply_is_atomic_and_hidden_cancel_rebind_preserve_all_original_terms() 
         480,
     )
     .unwrap();
-    assert!(pixels.iter().any(|p| p.r != p.g));
+    assert!(pixels.chunks_exact(4).any(|pixel| pixel[0] != pixel[1]));
     child.invoke_cancel();
     assert_eq!(bound.current.borrow().borrow().active_predicates(), before);
     let child = mixed_editor(&ui, &bound, &selected);
@@ -570,7 +584,7 @@ fn populated_or_and_start_or_replay_all_ten_actual_qt_apply_cancel_shapes() {
                 600,
             )
             .unwrap();
-            assert!(pixels.iter().any(|p| p.r != p.g));
+            assert!(pixels.chunks_exact(4).any(|pixel| pixel[0] != pixel[1]));
         }
         if case["accepted"] == true {
             child.invoke_apply();
@@ -664,7 +678,13 @@ fn retained_populated_or_hidden_page_rebind_and_destroyed_main_cannot_publish() 
     assert!(successor.search_or.borrow().is_some());
     let current = successor.current.borrow().clone();
     let after = current.borrow().active_predicates().to_vec();
+    let weak_main = ui.as_weak();
+    ui.hide().unwrap();
     drop(ui);
+    assert!(
+        weak_main.upgrade().is_none(),
+        "the emitting Main is actually destroyed"
+    );
     live.invoke_remove(0);
     live.invoke_apply();
     assert_eq!(current.borrow().active_predicates(), after);
@@ -689,8 +709,17 @@ fn retained_or_system_child_does_not_keep_the_or_or_main_component_alive() {
         Pages::single(SearchPage::restored(store, context, true, None, Vec::new())),
     );
     let child = active_or(&ui, &bound, &decoded(&case["selected"]), false);
-    child.invoke_edited("system:filesize".into());
-    child.invoke_enter(false);
+    // Empty input offers system editors; typed text searches tags instead.
+    child.invoke_edited("".into());
+    // A populated OR inserts its draft summary at index zero. Choose the
+    // actual system suggestion rather than broadcasting that summary.
+    let system_index = child
+        .get_suggestions()
+        .iter()
+        .position(|row| row.text.as_str() == "system:filesize")
+        .unwrap();
+    assert!(system_index > 0);
+    child.invoke_chosen(i32::try_from(system_index).unwrap());
     let system = bound
         .search_or
         .system
@@ -700,6 +729,10 @@ fn retained_or_system_child_does_not_keep_the_or_or_main_component_alive() {
         .clone_strong();
     let weak_or = child.as_weak();
     let weak_main = ui.as_weak();
+    // Release platform retention to isolate callbacks from the retained system
+    // child. Shown-window retention is not a callback ownership cycle.
+    child.hide().unwrap();
+    ui.hide().unwrap();
     drop(child);
     drop(bound);
     drop(ui);
@@ -731,8 +764,17 @@ fn hidden_or_parent_reconciles_actual_system_and_nested_child_cancellation() {
         Pages::single(SearchPage::restored(store, context, true, None, Vec::new())),
     );
     let child = active_or(&ui, &bound, &decoded(&case["selected"]), false);
-    child.invoke_edited("system:filesize".into());
-    child.invoke_enter(false);
+    // Empty input offers system editors; typed text searches tags instead.
+    child.invoke_edited("".into());
+    // A populated OR inserts its draft summary at index zero. Choose the
+    // actual system suggestion rather than broadcasting that summary.
+    let system_index = child
+        .get_suggestions()
+        .iter()
+        .position(|row| row.text.as_str() == "system:filesize")
+        .unwrap();
+    assert!(system_index > 0);
+    child.invoke_chosen(i32::try_from(system_index).unwrap());
     assert!(child.get_blocked());
     let system = bound
         .search_or
@@ -762,8 +804,17 @@ fn hidden_or_parent_reconciles_actual_system_and_nested_child_cancellation() {
         "nested OR Cancel reconciles the still-owned hidden parent"
     );
     let before = bound.current.borrow().borrow().active_predicates().to_vec();
-    child.invoke_edited("system:filesize".into());
-    child.invoke_enter(false);
+    // Empty input offers system editors; typed text searches tags instead.
+    child.invoke_edited("".into());
+    // A populated OR inserts its draft summary at index zero. Choose the
+    // actual system suggestion rather than broadcasting that summary.
+    let system_index = child
+        .get_suggestions()
+        .iter()
+        .position(|row| row.text.as_str() == "system:filesize")
+        .unwrap();
+    assert!(system_index > 0);
+    child.invoke_chosen(i32::try_from(system_index).unwrap());
     let system = bound
         .search_or
         .system
@@ -805,18 +856,22 @@ fn capture_routes(
     selected: &[hydrus_search::Predicate],
 ) {
     let current = bound.current.borrow().clone();
-    let text = current.borrow().text_context();
-    for (i, predicate) in selected.iter().enumerate() {
-        ui.invoke_active_predicate_clicked(
-            index(ui, &hydrus_search::predicate_text(predicate, &text)),
-            i > 0,
-            false,
-        );
+    let page = current.borrow();
+    let labels = page.predicates();
+    let row = |predicate: &hydrus_search::Predicate| {
+        let position = page
+            .active_predicates()
+            .iter()
+            .position(|value| value == predicate)
+            .unwrap();
+        index(ui, &labels[position])
+    };
+    let selected_rows: Vec<_> = selected.iter().map(row).collect();
+    drop(page);
+    for (i, &row) in selected_rows.iter().enumerate() {
+        ui.invoke_active_predicate_clicked(row, i > 0, false);
     }
-    ui.invoke_active_predicate_menu_opened(index(
-        ui,
-        &hydrus_search::predicate_text(&selected[0], &text),
-    ));
+    ui.invoke_active_predicate_menu_opened(selected_rows[0]);
 }
 
 #[test]
@@ -860,7 +915,7 @@ fn real_inherited_menus_publish_exact_qt_clipboard_text_and_open_owned_pages() {
         capture_routes(&ui, &bound, &selected);
         let captured = ui.get_active_predicate_menu().iter().collect::<Vec<_>>();
         for actual in case["actions"].as_array().unwrap() {
-            let group = if actual["group"] == "copy" { 0 } else { 1 };
+            let group = i32::from(actual["group"] != "copy");
             let action = captured
                 .iter()
                 .find(|a| a.group == group && a.label.as_str() == actual["label"].as_str().unwrap())
@@ -969,6 +1024,11 @@ fn inherited_routes_refuse_hidden_question_child_page_and_retired_main_owners() 
             let mut settings: hydrus_store::settings::GuiSettings =
                 hydrus_store::settings::get(tx.conn())?;
             settings.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(tx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(tx.conn(), &shutdown)?;
             hydrus_store::settings::set(tx.conn(), &settings)
         })
         .unwrap();

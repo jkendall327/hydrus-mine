@@ -112,6 +112,15 @@ fn actual_pointer_drags_replay_qt_and_options_refresh_cancel_and_reopen() {
     }
     let saved = store.read(settings::get::<ViewerPointerSettings>).unwrap();
     assert!(saved.anchor_drag && saved.touch_unanchors);
+    // The live viewer after the existing recorded pointer/delta assertions.
+    let pixels = headless::render_snapshot(&drawn, 1000, 750);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("viewer_drag_anchor.png"),
+        &pixels,
+        1000,
+        750,
+    )
+    .unwrap();
     let draft = options(&ui, &bound);
     draft.invoke_check_toggled(row(&draft, ANCHOR), false);
     draft.invoke_check_toggled(row(&draft, TOUCH), false);
@@ -141,6 +150,15 @@ fn actual_pointer_drags_replay_qt_and_options_refresh_cancel_and_reopen() {
             .unwrap()
             .checked
     );
+    // Both reopened anchor controls above are verified against persisted settings.
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 1100, 850);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("options_viewer_drag_anchor.png"),
+        &pixels,
+        1100,
+        850,
+    )
+    .unwrap();
     reopened.invoke_cancel();
     viewer.invoke_close_requested();
     viewer.show().unwrap();

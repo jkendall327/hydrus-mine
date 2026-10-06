@@ -1,3 +1,4 @@
+import { MenuChoiceFrame } from "menu_choice_wheel.slint";
 import { Button, ComboBox, VerticalBox, HorizontalBox, ListView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { TableRow, TableColumn, ListTable } from "list_table.slint";
@@ -55,6 +56,9 @@ export component MostUsedTagsWindow inherits Window {
     width: 520px; height: 440px; background: Theme.window;
     in property <[string]> services;
     in property <int> service;
+    out property <string> displayed-service: service-choice.current-value;
+    out property <int> displayed-service-index: service-choice.current-index;
+    out property <MenuChoiceFrame> service-choice-frame: {x:service-choice.absolute-position.x,y:service-choice.absolute-position.y,w:service-choice.width,h:service-choice.height};
     in property <[string]> tags;
     in property <bool> child-open;
     callback service-chosen(int);
@@ -64,7 +68,7 @@ export component MostUsedTagsWindow inherits Window {
     VerticalBox {
         padding: 12px; spacing: 8px;
         Text { text: "Add your most used tags for each particular service here, and then you can just double-click to add, rather than typing every time."; wrap: word-wrap; color: Theme.text; }
-        HorizontalBox { Text {text:"Tag service: "; color:Theme.text;} ComboBox { model:root.services; current-index:root.service; enabled:!root.child-open; selected(_)=>{root.service-chosen(self.current-index);} } }
+        HorizontalBox { Text {text:"Tag service: "; color:Theme.text;} service-choice := ComboBox { model:root.services; current-index:root.service; enabled:!root.child-open; selected(_)=>{root.service-chosen(self.current-index);} } }
         Rectangle { background:Theme.tags-background;vertical-stretch:1; ListView { for tag in root.tags: Text { text:tag; color:Theme.text; } } }
         Button { text:"edit most used tags"; enabled:!root.child-open && root.services.length > 0; clicked=>{root.edit-tags();} }
         HorizontalBox { alignment:end; Button {text:"apply"; enabled:!root.child-open; clicked=>{root.apply();}} Button {text:"cancel"; clicked=>{root.cancel();}} }

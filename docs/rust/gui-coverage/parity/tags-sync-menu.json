@@ -2,13 +2,13 @@
   "schema_version": 1,
   "agent": "tags-sync-menu",
   "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
-  "proposed_completed_count": 3,
+  "proposed_completed_count": 0,
   "claims": [
     {
       "id": "audit-media-menu-tags-sync-now",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Tags > sync: sync tag display during idle/normal time switch the stored sibling/parent sync settings (ticked as stored); sync now reports the reference's all-synced popup.",
       "source": [
         "crates/hydrus-gui-model/src/main_menu.rs",
@@ -20,13 +20,19 @@
       ],
       "limits": [
         "hydrus-rs syncs as it writes: the switches have no consumer and sync now never has work."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Idle/normal settings have no consumer; sync-now popup architecture-specific slice has no actual popup dispatch assertion in cited menu-generator test.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-3.md"
+      }
     },
     {
       "id": "audit-media-menu-tags-sync-tag-display-during-idle-time",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Tags > sync: sync tag display during idle/normal time switch the stored sibling/parent sync settings (ticked as stored); sync now reports the reference's all-synced popup.",
       "source": [
         "crates/hydrus-gui-model/src/main_menu.rs",
@@ -38,13 +44,19 @@
       ],
       "limits": [
         "hydrus-rs syncs as it writes: the switches have no consumer and sync now never has work."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Idle/normal settings have no consumer; sync-now popup architecture-specific slice has no actual popup dispatch assertion in cited menu-generator test.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-3.md"
+      }
     },
     {
       "id": "audit-media-menu-tags-sync-tag-display-during-normal-time",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Tags > sync: sync tag display during idle/normal time switch the stored sibling/parent sync settings (ticked as stored); sync now reports the reference's all-synced popup.",
       "source": [
         "crates/hydrus-gui-model/src/main_menu.rs",
@@ -56,7 +68,13 @@
       ],
       "limits": [
         "hydrus-rs syncs as it writes: the switches have no consumer and sync now never has work."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Idle/normal settings have no consumer; sync-now popup architecture-specific slice has no actual popup dispatch assertion in cited menu-generator test.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-3.md"
+      }
     }
   ]
 }

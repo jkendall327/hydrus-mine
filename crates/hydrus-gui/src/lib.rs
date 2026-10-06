@@ -12,10 +12,9 @@ use hydrus_core::HashId;
 use hydrus_store::sessions;
 use slint::{Model, ModelRc, SharedString, VecModel};
 
-/// The UI compiled from `ui/` (generated code).
-#[allow(missing_debug_implementations)]
+/// The UI compiled from `ui/`, provided by the generated UI library.
 mod ui {
-    slint::include_modules!();
+    pub use hydrus_gui_ui::*;
 }
 
 pub use ui::*;
@@ -372,7 +371,11 @@ pub struct Bound {
     pub services_editor: services_editor_window::Slots,
     /// Owned global archive-time maintenance window.
     pub archive_repair: archive_repair_window::Slot,
+    /// Pending global Database maintenance confirmations and service choices.
+    pub database_maintenance: database_maintenance_window::Slot,
+    _database_maintenance_owner: Rc<database_maintenance_window::Owner>,
     pub viewing_maintenance: viewing_maintenance_window::Slot,
+    _vacuum_review_owner: Rc<vacuum_review_window::Owner>,
     /// Independent global file-history frame.
     pub file_history: file_history_window::Slot,
     pub file_maintenance: Option<file_maintenance_current::Control>,
@@ -588,9 +591,12 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     }));
     let binding_active = Rc::new(Cell::new(true));
+    let database_maintenance =
+        database_maintenance_window::Slot::new(window, binding_active.clone());
     let file_maintenance_binding: Rc<RefCell<Option<file_maintenance_current::Control>>> =
         Rc::default();
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
+    let vacuum_review = vacuum_review_window::Slot::default();
     let manage_tags: Rc<RefCell<Option<ManageTagsWindow>>> = Rc::default();
     let predicate_editor: Rc<RefCell<Option<PredicateEditorWindow>>> = Rc::default();
 
@@ -699,6 +705,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let debug_session_reload = debug_session_reload.clone();
         let debug_fetch = debug_fetch.clone();
         let image_cache = image_cache.clone();
+        let database_maintenance = database_maintenance.clone();
+        let vacuum_review = vacuum_review.clone();
         let options = options.clone();
         let manage_tags = manage_tags.clone();
         let predicate_editor = predicate_editor.clone();
@@ -718,6 +726,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             debug_session_reload.retire();
             debug_fetch.retire();
             image_cache.retire();
+            database_maintenance.retire();
+            vacuum_review.retire();
             retire_colours();
             launcher.cancel();
             rows.retire();
@@ -2986,9 +2996,38 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     }
                 })
             },
+            review_vacuum: {
+                let store = pages.borrow().store().clone();
+                let slot = vacuum_review.clone();
+                let active = binding_active.clone();
+                let weak = window.as_weak();
+                Rc::new(move || {
+                    let valid = Rc::new({
+                        let active = active.clone();
+                        let weak = weak.clone();
+                        move || {
+                            active.get()
+                                && weak
+                                    .upgrade()
+                                    .is_some_and(|window| window.window().is_visible())
+                        }
+                    });
+                    let can_accept = Rc::new({
+                        let weak = weak.clone();
+                        move || {
+                            weak.upgrade()
+                                .is_some_and(|window| window.get_question().is_empty())
+                        }
+                    });
+                    if let Err(error) = vacuum_review_window::open(&store, &slot, valid, can_accept)
+                    {
+                        eprintln!("could not open the vacuum review: {error}");
+                    }
+                })
+            },
             database_maintenance: {
                 let pages = pages.clone();
-                let slot = database_maintenance_window::Slot::default();
+                let slot = database_maintenance.clone();
                 Rc::new(move |job| {
                     if let Err(error) =
                         database_maintenance_window::open(pages.borrow().store(), &slot, job)
@@ -3326,6 +3365,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let debug_session_reload = debug_session_reload.clone();
             let debug_fetch = debug_fetch.clone();
             let image_cache = image_cache.clone();
+            let database_maintenance = database_maintenance.clone();
+            let vacuum_review = vacuum_review.clone();
             move || {
                 sidebar_layout.accepted_exit();
                 binding_active.set(false);
@@ -3338,6 +3379,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 debug_session_reload.retire();
                 debug_fetch.retire();
                 image_cache.retire();
+                database_maintenance.retire();
+                vacuum_review.retire();
                 retire_colours();
                 rows.retire();
                 if let Some(window) = weak.upgrade() {
@@ -5245,6 +5288,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let debug_long_popup_owner = Rc::new(debug_long_popup.owner());
     let force_idle_owner = Rc::new(force_idle.owner());
     Bound {
+        _vacuum_review_owner: Rc::new(vacuum_review_window::Owner::new(&vacuum_review)),
         _file_maintenance_owner: file_maintenance
             .as_ref()
             .map(|control| Rc::new(control.owner())),
@@ -5300,6 +5344,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         network_controls,
         services_editor,
         archive_repair,
+        _database_maintenance_owner: Rc::new(database_maintenance.owner()),
+        database_maintenance,
         viewing_maintenance,
         file_history,
         checker_options,

@@ -4,7 +4,7 @@
 Cross-namespace synthetic aliases expose solid custom/ideal/fallback colours and
 Qt6 fading. Actual Options stages Cancel/Apply/reopen and disables the custom
 namespace control while fading. Real Manage Tags and WriteFetch lists supply
-text, RGB runs and CanFadeColours; representative Qt paints are saved under /tmp.
+text, RGB runs and CanFadeColours; representative Qt paints are saved alongside the fixture.
 """
 import json, os, sys, tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -85,9 +85,9 @@ def record(session):
         # Save actual unselected and selected Qt paint for representative fades.
         box.resize(700,200);write.resize(700,200);box.show();write.show();QW.QApplication.processEvents()
         if fade:
-            assert write.grab().save('/tmp/sibling-colours-qt-unselected.png')
+            assert write.grab().save(os.path.join(HERE, 'fixtures', 'sibling-colours-qt-unselected.png'))
             write._Hit(False,False,next(i for i,t in enumerate(write._ordered_terms) if t.GetPredicate().GetValue()=='creator:parity alias'))
-            QW.QApplication.processEvents();assert write.grab().save('/tmp/sibling-colours-qt-selected.png')
+            QW.QApplication.processEvents();assert write.grab().save(os.path.join(HERE, 'fixtures', 'sibling-colours-qt-selected.png'))
             write._DeselectAll()
         return dict(fade=fade,namespace=namespace,namespace_enabled=enabled,reopened_text=reopened_text,storage=rows(box,'storage'),write=rows(write,'write'))
     try:
@@ -111,7 +111,7 @@ def record(session):
             for width in [700,1000]:
                 write.resize(width,200);QW.QApplication.processEvents()
                 image=write.widget().grab().toImage()
-                assert image.save('/tmp/sibling-colours-qt-collapsed-'+str(width)+'.png')
+                assert image.save(os.path.join(HERE, 'fixtures', 'sibling-colours-qt-collapsed-'+str(width)+'.png'))
                 y=write._GetPositionalIndexFromLogicalIndex(index)*write.fontMetrics().height()+1
                 gradient=[x for x in range(image.width()) if image.pixelColor(x,y).red()==0 and 0<image.pixelColor(x,y).blue()<250 and image.pixelColor(x,y).green()<170]
                 samples=[list(image.pixelColor(x,y).getRgb()[:3]) for x in range(image.width()-100,image.width()-20)]

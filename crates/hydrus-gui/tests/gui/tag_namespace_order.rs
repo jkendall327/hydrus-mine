@@ -381,6 +381,11 @@ fn hidden_stale_rebound_and_accepted_close_children_cannot_stage_or_save() {
         .write(|writer| {
             let mut gui: settings::GuiSettings = settings::get(writer.conn())?;
             gui.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(writer.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(writer.conn(), &shutdown)?;
             settings::set(writer.conn(), &gui)
         })
         .unwrap();

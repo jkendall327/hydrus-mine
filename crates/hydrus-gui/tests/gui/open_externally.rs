@@ -11,6 +11,18 @@ use hydrus_store::{Store, settings};
 use serde_json::{Value, json};
 use slint::{ComponentHandle as _, Model as _};
 use std::{cell::RefCell, rc::Rc};
+// Drive the reference's selected reserved-set Edit button, not the retired
+// shortcuts-clicked callback. Also use this sender for blocked-child attempts.
+fn request_global_shortcuts(parent: &OptionsWindow) {
+    let label = hydrus_gui_model::shortcut_sets::pretty_name("global");
+    let row = parent
+        .get_shortcut_reserved_rows()
+        .iter()
+        .position(|row| row.cells.row_data(0).unwrap().as_str() == label)
+        .unwrap();
+    parent.invoke_shortcut_set_clicked(false, i32::try_from(row).unwrap(), false, false);
+    parent.invoke_shortcut_set_action("edit-reserved".into());
+}
 fn seed(store: &Store) -> Manager {
     let fixture = hydrus_testkit::fixture_json("open_externally.json");
     let manager = Manager {
@@ -189,9 +201,10 @@ fn shortcut_and_routing_children_exclude_each_other_and_cancel_staged_changes() 
     )
     .unwrap();
     window.invoke_page_chosen(shortcuts_page);
-    window.invoke_shortcuts_clicked();
+    request_global_shortcuts(&window);
     let shortcut_child = hydrus_gui::shortcut_windows::last_set().unwrap();
     assert!(shortcut_child.window().is_visible());
+    assert_eq!(shortcut_child.get_set_name().as_str(), "global");
     // StandardListView's two-way current-item binding writes page first.
     window.set_page(routing_page);
     window.invoke_page_chosen(routing_page);
@@ -225,7 +238,7 @@ fn shortcut_and_routing_children_exclude_each_other_and_cancel_staged_changes() 
     assert_eq!(window.get_page(), routing_page);
     window.invoke_routing_url_action("add".into());
     let routing_child = choice(&bound);
-    window.invoke_shortcuts_clicked();
+    request_global_shortcuts(&window);
     assert!(
         !shortcut_child.window().is_visible(),
         "routing child cannot reopen a shortcut child"
@@ -249,8 +262,9 @@ fn shortcut_and_routing_children_exclude_each_other_and_cancel_staged_changes() 
     );
     let successor = open(&ui, &bound);
     successor.invoke_page_chosen(shortcuts_page);
-    successor.invoke_shortcuts_clicked();
+    request_global_shortcuts(&successor);
     let child = hydrus_gui::shortcut_windows::last_set().unwrap();
+    assert_eq!(child.get_set_name().as_str(), "global");
     successor.invoke_cancel();
     assert!(!child.window().is_visible());
     child.invoke_apply();
@@ -590,7 +604,14 @@ fn saved_routes_reach_main_and_live_viewer_os_fallback_and_missing_owned_notice(
     let mut gui_settings = store.read(settings::get::<settings::GuiSettings>).unwrap();
     gui_settings.confirm_exit = true;
     store
-        .write(move |ctx| settings::set(ctx.conn(), &gui_settings))
+        .write(move |ctx| {
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(ctx.conn(), &shutdown)?;
+            settings::set(ctx.conn(), &gui_settings)
+        })
         .unwrap();
     ui.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);

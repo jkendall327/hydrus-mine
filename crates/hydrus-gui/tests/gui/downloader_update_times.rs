@@ -171,6 +171,11 @@ fn scheduler(watcher: bool) {
             )?;
             let mut gui: GuiSettings = settings::get(ctx.conn())?;
             gui.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(ctx.conn(), &shutdown)?;
             settings::set(ctx.conn(), &gui)
         })
         .unwrap();

@@ -2,13 +2,13 @@
   "schema_version": 1,
   "agent": "deferred-delete-menu-switches",
   "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
-  "proposed_completed_count": 2,
+  "proposed_completed_count": 0,
   "claims": [
     {
       "id": "audit-media-menu-database-work-deferred-delete-jobs-during-idle-time",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database > db maintenance > work deferred delete jobs during idle/normal time tick from and switch the stored database_deferred_delete_maintenance_during_idle/active settings (default on).",
       "source": [
         "crates/hydrus-gui-model/src/main_menu.rs",
@@ -20,13 +20,19 @@
       ],
       "limits": [
         "No consumer: hydrus-rs drops tables as it writes."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Saved menu ticks have no deferred-delete work consumer. Reference switches gate actual background deletion; native drops tables synchronously. Partial/0.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-4.md"
+      }
     },
     {
       "id": "audit-media-menu-database-work-deferred-delete-jobs-during-normal-time",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database > db maintenance > work deferred delete jobs during idle/normal time tick from and switch the stored database_deferred_delete_maintenance_during_idle/active settings (default on).",
       "source": [
         "crates/hydrus-gui-model/src/main_menu.rs",
@@ -38,7 +44,13 @@
       ],
       "limits": [
         "No consumer: hydrus-rs drops tables as it writes."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Saved menu ticks have no deferred-delete work consumer. Reference switches gate actual background deletion; native drops tables synchronously. Partial/0.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-4.md"
+      }
     }
   ]
 }

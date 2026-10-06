@@ -27,6 +27,18 @@ fn open(ui: &MainWindow, bound: &hydrus_gui::Bound) -> OptionsWindow {
     w.invoke_page_chosen(p);
     w
 }
+// Drive the reference's selected reserved-set Edit button, not the retired
+// shortcuts-clicked callback. Also use this sender for blocked-child attempts.
+fn request_global_shortcuts(parent: &OptionsWindow) {
+    let label = hydrus_gui_model::shortcut_sets::pretty_name("global");
+    let row = parent
+        .get_shortcut_reserved_rows()
+        .iter()
+        .position(|row| row.cells.row_data(0).unwrap().as_str() == label)
+        .unwrap();
+    parent.invoke_shortcut_set_clicked(false, i32::try_from(row).unwrap(), false, false);
+    parent.invoke_shortcut_set_action("edit-reserved".into());
+}
 fn rows(w: &RegexFavouritesWindow) -> Value {
     json!(
         w.get_rows()
@@ -185,7 +197,7 @@ fn real_options_saved_input_chooser_crud_cancel_apply_and_retired_owners_match_q
             "search cannot bypass the regex child"
         );
         options.invoke_routing_url_action("add".into());
-        options.invoke_shortcuts_clicked();
+        request_global_shortcuts(&options);
         assert!(!bound.options_open_externally.has_open());
         assert!(!options.get_shortcuts_child_open());
         options.invoke_apply();
@@ -263,13 +275,24 @@ fn real_options_saved_input_chooser_crud_cancel_apply_and_retired_owners_match_q
     }
     // Reciprocal composition: an existing shortcut child blocks regex input.
     let options = open(&ui, &bound);
-    options.invoke_shortcuts_clicked();
+    let regex_page = options.get_page();
+    let shortcuts_page = options
+        .get_pages()
+        .iter()
+        .position(|page| page.text == "shortcuts")
+        .unwrap() as i32;
+    options.invoke_page_chosen(shortcuts_page);
+    assert_eq!(options.get_page(), shortcuts_page);
+    request_global_shortcuts(&options);
     let shortcuts = hydrus_gui::shortcut_windows::last_set().unwrap();
+    assert_eq!(shortcuts.get_set_name().as_str(), "global");
     assert!(options.get_shortcuts_child_open());
     options.invoke_regex_favourites_clicked();
     assert!(regex_favourites_window::last_opened().is_none());
     assert!(!options.get_regex_child_open());
     shortcuts.invoke_cancel();
+    options.invoke_page_chosen(regex_page);
+    assert_eq!(options.get_page(), regex_page);
     options.invoke_regex_favourites_clicked();
     let child = regex_favourites_window::last_opened().unwrap();
     assert!(options.get_regex_child_open());

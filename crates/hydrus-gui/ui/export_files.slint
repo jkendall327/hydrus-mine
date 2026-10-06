@@ -31,6 +31,8 @@ export component ExportFilesWindow inherits Window {
     callback tag-context-menu(int,length,length);
     callback tag-sort-chosen(int,int);
     callback tag-sort-geometry(int,MenuChoiceFrame);
+    out property <MenuChoiceFrame> tag-sort-type-frame: tags.sort-type-frame;
+    out property <MenuChoiceFrame> tag-sort-order-frame: tags.sort-order-frame;
     callback tag-copy();
     callback tag-select-all();
     in property <[MenuPane]> tag-menu-panes;
@@ -68,7 +70,7 @@ export component ExportFilesWindow inherits Window {
         HorizontalLayout {
             vertical-stretch: 1;
             spacing: 8px;
-            ExportTags {
+            tags := ExportTags {
                 width: 280px;
                 enabled: !root.working && !root.asking;
                 rows: root.tags; selected: root.tag-selected;

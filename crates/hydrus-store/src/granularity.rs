@@ -35,7 +35,7 @@ pub fn estimate(path: &Path) -> Option<usize> {
         let name = entry.file_name().to_string_lossy().into_owned();
         if entry.file_type().is_ok_and(|t| t.is_dir()) {
             let length = match name.len() {
-                3 if is_hex(&name[1..]) => 2,
+                3 if name.get(1..).is_some_and(is_hex) => 2,
                 1 | 2 if is_hex(&name) => name.len(),
                 _ => continue,
             };
@@ -81,6 +81,17 @@ pub fn regranularise(
     from: usize,
     to: usize,
     progress: &mut Progress<'_>,
+) -> Result<Outcome> {
+    regranularise_recorded(bases, kinds, from, to, progress, &mut Vec::new())
+}
+
+fn regranularise_recorded(
+    bases: &[PathBuf],
+    kinds: &[char],
+    from: usize,
+    to: usize,
+    progress: &mut Progress<'_>,
+    moved: &mut Vec<(PathBuf, PathBuf)>,
 ) -> Result<Outcome> {
     if from == to {
         return Err(StoreError::Invalid(format!(
@@ -168,10 +179,25 @@ pub fn regranularise(
                 return Err(StoreError::Invalid("Cancelled by user".into()));
             }
             for (from_path, to_path) in chunk {
-                if std::fs::rename(from_path, to_path).is_err() {
-                    std::fs::copy(from_path, to_path)?;
-                    std::fs::remove_file(from_path)?;
+                if to_path.exists() {
+                    return Err(StoreError::Invalid(format!(
+                        "Refusing to overwrite an existing file while regranularising: {}",
+                        to_path.display()
+                    )));
                 }
+                if std::fs::rename(from_path, to_path).is_err() {
+                    if let Err(error) = std::fs::copy(from_path, to_path) {
+                        // A failed copy can leave a partial destination.
+                        let _ = std::fs::remove_file(to_path);
+                        return Err(error.into());
+                    }
+                    if let Err(error) = std::fs::remove_file(from_path) {
+                        // Keep the source authoritative if a cross-device move cannot finish.
+                        std::fs::remove_file(to_path)?;
+                        return Err(error.into());
+                    }
+                }
+                moved.push((from_path.clone(), to_path.clone()));
             }
             outcome.moved += chunk.len();
         }
@@ -198,21 +224,6 @@ pub fn granularise_store(
         )));
     }
     let bases: Vec<PathBuf> = storage.locations().iter().map(|l| l.path.clone()).collect();
-    let outcome = match regranularise(&bases, &['f', 't'], from, to, progress) {
-        Ok(outcome) => outcome,
-        Err(e) => {
-            // (cancelled or failed: put every file back where the records
-            // say, as the reference undoes the job)
-            let (no, say) = (|| false, &mut *progress.say);
-            let mut undo = Progress {
-                say,
-                paused: &no,
-                cancelled: &no,
-            };
-            regranularise(&bases, &['f', 't'], to, from, &mut undo)?;
-            return Err(e);
-        }
-    };
     // each new prefix where its old one was (the first, going down), as
     // the records say, whether or not its folder had files
     let old: Vec<(String, PathBuf)> = store.read(|conn| {
@@ -223,7 +234,18 @@ pub fn granularise_store(
         let rows = stmt.query_map([], |r| Ok((r.get::<_, String>(0)?, PathBuf::from(r.get::<_, String>(1)?))))?;
         Ok(rows.collect::<rusqlite::Result<_>>()?)
     })?;
-    let mut map: BTreeMap<String, PathBuf> = BTreeMap::new();
+    let mut moved = Vec::new();
+    let outcome = match regranularise_recorded(&bases, &['f', 't'], from, to, progress, &mut moved)
+    {
+        Ok(outcome) => outcome,
+        Err(error) => {
+            undo_moves(&moved)?;
+            return Err(error);
+        }
+    };
+    // Physical movement chooses the first base encountered. Preserve that actual
+    // destination when sibling prefixes previously lived in different locations.
+    let mut map = outcome.prefixes.clone();
     for (prefix, base) in old {
         let kind = prefix.chars().next().unwrap_or('f');
         if from < to {
@@ -237,7 +259,7 @@ pub fn granularise_store(
             map.entry(prefix[..=to].to_owned()).or_insert(base);
         }
     }
-    store.write_and_refresh(move |ctx| {
+    let published = store.write_and_refresh(move |ctx| {
         let conn = ctx.conn();
         conn.execute("DELETE FROM storage_subfolders", [])?;
         let mut insert = conn.prepare(
@@ -248,13 +270,45 @@ pub fn granularise_store(
             insert.execute(rusqlite::params![prefix, base.to_string_lossy()])?;
         }
         Ok(())
-    })?;
+    });
+    if let Err(error) = published {
+        undo_moves(&moved)?;
+        return Err(error);
+    }
     Ok(outcome)
+}
+
+/// Restore the exact original paths, including storage split across locations.
+fn undo_moves(moved: &[(PathBuf, PathBuf)]) -> Result<()> {
+    for (original, current) in moved.iter().rev() {
+        if original.exists() {
+            return Err(StoreError::Invalid(format!(
+                "Cannot restore migrated file over an existing path: {}",
+                original.display()
+            )));
+        }
+        if let Some(parent) = original.parent() {
+            std::fs::create_dir_all(parent)?;
+        }
+        if std::fs::rename(current, original).is_err() {
+            std::fs::copy(current, original)?;
+            std::fs::remove_file(current)?;
+        }
+    }
+    Ok(())
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn estimating_a_folder_ignores_non_ascii_names() {
+        let dir = tempfile::tempdir().unwrap();
+        std::fs::create_dir(dir.path().join("éa")).unwrap();
+        std::fs::create_dir(dir.path().join("f3a")).unwrap();
+        assert_eq!(estimate(dir.path()), Some(2));
+    }
 
     #[test]
     fn a_folder_goes_to_three_and_back() {
@@ -283,6 +337,134 @@ mod tests {
         let down = regranularise(std::slice::from_ref(&base), &['f'], 3, 2, &mut progress).unwrap();
         assert_eq!(down.moved, 1);
         assert!(base.join("f3a").join(file).is_file());
+    }
+
+    fn split_store() -> (
+        tempfile::TempDir,
+        std::sync::Arc<crate::Store>,
+        PathBuf,
+        PathBuf,
+    ) {
+        let dir = tempfile::tempdir().unwrap();
+        let store = crate::Store::open(dir.path()).unwrap();
+        let first = dir.path().join("a");
+        let second = dir.path().join("b");
+        let (a, b) = (first.clone(), second.clone());
+        store
+            .write_and_refresh(move |ctx| {
+                let conn = ctx.conn();
+                conn.execute("DELETE FROM storage_subfolders", [])?;
+                conn.execute("DELETE FROM storage_locations", [])?;
+                for (id, path, prefix) in [(1, a, "f3ab"), (2, b, "f3a0")] {
+                    conn.execute(
+                        "INSERT INTO storage_locations (location_id, path) VALUES (?1, ?2)",
+                        rusqlite::params![id, path.to_string_lossy()],
+                    )?;
+                    conn.execute(
+                        "INSERT INTO storage_subfolders (prefix, location_id) VALUES (?1, ?2)",
+                        rusqlite::params![prefix, id],
+                    )?;
+                }
+                Ok(())
+            })
+            .unwrap();
+        for (base, prefix, name) in [(&first, "f3ab", "3ab-file"), (&second, "f3a0", "3a0-file")] {
+            let folder = prefix_dir(base, prefix);
+            std::fs::create_dir_all(&folder).unwrap();
+            std::fs::write(folder.join(name), name).unwrap();
+        }
+        (dir, store, first, second)
+    }
+
+    #[test]
+    fn merged_prefix_records_the_actual_destination_across_locations() {
+        let (_dir, store, first, second) = split_store();
+        let mut say = |_: Option<String>, _: Option<String>| {};
+        let mut progress = Progress {
+            say: &mut say,
+            paused: &|| false,
+            cancelled: &|| false,
+        };
+        let outcome = granularise_store(&store, 3, 2, &mut progress).unwrap();
+        let recorded: String = store.read(|conn| Ok(conn.query_row(
+            "SELECT path FROM storage_subfolders JOIN storage_locations USING(location_id) WHERE prefix = 'f3a'",
+            [], |row| row.get(0))?)).unwrap();
+        assert_eq!(PathBuf::from(recorded), outcome.prefixes["f3a"]);
+        assert_eq!(outcome.prefixes["f3a"], first);
+        assert_eq!(
+            std::fs::read(first.join("f3a/3ab-file")).unwrap(),
+            b"3ab-file"
+        );
+        assert_eq!(
+            std::fs::read(first.join("f3a/3a0-file")).unwrap(),
+            b"3a0-file"
+        );
+        assert!(!second.join("f3a/0/3a0-file").exists());
+    }
+
+    #[test]
+    fn cancellation_restores_moved_files_to_their_original_locations() {
+        let (_dir, store, first, second) = split_store();
+        let cancel = std::cell::Cell::new(false);
+        let mut say = |text: Option<String>, _: Option<String>| {
+            if text.is_some_and(|text| text.contains("f3a0")) {
+                cancel.set(true);
+            }
+        };
+        let mut progress = Progress {
+            say: &mut say,
+            paused: &|| false,
+            cancelled: &|| cancel.get(),
+        };
+        assert!(granularise_store(&store, 3, 2, &mut progress).is_err());
+        assert_eq!(
+            std::fs::read(first.join("f3a/b/3ab-file")).unwrap(),
+            b"3ab-file"
+        );
+        assert_eq!(
+            std::fs::read(second.join("f3a/0/3a0-file")).unwrap(),
+            b"3a0-file"
+        );
+        assert!(!first.join("f3a/3ab-file").exists());
+        assert_eq!(
+            store
+                .read(crate::storage::FileStorage::load)
+                .unwrap()
+                .granularity(),
+            3
+        );
+    }
+
+    #[test]
+    fn failed_publication_restores_exact_split_locations() {
+        let (_dir, store, first, second) = split_store();
+        store.write(|ctx| {
+            ctx.conn().execute_batch("CREATE TRIGGER reject_migration BEFORE DELETE ON storage_subfolders BEGIN SELECT RAISE(ABORT, 'injected publication failure'); END;")?;
+            Ok(())
+        }).unwrap();
+        let mut say = |_: Option<String>, _: Option<String>| {};
+        let mut progress = Progress {
+            say: &mut say,
+            paused: &|| false,
+            cancelled: &|| false,
+        };
+        assert!(granularise_store(&store, 3, 2, &mut progress).is_err());
+        assert_eq!(
+            std::fs::read(first.join("f3a/b/3ab-file")).unwrap(),
+            b"3ab-file"
+        );
+        assert_eq!(
+            std::fs::read(second.join("f3a/0/3a0-file")).unwrap(),
+            b"3a0-file"
+        );
+        assert!(!first.join("f3a/3a0-file").exists());
+        assert_eq!(
+            store
+                .read(crate::storage::FileStorage::load)
+                .unwrap()
+                .granularity(),
+            3
+        );
     }
 
     #[test]

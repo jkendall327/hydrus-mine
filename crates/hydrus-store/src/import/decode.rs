@@ -4256,9 +4256,16 @@ mod tests {
             ],
         );
         let settings = decoded();
-        assert!(!settings.merge_numpad);
-        assert!(settings.primary_labels);
-        assert!(settings.sets.values().all(Vec::is_empty));
+        // Capture preferences change independently of the supported built-in
+        // bindings. Defaults now contain runnable shortcuts, not empty sets.
+        assert_eq!(
+            settings,
+            Settings {
+                merge_numpad: false,
+                primary_labels: true,
+                ..Settings::default()
+            }
+        );
     }
 
     #[test]

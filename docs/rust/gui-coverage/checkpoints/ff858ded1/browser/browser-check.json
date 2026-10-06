@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "source_commit": "ff858ded14518d4a9a1d39bb5aafe0213c992983",
+  "expected_signed_off": 280,
+  "expected_additional": 20,
+  "started_at_utc": "2026-10-06T07:55:16.915295+00:00",
+  "publication_performed": false,
+  "html": "/workspace/validation-reviews/publication-staged-next20-ff858ded1-linux/docs/rust/gui-progress.html",
+  "html_sha256": "ecc46d6525101ea3449d05d7b95d305cf02a0fb196261ced8a3174c52c2d8883",
+  "publication_audit": "/workspace/validation-reviews/publication-staged-next20-ff858ded1-linux/docs/rust/gui-coverage/audit/anchor-remap-ff858ded-publication.json",
+  "publication_audit_sha256": "728584009d6bb0d925d0dd474dfcfd45010781debe3130e80705341b29e4e33f",
+  "additional_selected_ids": [
+    "audit-options-files-and-trash-when-finishing-archive-delete-filtering-always-delete-from-all-possible-domains",
+    "audit-options-files-and-trash-when-finishing-archive-delete-filtering-delay-activation-of-multiple-deletion-choice-buttons",
+    "audit-options-help-debug-action-make-a-new-page-in-five-seconds",
+    "audit-options-help-debug-action-fetch-a-url",
+    "audit-options-help-debug-action-make-a-long-text-popup",
+    "audit-options-help-debug-action-close-and-reload-current-gui-session",
+    "audit-options-duplicates-duplicates-filter-page-hide-the-x-done-notification-on-preparation-tab-when-99-searched",
+    "audit-options-files-and-trash-confirm-when-copying-files-across-local-file-domains",
+    "audit-options-files-and-trash-confirm-when-moving-files-across-local-file-domains",
+    "audit-options-tag-presentation-other-rendering-namespace-for-the-or-top-row",
+    "audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time",
+    "audit-options-files-and-trash-allow-trash-maintenance-during-normal-time",
+    "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-show-tab-tree-view",
+    "audit-media-notes-missing-cog",
+    "audit-options-notes-start-editing-notes-with-the-text-cursor-at-the-end-of-the-document",
+    "audit-options-notes-when-middle-clicking-a-note-hover-only-copy-the-text",
+    "audit-options-files-and-trash-when-maintenance-physically-deletes-files-wait-this-long-between-each-delete",
+    "audit-options-popup-notifications-popup-window-toaster-approximate-max-width-of-popup-messages-in-characters",
+    "audit-options-popup-notifications-popup-window-toaster-bugfix-force-this-width-as-the-fixed-width-for-all-popup-messages",
+    "audit-options-menu-menu-file-quick-export-directory"
+  ],
+  "prior_signed_off": 260,
+  "url_scope": {
+    "url": "http://127.0.0.1:38863/gui-progress.html",
+    "origin": "http://127.0.0.1:38863",
+    "served_directory": "/workspace/validation-reviews/publication-staged-next20-ff858ded1-linux/docs/rust",
+    "directory_listing": false,
+    "escaping_symlinks": false,
+    "external_requests_allowed": false,
+    "source_links_followed": false
+  },
+  "js_errors": [],
+  "blocked_external_requests": [],
+  "failed_requests": [],
+  "rendered_note": "Overnight implementation: 280 original concrete features reached first pass (goal 80). Missing: 862 \u2192 541. Partial: 378 \u2192 390. Goal counting excludes parent/alias completions and evidence-only reassessments. Exact successful hosted Linux check and parity-models jobs. Windows and macOS validation is deferred under the exact-source owner policy. Source inspection and author reference-recording provenance are separate; no local Cargo or mutation testing by this tool.",
+  "inventory_counts": {
+    "reference": 1812,
+    "native": 1799
+  },
+  "inventory_status_counts": {
+    "reference": {
+      "first_pass": 881,
+      "partial": 390,
+      "missing": 541,
+      "unassessed": 0
+    },
+    "native": {
+      "first_pass": 850,
+      "partial": 860,
+      "missing": 89,
+      "unassessed": 0
+    }
+  },
+  "completion_filter": "280 matching \u00b7 1812 inventoried",
+  "selected_additional_node": "audit-options-files-and-trash-when-finishing-archive-delete-filtering-always-delete-from-all-possible-domains",
+  "completion_links": {
+    "snapshot": "https://github.com/jkendall327/hydrus-mine/commit/ff858ded14518d4a9a1d39bb5aafe0213c992983",
+    "source_anchors": [
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/hydrus/client/gui/panels/options/FilesAndTrashPanel.py#L162",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-store/src/archive_delete_preferences.rs#L9",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-store/src/archive_delete_preferences.rs#L9",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-store/src/archive_delete_preferences.rs#L26",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-store/src/archive_delete_preferences.rs#L60",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-store/src/archive_delete_preferences.rs#L45",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-store/src/import/decode.rs#L1057",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui-model/src/options.rs#L2432",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui-model/src/options.rs#L2437",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui-model/src/archive_delete.rs#L231",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui-model/src/archive_delete.rs#L358",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui-model/src/archive_delete.rs#L409",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui/src/archive_delete_window.rs#L41",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui/src/archive_delete_window.rs#L115",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui/src/archive_delete_window.rs#L15",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui/src/archive_delete_window.rs#L493",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui/src/archive_delete_window.rs#L235",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui/src/lib.rs#L4196",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui/src/archive_delete_window.rs#L576",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui/ui/archive_delete.slint#L59",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui/ui/archive_delete.slint#L211",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/hydrus/client/gui/panels/options/FilesAndTrashPanel.py#L162",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui-model/tests/model/archive_delete_policies.rs#L53",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui-model/tests/model/archive_delete_policies.rs#L138",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui-model/tests/model/archive_delete_policies.rs#L285",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui/tests/gui/archive_delete_policies.rs#L83",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui/tests/gui/archive_delete_policies.rs#L178",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui/tests/gui/archive_delete_policies.rs#L317",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui/tests/gui/archive_delete_policies.rs#L263",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/oracle/record_archive_delete_policies.py#L1",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/oracle/fixtures/archive_delete_policies.json#L1",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/hydrus/client/gui/panels/options/FilesAndTrashPanel.py#L40",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/hydrus/client/gui/panels/options/FilesAndTrashPanel.py#L44",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/hydrus/client/gui/canvas/ClientGUICanvas.py#L3629",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/hydrus/client/gui/canvas/ClientGUICanvas.py#L3941",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/hydrus/client/gui/panels/ClientGUIScrolledPanelsCommitFiltering.py#L95",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/hydrus/client/gui/panels/ClientGUIScrolledPanelsCommitFiltering.py#L204"
+    ]
+  },
+  "viewports": {
+    "desktop": {
+      "width": 1440,
+      "height": 1000
+    },
+    "narrow": {
+      "width": 390,
+      "height": 844
+    }
+  },
+  "screenshots": {
+    "desktop": {
+      "path": "/workspace/validation-reviews/report-browser-ff858ded1/report-desktop.png",
+      "sha256": "8ebc1ab7db106a16589bff7d410984f6409a303e7f649660223d26fb09a1141b"
+    },
+    "narrow": {
+      "path": "/workspace/validation-reviews/report-browser-ff858ded1/report-narrow.png",
+      "sha256": "362157f47b59789f9fc1932b754080e874d66b7053eb729d5c91d5b500606de0"
+    }
+  },
+  "reference_interaction": {
+    "search": "8 matching \u00b7 1812 inventoried",
+    "unchecked_status": "missing",
+    "filtered": "5 matching \u00b7 1812 inventoried",
+    "snapshot": "https://github.com/jkendall327/hydrus-mine/commit/ff858ded14518d4a9a1d39bb5aafe0213c992983",
+    "source_anchors": [
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/hydrus/client/gui/ClientGUI.py#L3366",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui-model/src/main_menu.rs#L1073",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui-model/src/main_menu.rs#L1005",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui/src/menu_bar.rs#L843",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-cli/src/main.rs#L618",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui/src/vacuum_review_window.rs#L213",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui-model/tests/model/vacuum_review.rs#L34"
+    ]
+  },
+  "native_interaction": {
+    "search": "18 matching \u00b7 1799 inventoried",
+    "unchecked_status": "partial",
+    "filtered": "4 matching \u00b7 1799 inventoried",
+    "snapshot": "https://github.com/jkendall327/hydrus-mine/commit/ff858ded14518d4a9a1d39bb5aafe0213c992983",
+    "source_anchors": [
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/hydrus/client/gui/ClientGUI.py#L3275",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui-model/src/main_menu.rs#L1019",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui-model/src/main_menu.rs#L1005",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui-model/src/main_menu.rs#L1009",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui/src/menu_bar.rs#L799",
+      "https://github.com/jkendall327/hydrus-mine/blob/ff858ded14518d4a9a1d39bb5aafe0213c992983/crates/hydrus-gui/src/database_maintenance_window.rs#L126"
+    ]
+  },
+  "narrow": {
+    "width": 390,
+    "documentWidth": 390,
+    "bodyWidth": 390
+  },
+  "browser_version": "151.0.7922.173",
+  "checks": [
+    "real Chromium render",
+    "no JS/console errors",
+    "exact inventory counts",
+    "separate completion ledger and inventory counts",
+    "selected additional IDs",
+    "visible cumulative completion note",
+    "explicit Linux/deferred Windows/macOS",
+    "completion filter rendered IDs",
+    "reference/native tabs",
+    "search and status filters",
+    "rendered exact-SHA snapshot/source links",
+    "390px no document/body overflow",
+    "desktop/narrow screenshots hashed",
+    "input digests stable"
+  ],
+  "finished_at_utc": "2026-10-06T07:55:21.308455+00:00"
+}

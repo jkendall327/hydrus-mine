@@ -3,7 +3,7 @@
 //! a viewer plays them.
 
 use std::fs::File;
-use std::io::{BufReader, Read};
+use std::io::{BufReader, Read, Seek};
 use std::path::Path;
 
 use hydrus_core::Mime;
@@ -32,7 +32,7 @@ enum Source {
     Ugoira { zip: Zip, names: Vec<String> },
     /// An animated WebP's canvas after each frame.
     Webp {
-        decoder: image_webp::WebPDecoder<BufReader<File>>,
+        decoder: image_webp::WebPDecoder<BufReader<webp::AnimationReader>>,
         channels: u8,
     },
 }
@@ -98,14 +98,20 @@ impl Frames {
                 (Source::Ugoira { zip, names }, durations)
             }
             Mime::AnimationWebp => {
-                let decoder = image_webp::WebPDecoder::new(BufReader::new(File::open(path)?))
+                // Parse and decode the same open file even if its path is replaced.
+                let mut file = File::open(path)?;
+                let mut data = Vec::new();
+                file.read_to_end(&mut data)?;
+                file.rewind()?;
+                let reader = webp::AnimationReader::new(file, &data);
+                let decoder = image_webp::WebPDecoder::new(BufReader::new(reader))
                     .map_err(|e| MediaError::damaged(e.to_string()))?;
                 if !decoder.is_animated() || decoder.num_frames() == 0 {
                     return Err(MediaError::damaged("The WebP is not animated!"));
                 }
                 let channels = if decoder.has_alpha() { 4 } else { 3 };
                 // (a frame without one of its own: the reference's 83ms)
-                let mut durations: Vec<u32> = webp::frame_durations_ms(&std::fs::read(path)?)
+                let mut durations: Vec<u32> = webp::frame_durations_ms(&data)
                     .into_iter()
                     .map(|d| u32::try_from(d).unwrap_or(u32::MAX))
                     .collect();

@@ -1,0 +1,1181 @@
+{
+  "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+  "run_id": 37447108755,
+  "artifact_id": 11406361462,
+  "validation_scope": "linux",
+  "claims": [
+    {
+      "id": "audit-options-media-playback-system-ffmpeg-call-timeout",
+      "approval": true,
+      "caveats": [
+        "Actual Qt timeout is passed once into metadata/version calls and checked in three-second communicate slices. Native Store policy adapts saved/displayed n to ceil(clamp(n,1,600)/3)\u00d73 seconds; fixed Ffmpeg::timeout(Duration) intentionally stays precise and overrides live readers. No exact submillisecond or polling-wakeup latency parity is claimed.",
+        "Native deadline duration is captured before process spawning; its Instant deadline is constructed after successful spawn/pipe-reader setup, matching the finite subprocess wait contract rather than bounding OS exec/thread admission itself.",
+        "The native subprocess regressions use authored POSIX FIFO transports; the reference uses an authored delayed local executable. They exercise real Ffmpeg/HydrusFFMPEG paths, not codec correctness, external network or arbitrary process-tree cleanup.",
+        "Retained importer version, local-review metadata and duplicate PSD decode consumers have dedicated timeout boundaries. Import/folder/parser reader construction establishes other routing but does not mean each caller has a dedicated timeout integration regression.",
+        "Streaming frame reads retain fixed per-chunk policy and Drop kill/wait; no streaming/player reuse or broader media playback promotion. Non-Store tools keep their default policy.",
+        "About uses a bounded saved-policy version call by source; on failure its pre-existing unavailable-version UI remains, unlike the reference diagnostic path string. A dedicated timeout-driven About UI fixture replay is not present.",
+        "Weak reader/isolated importer owner tests prove retained tools do not keep Store alive and fallback15s applies after Store loss. Options callbacks legitimately retain their Store while component handles live; this is not an assertion that all GUI handles release Store immediately.",
+        "Raw imported 0/601 display/apply normalization and independent/concurrent saves are model/Store tested; real GUI case inputs 0/601 clamp onApply and reopen. Five native PNGs show saved cases 1,600,15,1,600 with concurrently preserved ICC false, while the sole Qt PNG shows 1 with ICC true.",
+        "Options hidden edits/Apply are ignored, admitted visible draft surviveshide/show, retired cancelled handles cannotApply after reshow. Save-error handling keeps the editor open by source; no dedicated injected GUI Store-write failure replay exists for this leaf.",
+        "Windows and macOS are deferred; this preparation and required publication validation are Linux-only.",
+        "Store-loss fallback is exercised for subsequent reader calls. An admitted subprocess keeps its captured duration; cancellation or owner destruction in the middle of an admitted decode is not a separately replayed boundary and must not be inferred from weak reader ownership.",
+        "All five current 1200\u00d71800 native Options captures show complete numeric fields/arrows and clear adjacent labels at saved 1/600/15/1/600. This validates the repaired intrinsic numeric height in those recorded captures, not every viewport/platform or the surrounding unselected controls. The reference crop shows timeout 1 with ICC checked, while native cases intentionally preserve ICC false."
+      ]
+    },
+    {
+      "id": "audit-options-help-debug-action-make-a-popup-in-five-seconds",
+      "approval": true,
+      "caveats": [
+        "Actual Qt recording forwards the real CallLater/background SingleJob and messagepublication and observes real elapsed 5054.124/6002.523ms. Native tests inject this owner clock and call the production tick at 4999/5000/5999/6000ms; these prove deadline admission/order/noearly publication, not physical five-second native timer latency or equality of Qt/native timestamps.",
+        "The real native earliest-deadline weak single-shot timer rechecks the monotonic clock and polls owner/dismissal liveness at most 200ms; event-loop delivery can occur later. The actual 250ms popup projection timer is exercised only for Show resumption after durable hidden publication.",
+        "Hidden Main refuses new admission while already-admitted deadlines publish to Store; hidden cards remain frozen until Show refresh. Durable native Store jobs/reopen are explicit native behavior, not a claim that Qt persists its transient JobStatus cards.",
+        "Exit Cancel, accepted exit, same Main rebind, sole Bound owner drop and hide-before-drop actual Main destruction are separate native regressions; retained old controls cannot resurrect. General multiple-owner/lost-window/event-loop failure combinations are not exhaustively covered.",
+        "Store read/write errors retire pending producer work by source, consuming no duplicate deadline; there is no dedicated injected producer Store failure regression. No failure-notification wording parity is claimed.",
+        "The actual Qt PNG is a manager crop with two simple cards and \u201c2 messages\u201d/\u201cdismiss all\u201d summary; the native capture is full Main after real Show refresh. This supports card/text/state comparison, not pixel/frame geometry identity or a screenshot proving elapsed deadline.",
+        "Only the original make-a-popup-in-five-seconds leaf is selected; other Debug actions, long-popup producer completion or modal/new-page actions receive no extra completion credit.",
+        "Windows and macOS are deferred; this preparation and required publication validation are Linux-only.",
+        "The weak-window and Owner-drop regressions prove producer retirement without retaining Main. Retained Control handles still own their State and Store until those handles are dropped; this packet does not claim immediate release of every Store owner on GUI retirement.",
+        "The current 1000\u00d7700 full Main capture shows two complete exact-message cards and \u201c2 messages\u201d/\u201cdismiss all\u201d summary; Qt records its cropped manager. This is after-show consumer evidence, not a picture of physical five-second scheduling."
+      ]
+    }
+  ],
+  "reviewer": "review_6",
+  "approval_count": 2,
+  "review_type": "final independent source/reference/executed-behavior and fresh-render inspection",
+  "ci_evidence": {
+    "path": "/workspace/validation-reviews/ci-7c3c1aac5/ci-evidence.json",
+    "sha256": "2816fbf12b5604055b0b344080d39a9104b8cb00a50b9013efdd15e3ad5eaa4f",
+    "status": "completed",
+    "conclusion": "success",
+    "required_jobs": {
+      "check": "success",
+      "parity-models": "success"
+    },
+    "gui_tests_passed": 697,
+    "media_unit_tests_passed": 67,
+    "strict_clippy": "success",
+    "parity_ratchet": "success",
+    "parity_models": "success",
+    "deferred_platforms": [
+      "windows",
+      "macos"
+    ]
+  },
+  "current_test_proof": {
+    "path": "/workspace/validation-reviews/ci-7c3c1aac5/linux-full.log",
+    "sha256": "6123222b18b74892186700ac0a0a0663f1d4b5ec31198409d8fdf4bdfd97fc36",
+    "passed_assertion_tests": [
+      {
+        "line": 1779,
+        "observed": "2026-10-06T10:25:54.6777094Z test content::timeout_tests::retained_store_content_reads_new_policy_before_real_psd_decode ... ok"
+      },
+      {
+        "line": 1981,
+        "observed": "2026-10-06T10:26:54.5847747Z test debug_delayed_popup::actual_menu_overlapping_deadlines_hidden_progress_store_reopen_and_rendered_cards ... ok"
+      },
+      {
+        "line": 1982,
+        "observed": "2026-10-06T10:26:54.7876349Z test debug_delayed_popup::long_text_updates_and_dismissal_do_not_starve_a_pending_delayed_popup ... ok"
+      },
+      {
+        "line": 1983,
+        "observed": "2026-10-06T10:26:55.0879573Z test debug_delayed_popup::pending_delayed_jobs_retire_permanently_on_accepted_exit_rebind_and_owner_destruction ... ok"
+      },
+      {
+        "line": 2056,
+        "observed": "2026-10-06T10:27:09.7227082Z test ffmpeg_timeout::retained_importer_tools_do_not_retain_their_isolated_store ... ok"
+      },
+      {
+        "line": 2058,
+        "observed": "2026-10-06T10:27:10.1224639Z test ffmpeg_timeout::visible_timeout_draft_survives_hidden_edits_and_reaches_the_live_reader ... ok"
+      },
+      {
+        "line": 2070,
+        "observed": "2026-10-06T10:27:12.3557205Z test ffmpeg_timeout::real_options_cancel_hidden_retired_save_reopen_bounds_and_independent_field ... ok"
+      },
+      {
+        "line": 2091,
+        "observed": "2026-10-06T10:27:16.1564888Z test ffmpeg_timeout::already_open_importer_captures_old_deadline_saved_apply_changes_next_call_and_no_store_cycle ... ok"
+      },
+      {
+        "line": 2817,
+        "observed": "2026-10-06T10:30:31.7798273Z test ffmpeg_timeout::qt_options_cancel_bounds_reopen_and_concurrent_changes ... ok"
+      },
+      {
+        "line": 2908,
+        "observed": "2026-10-06T10:30:34.6255975Z test ffmpeg_timeout::already_open_import_review_uses_live_store_deadline_for_real_metadata_detection ... ok"
+      },
+      {
+        "line": 3563,
+        "observed": "2026-10-06T10:30:53.8626598Z test ffmpeg::deadline_tests::version_deadline_is_captured_once_and_explicit_fixed_configuration_wins ... ok"
+      },
+      {
+        "line": 3565,
+        "observed": "2026-10-06T10:30:54.7820234Z test ffmpeg::deadline_tests::actual_metadata_timeout_kills_and_reaps_the_admitted_child ... ok"
+      },
+      {
+        "line": 3872,
+        "observed": "2026-10-06T10:32:05.8445997Z test ffmpeg_policy::tests::actual_legacy_saved_policy_backfill_native_override_and_poll_adapter ... ok"
+      },
+      {
+        "line": 3880,
+        "observed": "2026-10-06T10:32:05.9217570Z test ffmpeg_policy::tests::reader_from_a_borrowed_store_is_live_and_does_not_retain_its_owner ... ok"
+      }
+    ]
+  },
+  "native_images_actually_inspected": [
+    {
+      "name": "ffmpeg-timeout-options-0-native.png",
+      "path": "/workspace/validation-reviews/ci-7c3c1aac5/native-renders/ffmpeg-timeout-options-0-native.png",
+      "sha256": "c6d257acc11e1e11ce0a46c2e8fbc2eb0e52e35458441272e4af15f1ff94ee54",
+      "bytes": 206630,
+      "dimensions": [
+        1200,
+        1800
+      ],
+      "view_image_inspection_performed": true,
+      "inspection_detail": "original",
+      "manifest_hash_match": true,
+      "source_capture": {
+        "filename": "ffmpeg-timeout-options-0-native.png",
+        "source": "crates/hydrus-gui/tests/gui/ffmpeg_timeout.rs",
+        "function": "real_options_cancel_hidden_retired_save_reopen_bounds_and_independent_field",
+        "capture_line": 95,
+        "render_line": 92,
+        "dimensions": [
+          1200,
+          1800
+        ],
+        "requested": 1,
+        "displayed_saved": 1,
+        "independent_ICC_normalise": false,
+        "fresh_artifact_pending": false
+      },
+      "observed_state": "Media playback Options system group: timeout 1, complete field border and up/down arrows, independent ICC unchecked, Prefer system unchecked, truncated/PIL checked. Adjacent timeout/ICC labels separated, no overlap. Start-animation 0 numeric field also complete.",
+      "visible_defects": []
+    },
+    {
+      "name": "ffmpeg-timeout-options-1-native.png",
+      "path": "/workspace/validation-reviews/ci-7c3c1aac5/native-renders/ffmpeg-timeout-options-1-native.png",
+      "sha256": "adaa0ce3778ced4f892a95e393ad66b2d4a33b83d463efecee54c0a6fd02d3b6",
+      "bytes": 207017,
+      "dimensions": [
+        1200,
+        1800
+      ],
+      "view_image_inspection_performed": true,
+      "inspection_detail": "original",
+      "manifest_hash_match": true,
+      "source_capture": {
+        "filename": "ffmpeg-timeout-options-1-native.png",
+        "source": "crates/hydrus-gui/tests/gui/ffmpeg_timeout.rs",
+        "function": "real_options_cancel_hidden_retired_save_reopen_bounds_and_independent_field",
+        "capture_line": 95,
+        "render_line": 92,
+        "dimensions": [
+          1200,
+          1800
+        ],
+        "requested": 600,
+        "displayed_saved": 600,
+        "independent_ICC_normalise": false,
+        "fresh_artifact_pending": false
+      },
+      "observed_state": "Media playback Options system group: timeout 600, complete field border and up/down arrows, independent ICC unchecked, Prefer system unchecked, truncated/PIL checked. Adjacent timeout/ICC labels separated, no overlap. Start-animation 0 numeric field also complete.",
+      "visible_defects": []
+    },
+    {
+      "name": "ffmpeg-timeout-options-2-native.png",
+      "path": "/workspace/validation-reviews/ci-7c3c1aac5/native-renders/ffmpeg-timeout-options-2-native.png",
+      "sha256": "64c83becd65246d9f81b2ab10be6a92c65ce9b05a02768c2966e156a8ad698a4",
+      "bytes": 206758,
+      "dimensions": [
+        1200,
+        1800
+      ],
+      "view_image_inspection_performed": true,
+      "inspection_detail": "original",
+      "manifest_hash_match": true,
+      "source_capture": {
+        "filename": "ffmpeg-timeout-options-2-native.png",
+        "source": "crates/hydrus-gui/tests/gui/ffmpeg_timeout.rs",
+        "function": "real_options_cancel_hidden_retired_save_reopen_bounds_and_independent_field",
+        "capture_line": 95,
+        "render_line": 92,
+        "dimensions": [
+          1200,
+          1800
+        ],
+        "requested": 15,
+        "displayed_saved": 15,
+        "independent_ICC_normalise": false,
+        "fresh_artifact_pending": false
+      },
+      "observed_state": "Media playback Options system group: timeout 15, complete field border and up/down arrows, independent ICC unchecked, Prefer system unchecked, truncated/PIL checked. Adjacent timeout/ICC labels separated, no overlap. Start-animation 0 numeric field also complete.",
+      "visible_defects": []
+    },
+    {
+      "name": "ffmpeg-timeout-options-3-native.png",
+      "path": "/workspace/validation-reviews/ci-7c3c1aac5/native-renders/ffmpeg-timeout-options-3-native.png",
+      "sha256": "c6d257acc11e1e11ce0a46c2e8fbc2eb0e52e35458441272e4af15f1ff94ee54",
+      "bytes": 206630,
+      "dimensions": [
+        1200,
+        1800
+      ],
+      "view_image_inspection_performed": true,
+      "inspection_detail": "original",
+      "manifest_hash_match": true,
+      "source_capture": {
+        "filename": "ffmpeg-timeout-options-3-native.png",
+        "source": "crates/hydrus-gui/tests/gui/ffmpeg_timeout.rs",
+        "function": "real_options_cancel_hidden_retired_save_reopen_bounds_and_independent_field",
+        "capture_line": 95,
+        "render_line": 92,
+        "dimensions": [
+          1200,
+          1800
+        ],
+        "requested": 0,
+        "displayed_saved": 1,
+        "independent_ICC_normalise": false,
+        "fresh_artifact_pending": false
+      },
+      "observed_state": "Media playback Options system group: timeout 1, complete field border and up/down arrows, independent ICC unchecked, Prefer system unchecked, truncated/PIL checked. Adjacent timeout/ICC labels separated, no overlap. Start-animation 0 numeric field also complete.",
+      "visible_defects": []
+    },
+    {
+      "name": "ffmpeg-timeout-options-4-native.png",
+      "path": "/workspace/validation-reviews/ci-7c3c1aac5/native-renders/ffmpeg-timeout-options-4-native.png",
+      "sha256": "adaa0ce3778ced4f892a95e393ad66b2d4a33b83d463efecee54c0a6fd02d3b6",
+      "bytes": 207017,
+      "dimensions": [
+        1200,
+        1800
+      ],
+      "view_image_inspection_performed": true,
+      "inspection_detail": "original",
+      "manifest_hash_match": true,
+      "source_capture": {
+        "filename": "ffmpeg-timeout-options-4-native.png",
+        "source": "crates/hydrus-gui/tests/gui/ffmpeg_timeout.rs",
+        "function": "real_options_cancel_hidden_retired_save_reopen_bounds_and_independent_field",
+        "capture_line": 95,
+        "render_line": 92,
+        "dimensions": [
+          1200,
+          1800
+        ],
+        "requested": 601,
+        "displayed_saved": 600,
+        "independent_ICC_normalise": false,
+        "fresh_artifact_pending": false
+      },
+      "observed_state": "Media playback Options system group: timeout 600, complete field border and up/down arrows, independent ICC unchecked, Prefer system unchecked, truncated/PIL checked. Adjacent timeout/ICC labels separated, no overlap. Start-animation 0 numeric field also complete.",
+      "visible_defects": []
+    },
+    {
+      "name": "debug_delayed_popup_native.png",
+      "path": "/workspace/validation-reviews/ci-7c3c1aac5/native-renders/debug_delayed_popup_native.png",
+      "sha256": "de5380a8784dab3198418f4105a78074a4f2a16690f484e762647cb2fb2f084a",
+      "bytes": 37103,
+      "dimensions": [
+        1000,
+        700
+      ],
+      "view_image_inspection_performed": true,
+      "inspection_detail": "original",
+      "manifest_hash_match": true,
+      "source_capture": {
+        "filename": "debug_delayed_popup_native.png",
+        "source": "crates/hydrus-gui/tests/gui/debug_delayed_popup.rs",
+        "function": "actual_menu_overlapping_deadlines_hidden_progress_store_reopen_and_rendered_cards",
+        "capture_line": 140,
+        "dimensions": [
+          1000,
+          700
+        ],
+        "state": "TwoordinarycompletedStorejobs after injected5000/6000deadlines werepublishedwhileMainhidden,thenMainshown andreal250msrefreshprojected2cards; before dismissal.",
+        "fresh_artifact_pending": false
+      },
+      "observed_state": "Two exact ordinary delayed-message cards, no title/cancel/gauge; \u201c2 messages\u201d/\u201cdismiss all\u201d/collapse summary. Entire toaster legible at lower right of full Main; no clipped text/control.",
+      "visible_defects": []
+    }
+  ],
+  "qt_images_actually_inspected": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/ffmpeg_timeout.png",
+      "sha256": "e455147792c98ec5b888cddb20b20cdb68dbe0c87022caad858f258adf673305",
+      "dimensions": [
+        728,
+        91
+      ],
+      "view_image_inspection_performed": true,
+      "observed_state": "Actual Qt cropped system controls: timeout 1 focused; Prefer system unchecked,ICC checked,truncated checked,PIL checked. Single Qt state only; native case ICC false is an asserted concurrent value difference.",
+      "inspection_provenance": "Actual view_image inspection repeated for this final7c review; source-bound PNG hash verified."
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/debug_delayed_popup.png",
+      "sha256": "1dd253d151e5750ec0bed2a4679cffaa01b9a238df00265930a638fb10f625dd",
+      "dimensions": [
+        196,
+        89
+      ],
+      "view_image_inspection_performed": true,
+      "observed_state": "Two exact delayed message cards,no titles or cancel controls; summary \u201c2 messages\u201d,dismiss all andcollapse arrow. Manager crop; not a Main window screenshot.",
+      "inspection_provenance": "Actual view_image inspection repeated for this final7c review; source-bound PNG hash verified."
+    }
+  ],
+  "artifact_manifest": {
+    "path": "/workspace/validation-reviews/ci-7c3c1aac5/native-render-manifest.json",
+    "sha256": "e1726269a18e1c94eb4ca253495df7d5c3555e171191876e67b99cd2b765604d",
+    "folder_manifest_identical": true,
+    "zip_sha256": "71a8b279207b3d5bfabe1cba076b684a3999908e5cf659993df1fc1e6ee338e5",
+    "native_image_count": 274
+  },
+  "source_reference_evidence": {
+    "preparation": "/workspace/validation-reviews/next18-review6-prep-7c3c1aac5.json",
+    "preparation_sha256": "f530f5e47af829daa17ff7cd493aab3d0c348ef7bb20d32c93d3593f29ae6d7a",
+    "exact_source_files": [
+      {
+        "path": "crates/hydrus-duplicates/src/content.rs",
+        "sha256": "07dc3182eee7cee93cb6f4e0f0511f47d90221f13d515b3f66d2885a157b7611",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/main_menu.rs",
+        "sha256": "b343cd00b1b985e76575905e3e6163ca9d4e4636e51d839b0388e6adc724b662",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/options.rs",
+        "sha256": "0959b5f502712b18a6cf8ebb089f1448770b25b291100468cd2e6fba9acb0ae0",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-gui-model/tests/model/ffmpeg_timeout.rs",
+        "sha256": "63a2f94631c3604037409af962bbc9972941334f0986f059a62c2a1306915be6",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-gui/src/about_window.rs",
+        "sha256": "3dfd3237854b7e71b24bc52bb6a3e739f9d8524cbc43978f936f5afa5f1e284a",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-gui/src/debug_long_popup.rs",
+        "sha256": "68f95d726c9660c4d6a9507540116cf322e47148adad836540c87686140ead43",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-gui/src/folders_window.rs",
+        "sha256": "2f3ebe38e94c5a6f95a8cd976656b22208cdcec1acf1368f38dcad33896503d2",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-gui/src/import_window.rs",
+        "sha256": "0aa3b52d72f3f7b51aca26cd446393cd83f03d052b6e8135c5aa2c5bcdb2f297",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-gui/src/lib.rs",
+        "sha256": "92dc7d5b2a1a21900433b0d7cd07eb7d4608a62d643310a6d614a9bd181a3905",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-gui/src/menu_bar.rs",
+        "sha256": "0c25eeb1e01301c6654a5b4c78c009a18e5943864fc0125437f474f2dbe5df03",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-gui/src/options_window.rs",
+        "sha256": "f22e87448924698a5b28d9bef42d0fc240ce6e6b90ee7ae0b12b8d20fa4aba7a",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-gui/src/parser_test_fetch.rs",
+        "sha256": "702df5b144b544ba41bff8044bd3c57268191e51ca802bfbdf71f09d214d76d0",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-gui/src/popups.rs",
+        "sha256": "a2c2fcc39d492009e21646ab6b9b380a393c69da7b07cd781914e294b89b7df0",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/debug_delayed_popup.rs",
+        "sha256": "a6ac09af5673fc47d3596483b691b2311e660554a4797df2ba554f1aa81a9e30",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/ffmpeg_timeout.rs",
+        "sha256": "ac0482a67fe2c578542d1dbd507f1c1b7ab47cde6b127cceba2bf5e2900b9b3f",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-import/src/lib.rs",
+        "sha256": "a96b70b1c86ddbfbd435033d3ce3dea7a1e6730d75f967e19a57ad97b3f42f95",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-media/src/ffmpeg/mod.rs",
+        "sha256": "8a755379f319b1f0be4c69340bd199e1038180733fd086e08bf6d104419a0c3b",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-media/tests/fixtures/ffmpeg-deadline.sh",
+        "sha256": "a2a98ec2ec6434b7cd5c72d4714c12d4482f23d37d5deec4eace6a1e974083e9",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-store/src/ffmpeg_policy.rs",
+        "sha256": "160987ec52e309e92c54e81dcacaef71b93243bed9be3b96e9ca5c046b35acff",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "docs/rust/gui-coverage/parity/debug-delayed-popup.json",
+        "sha256": "d43a605f51eeb8b3e1eb63cfd6f67a62fe3227dced4dd52db782c8c324fd36ce",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "docs/rust/gui-coverage/parity/ffmpeg-timeout.json",
+        "sha256": "c39e651f5d4f591d4af62c52e51b42966bc99294a756885f32d70c4bf8e3699b",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "hydrus/client/ClientController.py",
+        "sha256": "537306fbde6048ab65a5e25144f6c6cb692bff9b2930b428995f8fb56e5a3ee3",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "hydrus/client/ClientData.py",
+        "sha256": "38c48f9b8adfcbc54bbd7a51f8b683f56d80d9193610c1da743b3fd04600667f",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "hydrus/client/gui/ClientGUI.py",
+        "sha256": "fb2bc6a31759c068475021e27213a1516d4bba7c837fe1d9d95f72442ed3e5cf",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "hydrus/client/gui/panels/options/MediaPlaybackPanel.py",
+        "sha256": "1f00ec99b36882c4ae774e023206eec3addad62ede0d57623da1f5ac735d11db",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "hydrus/core/files/HydrusFFMPEG.py",
+        "sha256": "d431c2853a14ba02c84cde23f259c718572a713a82150c7aacb5f9a8ec3df3ca",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "hydrus/core/processes/HydrusSubprocess.py",
+        "sha256": "c855704ee20d2ccb7df8743bf5ffe00df859c55bb1cf5d9f3ac0d27b789c7990",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "oracle/fixtures/debug_delayed_popup.json",
+        "sha256": "18e728133c806d015c1e2d5180fc4cb37cb871676b378105030d67d1a1c19924",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "oracle/fixtures/debug_delayed_popup.png",
+        "sha256": "1dd253d151e5750ec0bed2a4679cffaa01b9a238df00265930a638fb10f625dd",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "oracle/fixtures/ffmpeg_timeout.json",
+        "sha256": "48518f6f26be4a5caad48dcf4ffa30fc82fbee137a9ad84a31ca7dca67009ee8",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "oracle/fixtures/ffmpeg_timeout.png",
+        "sha256": "e455147792c98ec5b888cddb20b20cdb68dbe0c87022caad858f258adf673305",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "oracle/record_debug_delayed_popup.py",
+        "sha256": "013dd4e3eb8c94eb70b6bd2ca652c656705a536da7ac6985c3e2d75889674fbe",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "oracle/record_ffmpeg_timeout.py",
+        "sha256": "a80d526fc4ce964b57334ebf63f1beb8568492900c95cb9e059fb9a78e343e42",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-gui/ui/options.slint",
+        "sha256": "2974a87aa87c8938ba8891b5033fe12dbee822c36366a605ad05ba6d94cab460",
+        "exact_source_git_blob_match": true
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+        "sha256": "207963c5ddef75d954d72265c0fee853ccb9921a745021f2c9361c56360560dc",
+        "exact_source_git_blob_match": true
+      }
+    ],
+    "source_anchors": [
+      {
+        "path": "hydrus/client/gui/panels/options/MediaPlaybackPanel.py",
+        "line": 176,
+        "end_line": 177,
+        "purpose": "actualQt15 default and1..600 spin bounds",
+        "line_sha256": "bd81712e35e12fb166a76855af98428d920271df927b292eeaa5a4d945844495"
+      },
+      {
+        "path": "hydrus/client/gui/panels/options/MediaPlaybackPanel.py",
+        "line": 238,
+        "end_line": 238,
+        "purpose": "saved timeout displayed",
+        "line_sha256": "0a86f6a23956a1b500055df203f5c2507aeaef7fc86e3225b9f98721d2bb21fd"
+      },
+      {
+        "path": "hydrus/client/gui/panels/options/MediaPlaybackPanel.py",
+        "line": 331,
+        "end_line": 331,
+        "purpose": "exactFFMPEG timeout label",
+        "line_sha256": "095a7ecdf030310ea44094b0f988e820c4346c97ff80a3b626396335bd6a155a"
+      },
+      {
+        "path": "hydrus/client/gui/panels/options/MediaPlaybackPanel.py",
+        "line": 686,
+        "end_line": 686,
+        "purpose": "UpdateOptions save",
+        "line_sha256": "081ceb8d4157827be2450a1df0a54418ec47b7953fa3242aaf058876fd10a588"
+      },
+      {
+        "path": "hydrus/client/ClientController.py",
+        "line": 1288,
+        "end_line": 1288,
+        "purpose": "publishsavedglobalFFMPEG policy",
+        "line_sha256": "e66d0d9e653b21f0b8b72d5f06429db4d40da6d32f3945d8bc67664715ed7fc3"
+      },
+      {
+        "path": "hydrus/core/files/HydrusFFMPEG.py",
+        "line": 71,
+        "end_line": 115,
+        "purpose": "metadataRunSubprocess timeout anderror",
+        "line_sha256": "003f7484540b5fc57ac2183c03e0d867c0bf843c2b4796397ce0b19cb91069ca"
+      },
+      {
+        "path": "hydrus/core/files/HydrusFFMPEG.py",
+        "line": 132,
+        "end_line": 165,
+        "purpose": "version timeoutpathdiagnostic",
+        "line_sha256": "776ef6e121a68f11d7456afb32942662017d86ab319cd6387a1864b2b4aec885"
+      },
+      {
+        "path": "hydrus/core/processes/HydrusSubprocess.py",
+        "line": 290,
+        "end_line": 327,
+        "purpose": "value captured/passedthrough subprocesscall",
+        "line_sha256": "7eca820cb61e76d744c960a243df8fee5d545dfaef9b2f2afcfc3334fb7fea9d"
+      },
+      {
+        "path": "hydrus/core/processes/HydrusSubprocess.py",
+        "line": 350,
+        "end_line": 393,
+        "purpose": "3scommunicate checks andtimedkill/reap",
+        "line_sha256": "d67f13ade4cedfdb3bf232613fc1f67ff774c0caa6168ce0836ee2e47f36f1a5"
+      },
+      {
+        "path": "oracle/record_ffmpeg_timeout.py",
+        "line": 45,
+        "end_line": 80,
+        "purpose": "realQtstage/cancel/save/rawnormalize",
+        "line_sha256": "bfd1b7c3afddce6b8f8510f26528f1c70404f9fee36968a653ebbc8b91f82249"
+      },
+      {
+        "path": "oracle/record_ffmpeg_timeout.py",
+        "line": 83,
+        "end_line": 121,
+        "purpose": "unmodifiedmetadata/version real subprocessrecording andPNG",
+        "line_sha256": "16d695753025153222328468b9034d09ec489209168f1ec8d20717c7ed158663"
+      },
+      {
+        "path": "crates/hydrus-store/src/ffmpeg_policy.rs",
+        "line": 13,
+        "end_line": 77,
+        "purpose": "legacy/default/nativeoverride,clamp/ceil3s,weakreaderfallback",
+        "line_sha256": "5cdbd7abf2e87de0c085b982efb03d1e8c6d67586f1b663340d0bc54bf1531cd"
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/options.rs",
+        "line": 228,
+        "end_line": 236,
+        "purpose": "changed-only/concurrent normalization save",
+        "line_sha256": "9adc5862620321ac9bc4fb5eaa431e48b0037fb59472212d3dd6f1e3fd48ab6c"
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/options.rs",
+        "line": 3614,
+        "end_line": 3626,
+        "purpose": "system timeoutrowexactlabelbounds",
+        "line_sha256": "3b6c14cab5081c5b609ac34748f65b90534c9343a67d8b3dddbcf158b9531761"
+      },
+      {
+        "path": "crates/hydrus-gui/src/options_window.rs",
+        "line": 1257,
+        "end_line": 1290,
+        "purpose": "activevisibleguard admitsnumberedit",
+        "line_sha256": "a6961ed89613ba3f6300059832cff34172b8c42170728d28536d17f3c57364d8"
+      },
+      {
+        "path": "crates/hydrus-gui/src/options_window.rs",
+        "line": 1684,
+        "end_line": 1782,
+        "purpose": "Applyadmission/savefailure retaineddraft/closeboundary",
+        "line_sha256": "fccfb8448162272d0c73dca851e0ad9ed3cd7842dd1a378aa85e692a3eebb9cb"
+      },
+      {
+        "path": "crates/hydrus-import/src/lib.rs",
+        "line": 86,
+        "end_line": 105,
+        "purpose": "ownedimporter weak live reader",
+        "line_sha256": "67f3833636d29538e4f0d2ac26907eda1292d1b295864fefe4a6d567364f4900"
+      },
+      {
+        "path": "crates/hydrus-duplicates/src/content.rs",
+        "line": 30,
+        "end_line": 40,
+        "purpose": "duplicateStoreContent weak reader",
+        "line_sha256": "b099b970eca9e99c9bc995682e4f3a1ad4ef4e9a8736084d0607c1caf1efc95c"
+      },
+      {
+        "path": "crates/hydrus-gui/src/import_window.rs",
+        "line": 64,
+        "end_line": 69,
+        "purpose": "localreviewreader routing",
+        "line_sha256": "3cfe21f2bb884972b713f33d28ec80398d11e05bf4689480af6d8776cb1511b2"
+      },
+      {
+        "path": "crates/hydrus-gui/src/folders_window.rs",
+        "line": 819,
+        "end_line": 828,
+        "purpose": "folderreader routing",
+        "line_sha256": "148fc338b6a2bce70aff1a7189314f4fdc0e0a6e802ba2712215bbaa1f22b47b"
+      },
+      {
+        "path": "crates/hydrus-gui/src/parser_test_fetch.rs",
+        "line": 64,
+        "end_line": 68,
+        "purpose": "parserfetch reader routing",
+        "line_sha256": "2ceaaa044955ea0553800444ce2c069d21fd74eb36e7365415c248d93ae98276"
+      },
+      {
+        "path": "crates/hydrus-gui/src/about_window.rs",
+        "line": 30,
+        "end_line": 40,
+        "purpose": "About boundedversionsavedpolicyunavailableUI",
+        "line_sha256": "75b56756ba32cc00aa05268af50eb0c005bc11285439c9ca75fadb3bf8cc684a"
+      },
+      {
+        "path": "crates/hydrus-media/src/ffmpeg/mod.rs",
+        "line": 75,
+        "end_line": 113,
+        "purpose": "fixedtimeoutwins,reader/versionboundedpath",
+        "line_sha256": "08b47bd0b51147e89673fe66fa8dd0b721b1a6c86c04526eedf093270da76ab6"
+      },
+      {
+        "path": "crates/hydrus-media/src/ffmpeg/mod.rs",
+        "line": 125,
+        "end_line": 183,
+        "purpose": "captureoncebeforespawn,deadlineandkill/wait",
+        "line_sha256": "2068fb4aca5c2f608f016f411da68151113114d7e1cc45e1290bc6ef04a41e3f"
+      },
+      {
+        "path": "crates/hydrus-media/src/ffmpeg/mod.rs",
+        "line": 333,
+        "end_line": 372,
+        "purpose": "stablecommittedtesttransportstartupdiagnostic",
+        "line_sha256": "952378d2b9e960ef49e09a846d3e2eb6534939c40061925399a893964bf433c8"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/ffmpeg_timeout.rs",
+        "line": 29,
+        "end_line": 111,
+        "purpose": "OptionsstagecancelhiddenretiredrangeICCpreserve/reopen5captures",
+        "line_sha256": "3e1ea217c7af82e74d1e04e91e3a116affc91bea1311191fb3cce87b9ca42f5a"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/ffmpeg_timeout.rs",
+        "line": 114,
+        "end_line": 168,
+        "purpose": "visible draftretained whilehidden editsignored;stale handlesdisabled",
+        "line_sha256": "208fc01a95fe01ab1428b6f2fd82979ba71c7c72dcefff10247604690e8f4b77"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/ffmpeg_timeout.rs",
+        "line": 173,
+        "end_line": 311,
+        "purpose": "actualretainedimporter call/deadline/kill andisolatedownerproof",
+        "line_sha256": "3f18029afae697fe1bb3d4a8bcb0a19685970ca74ea0f6b19289ca412084dda3"
+      },
+      {
+        "path": "crates/hydrus-gui-model/tests/model/ffmpeg_timeout.rs",
+        "line": 34,
+        "end_line": 114,
+        "purpose": "Qtmodelboundsrawnormalization/concurrentwrites",
+        "line_sha256": "2f14b60a735ef7533f8a7c5445a246ab8002dd658f5325c476a967d712c99881"
+      },
+      {
+        "path": "crates/hydrus-gui-model/tests/model/ffmpeg_timeout.rs",
+        "line": 119,
+        "end_line": 161,
+        "purpose": "realMP4metadata detection failure atnewpolicy",
+        "line_sha256": "c8a0f8d9a83fa5c0cd0cfa52489de675bed4e224f22a6c3ffab73fc8850d1a38"
+      },
+      {
+        "path": "crates/hydrus-duplicates/src/content.rs",
+        "line": 137,
+        "end_line": 209,
+        "purpose": "actualretainedPSDrenderfailure atnewpolicy",
+        "line_sha256": "7f206e4cd350ec49494c7d7df58ae49a9f74245048e4a2c6c1ee7fbd560607cc"
+      },
+      {
+        "path": "hydrus/client/gui/ClientGUI.py",
+        "line": 3644,
+        "end_line": 3644,
+        "purpose": "exactQtQAction5srealCallLater/ShowText",
+        "line_sha256": "c333165d15cd56c6cae1837b533632bdad1baadf7ebb2374adac40ddb705fe5e"
+      },
+      {
+        "path": "hydrus/client/ClientData.py",
+        "line": 158,
+        "end_line": 169,
+        "purpose": "actualcompletedordinaryJobStatuspublished",
+        "line_sha256": "dbd531faca0c7dca21cd7263aa83c8eb0702fe1f360e97223a01c1472b83c436"
+      },
+      {
+        "path": "oracle/record_debug_delayed_popup.py",
+        "line": 24,
+        "end_line": 110,
+        "purpose": "forwardingobserverrealclock/scheduler/hiddenMain2cards/PNG",
+        "line_sha256": "14e88377ac0ac1638a0931f753dc5365329a3e7279601bec03599452f0d43cdb"
+      },
+      {
+        "path": "crates/hydrus-gui-model/src/main_menu.rs",
+        "line": 1429,
+        "end_line": 1432,
+        "purpose": "nativeexactmenuaction command",
+        "line_sha256": "0202c821b4fd34cdfc212a4eb4d4cf50a2eef8cd2fbd3fa7fb2e42b6016c109d"
+      },
+      {
+        "path": "crates/hydrus-gui/src/menu_bar.rs",
+        "line": 789,
+        "end_line": 793,
+        "purpose": "routeactualmenuactiontoownedproducer",
+        "line_sha256": "324dafdeadc478c10818ca5d4267d7552dd8dacf32dda39a1d3e014277817179"
+      },
+      {
+        "path": "crates/hydrus-gui/src/debug_long_popup.rs",
+        "line": 15,
+        "end_line": 17,
+        "purpose": "exactmessageandfive-seconddeadline",
+        "line_sha256": "5fd82d10ef9115449607c6857d7bd35bf86fba4acd3fbb841166c1d2c2f879e0"
+      },
+      {
+        "path": "crates/hydrus-gui/src/debug_long_popup.rs",
+        "line": 35,
+        "end_line": 102,
+        "purpose": "WeakMain/currentbinding/retirement/earliestweak200mspoll",
+        "line_sha256": "913df55e26797cb73030c432f370f30e1caa4cf5f2c5c9865f27958857c2de18"
+      },
+      {
+        "path": "crates/hydrus-gui/src/debug_long_popup.rs",
+        "line": 102,
+        "end_line": 190,
+        "purpose": "duepartition/postcallbackliveguard/publishonceStore/errorretire",
+        "line_sha256": "a822b3ef58716d17376f2bf66205c42f25c591268369c1a86c0435cc8ba11210"
+      },
+      {
+        "path": "crates/hydrus-gui/src/debug_long_popup.rs",
+        "line": 199,
+        "end_line": 285,
+        "purpose": "Ownerdrop/monotonicclock/admissionhiddenretiredguard",
+        "line_sha256": "bd6ce4244df5b68a05e9188e32caecd69a0f7059136f615b7289145dca3a393f"
+      },
+      {
+        "path": "crates/hydrus-gui/src/lib.rs",
+        "line": 704,
+        "end_line": 728,
+        "purpose": "rebindretireexternalwork",
+        "line_sha256": "c8170599a3c4c3408252510acd4d4bcf4e3d466ce8b8e127a51155facd7984df"
+      },
+      {
+        "path": "crates/hydrus-gui/src/lib.rs",
+        "line": 3323,
+        "end_line": 3331,
+        "purpose": "weakpopupbindingprojectionnotification",
+        "line_sha256": "d38fa8fc8c3b4fe4e7022bbcde15312209df54210a74171eb7f9c15be058a066"
+      },
+      {
+        "path": "crates/hydrus-gui/src/lib.rs",
+        "line": 3364,
+        "end_line": 3380,
+        "purpose": "acceptedexitretirement",
+        "line_sha256": "faa19f7c878d352a2f74a8fb328754bb9fe8bbd05f626ff78d92d5624d0ef2b6"
+      },
+      {
+        "path": "crates/hydrus-gui/src/popups.rs",
+        "line": 318,
+        "end_line": 335,
+        "purpose": "hidden/frozenprojectiongate",
+        "line_sha256": "0f10cccab8bcecd28381b64c41b0c0aaba1442f6fbed52ec006ce673a7ad73b7"
+      },
+      {
+        "path": "crates/hydrus-gui/src/popups.rs",
+        "line": 550,
+        "end_line": 559,
+        "purpose": "real250msUIprojectiontimer",
+        "line_sha256": "82746ff6f6a98bd5375d518467b53b67efde2c5e6b19ca9ed40c292ff6f6251e"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/debug_delayed_popup.rs",
+        "line": 49,
+        "end_line": 155,
+        "purpose": "injectedclockoverlap/noearlyhiddenStore/showrefreshcapture/dismiss",
+        "line_sha256": "c48ad1db8be5b5b660b44c9a0b8f457cd42cae659d81c637f10acfe30b76ca98"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/debug_delayed_popup.rs",
+        "line": 158,
+        "end_line": 194,
+        "purpose": "longproducerprune/dismissno-starvation",
+        "line_sha256": "f5e8cbd56605e12e8fd1543aea4d8d20a07ed62c4c1630f1f59ec3da484a5ed2"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/debug_delayed_popup.rs",
+        "line": 197,
+        "end_line": 285,
+        "purpose": "realexitcancel/acceptrebindBounddrophiddenactualWindowloss",
+        "line_sha256": "91f00922a5ad678fbd6279c61152ef60b629cae5e05438808180536728e12bde"
+      },
+      {
+        "path": "crates/hydrus-gui/ui/options.slint",
+        "line": 353,
+        "end_line": 357,
+        "purpose": "Repaired integer row uses intrinsic preferred height with minimum26px",
+        "line_sha256": "f1d949ecca0657590b51e3a8eb1d236e3f94831f8c364e81f6a8da6889f06eff"
+      },
+      {
+        "path": "crates/hydrus-gui/ui/options.slint",
+        "line": 405,
+        "end_line": 418,
+        "purpose": "Kind2 SpinBox configured by actual row min/max/value and callback",
+        "line_sha256": "e406ecfea3affcb0b570e0065c7be429e9560f8be25c7993e6aab0c9946130b7"
+      },
+      {
+        "path": "crates/hydrus-gui/src/options_window.rs",
+        "line": 212,
+        "end_line": 218,
+        "purpose": "Model integer projects to actual native row.kind2",
+        "line_sha256": "57e10a1f0d7f772908e1aeef2b7eb2a240fe49384ec6e26130b63f2740a51c43"
+      },
+      {
+        "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+        "line": 90,
+        "end_line": 135,
+        "purpose": "Other selected Favourites service test now uses physical measured ComboBox input; outside these2 claims",
+        "line_sha256": "037a41ecb104a01fcb758add2e56db3fc980ef3d3e456f5ae033b07b2f10ef64"
+      }
+    ],
+    "behavioral_tests": [
+      {
+        "id": "audit-options-media-playback-system-ffmpeg-call-timeout",
+        "tests": [
+          {
+            "path": "crates/hydrus-gui/tests/gui/ffmpeg_timeout.rs",
+            "line": 29,
+            "function": "real_options_cancel_hidden_retired_save_reopen_bounds_and_independent_field"
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/ffmpeg_timeout.rs",
+            "line": 114,
+            "function": "visible_timeout_draft_survives_hidden_edits_and_reaches_the_live_reader"
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/ffmpeg_timeout.rs",
+            "line": 173,
+            "function": "already_open_importer_captures_old_deadline_saved_apply_changes_next_call_and_no_store_cycle"
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/ffmpeg_timeout.rs",
+            "line": 275,
+            "function": "retained_importer_tools_do_not_retain_their_isolated_store"
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/ffmpeg_timeout.rs",
+            "line": 34,
+            "function": "qt_options_cancel_bounds_reopen_and_concurrent_changes"
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/ffmpeg_timeout.rs",
+            "line": 119,
+            "function": "already_open_import_review_uses_live_store_deadline_for_real_metadata_detection"
+          },
+          {
+            "path": "crates/hydrus-media/src/ffmpeg/mod.rs",
+            "line": 376,
+            "function": "actual_metadata_timeout_kills_and_reaps_the_admitted_child"
+          },
+          {
+            "path": "crates/hydrus-media/src/ffmpeg/mod.rs",
+            "line": 399,
+            "function": "version_deadline_is_captured_once_and_explicit_fixed_configuration_wins"
+          },
+          {
+            "path": "crates/hydrus-duplicates/src/content.rs",
+            "line": 137,
+            "function": "retained_store_content_reads_new_policy_before_real_psd_decode"
+          }
+        ],
+        "reference_cases": {
+          "bounds": [
+            1,
+            600
+          ],
+          "default": 15,
+          "cases": [
+            {
+              "requested": 1,
+              "staged": 1,
+              "saved": 1,
+              "published": 1,
+              "reopened": 1
+            },
+            {
+              "requested": 600,
+              "staged": 600,
+              "saved": 600,
+              "published": 600,
+              "reopened": 600
+            },
+            {
+              "requested": 15,
+              "staged": 15,
+              "saved": 15,
+              "published": 15,
+              "reopened": 15
+            },
+            {
+              "requested": 0,
+              "staged": 1,
+              "saved": 1,
+              "published": 1,
+              "reopened": 1
+            },
+            {
+              "requested": 601,
+              "staged": 600,
+              "saved": 600,
+              "published": 600,
+              "reopened": 600
+            }
+          ],
+          "raw": [
+            {
+              "imported": 0,
+              "shown": 1,
+              "before_apply": 0,
+              "saved": 1
+            },
+            {
+              "imported": 601,
+              "shown": 600,
+              "before_apply": 601,
+              "saved": 600
+            }
+          ],
+          "cancel": {
+            "staged": 7,
+            "saved": 15,
+            "reopened": 15
+          },
+          "runtime": [
+            {
+              "operation": "metadata",
+              "admitted_seconds": 6,
+              "later_saved_seconds": 1,
+              "current": {
+                "output": [
+                  "ffmpeg version synthetic-timeout",
+                  "Input #0, synthetic, from 'local':",
+                  "Duration: 00:00:02.00, start: 0.000000, bitrate: 8 kb/s"
+                ],
+                "ok": true
+              },
+              "elapsed_ms": 4024,
+              "below_poll": {
+                "configured_seconds": 1,
+                "delay_seconds": 2,
+                "output": [
+                  "ffmpeg version synthetic-timeout",
+                  "Input #0, synthetic, from 'local':",
+                  "Duration: 00:00:02.00, start: 0.000000, bitrate: 8 kb/s"
+                ],
+                "elapsed_ms": 2028
+              },
+              "next": {
+                "ok": false,
+                "error_type": "DamagedOrUnusualFileException",
+                "error": "ffmpeg could not read file info quick enough!"
+              },
+              "next_elapsed_ms": 3005
+            },
+            {
+              "operation": "version",
+              "admitted_seconds": 6,
+              "later_saved_seconds": 1,
+              "current": {
+                "output": "synthetic-timeout",
+                "ok": true
+              },
+              "elapsed_ms": 4023,
+              "below_poll": {
+                "configured_seconds": 1,
+                "delay_seconds": 2,
+                "output": "synthetic-timeout",
+                "elapsed_ms": 2025
+              },
+              "next": {
+                "ok": true,
+                "output": "ffmpeg took too long to respond from path \"ffmpeg\""
+              },
+              "next_elapsed_ms": 3004
+            }
+          ]
+        }
+      },
+      {
+        "id": "audit-options-help-debug-action-make-a-popup-in-five-seconds",
+        "tests": [
+          {
+            "path": "crates/hydrus-gui/tests/gui/debug_delayed_popup.rs",
+            "line": 49,
+            "function": "actual_menu_overlapping_deadlines_hidden_progress_store_reopen_and_rendered_cards"
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/debug_delayed_popup.rs",
+            "line": 158,
+            "function": "long_text_updates_and_dismissal_do_not_starve_a_pending_delayed_popup"
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/debug_delayed_popup.rs",
+            "line": 197,
+            "function": "pending_delayed_jobs_retire_permanently_on_accepted_exit_rebind_and_owner_destruction"
+          }
+        ],
+        "reference_cases": {
+          "menu_path": [
+            "help",
+            "debug",
+            "gui actions",
+            "make a popup in five seconds"
+          ],
+          "schedule": [
+            {
+              "at_ms": 0.087,
+              "delay_seconds": 5,
+              "callback": "ShowTextClient",
+              "arguments": [
+                "This is a delayed popup message."
+              ],
+              "remaining_seconds": 4.999913215637207
+            },
+            {
+              "at_ms": 1001.516,
+              "delay_seconds": 5,
+              "callback": "ShowTextClient",
+              "arguments": [
+                "This is a delayed popup message."
+              ],
+              "remaining_seconds": 4.999770164489746
+            }
+          ],
+          "published": [
+            {
+              "at_ms": 5054.124,
+              "text": "This is a delayed popup message.",
+              "title": null,
+              "done": true,
+              "pausable": false,
+              "cancellable": false
+            },
+            {
+              "at_ms": 6002.523,
+              "text": "This is a delayed popup message.",
+              "title": null,
+              "done": true,
+              "pausable": false,
+              "cancellable": false
+            }
+          ],
+          "trace": [
+            {
+              "at_ms": 1001.189,
+              "requested_ms": 1000,
+              "main_visible": true,
+              "published": 0
+            },
+            {
+              "at_ms": 4901.079,
+              "requested_ms": 4900,
+              "main_visible": false,
+              "published": 0
+            },
+            {
+              "at_ms": 5300.86,
+              "requested_ms": 5300,
+              "main_visible": false,
+              "published": 1
+            },
+            {
+              "at_ms": 5900.956,
+              "requested_ms": 5900,
+              "main_visible": false,
+              "published": 1
+            },
+            {
+              "at_ms": 6400.404,
+              "requested_ms": 6400,
+              "main_visible": false,
+              "published": 2
+            }
+          ],
+          "cards": [
+            {
+              "text": "This is a delayed popup message.",
+              "title_hidden": true,
+              "cancel_hidden": true,
+              "width": 190,
+              "height": 25
+            },
+            {
+              "text": "This is a delayed popup message.",
+              "title_hidden": true,
+              "cancel_hidden": true,
+              "width": 190,
+              "height": 25
+            }
+          ],
+          "clock": "unmodified real monotonic observer",
+          "scheduler": "actual controller CallLater/background SingleJob"
+        }
+      }
+    ],
+    "Qt_recorder_rerun_by_reviewer": false
+  },
+  "current_assignment": {
+    "path": "/workspace/validation-reviews/next18-review-assignments-7c3c1aac5.json",
+    "sha256": "13e9228295ac28f195db1aea099dff219ec24d4da52fe1f3b6189e0135ef6a1a",
+    "exact_assigned2verified": true
+  },
+  "old_failed_or_prior_green_artifact_used_for_approval": false,
+  "blocking_defects": [],
+  "performed": {
+    "product_edits": false,
+    "canonical_edits": false,
+    "builds": false,
+    "Qt_runs": false
+  }
+}

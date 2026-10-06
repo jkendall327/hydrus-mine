@@ -87,7 +87,47 @@ fn most_used_child_stages_each_service_cancels_descendants_and_persists_options(
         .iter()
         .position(|s| s == "my tags")
         .unwrap();
-    edit.invoke_service_chosen(i32::try_from(mine).unwrap());
+    let editor_window = windows.get(image_index).unwrap();
+    // A callback-only invocation edits the draft without selecting the standard
+    // ComboBox. Draw its initial state, then use the actual popup input route.
+    headless::render(&editor_window, 520, 440);
+    assert_eq!(edit.get_service(), 0);
+    assert_eq!(edit.get_displayed_service_index(), 0);
+    assert_eq!(
+        edit.get_displayed_service(),
+        edit.get_services().row_data(0).unwrap()
+    );
+    let frame = edit.get_service_choice_frame();
+    assert!(frame.w > 0.0 && frame.h > 0.0);
+    let position = slint::LogicalPosition::new(frame.x + frame.w / 2.0, frame.y + frame.h / 2.0);
+    assert!(position.x > 0.0 && position.x < 520.0);
+    assert!(position.y > 0.0 && position.y < 440.0);
+    editor_window.dispatch_event(slint::platform::WindowEvent::PointerMoved { position });
+    editor_window.dispatch_event(slint::platform::WindowEvent::PointerPressed {
+        position,
+        button: slint::platform::PointerEventButton::Left,
+    });
+    editor_window.dispatch_event(slint::platform::WindowEvent::PointerReleased {
+        position,
+        button: slint::platform::PointerEventButton::Left,
+    });
+    headless::render(&editor_window, 520, 440);
+    for _ in 0..mine {
+        let text: slint::SharedString = slint::platform::Key::DownArrow.into();
+        editor_window
+            .dispatch_event(slint::platform::WindowEvent::KeyPressed { text: text.clone() });
+        editor_window.dispatch_event(slint::platform::WindowEvent::KeyReleased { text });
+        headless::render(&editor_window, 520, 440);
+    }
+    let text: slint::SharedString = slint::platform::Key::Return.into();
+    editor_window.dispatch_event(slint::platform::WindowEvent::KeyPressed { text: text.clone() });
+    editor_window.dispatch_event(slint::platform::WindowEvent::KeyReleased { text });
+    headless::render(&editor_window, 520, 440);
+    assert_eq!(
+        edit.get_displayed_service_index(),
+        i32::try_from(mine).unwrap()
+    );
+    assert_eq!(edit.get_service(), i32::try_from(mine).unwrap());
     edit.invoke_edit_tags();
     let child = slots.tags.borrow().as_ref().unwrap().clone_strong();
     for tag in f["edited"]["tags"].as_array().unwrap() {
@@ -106,7 +146,40 @@ fn most_used_child_stages_each_service_cancels_descendants_and_persists_options(
         ),
         f["edited"]["tags"]
     );
-    let pixels = headless::render(&windows.get(image_index).unwrap(), 520, 440);
+    let selected_service = i32::try_from(mine).unwrap();
+    let selected_label = edit.get_services().row_data(mine).unwrap();
+    assert_eq!(selected_label, "my tags");
+    assert_eq!(edit.get_service(), selected_service);
+    // ComboBox updates current-value from current-index through a deferred
+    // change handler. Observe its displayed value after real draws, without
+    // setting the caption or changing the selected service to make it match.
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(2);
+    loop {
+        headless::render(&editor_window, 520, 440);
+        if edit.get_displayed_service() == selected_label {
+            break;
+        }
+        assert!(
+            std::time::Instant::now() < deadline,
+            "most-used editor label did not settle: selected={selected_label:?}, displayed={:?}",
+            edit.get_displayed_service()
+        );
+        std::thread::sleep(std::time::Duration::from_millis(8));
+    }
+    let pixels = headless::render(&editor_window, 520, 440);
+    assert_eq!(edit.get_service(), selected_service);
+    assert_eq!(edit.get_displayed_service(), selected_label);
+    assert_eq!(edit.get_displayed_service_index(), selected_service);
+    assert_eq!(
+        serde_json::json!(
+            edit.get_tags()
+                .iter()
+                .map(|tag| tag.to_string())
+                .collect::<Vec<_>>()
+        ),
+        f["edited"]["tags"],
+        "settling the displayed service must preserve its accepted draft"
+    );
     headless::save_png(
         &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("most-used-tags-options.png"),
         &pixels,
@@ -240,6 +313,7 @@ fn the_options_window_applies_its_changes() {
         page_names(&window),
         [
             "audio",
+            "colours",
             "command palette",
             "connection",
             "downloading",
@@ -267,6 +341,7 @@ fn the_options_window_applies_its_changes() {
             "shortcuts",
             "speed and memory",
             "system",
+            "system tray",
             "tag autocomplete tabs",
             "tag editing",
             "tag presentation",
@@ -1113,6 +1188,15 @@ fn options_remember_navigation_and_apply_search_placement() {
 #[test]
 fn gui_identity_and_exit_confirmation_reach_the_main_window() {
     let (_dirs, store) = store();
+    // Replay GUI exit confirmation independently of shutdown-work questions.
+    store
+        .write(|ctx| {
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(ctx.conn(), &shutdown)
+        })
+        .unwrap();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();

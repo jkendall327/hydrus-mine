@@ -5,8 +5,15 @@ use slint::platform::{Key, PointerEventButton, WindowEvent};
 use slint::{ComponentHandle as _, Model as _};
 use std::{cell::RefCell, rc::Rc};
 fn settle(native: &slint::platform::software_renderer::MinimalSoftwareWindow) {
+    settle_at(native, 1100, 800);
+}
+fn settle_at(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    width: u32,
+    height: u32,
+) {
     for _ in 0..8 {
-        headless::render(native, 1100, 800);
+        headless::render(native, width, height);
     }
 }
 fn wheel(
@@ -15,13 +22,23 @@ fn wheel(
     dx: f32,
     dy: f32,
 ) {
+    wheel_at(native, frame, dx, dy, 1100, 800);
+}
+fn wheel_at(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    frame: &hydrus_gui::MenuChoiceFrame,
+    dx: f32,
+    dy: f32,
+    width: u32,
+    height: u32,
+) {
     assert!(frame.w > 0.0 && frame.h > 0.0);
     native.dispatch_event(WindowEvent::PointerScrolled {
         position: slint::LogicalPosition::new(frame.x + frame.w / 2.0, frame.y + frame.h / 2.0),
         delta_x: dx,
         delta_y: dy,
     });
-    settle(native);
+    settle_at(native, width, height);
 }
 fn click(
     native: &slint::platform::software_renderer::MinimalSoftwareWindow,
@@ -202,6 +219,11 @@ fn physical_media_order_changes_results_and_native_pointer_still_opens_and_choos
         .write(|writer| {
             let mut value: settings::GuiSettings = settings::get(writer.conn())?;
             value.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(writer.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(writer.conn(), &shutdown)?;
             settings::set(writer.conn(), &value)
         })
         .unwrap();
@@ -328,7 +350,6 @@ fn options_staging_saved_policy_bubbling_and_retired_roots_are_owned() {
             .enabled
     );
     let options = open(&ui, &bound);
-    page(&options, "tag sort");
     let native = windows.get(windows.count() - 1).unwrap();
     let frames = Rc::new(RefCell::new(std::collections::BTreeMap::new()));
     options.on_menu_choice_geometry({
@@ -337,7 +358,10 @@ fn options_staging_saved_policy_bubbling_and_retired_roots_are_owned() {
             frames.borrow_mut().insert((row, part), frame);
         }
     });
-    settle(&native);
+    page(&options, "tag sort");
+    // Bubbling needs an overflowing parent viewport, as the Qt probe supplies.
+    // Preserve this size through wheel dispatch and its following render.
+    settle_at(&native, 1100, 360);
     let row = i32::try_from(
         options
             .get_rows()
@@ -352,8 +376,37 @@ fn options_staging_saved_policy_bubbling_and_retired_roots_are_owned() {
         .row_data(usize::try_from(row).unwrap())
         .unwrap()
         .index;
+    assert!(frame.y >= 0.0 && frame.y + frame.h <= 360.0);
+    assert!(frame.x > 4.0);
+    // The real row's HorizontalLayout has an 8px gap before the choice.
+    // Prove the parent can scroll using that gap, outside the ComboBox.
+    let parent_position = slint::LogicalPosition::new(frame.x - 4.0, frame.y + frame.h / 2.0);
+    let initial_scroll = options.get_options_scroll_y();
+    native.dispatch_event(WindowEvent::PointerScrolled {
+        position: parent_position,
+        delta_x: 0.0,
+        delta_y: -120.0,
+    });
+    settle_at(&native, 1100, 360);
+    assert!(
+        options.get_options_scroll_y() < initial_scroll,
+        "short Options viewport must actually overflow and scroll"
+    );
+    native.dispatch_event(WindowEvent::PointerScrolled {
+        position: parent_position,
+        delta_x: 0.0,
+        delta_y: 120.0,
+    });
+    settle_at(&native, 1100, 360);
+    assert!(
+        (options.get_options_scroll_y() - initial_scroll).abs() < 0.01,
+        "parent positive control returns to its original scroll position"
+    );
+    // Scrolling changes absolute item coordinates; use the measured live frame.
+    let frame = frames.borrow().get(&(row, 0)).unwrap().clone();
+    assert!(frame.y >= 0.0 && frame.y + frame.h <= 360.0);
     let scroll = options.get_options_scroll_y();
-    wheel(&native, &frame, 0.0, -120.0);
+    wheel_at(&native, &frame, 0.0, -120.0, 1100, 360);
     assert_eq!(
         options
             .get_rows()
@@ -370,7 +423,6 @@ fn options_staging_saved_policy_bubbling_and_retired_roots_are_owned() {
     options.invoke_cancel();
     save(&store, true);
     let options = open(&ui, &bound);
-    page(&options, "tag sort");
     let native = windows.get(windows.count() - 1).unwrap();
     let frames = Rc::new(RefCell::new(std::collections::BTreeMap::new()));
     options.on_menu_choice_geometry({
@@ -379,6 +431,7 @@ fn options_staging_saved_policy_bubbling_and_retired_roots_are_owned() {
             frames.borrow_mut().insert((row, part), frame);
         }
     });
+    page(&options, "tag sort");
     settle(&native);
     let frame = frames.borrow().get(&(row, 0)).unwrap().clone();
     options.hide().unwrap();
@@ -422,6 +475,11 @@ fn options_staging_saved_policy_bubbling_and_retired_roots_are_owned() {
         .write(|writer| {
             let mut value: settings::GuiSettings = settings::get(writer.conn())?;
             value.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(writer.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(writer.conn(), &shutdown)?;
             settings::set(writer.conn(), &value)
         })
         .unwrap();
@@ -642,7 +700,7 @@ fn manual_export_tag_choices_read_live_policy_and_publish_real_sidebar_rows() {
     };
     let ascending = rows();
     assert!(ascending.len() > 1);
-    let order = frames.borrow().get(&1).unwrap().clone();
+    let order = window.get_tag_sort_order_frame();
     wheel(&native, &order, 0.0, -120.0);
     assert_eq!(window.get_tag_sort_order(), 1);
     let descending = rows();
@@ -657,7 +715,7 @@ fn manual_export_tag_choices_read_live_policy_and_publish_real_sidebar_rows() {
     wheel(&native, &group, 0.0, 120.0);
     assert_eq!(window.get_tag_sort_group(), 2);
     let grouped = rows();
-    let kind = frames.borrow().get(&0).unwrap().clone();
+    let kind = window.get_tag_sort_type_frame();
     wheel(&native, &kind, 0.0, 120.0);
     assert_eq!(window.get_tag_sort_type(), 2);
     assert_eq!(
@@ -746,6 +804,15 @@ fn real_media_type_wheels_reach_main_and_staged_options_including_unoffered_curr
     );
     let native = windows.get(0).unwrap();
     let recorded = hydrus_testkit::fixture_json("menu_choice_wheel.json");
+    // The reference wheels one existing sort control; retain one active query.
+    // Re-entering Everything in each case would toggle it off on the second.
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let predicates = bound.current.borrow().borrow().predicates();
+    assert_eq!(predicates, vec!["system:everything".to_owned()]);
+    let location = bound.current.borrow().borrow().location().clone();
+    let mut query_files = bound.current.borrow().borrow().results().to_vec();
+    query_files.sort();
     for case in recorded["media_types"]["cases"].as_array().unwrap() {
         let current = bound.current.borrow().clone();
         current
@@ -758,13 +825,20 @@ fn real_media_type_wheels_reach_main_and_staged_options_including_unoffered_curr
             } else {
                 SortOrder::Descending
             });
-        ui.invoke_search_edited("system:everything".into());
-        ui.invoke_search_accepted();
+        assert_eq!(current.borrow().predicates(), predicates, "{case}");
+        assert_eq!(current.borrow().location(), &location, "{case}");
+        // Refresh also publishes this case's directly staged sort to Main.
+        ui.invoke_refresh_page();
+        assert_eq!(current.borrow().predicates(), predicates, "{case}");
         save(&store, case["enabled"].as_bool().unwrap());
         settle(&native);
         let mut files = current.borrow().results().to_vec();
         files.sort();
-        assert!(files.len() > 1);
+        assert!(files.len() > 1, "{case}");
+        assert_eq!(
+            files, query_files,
+            "sort setup preserves query files: {case}"
+        );
         wheel(
             &native,
             &ui.get_sort_type_frame(),
@@ -784,6 +858,8 @@ fn real_media_type_wheels_reach_main_and_staged_options_including_unoffered_curr
         let mut after = current.borrow().results().to_vec();
         after.sort();
         assert_eq!(after, files);
+        assert_eq!(current.borrow().predicates(), predicates, "{case}");
+        assert_eq!(current.borrow().location(), &location, "{case}");
         // The extra current item remains offered for ordinary native selection,
         // but the actual Qt flat wheel traversal never includes it.
         if case["name"] == "unoffered-current-no-change" {
@@ -798,7 +874,7 @@ fn real_media_type_wheels_reach_main_and_staged_options_including_unoffered_curr
         let value = PageSort {
             by: media_type(&case["before"]),
             ascending: case["before_order"] == 0,
-            tag_context: Default::default(),
+            tag_context: hydrus_core::search::context::TagContext::default(),
         };
         store
             .write(move |writer| {
@@ -839,7 +915,7 @@ fn real_media_type_wheels_reach_main_and_staged_options_including_unoffered_curr
         );
         assert_eq!(
             actual.order_index,
-            if case["after_order"] == 0 { 0 } else { 1 },
+            i32::from(case["after_order"] != 0),
             "{case}"
         );
         assert_eq!(

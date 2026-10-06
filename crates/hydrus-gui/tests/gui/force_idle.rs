@@ -111,6 +111,8 @@ fn real_menu_checked_states_controller_matrix_activity_and_autosave_consumer() {
                         user_seconds: Some(60),
                         mouse_seconds: Some(60),
                         api_seconds: Some(60),
+                        busy_cpu_percent: 50,
+                        busy_cpu_count: None,
                     },
                 )
             })
@@ -142,6 +144,8 @@ fn real_menu_checked_states_controller_matrix_activity_and_autosave_consumer() {
                     user_seconds: Some(60),
                     mouse_seconds: Some(60),
                     api_seconds: Some(60),
+                    busy_cpu_percent: 50,
+                    busy_cpu_count: None,
                 },
             )
         })
@@ -276,10 +280,17 @@ fn hidden_prompt_cancel_rebind_close_and_final_binding_clone_retire_override() {
                     user_seconds: None,
                     mouse_seconds: None,
                     api_seconds: None,
+                    busy_cpu_percent: 50,
+                    busy_cpu_count: None,
                 },
             )?;
             let mut gui: settings::GuiSettings = settings::get(ctx.conn())?;
             gui.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(ctx.conn(), &shutdown)?;
             settings::set(ctx.conn(), &gui)
         })
         .unwrap();

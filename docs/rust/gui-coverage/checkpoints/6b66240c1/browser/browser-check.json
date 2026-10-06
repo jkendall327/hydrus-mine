@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+  "expected_signed_off": 301,
+  "expected_additional": 21,
+  "started_at_utc": "2026-10-06T09:22:00.273284+00:00",
+  "publication_performed": false,
+  "html": "/workspace/validation-reviews/publication-final21-6b66240c1-linux/staged/docs/rust/gui-progress.html",
+  "html_sha256": "adefde0a474bcf435a0482b225af20a93f858096926342e2795d38cbccb7a47e",
+  "publication_audit": "/workspace/validation-reviews/publication-final21-6b66240c1-linux/staged/docs/rust/gui-coverage/audit/anchor-remap-6b66240c-publication.json",
+  "publication_audit_sha256": "af70b8caf4aa6f0ae5d0a0669f3e3d6a3d28b6c5d8748f4ebcdc5a96d9b70b63",
+  "additional_selected_ids": [
+    "audit-options-ratings-dialogs-dialogs-inc-dec-rating-height",
+    "audit-options-ratings-dialogs-dialogs-like-dislike-and-numerical-rating-icon-size",
+    "audit-options-nested-tag-suggestions-weights",
+    "audit-options-nested-shortcuts-command-keyboard",
+    "audit-options-shortcuts-built-in-hydrus-shortcut-sets-edit",
+    "audit-options-menu-menu-pages-restore-all-pages-sidebar-preview-sizes-to-saved-value",
+    "audit-options-menu-menu-pages-save-current-page-s-sidebar-preview-size-now",
+    "audit-options-menu-menu-pages-save-current-page-s-sidebar-preview-size-on-client-exit",
+    "audit-options-sidebar-splitters",
+    "audit-shared-sidecar-import",
+    "subscriptions-merge",
+    "audit-options-gui-pages-navigation-and-drag-and-drop-bugfix-disable-all-page-tab-drag-and-drop",
+    "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-mouse-wheel-scrolls-tab-bar-not-page-selection",
+    "audit-options-gui-pages-navigation-and-drag-and-drop-selection-chases-dropped-page-after-drag-and-drop",
+    "audit-options-gui-pages-navigation-and-drag-and-drop-with-shift-held-down",
+    "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-hide-main-page-navigation-tabs",
+    "audit-options-gui-pages-page-tab-names-when-there-are-too-many-tabs-to-fit-elide-their-names-so-they-fit",
+    "audit-options-media-viewer-mouse-behaviour-anchor-mouse-cursor-during-media-viewer-drags",
+    "audit-options-media-viewer-mouse-behaviour-if-set-to-anchor-drags-undo-on-apparent-touchscreen-drag",
+    "audit-options-media-viewer-hovers-hover-windows-allow-a-mouse-wheel-scroll-over-the-taglist-to-propagate-to-the-main-canvas",
+    "audit-media-menu-database-clear-cull-file-viewing-statistics-based-on-current-min-max-values"
+  ],
+  "prior_signed_off": 280,
+  "url_scope": {
+    "url": "http://127.0.0.1:37369/gui-progress.html",
+    "origin": "http://127.0.0.1:37369",
+    "served_directory": "/workspace/validation-reviews/publication-final21-6b66240c1-linux/staged/docs/rust",
+    "directory_listing": false,
+    "escaping_symlinks": false,
+    "external_requests_allowed": false,
+    "source_links_followed": false
+  },
+  "js_errors": [],
+  "blocked_external_requests": [],
+  "failed_requests": [],
+  "rendered_note": "Overnight implementation: 301 original concrete features reached first pass (goal 80). Missing: 862 \u2192 521. Partial: 378 \u2192 389. Goal counting excludes parent/alias completions and evidence-only reassessments. Exact successful hosted Linux check and parity-models jobs. Windows and macOS validation is deferred under the exact-source owner policy. Source inspection and author reference-recording provenance are separate; no local Cargo or mutation testing by this tool.",
+  "inventory_counts": {
+    "reference": 1812,
+    "native": 1799
+  },
+  "inventory_status_counts": {
+    "reference": {
+      "first_pass": 902,
+      "partial": 389,
+      "missing": 521,
+      "unassessed": 0
+    },
+    "native": {
+      "first_pass": 850,
+      "partial": 860,
+      "missing": 89,
+      "unassessed": 0
+    }
+  },
+  "completion_filter": "301 matching \u00b7 1812 inventoried",
+  "selected_additional_node": "audit-options-ratings-dialogs-dialogs-inc-dec-rating-height",
+  "completion_links": {
+    "snapshot": "https://github.com/jkendall327/hydrus-mine/commit/6b66240c16164a0021f0dd9e128995a25ed28c1d",
+    "source_anchors": [
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/hydrus/client/gui/panels/options/RatingsPanel.py#L207",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui-model/src/options.rs#L4064",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui-model/src/options.rs#L4064",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-store/src/settings.rs#L1389",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-store/src/import/decode.rs#L903",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui/src/services_editor_window.rs#L516",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui/src/manage_ratings_window.rs#L124",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui-model/src/rating_sizes.rs#L4",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui/ui/manage_ratings.slint#L20",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui-model/src/rating_sizes.rs#L21",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/hydrus/client/gui/panels/options/RatingsPanel.py#L207",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui-model/tests/model/rating_sizes.rs#L16",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui/tests/gui/rating_sizes.rs#L50",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-store/src/import/decode.rs#L3761",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui-model/tests/model/rating_sizes.rs#L20",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/oracle/record_rating_context_sizes.py#L1",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/oracle/fixtures/rating_context_sizes.json#L1"
+    ]
+  },
+  "viewports": {
+    "desktop": {
+      "width": 1440,
+      "height": 1000
+    },
+    "narrow": {
+      "width": 390,
+      "height": 844
+    }
+  },
+  "screenshots": {
+    "desktop": {
+      "path": "/workspace/validation-reviews/report-browser-6b66240c1/report-desktop.png",
+      "sha256": "f47b2f5f2413d373cb937143ac3bfc3d2639e5254ccaefc51d450b96d474b04a"
+    },
+    "narrow": {
+      "path": "/workspace/validation-reviews/report-browser-6b66240c1/report-narrow.png",
+      "sha256": "fb2dc1d6c92afe2573b5eed5af4fc86c0fb65d4965d538b280c60ac366d74c32"
+    }
+  },
+  "reference_interaction": {
+    "search": "8 matching \u00b7 1812 inventoried",
+    "unchecked_status": "missing",
+    "filtered": "5 matching \u00b7 1812 inventoried",
+    "snapshot": "https://github.com/jkendall327/hydrus-mine/commit/6b66240c16164a0021f0dd9e128995a25ed28c1d",
+    "source_anchors": [
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/hydrus/client/gui/ClientGUI.py#L3366",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui-model/src/main_menu.rs#L1073",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui-model/src/main_menu.rs#L1005",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui/src/menu_bar.rs#L843",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-cli/src/main.rs#L618",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui/src/vacuum_review_window.rs#L213",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui-model/tests/model/vacuum_review.rs#L34"
+    ]
+  },
+  "native_interaction": {
+    "search": "18 matching \u00b7 1799 inventoried",
+    "unchecked_status": "partial",
+    "filtered": "4 matching \u00b7 1799 inventoried",
+    "snapshot": "https://github.com/jkendall327/hydrus-mine/commit/6b66240c16164a0021f0dd9e128995a25ed28c1d",
+    "source_anchors": [
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/hydrus/client/gui/ClientGUI.py#L3275",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui-model/src/main_menu.rs#L1019",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui-model/src/main_menu.rs#L1005",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui-model/src/main_menu.rs#L1009",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui/src/menu_bar.rs#L799",
+      "https://github.com/jkendall327/hydrus-mine/blob/6b66240c16164a0021f0dd9e128995a25ed28c1d/crates/hydrus-gui/src/database_maintenance_window.rs#L126"
+    ]
+  },
+  "narrow": {
+    "width": 390,
+    "documentWidth": 390,
+    "bodyWidth": 390
+  },
+  "browser_version": "151.0.7922.173",
+  "checks": [
+    "real Chromium render",
+    "no JS/console errors",
+    "exact inventory counts",
+    "separate completion ledger and inventory counts",
+    "selected additional IDs",
+    "visible cumulative completion note",
+    "explicit Linux/deferred Windows/macOS",
+    "completion filter rendered IDs",
+    "reference/native tabs",
+    "search and status filters",
+    "rendered exact-SHA snapshot/source links",
+    "390px no document/body overflow",
+    "desktop/narrow screenshots hashed",
+    "input digests stable"
+  ],
+  "finished_at_utc": "2026-10-06T09:22:04.695931+00:00"
+}

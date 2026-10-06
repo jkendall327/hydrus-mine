@@ -1,0 +1,1120 @@
+{
+  "source_commit": "ff858ded14518d4a9a1d39bb5aafe0213c992983",
+  "ci_evidence_sha256": "f46fbab6b9ebef2905956f7114b939ca2da1148e5d57d81d61b68beaee11aefe",
+  "mapping_sha256": "c7b55b8c74201ee9a9d13a6f486bd93bce22dc4966af27dded6aa2ff51687c67",
+  "mapping_applied_after_gates": true,
+  "operations": [
+    {
+      "id": "audit-options-files-and-trash-when-finishing-archive-delete-filtering-always-delete-from-all-possible-domains",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Hosted Rust CI and exact-source native rendering/PNG review remain pending; no local Rust/Cargo builds, tests or mutation execution.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-when-finishing-archive-delete-filtering-always-delete-from-all-possible-domains",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-when-finishing-archive-delete-filtering-always-delete-from-all-possible-domains",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-when-finishing-archive-delete-filtering-always-delete-from-all-possible-domains",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-when-finishing-archive-delete-filtering-always-delete-from-all-possible-domains",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-when-finishing-archive-delete-filtering-delay-activation-of-multiple-deletion-choice-buttons",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Hosted Rust CI and exact-source native rendering/PNG review remain pending; no local Rust/Cargo builds, tests or mutation execution.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-when-finishing-archive-delete-filtering-delay-activation-of-multiple-deletion-choice-buttons",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-when-finishing-archive-delete-filtering-delay-activation-of-multiple-deletion-choice-buttons",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-when-finishing-archive-delete-filtering-delay-activation-of-multiple-deletion-choice-buttons",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-when-finishing-archive-delete-filtering-delay-activation-of-multiple-deletion-choice-buttons",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-help-debug-action-make-a-new-page-in-five-seconds",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional source-only implementation proposal: hosted strict Clippy/Rust/native execution and actual debug_delayed_pages_native.png inspection are pending. No local Cargo/Rust/native builds/tests/mutations were run.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-help-debug-action-make-a-new-page-in-five-seconds",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-help-debug-action-make-a-new-page-in-five-seconds",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-help-debug-action-make-a-new-page-in-five-seconds",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-help-debug-action-make-a-new-page-in-five-seconds",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-help-debug-action-fetch-a-url",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "Exact Rust/native replay and native PNG inspection remain hosted pending. No parents, semantic aliases or new native window IDs receive credit.",
+      "conditional_after": "No parents, semantic aliases or new native window IDs receive credit.",
+      "reason": "Remove validation status while preserving existing credit or disposable-fixture safety boundary."
+    },
+    {
+      "id": "audit-options-help-debug-action-fetch-a-url",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-help-debug-action-fetch-a-url",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-help-debug-action-fetch-a-url",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-help-debug-action-fetch-a-url",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-help-debug-action-make-a-long-text-popup",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional source-only proposal; hosted strict Clippy/native replay/render inspection remain pending. No local Cargo/Rust builds/tests/mutations executed.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-help-debug-action-make-a-long-text-popup",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-help-debug-action-make-a-long-text-popup",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-help-debug-action-make-a-long-text-popup",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-help-debug-action-make-a-long-text-popup",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-help-debug-action-close-and-reload-current-gui-session",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Rust/native execution and exact native screenshot review remain deferred/pending; recorded real Qt and static source checks are the evidence currently available.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-help-debug-action-close-and-reload-current-gui-session",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-help-debug-action-close-and-reload-current-gui-session",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-help-debug-action-close-and-reload-current-gui-session",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-help-debug-action-close-and-reload-current-gui-session",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-duplicates-duplicates-filter-page-hide-the-x-done-notification-on-preparation-tab-when-99-searched",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional on hosted strict Clippy, Rust/native tests and native render inspection; authored regressions were not locally executed.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-duplicates-duplicates-filter-page-hide-the-x-done-notification-on-preparation-tab-when-99-searched",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-duplicates-duplicates-filter-page-hide-the-x-done-notification-on-preparation-tab-when-99-searched",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-duplicates-duplicates-filter-page-hide-the-x-done-notification-on-preparation-tab-when-99-searched",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-duplicates-duplicates-filter-page-hide-the-x-done-notification-on-preparation-tab-when-99-searched",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-confirm-when-copying-files-across-local-file-domains",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Rust/model/native tests are authored for hosted CI; no local Cargo builds, Rust tests or mutation runs.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-confirm-when-copying-files-across-local-file-domains",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-confirm-when-copying-files-across-local-file-domains",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-confirm-when-copying-files-across-local-file-domains",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-confirm-when-copying-files-across-local-file-domains",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-confirm-when-moving-files-across-local-file-domains",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Rust/model/native tests are authored for hosted CI; no local Cargo builds, Rust tests or mutation runs.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-confirm-when-moving-files-across-local-file-domains",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-confirm-when-moving-files-across-local-file-domains",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-confirm-when-moving-files-across-local-file-domains",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-confirm-when-moving-files-across-local-file-domains",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-tag-presentation-other-rendering-namespace-for-the-or-top-row",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Hosted model/native regressions and PNG authored but not executed locally; no Cargo builds/tests, mutation runs, pushes or canonical inventory edits.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-tag-presentation-other-rendering-namespace-for-the-or-top-row",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-tag-presentation-other-rendering-namespace-for-the-or-top-row",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-tag-presentation-other-rendering-namespace-for-the-or-top-row",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-tag-presentation-other-rendering-namespace-for-the-or-top-row",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "Hosted exact-source Rust/Clippy/native execution and inspection of the authored Options PNG remain pending. Physical native tests use disposable copied media; none were executed locally.",
+      "conditional_after": "Physical native tests use disposable copied media.",
+      "reason": "Remove validation status while preserving existing credit or disposable-fixture safety boundary."
+    },
+    {
+      "id": "audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "replace_exact_list_item",
+      "before": "The GUI owner uses a weak window and off-thread jobs capture no GUI state. Retained Control owns Monitor→Pages→Store until final owner drop. A private Bound Owner immediately retires work on binding drop despite retained Main callbacks/Control; weak owner timer or next poll detects a dropped Main. The actual held-wait dropped-Bound/fresh-successor regression and dropped-Main polling assertion are authored, not locally executed.",
+      "conditional_after": "The GUI owner uses a weak window and off-thread jobs capture no GUI state. Retained Control owns Monitor→Pages→Store until final owner drop. A private Bound Owner immediately retires work on binding drop despite retained Main callbacks/Control; weak owner timer or next poll detects a dropped Main.",
+      "reason": "Remove only author/execution status; retain weak Main, retained Control/Store lifetime, private Bound retirement, weak-timer/next-poll scope verbatim."
+    },
+    {
+      "id": "audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time",
+      "field": "assessment",
+      "operation": "replace_exact_substring",
+      "before": "Default-true staged checkbox, exact Qt Apply/Cancel/reopen, native-wins retained ClientOptions and future import, field-scoped save preserving the peer gate. Actual automatic worker admits once when current live GUI idle OR its saved normal-time flag is true; daemon with no GUI activity is normal time. A flag edit does not interrupt a pass already admitted, matching actual Qt [8,8] groups; shutdown stops before the next group. The real owned worker runs off UI, retains queue/import/current-membership/shared-media safety, and retires/wakes on accepted exit, rebind and last-owner drop. Physical captured waits remain outside the writer and final-pair waits remain intact. Hidden/retired Options cannot stage/save, declined exit preserves live work, successor owners consume the remaining real queue. Conditional finite-control FirstPass requires hosted validation; broader maintenance parents remain Partial. A private Bound Owner makes final binding-clone retirement immediate despite retained Main callbacks/public Control; the dropped Main is discovered by its weak timer/poll.",
+      "match": "Conditional finite-control FirstPass requires hosted validation; broader maintenance parents remain Partial.",
+      "conditional_after": "Default-true staged checkbox, exact Qt Apply/Cancel/reopen, native-wins retained ClientOptions and future import, field-scoped save preserving the peer gate. Actual automatic worker admits once when current live GUI idle OR its saved normal-time flag is true; daemon with no GUI activity is normal time. A flag edit does not interrupt a pass already admitted, matching actual Qt [8,8] groups; shutdown stops before the next group. The real owned worker runs off UI, retains queue/import/current-membership/shared-media safety, and retires/wakes on accepted exit, rebind and last-owner drop. Physical captured waits remain outside the writer and final-pair waits remain intact. Hidden/retired Options cannot stage/save, declined exit preserves live work, successor owners consume the remaining real queue. Broader maintenance parents remain Partial. A private Bound Owner makes final binding-clone retirement immediate despite retained Main callbacks/public Control; the dropped Main is discovered by its weak timer/poll.",
+      "replacement": "Broader maintenance parents remain Partial.",
+      "reason": "Remove only finite-control hosted-validation condition; preserve broader maintenance parents Partial and every substantive behavior assertion."
+    },
+    {
+      "id": "audit-options-files-and-trash-allow-trash-maintenance-during-normal-time",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "Hosted exact-source Rust/Clippy/native execution and inspection of the authored Options PNG remain pending. Physical native tests use disposable copied media; none were executed locally.",
+      "conditional_after": "Physical native tests use disposable copied media.",
+      "reason": "Remove validation status while preserving existing credit or disposable-fixture safety boundary."
+    },
+    {
+      "id": "audit-options-files-and-trash-allow-trash-maintenance-during-normal-time",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "replace_exact_list_item",
+      "before": "The GUI owner uses a weak window and off-thread jobs capture no GUI state. Retained Control owns Monitor→Pages→Store until final owner drop. A private Bound Owner immediately retires work on binding drop despite retained Main callbacks/Control; weak owner timer or next poll detects a dropped Main. The actual held-wait dropped-Bound/fresh-successor regression and dropped-Main polling assertion are authored, not locally executed.",
+      "conditional_after": "The GUI owner uses a weak window and off-thread jobs capture no GUI state. Retained Control owns Monitor→Pages→Store until final owner drop. A private Bound Owner immediately retires work on binding drop despite retained Main callbacks/Control; weak owner timer or next poll detects a dropped Main.",
+      "reason": "Remove only author/execution status; retain weak Main, retained Control/Store lifetime, private Bound retirement, weak-timer/next-poll scope verbatim."
+    },
+    {
+      "id": "audit-options-files-and-trash-allow-trash-maintenance-during-normal-time",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-allow-trash-maintenance-during-normal-time",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-allow-trash-maintenance-during-normal-time",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-allow-trash-maintenance-during-normal-time",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-allow-trash-maintenance-during-normal-time",
+      "field": "assessment",
+      "operation": "replace_exact_substring",
+      "before": "Default-true staged checkbox, exact Qt Apply/Cancel/reopen, native-wins retained ClientOptions and future import, field-scoped save preserving the peer gate. Actual automatic worker admits once when current live GUI idle OR its saved normal-time flag is true; daemon with no GUI activity is normal time. A flag edit does not interrupt a pass already admitted, matching actual Qt [8,8] groups; shutdown stops before the next group. The real owned worker runs off UI, retains queue/import/current-membership/shared-media safety, and retires/wakes on accepted exit, rebind and last-owner drop. Physical captured waits remain outside the writer and final-pair waits remain intact. Hidden/retired Options cannot stage/save, declined exit preserves live work, successor owners consume the remaining real queue. Conditional finite-control FirstPass requires hosted validation; broader maintenance parents remain Partial. A private Bound Owner makes final binding-clone retirement immediate despite retained Main callbacks/public Control; the dropped Main is discovered by its weak timer/poll.",
+      "match": "Conditional finite-control FirstPass requires hosted validation; broader maintenance parents remain Partial.",
+      "conditional_after": "Default-true staged checkbox, exact Qt Apply/Cancel/reopen, native-wins retained ClientOptions and future import, field-scoped save preserving the peer gate. Actual automatic worker admits once when current live GUI idle OR its saved normal-time flag is true; daemon with no GUI activity is normal time. A flag edit does not interrupt a pass already admitted, matching actual Qt [8,8] groups; shutdown stops before the next group. The real owned worker runs off UI, retains queue/import/current-membership/shared-media safety, and retires/wakes on accepted exit, rebind and last-owner drop. Physical captured waits remain outside the writer and final-pair waits remain intact. Hidden/retired Options cannot stage/save, declined exit preserves live work, successor owners consume the remaining real queue. Broader maintenance parents remain Partial. A private Bound Owner makes final binding-clone retirement immediate despite retained Main callbacks/public Control; the dropped Main is discovered by its weak timer/poll.",
+      "replacement": "Broader maintenance parents remain Partial.",
+      "reason": "Remove only finite-control hosted-validation condition; preserve broader maintenance parents Partial and every substantive behavior assertion."
+    },
+    {
+      "id": "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-show-tab-tree-view",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "replace_exact_list_item",
+      "before": "Native real pointer checks cover single-click and disclosure; Return/arrow/Home/End are dispatched through the focused real Slint window. Double-click sequences are replayed through the consumer callbacks as well as the real Qt mouse recording. Hosted native execution/PNG review remains pending; no local Cargo builds/tests were run.",
+      "conditional_after": "Native real pointer checks cover single-click and disclosure; Return/arrow/Home/End are dispatched through the focused real Slint window. Double-click sequences are replayed through the consumer callbacks as well as the real Qt mouse recording.",
+      "reason": "Remove only validation/author status; retain real pointer versus consumer double-click and focused key dispatch scope verbatim."
+    },
+    {
+      "id": "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-show-tab-tree-view",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-show-tab-tree-view",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-show-tab-tree-view",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-show-tab-tree-view",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-media-notes-missing-cog",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "remove_exact_list_item",
+      "before": "Rust model/store/native regressions are authored for hosted CI, not run locally. Formatter, git diff --check, Python py_compile and cached warning-aware Slint source compiler passed; no local Cargo builds/tests, mutation tests, pushes or remote/IPFS work.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-media-notes-missing-cog",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-media-notes-missing-cog",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-media-notes-missing-cog",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-media-notes-missing-cog",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-notes-start-editing-notes-with-the-text-cursor-at-the-end-of-the-document",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "remove_exact_list_item",
+      "before": "Rust model/store/native regressions are authored for hosted CI, not run locally. Formatter, git diff --check, Python py_compile and cached warning-aware Slint source compiler passed; no local Cargo builds/tests, mutation tests, pushes or remote/IPFS work.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-notes-start-editing-notes-with-the-text-cursor-at-the-end-of-the-document",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-notes-start-editing-notes-with-the-text-cursor-at-the-end-of-the-document",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-notes-start-editing-notes-with-the-text-cursor-at-the-end-of-the-document",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-notes-start-editing-notes-with-the-text-cursor-at-the-end-of-the-document",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-notes-when-middle-clicking-a-note-hover-only-copy-the-text",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "remove_exact_list_item",
+      "before": "Rust model/store/native regressions are authored for hosted CI, not run locally. Formatter, git diff --check, Python py_compile and cached warning-aware Slint source compiler passed; no local Cargo builds/tests, mutation tests, pushes or remote/IPFS work.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-notes-when-middle-clicking-a-note-hover-only-copy-the-text",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-notes-when-middle-clicking-a-note-hover-only-copy-the-text",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-notes-when-middle-clicking-a-note-hover-only-copy-the-text",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-notes-when-middle-clicking-a-note-hover-only-copy-the-text",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-when-maintenance-physically-deletes-files-wait-this-long-between-each-delete",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "replace_exact_list_item",
+      "before": "Hosted exact-source Rust/Clippy/native execution and inspection of the authored Options PNG remain pending. Physical mutation regressions are authored against disposable copied fixtures, not executed locally.",
+      "conditional_after": "Physical file-mutation regressions use disposable copied fixtures.",
+      "reason": "Remove validation status while preserving existing credit or disposable-fixture safety boundary."
+    },
+    {
+      "id": "audit-options-files-and-trash-when-maintenance-physically-deletes-files-wait-this-long-between-each-delete",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-when-maintenance-physically-deletes-files-wait-this-long-between-each-delete",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-when-maintenance-physically-deletes-files-wait-this-long-between-each-delete",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-when-maintenance-physically-deletes-files-wait-this-long-between-each-delete",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-files-and-trash-when-maintenance-physically-deletes-files-wait-this-long-between-each-delete",
+      "field": "assessment",
+      "operation": "replace_exact_substring",
+      "before": "Actual Qt seconds/milliseconds fields default to 600 ms, clamp minimum 20 ms, and have 59/999 field maxima. Cancel retains raw imported milliseconds; unchanged Apply accepts displayed fields once without overwriting a concurrent policy, and explicit edits preserve their actual float-sum conversion (1 s 29 ms saves 1029 ms and reopens at 1 s 28 ms). Native-wins retained ClientOptions load, future import, field-scoped save and hidden/retired controls reach the real maintenance consumer. Each pass snapshots its saved delay; each admitted file/thumbnail pair commits its durable queue clear then waits outside the writer, including the final pair and a missing original. Successors recheck current queue/membership/shared-media/import claims. Restored local media only clears an inconsistent queue and does not perform or wait for a physical pair; actual reference re-add clears those queues before the loop. Owned worker shutdown wakes bounded waits, retires further admissions and joins on normal shutdown. Failed pairs remain queued and receive no successful-pair wait; earlier pairs stay committed. Conditional finite-control FirstPass requires hosted validation; broader maintenance parents remain Partial.",
+      "match": "Conditional finite-control FirstPass requires hosted validation; broader maintenance parents remain Partial.",
+      "conditional_after": "Actual Qt seconds/milliseconds fields default to 600 ms, clamp minimum 20 ms, and have 59/999 field maxima. Cancel retains raw imported milliseconds; unchanged Apply accepts displayed fields once without overwriting a concurrent policy, and explicit edits preserve their actual float-sum conversion (1 s 29 ms saves 1029 ms and reopens at 1 s 28 ms). Native-wins retained ClientOptions load, future import, field-scoped save and hidden/retired controls reach the real maintenance consumer. Each pass snapshots its saved delay; each admitted file/thumbnail pair commits its durable queue clear then waits outside the writer, including the final pair and a missing original. Successors recheck current queue/membership/shared-media/import claims. Restored local media only clears an inconsistent queue and does not perform or wait for a physical pair; actual reference re-add clears those queues before the loop. Owned worker shutdown wakes bounded waits, retires further admissions and joins on normal shutdown. Failed pairs remain queued and receive no successful-pair wait; earlier pairs stay committed. Broader maintenance parents remain Partial.",
+      "replacement": "Broader maintenance parents remain Partial.",
+      "reason": "Remove only finite-control hosted-validation condition; preserve broader maintenance parents Partial and every substantive behavior assertion."
+    },
+    {
+      "id": "audit-options-popup-notifications-popup-window-toaster-approximate-max-width-of-popup-messages-in-characters",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Authored Rust/native/store tests await hosted CI; no local Cargo builds, Rust tests or mutation execution.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-popup-notifications-popup-window-toaster-approximate-max-width-of-popup-messages-in-characters",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-popup-notifications-popup-window-toaster-approximate-max-width-of-popup-messages-in-characters",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-popup-notifications-popup-window-toaster-approximate-max-width-of-popup-messages-in-characters",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-popup-notifications-popup-window-toaster-approximate-max-width-of-popup-messages-in-characters",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-popup-notifications-popup-window-toaster-bugfix-force-this-width-as-the-fixed-width-for-all-popup-messages",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Authored Rust/native/store tests await hosted CI; no local Cargo builds, Rust tests or mutation execution.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-popup-notifications-popup-window-toaster-bugfix-force-this-width-as-the-fixed-width-for-all-popup-messages",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-popup-notifications-popup-window-toaster-bugfix-force-this-width-as-the-fixed-width-for-all-popup-messages",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-popup-notifications-popup-window-toaster-bugfix-force-this-width-as-the-fixed-width-for-all-popup-messages",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-popup-notifications-popup-window-toaster-bugfix-force-this-width-as-the-fixed-width-for-all-popup-messages",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-menu-menu-file-quick-export-directory",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional on hosted Rust/strict Clippy/native/render validation; no local Cargo, Rust builds/tests or mutations executed.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-menu-menu-file-quick-export-directory",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-menu-menu-file-quick-export-directory",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-menu-menu-file-quick-export-directory",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    },
+    {
+      "id": "audit-options-menu-menu-file-quick-export-directory",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Remove historical author/preparation validation status from live limitations; original text remains in this provenance mapping. No local execution or mutation-testing claim is introduced."
+    }
+  ],
+  "added_review_scope_limits": {
+    "audit-options-files-and-trash-when-finishing-archive-delete-filtering-always-delete-from-all-possible-domains": [
+      "Native modal layers versus Qt dialogs; deterministic native secondary service order versus reference set iteration.",
+      "No broad media-viewer/shortcut/family credit and no GUI injected-Store-error presentation regression; atomic replaced-key rejection has model coverage.",
+      "Multiple delayed screenshot is intentionally before deadline, while all-domains single choice is immediately ready; image alone cannot validate elapsed1200ms or commits.",
+      "Qt finish PNG is captured after scheduled enable callbacks and a choice click; native delayed screenshot is before its deadline. Their enabled/disabled states are intentionally different, not a target mismatch."
+    ],
+    "audit-options-files-and-trash-when-finishing-archive-delete-filtering-delay-activation-of-multiple-deletion-choice-buttons": [
+      "Native modal layers versus Qt dialogs; deterministic native secondary service order versus reference set iteration.",
+      "No broad media-viewer/shortcut/family credit and no GUI injected-Store-error presentation regression; atomic replaced-key rejection has model coverage.",
+      "Multiple delayed screenshot is intentionally before deadline, while all-domains single choice is immediately ready; image alone cannot validate elapsed1200ms or commits.",
+      "Qt finish PNG is captured after scheduled enable callbacks and a choice click; native delayed screenshot is before its deadline. Their enabled/disabled states are intentionally different, not a target mismatch."
+    ],
+    "audit-options-help-debug-action-make-a-new-page-in-five-seconds": [
+      "Qt captures the delivered blank query with empty predicates before a search; native export follows an additional Everything query and decoded thumbnails. Compare tab/domain presence and native consumer visibility, not identical result state. Real Qt minimized delivery is recorded; native minimized backend is not proved by headless hide."
+    ],
+    "audit-options-help-debug-action-fetch-a-url": [
+      "Qt PNG is three completed network progress cards (done/100%/7B), not the native response-choice child. Native result PNG must show exact seven-byte message and all three save/copy/forget buttons; no direct matching Qt dialog PNG exists. Attached native network row is display-only; broader embedded stop/cog parity is unclaimed."
+    ],
+    "audit-options-help-debug-action-make-a-long-text-popup": [
+      "Qt recorder captures/drains actual scheduled setters with deterministic vocabulary; it does not execute25seconds of actual scheduler timing. Native replay injects owner clock and explicitly drains the same production tick. Qt PNG shows final two grown cards at24800ms; native initial is a different state and final is the corresponding logical state. Font-derived geometry is allowed to differ."
+    ],
+    "audit-options-help-debug-action-close-and-reload-current-gui-session": [
+      "Qt screenshot is post-reload first-root locked2-files search with tags and no displayed thumbnails; native export follows same reload consumer with decoded thumbnails. Compare tab names/first selection and legible controls, not whole-frame geometry or identical thumbnail capture timing. Native unique private slots differ from fixed Qt temporary name."
+    ],
+    "audit-options-duplicates-duplicates-filter-page-hide-the-x-done-notification-on-preparation-tab-when-99-searched": [
+      "Qt Options PNG and native Main publisher PNG show different surfaces/states; compare labels and recorded effects within scope, without pixel-parity assertions.",
+      "Preparation maintenance, duplicate colours, background search workers and Options parent completion remain outside leaf. Existing publication path is reused, with no added observer/timer.",
+      "Viewed the preparation page: preparation label has no percentage, 2,000 eligible files in the system. and Searched1,999/2,000 files at this distance. are readable, with a nearly full gauge. This matches recorded hide=true, distance8, unsearched1/searched1999.",
+      "Qt reference is Options Duplicates, checked selected checkbox; native export is the resulting Main preparation publisher. Surface mismatch is documented and is not an automatic demotion. The native selected checkbox itself is driven/asserted in the green GUI test but has no dedicated Options PNG.",
+      "An unrelated auto-resolution tab caption is truncated at the sidebar edge; it does not obscure the selected preparation label/counts and does not establish wider sidebar parity."
+    ],
+    "audit-options-files-and-trash-confirm-when-copying-files-across-local-file-domains": [
+      "thumbnail_menu.png is only a menu surface; freshly inspect files-view-removal.png supplement for both target Options checkboxes.",
+      "No physical relocation/remote services/viewer/source chooser or cancellable progress/block-worker parity; transaction can block GUI for large jobs.",
+      "Owned error display is implemented but GUI injected Store failure is untested. Other checked Files/Trash rows in supplemental capture reflect producer state and are not this pair of claims."
+    ],
+    "audit-options-files-and-trash-confirm-when-moving-files-across-local-file-domains": [
+      "thumbnail_menu.png is only a menu surface; freshly inspect files-view-removal.png supplement for both target Options checkboxes.",
+      "No physical relocation/remote services/viewer/source chooser or cancellable progress/block-worker parity; transaction can block GUI for large jobs.",
+      "Owned error display is implemented but GUI injected Store failure is untested. Other checked Files/Trash rows in supplemental capture reflect producer state and are not this pair of claims."
+    ],
+    "audit-options-tag-presentation-other-rendering-namespace-for-the-or-top-row": [
+      "No Qt PNG exists in this recorder/packet: colour/header/child JSON evidence cannot be described as a Qt visual comparison.",
+      "Native active OR remains one line; expanded header with independently coloured children remains broader Partial.",
+      "Inactive Qt OR connecting-string preference and full namespace colour picker/list menus/keyboard navigation are outside this selected leaf; Options/Tag Presentation parents remain Partial.",
+      "Viewed the full fresh950x1600 Options draft. Exact Namespace for the OR top row: label and plain text field show system, readable and fully inside the content width. The neighbouring sibling checkbox is readable; it is outside the selected leaf.",
+      "Correction to prep: the capture shows imported basic system, not untouched None. The measured use ideal tag colour checkbox in the shared test is the sibling namespace control, not the OR field. Selected OR presentation is directly visible; named/missing/empty/new namespace effects are exercised later in the passing live predicate-row colour assertions.",
+      "No Qt PNG was authored by this recorder. Actual Qt OR header and child RGB rows are JSON evidence; native post-Apply OR consumer also lacks a dedicated export. This supports bounded functional/control approval with the stated visual limit, not visual topology or pixel parity."
+    ],
+    "audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time": [
+      "Finite gate parity only; CPU/system-busy/global cursor idle, scheduler/queue wakes, trash pacing, physical extension repair and boot-long error disabling remain Partial.",
+      "Native256-file trash batches/1024 physical pairs/ten-minute cadence preserved; admitted synchronous IO or8-file group may finish after cancellation.",
+      "Both native and Qt capture show saved false/false gates. Native age/size/20ms wait versus Qt72h/2048MB/600ms are unrelated fixture states, not gate defects.",
+      "A daemon without GUI activity is normal time; explicit purge remains ungated. Retained Control can hold Store until final owner drop, while private Bound Owner retires work."
+    ],
+    "audit-options-files-and-trash-allow-trash-maintenance-during-normal-time": [
+      "Finite gate parity only; CPU/system-busy/global cursor idle, scheduler/queue wakes, trash pacing, physical extension repair and boot-long error disabling remain Partial.",
+      "Native256-file trash batches/1024 physical pairs/ten-minute cadence preserved; admitted synchronous IO or8-file group may finish after cancellation.",
+      "Both native and Qt capture show saved false/false gates. Native age/size/20ms wait versus Qt72h/2048MB/600ms are unrelated fixture states, not gate defects.",
+      "A daemon without GUI activity is normal time; explicit purge remains ungated. Retained Control can hold Store until final owner drop, while private Bound Owner retires work."
+    ],
+    "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-show-tab-tree-view": [
+      "Qt capture is a 252x724 tree-only widget; native capture is a 900x600 Main window with 190px sidebar/26px rows/text toolbar. Compare hierarchy, disclosure and cursor states; no exact-pixel parity.",
+      "Native double-click steps replay selected/toggled/chosen callbacks; Qt uses physical double clicks. Native single-click/disclosure and arrow/Home/End/Return are real events.",
+      "Drag/drop, context menus, filters/depth/history/cog/empty-space creation/optional collapsed descendants/broader keys remain outside this leaf. Cursor/expansion are live owner-local state, not persisted session content.",
+      "No native PNG of the Options tree selector was found in its assigned tests; functional staged-choice assertions cover it. Supplemental tab PNGs do not substitute for a selector capture."
+    ],
+    "audit-media-notes-missing-cog": [
+      "Qt PNG captures closed-cog Manage Notes panel, no open cog menu, Notes Options checkbox pane or viewer-hover screenshot. Behavioral recording covers those actions; no matching Qt PNG for native hover.",
+      "Shared manage_notes.png shows editor/cog button with different tab/content state. No authored native open-cog-menu or Notes Options checkbox PNG found; do not claim rendered menu/checkbox parity.",
+      "Native inline naming/questions, text labels and layout differ Qt icon toolbar/dialog. Rust cursor offsets are UTF-8 bytes; Qt offsets UTF-16; the regression translates actual Unicode insertion.",
+      "Real cog popup existence/mouse routing and bound check model are asserted; checkmark visuals/menu separator are source-declared, not asserted by unsupported OS-menu introspection.",
+      "Broader Manage Notes, viewer interaction and Notes Options parents remain Partial. Left-click note editing/right-click hide, keyboard Apply and empty-tab double-click are outside scope.",
+      "Retired/hidden viewer copy boundary is covered by retained callback after actual close; independently hidden-active/rebound viewer branches are not separately asserted. Renaming/copying cursor retention has source support but no dedicated cursor-after-rename/copy assertion in notes_preferences test.",
+      "Fresh native hover does not visibly paint fox emoji; the recorded Unicode clipboard and actual keyboard-insertion assertions pass. No font/glyph parity is claimed."
+    ],
+    "audit-options-notes-start-editing-notes-with-the-text-cursor-at-the-end-of-the-document": [
+      "Qt PNG captures closed-cog Manage Notes panel, no open cog menu, Notes Options checkbox pane or viewer-hover screenshot. Behavioral recording covers those actions; no matching Qt PNG for native hover.",
+      "Shared manage_notes.png shows editor/cog button with different tab/content state. No authored native open-cog-menu or Notes Options checkbox PNG found; do not claim rendered menu/checkbox parity.",
+      "Native inline naming/questions, text labels and layout differ Qt icon toolbar/dialog. Rust cursor offsets are UTF-8 bytes; Qt offsets UTF-16; the regression translates actual Unicode insertion.",
+      "Real cog popup existence/mouse routing and bound check model are asserted; checkmark visuals/menu separator are source-declared, not asserted by unsupported OS-menu introspection.",
+      "Broader Manage Notes, viewer interaction and Notes Options parents remain Partial. Left-click note editing/right-click hide, keyboard Apply and empty-tab double-click are outside scope.",
+      "Retired/hidden viewer copy boundary is covered by retained callback after actual close; independently hidden-active/rebound viewer branches are not separately asserted. Renaming/copying cursor retention has source support but no dedicated cursor-after-rename/copy assertion in notes_preferences test.",
+      "Fresh native hover does not visibly paint fox emoji; the recorded Unicode clipboard and actual keyboard-insertion assertions pass. No font/glyph parity is claimed."
+    ],
+    "audit-options-notes-when-middle-clicking-a-note-hover-only-copy-the-text": [
+      "Qt PNG captures closed-cog Manage Notes panel, no open cog menu, Notes Options checkbox pane or viewer-hover screenshot. Behavioral recording covers those actions; no matching Qt PNG for native hover.",
+      "Shared manage_notes.png shows editor/cog button with different tab/content state. No authored native open-cog-menu or Notes Options checkbox PNG found; do not claim rendered menu/checkbox parity.",
+      "Native inline naming/questions, text labels and layout differ Qt icon toolbar/dialog. Rust cursor offsets are UTF-8 bytes; Qt offsets UTF-16; the regression translates actual Unicode insertion.",
+      "Real cog popup existence/mouse routing and bound check model are asserted; checkmark visuals/menu separator are source-declared, not asserted by unsupported OS-menu introspection.",
+      "Broader Manage Notes, viewer interaction and Notes Options parents remain Partial. Left-click note editing/right-click hide, keyboard Apply and empty-tab double-click are outside scope.",
+      "Retired/hidden viewer copy boundary is covered by retained callback after actual close; independently hidden-active/rebound viewer branches are not separately asserted. Renaming/copying cursor retention has source support but no dedicated cursor-after-rename/copy assertion in notes_preferences test.",
+      "Fresh native hover does not visibly paint fox emoji; the recorded Unicode clipboard and actual keyboard-insertion assertions pass. No font/glyph parity is claimed."
+    ],
+    "audit-options-files-and-trash-when-maintenance-physically-deletes-files-wait-this-long-between-each-delete": [
+      "Expected native capture1s28ms is reopened after saving1029; Qt1s234ms was explicitly set from1234. This deliberate normalization/state difference is not a persistence defect.",
+      "No broader scheduler/backend parity; native1024-pair/ten-minute cadence and one-media-hash queue retained versus independent reference file/thumbnail hashes.",
+      "Synchronous filesystem IO is not interruptible; cancellation wakes waits/prevents next admissions. Long filesystem/platform behavior remains outside these focused assertions."
+    ],
+    "audit-options-popup-notifications-popup-window-toaster-approximate-max-width-of-popup-messages-in-characters": [
+      "Approximate character units only: padded measured native bold sample differs from Qt averageCharWidth, summary bars and platform wrapping.",
+      "Native stack is in MainWindow; separate Qt tool-window, multi-monitor placement, minimized/other-monitor freeze and wider Popup Options parents are outside this slice.",
+      "Existing separately banked API cookie/header leaf is neither credited nor demoted by stale parent-limit wording in this packet.",
+      "Viewed the full native Main capture: two bottom-right cards are visible. The old long synthetic text wraps within a narrower card; the short successor fills a wider fixed-width card. Both texts and the two-messages summary are readable, with no selected-card clipping observed.",
+      "Qt reference shows a single narrow long wrapped card, with updated synthetic words rather than the shorter repeated native synthetic words. Its successor was constructed under a separate host: JSON live.after/successor measurements and green native geometry assertions establish retained old cap/new fixed cap. No two-card Qt screenshot or pixel equality is inferred."
+    ],
+    "audit-options-popup-notifications-popup-window-toaster-bugfix-force-this-width-as-the-fixed-width-for-all-popup-messages": [
+      "Approximate character units only: padded measured native bold sample differs from Qt averageCharWidth, summary bars and platform wrapping.",
+      "Native stack is in MainWindow; separate Qt tool-window, multi-monitor placement, minimized/other-monitor freeze and wider Popup Options parents are outside this slice.",
+      "Existing separately banked API cookie/header leaf is neither credited nor demoted by stale parent-limit wording in this packet.",
+      "Viewed the full native Main capture: two bottom-right cards are visible. The old long synthetic text wraps within a narrower card; the short successor fills a wider fixed-width card. Both texts and the two-messages summary are readable, with no selected-card clipping observed.",
+      "Qt reference shows a single narrow long wrapped card, with updated synthetic words rather than the shorter repeated native synthetic words. Its successor was constructed under a separate host: JSON live.after/successor measurements and green native geometry assertions establish retained old cap/new fixed cap. No two-card Qt screenshot or pixel equality is inferred."
+    ],
+    "audit-options-menu-menu-file-quick-export-directory": [
+      "Qt recording and required validation are Linux; platform target normalization is documented while raw saved strings remain unchanged. Windows/macOS success not inferred.",
+      "Launcher arguments are tested with existing launcher substituted; real OS file manager behavior and selection are outside leaf.",
+      "No path picker/confirmation or broad File/database menu completion follows from this leaf.",
+      "Viewed fresh File/open cascade: installation directory, database directory and quick export directory appear in recorded order, readable and enabled. Qt reference is the tight open-submenu crop with these same labels/order.",
+      "Native submenu is drawn at the upper-left over menu chrome; this capture is generated by direct menu_line_clicked arguments0,0,0 rather than actual pointer row geometry. It is evidence for the live menu contents/action, not physical submenu placement parity or a proven production positioning defect. The existing launcher is substituted to record targets; no real OS file manager launch is claimed."
+    ]
+  },
+  "reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/ff858ded1/final-review-2-ff858ded1.json",
+      "sha256": "afd812f23e8c75626fc2f8ea2d0faab79b80bd25e3a402f6c10487e97ae25682"
+    },
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/ff858ded1/final-review-3-ff858ded1.json",
+      "sha256": "953cbd3bda16424666da97d9c6778a913a5108fd29715f73c853e2ca4c9ddcc1"
+    },
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/ff858ded1/final-review-4-ff858ded1.json",
+      "sha256": "03d699acad71910593c32b75e704aa55ffd4ef9f0d2d4ff875d3d41beb7f880c"
+    },
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/ff858ded1/final-review-5-ff858ded1.json",
+      "sha256": "2fd69ddf003f58a5210cd1ab96c3f56d065543d20e64186adbf937bb0de69acf"
+    }
+  ],
+  "selected_ids": [
+    "audit-options-files-and-trash-when-finishing-archive-delete-filtering-always-delete-from-all-possible-domains",
+    "audit-options-files-and-trash-when-finishing-archive-delete-filtering-delay-activation-of-multiple-deletion-choice-buttons",
+    "audit-options-help-debug-action-make-a-new-page-in-five-seconds",
+    "audit-options-help-debug-action-fetch-a-url",
+    "audit-options-help-debug-action-make-a-long-text-popup",
+    "audit-options-help-debug-action-close-and-reload-current-gui-session",
+    "audit-options-duplicates-duplicates-filter-page-hide-the-x-done-notification-on-preparation-tab-when-99-searched",
+    "audit-options-files-and-trash-confirm-when-copying-files-across-local-file-domains",
+    "audit-options-files-and-trash-confirm-when-moving-files-across-local-file-domains",
+    "audit-options-tag-presentation-other-rendering-namespace-for-the-or-top-row",
+    "audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time",
+    "audit-options-files-and-trash-allow-trash-maintenance-during-normal-time",
+    "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-show-tab-tree-view",
+    "audit-media-notes-missing-cog",
+    "audit-options-notes-start-editing-notes-with-the-text-cursor-at-the-end-of-the-document",
+    "audit-options-notes-when-middle-clicking-a-note-hover-only-copy-the-text",
+    "audit-options-files-and-trash-when-maintenance-physically-deletes-files-wait-this-long-between-each-delete",
+    "audit-options-popup-notifications-popup-window-toaster-approximate-max-width-of-popup-messages-in-characters",
+    "audit-options-popup-notifications-popup-window-toaster-bugfix-force-this-width-as-the-fixed-width-for-all-popup-messages",
+    "audit-options-menu-menu-file-quick-export-directory"
+  ],
+  "prior_260_and_unselected_unchanged": true,
+  "final_patch_digest": "117972ba4bfa7dadcde536ce2b92d81282c9cb55dbe96ab25bba61059e09b71f"
+}

@@ -2,13 +2,13 @@
   "schema_version": 1,
   "agent": "tab-menu-selectable-pages",
   "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
-  "proposed_completed_count": 1,
+  "proposed_completed_count": 0,
   "claims": [
     {
       "id": "audit-options-tabs-context-action-2120-selectable-page",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Tab right-click > pages lists the media pages of the clicked page of pages, or of the clicked media page's notebook, labelled with GetNameForMenu's name/file count/progress elision, each selecting its page (ClientGUIPages tab menu, ShowPage).",
       "source": [
         "crates/hydrus-gui/src/pages.rs"
@@ -18,7 +18,13 @@
       ],
       "limits": [
         "No recording: the menu's order and labels follow ClientGUIPages.py 2099-2123 and the existing Pages-menu name_for_menu; GUI test awaits the final native pass."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "No recording; cited test strips count/progress labels and never dispatches actual selecting consumer.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-6.md"
+      }
     }
   ]
 }

@@ -312,6 +312,11 @@ fn hidden_rebind_and_accepted_close_retire_ui_only_and_never_admit_to_a_successo
         .write(|c| {
             let mut prefs: hydrus_store::settings::GuiSettings = settings::get(c.conn())?;
             prefs.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(c.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(c.conn(), &shutdown)?;
             settings::set(c.conn(), &prefs)
         })
         .unwrap();

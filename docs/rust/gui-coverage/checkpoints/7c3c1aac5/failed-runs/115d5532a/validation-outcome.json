@@ -1,0 +1,56 @@
+{
+  "source_commit": "115d5532a0fa0fe9a937a23b556dfd3aed965175",
+  "run_id": 37443398472,
+  "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37443398472",
+  "conclusion": "failure",
+  "validation_scope": "linux",
+  "jobs": [
+    {
+      "id": 112202367462,
+      "name": "check",
+      "conclusion": "failure"
+    },
+    {
+      "id": 112202367648,
+      "name": "parity-models",
+      "conclusion": "success"
+    },
+    {
+      "id": 112202368830,
+      "name": "quick-check",
+      "conclusion": "skipped"
+    },
+    {
+      "id": 112202404829,
+      "name": "other-platforms",
+      "conclusion": "skipped"
+    },
+    {
+      "id": 112211018985,
+      "name": "workspace-cache-maintenance",
+      "conclusion": "success"
+    }
+  ],
+  "gui_tests": {
+    "passed": 695,
+    "failed": 2,
+    "ignored": 0,
+    "failures": [
+      "image_cache::speed_memory_helpers_own_wrapped_space_at_preferred_and_capture_sizes",
+      "options_window::most_used_child_stages_each_service_cancels_descendants_and_persists_options"
+    ]
+  },
+  "media_tests": {
+    "passed": 67,
+    "failed": 0,
+    "ignored": 0
+  },
+  "native_artifact_id": 11403540441,
+  "native_artifact_zip_sha256": "63b3036e7639c84c35df68ccaafe753715a68d62356f9d704b1990da00c6fe2a",
+  "completion_delta": 0,
+  "retained_files": {
+    "linux-full.log": "76212e23dcbbc65040ec1161cf28b57b8b21c13057adda1bc9ddf25014189e69",
+    "parity-models.log": "bab3e65281853a5e5540bc889ed42902906c7b0f8ffac4702ded35972c9c5030",
+    "native-render-manifest.json": "58c6f7925456db344e7f529ef1aa9d74072ebe316f4387e0fe49b000e267cedd"
+  }
+}

@@ -35,7 +35,7 @@ fn submit(control: &hydrus_gui::debug_fetch::Control, url: &str) -> hydrus_gui::
     let input = control
         .windows()
         .into_iter()
-        .find(|w| w.get_input_mode())
+        .find(hydrus_gui::DebugFetchWindow::get_input_mode)
         .unwrap();
     assert_eq!(input.get_message(), "Enter the URL.");
     input.set_url(url.into());
@@ -294,6 +294,11 @@ fn hidden_children_close_cancel_rebind_final_bound_drop_and_main_drop_retire_own
         .write(|ctx| {
             let mut gui: settings::GuiSettings = settings::get(ctx.conn())?;
             gui.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(ctx.conn(), &shutdown)?;
             settings::set(ctx.conn(), &gui)
         })
         .unwrap();
@@ -371,8 +376,8 @@ fn ordinary_get_waits_for_saved_bandwidth_rules_and_popup_stop_cancels_before_an
                 network::NetworkContext::global(),
                 Rules::new([Rule {
                     kind: BandwidthType::Requests,
-                    period: Some(3600),
-                    max: 0,
+                    time_delta: Some(3600),
+                    max_allowed: 0,
                 }]),
             ));
             settings::set(ctx.conn(), &policy)

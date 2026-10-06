@@ -43,13 +43,36 @@ fn row(options: &OptionsWindow) -> i32 {
         .position(|r| r.label == LABEL)
         .unwrap() as i32
 }
-fn file(store: &Store) -> HashId {
+fn synthetic_file(store: &Store) -> HashId {
     let qt = hydrus_testkit::fixture_json("preview_default_zoom.json");
     let hash: Sha256 = qt["file"].as_str().unwrap().parse().unwrap();
-    store
+    let id = store
         .read(|c| hydrus_store::master::hash_id(c, &hash))
         .unwrap()
+        .unwrap();
+    // record_preview_default_zoom copies this file and changes its metadata to
+    // 120x80 before SetMedia. Match that metadata and the injected raster.
+    store
+        .write(move |tx| {
+            assert_eq!(
+                tx.conn().execute(
+                    "UPDATE files SET width=120, height=80 WHERE hash_id=?1",
+                    [id],
+                )?,
+                1
+            );
+            Ok(())
+        })
+        .unwrap();
+    let info = store
+        .read(|conn| hydrus_store::media::load_basic(conn, &[id]))
         .unwrap()
+        .pop()
+        .unwrap()
+        .info
+        .unwrap();
+    assert_eq!(info.width.zip(info.height), Some((120, 80)));
+    id
 }
 fn rect(ui: &MainWindow) -> (i32, i32, i32, i32) {
     (
@@ -87,7 +110,7 @@ fn select(ui: &MainWindow, bound: &hydrus_gui::Bound) {
 fn real_options_cancel_reopen_six_modes_paint_clipped_geometry_and_preserve_current_on_save() {
     let qt = hydrus_testkit::fixture_json("preview_default_zoom.json");
     let (_dirs, store) = super::subscriptions::store();
-    let file = file(&store);
+    let file = synthetic_file(&store);
     let object = hydrus_legacy::serialisable::SerialisableObject::from_tuple_str(
         &qt["legacy_options"].to_string(),
     )
@@ -274,7 +297,7 @@ fn real_options_cancel_reopen_six_modes_paint_clipped_geometry_and_preserve_curr
 #[test]
 fn held_raster_acceptance_samples_saved_preview_policy_without_restart_or_prohibited_admission() {
     let (_dirs, store) = super::subscriptions::store();
-    let file = file(&store);
+    let file = synthetic_file(&store);
     store
         .write(|tx| {
             tx.conn()

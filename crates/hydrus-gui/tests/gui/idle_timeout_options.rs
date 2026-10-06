@@ -185,6 +185,8 @@ fn unchanged_options_acceptance_normalises_raw_seconds_and_changes_the_existing_
                     user_seconds: Some(119),
                     mouse_seconds: None,
                     api_seconds: None,
+                    busy_cpu_percent: 50,
+                    busy_cpu_count: None,
                 },
             )
         })

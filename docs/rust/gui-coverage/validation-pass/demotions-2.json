@@ -1,0 +1,261 @@
+[
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance.json",
+    "id": "audit-media-menu-database-analyze",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance.json",
+    "id": "audit-media-menu-database-clear-fix-orphan-file-records",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance.json",
+    "id": "audit-media-menu-database-clear-orphan-url-mappings",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance.json",
+    "id": "audit-media-menu-database-clear-orphan-tables",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance.json",
+    "id": "audit-media-menu-database-get-tables-using-definitions",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance.json",
+    "id": "audit-media-database-repair-invalid-tags",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance.json",
+    "id": "audit-media-menu-database-check-and-repair-fix-logically-inconsistent-mappings",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance.json",
+    "id": "audit-media-menu-database-check-and-repair-resync-tag-mappings-cache-files",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance.json",
+    "id": "audit-media-menu-database-regenerate-tag-storage-mappings-cache-all-with-deferred-siblings-parents-calculation",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance.json",
+    "id": "audit-media-menu-database-regenerate-tag-storage-mappings-cache-just-pending-tags-instant-calculation",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance.json",
+    "id": "audit-media-menu-database-regenerate-tag-display-mappings-cache-all-deferred-siblings-parents-calculation",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance.json",
+    "id": "audit-media-menu-database-regenerate-tag-display-mappings-cache-just-pending-tags-instant-calculation",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance.json",
+    "id": "audit-media-menu-database-regenerate-tag-display-mappings-cache-missing-file-repopulation",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance.json",
+    "id": "audit-media-menu-database-regenerate-tag-siblings-lookup-cache",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance.json",
+    "id": "audit-media-menu-database-regenerate-tag-parents-lookup-cache",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance.json",
+    "id": "audit-media-menu-database-regenerate-tag-text-search-cache",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance.json",
+    "id": "audit-media-menu-database-regenerate-tag-text-search-cache-subtags-repopulation",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance.json",
+    "id": "audit-media-menu-database-regenerate-tag-text-search-cache-searchable-subtag-maps",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native prompt/chooser admission is not owner-safe: YesNo Slot -> window -> callback -> Slot strong cycle retains Store; cancelled/hidden/retired prompt can still admit work/displace successor chooser. No native cancel/service/full/failure dispatch regression. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/duplicates-filtering.json",
+    "id": "audit-media-filter-sidebar-sort-group",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "No recorded reference/native positive search/pixel/sort/group/random consumer assertions; hardcoded model checks and vacuous empty-fixture inequalities do not establish first pass. Adjacent count publication has no page/search generation guard and retained relationship question lacks owner retirement. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/duplicates-filtering.json",
+    "id": "audit-media-filter-sidebar-pixels",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "No recorded reference/native positive search/pixel/sort/group/random consumer assertions; hardcoded model checks and vacuous empty-fixture inequalities do not establish first pass. Adjacent count publication has no page/search generation guard and retained relationship question lacks owner retirement. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/duplicates-filtering.json",
+    "id": "audit-media-filter-sidebar-random",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "No recorded reference/native positive search/pixel/sort/group/random consumer assertions; hardcoded model checks and vacuous empty-fixture inequalities do not establish first pass. Adjacent count publication has no page/search generation guard and retained relationship question lacks owner retirement. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/duplicates-filtering.json",
+    "id": "audit-media-filter-sidebar-search",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "No recorded reference/native positive search/pixel/sort/group/random consumer assertions; hardcoded model checks and vacuous empty-fixture inequalities do not establish first pass. Adjacent count publication has no page/search generation guard and retained relationship question lacks owner retirement. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/idle-time-maintenance.json",
+    "id": "audit-options-maintenance-and-processing-duplicates-auto-resolution-idle-ideal-work-packet-time",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Only fresh marker/Pace arithmetic unit assertions are cited; no actual recorded option bounds/defaults, Apply/Cancel/reopen/import or real worker admission/rest/throttle/CPU boundary regression for this claim. Source consumer wiring is present; evidence gap, not established broken worker. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/idle-time-maintenance.json",
+    "id": "audit-options-maintenance-and-processing-duplicates-auto-resolution-idle-rest-time-percentage",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Only fresh marker/Pace arithmetic unit assertions are cited; no actual recorded option bounds/defaults, Apply/Cancel/reopen/import or real worker admission/rest/throttle/CPU boundary regression for this claim. Source consumer wiring is present; evidence gap, not established broken worker. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/idle-time-maintenance.json",
+    "id": "audit-options-maintenance-and-processing-duplicates-auto-resolution-work-duplicates-auto-resolution-in-idle-time",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Only fresh marker/Pace arithmetic unit assertions are cited; no actual recorded option bounds/defaults, Apply/Cancel/reopen/import or real worker admission/rest/throttle/CPU boundary regression for this claim. Source consumer wiring is present; evidence gap, not established broken worker. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/idle-time-maintenance.json",
+    "id": "audit-options-maintenance-and-processing-file-maintenance-idle-throttle",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Only fresh marker/Pace arithmetic unit assertions are cited; no actual recorded option bounds/defaults, Apply/Cancel/reopen/import or real worker admission/rest/throttle/CPU boundary regression for this claim. Source consumer wiring is present; evidence gap, not established broken worker. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/idle-time-maintenance.json",
+    "id": "audit-options-maintenance-and-processing-file-maintenance-run-file-maintenance-during-idle-time",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Only fresh marker/Pace arithmetic unit assertions are cited; no actual recorded option bounds/defaults, Apply/Cancel/reopen/import or real worker admission/rest/throttle/CPU boundary regression for this claim. Source consumer wiring is present; evidence gap, not established broken worker. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/idle-time-maintenance.json",
+    "id": "audit-options-maintenance-and-processing-potential-duplicates-search-idle-ideal-work-packet-time",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Only fresh marker/Pace arithmetic unit assertions are cited; no actual recorded option bounds/defaults, Apply/Cancel/reopen/import or real worker admission/rest/throttle/CPU boundary regression for this claim. Source consumer wiring is present; evidence gap, not established broken worker. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/idle-time-maintenance.json",
+    "id": "audit-options-maintenance-and-processing-potential-duplicates-search-idle-rest-time-percentage",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Only fresh marker/Pace arithmetic unit assertions are cited; no actual recorded option bounds/defaults, Apply/Cancel/reopen/import or real worker admission/rest/throttle/CPU boundary regression for this claim. Source consumer wiring is present; evidence gap, not established broken worker. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/idle-time-maintenance.json",
+    "id": "audit-options-maintenance-and-processing-potential-duplicates-search-normal-ideal-work-packet-time",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Only fresh marker/Pace arithmetic unit assertions are cited; no actual recorded option bounds/defaults, Apply/Cancel/reopen/import or real worker admission/rest/throttle/CPU boundary regression for this claim. Source consumer wiring is present; evidence gap, not established broken worker. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/idle-time-maintenance.json",
+    "id": "audit-options-maintenance-and-processing-potential-duplicates-search-normal-rest-time-percentage",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Only fresh marker/Pace arithmetic unit assertions are cited; no actual recorded option bounds/defaults, Apply/Cancel/reopen/import or real worker admission/rest/throttle/CPU boundary regression for this claim. Source consumer wiring is present; evidence gap, not established broken worker. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/idle-time-maintenance.json",
+    "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-consider-the-system-busy-if-cpu-usage-is-above",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Only fresh marker/Pace arithmetic unit assertions are cited; no actual recorded option bounds/defaults, Apply/Cancel/reopen/import or real worker admission/rest/throttle/CPU boundary regression for this claim. Source consumer wiring is present; evidence gap, not established broken worker. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/idle-time-maintenance.json",
+    "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-on",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Only fresh marker/Pace arithmetic unit assertions are cited; no actual recorded option bounds/defaults, Apply/Cancel/reopen/import or real worker admission/rest/throttle/CPU boundary regression for this claim. Source consumer wiring is present; evidence gap, not established broken worker. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/idle-time-maintenance.json",
+    "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-run-maintenance-jobs-when-the-client-is-idle-and-the-system-is-not-otherwise-busy",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Only fresh marker/Pace arithmetic unit assertions are cited; no actual recorded option bounds/defaults, Apply/Cancel/reopen/import or real worker admission/rest/throttle/CPU boundary regression for this claim. Source consumer wiring is present; evidence gap, not established broken worker. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/manage-ratings-incdec-middle-click.json",
+    "id": "audit-media-ratings-missing-count",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Cancelled/replaced EditValue child still stages count; Manage Ratings Cancel does not retire/hide its child. Cited direct set_count model assertion does not cover actual middle click, child Cancel or saved/reopened native file ratings. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/session-weight-report.json",
+    "id": "audit-options-weight-detail",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Only hardcoded report-formatting assertions; no actual Qt frame recording or native nested open/closed/Undo/downloader queue/menu report regression. No arithmetic defect established. See review-2.md."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/tag-sync-review.json",
+    "id": "audit-media-menu-tags-review-current-sibling-parent-sync",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Global OPEN.take close allows retained old review to hide/remove successor; retired service-chosen can still persist remembered default service. No Qt/native tab/refresh/owner regression; hardcoded status and handcrafted graph count only. See review-2.md."
+  }
+]

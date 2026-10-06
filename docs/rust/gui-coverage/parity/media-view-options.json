@@ -2,13 +2,13 @@
   "schema_version": 1,
   "agent": "media-view-options",
   "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
-  "proposed_completed_count": 3,
+  "proposed_completed_count": 0,
   "claims": [
     {
       "id": "audit-options-media-playback-per-filetype-handling-add",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Options per-filetype media handling table with the reference rows, add (unset searchable filetypes, copy of class options), edit (reference editor choices per capability and enabling) and delete (specific types only), staged in the Options draft and consumed by the existing media viewer settings.",
       "source": [
         "crates/hydrus-gui-model/src/media_view_options.rs",
@@ -22,13 +22,19 @@
       ],
       "limits": [
         "Add chooser is a button column."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Static/model-only evidence omits parent lifecycle/persisted consumers; cancelled edit can apply into active parent and stale Add chooser can spawn child.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-6.md"
+      }
     },
     {
       "id": "audit-options-media-playback-per-filetype-handling-edit",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Options per-filetype media handling table with the reference rows, add (unset searchable filetypes, copy of class options), edit (reference editor choices per capability and enabling) and delete (specific types only), staged in the Options draft and consumed by the existing media viewer settings.",
       "source": [
         "crates/hydrus-gui-model/src/media_view_options.rs",
@@ -42,13 +48,19 @@
       ],
       "limits": [
         "Add chooser is a button column."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Static/model-only evidence omits parent lifecycle/persisted consumers; cancelled edit can apply into active parent and stale Add chooser can spawn child.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-6.md"
+      }
     },
     {
       "id": "audit-options-media-playback-per-filetype-handling-delete",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Options per-filetype media handling table with the reference rows, add (unset searchable filetypes, copy of class options), edit (reference editor choices per capability and enabling) and delete (specific types only), staged in the Options draft and consumed by the existing media viewer settings.",
       "source": [
         "crates/hydrus-gui-model/src/media_view_options.rs",
@@ -62,7 +74,13 @@
       ],
       "limits": [
         "Add chooser is a button column."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Static/model-only evidence omits parent lifecycle/persisted consumers; cancelled edit can apply into active parent and stale Add chooser can spawn child.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-6.md"
+      }
     }
   ]
 }

@@ -559,3 +559,46 @@ fn current_jobs_cog_retries_uses_rules_and_retains_finished_error() {
             .is_empty()
     );
 }
+
+#[test]
+fn retained_error_close_cannot_close_replacement_or_reopened_owner() {
+    let _rendered = headless::init();
+    let errors = gui::Errors::default();
+    let first = errors.show("first failure").unwrap();
+    let second = errors.show("replacement failure").unwrap();
+    assert!(!first.window().is_visible());
+    assert!(second.window().is_visible());
+
+    first.invoke_close_clicked();
+    assert!(second.window().is_visible());
+    assert_eq!(second.get_error_text(), "replacement failure");
+    first.show().unwrap();
+    first
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(!first.window().is_visible());
+    assert!(second.window().is_visible());
+
+    errors.cancel();
+    assert!(!second.window().is_visible());
+    let reopened = errors.show("reopened failure").unwrap();
+    second.invoke_close_clicked();
+    assert!(reopened.window().is_visible());
+    second.show().unwrap();
+    second
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(!second.window().is_visible());
+    assert!(reopened.window().is_visible());
+    assert_eq!(reopened.get_error_text(), "reopened failure");
+
+    reopened.invoke_close_clicked();
+    assert!(!reopened.window().is_visible());
+    let final_owner = errors.show("final failure").unwrap();
+    reopened.invoke_close_clicked();
+    assert!(final_owner.window().is_visible());
+    final_owner
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(!final_owner.window().is_visible());
+}

@@ -2,13 +2,13 @@
   "schema_version": 1,
   "agent": "options-reference-rows",
   "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
-  "proposed_completed_count": 2,
+  "proposed_completed_count": 0,
   "claims": [
     {
       "id": "audit-options-media-playback-mpv-debug-loop-playlist-instead-of-loop-file-in-mpv",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
       "source": [
         "crates/hydrus-store/src/reference_options.rs",
@@ -24,13 +24,19 @@
       ],
       "limits": [
         "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Rows/defaults are recorded but mpv consumer command, playback/reopen/cancel/failure assertions absent.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-5.md"
+      }
     },
     {
       "id": "audit-options-media-playback-mpv-preferred-audio-output-device",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Options rows the reference has and hydrus-rs lacked, each with the reference's label, box, position, default and range (recorded options_dialog.json): audio's preview volume; connection's REQUESTS_CA_BUNDLE debug; exporting's drag-and-drop box; gui misc's native menubar, locale integers, non-tool child windows, macOS debug menus and Qt file dialogs; frame locations' self-sizing viewer padding; gui pages' hide-page signal; importing's URL drop page switch; media playback's mpv, QtMediaPlayer and system rows; hovers' pinned duplicates hover and preview window hovers; popups' other-display freeze; the image tile cache and video buffer boxes; system sleep's file system wait; the system tray page; tag editing's petition reason count. Values are kept as the reference keeps them (ReferenceOptions) and imported from a legacy client. mpv's preferred audio device and playlist looping apply to each file played.",
       "source": [
         "crates/hydrus-store/src/reference_options.rs",
@@ -46,7 +52,13 @@
       ],
       "limits": [
         "Except mpv audio device and looping, the values are kept and edited but nothing in hydrus-rs reads them (no system tray, Qt styles, tile cache, drag-out or QtMediaPlayer)."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "Rows/defaults are recorded but mpv consumer command, playback/reopen/cancel/failure assertions absent.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-5.md"
+      }
     },
     {
       "id": "audit-options-audio-the-preview-window-has-its-own-volume",

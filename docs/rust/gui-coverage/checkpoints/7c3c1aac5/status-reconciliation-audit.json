@@ -1,0 +1,1100 @@
+{
+  "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+  "ci_evidence_sha256": "2816fbf12b5604055b0b344080d39a9104b8cb00a50b9013efdd15e3ad5eaa4f",
+  "mapping_sha256": "b40b3f565dde3e2823ab9dc4a8c2b47f70adf87eb8810db92d7e26789046183e",
+  "mapping_applied_after_gates": true,
+  "operations": [
+    {
+      "id": "audit-options-help-debug-action-make-a-popup-in-five-seconds",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional source-only implementation proposal; hosted strict Clippy/Rust/native replay and exact native PNG inspection remain pending. No local Cargo/Rust builds/tests/mutations executed.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-help-debug-action-make-a-popup-in-five-seconds",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-help-debug-action-make-a-popup-in-five-seconds",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-help-debug-action-make-a-popup-in-five-seconds",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-help-debug-action-make-a-popup-in-five-seconds",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-gallery-importer-magic-update-time-denominator",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional proposal: authored Rust/model/Store/native regressions await exact hosted CI and native PNG review; no local Cargo/build/Rust/mutation execution.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-gallery-importer-magic-update-time-denominator",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-gallery-importer-magic-update-time-denominator",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-gallery-importer-magic-update-time-denominator",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-gallery-importer-magic-update-time-denominator",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-minimum-gallery-importer-update-time",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional proposal: authored Rust/model/Store/native regressions await exact hosted CI and native PNG review; no local Cargo/build/Rust/mutation execution.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-minimum-gallery-importer-update-time",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-minimum-gallery-importer-update-time",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-minimum-gallery-importer-update-time",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-minimum-gallery-importer-update-time",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-minimum-watcher-importer-update-time",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional proposal: authored Rust/model/Store/native regressions await exact hosted CI and native PNG review; no local Cargo/build/Rust/mutation execution.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-minimum-watcher-importer-update-time",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-minimum-watcher-importer-update-time",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-minimum-watcher-importer-update-time",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-minimum-watcher-importer-update-time",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-watcher-importer-magic-update-time-denominator",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional proposal: authored Rust/model/Store/native regressions await exact hosted CI and native PNG review; no local Cargo/build/Rust/mutation execution.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-watcher-importer-magic-update-time-denominator",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-watcher-importer-magic-update-time-denominator",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-watcher-importer-magic-update-time-denominator",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-download-pages-update-experimental-watcher-importer-magic-update-time-denominator",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-media-playback-system-ffmpeg-call-timeout",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional source-only proposal; exact hosted strict Clippy/Rust/native execution pending. No local Cargo/Rust/native builds/tests/mutations ran.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-media-playback-system-ffmpeg-call-timeout",
+      "field": "limitations",
+      "original_index": 1,
+      "operation": "replace_exact_list_item",
+      "before": "Actual reference consumers execute an authored local delayed executable through unchanged HydrusFFMPEG and HydrusSubprocess. This proves saved timeout/capture/poll semantics, not codec correctness or external network. Native authored FIFO transports are distinct future hosted regression inputs.",
+      "conditional_after": "Actual reference consumers execute an authored local delayed executable through unchanged HydrusFFMPEG and HydrusSubprocess. This proves saved timeout/capture/poll semantics, not codec correctness or external network. Native FIFO transports are distinct native regression inputs.",
+      "reason": "Retain actual finite/parent credit, independent Debug gap, reference/native transport distinction or deferred physical/platform scope while removing stale proposed/pending-validation phrasing."
+    },
+    {
+      "id": "audit-options-media-playback-system-ffmpeg-call-timeout",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-media-playback-system-ffmpeg-call-timeout",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-media-playback-system-ffmpeg-call-timeout",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-media-playback-system-ffmpeg-call-timeout",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-image-cache-timeout",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "replace_exact_list_item",
+      "before": "Exactly three frozen original Missing concrete image-cache controls are conditional first-pass proposals. Image-cache/Speed-and-Memory parents, the separate prefetch-per-viewer percentage, image-prefetch, image-tile, video buffers and global backend parity remain Partial with zero extra credit; no aliases or structural completions.",
+      "conditional_after": "Only the three frozen original concrete image-cache controls are in scope for these assessments. Image-cache/image-prefetch/Speed-and-Memory structural parents, image-tile, video buffers and global backend parity remain Partial with zero extra credit; no aliases or structural completions. The separate prefetch-per-viewer percentage is reviewed independently and receives no credit from these three image-cache assessments.",
+      "reason": "Retain actual finite/parent credit, independent Debug gap, reference/native transport distinction or deferred physical/platform scope while removing stale proposed/pending-validation phrasing."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-image-cache-timeout",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Native/model/store regressions are authored only. Hosted exact-source compilation, Rust/native tests and inspection of image-cache-options.png remain pending; no local Rust/Cargo/mutation execution, pushes, canonical inventory edits or validated completion claims.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-image-cache-timeout",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-image-cache-timeout",
+      "field": "limitations",
+      "original_index": 8,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-image-cache-timeout",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-image-cache-timeout",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-maximum-image-size-in-of-cache-that-can-be-cached",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "replace_exact_list_item",
+      "before": "Exactly three frozen original Missing concrete image-cache controls are conditional first-pass proposals. Image-cache/Speed-and-Memory parents, the separate prefetch-per-viewer percentage, image-prefetch, image-tile, video buffers and global backend parity remain Partial with zero extra credit; no aliases or structural completions.",
+      "conditional_after": "Only the three frozen original concrete image-cache controls are in scope for these assessments. Image-cache/image-prefetch/Speed-and-Memory structural parents, image-tile, video buffers and global backend parity remain Partial with zero extra credit; no aliases or structural completions. The separate prefetch-per-viewer percentage is reviewed independently and receives no credit from these three image-cache assessments.",
+      "reason": "Retain actual finite/parent credit, independent Debug gap, reference/native transport distinction or deferred physical/platform scope while removing stale proposed/pending-validation phrasing."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-maximum-image-size-in-of-cache-that-can-be-cached",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Native/model/store regressions are authored only. Hosted exact-source compilation, Rust/native tests and inspection of image-cache-options.png remain pending; no local Rust/Cargo/mutation execution, pushes, canonical inventory edits or validated completion claims.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-maximum-image-size-in-of-cache-that-can-be-cached",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-maximum-image-size-in-of-cache-that-can-be-cached",
+      "field": "limitations",
+      "original_index": 8,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-maximum-image-size-in-of-cache-that-can-be-cached",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-maximum-image-size-in-of-cache-that-can-be-cached",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-memory-reserved-for-image-cache",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "replace_exact_list_item",
+      "before": "Exactly three frozen original Missing concrete image-cache controls are conditional first-pass proposals. Image-cache/Speed-and-Memory parents, the separate prefetch-per-viewer percentage, image-prefetch, image-tile, video buffers and global backend parity remain Partial with zero extra credit; no aliases or structural completions.",
+      "conditional_after": "Only the three frozen original concrete image-cache controls are in scope for these assessments. Image-cache/image-prefetch/Speed-and-Memory structural parents, image-tile, video buffers and global backend parity remain Partial with zero extra credit; no aliases or structural completions. The separate prefetch-per-viewer percentage is reviewed independently and receives no credit from these three image-cache assessments.",
+      "reason": "Retain actual finite/parent credit, independent Debug gap, reference/native transport distinction or deferred physical/platform scope while removing stale proposed/pending-validation phrasing."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-memory-reserved-for-image-cache",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Native/model/store regressions are authored only. Hosted exact-source compilation, Rust/native tests and inspection of image-cache-options.png remain pending; no local Rust/Cargo/mutation execution, pushes, canonical inventory edits or validated completion claims.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-memory-reserved-for-image-cache",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-memory-reserved-for-image-cache",
+      "field": "limitations",
+      "original_index": 8,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-memory-reserved-for-image-cache",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-memory-reserved-for-image-cache",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-media-playback-system-apply-image-icc-profile-colour-adjustments",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Conditional on hosted strict Clippy, Rust/native tests and native render inspection; no local Cargo/Rust build/test or mutation execution.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-media-playback-system-apply-image-icc-profile-colour-adjustments",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-media-playback-system-apply-image-icc-profile-colour-adjustments",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-media-playback-system-apply-image-icc-profile-colour-adjustments",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-media-playback-system-apply-image-icc-profile-colour-adjustments",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "exchange-login",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "remove_exact_list_item",
+      "before": "Actual Qt evidence executed; new codec/model/native regression sources await hosted CI. This is a pending original-leaf proposal and does not change the validated 240 checkpoint.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "exchange-login",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "exchange-login",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "exchange-login",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "exchange-login",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-media-playback-zoom-and-position-preview-viewer-default-zoom",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "remove_exact_list_item",
+      "before": "Hosted exact-source Rust compilation/tests, native frame rendering and both native PNG inspections are pending. Authored tests are not claimed as executed runtime outcomes.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-media-playback-zoom-and-position-preview-viewer-default-zoom",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-media-playback-zoom-and-position-preview-viewer-default-zoom",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-media-playback-zoom-and-position-preview-viewer-default-zoom",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-media-playback-zoom-and-position-preview-viewer-default-zoom",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-nested-tag-suggestions-favourites",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Author did not run local Cargo builds/tests/mutations; hosted CI and native authored PNG inspection are pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-nested-tag-suggestions-favourites",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-nested-tag-suggestions-favourites",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-nested-tag-suggestions-favourites",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-nested-tag-suggestions-favourites",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-thumbnail-cache-memory-reserved-for-thumbnail-cache",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "replace_exact_list_item",
+      "before": "Exactly three original frozen Missing leaves receive bounded first-pass proposals. Speed and Memory, thumbnail-cache and Help/debug parents remain Partial; no alias/new ID, image/tile/prefetch/video cache or other debug action is counted.",
+      "conditional_after": "Only the selected original frozen thumbnail-cache controls are in scope; the independent Debug clear-thumbnail action remains deferred. Speed and Memory, thumbnail-cache and Help/debug parents remain Partial; no alias/new ID, image/tile/prefetch/video cache or other debug action is counted.",
+      "reason": "Retain actual finite/parent credit, independent Debug gap, reference/native transport distinction or deferred physical/platform scope while removing stale proposed/pending-validation phrasing."
+    },
+    {
+      "id": "audit-options-speed-and-memory-thumbnail-cache-memory-reserved-for-thumbnail-cache",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Authored model/store/native regressions await hosted CI. No local Cargo build, Rust tests, mutation tests, pushes or canonical inventory writes were performed.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-thumbnail-cache-memory-reserved-for-thumbnail-cache",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-thumbnail-cache-memory-reserved-for-thumbnail-cache",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-thumbnail-cache-memory-reserved-for-thumbnail-cache",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-thumbnail-cache-memory-reserved-for-thumbnail-cache",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-thumbnail-cache-thumbnail-cache-timeout",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "replace_exact_list_item",
+      "before": "Exactly three original frozen Missing leaves receive bounded first-pass proposals. Speed and Memory, thumbnail-cache and Help/debug parents remain Partial; no alias/new ID, image/tile/prefetch/video cache or other debug action is counted.",
+      "conditional_after": "Only the selected original frozen thumbnail-cache controls are in scope; the independent Debug clear-thumbnail action remains deferred. Speed and Memory, thumbnail-cache and Help/debug parents remain Partial; no alias/new ID, image/tile/prefetch/video cache or other debug action is counted.",
+      "reason": "Retain actual finite/parent credit, independent Debug gap, reference/native transport distinction or deferred physical/platform scope while removing stale proposed/pending-validation phrasing."
+    },
+    {
+      "id": "audit-options-speed-and-memory-thumbnail-cache-thumbnail-cache-timeout",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Authored model/store/native regressions await hosted CI. No local Cargo build, Rust tests, mutation tests, pushes or canonical inventory writes were performed.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-thumbnail-cache-thumbnail-cache-timeout",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-thumbnail-cache-thumbnail-cache-timeout",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-thumbnail-cache-thumbnail-cache-timeout",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-thumbnail-cache-thumbnail-cache-timeout",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-maximum-of-cache-that-will-be-prefetched-per-media-viewer",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "replace_exact_list_item",
+      "before": "Exactly three frozen original Missing concrete controls are conditional proposals only. Image-cache/image-prefetch/Speed-and-Memory structural parents, prefetch/shared renderer backend families, tile/video/cache-delay and the separate duplicate-pair-count control receive zero credit. Both completion ledgers and canonical inventory remain unchanged.",
+      "conditional_after": "Only the three frozen original concrete prefetch controls are in scope. Image-cache/image-prefetch/Speed-and-Memory structural parents, prefetch/shared renderer backend families, tile/video/cache-delay and the separate duplicate-pair-count control receive zero credit.",
+      "reason": "Retain actual finite/parent credit, independent Debug gap, reference/native transport distinction or deferred physical/platform scope while removing stale proposed/pending-validation phrasing."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-maximum-of-cache-that-will-be-prefetched-per-media-viewer",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "replace_exact_list_item",
+      "before": "All new Rust/model/native regressions are authored only. Exact hosted compilation/runtime/physical/platform and final viewer-prefetch-options.png inspection remain pending. No local Cargo/Rust/native builds, tests or mutations, pushes, canonical promotion or green attestation.",
+      "conditional_after": "No physical-display or wider platform parity is inferred from headless Linux native execution; Windows/macOS validation remains deferred under the exact-source owner policy.",
+      "reason": "Retain actual finite/parent credit, independent Debug gap, reference/native transport distinction or deferred physical/platform scope while removing stale proposed/pending-validation phrasing."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-maximum-of-cache-that-will-be-prefetched-per-media-viewer",
+      "field": "limitations",
+      "original_index": 8,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-maximum-of-cache-that-will-be-prefetched-per-media-viewer",
+      "field": "limitations",
+      "original_index": 9,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-maximum-of-cache-that-will-be-prefetched-per-media-viewer",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-cache-maximum-of-cache-that-will-be-prefetched-per-media-viewer",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-prefetch-num-next-to-prefetch-in-media-viewer",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "replace_exact_list_item",
+      "before": "Exactly three frozen original Missing concrete controls are conditional proposals only. Image-cache/image-prefetch/Speed-and-Memory structural parents, prefetch/shared renderer backend families, tile/video/cache-delay and the separate duplicate-pair-count control receive zero credit. Both completion ledgers and canonical inventory remain unchanged.",
+      "conditional_after": "Only the three frozen original concrete prefetch controls are in scope. Image-cache/image-prefetch/Speed-and-Memory structural parents, prefetch/shared renderer backend families, tile/video/cache-delay and the separate duplicate-pair-count control receive zero credit.",
+      "reason": "Retain actual finite/parent credit, independent Debug gap, reference/native transport distinction or deferred physical/platform scope while removing stale proposed/pending-validation phrasing."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-prefetch-num-next-to-prefetch-in-media-viewer",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "replace_exact_list_item",
+      "before": "All new Rust/model/native regressions are authored only. Exact hosted compilation/runtime/physical/platform and final viewer-prefetch-options.png inspection remain pending. No local Cargo/Rust/native builds, tests or mutations, pushes, canonical promotion or green attestation.",
+      "conditional_after": "No physical-display or wider platform parity is inferred from headless Linux native execution; Windows/macOS validation remains deferred under the exact-source owner policy.",
+      "reason": "Retain actual finite/parent credit, independent Debug gap, reference/native transport distinction or deferred physical/platform scope while removing stale proposed/pending-validation phrasing."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-prefetch-num-next-to-prefetch-in-media-viewer",
+      "field": "limitations",
+      "original_index": 8,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-prefetch-num-next-to-prefetch-in-media-viewer",
+      "field": "limitations",
+      "original_index": 9,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-prefetch-num-next-to-prefetch-in-media-viewer",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-prefetch-num-next-to-prefetch-in-media-viewer",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-prefetch-num-previous-to-prefetch-in-media-viewer",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "replace_exact_list_item",
+      "before": "Exactly three frozen original Missing concrete controls are conditional proposals only. Image-cache/image-prefetch/Speed-and-Memory structural parents, prefetch/shared renderer backend families, tile/video/cache-delay and the separate duplicate-pair-count control receive zero credit. Both completion ledgers and canonical inventory remain unchanged.",
+      "conditional_after": "Only the three frozen original concrete prefetch controls are in scope. Image-cache/image-prefetch/Speed-and-Memory structural parents, prefetch/shared renderer backend families, tile/video/cache-delay and the separate duplicate-pair-count control receive zero credit.",
+      "reason": "Retain actual finite/parent credit, independent Debug gap, reference/native transport distinction or deferred physical/platform scope while removing stale proposed/pending-validation phrasing."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-prefetch-num-previous-to-prefetch-in-media-viewer",
+      "field": "limitations",
+      "original_index": 7,
+      "operation": "replace_exact_list_item",
+      "before": "All new Rust/model/native regressions are authored only. Exact hosted compilation/runtime/physical/platform and final viewer-prefetch-options.png inspection remain pending. No local Cargo/Rust/native builds, tests or mutations, pushes, canonical promotion or green attestation.",
+      "conditional_after": "No physical-display or wider platform parity is inferred from headless Linux native execution; Windows/macOS validation remains deferred under the exact-source owner policy.",
+      "reason": "Retain actual finite/parent credit, independent Debug gap, reference/native transport distinction or deferred physical/platform scope while removing stale proposed/pending-validation phrasing."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-prefetch-num-previous-to-prefetch-in-media-viewer",
+      "field": "limitations",
+      "original_index": 8,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-prefetch-num-previous-to-prefetch-in-media-viewer",
+      "field": "limitations",
+      "original_index": 9,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-prefetch-num-previous-to-prefetch-in-media-viewer",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    },
+    {
+      "id": "audit-options-speed-and-memory-image-prefetch-num-previous-to-prefetch-in-media-viewer",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "Resolve only author/preparation execution-status wording after actual exact-source gates; original literal retained here as provenance."
+    }
+  ],
+  "added_review_scope_limits": {
+    "audit-options-help-debug-action-make-a-popup-in-five-seconds": [
+      "Actual Qt recording forwards the real CallLater/background SingleJob and messagepublication and observes real elapsed 5054.124/6002.523ms. Native tests inject this owner clock and call the production tick at 4999/5000/5999/6000ms; these prove deadline admission/order/noearly publication, not physical five-second native timer latency or equality of Qt/native timestamps.",
+      "The real native earliest-deadline weak single-shot timer rechecks the monotonic clock and polls owner/dismissal liveness at most 200ms; event-loop delivery can occur later. The actual 250ms popup projection timer is exercised only for Show resumption after durable hidden publication.",
+      "Hidden Main refuses new admission while already-admitted deadlines publish to Store; hidden cards remain frozen until Show refresh. Durable native Store jobs/reopen are explicit native behavior, not a claim that Qt persists its transient JobStatus cards.",
+      "Exit Cancel, accepted exit, same Main rebind, sole Bound owner drop and hide-before-drop actual Main destruction are separate native regressions; retained old controls cannot resurrect. General multiple-owner/lost-window/event-loop failure combinations are not exhaustively covered.",
+      "Store read/write errors retire pending producer work by source, consuming no duplicate deadline; there is no dedicated injected producer Store failure regression. No failure-notification wording parity is claimed.",
+      "The actual Qt PNG is a manager crop with two simple cards and “2 messages”/“dismiss all” summary; the native capture is full Main after real Show refresh. This supports card/text/state comparison, not pixel/frame geometry identity or a screenshot proving elapsed deadline.",
+      "Only the original make-a-popup-in-five-seconds leaf is selected; other Debug actions, long-popup producer completion or modal/new-page actions receive no extra completion credit.",
+      "Windows and macOS are deferred; this preparation and required publication validation are Linux-only.",
+      "The weak-window and Owner-drop regressions prove producer retirement without retaining Main. Retained Control handles still own their State and Store until those handles are dropped; this packet does not claim immediate release of every Store owner on GUI retirement.",
+      "The current 1000×700 full Main capture shows two complete exact-message cards and “2 messages”/“dismiss all” summary; Qt records its cropped manager. This is after-show consumer evidence, not a picture of physical five-second scheduling."
+    ],
+    "audit-options-speed-and-memory-download-pages-update-experimental-gallery-importer-magic-update-time-denominator": [
+      "Linux-only validation at the exact source/run/artifact; Windows and macOS are deferred. Approval covers this original leaf only, with no broader parent, alias or unrelated completion credit.",
+      "All eight fresh shared helper PNGs were actually inspected. Estimates, warnings and numeric controls are separate at all four sizes, including the wrapped long warning; lower rows fall below the normal ScrollView fold. Shared layout evidence does not widen the defining consumer claim.",
+      "Only visible current-page status list/totals scheduling is claimed. Importer, daemon and network work remain unchanged; no background cadence or throughput parity is inferred.",
+      "The native binding owns a 250 ms Slint timer and synchronous Store status snapshots. It uses the reference strict wall-clock deadline comparison; saved changes affect the next period without resetting the pending deadline. Cache expiry uses a separate monotonic clock.",
+      "Qt records actual paused private importer managers with 0/3/12 displayed rows and a restored synthetic clock, without real network traffic. Native timer tests use 12 paused queues; other row-count, negative and zero-denominator histories are model replays.",
+      "Qt captures only the default timing box (1 s / 30 for both kinds), while native gallery controls show 333 ms / 7. The 1100 × 900 native image shows the watcher minimum label at the lower fold; its duration fields and denominator are below the scroll viewport and have no scrolled PNG. Actual enabled-control values, Cancel/Apply/reopen and kind-specific saved-policy list consumers are asserted by the passing tests. No same-state watcher-control or importer-list PNG parity is claimed."
+    ],
+    "audit-options-speed-and-memory-download-pages-update-experimental-minimum-gallery-importer-update-time": [
+      "Linux-only validation at the exact source/run/artifact; Windows and macOS are deferred. Approval covers this original leaf only, with no broader parent, alias or unrelated completion credit.",
+      "All eight fresh shared helper PNGs were actually inspected. Estimates, warnings and numeric controls are separate at all four sizes, including the wrapped long warning; lower rows fall below the normal ScrollView fold. Shared layout evidence does not widen the defining consumer claim.",
+      "Only visible current-page status list/totals scheduling is claimed. Importer, daemon and network work remain unchanged; no background cadence or throughput parity is inferred.",
+      "The native binding owns a 250 ms Slint timer and synchronous Store status snapshots. It uses the reference strict wall-clock deadline comparison; saved changes affect the next period without resetting the pending deadline. Cache expiry uses a separate monotonic clock.",
+      "Qt records actual paused private importer managers with 0/3/12 displayed rows and a restored synthetic clock, without real network traffic. Native timer tests use 12 paused queues; other row-count, negative and zero-denominator histories are model replays.",
+      "Qt captures only the default timing box (1 s / 30 for both kinds), while native gallery controls show 333 ms / 7. The 1100 × 900 native image shows the watcher minimum label at the lower fold; its duration fields and denominator are below the scroll viewport and have no scrolled PNG. Actual enabled-control values, Cancel/Apply/reopen and kind-specific saved-policy list consumers are asserted by the passing tests. No same-state watcher-control or importer-list PNG parity is claimed."
+    ],
+    "audit-options-speed-and-memory-download-pages-update-experimental-minimum-watcher-importer-update-time": [
+      "Linux-only validation at the exact source/run/artifact; Windows and macOS are deferred. Approval covers this original leaf only, with no broader parent, alias or unrelated completion credit.",
+      "All eight fresh shared helper PNGs were actually inspected. Estimates, warnings and numeric controls are separate at all four sizes, including the wrapped long warning; lower rows fall below the normal ScrollView fold. Shared layout evidence does not widen the defining consumer claim.",
+      "Only visible current-page status list/totals scheduling is claimed. Importer, daemon and network work remain unchanged; no background cadence or throughput parity is inferred.",
+      "The native binding owns a 250 ms Slint timer and synchronous Store status snapshots. It uses the reference strict wall-clock deadline comparison; saved changes affect the next period without resetting the pending deadline. Cache expiry uses a separate monotonic clock.",
+      "Qt records actual paused private importer managers with 0/3/12 displayed rows and a restored synthetic clock, without real network traffic. Native timer tests use 12 paused queues; other row-count, negative and zero-denominator histories are model replays.",
+      "Qt captures only the default timing box (1 s / 30 for both kinds), while native gallery controls show 333 ms / 7. The 1100 × 900 native image shows the watcher minimum label at the lower fold; its duration fields and denominator are below the scroll viewport and have no scrolled PNG. Actual enabled-control values, Cancel/Apply/reopen and kind-specific saved-policy list consumers are asserted by the passing tests. No same-state watcher-control or importer-list PNG parity is claimed."
+    ],
+    "audit-options-speed-and-memory-download-pages-update-experimental-watcher-importer-magic-update-time-denominator": [
+      "Linux-only validation at the exact source/run/artifact; Windows and macOS are deferred. Approval covers this original leaf only, with no broader parent, alias or unrelated completion credit.",
+      "All eight fresh shared helper PNGs were actually inspected. Estimates, warnings and numeric controls are separate at all four sizes, including the wrapped long warning; lower rows fall below the normal ScrollView fold. Shared layout evidence does not widen the defining consumer claim.",
+      "Only visible current-page status list/totals scheduling is claimed. Importer, daemon and network work remain unchanged; no background cadence or throughput parity is inferred.",
+      "The native binding owns a 250 ms Slint timer and synchronous Store status snapshots. It uses the reference strict wall-clock deadline comparison; saved changes affect the next period without resetting the pending deadline. Cache expiry uses a separate monotonic clock.",
+      "Qt records actual paused private importer managers with 0/3/12 displayed rows and a restored synthetic clock, without real network traffic. Native timer tests use 12 paused queues; other row-count, negative and zero-denominator histories are model replays.",
+      "Qt captures only the default timing box (1 s / 30 for both kinds), while native gallery controls show 333 ms / 7. The 1100 × 900 native image shows the watcher minimum label at the lower fold; its duration fields and denominator are below the scroll viewport and have no scrolled PNG. Actual enabled-control values, Cancel/Apply/reopen and kind-specific saved-policy list consumers are asserted by the passing tests. No same-state watcher-control or importer-list PNG parity is claimed."
+    ],
+    "audit-options-media-playback-system-ffmpeg-call-timeout": [
+      "Actual Qt timeout is passed once into metadata/version calls and checked in three-second communicate slices. Native Store policy adapts saved/displayed n to ceil(clamp(n,1,600)/3)×3 seconds; fixed Ffmpeg::timeout(Duration) intentionally stays precise and overrides live readers. No exact submillisecond or polling-wakeup latency parity is claimed.",
+      "Native deadline duration is captured before process spawning; its Instant deadline is constructed after successful spawn/pipe-reader setup, matching the finite subprocess wait contract rather than bounding OS exec/thread admission itself.",
+      "The native subprocess regressions use authored POSIX FIFO transports; the reference uses an authored delayed local executable. They exercise real Ffmpeg/HydrusFFMPEG paths, not codec correctness, external network or arbitrary process-tree cleanup.",
+      "Retained importer version, local-review metadata and duplicate PSD decode consumers have dedicated timeout boundaries. Import/folder/parser reader construction establishes other routing but does not mean each caller has a dedicated timeout integration regression.",
+      "Streaming frame reads retain fixed per-chunk policy and Drop kill/wait; no streaming/player reuse or broader media playback promotion. Non-Store tools keep their default policy.",
+      "About uses a bounded saved-policy version call by source; on failure its pre-existing unavailable-version UI remains, unlike the reference diagnostic path string. A dedicated timeout-driven About UI fixture replay is not present.",
+      "Weak reader/isolated importer owner tests prove retained tools do not keep Store alive and fallback15s applies after Store loss. Options callbacks legitimately retain their Store while component handles live; this is not an assertion that all GUI handles release Store immediately.",
+      "Raw imported 0/601 display/apply normalization and independent/concurrent saves are model/Store tested; real GUI case inputs 0/601 clamp onApply and reopen. Five native PNGs show saved cases 1,600,15,1,600 with concurrently preserved ICC false, while the sole Qt PNG shows 1 with ICC true.",
+      "Options hidden edits/Apply are ignored, admitted visible draft surviveshide/show, retired cancelled handles cannotApply after reshow. Save-error handling keeps the editor open by source; no dedicated injected GUI Store-write failure replay exists for this leaf.",
+      "Windows and macOS are deferred; this preparation and required publication validation are Linux-only.",
+      "Store-loss fallback is exercised for subsequent reader calls. An admitted subprocess keeps its captured duration; cancellation or owner destruction in the middle of an admitted decode is not a separately replayed boundary and must not be inferred from weak reader ownership.",
+      "All five current 1200×1800 native Options captures show complete numeric fields/arrows and clear adjacent labels at saved 1/600/15/1/600. This validates the repaired intrinsic numeric height in those recorded captures, not every viewport/platform or the surrounding unselected controls. The reference crop shows timeout 1 with ICC checked, while native cases intentionally preserve ICC false."
+    ],
+    "audit-options-speed-and-memory-image-cache-image-cache-timeout": [
+      "Validation is Linux only at this exact source and run; Windows and macOS are explicitly deferred, not passed.",
+      "The Qt PNGs have different staged values, accordion states and framework/font geometry from the final native states. This review confirms scoped readable controls, ordering and reference behavior; it does not claim pixel parity.",
+      "Exactly the six selected concrete controls receive review credit. Structural parents, general renderer/backend/tile/video/playback families and the separate duplicate-pair-count control retain broader Partial scope and zero extra credit.",
+      "All ten fresh native captures and both Qt PNGs were actually inspected. The unchanged strict finite/positive/bounds/positive-gap/long-warning geometry assertions passed. At 900px, long labels and the warning wrap readably; lower unselected controls remain scrollable rather than all-visible evidence.",
+      "The primary image shows saved cache=100B, timeout=5 minutes and storage=50%; its default previous=2, next=3, percentage=25% and pairs=3 are distinct from the saved prefetch producer."
+    ],
+    "audit-options-speed-and-memory-image-cache-maximum-image-size-in-of-cache-that-can-be-cached": [
+      "Validation is Linux only at this exact source and run; Windows and macOS are explicitly deferred, not passed.",
+      "The Qt PNGs have different staged values, accordion states and framework/font geometry from the final native states. This review confirms scoped readable controls, ordering and reference behavior; it does not claim pixel parity.",
+      "Exactly the six selected concrete controls receive review credit. Structural parents, general renderer/backend/tile/video/playback families and the separate duplicate-pair-count control retain broader Partial scope and zero extra credit.",
+      "All ten fresh native captures and both Qt PNGs were actually inspected. The unchanged strict finite/positive/bounds/positive-gap/long-warning geometry assertions passed. At 900px, long labels and the warning wrap readably; lower unselected controls remain scrollable rather than all-visible evidence.",
+      "The primary image shows saved cache=100B, timeout=5 minutes and storage=50%; its default previous=2, next=3, percentage=25% and pairs=3 are distinct from the saved prefetch producer."
+    ],
+    "audit-options-speed-and-memory-image-cache-memory-reserved-for-image-cache": [
+      "Validation is Linux only at this exact source and run; Windows and macOS are explicitly deferred, not passed.",
+      "The Qt PNGs have different staged values, accordion states and framework/font geometry from the final native states. This review confirms scoped readable controls, ordering and reference behavior; it does not claim pixel parity.",
+      "Exactly the six selected concrete controls receive review credit. Structural parents, general renderer/backend/tile/video/playback families and the separate duplicate-pair-count control retain broader Partial scope and zero extra credit.",
+      "All ten fresh native captures and both Qt PNGs were actually inspected. The unchanged strict finite/positive/bounds/positive-gap/long-warning geometry assertions passed. At 900px, long labels and the warning wrap readably; lower unselected controls remain scrollable rather than all-visible evidence.",
+      "The primary image shows saved cache=100B, timeout=5 minutes and storage=50%; its default previous=2, next=3, percentage=25% and pairs=3 are distinct from the saved prefetch producer."
+    ],
+    "audit-options-media-playback-system-apply-image-icc-profile-colour-adjustments": [
+      "Qt Options and native viewer are different surfaces/states; no paired bitmap or dedicated native checkbox image.",
+      "Separate truncated loading remains unimplemented and earns zero credit; browser eye-menu ICC, universal formats/plugins/mpv and Media Playback parents are outside scope.",
+      "100ms owner-local watch is native polling/cache notification integration, without platform scheduling/render/font parity.",
+      "Validated Linux only at exact7c source; Windows/macOS deferred. No parent-family, alias or unrepresented renderer/control credit."
+    ],
+    "exchange-login": [
+      "Finite registered-login mixed package semantics only. No direct Qt chooser/import/export UI screenshot or native login-containing import-review capture is available; Qt mixed_login_packages.png is encoded transport data and downloader-import.png is shared parser topology only.",
+      "Native component checkboxes differ from Qt separate Add dialogs; optional per-object import selection, domain metadata packages, clipboard bitmaps/drag ingestion and wider downloader/login/network parents remain outside this leaf.",
+      "Recorded script duplicate rules ignore name/key, regenerate script identity and retarget only existing matching-name example domains, preserving credentials/activation/validity/delays. New example domains remain unconfigured. Native retains nested dependency duplicate checks despite Qt repeated import adding a nested GUG after child identities regenerate.",
+      "No broad geometry/pixel parity is inferred from JSON/runtime evidence or the encoded Qt package bitmap. Exact7c native importer/exporter inspection and source-bound test success are validated; the supplemental parser review provides no login-containing import or direct Qt UI pairing.",
+      "Linux only; Windows/macOS deferred. No parent, alias, native-only or support-only completion credit."
+    ],
+    "audit-options-media-playback-zoom-and-position-preview-viewer-default-zoom": [
+      "FlatRGB43 is intentional injected geometry evidence, not failed decode or bitmap parity against colourful Qt screenshot.",
+      "No dedicated native Options dropdown capture; native tests assert exact choices/reopened indices, while Qt screenshot provides control presentation.",
+      "Validated Linux only at exact7c source; Windows/macOS deferred. No parent-family, alias or unrepresented renderer/control credit."
+    ],
+    "audit-options-nested-tag-suggestions-favourites": [
+      "Only the original nested per-service most-used favourites editor and existing filtered/add-only saved broadcast consumer. Suggestion width/layout/default-page, recent Clear/decay and broader keyboard/context-menu/autocomplete families remain outside this leaf.",
+      "Native per-service editor owns a separate shared write-autocomplete child; Qt has the input embedded in Options. Child acceptance stages only, descendant/parent Cancel retires callbacks, and per-service field-scoped merge preserves unrelated/unknown entries.",
+      "Only already-present panels receive saved broadcasts, using200ms native polling and opening-time availability capture. Qt reference columns/recent differs from native service-switch notebook/favourites state, so no missing-recent or width/layout claim follows.",
+      "Exact7c actual dropdown input, owner/widget indices, displayed my-tags caption and accepted list are validated by passing runtime assertions and fresh inspection. Universal host-driven programmatic ComboBox projection remains outside this approval.",
+      "Linux only; Windows/macOS deferred. No parent, alias, native-only or support-only completion credit."
+    ],
+    "audit-options-speed-and-memory-thumbnail-cache-memory-reserved-for-thumbnail-cache": [
+      "Linux-only validation at the exact source/run/artifact; Windows and macOS are deferred. Approval covers this original leaf only, with no broader parent, alias or unrelated completion credit.",
+      "All eight fresh shared helper PNGs were actually inspected. Estimates, warnings and numeric controls are separate at all four sizes, including the wrapped long warning; lower rows fall below the normal ScrollView fold. Shared layout evidence does not widen the defining consumer claim.",
+      "The reference ThumbnailCache is process-wide. The native cache belongs to one Main incarnation and is shared across its pages; separate Main windows do not share entries.",
+      "The accounted budget includes owned decoded RGB/RGBA pixels and 128-byte missing entries. Renderer-held clones, loader queues, metadata/icon caches and total process/GPU memory are outside this budget; reference HydrusBitmap may compress.",
+      "Admission permits one incoming entry beyond the soft byte budget until maintenance. This is not a hard total-memory ceiling. Strict monotonic last-access expiry runs through the existing 25 ms collection maintenance, and saved policy changes apply immediately.",
+      "Native inline day/hour/minute editing differs from the Qt duration popup. Untouched raw 299 seconds remains 299; edited fields clamp to at least 300 seconds. B through TB amount/unit cases replay in model/store tests; native GUI assertions cover representative cases.",
+      "The separate Help/debug clear-thumbnail-cache leaf is excluded even though this shared suite records and exercises it; this review gives it no independent action, menu or parity approval."
+    ],
+    "audit-options-speed-and-memory-thumbnail-cache-thumbnail-cache-timeout": [
+      "Linux-only validation at the exact source/run/artifact; Windows and macOS are deferred. Approval covers this original leaf only, with no broader parent, alias or unrelated completion credit.",
+      "All eight fresh shared helper PNGs were actually inspected. Estimates, warnings and numeric controls are separate at all four sizes, including the wrapped long warning; lower rows fall below the normal ScrollView fold. Shared layout evidence does not widen the defining consumer claim.",
+      "The reference ThumbnailCache is process-wide. The native cache belongs to one Main incarnation and is shared across its pages; separate Main windows do not share entries.",
+      "The accounted budget includes owned decoded RGB/RGBA pixels and 128-byte missing entries. Renderer-held clones, loader queues, metadata/icon caches and total process/GPU memory are outside this budget; reference HydrusBitmap may compress.",
+      "Admission permits one incoming entry beyond the soft byte budget until maintenance. This is not a hard total-memory ceiling. Strict monotonic last-access expiry runs through the existing 25 ms collection maintenance, and saved policy changes apply immediately.",
+      "Native inline day/hour/minute editing differs from the Qt duration popup. Untouched raw 299 seconds remains 299; edited fields clamp to at least 300 seconds. B through TB amount/unit cases replay in model/store tests; native GUI assertions cover representative cases.",
+      "The separate Help/debug clear-thumbnail-cache leaf is excluded even though this shared suite records and exercises it; this review gives it no independent action, menu or parity approval."
+    ],
+    "audit-options-speed-and-memory-image-cache-maximum-of-cache-that-will-be-prefetched-per-media-viewer": [
+      "Image-cache/image-prefetch/Speed-and-Memory structural parents, prefetch/shared renderer backend families, tile/video/cache-delay and the separate duplicate-pair-count control receive zero credit.",
+      "Validation is Linux only at this exact source and run; Windows and macOS are explicitly deferred, not passed.",
+      "The Qt PNGs have different staged values, accordion states and framework/font geometry from the final native states. This review confirms scoped readable controls, ordering and reference behavior; it does not claim pixel parity.",
+      "Exactly the six selected concrete controls receive review credit. Structural parents, general renderer/backend/tile/video/playback families and the separate duplicate-pair-count control retain broader Partial scope and zero extra credit.",
+      "All ten fresh native captures and both Qt PNGs were actually inspected. The unchanged strict finite/positive/bounds/positive-gap/long-warning geometry assertions passed. At 900px, long labels and the warning wrap readably; lower unselected controls remain scrollable rather than all-visible evidence.",
+      "The primary image shows saved previous=1, next=1 and percentage=50%, with cache=400B. The eight helper captures intentionally show default previous=2, next=3 and percentage=25%; they supplement geometry rather than replace saved-state proof. Both actual producers retain default duplicate_pairs=3 and supply no pair-count credit."
+    ],
+    "audit-options-speed-and-memory-image-prefetch-num-next-to-prefetch-in-media-viewer": [
+      "Image-cache/image-prefetch/Speed-and-Memory structural parents, prefetch/shared renderer backend families, tile/video/cache-delay and the separate duplicate-pair-count control receive zero credit.",
+      "Validation is Linux only at this exact source and run; Windows and macOS are explicitly deferred, not passed.",
+      "The Qt PNGs have different staged values, accordion states and framework/font geometry from the final native states. This review confirms scoped readable controls, ordering and reference behavior; it does not claim pixel parity.",
+      "Exactly the six selected concrete controls receive review credit. Structural parents, general renderer/backend/tile/video/playback families and the separate duplicate-pair-count control retain broader Partial scope and zero extra credit.",
+      "All ten fresh native captures and both Qt PNGs were actually inspected. The unchanged strict finite/positive/bounds/positive-gap/long-warning geometry assertions passed. At 900px, long labels and the warning wrap readably; lower unselected controls remain scrollable rather than all-visible evidence.",
+      "The primary image shows saved previous=1, next=1 and percentage=50%, with cache=400B. The eight helper captures intentionally show default previous=2, next=3 and percentage=25%; they supplement geometry rather than replace saved-state proof. Both actual producers retain default duplicate_pairs=3 and supply no pair-count credit."
+    ],
+    "audit-options-speed-and-memory-image-prefetch-num-previous-to-prefetch-in-media-viewer": [
+      "Image-cache/image-prefetch/Speed-and-Memory structural parents, prefetch/shared renderer backend families, tile/video/cache-delay and the separate duplicate-pair-count control receive zero credit.",
+      "Validation is Linux only at this exact source and run; Windows and macOS are explicitly deferred, not passed.",
+      "The Qt PNGs have different staged values, accordion states and framework/font geometry from the final native states. This review confirms scoped readable controls, ordering and reference behavior; it does not claim pixel parity.",
+      "Exactly the six selected concrete controls receive review credit. Structural parents, general renderer/backend/tile/video/playback families and the separate duplicate-pair-count control retain broader Partial scope and zero extra credit.",
+      "All ten fresh native captures and both Qt PNGs were actually inspected. The unchanged strict finite/positive/bounds/positive-gap/long-warning geometry assertions passed. At 900px, long labels and the warning wrap readably; lower unselected controls remain scrollable rather than all-visible evidence.",
+      "The primary image shows saved previous=1, next=1 and percentage=50%, with cache=400B. The eight helper captures intentionally show default previous=2, next=3 and percentage=25%; they supplement geometry rather than replace saved-state proof. Both actual producers retain default duplicate_pairs=3 and supply no pair-count credit."
+    ]
+  },
+  "reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/7c3c1aac5/final-review-2-7c3c1aac5.json",
+      "sha256": "f629f84ac7805381a7c281b8c020c3b31b92f3b2fc9b0a7feeb23fe84cf5184e"
+    },
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/7c3c1aac5/final-review-3-7c3c1aac5.json",
+      "sha256": "ad6898f9e726efabd3059df36727adf2fb4fcd79cdf13ce8b444564c7d3a15c0"
+    },
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/7c3c1aac5/final-review-4-7c3c1aac5.json",
+      "sha256": "49308728087cfbe67a96ab9777afdc9d2a77635edbf3280307e05e84d181a22e"
+    },
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/7c3c1aac5/final-review-5-7c3c1aac5.json",
+      "sha256": "2413f315225507b7abc6c1a3cd11480548bbba663a8efb74d54ceefa808b598e"
+    },
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/7c3c1aac5/final-review-6-7c3c1aac5.json",
+      "sha256": "1568630691fc65e718412b635f22256131d2d5c3a8c32ef6219712aab00e6f7f"
+    }
+  ],
+  "selected_ids": [
+    "audit-options-help-debug-action-make-a-popup-in-five-seconds",
+    "audit-options-speed-and-memory-download-pages-update-experimental-gallery-importer-magic-update-time-denominator",
+    "audit-options-speed-and-memory-download-pages-update-experimental-minimum-gallery-importer-update-time",
+    "audit-options-speed-and-memory-download-pages-update-experimental-minimum-watcher-importer-update-time",
+    "audit-options-speed-and-memory-download-pages-update-experimental-watcher-importer-magic-update-time-denominator",
+    "audit-options-media-playback-system-ffmpeg-call-timeout",
+    "audit-options-speed-and-memory-image-cache-image-cache-timeout",
+    "audit-options-speed-and-memory-image-cache-maximum-image-size-in-of-cache-that-can-be-cached",
+    "audit-options-speed-and-memory-image-cache-memory-reserved-for-image-cache",
+    "audit-options-media-playback-system-apply-image-icc-profile-colour-adjustments",
+    "exchange-login",
+    "audit-options-media-playback-zoom-and-position-preview-viewer-default-zoom",
+    "audit-options-nested-tag-suggestions-favourites",
+    "audit-options-speed-and-memory-thumbnail-cache-memory-reserved-for-thumbnail-cache",
+    "audit-options-speed-and-memory-thumbnail-cache-thumbnail-cache-timeout",
+    "audit-options-speed-and-memory-image-cache-maximum-of-cache-that-will-be-prefetched-per-media-viewer",
+    "audit-options-speed-and-memory-image-prefetch-num-next-to-prefetch-in-media-viewer",
+    "audit-options-speed-and-memory-image-prefetch-num-previous-to-prefetch-in-media-viewer"
+  ],
+  "prior301_completion_ids_and_assessments_preserved": true,
+  "zero_credit_wording_errata_ids": [
+    "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-hide-main-page-navigation-tabs",
+    "audit-options-gui-pages-page-tab-names-when-there-are-too-many-tabs-to-fit-elide-their-names-so-they-fit",
+    "audit-options-menu-menu-pages-restore-all-pages-sidebar-preview-sizes-to-saved-value",
+    "audit-options-menu-menu-pages-save-current-page-s-sidebar-preview-size-now",
+    "audit-options-menu-menu-pages-save-current-page-s-sidebar-preview-size-on-client-exit",
+    "audit-options-sidebar-splitters"
+  ],
+  "wording_erratum_sha256": "9560bab633995e460d8a29c8256e68eb771c68e038cad4c72321a8257ab234d9",
+  "final_patch_digest": "42c4d52784555564ca23db1df85b98801bc98705627206062e9a67c6d1ce8d61"
+}

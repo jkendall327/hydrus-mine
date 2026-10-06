@@ -2,13 +2,13 @@
   "schema_version": 1,
   "agent": "urls-force-metadata-refetch",
   "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
-  "proposed_completed_count": 1,
+  "proposed_completed_count": 0,
   "claims": [
     {
       "id": "audit-media-context-missing-refetch",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Thumbnail urls > force metadata refetch: this file's {class} urls and (several selected) these files' {class} urls; the reference's question, then the URLs pended on a 'forced urls downloader' URL page (made if missing) with post-URL prefetch options set to fetch metadata even if URL/hash known (RedownloadURLsForceFetch).",
       "source": [
         "crates/hydrus-gui/src/thumbnail_menu.rs",
@@ -22,7 +22,13 @@
       ],
       "limits": [
         "No recording; GUI unit test awaits the native pass."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "No actual reference recording or consumer regression; cited test checks menu labels only.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-5.md"
+      }
     }
   ]
 }

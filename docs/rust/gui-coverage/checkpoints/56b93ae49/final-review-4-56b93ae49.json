@@ -1,0 +1,667 @@
+{
+  "schema_version": 1,
+  "review_batch": 4,
+  "source_commit": "56b93ae49337356aa4f81c79b12171397278247b",
+  "run_id": 37425380545,
+  "artifact_id": 11394399260,
+  "artifact_zip_sha256": "bcfa6c6a2a484c4c2d54c913e7c12bde502167ae2ce95c9917640f6cc8bb0ab1",
+  "validation_scope": "linux",
+  "review_scope": "Fresh independent visual review of6native PNGs plus shared Qt sibling PNG; scoped current source/reference/assertion review for5selected original leaves only.",
+  "eligible_ids": [
+    "audit-options-gui-misc-experimental-bytes-strings-1kb-pseudo-significant-figures",
+    "audit-options-gui-misc-prefer-iso-time-2018-03-01-12-40-23-to-5-days-ago",
+    "audit-options-popups-callable",
+    "audit-options-popups-clipboard",
+    "audit-options-popups-yes-no"
+  ],
+  "not_eligible_ids": [],
+  "exact_pixel_parity_claim": false,
+  "canonical_files_changed": false,
+  "publication_performed": false,
+  "native_images": [
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/native-renders/gui_format_options.png",
+      "name": "gui_format_options.png",
+      "sha256": "569608a0db93974d466a51884fd858ca5a2b94f72698bcae3e37fa9ccfc284e9",
+      "bytes": 114315,
+      "dimensions": [
+        980,
+        850
+      ],
+      "manifest_hash_matches": true,
+      "actually_viewed": true,
+      "finding": "980x850 Options/gui/misc: exact ISO checkbox is visible unchecked, precision spinbox is visible at 6, and Apply/Cancel are visible. This is the last reopened fixture event (input false/7 clamps to false/6), not a factory-default capture. No selected control is clipped or overlapped."
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/native-renders/popup_job_actions.png",
+      "name": "popup_job_actions.png",
+      "sha256": "1b92dd7373c7d8be727814eab7795663cb71cd38345c79a6dbd5a0b8ba85b671",
+      "bytes": 38001,
+      "dimensions": [
+        1100,
+        700
+      ],
+      "manifest_hash_matches": true,
+      "actually_viewed": true,
+      "finding": "1100x700 Main popup at lower right: live actions title, copy full payload and repeat command buttons are readable and contained. Stop control/summary are visible. Surrounding empty page is test setup, not a reference-layout comparison."
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/native-renders/popup_job_question.png",
+      "name": "popup_job_question.png",
+      "sha256": "fbb7ee3db4ceb570656df3eb23394eb8a667639d54697c9edc5dfffaf6d5bfe3",
+      "bytes": 36587,
+      "dimensions": [
+        1100,
+        700
+      ],
+      "manifest_hash_matches": true,
+      "actually_viewed": true,
+      "finding": "1100x700 Main popup: question title, Accept this? body, lowercase yes/no, stop and summary are readable and contained."
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/native-renders/popup_job_question_dismissed.png",
+      "name": "popup_job_question_dismissed.png",
+      "sha256": "9d744f26103ce2cc4f43761020acb4d33c2fef09f5a16db7e1518a0aa2cbb1c0",
+      "bytes": 29719,
+      "dimensions": [
+        1100,
+        700
+      ],
+      "manifest_hash_matches": true,
+      "actually_viewed": true,
+      "finding": "1100x700 Main after accepted answer: popup/question controls are absent; unchanged Main surface remains visible. Native assertion proves actual Store removal and retained producer answer."
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/native-renders/popup_job_question_fixed32.png",
+      "name": "popup_job_question_fixed32.png",
+      "sha256": "33f4f151636c9101061d0d251591a73be2b4afbe8764e9594a7316219f95bc43",
+      "bytes": 59037,
+      "dimensions": [
+        1280,
+        1200
+      ],
+      "manifest_hash_matches": true,
+      "actually_viewed": true,
+      "finding": "1280x1200 fixed-32 card: long question wraps to several lines above yes/no; copy payload/run command/stop and summary remain within the card without overlap or lower-edge clipping."
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/native-renders/popup_job_question_narrow16.png",
+      "name": "popup_job_question_narrow16.png",
+      "sha256": "5e60bb6e92041b43c97121a71c07ce8c81a694f2ad4d8c723331e30ec3836291",
+      "bytes": 62857,
+      "dimensions": [
+        1280,
+        1200
+      ],
+      "manifest_hash_matches": true,
+      "actually_viewed": true,
+      "finding": "1280x1200 nonfixed-16 card is narrower and taller: full long question wraps, all five measured controls remain contained/readable. Title and action captions fit. Source assertions additionally test the painted stop-button lower border and an actual lower-edge pointer reaching the producer."
+    }
+  ],
+  "reference_images": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/popup_question_layout.png",
+      "sha256": "6819784937d914cf0f3c3d50bf651a4c8cfdf3df33839e889c8f6a542f9740a0",
+      "actually_viewed": true,
+      "recorder": "oracle/record_popup_question_layout.py:61\u201362",
+      "matching_native": "popup_job_question_narrow16.png",
+      "finding": "Same narrow16/nonfixed synthetic long-question/action state; Qt clips one nonwrapped question line while native wraps; shared control captions/order verified, full geometry parity excluded."
+    }
+  ],
+  "reference_fingerprints": [
+    {
+      "path": "oracle/fixtures/gui_format.json",
+      "sha256": "7e820dd11dccb3c98d6cce95874936f184cc8e7c544dacd84875e789c3c16c0e",
+      "exact_source_verified": true,
+      "actually_viewed": false
+    },
+    {
+      "path": "oracle/fixtures/gui_format_backend.json",
+      "sha256": "820a5fb567dfbf1babd12b528db412549c6d3d62f33b3b2cc74ea5fd9499f99c",
+      "exact_source_verified": true,
+      "actually_viewed": false
+    },
+    {
+      "path": "oracle/fixtures/popup_actions.json",
+      "sha256": "74af81a31f8621cfd134949dfd68accf6c3eb377b40ad55525b5107e8fd425e1",
+      "exact_source_verified": true,
+      "actually_viewed": false
+    },
+    {
+      "path": "oracle/fixtures/popup_question_layout.json",
+      "sha256": "6bb8f56e6d8f0a2e737e8daf04d4fbb114abda074740b74c9a03548b0a0414d9",
+      "exact_source_verified": true,
+      "actually_viewed": false
+    },
+    {
+      "path": "oracle/record_gui_format.py",
+      "sha256": "4d27b770dc561367d15da57ef30d9c9f2c6c81a8d640fe9c8862581a4f29ee0d",
+      "exact_source_verified": true,
+      "actually_viewed": false
+    },
+    {
+      "path": "oracle/record_popup_actions.py",
+      "sha256": "1a262c4f6f8fcfc136383f24e7701729f6ccf3658ae3b0ce0084a92ee6ba6933",
+      "exact_source_verified": true,
+      "actually_viewed": false
+    },
+    {
+      "path": "oracle/record_popup_question_layout.py",
+      "sha256": "561bda4bfebf7d3d0b5f6b4815ee95257530a2684eb54d020a858f6ef5a22225",
+      "exact_source_verified": true,
+      "actually_viewed": false
+    },
+    {
+      "path": "oracle/fixtures/popup_question_layout.png",
+      "sha256": "6819784937d914cf0f3c3d50bf651a4c8cfdf3df33839e889c8f6a542f9740a0",
+      "exact_source_verified": true,
+      "actually_viewed": true
+    }
+  ],
+  "source_fingerprints": [
+    {
+      "path": "crates/hydrus-gui/src/gallery.rs",
+      "sha256": "34812977af3ae6849eeb7dc8a52e4f16df6ef497ee27faf8636b0bcc15b24730",
+      "exact_source_verified": true
+    },
+    {
+      "path": "crates/hydrus-gui/src/lib.rs",
+      "sha256": "92dc7d5b2a1a21900433b0d7cd07eb7d4608a62d643310a6d614a9bd181a3905",
+      "exact_source_verified": true
+    },
+    {
+      "path": "crates/hydrus-gui/src/popups.rs",
+      "sha256": "a2c2fcc39d492009e21646ab6b9b380a393c69da7b07cd781914e294b89b7df0",
+      "exact_source_verified": true
+    },
+    {
+      "path": "crates/hydrus-gui/src/thumbnail_menu.rs",
+      "sha256": "c098406c18cafee3840ac938aa8b60f693acd74b2cd2a4ba46656383aa9e4589",
+      "exact_source_verified": true
+    },
+    {
+      "path": "crates/hydrus-gui/src/watcher.rs",
+      "sha256": "daa5425871b760ee3448fe94d590a56b60aa14b2ee0a881f25025ddb1c410b72",
+      "exact_source_verified": true
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/gui_format.rs",
+      "sha256": "964b4b09973998477cffcc6d442908ab004d08c8dc98642dad57a31caa2742a1",
+      "exact_source_verified": true
+    },
+    {
+      "path": "docs/rust/gui-coverage/parity/gui-format.json",
+      "sha256": "4d6b7cdb159665bd508e92ef0c78ccbb50bd0658c1449a2a43417ade59697131",
+      "exact_source_verified": true
+    },
+    {
+      "path": "crates/hydrus-gui/tests/gui/popup_job_actions.rs",
+      "sha256": "218e7f43cca24ef62888a1234e163cc74091524729341533cf6baa66a838a40d",
+      "exact_source_verified": true
+    },
+    {
+      "path": "docs/rust/gui-coverage/parity/popup-job-actions.json",
+      "sha256": "ea745b758787d5bf9e71d776fedc2e78d0a86b28abfbbbae59a2658816626d0e",
+      "exact_source_verified": true
+    }
+  ],
+  "observed_passing_assertion_suites": [
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 1584,
+      "text": "2026-10-06T06:52:19.1703903Z test popups::tests::concurrent_pollers_cannot_overtake_a_reentrant_callable_removal ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 1585,
+      "text": "2026-10-06T06:52:19.1840120Z test popups::tests::current_callable_is_reentrant_and_removal_invalidates_later_queued_calls ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 1595,
+      "text": "2026-10-06T06:52:19.8797514Z test popups::tests::a_callable_added_after_finish_restarts_the_single_weak_poller ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 1830,
+      "text": "2026-10-06T06:53:37.0060443Z test gallery::tests::formatting_reaches_gallery_added_rows_without_changing_import_state ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 1855,
+      "text": "2026-10-06T06:53:37.5023022Z test popups::tests::actual_qt_action_visibility_labels_and_question_cutoff_replay ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 1857,
+      "text": "2026-10-06T06:53:37.5056284Z test popups::tests::popup_download_precision_replays_actual_network_control_output ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 1895,
+      "text": "2026-10-06T06:53:38.1992532Z test watcher::tests::formatting_reaches_watcher_rows_status_and_checker_without_changing_work_state ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 2118,
+      "text": "2026-10-06T06:54:18.1930218Z test gui_format::staged_controls_reopen_and_reach_real_log_rows_and_page_size_status ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 2352,
+      "text": "2026-10-06T06:55:49.7401672Z test popup_job_actions::accepted_close_and_rebinding_retire_queued_calls_even_with_retained_windows_and_bindings ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 2353,
+      "text": "2026-10-06T06:55:49.9761205Z test popup_job_actions::clipboard_and_repeatable_current_callable_reach_real_native_controls_and_store_effects ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 2354,
+      "text": "2026-10-06T06:55:50.1038820Z test popup_job_actions::cloned_bound_keeps_popup_actions_live_until_its_last_owner_drops ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 2356,
+      "text": "2026-10-06T06:55:50.2586444Z test popup_job_actions::removed_question_tokens_and_retired_producers_cannot_answer_successors ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 2358,
+      "text": "2026-10-06T06:55:50.5835627Z test popup_job_actions::yes_and_no_dismiss_the_popup_and_reach_the_retained_producer_once ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 2360,
+      "text": "2026-10-06T06:55:51.9865492Z test popup_job_actions::long_question_and_action_controls_render_with_fixed_and_narrow_popup_caps ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 2653,
+      "text": "2026-10-06T06:57:19.1007475Z test result: ok. 696 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 216.45s"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 2867,
+      "text": "2026-10-06T06:57:27.2662780Z test gui_format::recorded_current_local_offsets_and_ancient_boundaries_match_python ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 2868,
+      "text": "2026-10-06T06:57:27.2722606Z test gui_format::recorded_summaries_previews_expiry_and_scheduling_variants_reach_existing_models ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 2869,
+      "text": "2026-10-06T06:57:27.4172937Z test gui_format::precision_reaches_existing_import_png_network_and_service_displays ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 2873,
+      "text": "2026-10-06T06:57:27.7732779Z test gui_format::staged_bounds_cancel_save_reopen_and_real_log_columns_match_qt ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 3239,
+      "text": "2026-10-06T06:57:40.6438107Z test formatting_tests::saved_figures_replay_all_reference_rejections_and_critical_drive_pause ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 3281,
+      "text": "2026-10-06T06:57:42.7548093Z test saved_precision_reaches_actual_import_rejection_without_importing_or_changing_rules ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 3626,
+      "text": "2026-10-06T06:58:42.2872585Z test engine::reload_tests::formatting_refresh_wakes_a_pending_gallery_label_and_preserves_its_token_and_job ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 3627,
+      "text": "2026-10-06T06:58:42.2885436Z test engine::reload_tests::formatting_refresh_keeps_a_bandwidth_wait_and_its_usage_and_cancel_reason ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 3656,
+      "text": "2026-10-06T06:58:47.2347651Z test saved_byte_precision_reaches_both_real_overlength_errors_after_reload ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 3999,
+      "text": "2026-10-06T06:59:08.6441555Z test popup_actions::tests::answer_survives_dismissal_and_old_owner_cannot_consume_or_retire_successor ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/linux-full.log",
+      "line": 4000,
+      "text": "2026-10-06T06:59:08.6754503Z test popup_actions::tests::gui_retirement_drops_unconsumed_calls_but_preserves_committed_answers ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/parity-models.log",
+      "line": 1208,
+      "text": "2026-10-06T06:47:22.6565419Z test popups::tests::concurrent_pollers_cannot_overtake_a_reentrant_callable_removal ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/parity-models.log",
+      "line": 1209,
+      "text": "2026-10-06T06:47:22.6593176Z test popups::tests::current_callable_is_reentrant_and_removal_invalidates_later_queued_calls ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/parity-models.log",
+      "line": 1219,
+      "text": "2026-10-06T06:47:23.3619860Z test popups::tests::a_callable_added_after_finish_restarts_the_single_weak_poller ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/parity-models.log",
+      "line": 1606,
+      "text": "2026-10-06T06:47:59.3614601Z test gui_format::recorded_current_local_offsets_and_ancient_boundaries_match_python ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/parity-models.log",
+      "line": 1607,
+      "text": "2026-10-06T06:47:59.3688352Z test gui_format::recorded_summaries_previews_expiry_and_scheduling_variants_reach_existing_models ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/parity-models.log",
+      "line": 1608,
+      "text": "2026-10-06T06:47:59.5347559Z test gui_format::precision_reaches_existing_import_png_network_and_service_displays ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/parity-models.log",
+      "line": 1612,
+      "text": "2026-10-06T06:47:59.8962843Z test gui_format::staged_bounds_cancel_save_reopen_and_real_log_columns_match_qt ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/parity-models.log",
+      "line": 1981,
+      "text": "2026-10-06T06:48:12.7702783Z test engine::reload_tests::formatting_refresh_wakes_a_pending_gallery_label_and_preserves_its_token_and_job ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/parity-models.log",
+      "line": 1982,
+      "text": "2026-10-06T06:48:12.7716514Z test engine::reload_tests::formatting_refresh_keeps_a_bandwidth_wait_and_its_usage_and_cancel_reason ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/parity-models.log",
+      "line": 2011,
+      "text": "2026-10-06T06:48:17.8048764Z test saved_byte_precision_reaches_both_real_overlength_errors_after_reload ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/parity-models.log",
+      "line": 2341,
+      "text": "2026-10-06T06:48:37.7591144Z test popup_actions::tests::answer_survives_dismissal_and_old_owner_cannot_consume_or_retire_successor ... ok"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-56b93ae49/parity-models.log",
+      "line": 2342,
+      "text": "2026-10-06T06:48:37.7785826Z test popup_actions::tests::gui_retirement_drops_unconsumed_calls_but_preserves_committed_answers ... ok"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "audit-options-gui-misc-experimental-bytes-strings-1kb-pseudo-significant-figures",
+      "manifest": "docs/rust/gui-coverage/parity/gui-format.json",
+      "eligible": true,
+      "recommendation": "eligible_for_linux_first_pass_checkpoint",
+      "native_images": [
+        "gui_format_options.png"
+      ],
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/gui_format.rs",
+          "lines": "112\u2013154",
+          "finding": "Private drafts remain unsaved; Cancel owner cannot later Apply; current Apply persists; reopened checkbox/number equal saved values; native PNG captures reopened state."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/gui_format.rs",
+          "lines": "155\u2013267",
+          "finding": "Actual page totals/selected status, download controls, PNG payload, parser raw preview and file/gallery log cells consume saved formatting; reopening Store preserves it."
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/gui_format.rs",
+          "lines": "25\u2013120",
+          "finding": "Real imported defaults, recorded eight drafts including bounds0/7, byte/timestamp outputs and log columns match actual Qt JSON; save/reopen replay."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "lines": "2597\u20132600,2628\u20132632",
+          "finding": "Exact checkbox and1\u20136 spinbox read/write owned GuiFormatting settings."
+        },
+        {
+          "path": "oracle/record_gui_format.py",
+          "lines": "29\u201336,62\u201369",
+          "finding": "Actual Qt controls, UpdateOptions/ReinitGlobalSettings, serialized roundtrip/reopen and actual formatter/log consumers are recorded."
+        }
+      ],
+      "caveats": [
+        "Linux checkpoint only; Windows/macOS validation remains deferred.",
+        "No exact-pixel/whole-client Qt parity claim.",
+        "Screenshots prove captured controls/layout states; behavior is grounded separately in recorded assertions and source.",
+        "No matching Qt PNG for Options/gui or rendered formatter consumers; JSON/text oracle is not a paired visual substitute.",
+        "The screenshot represents the final saved/reopened false/6 event; other draft, bound, cancellation and consumer states are asserted rather than shown.",
+        "Cached labels update through existing open/data/media refresh paths; immediate whole-application broadcast timing is unclaimed.",
+        "Integer-locale preference is outside these two claims. UTC native replay and separately recorded current-offset/date-boundary tests do not establish all platform historical date behavior."
+      ]
+    },
+    {
+      "id": "audit-options-gui-misc-prefer-iso-time-2018-03-01-12-40-23-to-5-days-ago",
+      "manifest": "docs/rust/gui-coverage/parity/gui-format.json",
+      "eligible": true,
+      "recommendation": "eligible_for_linux_first_pass_checkpoint",
+      "native_images": [
+        "gui_format_options.png"
+      ],
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/gui_format.rs",
+          "lines": "112\u2013154",
+          "finding": "Private drafts remain unsaved; Cancel owner cannot later Apply; current Apply persists; reopened checkbox/number equal saved values; native PNG captures reopened state."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/gui_format.rs",
+          "lines": "155\u2013267",
+          "finding": "Actual page totals/selected status, download controls, PNG payload, parser raw preview and file/gallery log cells consume saved formatting; reopening Store preserves it."
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/gui_format.rs",
+          "lines": "25\u2013120",
+          "finding": "Real imported defaults, recorded eight drafts including bounds0/7, byte/timestamp outputs and log columns match actual Qt JSON; save/reopen replay."
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "lines": "2597\u20132600,2628\u20132632",
+          "finding": "Exact checkbox and1\u20136 spinbox read/write owned GuiFormatting settings."
+        },
+        {
+          "path": "oracle/record_gui_format.py",
+          "lines": "29\u201336,62\u201369",
+          "finding": "Actual Qt controls, UpdateOptions/ReinitGlobalSettings, serialized roundtrip/reopen and actual formatter/log consumers are recorded."
+        }
+      ],
+      "caveats": [
+        "Linux checkpoint only; Windows/macOS validation remains deferred.",
+        "No exact-pixel/whole-client Qt parity claim.",
+        "Screenshots prove captured controls/layout states; behavior is grounded separately in recorded assertions and source.",
+        "No matching Qt PNG for Options/gui or rendered formatter consumers; JSON/text oracle is not a paired visual substitute.",
+        "The screenshot represents the final saved/reopened false/6 event; other draft, bound, cancellation and consumer states are asserted rather than shown.",
+        "Cached labels update through existing open/data/media refresh paths; immediate whole-application broadcast timing is unclaimed.",
+        "Integer-locale preference is outside these two claims. UTC native replay and separately recorded current-offset/date-boundary tests do not establish all platform historical date behavior."
+      ]
+    },
+    {
+      "id": "audit-options-popups-callable",
+      "manifest": "docs/rust/gui-coverage/parity/popup-job-actions.json",
+      "eligible": true,
+      "recommendation": "eligible_for_linux_first_pass_checkpoint",
+      "native_images": [
+        "popup_job_actions.png",
+        "popup_job_question_fixed32.png",
+        "popup_job_question_narrow16.png"
+      ],
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/popup_job_actions.rs",
+          "lines": "77\u2013150,274\u2013398",
+          "finding": "Repeat calls create two real Store effects; current replacement is used after Cancel; removal suppresses later calls; retirement/rebind invalidate queued/stale calls and final Bound ownership preserves then retires GUI capability."
+        },
+        {
+          "path": "crates/hydrus-gui/src/popup_job_actions.rs",
+          "lines": "23\u2013106",
+          "finding": "Native handlers validate displayed GUI incarnation/active weak window; clipboard reads current Store payload and owner; call/answer enqueue current owner-qualified requests."
+        },
+        {
+          "path": "crates/hydrus-store/src/popup_actions.rs",
+          "lines": "104\u2013161",
+          "finding": "Producer/GUI leases and current callable/question tokens are checked; paused/stale question rejected; accepted answer finishes/dismisses atomically."
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "lines": "3353,3370\u20133413",
+          "finding": "Actual accepted client-exit composition captures and invokes popup retirement; no new guard/owner is inferred from the image."
+        },
+        {
+          "path": "crates/hydrus-gui/src/popups.rs",
+          "lines": "579\u2013631",
+          "finding": "Qt JSON replays absent/paused/resumed/cancelled/removed visibility, current labels and exact Unicode question cutoff."
+        },
+        {
+          "path": "oracle/record_popup_actions.py",
+          "lines": "24\u201343",
+          "finding": "Real Qt button clicks record full payload, repeat callable, synchronous replacements, cancellation, and Boolean finish/dismiss answers."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/popup_job_actions.rs",
+          "lines": "401\u2013565",
+          "finding": "Long-question controls measured from actual Slint frames, all five contained; cap behavior, painted lower stop border and real lower-edge pointer consumer asserted."
+        }
+      ],
+      "caveats": [
+        "Linux checkpoint only; Windows/macOS validation remains deferred.",
+        "No exact-pixel/whole-client Qt parity claim.",
+        "Screenshots prove captured controls/layout states; behavior is grounded separately in recorded assertions and source.",
+        "No matching Qt PNG for the simple action, short Accept this? or dismissed states.",
+        "Shared popup_question_layout.png is a genuine Qt narrow16/nonfixed long-question/action capture, recorded at oracle/record_popup_question_layout.py:61\u201362. It supports comparison of labels/order and contained controls only.",
+        "Recorded Qt question_word_wrap=false and 123x143 card clips the long question to one line; native word-wrap presents all text in a taller card. Font metrics, character-derived widths, buttons and surrounding window differ. This visible layout difference is retained explicitly.",
+        "Callable executes through a live producer/weak Tokio poller, potentially up to 250 ms later, rather than synchronously in a Qt GUI callback; executable code is not serialized. Stock producer-family/menu/maintenance conversion is unclaimed; already-started effects are not interrupted.",
+        "Popup widths, cancellation, download/freeze/modal policies and parent/alias completeness receive no additional completion credit from these three action leaves."
+      ]
+    },
+    {
+      "id": "audit-options-popups-clipboard",
+      "manifest": "docs/rust/gui-coverage/parity/popup-job-actions.json",
+      "eligible": true,
+      "recommendation": "eligible_for_linux_first_pass_checkpoint",
+      "native_images": [
+        "popup_job_actions.png",
+        "popup_job_question_fixed32.png",
+        "popup_job_question_narrow16.png"
+      ],
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/popup_job_actions.rs",
+          "lines": "23\u2013156",
+          "finding": "FullUnicode payload reaches actual clipboard; stale displayed label reads replacement current payload; removal and retired retained GUI remain inert."
+        },
+        {
+          "path": "crates/hydrus-gui/src/popup_job_actions.rs",
+          "lines": "23\u2013106",
+          "finding": "Native handlers validate displayed GUI incarnation/active weak window; clipboard reads current Store payload and owner; call/answer enqueue current owner-qualified requests."
+        },
+        {
+          "path": "crates/hydrus-store/src/popup_actions.rs",
+          "lines": "104\u2013161",
+          "finding": "Producer/GUI leases and current callable/question tokens are checked; paused/stale question rejected; accepted answer finishes/dismisses atomically."
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "lines": "3353,3370\u20133413",
+          "finding": "Actual accepted client-exit composition captures and invokes popup retirement; no new guard/owner is inferred from the image."
+        },
+        {
+          "path": "crates/hydrus-gui/src/popups.rs",
+          "lines": "579\u2013631",
+          "finding": "Qt JSON replays absent/paused/resumed/cancelled/removed visibility, current labels and exact Unicode question cutoff."
+        },
+        {
+          "path": "oracle/record_popup_actions.py",
+          "lines": "24\u201343",
+          "finding": "Real Qt button clicks record full payload, repeat callable, synchronous replacements, cancellation, and Boolean finish/dismiss answers."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/popup_job_actions.rs",
+          "lines": "401\u2013565",
+          "finding": "Long-question controls measured from actual Slint frames, all five contained; cap behavior, painted lower stop border and real lower-edge pointer consumer asserted."
+        }
+      ],
+      "caveats": [
+        "Linux checkpoint only; Windows/macOS validation remains deferred.",
+        "No exact-pixel/whole-client Qt parity claim.",
+        "Screenshots prove captured controls/layout states; behavior is grounded separately in recorded assertions and source.",
+        "No matching Qt PNG for the simple action, short Accept this? or dismissed states.",
+        "Shared popup_question_layout.png is a genuine Qt narrow16/nonfixed long-question/action capture, recorded at oracle/record_popup_question_layout.py:61\u201362. It supports comparison of labels/order and contained controls only.",
+        "Recorded Qt question_word_wrap=false and 123x143 card clips the long question to one line; native word-wrap presents all text in a taller card. Font metrics, character-derived widths, buttons and surrounding window differ. This visible layout difference is retained explicitly.",
+        "Callable executes through a live producer/weak Tokio poller, potentially up to 250 ms later, rather than synchronously in a Qt GUI callback; executable code is not serialized. Stock producer-family/menu/maintenance conversion is unclaimed; already-started effects are not interrupted.",
+        "Popup widths, cancellation, download/freeze/modal policies and parent/alias completeness receive no additional completion credit from these three action leaves."
+      ]
+    },
+    {
+      "id": "audit-options-popups-yes-no",
+      "manifest": "docs/rust/gui-coverage/parity/popup-job-actions.json",
+      "eligible": true,
+      "recommendation": "eligible_for_linux_first_pass_checkpoint",
+      "native_images": [
+        "popup_job_question.png",
+        "popup_job_question_dismissed.png",
+        "popup_job_question_fixed32.png",
+        "popup_job_question_narrow16.png"
+      ],
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/popup_job_actions.rs",
+          "lines": "159\u2013269",
+          "finding": "Both true/false dismiss the real Store/UI row; producer receives accepted value once even after GUI drop; repeat old tokens and replaced/retired producers cannot answer successor; rendered before/after differs."
+        },
+        {
+          "path": "crates/hydrus-gui/src/popup_job_actions.rs",
+          "lines": "23\u2013106",
+          "finding": "Native handlers validate displayed GUI incarnation/active weak window; clipboard reads current Store payload and owner; call/answer enqueue current owner-qualified requests."
+        },
+        {
+          "path": "crates/hydrus-store/src/popup_actions.rs",
+          "lines": "104\u2013161",
+          "finding": "Producer/GUI leases and current callable/question tokens are checked; paused/stale question rejected; accepted answer finishes/dismisses atomically."
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "lines": "3353,3370\u20133413",
+          "finding": "Actual accepted client-exit composition captures and invokes popup retirement; no new guard/owner is inferred from the image."
+        },
+        {
+          "path": "crates/hydrus-gui/src/popups.rs",
+          "lines": "579\u2013631",
+          "finding": "Qt JSON replays absent/paused/resumed/cancelled/removed visibility, current labels and exact Unicode question cutoff."
+        },
+        {
+          "path": "oracle/record_popup_actions.py",
+          "lines": "24\u201343",
+          "finding": "Real Qt button clicks record full payload, repeat callable, synchronous replacements, cancellation, and Boolean finish/dismiss answers."
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/popup_job_actions.rs",
+          "lines": "401\u2013565",
+          "finding": "Long-question controls measured from actual Slint frames, all five contained; cap behavior, painted lower stop border and real lower-edge pointer consumer asserted."
+        }
+      ],
+      "caveats": [
+        "Linux checkpoint only; Windows/macOS validation remains deferred.",
+        "No exact-pixel/whole-client Qt parity claim.",
+        "Screenshots prove captured controls/layout states; behavior is grounded separately in recorded assertions and source.",
+        "No matching Qt PNG for the simple action, short Accept this? or dismissed states.",
+        "Shared popup_question_layout.png is a genuine Qt narrow16/nonfixed long-question/action capture, recorded at oracle/record_popup_question_layout.py:61\u201362. It supports comparison of labels/order and contained controls only.",
+        "Recorded Qt question_word_wrap=false and 123x143 card clips the long question to one line; native word-wrap presents all text in a taller card. Font metrics, character-derived widths, buttons and surrounding window differ. This visible layout difference is retained explicitly.",
+        "Callable executes through a live producer/weak Tokio poller, potentially up to 250 ms later, rather than synchronously in a Qt GUI callback; executable code is not serialized. Stock producer-family/menu/maintenance conversion is unclaimed; already-started effects are not interrupted.",
+        "Popup widths, cancellation, download/freeze/modal policies and parent/alias completeness receive no additional completion credit from these three action leaves."
+      ]
+    }
+  ]
+}

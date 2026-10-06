@@ -29,7 +29,7 @@ fn options(ui: &MainWindow, bound: &Bound) -> (OptionsWindow, i32) {
 fn real_options_cancel_hidden_retired_save_reopen_bounds_and_independent_field() {
     let fixture = hydrus_testkit::fixture_json("ffmpeg_timeout.json");
     let (_dirs, store) = super::subscriptions::store();
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(
@@ -57,7 +57,7 @@ fn real_options_cancel_hidden_retired_save_reopen_bounds_and_independent_field()
         15,
         "hidden edits must not be staged for later Apply"
     );
-    for case in fixture["cases"].as_array().unwrap() {
+    for (case_index, case) in fixture["cases"].as_array().unwrap().iter().enumerate() {
         let (w, row) = options(&ui, &bound);
         let before = store.read(ffmpeg_policy::load).unwrap();
         w.invoke_number_edited(row, case["requested"].as_i64().unwrap() as i32);
@@ -88,6 +88,16 @@ fn real_options_cancel_hidden_retired_save_reopen_bounds_and_independent_field()
             reopened.get_rows().row_data(row as usize).unwrap().number,
             i32::try_from(case["reopened"].as_i64().unwrap()).unwrap()
         );
+        // Capture the system group, including this persisted timeout and the ICC field.
+        let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 1200, 1800);
+        headless::save_png(
+            &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+                .join(format!("ffmpeg-timeout-options-{case_index}-native.png")),
+            &pixels,
+            1200,
+            1800,
+        )
+        .unwrap();
         reopened.invoke_cancel();
     }
     assert_eq!(
@@ -100,6 +110,64 @@ fn real_options_cancel_hidden_retired_save_reopen_bounds_and_independent_field()
     );
 }
 
+#[test]
+fn visible_timeout_draft_survives_hidden_edits_and_reaches_the_live_reader() {
+    let fixture = hydrus_testkit::fixture_json("ffmpeg_timeout.json");
+    let (_dirs, store) = super::subscriptions::store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    let reader = ffmpeg_policy::reader(&store);
+    let loaded = fixture["loaded"].as_i64().unwrap();
+    let loaded_timeout = std::time::Duration::from_secs(fixture["loaded"].as_u64().unwrap());
+    let current = &fixture["cases"][1];
+    let ignored = i32::try_from(fixture["cases"][0]["requested"].as_i64().unwrap()).unwrap();
+    let expected = current["saved"].as_i64().unwrap();
+    let (window, row) = options(&ui, &bound);
+    window.invoke_number_edited(
+        row,
+        i32::try_from(current["requested"].as_i64().unwrap()).unwrap(),
+    );
+    assert_eq!(store.read(ffmpeg_policy::load).unwrap().seconds, loaded);
+    assert_eq!(reader(), loaded_timeout);
+    window.hide().unwrap();
+    window.invoke_number_edited(row, ignored);
+    window.invoke_apply();
+    assert_eq!(store.read(ffmpeg_policy::load).unwrap().seconds, loaded);
+    assert_eq!(reader(), loaded_timeout);
+    window.show().unwrap();
+    window.invoke_apply();
+    assert_eq!(
+        store.read(ffmpeg_policy::load).unwrap().seconds,
+        expected,
+        "an ignored hidden edit must preserve the admitted visible draft"
+    );
+    let saved_timeout = std::time::Duration::from_secs(current["published"].as_u64().unwrap());
+    assert_eq!(reader(), saved_timeout);
+    let (reopened, row) = options(&ui, &bound);
+    assert_eq!(
+        reopened
+            .get_rows()
+            .row_data(usize::try_from(row).unwrap())
+            .unwrap()
+            .number,
+        i32::try_from(current["reopened"].as_i64().unwrap()).unwrap()
+    );
+    reopened.invoke_cancel();
+    reopened.show().unwrap();
+    reopened.invoke_number_edited(row, ignored);
+    reopened.invoke_apply();
+    assert_eq!(store.read(ffmpeg_policy::load).unwrap().seconds, expected);
+    assert_eq!(reader(), saved_timeout);
+    assert!(bound.options.borrow().is_none());
+    reopened.hide().unwrap();
+    ui.hide().unwrap();
+}
+
 #[cfg(unix)]
 #[test]
 fn already_open_importer_captures_old_deadline_saved_apply_changes_next_call_and_no_store_cycle() {
@@ -109,7 +177,7 @@ fn already_open_importer_captures_old_deadline_saved_apply_changes_next_call_and
         io::Write as _,
         os::unix::fs::PermissionsExt as _,
         process::Command,
-        sync::{Arc, mpsc},
+        sync::mpsc,
         thread,
         time::{Duration, Instant},
     };
@@ -140,15 +208,9 @@ fn already_open_importer_captures_old_deadline_saved_apply_changes_next_call_and
     );
     std::fs::write(&exe,format!("#!/bin/sh\nprintf '%s' \"$$\" > {}\nread -r reply < {}\nprintf 'ffmpeg version owned-local Copyright transport\\n'\n",quoted(&marker),quoted(&fifo))).unwrap();
     std::fs::set_permissions(&exe, std::fs::Permissions::from_mode(0o755)).unwrap();
-    let count = Arc::strong_count(&store);
     let importer = FileImporter::new(
         store.clone(),
         MediaTools::with_ffmpeg(Ffmpeg::with_executable(&exe)),
-    );
-    assert_eq!(
-        Arc::strong_count(&store),
-        count + 1,
-        "only FileImporter owns Store; timeout and ICC providers are weak"
     );
     let tools = importer.tools().clone();
     let worker_tools = tools.clone();
@@ -205,17 +267,47 @@ fn already_open_importer_captures_old_deadline_saved_apply_changes_next_call_and
         "timed out child is reaped before returning"
     );
     drop(importer);
-    assert_eq!(Arc::strong_count(&store), count);
+    // Options callbacks own Store while their retained component handles live.
+    // Test importer/provider ownership independently of those GUI lifetimes below.
+}
+
+#[test]
+fn retained_importer_tools_do_not_retain_their_isolated_store() {
+    use hydrus_import::FileImporter;
+    use hydrus_media::MediaTools;
+    use std::sync::Arc;
+
+    // No Options or GUI workers can alter this Store's owner count.
     let isolated_dir = tempfile::tempdir().unwrap();
     let isolated = Store::open(isolated_dir.path()).unwrap();
     let weak = Arc::downgrade(&isolated);
+    let count = Arc::strong_count(&isolated);
     let importer = FileImporter::new(isolated.clone(), MediaTools::new());
+    assert_eq!(
+        Arc::strong_count(&isolated),
+        count + 1,
+        "only FileImporter owns Store; timeout and ICC providers are weak"
+    );
     let retained = importer.tools().clone();
+    let retained_clone = retained.clone();
+    let retained_ffmpeg = retained.ffmpeg().clone();
+    assert_eq!(
+        Arc::strong_count(&isolated),
+        count + 1,
+        "cloned media tools and ffmpeg cannot add strong Store owners"
+    );
     drop(importer);
+    assert_eq!(
+        Arc::strong_count(&isolated),
+        count,
+        "dropping the importer releases its sole strong Store owner"
+    );
     drop(isolated);
     assert!(
         weak.upgrade().is_none(),
         "retained tools cannot keep a retired Store alive"
     );
+    drop(retained_ffmpeg);
+    drop(retained_clone);
     drop(retained);
 }

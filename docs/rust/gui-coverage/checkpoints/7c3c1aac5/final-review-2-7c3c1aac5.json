@@ -1,0 +1,688 @@
+{
+  "schema_version": 1,
+  "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+  "run_id": 37447108755,
+  "artifact_id": 11406361462,
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "claims": [
+    {
+      "id": "audit-options-nested-tag-suggestions-favourites",
+      "manifest": "docs/rust/gui-coverage/parity/tag-suggestions.json",
+      "approval": true,
+      "validation_scope": "linux",
+      "caveats": [
+        "Only the original nested per-service most-used favourites editor and existing filtered/add-only saved broadcast consumer. Suggestion width/layout/default-page, recent Clear/decay and broader keyboard/context-menu/autocomplete families remain outside this leaf.",
+        "Native per-service editor owns a separate shared write-autocomplete child; Qt has the input embedded in Options. Child acceptance stages only, descendant/parent Cancel retires callbacks, and per-service field-scoped merge preserves unrelated/unknown entries.",
+        "Only already-present panels receive saved broadcasts, using200ms native polling and opening-time availability capture. Qt reference columns/recent differs from native service-switch notebook/favourites state, so no missing-recent or width/layout claim follows.",
+        "Exact7c actual dropdown input, owner/widget indices, displayed my-tags caption and accepted list are validated by passing runtime assertions and fresh inspection. Universal host-driven programmatic ComboBox projection remains outside this approval.",
+        "Linux only; Windows/macOS deferred. No parent, alias, native-only or support-only completion credit."
+      ],
+      "basis": "Exact full replay passes the real pointer/popup-key selection path with the original2second bound, actual my-tags caption/index/owner and accepted-list assertions. Fresh native PNG visibly shows my tags and the recorded accepted list. Unchanged per-service cancellation, stale child/parent retirement, field-scoped persistence, saved-broadcast existing-consumer filtering/add-only and empty-service-switch assertions pass. Reference recorder exercises real Qt per-service Options drafts and activation. Scope remains the original favourites leaf.",
+      "native_images": [
+        {
+          "path": "/workspace/validation-reviews/ci-7c3c1aac5/native-renders/most-used-tags-options.png",
+          "sha256": "8bde7e8c11eaddd7171ee0b60812280acbc341bc19f4069d5ac93b613f4c57f1",
+          "name": "most-used-tags-options.png",
+          "dimensions": [
+            520,
+            440
+          ],
+          "actually_viewed_fresh": true,
+          "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+          "run_id": 37447108755,
+          "artifact_id": 11406361462,
+          "producer": {
+            "source": "crates/hydrus-gui/tests/gui/options_window.rs",
+            "function": "most_used_child_stages_each_service_cancels_descendants_and_persists_options",
+            "line": 65,
+            "execution": "passed exact7c Linux",
+            "support_only": false
+          },
+          "filename_line": 184,
+          "observation": "Actual visible ComboBox caption is my tags; accepted list is parity:new2, parity:new10, parity:present, parity:. Instructions, edit-most-used and Apply/Cancel are readable. Source test selects actual popup before child editing and asserts host index, actual widget index, displayed caption and unchanged accepted list before PNG."
+        },
+        {
+          "path": "/workspace/validation-reviews/ci-7c3c1aac5/native-renders/suggested_tags_service_switch.png",
+          "sha256": "49ca39e5d622239ba819215a311632b64f694acdbc22d64d397cd81f5adfffe9",
+          "name": "suggested_tags_service_switch.png",
+          "dimensions": [
+            1100,
+            700
+          ],
+          "actually_viewed_fresh": true,
+          "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+          "run_id": 37447108755,
+          "artifact_id": 11406361462,
+          "producer": {
+            "source": "crates/hydrus-gui/tests/gui/manage_tags.rs",
+            "function": "switching_from_empty_service_restores_the_only_suggestion_page",
+            "line": 168,
+            "execution": "passed exact7c Linux",
+            "support_only": false
+          },
+          "filename_line": 246,
+          "observation": "Actual my tags service is highlighted and the Most Used notebook contains the same four accepted tags after repeated empty-service switches. Related/recent are deliberately disabled in this producer; Qt columns/recent reference is a different state. No width/layout/default-page/recent-Clear equivalence follows."
+        }
+      ],
+      "passing_tests": [
+        {
+          "source": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "function": "most_used_child_stages_each_service_cancels_descendants_and_persists_options",
+          "line": 65,
+          "execution": "passed exact7c Linux",
+          "support_only": false,
+          "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-7c3c1aac5/linux-full.log",
+              "line": 2300,
+              "text": "2026-10-06T10:28:39.3856982Z test options_window::most_used_child_stages_each_service_cancels_descendants_and_persists_options ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui/tests/gui/manage_tags.rs",
+          "function": "most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers",
+          "line": 35,
+          "execution": "passed exact7c Linux",
+          "support_only": false,
+          "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-7c3c1aac5/linux-full.log",
+              "line": 2203,
+              "text": "2026-10-06T10:27:44.5001029Z test manage_tags::most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui/tests/gui/manage_tags.rs",
+          "function": "switching_from_empty_service_restores_the_only_suggestion_page",
+          "line": 168,
+          "execution": "passed exact7c Linux",
+          "support_only": false,
+          "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-7c3c1aac5/linux-full.log",
+              "line": 2202,
+              "text": "2026-10-06T10:27:44.2383877Z test manage_tags::switching_from_empty_service_restores_the_only_suggestion_page ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui-model/tests/model/tag_suggestions.rs",
+          "function": "most_used_options_merge_per_service_and_reach_filtered_add_only_media",
+          "line": 76,
+          "execution": "passed exact7c Linux",
+          "support_only": false,
+          "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-7c3c1aac5/linux-full.log",
+              "line": 3175,
+              "text": "2026-10-06T10:30:44.7231073Z test tag_suggestions::most_used_options_merge_per_service_and_reach_filtered_add_only_media ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-7c3c1aac5/parity-models.log",
+              "line": 1905,
+              "text": "2026-10-06T10:05:34.4711161Z test tag_suggestions::most_used_options_merge_per_service_and_reach_filtered_add_only_media ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui-model/tests/model/tag_suggestions.rs",
+          "function": "broadcast_keeps_selected_tag_identity_but_switching_services_retires_selection",
+          "line": 178,
+          "execution": "passed exact7c Linux",
+          "support_only": false,
+          "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-7c3c1aac5/linux-full.log",
+              "line": 3167,
+              "text": "2026-10-06T10:30:44.2666525Z test tag_suggestions::broadcast_keeps_selected_tag_identity_but_switching_services_retires_selection ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-7c3c1aac5/parity-models.log",
+              "line": 1897,
+              "text": "2026-10-06T10:05:34.1860596Z test tag_suggestions::broadcast_keeps_selected_tag_identity_but_switching_services_retires_selection ... ok"
+            }
+          ]
+        }
+      ],
+      "prior_failure_resolution": {
+        "previous_source": "115d5532a0fa0fe9a937a23b556dfd3aed965175",
+        "previous_failure": "host my-tags index with downloader-tags actual caption after2seconds under callback-only selection",
+        "repair": "Actual measured standard dropdown pointer plus Down/Return input before backend/child actions; readonly getters observe widget state without setting its caption. Original2second bound and label/service/list assertions preserved.",
+        "existing_assertions_preserved": 661,
+        "additional_assertions": 9,
+        "actual_caption": "my tags"
+      },
+      "historical_validation_provenance": {
+        "superseded_preparation_gate_caveat": "No approval from application of the assertion patch. Full exact-source runtime pass and fresh visible my-tags label are mandatory; persistent mismatching label leaves the claim blocked. 115d2second failure disproved simple settling under the direct callback path; actual widget route remains unvalidated until fresh replay.",
+        "gate_resolution_note": "The preceding preparation gate caveat is preserved verbatim for provenance. Its exact7c runtime/fresh-caption prerequisites are now satisfied by passing log2300 and the inspected most-used-tags-options.png. This validates actual widget selection; it does not claim universal host-driven programmatic ComboBox projection or reinstate the disproved settling-only explanation for115d.",
+        "current_outcome": "Exact7c real dropdown input test passed, including original2second bound and unchanged owner/label/list assertions; inspected fresh PNG visibly shows my tags. Earlier115d callback-only failure remains historical evidence, not a pending gate."
+      }
+    },
+    {
+      "id": "exchange-login",
+      "manifest": "docs/rust/gui-coverage/parity/login-workflows.json",
+      "approval": true,
+      "validation_scope": "linux",
+      "caveats": [
+        "Finite registered-login mixed package semantics only. No direct Qt chooser/import/export UI screenshot or native login-containing import-review capture is available; Qt mixed_login_packages.png is encoded transport data and downloader-import.png is shared parser topology only.",
+        "Native component checkboxes differ from Qt separate Add dialogs; optional per-object import selection, domain metadata packages, clipboard bitmaps/drag ingestion and wider downloader/login/network parents remain outside this leaf.",
+        "Recorded script duplicate rules ignore name/key, regenerate script identity and retarget only existing matching-name example domains, preserving credentials/activation/validity/delays. New example domains remain unconfigured. Native retains nested dependency duplicate checks despite Qt repeated import adding a nested GUG after child identities regenerate.",
+        "No broad geometry/pixel parity is inferred from JSON/runtime evidence or the encoded Qt package bitmap. Exact7c native importer/exporter inspection and source-bound test success are validated; the supplemental parser review provides no login-containing import or direct Qt UI pairing.",
+        "Linux only; Windows/macOS deferred. No parent, alias, native-only or support-only completion credit."
+      ],
+      "basis": "Exact GUI replay imports the real Qt mixed PNG, reviews registered Login Script before save, checks Cancel and retired actions, accepted clipboard import, identity regeneration and reopened saved-script consumer, and verifies selected clipboard/JSON/PNG exports. Model and codec replays check actual Qt duplicate/link rules, concurrent domain preservation, saved secret exclusion and atomic malformed/stale rejection. Fresh native exporter and supplemental parser import review are legible. Approval is for these finite registered-login mixed package semantics with the absent same-state UI pairing explicitly retained.",
+      "native_images": [
+        {
+          "path": "/workspace/validation-reviews/ci-7c3c1aac5/native-renders/mixed-login-export.png",
+          "sha256": "f33f146b66243b29776ed31386154fc9659ba927e92bac215e62d9890f9548e0",
+          "name": "mixed-login-export.png",
+          "dimensions": [
+            880,
+            750
+          ],
+          "actually_viewed_fresh": true,
+          "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+          "run_id": 37447108755,
+          "artifact_id": 11406361462,
+          "producer": {
+            "source": "crates/hydrus-gui/tests/gui/downloader_interchange.rs",
+            "function": "mixed_registered_login_package_reviews_png_selects_dependencies_and_reopens_saved_scripts",
+            "line": 24,
+            "execution": "passed exact7c Linux",
+            "support_only": false
+          },
+          "filename_line": 144,
+          "observation": "Registered Login Script and nested GUG checkboxes are selected; rendered selected payload, Copy, PNG/JSON file controls, PNG saved notice and Cancel are readable. Random regenerated keys and temporary path prevent meaningful raw screenshot byte comparison across runs."
+        },
+        {
+          "path": "/workspace/validation-reviews/ci-7c3c1aac5/native-renders/downloader-import.png",
+          "sha256": "31af2d7627d5bad2fb6a19ba8f2c9913c4588de407f1aaf47e1068483543621f",
+          "name": "downloader-import.png",
+          "dimensions": [
+            880,
+            610
+          ],
+          "actually_viewed_fresh": true,
+          "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+          "run_id": 37447108755,
+          "artifact_id": 11406361462,
+          "producer": {
+            "source": "crates/hydrus-gui/tests/gui/downloader_interchange.rs",
+            "function": "package_reviews_real_png_cancel_and_invalid_input_before_atomic_apply",
+            "line": 180,
+            "execution": "passed exact7c Linux",
+            "support_only": true
+          },
+          "filename_line": 213,
+          "observation": "Shared parser-package review visibly reports one definition, zero duplicates, Parser: exchange page and enabled Import/back/Cancel. Supplemental importer topology only; it is not a login-containing import preview."
+        }
+      ],
+      "passing_tests": [
+        {
+          "source": "crates/hydrus-gui/tests/gui/downloader_interchange.rs",
+          "function": "mixed_registered_login_package_reviews_png_selects_dependencies_and_reopens_saved_scripts",
+          "line": 24,
+          "execution": "passed exact7c Linux",
+          "support_only": false,
+          "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-7c3c1aac5/linux-full.log",
+              "line": 2012,
+              "text": "2026-10-06T10:27:00.6599488Z test downloader_interchange::mixed_registered_login_package_reviews_png_selects_dependencies_and_reopens_saved_scripts ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui/tests/gui/downloader_interchange.rs",
+          "function": "package_reviews_real_png_cancel_and_invalid_input_before_atomic_apply",
+          "line": 180,
+          "execution": "passed exact7c Linux",
+          "support_only": true,
+          "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-7c3c1aac5/linux-full.log",
+              "line": 2013,
+              "text": "2026-10-06T10:27:00.6685123Z test downloader_interchange::package_reviews_real_png_cancel_and_invalid_input_before_atomic_apply ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui/tests/gui/downloader_interchange.rs",
+          "function": "dropping_the_final_exchange_owner_hides_and_invalidates_a_retained_window_handle",
+          "line": 432,
+          "execution": "passed exact7c Linux",
+          "support_only": false,
+          "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-7c3c1aac5/linux-full.log",
+              "line": 2008,
+              "text": "2026-10-06T10:27:00.2796140Z test downloader_interchange::dropping_the_final_exchange_owner_hides_and_invalidates_a_retained_window_handle ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui-model/tests/model/downloader_interchange.rs",
+          "function": "mixed_login_import_replays_qt_duplicates_links_and_saved_consumer_without_exporting_credentials",
+          "line": 64,
+          "execution": "passed exact7c Linux",
+          "support_only": false,
+          "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-7c3c1aac5/linux-full.log",
+              "line": 2777,
+              "text": "2026-10-06T10:30:30.2521662Z test downloader_interchange::mixed_login_import_replays_qt_duplicates_links_and_saved_consumer_without_exporting_credentials ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-7c3c1aac5/parity-models.log",
+              "line": 1510,
+              "text": "2026-10-06T10:05:24.8799473Z test downloader_interchange::mixed_login_import_replays_qt_duplicates_links_and_saved_consumer_without_exporting_credentials ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui-model/tests/model/downloader_interchange.rs",
+          "function": "mixed_login_cancel_malformed_and_stale_scripts_never_partially_save_downloaders",
+          "line": 180,
+          "execution": "passed exact7c Linux",
+          "support_only": false,
+          "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-7c3c1aac5/linux-full.log",
+              "line": 2776,
+              "text": "2026-10-06T10:30:30.1224689Z test downloader_interchange::mixed_login_cancel_malformed_and_stale_scripts_never_partially_save_downloaders ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-7c3c1aac5/parity-models.log",
+              "line": 1508,
+              "text": "2026-10-06T10:05:24.8400633Z test downloader_interchange::mixed_login_cancel_malformed_and_stale_scripts_never_partially_save_downloaders ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-downloader-exchange/tests/interchange.rs",
+          "function": "registered_mixed_login_package_preserves_json_png_rules_and_rejects_partial_decoding",
+          "line": 11,
+          "execution": "passed exact7c Linux",
+          "support_only": false,
+          "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-7c3c1aac5/linux-full.log",
+              "line": 1715,
+              "text": "2026-10-06T10:25:51.1604453Z test registered_mixed_login_package_preserves_json_png_rules_and_rejects_partial_decoding ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-7c3c1aac5/parity-models.log",
+              "line": 1331,
+              "text": "2026-10-06T10:05:21.6198591Z test registered_mixed_login_package_preserves_json_png_rules_and_rejects_partial_decoding ... ok"
+            }
+          ]
+        }
+      ],
+      "same_state_visual_pair_available": false,
+      "visual_approval_scope": "Actual native control legibility/topology plus encoded reference transport/semantic replay; no broad Qt/native geometry or pixel parity.",
+      "historical_validation_provenance": {
+        "superseded_preparation_gate_caveat": "No broad geometry/pixel parity is inferred from JSON/runtime evidence or the encoded Qt package bitmap. Fresh actual importer/exporter inspection and source-bound test success are mandatory.",
+        "gate_resolution_note": "The fresh importer/exporter inspection and exact-source success gates stated above are now satisfied. The supplemental parser import image does not supply a missing login-containing import preview or direct Qt UI pair.",
+        "current_outcome": "Exact7c importer/exporter images were actually inspected and focused GUI/model/codec tests passed. Direct matching Qt UI and native login-containing import-review captures remain absent."
+      }
+    }
+  ],
+  "selected_count": 2,
+  "approved_count": 2,
+  "parent_alias_support_credit": 0,
+  "canonical_edits": false,
+  "builds_run": false,
+  "banked301_unchanged": true,
+  "frozen_reference_denominator": 1812,
+  "future_thumbnail_proposal_unapplied": true,
+  "ci": {
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "check",
+        "id": 112214498612,
+        "conclusion": "success"
+      },
+      {
+        "name": "parity-models",
+        "id": 112214498972,
+        "conclusion": "success"
+      }
+    ],
+    "strict_clippy": "check clippy step success",
+    "parity_ratchet": "check parity ratchet step success",
+    "gui_tests": {
+      "passed": 697,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 219.79
+    },
+    "media_tests": {
+      "passed": 67,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 1.01
+    },
+    "native_png_count": 274,
+    "zip_sha256": "71a8b279207b3d5bfabe1cba076b684a3999908e5cf659993df1fc1e6ee338e5"
+  },
+  "actual_fresh_images_reviewed": [
+    {
+      "path": "/workspace/validation-reviews/ci-7c3c1aac5/native-renders/most-used-tags-options.png",
+      "sha256": "8bde7e8c11eaddd7171ee0b60812280acbc341bc19f4069d5ac93b613f4c57f1",
+      "name": "most-used-tags-options.png",
+      "dimensions": [
+        520,
+        440
+      ],
+      "actually_viewed_fresh": true,
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "run_id": 37447108755,
+      "artifact_id": 11406361462,
+      "producer": {
+        "source": "crates/hydrus-gui/tests/gui/options_window.rs",
+        "function": "most_used_child_stages_each_service_cancels_descendants_and_persists_options",
+        "line": 65,
+        "execution": "passed exact7c Linux",
+        "support_only": false
+      },
+      "filename_line": 184,
+      "observation": "Actual visible ComboBox caption is my tags; accepted list is parity:new2, parity:new10, parity:present, parity:. Instructions, edit-most-used and Apply/Cancel are readable. Source test selects actual popup before child editing and asserts host index, actual widget index, displayed caption and unchanged accepted list before PNG."
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-7c3c1aac5/native-renders/suggested_tags_service_switch.png",
+      "sha256": "49ca39e5d622239ba819215a311632b64f694acdbc22d64d397cd81f5adfffe9",
+      "name": "suggested_tags_service_switch.png",
+      "dimensions": [
+        1100,
+        700
+      ],
+      "actually_viewed_fresh": true,
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "run_id": 37447108755,
+      "artifact_id": 11406361462,
+      "producer": {
+        "source": "crates/hydrus-gui/tests/gui/manage_tags.rs",
+        "function": "switching_from_empty_service_restores_the_only_suggestion_page",
+        "line": 168,
+        "execution": "passed exact7c Linux",
+        "support_only": false
+      },
+      "filename_line": 246,
+      "observation": "Actual my tags service is highlighted and the Most Used notebook contains the same four accepted tags after repeated empty-service switches. Related/recent are deliberately disabled in this producer; Qt columns/recent reference is a different state. No width/layout/default-page/recent-Clear equivalence follows."
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-7c3c1aac5/native-renders/mixed-login-export.png",
+      "sha256": "f33f146b66243b29776ed31386154fc9659ba927e92bac215e62d9890f9548e0",
+      "name": "mixed-login-export.png",
+      "dimensions": [
+        880,
+        750
+      ],
+      "actually_viewed_fresh": true,
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "run_id": 37447108755,
+      "artifact_id": 11406361462,
+      "producer": {
+        "source": "crates/hydrus-gui/tests/gui/downloader_interchange.rs",
+        "function": "mixed_registered_login_package_reviews_png_selects_dependencies_and_reopens_saved_scripts",
+        "line": 24,
+        "execution": "passed exact7c Linux",
+        "support_only": false
+      },
+      "filename_line": 144,
+      "observation": "Registered Login Script and nested GUG checkboxes are selected; rendered selected payload, Copy, PNG/JSON file controls, PNG saved notice and Cancel are readable. Random regenerated keys and temporary path prevent meaningful raw screenshot byte comparison across runs."
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-7c3c1aac5/native-renders/downloader-import.png",
+      "sha256": "31af2d7627d5bad2fb6a19ba8f2c9913c4588de407f1aaf47e1068483543621f",
+      "name": "downloader-import.png",
+      "dimensions": [
+        880,
+        610
+      ],
+      "actually_viewed_fresh": true,
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "run_id": 37447108755,
+      "artifact_id": 11406361462,
+      "producer": {
+        "source": "crates/hydrus-gui/tests/gui/downloader_interchange.rs",
+        "function": "package_reviews_real_png_cancel_and_invalid_input_before_atomic_apply",
+        "line": 180,
+        "execution": "passed exact7c Linux",
+        "support_only": true
+      },
+      "filename_line": 213,
+      "observation": "Shared parser-package review visibly reports one definition, zero duplicates, Parser: exchange page and enabled Import/back/Cancel. Supplemental importer topology only; it is not a login-containing import preview."
+    }
+  ],
+  "reference_images_actually_reviewed": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/tag_suggestions.png",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "7e4677c6bd7ebc413f48b6fe22bad5c74876815304f3b7c06e71a00a3921a5d3",
+      "committed_blob_match": true,
+      "actually_viewed": true,
+      "dimensions": [
+        740,
+        400
+      ],
+      "role": "qt_ui_capture",
+      "actually_viewed_in_final_review": true,
+      "observation": "Real Qt Most Used/recent columns after activation, Unicode remaining tag and recent Clear. Different consumer/layout/draft state than the native editor/notebook; font metrics and arrangements differ, and no whole-panel pixel match is claimed."
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/mixed_login_packages.png",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "4b12aca81d97d2d5203b800de1f4f36b92b3abb00e47db84a1dd1d8de70c9873",
+      "committed_blob_match": true,
+      "actually_viewed": true,
+      "dimensions": [
+        512,
+        174
+      ],
+      "role": "encoded_reference_package_input_not_UI",
+      "actually_viewed_in_final_review": true,
+      "observation": "Encoded PNG transport/title bitmap lists Login Script and downloader package components; it is not a Qt chooser/import/export UI screenshot."
+    }
+  ],
+  "source_inputs": [
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/tag-suggestions.json",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "5c216b8ef5a906b691e60f9899e05e5b57f07da6cea5c68cf6fffc1c51e8d312",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/login-workflows.json",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "72ea6437d5309bee2faed58ab873ecefa94f8d9599a73cad8ee6ea92e72d4f8c",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/tag_suggestions_window.rs",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "3e84a24e8a498f154ca7c2cf8cb528bb624b4208522c416668254678c240105c",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/tag_suggestions.slint",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "35865ee4d39a68ff2e82eef06935ad93c5acb04112baf8a1a3dae7686b0d6a78",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/headless.rs",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "c366399b1f509ea4859dd2e566a6e6a2b73d86ee6581aa34434fc5a16fc4bef7",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/manage_tags_window.rs",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "35d5ad952782e58e118d37ad092fa1a61de63980d24bede16086e30062e13297",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/downloader_interchange_window.rs",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "64178bc971c20f1170d78bff0eab21cb4df6ce2e3a50a41837e1e35be3e7d4c9",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/downloader_interchange.slint",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "3b6b20b8c3054d2db073ad21792fb2080a1fe58dbea4d48a3b1f51d375ad1651",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/src/downloader_interchange.rs",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "6f2b0087120a2410dd6816d7c7f6f9046d9e036b866e7b3e68b9403faa521d00",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-downloader-exchange/src/lib.rs",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "4d7fc74fec8f85d5a33eb33f408aadb5776c0c252c2beac5213c3d124d418ead",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-store/src/logins.rs",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "b75bb1315960151d63a16c2d62c6e712f3e745d16d03fd3bf2c1eba987c6243d",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_tag_suggestions.py",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "4b4df8694cc624e57afb01d7451bde742097a0d9aff4bc6d253af80df1b119b3",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/tag_suggestions.json",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "81f5e4270fdc7a3c1a31908c12cc4fa3af9b334735479b5e04fdef9378197fc6",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/tag_suggestions.png",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "7e4677c6bd7ebc413f48b6fe22bad5c74876815304f3b7c06e71a00a3921a5d3",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_mixed_login_packages.py",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "7515299537f6ff3e145efa0b518726dc533f8efb62b2f7879eead006c85a7caf",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/mixed_login_packages.json",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "97695f5224645a4f356c7346da32c7ef998c3d74ff3ea5a7806c3b1cc02c15c2",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/mixed_login_packages.png",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "4b12aca81d97d2d5203b800de1f4f36b92b3abb00e47db84a1dd1d8de70c9873",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/.github/workflows/rust.yml",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "48c773539eff907d73b5c868020272ea9938e397829ef81a1345fe1d2ffe927f",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/options_window.rs",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "207963c5ddef75d954d72265c0fee853ccb9921a745021f2c9361c56360560dc",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/manage_tags.rs",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "f9d8a74acddab7df47c7ea5b93c98cc9dd76d22691693ae1ff6fc856362409db",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/tag_suggestions.rs",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "94242872c3e5cde3f6df62b662ee4118d820c30102886f6d8ff3eec77cb01abe",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/downloader_interchange.rs",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "00293455905d4886397e5229d2f017298daca53212c2ed6e64180526ff97eef8",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/downloader_interchange.rs",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "a9ca503c6e678ccb4a25346caf567c623f3e25d3038e4743a1ff3360c8a68b4b",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-downloader-exchange/tests/interchange.rs",
+      "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+      "sha256": "e4c123e7c70e98dc2ad1725b0b625ffd5870d4758992eebb350715178431aa0f",
+      "committed_blob_match": true
+    }
+  ],
+  "input_hashes": [
+    {
+      "path": "/workspace/validation-reviews/ci-7c3c1aac5/native-render-manifest.json",
+      "sha256": "e1726269a18e1c94eb4ca253495df7d5c3555e171191876e67b99cd2b765604d"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-7c3c1aac5/ci-evidence.json",
+      "sha256": "2816fbf12b5604055b0b344080d39a9104b8cb00a50b9013efdd15e3ad5eaa4f"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-7c3c1aac5/validation-outcome.json",
+      "sha256": "b2ce99b71ecbf707b2e997150cd804b01fd9e0621c1d1211cfd0de4f0d38a39e"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-7c3c1aac5/linux-full.log",
+      "sha256": "6123222b18b74892186700ac0a0a0663f1d4b5ec31198409d8fdf4bdfd97fc36"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-7c3c1aac5/parity-models.log",
+      "sha256": "55ad518f3782e94b84a0d78b2a8b7417d8813dacc7198ab12363f82776e1eac3"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-7c3c1aac5/clippy.log",
+      "sha256": "427593ae85350f5d281e2a35468ba8f1c8d56323ec424add881d9aecf05be463"
+    },
+    {
+      "path": "/workspace/validation-reviews/next18-review2-prep-7c3c1aac5.json",
+      "sha256": "e0ebf7b227d6574cfbac8c2dd25de1f76c971b55aca4c675a65aabe5c18f934d"
+    }
+  ],
+  "remaining_independent_review_blockers": [],
+  "central_publication_gate": "Root must still perform exact selected packet/anchor/count/preservation checks. This scratch review changes no status, credit, parent, alias, support-only or canonical object."
+}

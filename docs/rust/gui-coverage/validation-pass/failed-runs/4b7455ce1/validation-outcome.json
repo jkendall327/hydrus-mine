@@ -1,0 +1,30 @@
+{
+  "source_commit": "4b7455ce1077c34e505577807de496b162f2f999",
+  "run_id": 37433258092,
+  "conclusion": "failure",
+  "validation_scope": "linux",
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "gui_tests": {
+    "passed": 696,
+    "failed": 0,
+    "ignored": 0,
+    "runtime_seconds": 217.64
+  },
+  "media_unit_tests": {
+    "passed": 66,
+    "failed": 1,
+    "failure": "ffmpeg::deadline_tests::version_deadline_is_captured_once_and_explicit_fixed_configuration_wins",
+    "message": "real subprocess must publish its PID"
+  },
+  "compile_seconds": {
+    "clippy": 614,
+    "test_profile": 728
+  },
+  "workspace_snapshot_reused": false,
+  "snapshot_rejection": "input paths added/deleted; reject workspace snapshot",
+  "publication_eligible": false,
+  "native_image_count": 266
+}

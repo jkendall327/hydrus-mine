@@ -1,0 +1,156 @@
+[
+  {
+    "manifest": "docs/rust/gui-coverage/parity/auto-resolution-approval-progress.json",
+    "id": "audit-media-review-progress",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Four-second popup admission is checked only before chunks, so one long chunk has no timely popup; authored model assertions cover strings, not this timing. Worker failure currently removes all requested rows as success (root repair in progress)."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/content-undo.json",
+    "id": "audit-options-undo-manager-undo-last-content-operation",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "No actual reference content-undo recording found; authored strings/archive Store replay do not assert actual ManageTags undo/redo or native consumer refresh."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/content-undo.json",
+    "id": "audit-options-undo-manager-redo-last-content-operation",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "No actual reference content-undo recording found; authored strings/archive Store replay do not assert actual ManageTags undo/redo or native consumer refresh."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance-cacheless.json",
+    "id": "audit-media-menu-database-check-and-repair-repopulate-truncated-mappings-tables",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Clean-client question/no-op popup replay does not validate original repair/regeneration semantics or actual native cancellation/current-question ownership; callbacks can accept after cancel/replacement."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance-cacheless.json",
+    "id": "audit-media-menu-database-check-and-repair-resync-combined-deleted-files",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Clean-client question/no-op popup replay does not validate original repair/regeneration semantics or actual native cancellation/current-question ownership; callbacks can accept after cancel/replacement."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance-cacheless.json",
+    "id": "audit-media-menu-database-clear-orphan-hashed-serialisables",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Clean-client question/no-op popup replay does not validate original repair/regeneration semantics or actual native cancellation/current-question ownership; callbacks can accept after cancel/replacement."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance-cacheless.json",
+    "id": "audit-media-menu-database-regenerate-local-hashes-cache",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Clean-client question/no-op popup replay does not validate original repair/regeneration semantics or actual native cancellation/current-question ownership; callbacks can accept after cancel/replacement."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance-cacheless.json",
+    "id": "audit-media-menu-database-regenerate-local-tags-cache",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Clean-client question/no-op popup replay does not validate original repair/regeneration semantics or actual native cancellation/current-question ownership; callbacks can accept after cancel/replacement."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance-cacheless.json",
+    "id": "audit-media-menu-database-regenerate-service-info-numbers",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Clean-client question/no-op popup replay does not validate original repair/regeneration semantics or actual native cancellation/current-question ownership; callbacks can accept after cancel/replacement."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance-cacheless.json",
+    "id": "audit-media-menu-database-regenerate-similar-files-search-tree",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Clean-client question/no-op popup replay does not validate original repair/regeneration semantics or actual native cancellation/current-question ownership; callbacks can accept after cancel/replacement."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/database-maintenance-cacheless.json",
+    "id": "audit-media-menu-database-regenerate-total-pending-count-in-the-pending-menu",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Clean-client question/no-op popup replay does not validate original repair/regeneration semantics or actual native cancellation/current-question ownership; callbacks can accept after cancel/replacement."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/duplicate-filter-prefetch-control.json",
+    "id": "audit-options-speed-and-memory-image-prefetch-num-pairs-to-prefetch-in-duplicate-filter",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Generic viewer-prefetch fixture retains duplicate_pairs unchanged; no edited pair-count bounds/Cancel/reopen or real duplicate-filter prefetch consumer assertion found."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/idle-scheduling-consumers.json",
+    "id": "audit-media-menu-database-work-file-jobs-during-idle-time",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Source reads idle marker and chooses gates, but no reference-backed execution asserts each original similar-search/file-jobs/auto-resolution worker consumer across idle/normal transitions."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/idle-scheduling-consumers.json",
+    "id": "audit-media-preparation-scheduling",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Source reads idle marker and chooses gates, but no reference-backed execution asserts each original similar-search/file-jobs/auto-resolution worker consumer across idle/normal transitions."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/idle-scheduling-consumers.json",
+    "id": "audit-media-rule-sidebar-scheduling",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Source reads idle marker and chooses gates, but no reference-backed execution asserts each original similar-search/file-jobs/auto-resolution worker consumer across idle/normal transitions."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/shutdown-maintenance.json",
+    "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-shutdown-run-jobs-on-shutdown",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Explicit maintenance Cancel currently registers work and exits contrary to Python was_cancelled return; maintenance timer is forgotten and retired child unguarded. Model tests use authored strings; native relaunch/control consumer assertions missing."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/shutdown-maintenance.json",
+    "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-shutdown-only-run-shutdown-jobs-once-per",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Explicit maintenance Cancel currently registers work and exits contrary to Python was_cancelled return; maintenance timer is forgotten and retired child unguarded. Model tests use authored strings; native relaunch/control consumer assertions missing."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/shutdown-maintenance.json",
+    "id": "audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-shutdown-max-number-of-minutes-to-run-shutdown-jobs",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Explicit maintenance Cancel currently registers work and exits contrary to Python was_cancelled return; maintenance timer is forgotten and retired child unguarded. Model tests use authored strings; native relaunch/control consumer assertions missing."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/shutdown-maintenance.json",
+    "id": "audit-options-menu-menu-file-exit-force-maintenance",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Explicit maintenance Cancel currently registers work and exits contrary to Python was_cancelled return; maintenance timer is forgotten and retired child unguarded. Model tests use authored strings; native relaunch/control consumer assertions missing."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/shutdown-maintenance.json",
+    "id": "audit-options-menu-menu-file-restart",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Explicit maintenance Cancel currently registers work and exits contrary to Python was_cancelled return; maintenance timer is forgotten and retired child unguarded. Model tests use authored strings; native relaunch/control consumer assertions missing."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/thumbnail-maintenance.json",
+    "id": "audit-media-context-missing-maintenance",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native selected-maintenance drains arbitrary same-type global backlog; both maintenance/stats questions accept retained affirmative callbacks after cancel. Model tests cover labels/questions only, not native selected IDs/cancel/reopen."
+  },
+  {
+    "manifest": "docs/rust/gui-coverage/parity/thumbnail-maintenance.json",
+    "id": "audit-media-context-missing-stats",
+    "status": "partial",
+    "countAsCompletedLeaf": false,
+    "reason": "Native selected-maintenance drains arbitrary same-type global backlog; both maintenance/stats questions accept retained affirmative callbacks after cancel. Model tests cover labels/questions only, not native selected IDs/cancel/reopen."
+  }
+]

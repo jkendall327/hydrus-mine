@@ -1,0 +1,25 @@
+{
+  "stable_fixture_sha256": "a2a98ec2ec6434b7cd5c72d4714c12d4482f23d37d5deec4eace6a1e974083e9",
+  "production_prefix_unchanged": true,
+  "cases": [
+    {
+      "args": [
+        "-version"
+      ],
+      "pid_marker_matched": true,
+      "fifo_completed": true,
+      "stdout": "ffmpeg version authored Copyright local\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "-i",
+        "authored"
+      ],
+      "pid_marker_matched": true,
+      "fifo_completed": true,
+      "stdout": "",
+      "stderr": "ffmpeg version authored\nInput #0, authored, from local:\n"
+    }
+  ]
+}

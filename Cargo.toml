@@ -14,6 +14,7 @@ repository = "https://github.com/jkendall327/hydrus-mine"
 # internal
 hydrus-core = { path = "crates/hydrus-core" }
 hydrus-gui-model = { path = "crates/hydrus-gui-model" }
+hydrus-gui-ui = { path = "crates/hydrus-gui-ui" }
 hydrus-legacy = { path = "crates/hydrus-legacy" }
 hydrus-parse = { path = "crates/hydrus-parse" }
 hydrus-store = { path = "crates/hydrus-store" }
@@ -27,6 +28,8 @@ hydrus-api = { path = "crates/hydrus-api" }
 hydrus-testkit = { path = "crates/hydrus-testkit" }
 
 # external
+slint = { version = "1.18", default-features = false, features = ["std", "compat-1-2", "backend-winit", "renderer-software", "unstable-winit-030"] }
+slint-build = "1.18"
 anyhow = "1"
 thiserror = "2"
 serde = { version = "1", features = ["derive"] }

@@ -347,7 +347,7 @@ fn whole_cell_snapshots_exact_default_threshold_interruptions_and_cached_revisit
         true,
         false,
     );
-    assert!((thumbnail.fade_opacity-.5).abs()<1e-5);
+    assert!((thumbnail.fade_opacity - 0.5).abs() < 1e-5);
     paints.dirty(HashId(1));
     paint.bottom = "interrupted".into();
     paints.decorate(
@@ -477,6 +477,11 @@ fn exit_cancel_preserves_nonempty_background_and_accepted_exit_permanently_clear
         .write(|ctx| {
             let mut gui: hydrus_store::settings::GuiSettings = settings::get(ctx.conn())?;
             gui.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(ctx.conn(), &shutdown)?;
             settings::set(ctx.conn(), &gui)
         })
         .unwrap();

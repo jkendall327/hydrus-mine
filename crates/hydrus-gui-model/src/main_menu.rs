@@ -1922,17 +1922,46 @@ mod tests {
     fn closed_pages_are_offered_latest_first() {
         let mut facts = facts();
         facts.closed_pages = vec!["first".into(), "second".into()];
-        let menus = menubar(&facts);
-        let undo = &menus[1];
-        assert!(undo.usable());
-        assert_eq!(
-            entry_at(&menus, &[1, 0, 2]),
-            Some(&item("second", Command::Unclose(1)))
-        );
-        assert_eq!(
-            entry_at(&menus, &[1, 0, 3]),
-            Some(&item("first", Command::Unclose(0)))
-        );
+        for (undo, redo) in [
+            (None, None),
+            (Some("undo tags".to_owned()), Some("redo tags".to_owned())),
+        ] {
+            facts.undo = undo;
+            facts.redo = redo;
+            let menus = menubar(&facts);
+            assert!(menus[1].usable());
+            let Entry::Menu { entries, .. } = &menus[1] else {
+                panic!()
+            };
+            if facts.undo.is_some() {
+                assert_eq!(
+                    labels(entries),
+                    ["undo tags", "redo tags", "", "closed pages"]
+                );
+            } else {
+                assert_eq!(labels(entries), ["closed pages"]);
+            }
+            let closed = entries
+                .iter()
+                .find(|entry| entry.label() == "closed pages")
+                .unwrap();
+            assert!(closed.usable());
+            let Entry::Menu {
+                entries: closed, ..
+            } = closed
+            else {
+                panic!()
+            };
+            assert_eq!(
+                closed,
+                &vec![
+                    item(dots("clear all"), Command::ClearClosedPages),
+                    SEP,
+                    item("second", Command::Unclose(1)),
+                    item("first", Command::Unclose(0)),
+                ]
+            );
+        }
         // with none, the menu is disabled
         assert!(!menubar(&Facts::default())[1].usable());
     }
@@ -2092,7 +2121,7 @@ mod tests {
         );
         assert_eq!(
             view[0].lines[8],
-            ("restart".to_owned(), LineKind::Item, false, false)
+            ("restart".to_owned(), LineKind::Item, true, false)
         );
         open.hover(0, 2, 150.0, 40.0, 10.0);
         let view = open.view();
@@ -2126,9 +2155,35 @@ mod tests {
     #[test]
     fn clicking_an_entry_chooses_it_unless_it_cannot_be() {
         let mut open = OpenMenus::default();
+        open.open(
+            vec![menu(
+                "availability",
+                vec![
+                    todo("unsupported"),
+                    Entry::Item {
+                        label: "disabled".into(),
+                        command: Some(Command::Restart),
+                        enabled: false,
+                    },
+                    SEP,
+                    item("restart", Command::Restart),
+                ],
+            )],
+            0,
+            0.0,
+            22.0,
+        );
+        for index in 0..3 {
+            assert_eq!(open.click(0, index, 0.0, 0.0, 0.0), None);
+            assert!(
+                open.is_open(),
+                "unavailable entries and separators do nothing"
+            );
+        }
         open.open(menubar(&facts()), 0, 0.0, 22.0);
-        assert_eq!(open.click(0, 8, 0.0, 0.0, 0.0), None);
-        assert!(open.is_open(), "a greyed out entry does nothing");
+        assert_eq!(open.click(0, 8, 0.0, 0.0, 0.0), Some(Command::Restart));
+        assert!(!open.is_open(), "choosing restart closes its menu");
+        open.open(menubar(&facts()), 0, 0.0, 22.0);
         assert_eq!(open.click(0, 4, 100.0, 50.0, 0.0), None);
         assert_eq!(open.view().len(), 2, "a submenu opens");
         assert_eq!(
@@ -2211,8 +2266,17 @@ mod tests {
     fn entries_hydrus_rs_cannot_do_are_not_usable() {
         let menus = menubar(&facts());
         let restart = entry_at(&menus, &[0, 8]).unwrap();
-        assert_eq!(restart.label(), "restart");
-        assert!(!restart.usable());
+        assert_eq!(restart, &item("restart", Command::Restart));
+        assert!(restart.usable());
+        let Entry::Menu { entries: help, .. } = &menus[7] else {
+            panic!()
+        };
+        let unsupported = help
+            .iter()
+            .find(|entry| entry.label() == dots("add the PTR"))
+            .unwrap();
+        assert_eq!(unsupported, &todo(dots("add the PTR")));
+        assert!(!unsupported.usable());
         let exit = entry_at(&menus, &[0, 10]).unwrap();
         assert_eq!(exit.label(), "exit");
         assert!(exit.usable());

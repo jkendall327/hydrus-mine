@@ -15,6 +15,11 @@ fn cancel_hidden_answer_and_accepted_close_respect_the_live_main_binding() {
         .write(|ctx| {
             let mut preferences: GuiSettings = settings::get(ctx.conn())?;
             preferences.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(ctx.conn(), &shutdown)?;
             settings::set(ctx.conn(), &preferences)
         })
         .unwrap();

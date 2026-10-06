@@ -253,6 +253,21 @@ pub fn switch_fullscreen(window: &slint::Window, maximised_before: &std::cell::C
     }
 }
 
+/// Logical size of the owner's current native monitor for cache estimates.
+pub(crate) fn display_size(window: &slint::Window) -> Option<(u64, u64)> {
+    window
+        .with_winit_window(|native| {
+            native
+                .current_monitor()
+                .or_else(|| native.primary_monitor())
+                .map(|monitor| {
+                    let size = monitor.size().to_logical::<f64>(monitor.scale_factor());
+                    (size.width as u64, size.height as u64)
+                })
+        })
+        .flatten()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -364,19 +379,4 @@ mod tests {
         );
         owner.hide().unwrap();
     }
-}
-
-/// Logical size of the owner's current native monitor for cache estimates.
-pub(crate) fn display_size(window: &slint::Window) -> Option<(u64, u64)> {
-    window
-        .with_winit_window(|native| {
-            native
-                .current_monitor()
-                .or_else(|| native.primary_monitor())
-                .map(|monitor| {
-                    let size = monitor.size().to_logical::<f64>(monitor.scale_factor());
-                    (size.width as u64, size.height as u64)
-                })
-        })
-        .flatten()
 }

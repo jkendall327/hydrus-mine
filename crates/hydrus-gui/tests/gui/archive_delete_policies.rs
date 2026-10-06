@@ -32,7 +32,7 @@ fn setup() -> (
         .unwrap()
         .iter()
         .map(|d| {
-            let key: ServiceKey = d["key"].as_str().unwrap().parse().unwrap();
+            let key = ServiceKey::from_hex(d["key"].as_str().unwrap()).unwrap();
             store.snapshot().services.by_key(&key).unwrap().id
         })
         .collect();

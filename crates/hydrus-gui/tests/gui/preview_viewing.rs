@@ -367,6 +367,11 @@ fn saved_preview_options_reach_open_display_duration_cap_cancel_and_confirmed_cl
         .write(|ctx| {
             let mut settings: hydrus_store::settings::GuiSettings = settings::get(ctx.conn())?;
             settings.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(ctx.conn(), &shutdown)?;
             settings::set(ctx.conn(), &settings)
         })
         .unwrap();

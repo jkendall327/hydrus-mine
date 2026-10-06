@@ -30,7 +30,7 @@ fn set(store: &Store, enabled: bool) {
 }
 fn expected(enabled: bool) -> Vec<u8> {
     let fixture = hydrus_testkit::fixture_json("image_decoder_policies.json");
-    let case = &fixture["cases"][if enabled { 0 } else { 1 }];
+    let case = &fixture["cases"][usize::from(!enabled)];
     let row = case["decode"]
         .as_array()
         .unwrap()
@@ -39,7 +39,7 @@ fn expected(enabled: bool) -> Vec<u8> {
         .unwrap();
     serde_json::from_value(row["pixels"].clone()).unwrap()
 }
-fn rgb(image: slint::Image) -> Vec<u8> {
+fn rgb(image: &slint::Image) -> Vec<u8> {
     image.to_rgba8().map_or_else(Vec::new, |pixels| {
         pixels
             .as_bytes()
@@ -126,6 +126,48 @@ fn query_select(ui: &MainWindow, bound: &hydrus_gui::Bound, file: HashId) -> i32
     ui.invoke_thumbnail_clicked(index, false, false);
     index
 }
+// Re-entering an active Everything predicate removes it. Refresh the owned
+// query without changing its predicates, location, or full result membership.
+fn refresh_select(ui: &MainWindow, bound: &hydrus_gui::Bound, file: HashId) -> i32 {
+    let current = bound.current.borrow().clone();
+    let predicates = current.borrow().predicates();
+    assert_eq!(predicates, vec!["system:everything".to_owned()]);
+    let location = current.borrow().location().clone();
+    let mut files = current.borrow().results().to_vec();
+    files.sort();
+    assert!(
+        files.contains(&file),
+        "owned query retains the requested file"
+    );
+    ui.invoke_refresh_page();
+    assert_eq!(current.borrow().predicates(), predicates);
+    assert_eq!(current.borrow().location(), &location);
+    let mut refreshed = current.borrow().results().to_vec();
+    refreshed.sort();
+    assert_eq!(refreshed, files, "Refresh preserves owned query membership");
+    let index = current
+        .borrow()
+        .results()
+        .iter()
+        .position(|id| *id == file)
+        .unwrap();
+    let index = i32::try_from(index).unwrap();
+    ui.invoke_thumbnail_clicked(index, false, false);
+    index
+}
+// A visible owner also needs a measured native preview viewport before SetMedia.
+fn settle_viewport(ui: &MainWindow, bound: &hydrus_gui::Bound, windows: &headless::Windows) {
+    assert!(ui.window().is_visible());
+    let native = windows.get(0).unwrap();
+    for _ in 0..3 {
+        headless::render(&native, 1400, 1000);
+    }
+    bound.preview.refresh();
+    assert!(ui.get_layout_available_width() > 0.0);
+    assert!(ui.get_sidebar_actual_width() > 0.0);
+    assert!(ui.get_preview_actual_height() > 0.0);
+    assert!(!ui.get_preview_splitter_hidden());
+}
 fn rect(window: &MediaViewerWindow) -> [f32; 4] {
     [
         window.get_media_x(),
@@ -149,10 +191,11 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
         let now = now.clone();
         move || now.get()
     }));
+    settle_viewport(&ui, &bound, &windows);
     let index = query_select(&ui, &bound, file);
     wait(|| {
         bound.preview.refresh();
-        rgb(ui.get_preview_media()) == expected(true)
+        rgb(&ui.get_preview_media()) == expected(true)
     });
     let (cancel, row) = options(&ui, &bound);
     cancel.invoke_check_toggled(row, false);
@@ -187,10 +230,16 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
     edit.invoke_apply();
     wait(|| {
         bound.preview.refresh();
-        rgb(ui.get_preview_media()) == expected(false)
+        rgb(&ui.get_preview_media()) == expected(false)
     });
-    assert_eq!(rgb(viewer.get_media()), expected(false));
-    assert_eq!(rect(&viewer), before_rect, "ICC reload preserves zoom/pan");
+    assert_eq!(rgb(&viewer.get_media()), expected(false));
+    #[expect(
+        clippy::float_cmp,
+        reason = "ICC repaint must preserve accepted geometry exactly; no new layout is requested"
+    )]
+    {
+        assert_eq!(rect(&viewer), before_rect, "ICC reload preserves zoom/pan");
+    }
     wait(|| viewer.get_sharp_shown());
     let raster = hydrus_media::decode_image_with_icc(
         &std::fs::read(hydrus_testkit::fixture_path(
@@ -216,11 +265,11 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
     .unwrap();
     let tile = hydrus_gui::still::render(&raster, &plan);
     assert_eq!(
-        rgb(viewer.get_sharp()),
+        rgb(&viewer.get_sharp()),
         tile.data(),
         "sharp pixels must use the new profile policy"
     );
-    assert_eq!(rgb(ui.get_preview_media()), expected(false));
+    assert_eq!(rgb(&ui.get_preview_media()), expected(false));
     let render = headless::render(&native, 800, 600);
     headless::save_png(
         &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("icc-viewer-policy-native.png"),
@@ -233,17 +282,23 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
     viewer.hide().unwrap();
     set(&store, true);
     viewer.invoke_presentation_settings_changed();
-    assert_eq!(rgb(viewer.get_media()), expected(false));
+    assert_eq!(rgb(&viewer.get_media()), expected(false));
     viewer.show().unwrap();
     viewer.invoke_presentation_settings_changed();
-    assert_eq!(rgb(viewer.get_media()), expected(true));
-    assert_eq!(rect(&viewer), before_rect);
+    assert_eq!(rgb(&viewer.get_media()), expected(true));
+    #[expect(
+        clippy::float_cmp,
+        reason = "ICC repaint must preserve accepted geometry exactly; no new layout is requested"
+    )]
+    {
+        assert_eq!(rect(&viewer), before_rect);
+    }
     viewer.invoke_close_requested();
     viewer.show().unwrap();
     set(&store, false);
     viewer.invoke_presentation_settings_changed();
     assert_eq!(
-        rgb(viewer.get_media()),
+        rgb(&viewer.get_media()),
         expected(true),
         "retired viewer cannot repaint"
     );
@@ -255,7 +310,7 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
         .as_ref()
         .unwrap()
         .clone_strong();
-    assert_eq!(rgb(archive.get_media()), expected(false));
+    assert_eq!(rgb(&archive.get_media()), expected(false));
     let before = [
         archive.get_media_x(),
         archive.get_media_y(),
@@ -263,16 +318,22 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
         archive.get_media_height(),
     ];
     set(&store, true);
-    wait(|| rgb(archive.get_media()) == expected(true));
-    assert_eq!(
-        [
-            archive.get_media_x(),
-            archive.get_media_y(),
-            archive.get_media_width(),
-            archive.get_media_height()
-        ],
-        before
-    );
+    wait(|| rgb(&archive.get_media()) == expected(true));
+    #[expect(
+        clippy::float_cmp,
+        reason = "ICC repaint must preserve accepted geometry exactly; no new layout is requested"
+    )]
+    {
+        assert_eq!(
+            [
+                archive.get_media_x(),
+                archive.get_media_y(),
+                archive.get_media_width(),
+                archive.get_media_height()
+            ],
+            before
+        );
+    }
     archive.invoke_close_requested();
     // Global hide rejects SetMedia but not ICC cache notifications on accepted media.
     store
@@ -286,7 +347,7 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
     set(&store, false);
     wait(|| {
         bound.preview.refresh();
-        rgb(ui.get_preview_media()) == expected(false)
+        rgb(&ui.get_preview_media()) == expected(false)
     });
     assert_eq!(bound.preview.displayed_file(), Some(file));
     assert!(
@@ -303,7 +364,7 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
     ui.show().unwrap();
     wait(|| {
         bound.preview.refresh();
-        rgb(ui.get_preview_media()) == expected(true)
+        rgb(&ui.get_preview_media()) == expected(true)
     });
     now.set(4000);
     let (old, row) = options(&ui, &bound);
@@ -312,11 +373,21 @@ fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_o
         .write(|c| {
             let mut prefs: settings::GuiSettings = settings::get(c.conn())?;
             prefs.confirm_exit = false;
-            settings::set(c.conn(), &prefs)
+            settings::set(c.conn(), &prefs)?;
+            // Isolate completed owner retirement from the separate maintenance question.
+            let mut shutdown: settings::ShutdownWork = settings::get(c.conn())?;
+            shutdown.action = 0;
+            settings::set(c.conn(), &shutdown)
         })
         .unwrap();
     ui.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(
+        !ui.window().is_visible(),
+        "completed exit precedes retained ICC callbacks"
+    );
+    assert!(!old.window().is_visible());
+    assert!(store.read(image_colour::load).unwrap().normalise_icc);
     old.show().unwrap();
     old.invoke_apply();
     old.invoke_check_toggled(row, false);
@@ -348,17 +419,18 @@ impl Drop for Published {
 fn held_old_colour_reply_cannot_replace_current_or_rebound_canvas_and_ineligible_preview_stays_empty()
  {
     let (_dirs, store, file) = setup();
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(
         &ui,
         Pages::single(super::common::all_local_page(store.clone())),
     );
+    settle_viewport(&ui, &bound, &windows);
     query_select(&ui, &bound, file);
     wait(|| {
         bound.preview.refresh();
-        rgb(ui.get_preview_media()) == expected(true)
+        rgb(&ui.get_preview_media()) == expected(true)
     });
     let data = std::fs::read(hydrus_testkit::fixture_path(
         "image_decoder_policies/embedded-linear.png",
@@ -393,13 +465,13 @@ fn held_old_colour_reply_cannot_replace_current_or_rebound_canvas_and_ineligible
     bound.preview.refresh();
     wait(|| {
         bound.preview.refresh();
-        rgb(ui.get_preview_media()) == expected(true)
+        rgb(&ui.get_preview_media()) == expected(true)
     });
     release.send(()).unwrap();
     published.recv_timeout(Duration::from_secs(10)).unwrap();
     bound.preview.refresh();
     assert_eq!(
-        rgb(ui.get_preview_media()),
+        rgb(&ui.get_preview_media()),
         expected(true),
         "published old generation is rejected"
     );
@@ -421,7 +493,7 @@ fn held_old_colour_reply_cannot_replace_current_or_rebound_canvas_and_ineligible
     }));
     ui.invoke_select_none();
     bound.preview.refresh();
-    query_select(&ui, &bound, file);
+    refresh_select(&ui, &bound, file);
     entered.recv_timeout(Duration::from_secs(10)).unwrap();
     bound.preview.set_decoder(Arc::new(move |store, _| {
         let policy = store.read(image_colour::load).unwrap();
@@ -434,10 +506,11 @@ fn held_old_colour_reply_cannot_replace_current_or_rebound_canvas_and_ineligible
         &ui,
         Pages::single(super::common::all_local_page(store.clone())),
     );
+    settle_viewport(&ui, &successor, &windows);
     query_select(&ui, &successor, file);
     wait(|| {
         successor.preview.refresh();
-        rgb(ui.get_preview_media()) == expected(false)
+        rgb(&ui.get_preview_media()) == expected(false)
     });
     old.show().unwrap();
     old.invoke_apply();
@@ -453,7 +526,7 @@ fn held_old_colour_reply_cannot_replace_current_or_rebound_canvas_and_ineligible
     published.recv_timeout(Duration::from_secs(10)).unwrap();
     successor.preview.refresh();
     assert_eq!(
-        rgb(ui.get_preview_media()),
+        rgb(&ui.get_preview_media()),
         expected(false),
         "retired owner's published colour cannot replace successor pixels"
     );
@@ -483,7 +556,7 @@ fn held_old_colour_reply_cannot_replace_current_or_rebound_canvas_and_ineligible
             settings::set(c.conn(), &rules)
         })
         .unwrap();
-    query_select(&ui, &successor, file);
+    refresh_select(&ui, &successor, file);
     successor.preview.refresh();
     assert!(!ui.get_preview_has_media());
     set(&store, false);
@@ -522,14 +595,14 @@ fn paused_animation_keeps_accepted_frame_index_and_pixels_on_icc_notification() 
     let fixture = hydrus_testkit::fixture_json("image_decoder_policies.json");
     let pixels: Vec<u8> =
         serde_json::from_value(fixture["cases"][0]["frames"][1]["pixels"].clone()).unwrap();
-    wait(|| viewer.get_scanbar_text().starts_with("2/2 - ") && rgb(viewer.get_media()) == pixels);
+    wait(|| viewer.get_scanbar_text().starts_with("2/2 - ") && rgb(&viewer.get_media()) == pixels);
     let status = viewer.get_scanbar_text();
-    let before = rgb(viewer.get_media());
+    let before = rgb(&viewer.get_media());
     set(&store, false);
     viewer.invoke_presentation_settings_changed();
     assert_eq!(viewer.get_scanbar_text(), status);
     assert_eq!(
-        rgb(viewer.get_media()),
+        rgb(&viewer.get_media()),
         before,
         "static cache notification cannot reset a paused animation to frame zero"
     );

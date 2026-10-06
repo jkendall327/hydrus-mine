@@ -465,10 +465,28 @@ impl Control {
                 let _ = control.0.commands.send(Command::Force(wanted));
             }
         });
+        let new_work = crate::file_maintenance_new::bind(
+            &window,
+            &self.0.store,
+            Rc::new({
+                let input = input.clone();
+                move || input().is_some()
+            }),
+            Rc::new({
+                let weak = Rc::downgrade(&self.0);
+                move || {
+                    if let Some(state) = weak.upgrade() {
+                        let _ = state.commands.send(Command::Refresh);
+                    }
+                }
+            }),
+        );
         let close = Rc::new({
+            let new_work = new_work.clone();
             let weak = Rc::downgrade(&self.0);
             let owner = window.as_weak();
             move || {
+                new_work.retire();
                 if let Some(window) = owner.upgrade() {
                     if let Some(state) = weak.upgrade() {
                         let current =
@@ -492,21 +510,12 @@ impl Control {
             close();
             slint::CloseRequestResponse::HideWindow
         });
-        crate::file_maintenance_new::bind(
-            &window,
-            &self.0.store,
-            Rc::new({
-                let weak = Rc::downgrade(&self.0);
-                move || {
-                    if let Some(state) = weak.upgrade() {
-                        let _ = state.commands.send(Command::Refresh);
-                    }
-                }
-            }),
-        );
         *self.0.slot.borrow_mut() = Some(window.clone_strong());
         self.paint();
-        window.show().map_err(|e| e.to_string())?;
+        if let Err(error) = window.show() {
+            window.invoke_close_clicked();
+            return Err(error.to_string());
+        }
         let _ = self.0.commands.send(Command::Refresh);
         Ok(window)
     }

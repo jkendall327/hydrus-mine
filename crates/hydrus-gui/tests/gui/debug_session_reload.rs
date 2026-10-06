@@ -49,7 +49,7 @@ fn files(store: &Store, row: &serde_json::Value) -> Vec<HashId> {
             store
                 .read(|conn| {
                     Ok(HashId(conn.query_row(
-                        "SELECT hash_id FROM hashes WHERE hash = ?",
+                        "SELECT hash_id FROM hashes WHERE sha256 = ?",
                         [hash],
                         |row| row.get(0),
                     )?))
@@ -120,15 +120,12 @@ fn assert_tree(bound: &Bound, store: &Store) {
         assert_eq!(tree.len(), rows.len());
         for (page, row) in tree.iter().zip(rows) {
             assert_eq!(page.name, row["name"].as_str().unwrap());
-            match &page.content {
-                PageContent::Pages(children) => {
-                    compare(pages, children, row["children"].as_array().unwrap(), store)
-                }
-                _ => {
-                    let opened = pages.page(&page.key).unwrap();
-                    assert_eq!(opened.borrow().files(), files(store, row));
-                    assert!(opened.borrow().selected_files().is_empty());
-                }
+            if let PageContent::Pages(children) = &page.content {
+                compare(pages, children, row["children"].as_array().unwrap(), store);
+            } else {
+                let opened = pages.page(&page.key).unwrap();
+                assert_eq!(opened.borrow().files(), files(store, row));
+                assert!(opened.borrow().selected_files().is_empty());
             }
         }
     }
@@ -258,6 +255,8 @@ fn importer_logs_restore_with_new_queue_identity_and_paused_closed_owner() {
                     referral_url: None,
                     meta: queues::FileSeedMeta::default(),
                 }],
+                false,
+                super::subscriptions::now(),
             )?;
             Ok(())
         })
@@ -309,6 +308,11 @@ fn hidden_new_launch_cancelled_exit_rebind_and_shared_final_drop_ownership() {
             let mut gui: hydrus_store::settings::GuiSettings =
                 hydrus_store::settings::get(ctx.conn())?;
             gui.confirm_exit = true;
+            // Isolate confirmed owner retirement from shutdown maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(ctx.conn(), &shutdown)?;
             hydrus_store::settings::set(ctx.conn(), &gui)
         })
         .unwrap();

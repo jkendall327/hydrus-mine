@@ -1,5 +1,5 @@
 //! The real Options capture children feed staged settings and existing executors.
-use hydrus_core::shortcuts::{Gesture, Settings};
+use hydrus_core::shortcuts::{Binding, Gesture, Settings};
 use hydrus_gui::{MainWindow, OptionsWindow, Pages, SearchPage, bind, headless};
 use slint::{ComponentHandle as _, Model as _};
 fn options(ui: &MainWindow, bound: &hydrus_gui::Bound) -> OptionsWindow {
@@ -20,17 +20,59 @@ fn options(ui: &MainWindow, bound: &hydrus_gui::Bound) -> OptionsWindow {
     window.invoke_page_chosen(page);
     window
 }
+fn edit_set(parent: &OptionsWindow, name: &str) -> hydrus_gui::ShortcutSetWindow {
+    let label = hydrus_gui_model::shortcut_sets::pretty_name(name);
+    let row = parent
+        .get_shortcut_reserved_rows()
+        .iter()
+        .position(|row| row.cells.row_data(0).unwrap().as_str() == label)
+        .unwrap();
+    parent.invoke_shortcut_set_clicked(false, i32::try_from(row).unwrap(), false, false);
+    assert!(parent.get_shortcut_reserved_selected());
+    parent.invoke_shortcut_set_action("edit-reserved".into());
+    let window = hydrus_gui::shortcut_windows::last_set().unwrap();
+    assert!(window.window().is_visible());
+    assert_eq!(window.get_set_name().as_str(), name);
+    window
+}
+fn choose_command(window: &hydrus_gui::ShortcutCommandWindow, label: &str) {
+    let index = window
+        .get_commands()
+        .iter()
+        .position(|command| command.as_str() == label)
+        .unwrap();
+    window.set_command_index(i32::try_from(index).unwrap());
+}
+fn with_added(before: &Settings, set: &str, additions: &[Binding]) -> Settings {
+    let mut expected = before.clone();
+    let bindings = expected.sets.get_mut(set).unwrap();
+    for addition in additions {
+        assert!(
+            bindings
+                .iter()
+                .all(|binding| binding.gesture != addition.gesture),
+            "the test gesture must add to, rather than replace, an imported binding"
+        );
+        bindings.push(addition.clone());
+    }
+    expected
+}
+fn simple_binding(gesture: Gesture, action: i32) -> Binding {
+    Binding {
+        gesture,
+        action,
+        text: None,
+        content: None,
+    }
+}
 fn add(
     parent: &OptionsWindow,
-    set: i32,
+    set: &str,
 ) -> (
     hydrus_gui::ShortcutSetWindow,
     hydrus_gui::ShortcutCommandWindow,
 ) {
-    parent.invoke_shortcuts_clicked();
-    let sets = hydrus_gui::shortcut_windows::last_set().unwrap();
-    sets.set_set_index(set);
-    sets.invoke_set_changed(set);
+    let sets = edit_set(parent, set);
     sets.invoke_action("add".into());
     (sets, hydrus_gui::shortcut_windows::last_command().unwrap())
 }
@@ -38,6 +80,7 @@ fn add(
 fn keyboard_capture_applies_through_owned_set_then_options_and_saved_main_executor() {
     use slint::platform::{Key, WindowEvent};
     let (_dirs, store) = crate::subscriptions::store();
+    let initial = store.read(hydrus_store::settings::get::<Settings>).unwrap();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
@@ -46,10 +89,26 @@ fn keyboard_capture_applies_through_owned_set_then_options_and_saved_main_execut
     ui.invoke_search_accepted();
     let before = bound.current.borrow().borrow().results().to_vec();
     assert!(before.len() > 1);
+    let original_count = initial.sets["main_gui"].len();
+    assert!(
+        original_count > 0,
+        "preserve the imported built-in defaults"
+    );
     let parent = options(&ui, &bound);
     parent.set_shortcuts_merge_numpad(false);
     parent.invoke_shortcuts_policy(false, true);
-    let (sets, command) = add(&parent, 0);
+    // The actual shortcuts page, before a child disables the two set lists.
+    let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 1100, 960);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("options_shortcut_sets.png"),
+        &pixels,
+        1100,
+        960,
+    )
+    .unwrap();
+    let (sets, command) = add(&parent, "main_gui");
+    let set_native = windows.get(windows.count() - 2).unwrap();
+    let command_native = windows.get(windows.count() - 1).unwrap();
     let pixels = headless::render(&windows.get(windows.count() - 1).unwrap(), 700, 330);
     assert!(!pixels.is_empty());
     // Dispatch real widget keys, rather than calling its capture callback directly.
@@ -71,34 +130,60 @@ fn keyboard_capture_applies_through_owned_set_then_options_and_saved_main_execut
             "ctrl+shift+q"
         }
     );
+    // Save the captured key text already verified above; keep the original key replay intact.
+    let pixels = headless::render_snapshot(&command_native, 700, 420);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("shortcut_capture_keyboard.png"),
+        &pixels,
+        700,
+        420,
+    )
+    .unwrap();
     parent.invoke_apply();
     sets.invoke_apply();
-    assert!(
-        store
-            .read(hydrus_store::settings::get::<Settings>)
-            .unwrap()
-            .sets["main_gui"]
-            .is_empty()
+    assert_eq!(
+        store.read(hydrus_store::settings::get::<Settings>).unwrap(),
+        initial,
+        "child/set Apply must not publish the outer Options draft"
     );
     command.invoke_apply();
-    assert_eq!(sets.get_rows().row_count(), 1);
+    assert_eq!(sets.get_rows().row_count(), original_count + 1);
+    // The tested built-in editor after accepting the captured binding into its draft.
+    let pixels = headless::render(&set_native, 800, 600);
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("shortcut_set_builtin_main_gui.png"),
+        &pixels,
+        800,
+        600,
+    )
+    .unwrap();
     parent.invoke_apply();
     assert!(bound.options.borrow().is_some());
     sets.invoke_apply();
-    assert!(
-        store
-            .read(hydrus_store::settings::get::<Settings>)
-            .unwrap()
-            .sets["main_gui"]
-            .is_empty()
+    assert_eq!(
+        store.read(hydrus_store::settings::get::<Settings>).unwrap(),
+        initial,
+        "child/set Apply must not publish the outer Options draft"
     );
     parent.invoke_apply();
     let saved = store.read(hydrus_store::settings::get::<Settings>).unwrap();
     assert!(!saved.merge_numpad);
     assert!(saved.primary_labels);
+    let captured = simple_binding(Gesture::new(0, 113, 0, 5), 78);
+    let mut expected = with_added(&initial, "main_gui", std::slice::from_ref(&captured));
+    expected.merge_numpad = false;
+    expected.primary_labels = true;
     assert_eq!(
-        saved.sets["main_gui"][0].gesture,
-        Gesture::new(0, 113, 0, 5)
+        saved, expected,
+        "all imported bindings survive the new capture"
+    );
+    assert_eq!(
+        saved.sets["main_gui"]
+            .iter()
+            .find(|binding| binding.gesture == captured.gesture)
+            .unwrap(),
+        &captured
     );
     ui.invoke_flip_synchronised();
     ui.invoke_search_edited("system:archive".into());
@@ -108,10 +193,18 @@ fn keyboard_capture_applies_through_owned_set_then_options_and_saved_main_execut
     assert!(bound.current.borrow().borrow().synchronised());
     assert!(bound.current.borrow().borrow().results().len() < before.len());
     let parent = options(&ui, &bound);
-    parent.invoke_shortcuts_clicked();
-    let reopened = hydrus_gui::shortcut_windows::last_set().unwrap();
-    assert_eq!(reopened.get_rows().row_count(), 1);
-    reopened.invoke_selected_row(0);
+    let reopened = edit_set(&parent, "main_gui");
+    assert_eq!(
+        reopened.get_rows().row_count(),
+        saved.sets["main_gui"].len()
+    );
+    let label = captured.gesture.text(saved.primary_labels);
+    let row = reopened
+        .get_rows()
+        .iter()
+        .position(|row| row.cells.row_data(0).unwrap().as_str() == label.as_str())
+        .unwrap();
+    reopened.invoke_selected_row(i32::try_from(row).unwrap());
     reopened.invoke_action("edit".into());
     let edit = hydrus_gui::shortcut_windows::last_command().unwrap();
     assert_eq!(edit.get_keyboard_text(), command.get_keyboard_text());
@@ -128,46 +221,51 @@ fn keyboard_capture_applies_through_owned_set_then_options_and_saved_main_execut
 #[test]
 fn command_and_set_cancel_reject_stale_children_and_preserve_successor_drafts() {
     let (_dirs, store) = crate::subscriptions::store();
+    let initial = store.read(hydrus_store::settings::get::<Settings>).unwrap();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let original_count = initial.sets["main_gui"].len();
+    assert!(
+        original_count > 0,
+        "the cancelled draft starts with imported defaults"
+    );
     let parent = options(&ui, &bound);
-    let (sets, child) = add(&parent, 0);
+    let (sets, child) = add(&parent, "main_gui");
     child.invoke_key_capture("x".into(), 1);
     child.invoke_cancel();
     child.invoke_key_capture("y".into(), 1);
     child.invoke_apply();
-    assert_eq!(sets.get_rows().row_count(), 0);
+    assert_eq!(sets.get_rows().row_count(), original_count);
     sets.invoke_action("add".into());
     let next = hydrus_gui::shortcut_windows::last_command().unwrap();
     next.invoke_key_capture("a".into(), 0);
     next.invoke_apply();
-    assert_eq!(sets.get_rows().row_count(), 1);
+    assert_eq!(sets.get_rows().row_count(), original_count + 1);
     sets.invoke_cancel();
     sets.invoke_apply();
     assert!(!parent.get_shortcuts_child_open());
-    let (successor, child) = add(&parent, 0);
-    assert_eq!(successor.get_rows().row_count(), 0);
+    let (successor, child) = add(&parent, "main_gui");
+    assert_eq!(successor.get_rows().row_count(), original_count);
     child.invoke_key_capture("b".into(), 0);
     parent.invoke_cancel();
     child.invoke_apply();
     successor.invoke_apply();
-    parent.invoke_shortcuts_clicked();
+    parent.invoke_shortcut_set_action("edit-reserved".into());
+    assert!(!parent.get_shortcuts_child_open());
     let fresh = options(&ui, &bound);
     fresh.invoke_apply();
-    assert!(
-        store
-            .read(hydrus_store::settings::get::<Settings>)
-            .unwrap()
-            .sets
-            .values()
-            .all(Vec::is_empty)
+    assert_eq!(
+        store.read(hydrus_store::settings::get::<Settings>).unwrap(),
+        initial,
+        "Cancel and stale callbacks preserve every imported set and capture policy"
     );
 }
 #[test]
 fn saved_mouse_and_keyboard_captures_feed_existing_viewer_navigation_and_guard_closed_owners() {
     let (_dirs, store) = crate::subscriptions::store();
+    let initial = store.read(hydrus_store::settings::get::<Settings>).unwrap();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
@@ -176,26 +274,40 @@ fn saved_mouse_and_keyboard_captures_feed_existing_viewer_navigation_and_guard_c
     ui.invoke_search_accepted();
     assert!(bound.current.borrow().borrow().results().len() > 1);
     let parent = options(&ui, &bound);
-    let (sets, mouse) = add(&parent, 1);
+    let (sets, mouse) = add(&parent, "media_viewer");
     mouse.invoke_mouse_capture(1, 0, 1);
     assert_eq!(mouse.get_mode(), 1);
-    mouse.set_command_index(1);
+    choose_command(&mouse, "media navigation: next");
     mouse.invoke_apply();
     sets.invoke_action("add".into());
     let key = hydrus_gui::shortcut_windows::last_command().unwrap();
     key.invoke_key_capture("v".into(), 0);
-    key.set_command_index(2);
+    choose_command(&key, "media navigation: previous");
     key.invoke_apply();
     sets.invoke_action("add".into());
     let wheel = hydrus_gui::shortcut_windows::last_command().unwrap();
     wheel.invoke_wheel_capture(-120.0, 0);
     assert!(!wheel.get_release_enabled());
-    wheel.set_command_index(1);
+    choose_command(&wheel, "media navigation: next");
     wheel.invoke_apply();
     sets.invoke_apply();
     parent.invoke_apply();
     let saved = store.read(hydrus_store::settings::get::<Settings>).unwrap();
-    assert_eq!(saved.sets["media_viewer"].len(), 3);
+    let additions = [
+        simple_binding(Gesture::new(1, 1, 0, 1), 99),
+        simple_binding(Gesture::new(0, 118, 0, 0), 100),
+        simple_binding(Gesture::new(1, 4, 0, 0), 99),
+    ];
+    assert_eq!(saved, with_added(&initial, "media_viewer", &additions));
+    for addition in &additions {
+        assert_eq!(
+            saved.sets["media_viewer"]
+                .iter()
+                .find(|binding| binding.gesture == addition.gesture)
+                .unwrap(),
+            addition
+        );
+    }
     ui.invoke_thumbnail_activated(0);
     let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
     let count = bound.current.borrow().borrow().results().len();
@@ -228,25 +340,41 @@ fn saved_mouse_and_keyboard_captures_feed_existing_viewer_navigation_and_guard_c
 #[test]
 fn accepted_main_close_retires_saved_shortcuts_even_after_show_and_fresh_binding_reopens() {
     let (_dirs, store) = crate::subscriptions::store();
+    let initial = store.read(hydrus_store::settings::get::<Settings>).unwrap();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     let parent = options(&ui, &bound);
-    let (sets, command) = add(&parent, 0);
+    let (sets, command) = add(&parent, "main_gui");
     // Apply the untouched reference F7/default refresh command.
     command.invoke_apply();
     sets.invoke_apply();
     parent.invoke_apply();
     let saved = store.read(hydrus_store::settings::get::<Settings>).unwrap();
-    assert_eq!(saved.sets["main_gui"][0].gesture, Gesture::default());
-    assert_eq!(saved.sets["main_gui"][0].action, 78);
+    let added = simple_binding(Gesture::default(), 78);
+    assert_eq!(
+        saved,
+        with_added(&initial, "main_gui", std::slice::from_ref(&added))
+    );
+    assert_eq!(
+        saved.sets["main_gui"]
+            .iter()
+            .find(|binding| binding.gesture == added.gesture)
+            .unwrap(),
+        &added
+    );
     store
         .write(|ctx| {
             let mut settings: hydrus_store::settings::GuiSettings =
                 hydrus_store::settings::get(ctx.conn())?;
             settings.confirm_exit = true;
-            hydrus_store::settings::set(ctx.conn(), &settings)
+            hydrus_store::settings::set(ctx.conn(), &settings)?;
+            // Exercise the outer exit question without a second maintenance prompt.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(ctx.conn())?;
+            shutdown.action = 0;
+            hydrus_store::settings::set(ctx.conn(), &shutdown)
         })
         .unwrap();
     ui.window()

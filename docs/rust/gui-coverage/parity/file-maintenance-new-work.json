@@ -2,13 +2,13 @@
   "schema_version": 1,
   "agent": "file-maintenance-new-work",
   "note": "Cheap-validation implementation proposal (2026-10-05 breadth pass): strict backend/model Clippy and targeted model tests; native GUI compile/render review deferred to the final validation pass.",
-  "proposed_completed_count": 2,
+  "proposed_completed_count": 0,
   "claims": [
     {
       "id": "audit-media-database-maintenance-search",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database > file maintenance > manage scheduled jobs: the 'add new work' tab with the reference's explanation; typed-predicate search in the default local domain with 'run this search' (loading/N files found), easy select all media / all repository update files, 'N files selected', the job dropdown in ALL_REGEN_JOBS_IN_HUMAN_ORDER, 'see description' with the weight line, the >1,000 files 'do it/forget it' confirmation, queueing via add_jobs and 'Jobs added!' then refreshing scheduled work.",
       "source": [
         "crates/hydrus-gui-model/src/file_maintenance_new.rs",
@@ -21,13 +21,19 @@
       ],
       "limits": [
         "Typed predicates, not the read autocomplete; description and confirmation shown inline."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "No reference-backed workflow assertions; retained hidden/new-tab callbacks can schedule jobs after owner closes.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-5.md"
+      }
     },
     {
       "id": "audit-media-database-maintenance-schedule",
       "before": "missing",
-      "proposedStatus": "first_pass",
-      "countAsCompletedLeaf": true,
+      "proposedStatus": "partial",
+      "countAsCompletedLeaf": false,
       "behavior": "Database > file maintenance > manage scheduled jobs: the 'add new work' tab with the reference's explanation; typed-predicate search in the default local domain with 'run this search' (loading/N files found), easy select all media / all repository update files, 'N files selected', the job dropdown in ALL_REGEN_JOBS_IN_HUMAN_ORDER, 'see description' with the weight line, the >1,000 files 'do it/forget it' confirmation, queueing via add_jobs and 'Jobs added!' then refreshing scheduled work.",
       "source": [
         "crates/hydrus-gui-model/src/file_maintenance_new.rs",
@@ -40,7 +46,13 @@
       ],
       "limits": [
         "Typed predicates, not the read autocomplete; description and confirmation shown inline."
-      ]
+      ],
+      "validation_review": {
+        "source_checkpoint": "3702cdbee99473cfd7af073aa044fe847f78f405",
+        "disposition": "deferred",
+        "reason": "No reference-backed workflow assertions; retained hidden/new-tab callbacks can schedule jobs after owner closes.",
+        "review": "docs/rust/gui-coverage/validation-pass/review-5.md"
+      }
     }
   ]
 }

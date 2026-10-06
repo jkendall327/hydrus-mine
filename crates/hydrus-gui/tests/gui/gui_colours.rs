@@ -37,7 +37,7 @@ fn menu(ui: &MainWindow, title: &str, label: &str) {
     ui.invoke_menu_title_pressed(i32::try_from(title).unwrap(), 20.0, 22.0);
     let lines = ui.get_menu_panes().row_data(0).unwrap().lines;
     let index = lines.iter().position(|value| value.label == label).unwrap();
-    assert!(lines.row_data(index).unwrap().enabled);
+    assert!(lines.row_data(index).unwrap().usable);
     ui.invoke_menu_line_clicked(0, i32::try_from(index).unwrap(), 0.0, 0.0, 0.0);
 }
 fn open(ui: &MainWindow, bound: &hydrus_gui::Bound) -> OptionsWindow {
@@ -93,6 +93,7 @@ fn real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker() {
     ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let options = open(&ui, &bound);
+    let options_native = windows.get(windows.count() - 1).unwrap();
     assert_eq!(options.get_gui_colour_tab(), 0);
     assert!(!options.get_gui_colour_enabled());
     assert_eq!(
@@ -107,6 +108,10 @@ fn real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker() {
         let set = i32::from(edit["set"] == "darkmode");
         let role = i32::try_from(edit["role"].as_u64().unwrap()).unwrap();
         options.set_gui_colour_tab(set);
+        // Process the real tab binding before observing its row model.
+        for _ in 0..3 {
+            headless::render(&options_native, 950, 700);
+        }
         options.invoke_gui_colour_chosen(set, role);
         let picker = hydrus_gui::options_gui_colours::last_opened().unwrap();
         let rgb: [u8; 3] = serde_json::from_value(edit["colour"].clone()).unwrap();
@@ -142,8 +147,16 @@ fn real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker() {
         qt["before_update"]
     );
     options.set_gui_colour_tab(0);
+    // Process the real tab binding before observing its row model.
+    for _ in 0..3 {
+        headless::render(&options_native, 950, 700);
+    }
     assert_eq!(json!(colours(&options)), qt["saved"]["sets"]["default"]);
     options.set_gui_colour_tab(1);
+    // Process the real tab binding before observing its row model.
+    for _ in 0..3 {
+        headless::render(&options_native, 950, 700);
+    }
     assert_eq!(json!(colours(&options)), qt["saved"]["sets"]["darkmode"]);
     save_png(&windows, 1, "gui-coloursets-options.png", 950, 700);
     options.invoke_apply();
@@ -172,6 +185,11 @@ fn real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker() {
     old.show().unwrap();
     old.invoke_accepted(3, 5, 7);
     old.invoke_cancelled();
+    assert!(
+        !old.window().is_visible(),
+        "Cancel must hide the reopened retired picker itself"
+    );
+    assert!(successor.window().is_visible());
     assert_eq!(colours(&successor), before);
     assert_eq!(values(&store.read(gui_colours::load).unwrap()), qt["saved"]);
     drop(old);
@@ -215,7 +233,9 @@ fn help_warning_hidden_acknowledgement_toggle_rebind_and_final_bound_drop_are_ow
             .write(move |tx| settings::set(tx.conn(), &settings))
             .unwrap();
         menu(&ui, "help", "darkmode");
-        if !before.override_stylesheet {
+        if before.override_stylesheet {
+            assert!(hydrus_gui::gui_colour_actions::last_notice().is_none());
+        } else {
             let notice = hydrus_gui::gui_colour_actions::last_notice().unwrap();
             assert_eq!(
                 notice.get_message(),
@@ -236,8 +256,6 @@ fn help_warning_hidden_acknowledgement_toggle_rebind_and_final_bound_drop_are_ow
             notice.show().unwrap();
             notice.invoke_cancelled();
             assert!(!notice.window().is_visible());
-        } else {
-            assert!(hydrus_gui::gui_colour_actions::last_notice().is_none());
         }
         assert_eq!(
             values(&store.read(gui_colours::load).unwrap()),
@@ -287,13 +305,22 @@ fn help_warning_hidden_acknowledgement_toggle_rebind_and_final_bound_drop_are_ow
         .write(|tx| {
             let mut gui: settings::GuiSettings = settings::get(tx.conn())?;
             gui.confirm_exit = false;
-            settings::set(tx.conn(), &gui)
+            settings::set(tx.conn(), &gui)?;
+            // This boundary tests completed exit, independently of due maintenance.
+            let mut shutdown: hydrus_store::settings::ShutdownWork =
+                hydrus_store::settings::get(tx.conn())?;
+            shutdown.action = 0;
+            settings::set(tx.conn(), &shutdown)
         })
         .unwrap();
     menu(&ui, "help", "darkmode");
     let pending = hydrus_gui::gui_colour_actions::last_notice().unwrap();
     ui.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    assert!(
+        !ui.window().is_visible(),
+        "completed exit precedes retained callbacks"
+    );
     assert!(!pending.window().is_visible());
     ui.show().unwrap();
     pending.show().unwrap();
@@ -642,7 +669,11 @@ fn fresh_local_membership_live_roles_and_existing_owned_windows_paint_without_pa
     .unwrap();
     viewer.set_media(slint::Image::default());
     viewer.set_sharp_shown(false);
-    viewer.set_index_background_text("1/1".into());
+    // The passive index is computed from the same public inputs used by the viewer.
+    viewer.set_draw_index_background(true);
+    viewer.set_caption("1/1".into());
+    viewer.set_zoom_text("100%".into());
+    assert_eq!(viewer.get_index_background_text().as_str(), "100% - 1/1");
     let viewer_pixels = headless::render(&windows.get(viewer_index).unwrap(), 800, 600);
     for (role, minimum) in [(10, 1000), (11, 4)] {
         let rgb = saved.active()[role].0;
