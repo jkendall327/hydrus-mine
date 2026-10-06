@@ -4521,9 +4521,9 @@ Validation repairs now invalidate cached thumbnail colours when the stylesheet
 changes and hide an exact retired colour picker on repeated Cancel. Wheel
 controls publish their initial measured geometry as well as later changes.
 These repairs passed full Linux replay at `56b93ae49` (696 GUI tests).
-Completion credit remains limited to the 79 independently reviewed original
-leaves banked across four checkpoints, with the latest
-[319-item checkpoint](gui-coverage/checkpoints/7c3c1aac5/README.md);
+Completion credit remains limited to the 86 independently reviewed original
+leaves banked across five checkpoints, with the latest
+[326-item checkpoint](gui-coverage/checkpoints/9bec37964/README.md);
 other repaired behavior retains its scoped assessment.
 
 The two Speed and Memory cache-percentage helpers now have their own wrapped
@@ -4535,3 +4535,14 @@ and accepted draft within the existing deadline; the fresh capture shows my tags
 Full Linux validation and independent review at `7c3c1aac5` support 18 further
 scoped completions, bringing the published ledger to 319. Capture and consumer
 limits remain explicit in the checkpoint; 56 candidates remain pending.
+
+The seven-candidate repair stacks the RGB picker controls beside its swatch
+and derives opening/minimum dimensions from the content. Strict regressions
+measure every label, editor and action at both sizes. Colour settings replay
+uses actual checkbox/dropdown input and checks displayed values before capture.
+Thumbnail preview settings
+now honor their enabled state in the real checkbox, and replay selects them
+through pointer input while checking that disabled children cannot toggle.
+Full Linux execution at `9bec37964` and fresh independent review approve these
+seven scoped leaves: 326 signed off, 86 new across five October 6 checkpoints,
+and 49 candidates pending. All 697 GUI tests pass without ignored tests.

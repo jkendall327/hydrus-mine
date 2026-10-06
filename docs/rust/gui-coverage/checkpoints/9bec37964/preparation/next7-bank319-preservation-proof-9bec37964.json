@@ -1,0 +1,26 @@
+{
+  "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+  "run_id": 37491826054,
+  "source_phase": "repaired source validation pending",
+  "selected_count": 7,
+  "prior_completed_count": 319,
+  "prior319_complete_whole_objects_preserved": true,
+  "all_unselected_reference_whole_objects_preserved": true,
+  "native1799_nonanchor_fields_preserved": true,
+  "native_source_only_review_ids": [
+    "dialog.shared.rgb-colour.rgb"
+  ],
+  "frozen1812_preserved": true,
+  "new_prior_errata_updates": 0,
+  "unselected_proposed_promotions": [],
+  "required_inherited_anchor_updates": 0,
+  "prior319_nodes_digest": "af0b52efeb4df3bfaf2cb9a56af429638029a3c8fc52352f69825cc579e18c82",
+  "unselected_nodes_digest": "942a74da47b8d5b9edd3b63ea71b7670722c47d7f4311f6f874d5ce74eda2fc2",
+  "native_inventory_digest": "759a5b9fdfd89ccc6d0776aaedd976f6929a6a33fda961ecf40289e3cc032c66",
+  "subset_normalized_digest": "5dcab7365f24173bf2978e674a58829f7316a28952fa97ab0a0f47db67965ff2",
+  "subset_sha256": "2af2fb149570b3496771f9c35c26970ea8ecc240201fde78e6850704987c7a11",
+  "source_census_digest": "4c9917f91e715b30b9f6f9e20d7a33dd04e4d49ab3cdd07df85f2c68d1b0c1cb",
+  "approval": false,
+  "builds": false,
+  "canonical_writes": false
+}

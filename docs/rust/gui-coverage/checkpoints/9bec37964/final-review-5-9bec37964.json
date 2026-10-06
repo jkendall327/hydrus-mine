@@ -1,0 +1,586 @@
+{
+  "schema": 1,
+  "reviewer": "reference_visual_5",
+  "reviewed_at": "2026-10-06T16:27:32.994639+00:00",
+  "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+  "run_id": 37491826054,
+  "artifact_id": 11427745525,
+  "zip_sha256": "c7b676216204ca0a53b9cf7b005c7da8b179a242342841f98613cf0f6ebdeeb3",
+  "validation_scope": "linux",
+  "claims": [
+    {
+      "id": "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page",
+      "approval": true,
+      "finite_behavior": "Independent exact override checkbox gates the thirteen swatches in each editing tab while preserving the current-set selector. Cancel/reopen and field-scoped Apply preserve latest unrelated Help/role changes; imported retained ClientOptions fallback and native precedence persist. Saved override controls the thirteen represented Qt colour roles across owned thumbnail, autocomplete, tagbox, preview/viewer/archive/delete/duplicate consumers while leaving the application Palette/style unchanged. Hidden Options and stale/hidden child callbacks cannot change or save drafts; child rebind/close ownership is retained.",
+      "caveats": [
+        "Structural audit-options-colours-coloursets remains Partial and uncounted: native bounded RGB picker differs from QColorDialog HSV/HTML/history/platform topology.",
+        "Application Palette, stylesheet/QSS and OS appearance remain separately owned; generic controls and synthetic preview status retain native palette semantics.",
+        "Saved role updates are owner-local, weak and at most250ms; arbitrary whole-platform or unrepresented-widget parity is not claimed.",
+        "Represented native thumbnail fills/borders map all eight saved-role brushes into the extracted Paint Palette. Current physical storage membership distinguishes local/remote normal/selected paints; palette invalidation clears both current and previous fade snapshots without changing decoded thumbnail bytes/cache entries. The native grid keeps the saved grid role behind viewport margins and the bottom-right background-image layer. This covers represented native grid integration; QColorDialog topology, QSS/OS palettes and unrepresented controls remain outside scope. No dedicated combined saved-role-plus-background-bitmap pixel-parity claim is made.",
+        "Linux only at exact9bec source; Windows/macOS deferred. Only this original concrete ID earns credit; no structural parent/alias or unrelated thumbnail-option completion.",
+        "Native opening/minimum measurements use physical1x software-rendered client areas. OS compositor minimum enforcement, HiDPI native window behavior and broad font/platform pixel parity are not established.",
+        "Qt picker PNG uses19/83/197 and full QColorDialog topology; native picker capture uses the initial255/255/255 role. Qt Colours PNG showsdefault/default, native enabled capture intentionallyshowsdarkmode/darkmode after physical input. These are related different states, not paired bitmap parity.",
+        "RGB picker accepted/hidden/retired channel callbacks are verified against staged role values; actual standard SpinBox text-input behavior is not independently exercised here.",
+        "Role-paint exports deliberately isolate thumbnail/viewer paint in places; controlled fade-clock and250ms observer evidence do not establish full compositor or arbitrary scheduling parity."
+      ]
+    },
+    {
+      "id": "audit-options-colours-current-colourset",
+      "approval": true,
+      "finite_behavior": "Exact independent default/darkmode choice remains available with override off and is separate from the editing tab, which always opens default. All26 staged RGB roles survive Apply/Store reopen; unchanged Apply preserves concurrent Help changes and untouched roles. Saved active set reaches every represented role consumer through owner-local weak observers, including physically-local/trash versus remote selected/normal thumbnail fills/borders. Closed/rebound consumers cannot resume observer publication; real semantic RGB pixel assertions are authored.",
+      "caveats": [
+        "Structural audit-options-colours-coloursets remains Partial and uncounted: native bounded RGB picker differs from QColorDialog HSV/HTML/history/platform topology.",
+        "Application Palette, stylesheet/QSS and OS appearance remain separately owned; generic controls and synthetic preview status retain native palette semantics.",
+        "Saved role updates are owner-local, weak and at most250ms; arbitrary whole-platform or unrepresented-widget parity is not claimed.",
+        "Represented native thumbnail fills/borders map all eight saved-role brushes into the extracted Paint Palette. Current physical storage membership distinguishes local/remote normal/selected paints; palette invalidation clears both current and previous fade snapshots without changing decoded thumbnail bytes/cache entries. The native grid keeps the saved grid role behind viewport margins and the bottom-right background-image layer. This covers represented native grid integration; QColorDialog topology, QSS/OS palettes and unrepresented controls remain outside scope. No dedicated combined saved-role-plus-background-bitmap pixel-parity claim is made.",
+        "Linux only at exact9bec source; Windows/macOS deferred. Only this original concrete ID earns credit; no structural parent/alias or unrelated thumbnail-option completion.",
+        "Native opening/minimum measurements use physical1x software-rendered client areas. OS compositor minimum enforcement, HiDPI native window behavior and broad font/platform pixel parity are not established.",
+        "Qt picker PNG uses19/83/197 and full QColorDialog topology; native picker capture uses the initial255/255/255 role. Qt Colours PNG showsdefault/default, native enabled capture intentionallyshowsdarkmode/darkmode after physical input. These are related different states, not paired bitmap parity.",
+        "RGB picker accepted/hidden/retired channel callbacks are verified against staged role values; actual standard SpinBox text-input behavior is not independently exercised here.",
+        "Role-paint exports deliberately isolate thumbnail/viewer paint in places; controlled fade-clock and250ms observer evidence do not establish full compositor or arbitrary scheduling parity."
+      ]
+    },
+    {
+      "id": "audit-options-menu-menu-help-darkmode",
+      "approval": true,
+      "finite_behavior": "Actual Help check action reflects the saved current set and toggles default/darkmode. When override is off the exact reference Information warning is acknowledged first, then toggles regardless; when on it toggles immediately. Stylesheet/application Palette remain unchanged. The action reads latest settings at acknowledgement, updates the main owner immediately and other live role owners within250ms. Hidden acknowledgement is inert without consuming the notice; rebind/accepted close/final Bound drop permanently retire pending notices and retained callbacks while independent Store remains live.",
+      "caveats": [
+        "Structural audit-options-colours-coloursets remains Partial and uncounted: native bounded RGB picker differs from QColorDialog HSV/HTML/history/platform topology.",
+        "Application Palette, stylesheet/QSS and OS appearance remain separately owned; generic controls and synthetic preview status retain native palette semantics.",
+        "Saved role updates are owner-local, weak and at most250ms; arbitrary whole-platform or unrepresented-widget parity is not claimed.",
+        "Represented native thumbnail fills/borders map all eight saved-role brushes into the extracted Paint Palette. Current physical storage membership distinguishes local/remote normal/selected paints; palette invalidation clears both current and previous fade snapshots without changing decoded thumbnail bytes/cache entries. The native grid keeps the saved grid role behind viewport margins and the bottom-right background-image layer. This covers represented native grid integration; QColorDialog topology, QSS/OS palettes and unrepresented controls remain outside scope. No dedicated combined saved-role-plus-background-bitmap pixel-parity claim is made.",
+        "Linux only at exact9bec source; Windows/macOS deferred. Only this original concrete ID earns credit; no structural parent/alias or unrelated thumbnail-option completion.",
+        "Native opening/minimum measurements use physical1x software-rendered client areas. OS compositor minimum enforcement, HiDPI native window behavior and broad font/platform pixel parity are not established.",
+        "Qt picker PNG uses19/83/197 and full QColorDialog topology; native picker capture uses the initial255/255/255 role. Qt Colours PNG showsdefault/default, native enabled capture intentionallyshowsdarkmode/darkmode after physical input. These are related different states, not paired bitmap parity.",
+        "RGB picker accepted/hidden/retired channel callbacks are verified against staged role values; actual standard SpinBox text-input behavior is not independently exercised here.",
+        "Role-paint exports deliberately isolate thumbnail/viewer paint in places; controlled fade-clock and250ms observer evidence do not establish full compositor or arbitrary scheduling parity."
+      ]
+    }
+  ],
+  "eligible_ids": [
+    "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page",
+    "audit-options-colours-current-colourset",
+    "audit-options-menu-menu-help-darkmode"
+  ],
+  "blocked_ids": [],
+  "blocking_findings": [],
+  "ci": {
+    "status": "completed",
+    "conclusion": "success",
+    "required_jobs": [
+      {
+        "id": 112366942762,
+        "name": "check",
+        "conclusion": "success",
+        "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37491826054/job/112366942762"
+      },
+      {
+        "id": 112366943599,
+        "name": "parity-models",
+        "conclusion": "success",
+        "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37491826054/job/112366943599"
+      }
+    ],
+    "gui_summary": {
+      "passed": 697,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 142.79
+    },
+    "media_unit_summary": {
+      "passed": 67,
+      "failed": 0,
+      "ignored": 0
+    },
+    "strict_clippy": "Required check/clippy step success at exact source",
+    "parity_ratchet": "Required check/parity ratchet step and parity-models job success"
+  },
+  "source_files": [
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/gui_coloursets.slint",
+      "sha256": "b8155ca3d4415d9412d9c12f26d929e3569c5b75864f880516f12e09b78008ac",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/options.slint",
+      "sha256": "11da5f0479726a224b4e9aa1d5518a14ab6e6e514e530063947eea323a73c996",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/theme.slint",
+      "sha256": "330710e429932635e085728488b422122c7e5c3406bede1607918fce8bbd991f",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/main.slint",
+      "sha256": "5b115be2c3f81553f166fab91e93564031ef62f76aa239548f507a4cd606c5b0",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/options_gui_colours.rs",
+      "sha256": "619dd3d505346ae1bc3bc2a552c1dc92e2239e56c3a6990eb2661621f74c3d02",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/options_window.rs",
+      "sha256": "f22e87448924698a5b28d9bef42d0fc240ce6e6b90ee7ae0b12b8d20fa4aba7a",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/gui_colour_actions.rs",
+      "sha256": "ba079447533b3f0b0085de569f7773730c7f398d3ad698355e2ccd16c47b00b5",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/gui_colours.rs",
+      "sha256": "b2aa0e9d3b368468331bd382c25f916c5e28a064f518ccb7fc941041f7c6a473",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/grid.rs",
+      "sha256": "57819137d59fc2b4455b584c54ea0f981cf829ec00477cc0c0ce79171e170065",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/thumbnail_paint.rs",
+      "sha256": "16a846d7de12c7dea843d6030067490a7948f51a1f41b812ac1b48b0cab0fbe3",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/lib.rs",
+      "sha256": "92dc7d5b2a1a21900433b0d7cd07eb7d4608a62d643310a6d614a9bd181a3905",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/gui_colours.rs",
+      "sha256": "a1f02bce2dab8e5bd46d86c411dac1fe45060b8b23105d1f126055600330f56f",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/thumbnail_appearance.rs",
+      "sha256": "c0c92903414331a4ff2430bc57b690020756786d9447250762b14ac8a0e56156",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/gui_colours.rs",
+      "sha256": "19dbe4a4e94aed7f5b3e38af616c4177928a398f93fa279fab0a549da4acac60",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-store/src/gui_colours.rs",
+      "sha256": "791c9d634b366799597e2384c21b5c813d987a6c61d3b215883d6c0ae47312bb",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_gui_coloursets.py",
+      "sha256": "7ab61562eb9ab14b782eeb0662fab0c074509958f95a0e5ed3604ed8908e57af",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/gui_coloursets.json",
+      "sha256": "c47797f69d419e7a65c5fea2bc08b6a0c3e3cc77f05e0b632fdb9543ea73ca33",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/gui_colour_picker_qt.png",
+      "sha256": "9c0ca5f64a1bdfb821d30625c5aa71ef99bbc92edcb41273d4ba880f03b72b1b",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/gui_coloursets_qt.png",
+      "sha256": "600b0d56a67297191efd7ce1be9a28f1693f2e0ee175bb11b1b285df3d619bc0",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/panels/options/ColoursPanel.py",
+      "sha256": "70dd60e62c41c9a3875e40deea78de9b8bcc96a5690cd7fc5f82e98521ba2b36",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/ClientGUI.py",
+      "sha256": "fb2bc6a31759c068475021e27213a1516d4bba7c837fe1d9d95f72442ed3e5cf",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/gui-coloursets.json",
+      "sha256": "df49384f8dc92dce99471941cea5dcc6c7aa92665e32a676b4029f46d668ca79",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true
+    }
+  ],
+  "test_proof": [
+    {
+      "test": "crates/hydrus-gui-model/tests/model/gui_colours.rs::all_twenty_six_rgb_roles_and_independent_tabs_stage_cancel_apply_and_reopen_like_qt",
+      "passed": true,
+      "evidence": [
+        {
+          "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+          "line": 2872,
+          "text": "2026-10-06T16:21:20.0272006Z test gui_colours::all_twenty_six_rgb_roles_and_independent_tabs_stage_cancel_apply_and_reopen_like_qt ... ok"
+        },
+        {
+          "path": "/workspace/validation-reviews/ci-9bec37964/parity-models.log",
+          "line": 2293,
+          "text": "2026-10-06T16:10:10.1789460Z test gui_colours::all_twenty_six_rgb_roles_and_independent_tabs_stage_cancel_apply_and_reopen_like_qt ... ok"
+        }
+      ]
+    },
+    {
+      "test": "crates/hydrus-gui-model/tests/model/gui_colours.rs::staged_role_changes_merge_with_live_help_switch_and_other_saved_rgb_roles",
+      "passed": true,
+      "evidence": [
+        {
+          "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+          "line": 2874,
+          "text": "2026-10-06T16:21:20.1621946Z test gui_colours::staged_role_changes_merge_with_live_help_switch_and_other_saved_rgb_roles ... ok"
+        },
+        {
+          "path": "/workspace/validation-reviews/ci-9bec37964/parity-models.log",
+          "line": 2295,
+          "text": "2026-10-06T16:10:10.3784250Z test gui_colours::staged_role_changes_merge_with_live_help_switch_and_other_saved_rgb_roles ... ok"
+        }
+      ]
+    },
+    {
+      "test": "crates/hydrus-gui-model/tests/model/gui_colours.rs::old_imported_store_keeps_retained_legacy_rgb_until_native_values_take_precedence",
+      "passed": true,
+      "evidence": [
+        {
+          "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+          "line": 2873,
+          "text": "2026-10-06T16:21:20.1416968Z test gui_colours::old_imported_store_keeps_retained_legacy_rgb_until_native_values_take_precedence ... ok"
+        },
+        {
+          "path": "/workspace/validation-reviews/ci-9bec37964/parity-models.log",
+          "line": 2294,
+          "text": "2026-10-06T16:10:10.2387273Z test gui_colours::old_imported_store_keeps_retained_legacy_rgb_until_native_values_take_precedence ... ok"
+        }
+      ]
+    },
+    {
+      "test": "crates/hydrus-gui/tests/gui/gui_colours.rs::real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker",
+      "passed": true,
+      "evidence": [
+        {
+          "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+          "line": 2135,
+          "text": "2026-10-06T16:19:20.4271906Z test gui_colours::real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker ... ok"
+        }
+      ]
+    },
+    {
+      "test": "crates/hydrus-gui/tests/gui/gui_colours.rs::help_warning_hidden_acknowledgement_toggle_rebind_and_final_bound_drop_are_owned",
+      "passed": true,
+      "evidence": [
+        {
+          "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+          "line": 2116,
+          "text": "2026-10-06T16:19:14.6070834Z test gui_colours::help_warning_hidden_acknowledgement_toggle_rebind_and_final_bound_drop_are_owned ... ok"
+        }
+      ]
+    },
+    {
+      "test": "crates/hydrus-gui/tests/gui/gui_colours.rs::saved_palette_change_during_real_row_fade_discards_old_brushes_without_redecoding",
+      "passed": true,
+      "evidence": [
+        {
+          "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+          "line": 2118,
+          "text": "2026-10-06T16:19:14.9972145Z test gui_colours::saved_palette_change_during_real_row_fade_discards_old_brushes_without_redecoding ... ok"
+        }
+      ]
+    },
+    {
+      "test": "crates/hydrus-gui/tests/gui/gui_colours.rs::fresh_local_membership_live_roles_and_existing_owned_windows_paint_without_palette_changes",
+      "passed": true,
+      "evidence": [
+        {
+          "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+          "line": 2119,
+          "text": "2026-10-06T16:19:15.2859613Z test gui_colours::fresh_local_membership_live_roles_and_existing_owned_windows_paint_without_palette_changes ... ok"
+        }
+      ]
+    },
+    {
+      "test": "crates/hydrus-gui/src/options_gui_colours.rs::tests::clipboard_hex_acceptance_matches_actual_qt_cases",
+      "passed": true,
+      "evidence": [
+        {
+          "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+          "line": 1856,
+          "text": "2026-10-06T16:18:46.8501730Z test options_gui_colours::tests::clipboard_hex_acceptance_matches_actual_qt_cases ... ok"
+        }
+      ]
+    }
+  ],
+  "qt_images_inspected": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/gui_colour_picker_qt.png",
+      "sha256": "9c0ca5f64a1bdfb821d30625c5aa71ef99bbc92edcb41273d4ba880f03b72b1b",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true,
+      "actually_viewed": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/gui_coloursets_qt.png",
+      "sha256": "600b0d56a67297191efd7ce1be9a28f1693f2e0ee175bb11b1b285df3d619bc0",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "exact_source_match": true,
+      "actually_viewed": true
+    }
+  ],
+  "native_images_inspected": [
+    {
+      "filename": "gui-colour-picker.png",
+      "path": "/workspace/validation-reviews/ci-9bec37964/native-renders/gui-colour-picker.png",
+      "dimensions": [
+        440,
+        172
+      ],
+      "bytes": 6437,
+      "sha256": "bb6b49e6ae5bec146b0d63688419ed51da0eeec5caf09573aa5636c8925c9834",
+      "actually_viewed": true,
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "run_id": 37491826054,
+      "artifact_id": 11427745525,
+      "test": "gui_colours::real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker",
+      "state": "All Red/Green/Blue labels+SpinBoxes and OK/Cancel fit, positive finite nonoverlapping measured frames. Actual owned current picker; source preserves bounded channels/swatches/Theme/callbacks.",
+      "visual_finding": "Actually viewed440x172 opening-size capture: Red/Green/Blue labels and255-value standard SpinBoxes all visible beside white swatch; OK/Cancel fit on the lower action row. Production intrinsic layout is repaired; first-draw size getters and strict measured bounds pass at this exact source."
+    },
+    {
+      "filename": "gui-colour-picker-minimum.png",
+      "path": "/workspace/validation-reviews/ci-9bec37964/native-renders/gui-colour-picker-minimum.png",
+      "dimensions": [
+        251,
+        172
+      ],
+      "bytes": 5879,
+      "sha256": "7324a755a707b394b9cefe5add0e9001ebf041d0bbce8e236b3bcf5b4f2cf9d7",
+      "actually_viewed": true,
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "run_id": 37491826054,
+      "artifact_id": 11427745525,
+      "test": "gui_colours::real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker",
+      "state": "Same actual picker at minimum constraints. Strict measured bounds/nonoverlap, no arbitrary tolerance or screenshot-only enlarging.",
+      "visual_finding": "Actually viewed251x172 intrinsic-minimum capture: all three channel editors/labels and OK/Cancel remain visible with margins, no clipping/overlap. Same actual owned picker, not a larger screenshot-only substitute. Exact strict real-frame assertions pass."
+    },
+    {
+      "filename": "gui-coloursets-options.png",
+      "path": "/workspace/validation-reviews/ci-9bec37964/native-renders/gui-coloursets-options.png",
+      "dimensions": [
+        950,
+        700
+      ],
+      "bytes": 55002,
+      "sha256": "4d7287cb0c91180b3deca48b5e8f94160b9fee310ea3617568f834bc119cc50d",
+      "actually_viewed": true,
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "run_id": 37491826054,
+      "artifact_id": 11427745525,
+      "test": "gui_colours::real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker",
+      "state": "After real pointer override-on and real ComboBox popup Down/Return to darkmode, all26role edits staged; override visiblychecked, current darkmode, darkmode editing tab selected. Fresh observed checked/enabled/index/label asserted before capture.",
+      "visual_finding": "Actually viewed950x700: override visibly checked, actual current selector darkmode, darkmode editing tab selected, all seven groups/thirteen swatches visible and enabled. Fresh widget observations follow measured physical pointer override-on and actual ComboBox popup Down/Return; backend draft and displayed widget agree."
+    },
+    {
+      "filename": "gui-coloursets-disabled.png",
+      "path": "/workspace/validation-reviews/ci-9bec37964/native-renders/gui-coloursets-disabled.png",
+      "dimensions": [
+        950,
+        700
+      ],
+      "bytes": 54841,
+      "sha256": "bd93138fcea02cf8e9bf4c488bebac9e5cdd4c9885661997d67b2456f461e83f",
+      "actually_viewed": true,
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "run_id": 37491826054,
+      "artifact_id": 11427745525,
+      "test": "gui_colours::real_options_stage_all_roles_cancel_hidden_inputs_and_retire_owned_picker",
+      "state": "Successor Options after retired old picker Cancel probe; real pointer override-off, current darkmode remains displayed, editing tabs disabled. Fresh actual control states asserted before capture; Store still unchanged because draft will Cancel.",
+      "visual_finding": "Actually viewed950x700 successor Options: override has no tick, current selector still darkmode, default editing tab retained and both tab controls/role labels disabled. Blue checkbox hover/focus fill is native styling, while fresh observer verifies checked=false/enabled=true. This fixes the prior actual-widget/draft mismatch."
+    },
+    {
+      "filename": "gui-colourset-darkmode-warning.png",
+      "path": "/workspace/validation-reviews/ci-9bec37964/native-renders/gui-colourset-darkmode-warning.png",
+      "dimensions": [
+        620,
+        300
+      ],
+      "bytes": 14683,
+      "sha256": "deccfc8d14b7ab3030ec390dd464df0ed92f0984d12f8cd5b7b28c3b25b43de2",
+      "actually_viewed": true,
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "run_id": 37491826054,
+      "artifact_id": 11427745525,
+      "test": "gui_colours::help_warning_hidden_acknowledgement_toggle_rebind_and_final_bound_drop_are_owned",
+      "state": "Owned Information warning when overridefalse; exact Qt warningtext/acknowledgement/toggle. No dedicated paired Qt warningPNG: JSON real message recording supplies reference.",
+      "visual_finding": "Actually viewed620x300: complete exact warning message and OK visible in owned notice. Tall native action button/framework topology differs Qt; no clipping of selected warning text/action. Reference real warning message and acknowledgement/toggle are JSON-recorded; no paired Qt warningPNG."
+    },
+    {
+      "filename": "gui-coloursets-live-main.png",
+      "path": "/workspace/validation-reviews/ci-9bec37964/native-renders/gui-coloursets-live-main.png",
+      "dimensions": [
+        1100,
+        700
+      ],
+      "bytes": 41435,
+      "sha256": "79f7083d13ef6df343ec561d3b1c461955ba9e6f1756f273ab6816bb4dd1bfe5",
+      "actually_viewed": true,
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "run_id": 37491826054,
+      "artifact_id": 11427745525,
+      "test": "gui_colours::fresh_local_membership_live_roles_and_existing_owned_windows_paint_without_palette_changes",
+      "state": "Actual saved darkmode grid/tag-container roles in current main owner after Apply. Source intentionally clears thumbnail bitmap only in finite four-state role-colour probes; not whole screenshot bitmap parity.",
+      "visual_finding": "Actually viewed1100x700: saved grid brush fills viewport margins around thumbnail, autocomplete/tag containers use represented saved roles, preview background role surrounds accepted raster. Generic window/menus remain native light palette. Exact finite role pixel assertions and owned live propagation pass."
+    },
+    {
+      "filename": "gui-coloursets-live-viewer.png",
+      "path": "/workspace/validation-reviews/ci-9bec37964/native-renders/gui-coloursets-live-viewer.png",
+      "dimensions": [
+        800,
+        600
+      ],
+      "bytes": 17931,
+      "sha256": "ce47e824954c08d3c9e9c4fc68c4230071b453a79635f42636c5a141d7413487",
+      "actually_viewed": true,
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "run_id": 37491826054,
+      "artifact_id": 11427745525,
+      "test": "gui_colours::fresh_local_membership_live_roles_and_existing_owned_windows_paint_without_palette_changes",
+      "state": "Existing real owned viewer paints saved media background/text; test clears media/sharp and explicitly enables index text to isolate rolepaint. No universal viewer-render parity.",
+      "visual_finding": "Actually viewed800x600: saved media-background role covers canvas; saved media text and namespace text are present. Media/sharp bitmap deliberately cleared and passive index text explicitly enabled to isolate role paint; this is not failed decode. Fixture-authored arbitrary colours have low contrast; exact represented RGB role paint is verified, not a universal theme/readability or whole-viewer bitmap claim."
+    }
+  ],
+  "palette_integration_reconciliation": {
+    "approved_reconciliation": true,
+    "replacement": "Represented native thumbnail fills/borders map all eight saved-role brushes into the extracted Paint Palette. Current physical storage membership distinguishes local/remote normal/selected paints; palette invalidation clears both current and previous fade snapshots without changing decoded thumbnail bytes/cache entries. The native grid keeps the saved grid role behind viewport margins and the bottom-right background-image layer. This covers represented native grid integration; QColorDialog topology, QSS/OS palettes and unrepresented controls remain outside scope. No dedicated combined saved-role-plus-background-bitmap pixel-parity claim is made.",
+    "scope": "Resolved represented native PaintPalette mapping, current physical membership, cached fade-layer invalidation and viewport layer ordering. No dedicated combined saved-role-plus-background-bitmap Qt pixel parity.",
+    "source_proof_provenance": {
+      "path": "/workspace/validation-reviews/next7-palette-integration-source-proof-9bec37964.json",
+      "sha256": "1c21216a5d816149e6c9a8a4ebbc35865d86bbcd4742f095e7eb42a3179557ae",
+      "exact_source_and_all_anchored_line_hashes_verified": true
+    },
+    "runtime_proof": [
+      {
+        "test": "crates/hydrus-gui/tests/gui/gui_colours.rs::saved_palette_change_during_real_row_fade_discards_old_brushes_without_redecoding",
+        "passed": true,
+        "evidence": [
+          {
+            "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+            "line": 2118,
+            "text": "2026-10-06T16:19:14.9972145Z test gui_colours::saved_palette_change_during_real_row_fade_discards_old_brushes_without_redecoding ... ok"
+          }
+        ]
+      },
+      {
+        "test": "crates/hydrus-gui/tests/gui/gui_colours.rs::fresh_local_membership_live_roles_and_existing_owned_windows_paint_without_palette_changes",
+        "passed": true,
+        "evidence": [
+          {
+            "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+            "line": 2119,
+            "text": "2026-10-06T16:19:15.2859613Z test gui_colours::fresh_local_membership_live_roles_and_existing_owned_windows_paint_without_palette_changes ... ok"
+          }
+        ]
+      }
+    ],
+    "separate_background_tests": [
+      {
+        "test": "crates/hydrus-gui/tests/gui/thumbnail_appearance.rs::default_new_page_small_nonuniform_background_has_exact_unscaled_extent_on_resize",
+        "passed": true,
+        "evidence": [
+          {
+            "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+            "line": 2586,
+            "text": "2026-10-06T16:20:52.4864784Z test thumbnail_appearance::default_new_page_small_nonuniform_background_has_exact_unscaled_extent_on_resize ... ok"
+          }
+        ]
+      },
+      {
+        "test": "crates/hydrus-gui/tests/gui/thumbnail_appearance.rs::unscaled_background_clips_oversized_pixels_and_stays_fixed_on_scroll_and_clear",
+        "passed": true,
+        "evidence": [
+          {
+            "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+            "line": 2594,
+            "text": "2026-10-06T16:20:53.8522604Z test thumbnail_appearance::unscaled_background_clips_oversized_pixels_and_stays_fixed_on_scroll_and_clear ... ok"
+          }
+        ]
+      }
+    ]
+  },
+  "evidence_files": [
+    {
+      "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+      "sha256": "2e4ddb585e3a47733011ed122e347316f67df1b1e4bc7680632c855e8e224803"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-9bec37964/parity-models.log",
+      "sha256": "aedd0b31d079e8326ed6064c617579e11805cb4ecf550db6ae9fb17200508aa9"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-9bec37964/clippy.log",
+      "sha256": "d3f3b6fd24a2703cc82cd5a0d83881c010e4f85f97493d887c45e6f2d7122727"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-9bec37964/ci-evidence.json",
+      "sha256": "26a9b9725a8d4d0088a98baf6da17235f767522a058e00da0aa6b1c2c74efa31"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-9bec37964/native-render-manifest.json",
+      "sha256": "8c38f84ba7d8535d655a8625892eb16c48284c9623129626255b9c4c11de1659"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-9bec37964/run-latest.json",
+      "sha256": "14c6adb689c7ea6809c3415a7441307dc5496ca1bdd6b83ad924d9e6408e9983"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-9bec37964/jobs-latest.json",
+      "sha256": "a5d72626b3f6dae55025d43c43a7d84caa54334146527048e271f3872d399edd"
+    }
+  ],
+  "history_provenance": {
+    "preparation": {
+      "path": "/workspace/validation-reviews/next7-review5-prep-9bec37964.json",
+      "sha256": "f383fba0896fdde411a00862fcdadcfb32e8743f75a2e941c545eb7629644c54"
+    },
+    "prior_capture_defects": "Earlier7c native picker clipped Blue; enabled/disabled Options captures had callback-only checkbox/selector display mismatches. These are historical provenance; fresh exact9bec images and physical-input/geometry tests establish resolution.",
+    "historical_images": [
+      {
+        "path": "/workspace/validation-reviews/ci-7c3c1aac5/native-renders/gui-coloursets-options.png",
+        "sha256": "13a94dff9de23df3bfe5a266c67ab9620ed18e51e080dc86289ad776be71bfc1",
+        "actually_viewed": true,
+        "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+        "role": "diagnostic obsolete-state artifact; no current-source credit"
+      },
+      {
+        "path": "/workspace/validation-reviews/ci-7c3c1aac5/native-renders/gui-coloursets-disabled.png",
+        "sha256": "58af318e1f10c622cfe9dc270b5bfb1b2f18c382f8b97560934838be3e2b7178",
+        "actually_viewed": true,
+        "source_commit": "7c3c1aac5a60a9e3fb1e7a8864cb439914d4fd60",
+        "role": "diagnostic obsolete-state artifact; no current-source credit"
+      }
+    ]
+  },
+  "actions": "Scratch final JSON/MD only; no builds/product edits/canonical writes/publication by this reviewer."
+}

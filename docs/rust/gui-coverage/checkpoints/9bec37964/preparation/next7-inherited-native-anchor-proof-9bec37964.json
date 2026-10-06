@@ -1,0 +1,19 @@
+{
+  "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+  "old_commit": "c107939ff18ac0892800c4a7dd94b08e935e0a11",
+  "id": "dialog.shared.rgb-colour.rgb",
+  "field": "native_source",
+  "old_line": 70,
+  "old_text": "                SpinBox { minimum:0;maximum:255;value<=>root.red; }",
+  "old_line_sha256": "f3ee06ba32c4c46aa8c7715f0cb1bc7db90f89874b4c4f26e822efb1c357f61a",
+  "new_anchor": {
+    "path": "crates/hydrus-gui/ui/gui_coloursets.slint",
+    "line": 91,
+    "line_sha256": "80723a722dee61ae4558383625af87e4ea1be110923fd34169859e5fea650743",
+    "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+  },
+  "new_text": "                        red-input := SpinBox { minimum:0;maximum:255;value<=>root.red; }",
+  "proof": "Exact original red-channel SpinBox is named red-input and moved into GridLayout Row. Both retain minimum0/maximum255 and identical two-way root.red value binding; containing exported GuiColourPickerWindow is preserved. Geometry repair changes layout/measurement only; source-only inventory correction preserves status, assessment and credit.",
+  "approval": false,
+  "repository_writes": false
+}

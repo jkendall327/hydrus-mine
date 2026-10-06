@@ -1,0 +1,469 @@
+{
+  "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+  "ci_evidence_sha256": "26a9b9725a8d4d0088a98baf6da17235f767522a058e00da0aa6b1c2c74efa31",
+  "mapping_sha256": "1e5c8d0462ef69eaa6f60e555f512156b42dd770393126346fa8ec7066018861",
+  "mapping_applied_after_gates": true,
+  "operations": [
+    {
+      "id": "audit-options-colours-current-colourset",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Hosted Rust CI and exact-source native rendered review remain pending; no local Cargo/Rust builds, tests or mutations.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-colours-current-colourset",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "Thumbnail appearance integration must map these eight brushes into the extracted Paint Palette, propagate current physical local membership, discard cached current/old colour snapshots on palette invalidation, and retain grid background behind viewport margins/bitmap. Standalone colour source does not depend on that separate branch.",
+      "conditional_after": "Represented native thumbnail fills/borders map all eight saved-role brushes into the extracted Paint Palette. Current physical storage membership distinguishes local/remote normal/selected paints; palette invalidation clears both current and previous fade snapshots without changing decoded thumbnail bytes/cache entries. The native grid keeps the saved grid role behind viewport margins and the bottom-right background-image layer. This covers represented native grid integration; QColorDialog topology, QSS/OS palettes and unrepresented controls remain outside scope. No dedicated combined saved-role-plus-background-bitmap pixel-parity claim is made.",
+      "reason": "Exact current-source palette integration proof replaces obsolete standalone-branch TODO; real Qt topology/QSS/OS/unrepresented/combined-pixel exclusions remain."
+    },
+    {
+      "id": "audit-options-colours-current-colourset",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-colours-current-colourset",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-colours-current-colourset",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-colours-current-colourset",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Hosted Rust CI and exact-source native rendered review remain pending; no local Cargo/Rust builds, tests or mutations.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "Thumbnail appearance integration must map these eight brushes into the extracted Paint Palette, propagate current physical local membership, discard cached current/old colour snapshots on palette invalidation, and retain grid background behind viewport margins/bitmap. Standalone colour source does not depend on that separate branch.",
+      "conditional_after": "Represented native thumbnail fills/borders map all eight saved-role brushes into the extracted Paint Palette. Current physical storage membership distinguishes local/remote normal/selected paints; palette invalidation clears both current and previous fade snapshots without changing decoded thumbnail bytes/cache entries. The native grid keeps the saved grid role behind viewport margins and the bottom-right background-image layer. This covers represented native grid integration; QColorDialog topology, QSS/OS palettes and unrepresented controls remain outside scope. No dedicated combined saved-role-plus-background-bitmap pixel-parity claim is made.",
+      "reason": "Exact current-source palette integration proof replaces obsolete standalone-branch TODO; real Qt topology/QSS/OS/unrepresented/combined-pixel exclusions remain."
+    },
+    {
+      "id": "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-menu-menu-help-darkmode",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Hosted Rust CI and exact-source native rendered review remain pending; no local Cargo/Rust builds, tests or mutations.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-menu-menu-help-darkmode",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "replace_exact_list_item",
+      "before": "Thumbnail appearance integration must map these eight brushes into the extracted Paint Palette, propagate current physical local membership, discard cached current/old colour snapshots on palette invalidation, and retain grid background behind viewport margins/bitmap. Standalone colour source does not depend on that separate branch.",
+      "conditional_after": "Represented native thumbnail fills/borders map all eight saved-role brushes into the extracted Paint Palette. Current physical storage membership distinguishes local/remote normal/selected paints; palette invalidation clears both current and previous fade snapshots without changing decoded thumbnail bytes/cache entries. The native grid keeps the saved grid role behind viewport margins and the bottom-right background-image layer. This covers represented native grid integration; QColorDialog topology, QSS/OS palettes and unrepresented controls remain outside scope. No dedicated combined saved-role-plus-background-bitmap pixel-parity claim is made.",
+      "reason": "Exact current-source palette integration proof replaces obsolete standalone-branch TODO; real Qt topology/QSS/OS/unrepresented/combined-pixel exclusions remain."
+    },
+    {
+      "id": "audit-options-menu-menu-help-darkmode",
+      "field": "limitations",
+      "original_index": 5,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-menu-menu-help-darkmode",
+      "field": "limitations",
+      "original_index": 6,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-menu-menu-help-darkmode",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-menu-menu-help-darkmode",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "replace_exact_list_item",
+      "before": "Exactly four frozen-original Missing leaves proposed; no parent, alias, renderer/fade/blurhash or ghost-navigation duplicate credit. Canonical ledger/progress/inventory/totals unchanged.",
+      "conditional_after": "Only the four frozen-original concrete thumbnail-preview preferences are in scope; no parent, alias, renderer/fade/blurhash or ghost-navigation duplicate credit.",
+      "reason": "Retain four-control-only/parent-alias-renderer zero-credit scope while removing proposed/unchanged-ledger status."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window",
+      "field": "limitations",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "First-pass promotion requires exact hosted Rust/Clippy/native CI and inspection of thumbnail_preview_selection_options.png; native/Rust tests have not been run locally. Independent bounded source review accepted by repair_namespace_contract.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-on-shift-selection-focus-thumbnails-in-the-preview-window",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "replace_exact_list_item",
+      "before": "Exactly four frozen-original Missing leaves proposed; no parent, alias, renderer/fade/blurhash or ghost-navigation duplicate credit. Canonical ledger/progress/inventory/totals unchanged.",
+      "conditional_after": "Only the four frozen-original concrete thumbnail-preview preferences are in scope; no parent, alias, renderer/fade/blurhash or ghost-navigation duplicate credit.",
+      "reason": "Retain four-control-only/parent-alias-renderer zero-credit scope while removing proposed/unchanged-ledger status."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-on-shift-selection-focus-thumbnails-in-the-preview-window",
+      "field": "limitations",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "First-pass promotion requires exact hosted Rust/Clippy/native CI and inspection of thumbnail_preview_selection_options.png; native/Rust tests have not been run locally. Independent bounded source review accepted by repair_namespace_contract.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-on-shift-selection-focus-thumbnails-in-the-preview-window",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-on-shift-selection-focus-thumbnails-in-the-preview-window",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-on-shift-selection-focus-thumbnails-in-the-preview-window",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-on-shift-selection-focus-thumbnails-in-the-preview-window",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "replace_exact_list_item",
+      "before": "Exactly four frozen-original Missing leaves proposed; no parent, alias, renderer/fade/blurhash or ghost-navigation duplicate credit. Canonical ledger/progress/inventory/totals unchanged.",
+      "conditional_after": "Only the four frozen-original concrete thumbnail-preview preferences are in scope; no parent, alias, renderer/fade/blurhash or ghost-navigation duplicate credit.",
+      "reason": "Retain four-control-only/parent-alias-renderer zero-credit scope while removing proposed/unchanged-ledger status."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration",
+      "field": "limitations",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "First-pass promotion requires exact hosted Rust/Clippy/native CI and inspection of thumbnail_preview_selection_options.png; native/Rust tests have not been run locally. Independent bounded source review accepted by repair_namespace_contract.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration-2",
+      "field": "limitations",
+      "original_index": 0,
+      "operation": "replace_exact_list_item",
+      "before": "Exactly four frozen-original Missing leaves proposed; no parent, alias, renderer/fade/blurhash or ghost-navigation duplicate credit. Canonical ledger/progress/inventory/totals unchanged.",
+      "conditional_after": "Only the four frozen-original concrete thumbnail-preview preferences are in scope; no parent, alias, renderer/fade/blurhash or ghost-navigation duplicate credit.",
+      "reason": "Retain four-control-only/parent-alias-renderer zero-credit scope while removing proposed/unchanged-ledger status."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration-2",
+      "field": "limitations",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "First-pass promotion requires exact hosted Rust/Clippy/native CI and inspection of thumbnail_preview_selection_options.png; native/Rust tests have not been run locally. Independent bounded source review accepted by repair_namespace_contract.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration-2",
+      "field": "limitations",
+      "original_index": 3,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendering and independent behavioral review are separate from CI; preparation alone validates no completion.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration-2",
+      "field": "limitations",
+      "original_index": 4,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted Rust/native execution remains pending; regressions below are authored, not marked executed by preparation.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration-2",
+      "field": "remaining",
+      "original_index": 0,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source hosted full validation remains pending.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration-2",
+      "field": "remaining",
+      "original_index": 1,
+      "operation": "remove_exact_list_item",
+      "before": "Exact-source native rendered review and final assessment reconciliation remain pending.",
+      "conditional_after": null,
+      "reason": "After actual gates remove only historical authored/pending-validation status; preserve exact original literal in provenance."
+    }
+  ],
+  "added_review_scope_limits": {
+    "audit-options-colours-current-colourset": [
+      "Linux only at exact9bec source; Windows/macOS deferred. Only this original concrete ID earns credit; no structural parent/alias or unrelated thumbnail-option completion.",
+      "Native opening/minimum measurements use physical1x software-rendered client areas. OS compositor minimum enforcement, HiDPI native window behavior and broad font/platform pixel parity are not established.",
+      "Qt picker PNG uses19/83/197 and full QColorDialog topology; native picker capture uses the initial255/255/255 role. Qt Colours PNG showsdefault/default, native enabled capture intentionallyshowsdarkmode/darkmode after physical input. These are related different states, not paired bitmap parity.",
+      "RGB picker accepted/hidden/retired channel callbacks are verified against staged role values; actual standard SpinBox text-input behavior is not independently exercised here.",
+      "Role-paint exports deliberately isolate thumbnail/viewer paint in places; controlled fade-clock and250ms observer evidence do not establish full compositor or arbitrary scheduling parity."
+    ],
+    "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page": [
+      "Linux only at exact9bec source; Windows/macOS deferred. Only this original concrete ID earns credit; no structural parent/alias or unrelated thumbnail-option completion.",
+      "Native opening/minimum measurements use physical1x software-rendered client areas. OS compositor minimum enforcement, HiDPI native window behavior and broad font/platform pixel parity are not established.",
+      "Qt picker PNG uses19/83/197 and full QColorDialog topology; native picker capture uses the initial255/255/255 role. Qt Colours PNG showsdefault/default, native enabled capture intentionallyshowsdarkmode/darkmode after physical input. These are related different states, not paired bitmap parity.",
+      "RGB picker accepted/hidden/retired channel callbacks are verified against staged role values; actual standard SpinBox text-input behavior is not independently exercised here.",
+      "Role-paint exports deliberately isolate thumbnail/viewer paint in places; controlled fade-clock and250ms observer evidence do not establish full compositor or arbitrary scheduling parity."
+    ],
+    "audit-options-menu-menu-help-darkmode": [
+      "Linux only at exact9bec source; Windows/macOS deferred. Only this original concrete ID earns credit; no structural parent/alias or unrelated thumbnail-option completion.",
+      "Native opening/minimum measurements use physical1x software-rendered client areas. OS compositor minimum enforcement, HiDPI native window behavior and broad font/platform pixel parity are not established.",
+      "Qt picker PNG uses19/83/197 and full QColorDialog topology; native picker capture uses the initial255/255/255 role. Qt Colours PNG showsdefault/default, native enabled capture intentionallyshowsdarkmode/darkmode after physical input. These are related different states, not paired bitmap parity.",
+      "RGB picker accepted/hidden/retired channel callbacks are verified against staged role values; actual standard SpinBox text-input behavior is not independently exercised here.",
+      "Role-paint exports deliberately isolate thumbnail/viewer paint in places; controlled fade-clock and250ms observer evidence do not establish full compositor or arbitrary scheduling parity."
+    ],
+    "audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window": [
+      "Exactly four frozen-original preference leaves only. No parent, alias, ghost-navigation duplicate, renderer/fade/blurhash or broader thumbnail/player completion credit.",
+      "Existing owned still/poster preview workers, presentation, viewing statistics and page lifetime remain the consumer; broader animation/player/renderer parity is outside these preferences.",
+      "Recorder observes actual Qt focus publications but disconnects downstream preview movie-playback connections only in its private process. This does not prove movie/player execution.",
+      "No direct matching Qt four-control Options PNG is committed: the actual Qt recorder emits JSON. The fresh native four-checked-state image was independently inspected; no whole-panel geometry/pixel equality is claimed.",
+      "Native GUI regression uses private synthetic None/Some0 metadata and injected still rasters to distinguish current preview pixels and viewing intervals. Actual Qt loaded-media/collection duration semantics are replayed separately; real movie decoding is outside this scope.",
+      "Fresh native image shows staged true values before Apply, while recorded defaults are allfalse. Other visible Options rows receive no credit from this image.",
+      "Linux-only validation at exact9bec; Windows/macOS deferred. No support-only completion credit."
+    ],
+    "audit-options-thumbnails-interaction-on-shift-selection-focus-thumbnails-in-the-preview-window": [
+      "Exactly four frozen-original preference leaves only. No parent, alias, ghost-navigation duplicate, renderer/fade/blurhash or broader thumbnail/player completion credit.",
+      "Existing owned still/poster preview workers, presentation, viewing statistics and page lifetime remain the consumer; broader animation/player/renderer parity is outside these preferences.",
+      "Recorder observes actual Qt focus publications but disconnects downstream preview movie-playback connections only in its private process. This does not prove movie/player execution.",
+      "No direct matching Qt four-control Options PNG is committed: the actual Qt recorder emits JSON. The fresh native four-checked-state image was independently inspected; no whole-panel geometry/pixel equality is claimed.",
+      "Native GUI regression uses private synthetic None/Some0 metadata and injected still rasters to distinguish current preview pixels and viewing intervals. Actual Qt loaded-media/collection duration semantics are replayed separately; real movie decoding is outside this scope.",
+      "Fresh native image shows staged true values before Apply, while recorded defaults are allfalse. Other visible Options rows receive no credit from this image.",
+      "Linux-only validation at exact9bec; Windows/macOS deferred. No support-only completion credit."
+    ],
+    "audit-options-thumbnails-interaction-only-on-files-with-no-duration": [
+      "Exactly four frozen-original preference leaves only. No parent, alias, ghost-navigation duplicate, renderer/fade/blurhash or broader thumbnail/player completion credit.",
+      "Existing owned still/poster preview workers, presentation, viewing statistics and page lifetime remain the consumer; broader animation/player/renderer parity is outside these preferences.",
+      "Recorder observes actual Qt focus publications but disconnects downstream preview movie-playback connections only in its private process. This does not prove movie/player execution.",
+      "No direct matching Qt four-control Options PNG is committed: the actual Qt recorder emits JSON. The fresh native four-checked-state image was independently inspected; no whole-panel geometry/pixel equality is claimed.",
+      "Native GUI regression uses private synthetic None/Some0 metadata and injected still rasters to distinguish current preview pixels and viewing intervals. Actual Qt loaded-media/collection duration semantics are replayed separately; real movie decoding is outside this scope.",
+      "Fresh native image shows staged true values before Apply, while recorded defaults are allfalse. Other visible Options rows receive no credit from this image.",
+      "Linux-only validation at exact9bec; Windows/macOS deferred. No support-only completion credit."
+    ],
+    "audit-options-thumbnails-interaction-only-on-files-with-no-duration-2": [
+      "Exactly four frozen-original preference leaves only. No parent, alias, ghost-navigation duplicate, renderer/fade/blurhash or broader thumbnail/player completion credit.",
+      "Existing owned still/poster preview workers, presentation, viewing statistics and page lifetime remain the consumer; broader animation/player/renderer parity is outside these preferences.",
+      "Recorder observes actual Qt focus publications but disconnects downstream preview movie-playback connections only in its private process. This does not prove movie/player execution.",
+      "No direct matching Qt four-control Options PNG is committed: the actual Qt recorder emits JSON. The fresh native four-checked-state image was independently inspected; no whole-panel geometry/pixel equality is claimed.",
+      "Native GUI regression uses private synthetic None/Some0 metadata and injected still rasters to distinguish current preview pixels and viewing intervals. Actual Qt loaded-media/collection duration semantics are replayed separately; real movie decoding is outside this scope.",
+      "Fresh native image shows staged true values before Apply, while recorded defaults are allfalse. Other visible Options rows receive no credit from this image.",
+      "Linux-only validation at exact9bec; Windows/macOS deferred. No support-only completion credit."
+    ]
+  },
+  "reviews": [
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/9bec37964/final-review-2-9bec37964.json",
+      "sha256": "a21bc417b0c91dad1cb240631502327e2bdbf48db9255483f7e86ec41e57a4b7"
+    },
+    {
+      "path": "docs/rust/gui-coverage/checkpoints/9bec37964/final-review-5-9bec37964.json",
+      "sha256": "cef9b90772795fbebcd8ad8c61ef7860fdbb8881cf71811dd01a94cd981082fc"
+    }
+  ],
+  "selected_ids": [
+    "audit-options-colours-current-colourset",
+    "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page",
+    "audit-options-menu-menu-help-darkmode",
+    "audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window",
+    "audit-options-thumbnails-interaction-on-shift-selection-focus-thumbnails-in-the-preview-window",
+    "audit-options-thumbnails-interaction-only-on-files-with-no-duration",
+    "audit-options-thumbnails-interaction-only-on-files-with-no-duration-2"
+  ],
+  "prior319_completion_ids_and_assessments_preserved": true,
+  "source_only_native_anchor_ids": [
+    "dialog.shared.rgb-colour.rgb"
+  ],
+  "final_patch_digest": "457d97b232d5db217e60a27c6a302f9a1b134602eeebf1b829aa7e9424785be0"
+}

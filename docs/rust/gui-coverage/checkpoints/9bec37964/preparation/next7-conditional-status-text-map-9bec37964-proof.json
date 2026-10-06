@@ -1,0 +1,20 @@
+{
+  "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+  "run_id": 37491826054,
+  "map_path": "/workspace/validation-reviews/next7-conditional-status-text-map-9bec37964.json",
+  "map_sha256": "1e5c8d0462ef69eaa6f60e555f512156b42dd770393126346fa8ec7066018861",
+  "input_patch_sha256": "2af2fb149570b3496771f9c35c26970ea8ecc240201fde78e6850704987c7a11",
+  "summary": {
+    "operations": 42,
+    "operation_counts": {
+      "remove_exact_list_item": 35,
+      "replace_exact_list_item": 7
+    },
+    "assessment_changes": 0,
+    "prior319_or_unselected_native_changes": 0,
+    "conditional_packet_written": false,
+    "all_other_fields_and_input_patch_preserved": true
+  },
+  "approval": false,
+  "canonical_writes": false
+}

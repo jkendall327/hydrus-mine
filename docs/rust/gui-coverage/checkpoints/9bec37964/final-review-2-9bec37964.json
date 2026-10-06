@@ -1,0 +1,1169 @@
+{
+  "schema_version": 1,
+  "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+  "run_id": 37491826054,
+  "artifact_id": 11427745525,
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "claims": [
+    {
+      "id": "audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window",
+      "manifest": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json",
+      "approval": true,
+      "validation_scope": "linux",
+      "caveats": [
+        "Exactly four frozen-original preference leaves only. No parent, alias, ghost-navigation duplicate, renderer/fade/blurhash or broader thumbnail/player completion credit.",
+        "Existing owned still/poster preview workers, presentation, viewing statistics and page lifetime remain the consumer; broader animation/player/renderer parity is outside these preferences.",
+        "Recorder observes actual Qt focus publications but disconnects downstream preview movie-playback connections only in its private process. This does not prove movie/player execution.",
+        "No direct matching Qt four-control Options PNG is committed: the actual Qt recorder emits JSON. The fresh native four-checked-state image was independently inspected; no whole-panel geometry/pixel equality is claimed.",
+        "Native GUI regression uses private synthetic None/Some0 metadata and injected still rasters to distinguish current preview pixels and viewing intervals. Actual Qt loaded-media/collection duration semantics are replayed separately; real movie decoding is outside this scope.",
+        "Fresh native image shows staged true values before Apply, while recorded defaults are allfalse. Other visible Options rows receive no credit from this image.",
+        "Linux-only validation at exact9bec; Windows/macOS deferred. No support-only completion credit."
+      ],
+      "basis": "Independent false-default Ctrl preference optionally focuses newly added targets through the existing preview source; Ctrl deselection clears only its own current focus. Apply merges edited fields, Cancel preserves stored settings, and retained closed/rebound main callbacks are inert. Exact native replay verifies real pointer input cannot visibly toggle disabled children, independent parent/child clicks stage four checked+enabled controls without saving, Apply persists allfourtrue and reopen retains them. Original real Ctrl/Shift/range/key preview pixels, statistics, Cancel and owner retirement assertions pass. Model replay matches16Qt control cases,192exact selection/focus/anchor/ghost/publication states and5duration shapes.",
+      "exact_behavior": "Independent false-default Ctrl preference optionally focuses newly added targets through the existing preview source; Ctrl deselection clears only its own current focus. Apply merges edited fields, Cancel preserves stored settings, and retained closed/rebound main callbacks are inert.",
+      "native_images": [
+        {
+          "path": "/workspace/validation-reviews/ci-9bec37964/native-renders/thumbnail_preview_selection_options.png",
+          "sha256": "a44ccbfc399d8492a02f4f31c7838c5ed83bb95f582c2addf6f965d2d79119bf",
+          "name": "thumbnail_preview_selection_options.png",
+          "dimensions": [
+            1100,
+            900
+          ],
+          "actually_viewed_fresh": true,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "run_id": 37491826054,
+          "artifact_id": 11427745525,
+          "producer": "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs:158",
+          "filename_line": 300,
+          "observation": "Ctrl parent and its no-duration child, Shift parent and its no-duration child are all visibly checked; four labels and Apply/Cancel are readable within1100x900. Image is the staged true draft, not recorded false defaults. Nearby fade/blurhash/status/ghost/background/renderer controls receive no completion credit."
+        }
+      ],
+      "passing_tests": [
+        {
+          "source": "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs",
+          "function": "staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retirement",
+          "execution": "passed exact9bec Linux",
+          "line": 158,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 2611,
+              "text": "2026-10-06T16:21:04.4872115Z test thumbnail_preview_selection::staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retirement ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs",
+          "function": "live_store_collection_gate_uses_all_members_and_preserves_zero_duration_distinction",
+          "execution": "passed exact9bec Linux",
+          "line": 446,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 2607,
+              "text": "2026-10-06T16:20:54.6529403Z test thumbnail_preview_selection::live_store_collection_gate_uses_all_members_and_preserves_zero_duration_distinction ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+          "function": "actual_defaults_disabled_values_cancel_reopen_and_edited_field_merge",
+          "execution": "passed exact9bec Linux",
+          "line": 43,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 3213,
+              "text": "2026-10-06T16:21:28.4098399Z test thumbnail_preview_selection::actual_defaults_disabled_values_cancel_reopen_and_edited_field_merge ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/parity-models.log",
+              "line": 2634,
+              "text": "2026-10-06T16:10:23.5013182Z test thumbnail_preview_selection::actual_defaults_disabled_values_cancel_reopen_and_edited_field_merge ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+          "function": "all_qt_modifier_ranges_focus_anchor_ghost_and_keyboard_publications",
+          "execution": "passed exact9bec Linux",
+          "line": 153,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 3184,
+              "text": "2026-10-06T16:21:27.7758800Z test thumbnail_preview_selection::all_qt_modifier_ranges_focus_anchor_ghost_and_keyboard_publications ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/parity-models.log",
+              "line": 2605,
+              "text": "2026-10-06T16:10:22.4875661Z test thumbnail_preview_selection::all_qt_modifier_ranges_focus_anchor_ghost_and_keyboard_publications ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+          "function": "exact_singleton_zero_and_collection_aggregate_duration_eligibility",
+          "execution": "passed exact9bec Linux",
+          "line": 203,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 3188,
+              "text": "2026-10-06T16:21:27.7881638Z test thumbnail_preview_selection::exact_singleton_zero_and_collection_aggregate_duration_eligibility ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/parity-models.log",
+              "line": 2609,
+              "text": "2026-10-06T16:10:22.5014034Z test thumbnail_preview_selection::exact_singleton_zero_and_collection_aggregate_duration_eligibility ... ok"
+            }
+          ]
+        }
+      ],
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 11,
+          "symbol": "pub struct Preferences",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 41,
+          "symbol": "pub fn focus_target(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 53,
+          "symbol": "pub fn save_changed(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 1306,
+          "symbol": "preview_selection.apply_legacy",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 4834,
+          "symbol": "\"On ctrl-selection",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/selection.rs",
+          "line": 88,
+          "symbol": "pub fn hit_with_preview_focus(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/selection.rs",
+          "line": 227,
+          "symbol": "pub fn move_focus_with_preview(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/thumbnail_preview_selection.rs",
+          "line": 5,
+          "symbol": "pub fn has_duration(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2678,
+          "symbol": "fn preview_selection_has_duration(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2792,
+          "symbol": "let eligible = |file|",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 4405,
+          "symbol": "let reselect = {",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 397,
+          "symbol": "check := CheckBox",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 558,
+          "symbol": "observed-choice := ComboBox",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+          "line": 201,
+          "symbol": "def _UpdatePreviewCheckboxes(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        }
+      ]
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration",
+      "manifest": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json",
+      "approval": true,
+      "validation_scope": "linux",
+      "caveats": [
+        "Exactly four frozen-original preference leaves only. No parent, alias, ghost-navigation duplicate, renderer/fade/blurhash or broader thumbnail/player completion credit.",
+        "Existing owned still/poster preview workers, presentation, viewing statistics and page lifetime remain the consumer; broader animation/player/renderer parity is outside these preferences.",
+        "Recorder observes actual Qt focus publications but disconnects downstream preview movie-playback connections only in its private process. This does not prove movie/player execution.",
+        "No direct matching Qt four-control Options PNG is committed: the actual Qt recorder emits JSON. The fresh native four-checked-state image was independently inspected; no whole-panel geometry/pixel equality is claimed.",
+        "Native GUI regression uses private synthetic None/Some0 metadata and injected still rasters to distinguish current preview pixels and viewing intervals. Actual Qt loaded-media/collection duration semantics are replayed separately; real movie decoding is outside this scope.",
+        "Fresh native image shows staged true values before Apply, while recorded defaults are allfalse. Other visible Options rows receive no credit from this image.",
+        "Linux-only validation at exact9bec; Windows/macOS deferred. No support-only completion credit."
+      ],
+      "basis": "Ctrl child is enabled only with its own parent and keeps its saved value while disabled. Static-only accepts GetDurationMS None, rejecting singleton Some(0); collections use their positive aggregate duration rather than the preview representative. The actual live click gate reaches owned preview pixels and statistics. Exact native replay verifies real pointer input cannot visibly toggle disabled children, independent parent/child clicks stage four checked+enabled controls without saving, Apply persists allfourtrue and reopen retains them. Original real Ctrl/Shift/range/key preview pixels, statistics, Cancel and owner retirement assertions pass. Model replay matches16Qt control cases,192exact selection/focus/anchor/ghost/publication states and5duration shapes.",
+      "exact_behavior": "Ctrl child is enabled only with its own parent and keeps its saved value while disabled. Static-only accepts GetDurationMS None, rejecting singleton Some(0); collections use their positive aggregate duration rather than the preview representative. The actual live click gate reaches owned preview pixels and statistics.",
+      "native_images": [
+        {
+          "path": "/workspace/validation-reviews/ci-9bec37964/native-renders/thumbnail_preview_selection_options.png",
+          "sha256": "a44ccbfc399d8492a02f4f31c7838c5ed83bb95f582c2addf6f965d2d79119bf",
+          "name": "thumbnail_preview_selection_options.png",
+          "dimensions": [
+            1100,
+            900
+          ],
+          "actually_viewed_fresh": true,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "run_id": 37491826054,
+          "artifact_id": 11427745525,
+          "producer": "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs:158",
+          "filename_line": 300,
+          "observation": "Ctrl parent and its no-duration child, Shift parent and its no-duration child are all visibly checked; four labels and Apply/Cancel are readable within1100x900. Image is the staged true draft, not recorded false defaults. Nearby fade/blurhash/status/ghost/background/renderer controls receive no completion credit."
+        }
+      ],
+      "passing_tests": [
+        {
+          "source": "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs",
+          "function": "staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retirement",
+          "execution": "passed exact9bec Linux",
+          "line": 158,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 2611,
+              "text": "2026-10-06T16:21:04.4872115Z test thumbnail_preview_selection::staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retirement ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs",
+          "function": "live_store_collection_gate_uses_all_members_and_preserves_zero_duration_distinction",
+          "execution": "passed exact9bec Linux",
+          "line": 446,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 2607,
+              "text": "2026-10-06T16:20:54.6529403Z test thumbnail_preview_selection::live_store_collection_gate_uses_all_members_and_preserves_zero_duration_distinction ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+          "function": "actual_defaults_disabled_values_cancel_reopen_and_edited_field_merge",
+          "execution": "passed exact9bec Linux",
+          "line": 43,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 3213,
+              "text": "2026-10-06T16:21:28.4098399Z test thumbnail_preview_selection::actual_defaults_disabled_values_cancel_reopen_and_edited_field_merge ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/parity-models.log",
+              "line": 2634,
+              "text": "2026-10-06T16:10:23.5013182Z test thumbnail_preview_selection::actual_defaults_disabled_values_cancel_reopen_and_edited_field_merge ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+          "function": "all_qt_modifier_ranges_focus_anchor_ghost_and_keyboard_publications",
+          "execution": "passed exact9bec Linux",
+          "line": 153,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 3184,
+              "text": "2026-10-06T16:21:27.7758800Z test thumbnail_preview_selection::all_qt_modifier_ranges_focus_anchor_ghost_and_keyboard_publications ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/parity-models.log",
+              "line": 2605,
+              "text": "2026-10-06T16:10:22.4875661Z test thumbnail_preview_selection::all_qt_modifier_ranges_focus_anchor_ghost_and_keyboard_publications ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+          "function": "exact_singleton_zero_and_collection_aggregate_duration_eligibility",
+          "execution": "passed exact9bec Linux",
+          "line": 203,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 3188,
+              "text": "2026-10-06T16:21:27.7881638Z test thumbnail_preview_selection::exact_singleton_zero_and_collection_aggregate_duration_eligibility ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/parity-models.log",
+              "line": 2609,
+              "text": "2026-10-06T16:10:22.5014034Z test thumbnail_preview_selection::exact_singleton_zero_and_collection_aggregate_duration_eligibility ... ok"
+            }
+          ]
+        }
+      ],
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 11,
+          "symbol": "pub struct Preferences",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 41,
+          "symbol": "pub fn focus_target(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 53,
+          "symbol": "pub fn save_changed(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 1306,
+          "symbol": "preview_selection.apply_legacy",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 4834,
+          "symbol": "\"On ctrl-selection",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/selection.rs",
+          "line": 88,
+          "symbol": "pub fn hit_with_preview_focus(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/selection.rs",
+          "line": 227,
+          "symbol": "pub fn move_focus_with_preview(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/thumbnail_preview_selection.rs",
+          "line": 5,
+          "symbol": "pub fn has_duration(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2678,
+          "symbol": "fn preview_selection_has_duration(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2792,
+          "symbol": "let eligible = |file|",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 4405,
+          "symbol": "let reselect = {",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 397,
+          "symbol": "check := CheckBox",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 558,
+          "symbol": "observed-choice := ComboBox",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+          "line": 201,
+          "symbol": "def _UpdatePreviewCheckboxes(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        }
+      ]
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-on-shift-selection-focus-thumbnails-in-the-preview-window",
+      "manifest": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json",
+      "approval": true,
+      "validation_scope": "linux",
+      "caveats": [
+        "Exactly four frozen-original preference leaves only. No parent, alias, ghost-navigation duplicate, renderer/fade/blurhash or broader thumbnail/player completion credit.",
+        "Existing owned still/poster preview workers, presentation, viewing statistics and page lifetime remain the consumer; broader animation/player/renderer parity is outside these preferences.",
+        "Recorder observes actual Qt focus publications but disconnects downstream preview movie-playback connections only in its private process. This does not prove movie/player execution.",
+        "No direct matching Qt four-control Options PNG is committed: the actual Qt recorder emits JSON. The fresh native four-checked-state image was independently inspected; no whole-panel geometry/pixel equality is claimed.",
+        "Native GUI regression uses private synthetic None/Some0 metadata and injected still rasters to distinguish current preview pixels and viewing intervals. Actual Qt loaded-media/collection duration semantics are replayed separately; real movie decoding is outside this scope.",
+        "Fresh native image shows staged true values before Apply, while recorded defaults are allfalse. Other visible Options rows receive no credit from this image.",
+        "Linux-only validation at exact9bec; Windows/macOS deferred. No support-only completion credit."
+      ],
+      "basis": "Independent false-default Shift preference optionally focuses anchored range endpoints and Shift-key navigation targets without changing selection anchor, last-hit priority, contraction or ghost restoration. Ctrl+Shift uses Shift range behavior; anchorless Shift fallback focuses unconditionally. Shift-all disables the existing ghost-navigation checkbox without clearing its value. Exact native replay verifies real pointer input cannot visibly toggle disabled children, independent parent/child clicks stage four checked+enabled controls without saving, Apply persists allfourtrue and reopen retains them. Original real Ctrl/Shift/range/key preview pixels, statistics, Cancel and owner retirement assertions pass. Model replay matches16Qt control cases,192exact selection/focus/anchor/ghost/publication states and5duration shapes.",
+      "exact_behavior": "Independent false-default Shift preference optionally focuses anchored range endpoints and Shift-key navigation targets without changing selection anchor, last-hit priority, contraction or ghost restoration. Ctrl+Shift uses Shift range behavior; anchorless Shift fallback focuses unconditionally. Shift-all disables the existing ghost-navigation checkbox without clearing its value.",
+      "native_images": [
+        {
+          "path": "/workspace/validation-reviews/ci-9bec37964/native-renders/thumbnail_preview_selection_options.png",
+          "sha256": "a44ccbfc399d8492a02f4f31c7838c5ed83bb95f582c2addf6f965d2d79119bf",
+          "name": "thumbnail_preview_selection_options.png",
+          "dimensions": [
+            1100,
+            900
+          ],
+          "actually_viewed_fresh": true,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "run_id": 37491826054,
+          "artifact_id": 11427745525,
+          "producer": "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs:158",
+          "filename_line": 300,
+          "observation": "Ctrl parent and its no-duration child, Shift parent and its no-duration child are all visibly checked; four labels and Apply/Cancel are readable within1100x900. Image is the staged true draft, not recorded false defaults. Nearby fade/blurhash/status/ghost/background/renderer controls receive no completion credit."
+        }
+      ],
+      "passing_tests": [
+        {
+          "source": "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs",
+          "function": "staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retirement",
+          "execution": "passed exact9bec Linux",
+          "line": 158,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 2611,
+              "text": "2026-10-06T16:21:04.4872115Z test thumbnail_preview_selection::staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retirement ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs",
+          "function": "live_store_collection_gate_uses_all_members_and_preserves_zero_duration_distinction",
+          "execution": "passed exact9bec Linux",
+          "line": 446,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 2607,
+              "text": "2026-10-06T16:20:54.6529403Z test thumbnail_preview_selection::live_store_collection_gate_uses_all_members_and_preserves_zero_duration_distinction ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+          "function": "actual_defaults_disabled_values_cancel_reopen_and_edited_field_merge",
+          "execution": "passed exact9bec Linux",
+          "line": 43,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 3213,
+              "text": "2026-10-06T16:21:28.4098399Z test thumbnail_preview_selection::actual_defaults_disabled_values_cancel_reopen_and_edited_field_merge ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/parity-models.log",
+              "line": 2634,
+              "text": "2026-10-06T16:10:23.5013182Z test thumbnail_preview_selection::actual_defaults_disabled_values_cancel_reopen_and_edited_field_merge ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+          "function": "all_qt_modifier_ranges_focus_anchor_ghost_and_keyboard_publications",
+          "execution": "passed exact9bec Linux",
+          "line": 153,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 3184,
+              "text": "2026-10-06T16:21:27.7758800Z test thumbnail_preview_selection::all_qt_modifier_ranges_focus_anchor_ghost_and_keyboard_publications ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/parity-models.log",
+              "line": 2605,
+              "text": "2026-10-06T16:10:22.4875661Z test thumbnail_preview_selection::all_qt_modifier_ranges_focus_anchor_ghost_and_keyboard_publications ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+          "function": "exact_singleton_zero_and_collection_aggregate_duration_eligibility",
+          "execution": "passed exact9bec Linux",
+          "line": 203,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 3188,
+              "text": "2026-10-06T16:21:27.7881638Z test thumbnail_preview_selection::exact_singleton_zero_and_collection_aggregate_duration_eligibility ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/parity-models.log",
+              "line": 2609,
+              "text": "2026-10-06T16:10:22.5014034Z test thumbnail_preview_selection::exact_singleton_zero_and_collection_aggregate_duration_eligibility ... ok"
+            }
+          ]
+        }
+      ],
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 11,
+          "symbol": "pub struct Preferences",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 41,
+          "symbol": "pub fn focus_target(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 53,
+          "symbol": "pub fn save_changed(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 1306,
+          "symbol": "preview_selection.apply_legacy",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 4834,
+          "symbol": "\"On ctrl-selection",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/selection.rs",
+          "line": 88,
+          "symbol": "pub fn hit_with_preview_focus(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/selection.rs",
+          "line": 227,
+          "symbol": "pub fn move_focus_with_preview(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/thumbnail_preview_selection.rs",
+          "line": 5,
+          "symbol": "pub fn has_duration(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2678,
+          "symbol": "fn preview_selection_has_duration(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2792,
+          "symbol": "let eligible = |file|",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 4405,
+          "symbol": "let reselect = {",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 397,
+          "symbol": "check := CheckBox",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 558,
+          "symbol": "observed-choice := ComboBox",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+          "line": 201,
+          "symbol": "def _UpdatePreviewCheckboxes(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        }
+      ]
+    },
+    {
+      "id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration-2",
+      "manifest": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json",
+      "approval": true,
+      "validation_scope": "linux",
+      "caveats": [
+        "Exactly four frozen-original preference leaves only. No parent, alias, ghost-navigation duplicate, renderer/fade/blurhash or broader thumbnail/player completion credit.",
+        "Existing owned still/poster preview workers, presentation, viewing statistics and page lifetime remain the consumer; broader animation/player/renderer parity is outside these preferences.",
+        "Recorder observes actual Qt focus publications but disconnects downstream preview movie-playback connections only in its private process. This does not prove movie/player execution.",
+        "No direct matching Qt four-control Options PNG is committed: the actual Qt recorder emits JSON. The fresh native four-checked-state image was independently inspected; no whole-panel geometry/pixel equality is claimed.",
+        "Native GUI regression uses private synthetic None/Some0 metadata and injected still rasters to distinguish current preview pixels and viewing intervals. Actual Qt loaded-media/collection duration semantics are replayed separately; real movie decoding is outside this scope.",
+        "Fresh native image shows staged true values before Apply, while recorded defaults are allfalse. Other visible Options rows receive no credit from this image.",
+        "Linux-only validation at exact9bec; Windows/macOS deferred. No support-only completion credit."
+      ],
+      "basis": "Shift child is enabled only with its own parent and retains disabled values. Static-only uses the actual endpoint media duration for range and keyboard targets; rejected targets keep existing preview focus/pixels/viewing interval even when range contraction removes that file from selection. Collections and singleton zero retain Qt distinctions. Exact native replay verifies real pointer input cannot visibly toggle disabled children, independent parent/child clicks stage four checked+enabled controls without saving, Apply persists allfourtrue and reopen retains them. Original real Ctrl/Shift/range/key preview pixels, statistics, Cancel and owner retirement assertions pass. Model replay matches16Qt control cases,192exact selection/focus/anchor/ghost/publication states and5duration shapes.",
+      "exact_behavior": "Shift child is enabled only with its own parent and retains disabled values. Static-only uses the actual endpoint media duration for range and keyboard targets; rejected targets keep existing preview focus/pixels/viewing interval even when range contraction removes that file from selection. Collections and singleton zero retain Qt distinctions.",
+      "native_images": [
+        {
+          "path": "/workspace/validation-reviews/ci-9bec37964/native-renders/thumbnail_preview_selection_options.png",
+          "sha256": "a44ccbfc399d8492a02f4f31c7838c5ed83bb95f582c2addf6f965d2d79119bf",
+          "name": "thumbnail_preview_selection_options.png",
+          "dimensions": [
+            1100,
+            900
+          ],
+          "actually_viewed_fresh": true,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "run_id": 37491826054,
+          "artifact_id": 11427745525,
+          "producer": "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs:158",
+          "filename_line": 300,
+          "observation": "Ctrl parent and its no-duration child, Shift parent and its no-duration child are all visibly checked; four labels and Apply/Cancel are readable within1100x900. Image is the staged true draft, not recorded false defaults. Nearby fade/blurhash/status/ghost/background/renderer controls receive no completion credit."
+        }
+      ],
+      "passing_tests": [
+        {
+          "source": "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs",
+          "function": "staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retirement",
+          "execution": "passed exact9bec Linux",
+          "line": 158,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 2611,
+              "text": "2026-10-06T16:21:04.4872115Z test thumbnail_preview_selection::staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retirement ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs",
+          "function": "live_store_collection_gate_uses_all_members_and_preserves_zero_duration_distinction",
+          "execution": "passed exact9bec Linux",
+          "line": 446,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 2607,
+              "text": "2026-10-06T16:20:54.6529403Z test thumbnail_preview_selection::live_store_collection_gate_uses_all_members_and_preserves_zero_duration_distinction ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+          "function": "actual_defaults_disabled_values_cancel_reopen_and_edited_field_merge",
+          "execution": "passed exact9bec Linux",
+          "line": 43,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 3213,
+              "text": "2026-10-06T16:21:28.4098399Z test thumbnail_preview_selection::actual_defaults_disabled_values_cancel_reopen_and_edited_field_merge ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/parity-models.log",
+              "line": 2634,
+              "text": "2026-10-06T16:10:23.5013182Z test thumbnail_preview_selection::actual_defaults_disabled_values_cancel_reopen_and_edited_field_merge ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+          "function": "all_qt_modifier_ranges_focus_anchor_ghost_and_keyboard_publications",
+          "execution": "passed exact9bec Linux",
+          "line": 153,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 3184,
+              "text": "2026-10-06T16:21:27.7758800Z test thumbnail_preview_selection::all_qt_modifier_ranges_focus_anchor_ghost_and_keyboard_publications ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/parity-models.log",
+              "line": 2605,
+              "text": "2026-10-06T16:10:22.4875661Z test thumbnail_preview_selection::all_qt_modifier_ranges_focus_anchor_ghost_and_keyboard_publications ... ok"
+            }
+          ]
+        },
+        {
+          "source": "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+          "function": "exact_singleton_zero_and_collection_aggregate_duration_eligibility",
+          "execution": "passed exact9bec Linux",
+          "line": 203,
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+              "line": 3188,
+              "text": "2026-10-06T16:21:27.7881638Z test thumbnail_preview_selection::exact_singleton_zero_and_collection_aggregate_duration_eligibility ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-9bec37964/parity-models.log",
+              "line": 2609,
+              "text": "2026-10-06T16:10:22.5014034Z test thumbnail_preview_selection::exact_singleton_zero_and_collection_aggregate_duration_eligibility ... ok"
+            }
+          ]
+        }
+      ],
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 11,
+          "symbol": "pub struct Preferences",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 41,
+          "symbol": "pub fn focus_target(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 53,
+          "symbol": "pub fn save_changed(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-store/src/import/decode.rs",
+          "line": 1306,
+          "symbol": "preview_selection.apply_legacy",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 4834,
+          "symbol": "\"On ctrl-selection",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/selection.rs",
+          "line": 88,
+          "symbol": "pub fn hit_with_preview_focus(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/selection.rs",
+          "line": 227,
+          "symbol": "pub fn move_focus_with_preview(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/thumbnail_preview_selection.rs",
+          "line": 5,
+          "symbol": "pub fn has_duration(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2678,
+          "symbol": "fn preview_selection_has_duration(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/src/page.rs",
+          "line": 2792,
+          "symbol": "let eligible = |file|",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 4405,
+          "symbol": "let reselect = {",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 397,
+          "symbol": "check := CheckBox",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 558,
+          "symbol": "observed-choice := ComboBox",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        },
+        {
+          "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+          "line": 201,
+          "symbol": "def _UpdatePreviewCheckboxes(",
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        }
+      ]
+    }
+  ],
+  "selected_count": 4,
+  "approved_count": 4,
+  "parent_alias_support_credit": 0,
+  "banked319_unchanged": true,
+  "frozen_reference_denominator": 1812,
+  "canonical_edits": false,
+  "product_edits": false,
+  "builds_run": false,
+  "ci": {
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "check",
+        "id": 112366942762,
+        "conclusion": "success"
+      },
+      {
+        "name": "parity-models",
+        "id": 112366943599,
+        "conclusion": "success"
+      }
+    ],
+    "strict_clippy": "check clippy step success",
+    "parity_ratchet": "check parity ratchet step success",
+    "gui_tests": {
+      "passed": 697,
+      "failed": 0,
+      "ignored": 0,
+      "seconds": 142.79,
+      "log_evidence": [
+        {
+          "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+          "line": 2661,
+          "text": "2026-10-06T16:21:15.0410011Z test result: ok. 697 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 142.79s"
+        }
+      ]
+    },
+    "media_tests": {
+      "passed": 67,
+      "failed": 0,
+      "ignored": 0,
+      "log_evidence": [
+        {
+          "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+          "line": 3568,
+          "text": "2026-10-06T16:21:34.3403759Z test result: ok. 67 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.01s"
+        }
+      ]
+    },
+    "native_png_count": 275,
+    "zip_sha256": "c7b676216204ca0a53b9cf7b005c7da8b179a242342841f98613cf0f6ebdeeb3"
+  },
+  "actual_fresh_images_reviewed": [
+    {
+      "path": "/workspace/validation-reviews/ci-9bec37964/native-renders/thumbnail_preview_selection_options.png",
+      "sha256": "a44ccbfc399d8492a02f4f31c7838c5ed83bb95f582c2addf6f965d2d79119bf",
+      "name": "thumbnail_preview_selection_options.png",
+      "dimensions": [
+        1100,
+        900
+      ],
+      "actually_viewed_fresh": true,
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "run_id": 37491826054,
+      "artifact_id": 11427745525,
+      "producer": "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs:158",
+      "filename_line": 300,
+      "observation": "Ctrl parent and its no-duration child, Shift parent and its no-duration child are all visibly checked; four labels and Apply/Cancel are readable within1100x900. Image is the staged true draft, not recorded false defaults. Nearby fade/blurhash/status/ghost/background/renderer controls receive no completion credit."
+    }
+  ],
+  "reference_images_actually_reviewed": [],
+  "reference_recording": {
+    "recorder": "oracle/record_thumbnail_preview_selection.py",
+    "fixture": "oracle/fixtures/thumbnail_preview_selection.json",
+    "default_values": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "default_enabled": [
+      true,
+      false,
+      true,
+      false
+    ],
+    "boolean_cases": 16,
+    "selection_states": 192,
+    "duration_shapes": [
+      {
+        "input": [
+          null
+        ],
+        "collection": false,
+        "duration": null
+      },
+      {
+        "input": [
+          0
+        ],
+        "collection": false,
+        "duration": 0
+      },
+      {
+        "input": [
+          1
+        ],
+        "collection": false,
+        "duration": 1
+      },
+      {
+        "input": [
+          null,
+          0
+        ],
+        "collection": true,
+        "duration": null
+      },
+      {
+        "input": [
+          null,
+          1
+        ],
+        "collection": true,
+        "duration": 1
+      }
+    ],
+    "direct_Qt_UI_PNG_available": false,
+    "source_basis": "ThumbnailsPanel201-207 depends each child on its own parent without clearing disabled value; MediaResultsPanel actual Ctrl/Shift focus gates use endpoint GetDurationMS isNone. Real singleton0 versus collection zero aggregate recorded."
+  },
+  "reference_review_note": "Actual Qt recorder/source/JSON reviewed; no matching Qt UI image exists. Unrelated thumbnail appearance/cache captures are not treated as a pair.",
+  "source_inputs": [
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "ea9afaf50d63dc7385fdfaddbededd176a64969a99fb3351ef9c5d865f625795",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/options.slint",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "11da5f0479726a224b4e9aa1d5518a14ab6e6e514e530063947eea323a73c996",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/options_window.rs",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "f22e87448924698a5b28d9bef42d0fc240ce6e6b90ee7ae0b12b8d20fa4aba7a",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "0c74f5ee3840fce34a2c73136c531d20d1dc6a14073e0be2df6e4189bf808c65",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/src/selection.rs",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "81011d5c7693d798a7fa3ae7882281e0b4796ecf258efd914bebf341616576cc",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/src/options.rs",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "0959b5f502712b18a6cf8ebb089f1448770b25b291100468cd2e6fba9acb0ae0",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-store/src/thumbnail_preview_selection.rs",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "03f370bd94f7f5996559ccd02bca7277c790187dc5b8a0941c8f986f7e0cd0d4",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/page.rs",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "8c968c29c99b14e862ee643d5aea5af5e78eadb8c532202fffc18084885b0c8d",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_thumbnail_preview_selection.py",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "0d4b8d57c94121340410842e09ebf28cad57f7fa600e011f079f579899674ac3",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/thumbnail_preview_selection.json",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "3783a99fc5fccc23c4c30317dba12d76ca581fe8482fbe1f7f0421fffd960a8a",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "424aa25a179767c3e1faafd931694f5906b11ce9aabd04241cdc520396513f89",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/thumbnail-preview-selection.json",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "19c461a08201af7ba4aa9b2f52ebb6a21bc67df063a93023e310c799e9ee8eff",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/src/thumbnail_preview_selection.rs",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "f05f9397d0cae61ee95ea81da4ac712338f7b631ce3e8736a6b19a59b800ea50",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-store/src/import/decode.rs",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "ce988cd231d08607710465c9a64c3aa01e4a1eaec75a9f698a1d16b25204434d",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/lib.rs",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "92dc7d5b2a1a21900433b0d7cd07eb7d4608a62d643310a6d614a9bd181a3905",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/headless.rs",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "c366399b1f509ea4859dd2e566a6e6a2b73d86ee6581aa34434fc5a16fc4bef7",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "6ce07c23d02d92a69a482240ef6d7eea10128548f5d8a0a077751dfa00789ea4",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "d9fb2c52e61321e6732e97606e74545cba156473812eb2aac8476ea5871d2d5b",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/media/ClientMediaList.py",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "38073a8023358641c226a27e0d91519ac61cfa023157a7abaa82f8a39379caaf",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/.github/workflows/rust.yml",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "48c773539eff907d73b5c868020272ea9938e397829ef81a1345fe1d2ffe927f",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/.github/publication-validation.json",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "49723bd5d6b786392a1368bb3da1406747a553ef31c9de2bdef92cea5d014c5f",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/GUI.md",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "b849007817aaffb3fe5d2ee75400966a93f64bae9e3ae6f70a8ee74ef4706f04",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/DIFFERENCES.md",
+      "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+      "sha256": "3a9aea38c91943fa857f31d0ec231925ac22fbe69558007f7853520881fc3070",
+      "committed_blob_match": true
+    }
+  ],
+  "assertion_preservation": {
+    "baseline_commit": "c107939ff18ac0892800c4a7dd94b08e935e0a11",
+    "original_assertions_preserved": 36,
+    "new_assertions": 7,
+    "all_previous_assertions_retained": true
+  },
+  "shared_observer_review": [
+    "Kind1 named standard CheckBox enabled:row.enabled corresponds to existing Editor/backend guard and Qt dependency admission. Pointer updates actual checked before callback; callback still reprojects only enabled.",
+    "Sibling1ms Timer reads actual state/frame without writing; Timer is Slint non-item removed from layout children. Opt-in defaults false and capture disables it beforePNG.",
+    "Generic kind5/15 ComboBox moved into260px HorizontalLayout with same260px control, same enabled/model/index/callback. Additional sibling Timer reads actual current-index/current-value/frame only; opt-in defaults false. No checkbox path mutation from choice observer.",
+    "Real native pointer steps require fresh observations after each attempted disabled click and each parent/child toggle; saved Preferences remain default beforeApply. Full persistence/reopen, preview pixels/timing/statistics, hidden/permanentlyretired/successor ownership assertions remain intact."
+  ],
+  "historical_validation_provenance": {
+    "preparation": "/workspace/validation-reviews/next7-review2-prep-9bec37964.json",
+    "superseded_gate_wording": [
+      "Exact9bec Linux full check/strictClippy/parity green",
+      "Fresh source-bound thumbnail_preview_selection_options.png actually viewed and hashed; allfourchecked required",
+      "Final exact selected packet/anchor/count/preservation gates"
+    ],
+    "resolution": "Exact9bec completed check/parity success and fresh artifact hash/state inspection resolve runtime/render preparation gates. Earlier callback-only fourfalse capture did not select native widget state; actual pointer route now independently checks disabled admission and fourtrue display. Current scope limits are recorded only in current caveats.",
+    "pending_canonical_publication": "Root-owned selected packet/count/anchor/preservation verification remains independent of this review."
+  },
+  "input_hashes": [
+    {
+      "path": "/workspace/validation-reviews/ci-9bec37964/native-render-manifest.json",
+      "sha256": "8c38f84ba7d8535d655a8625892eb16c48284c9623129626255b9c4c11de1659"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-9bec37964/ci-evidence.json",
+      "sha256": "26a9b9725a8d4d0088a98baf6da17235f767522a058e00da0aa6b1c2c74efa31"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+      "sha256": "2e4ddb585e3a47733011ed122e347316f67df1b1e4bc7680632c855e8e224803"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-9bec37964/parity-models.log",
+      "sha256": "aedd0b31d079e8326ed6064c617579e11805cb4ecf550db6ae9fb17200508aa9"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-9bec37964/clippy.log",
+      "sha256": "d3f3b6fd24a2703cc82cd5a0d83881c010e4f85f97493d887c45e6f2d7122727"
+    },
+    {
+      "path": "/workspace/validation-reviews/next7-review2-prep-9bec37964.json",
+      "sha256": "304307023c3b8720a89ad9a35e02c874a75bace4759538114696874e9ea9bfe4"
+    }
+  ],
+  "remaining_independent_review_blockers": []
+}

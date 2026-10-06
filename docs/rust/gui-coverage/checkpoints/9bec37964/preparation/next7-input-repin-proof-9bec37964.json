@@ -1,0 +1,23 @@
+{
+  "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+  "previous_source": "c107939ff18ac0892800c4a7dd94b08e935e0a11",
+  "run_id": 37491826054,
+  "selected7_unchanged": true,
+  "prior_completed_count": 319,
+  "native_nodes": 1799,
+  "original_claims_deferrals_and_bounds_preserved": true,
+  "source_diff_files": [
+    "crates/hydrus-gui/tests/gui/gui_colours.rs",
+    "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs",
+    "crates/hydrus-gui/ui/gui_coloursets.slint",
+    "crates/hydrus-gui/ui/options.slint",
+    "docs/rust/DIFFERENCES.md",
+    "docs/rust/GUI.md"
+  ],
+  "input_hash_corrections": [],
+  "prep_path": "/workspace/validation-reviews/publication-subset-prep-56-9bec37964.json",
+  "prep_sha256": "bb83bc6b07462a55244ebfe3c5680e5ec1dc0a5362744fe6f847b807d37408c6",
+  "approval": false,
+  "builds": false,
+  "canonical_writes": false
+}

@@ -1,0 +1,864 @@
+{
+  "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+  "run_id": 37491826054,
+  "helper_sha256": "3ccef6214a65fa41577f0aa21b399143e00964c3002c6d279a291ed68f66e2bf",
+  "state": "gates_and_staged_preservation_verified_for_root_review",
+  "publication_performed": false,
+  "new_approval_created": false,
+  "canonical_writes": false,
+  "selected_count": 7,
+  "prior319_nonanchor_nodes_preserved": true,
+  "mandatory_native_rgb_anchor_proof": "/workspace/validation-reviews/next7-inherited-native-anchor-proof-9bec37964.json",
+  "unselected_assessments_limits_metadata_and_topology_preserved": true,
+  "native1799_preserved_except_exact_source_anchor_remaps": true,
+  "node_delta_fields": {
+    "reference": {
+      "client": [
+        "descendant_status_counts"
+      ],
+      "file": [
+        "descendant_status_counts"
+      ],
+      "help": [
+        "descendant_status_counts"
+      ],
+      "options": [
+        "descendant_status_counts"
+      ],
+      "options-colours": [
+        "descendant_status_counts"
+      ],
+      "options-regex-favourites": [
+        "evidence"
+      ],
+      "options-thumbnails": [
+        "descendant_status_counts"
+      ],
+      "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "reference_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-colours-current-colourset": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "reference_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-downloading-gallery-downloader-default-download-source": [
+        "evidence"
+      ],
+      "audit-options-gui-misc-put-the-options-search-bar-at-the": [
+        "evidence"
+      ],
+      "audit-options-speed-and-memory-thumbnail-cache-memory-reserved-for-thumbnail-cache": [
+        "evidence"
+      ],
+      "audit-options-speed-and-memory-thumbnail-cache-thumbnail-cache-timeout": [
+        "evidence"
+      ],
+      "audit-options-speed-and-memory-image-cache-memory-reserved-for-image-cache": [
+        "evidence"
+      ],
+      "audit-options-speed-and-memory-image-cache-image-cache-timeout": [
+        "evidence"
+      ],
+      "audit-options-speed-and-memory-image-cache-maximum-image-size-in-of-cache-that-can-be-cached": [
+        "evidence"
+      ],
+      "audit-options-tag-autocomplete-tabs-favourite-tags-favourite-tag-list-editor": [
+        "evidence"
+      ],
+      "audit-options-thumbnails-interaction": [
+        "descendant_status_counts"
+      ],
+      "audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "reference_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-thumbnails-interaction-only-on-files-with-no-duration": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "reference_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-thumbnails-interaction-on-shift-selection-focus-thumbnails-in-the-preview-window": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "reference_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-thumbnails-interaction-only-on-files-with-no-duration-2": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "reference_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-menu-menu-help-darkmode": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "reference_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-nested-sort-collect-cog-default-file-sort": [
+        "evidence"
+      ],
+      "audit-options-nested-sort-collect-cog-secondary-file-sort-when-primary-gives-two-equal-values": [
+        "evidence"
+      ]
+    },
+    "native": {
+      "menu.help.darkmode": [
+        "evidence"
+      ],
+      "audit.options.missing-tab.regex-favourites": [
+        "evidence"
+      ],
+      "audit.options.nested.sort-collect-cog.default-file-sort": [
+        "evidence"
+      ],
+      "audit.options.nested.sort-collect-cog.secondary-file-sort-when-primary-gives-two-equal-values": [
+        "evidence"
+      ],
+      "dialog.gallery-source": [
+        "evidence"
+      ],
+      "implemented.audit-options-tag-autocomplete-tabs-favourite-tags-favourite-tag-list-editor": [
+        "evidence"
+      ],
+      "dialog.gallery-source.group.1": [
+        "evidence"
+      ],
+      "dialog.gallery-source.group.2": [
+        "evidence"
+      ],
+      "dialog.gallery-source.group.3": [
+        "evidence"
+      ],
+      "dialog.gallery-source.group.4": [
+        "evidence"
+      ],
+      "dialog.gallery-source.group.5": [
+        "evidence"
+      ],
+      "audit.options.nested.sort-collect-cog.default-file-sort.popup-group.1": [
+        "evidence",
+        "native_source"
+      ],
+      "audit.options.nested.sort-collect-cog.default-file-sort.popup-group.1.control.1": [
+        "evidence",
+        "native_source"
+      ],
+      "audit.options.nested.sort-collect-cog.default-file-sort.popup-group.2": [
+        "evidence",
+        "native_source"
+      ],
+      "audit.options.nested.sort-collect-cog.default-file-sort.popup-group.2.control.1": [
+        "evidence",
+        "native_source"
+      ],
+      "audit.options.nested.sort-collect-cog.default-file-sort.popup-group.2.control.2": [
+        "evidence",
+        "native_source"
+      ],
+      "audit.options.nested.sort-collect-cog.default-file-sort.popup-group.2.control.3": [
+        "evidence",
+        "native_source"
+      ],
+      "audit.options.nested.sort-collect-cog.secondary-file-sort-when-primary-gives-two-equal-values.popup-group.1": [
+        "evidence",
+        "native_source"
+      ],
+      "audit.options.nested.sort-collect-cog.secondary-file-sort-when-primary-gives-two-equal-values.popup-group.1.control.1": [
+        "evidence",
+        "native_source"
+      ],
+      "audit.options.nested.sort-collect-cog.secondary-file-sort-when-primary-gives-two-equal-values.popup-group.2": [
+        "evidence",
+        "native_source"
+      ],
+      "audit.options.nested.sort-collect-cog.secondary-file-sort-when-primary-gives-two-equal-values.popup-group.2.control.1": [
+        "evidence",
+        "native_source"
+      ],
+      "audit.options.nested.sort-collect-cog.secondary-file-sort-when-primary-gives-two-equal-values.popup-group.2.control.2": [
+        "evidence",
+        "native_source"
+      ],
+      "audit.options.nested.sort-collect-cog.secondary-file-sort-when-primary-gives-two-equal-values.popup-group.2.control.3": [
+        "evidence",
+        "native_source"
+      ],
+      "dialog.shared.rgb-colour": [
+        "native_source"
+      ],
+      "dialog.shared.rgb-colour.rgb": [
+        "native_source"
+      ],
+      "dialog.shared.rgb-colour.draft": [
+        "native_source"
+      ]
+    }
+  },
+  "exact_source_anchor_remaps": [
+    {
+      "inventory": "reference",
+      "id": "options-regex-favourites",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-downloading-gallery-downloader-default-download-source",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-gui-misc-put-the-options-search-bar-at-the",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-speed-and-memory-thumbnail-cache-memory-reserved-for-thumbnail-cache",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-speed-and-memory-thumbnail-cache-thumbnail-cache-timeout",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-speed-and-memory-image-cache-memory-reserved-for-image-cache",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-speed-and-memory-image-cache-image-cache-timeout",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-speed-and-memory-image-cache-maximum-image-size-in-of-cache-that-can-be-cached",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-tag-autocomplete-tabs-favourite-tags-favourite-tag-list-editor",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-nested-sort-collect-cog-default-file-sort",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-nested-sort-collect-cog-secondary-file-sort-when-primary-gives-two-equal-values",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "menu.help.darkmode",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.options.missing-tab.regex-favourites",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.options.nested.sort-collect-cog.default-file-sort",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.options.nested.sort-collect-cog.secondary-file-sort-when-primary-gives-two-equal-values",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "dialog.gallery-source",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "implemented.audit-options-tag-autocomplete-tabs-favourite-tags-favourite-tag-list-editor",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "dialog.gallery-source.group.1",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "dialog.gallery-source.group.2",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "dialog.gallery-source.group.3",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "dialog.gallery-source.group.4",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "dialog.gallery-source.group.5",
+      "fields": [
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.options.nested.sort-collect-cog.default-file-sort.popup-group.1",
+      "fields": [
+        "native_source",
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.options.nested.sort-collect-cog.default-file-sort.popup-group.1.control.1",
+      "fields": [
+        "native_source",
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.options.nested.sort-collect-cog.default-file-sort.popup-group.2",
+      "fields": [
+        "native_source",
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.options.nested.sort-collect-cog.default-file-sort.popup-group.2.control.1",
+      "fields": [
+        "native_source",
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.options.nested.sort-collect-cog.default-file-sort.popup-group.2.control.2",
+      "fields": [
+        "native_source",
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.options.nested.sort-collect-cog.default-file-sort.popup-group.2.control.3",
+      "fields": [
+        "native_source",
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.options.nested.sort-collect-cog.secondary-file-sort-when-primary-gives-two-equal-values.popup-group.1",
+      "fields": [
+        "native_source",
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.options.nested.sort-collect-cog.secondary-file-sort-when-primary-gives-two-equal-values.popup-group.1.control.1",
+      "fields": [
+        "native_source",
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.options.nested.sort-collect-cog.secondary-file-sort-when-primary-gives-two-equal-values.popup-group.2",
+      "fields": [
+        "native_source",
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.options.nested.sort-collect-cog.secondary-file-sort-when-primary-gives-two-equal-values.popup-group.2.control.1",
+      "fields": [
+        "native_source",
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.options.nested.sort-collect-cog.secondary-file-sort-when-primary-gives-two-equal-values.popup-group.2.control.2",
+      "fields": [
+        "native_source",
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "audit.options.nested.sort-collect-cog.secondary-file-sort-when-primary-gives-two-equal-values.popup-group.2.control.3",
+      "fields": [
+        "native_source",
+        "evidence"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "dialog.shared.rgb-colour",
+      "fields": [
+        "native_source"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "dialog.shared.rgb-colour.rgb",
+      "fields": [
+        "native_source"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    },
+    {
+      "inventory": "native",
+      "id": "dialog.shared.rgb-colour.draft",
+      "fields": [
+        "native_source"
+      ],
+      "proof": "Exact source pipeline equals staged whole node. Sole explicit authored red RGB editor correction is in next7-inherited-native-anchor-proof-9bec37964.json; all other inherited remaps use unchanged-line/hash mapping, never nearest guesses."
+    }
+  ],
+  "ancestor_count_summaries": [
+    {
+      "inventory": "reference",
+      "id": "client",
+      "before": {
+        "partial": 387,
+        "missing": 504,
+        "first_pass": 920
+      },
+      "after": {
+        "partial": 387,
+        "missing": 497,
+        "first_pass": 927
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "file",
+      "before": {
+        "partial": 109,
+        "first_pass": 330,
+        "missing": 265
+      },
+      "after": {
+        "partial": 109,
+        "first_pass": 336,
+        "missing": 259
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "help",
+      "before": {
+        "partial": 7,
+        "first_pass": 18,
+        "missing": 90
+      },
+      "after": {
+        "partial": 7,
+        "first_pass": 19,
+        "missing": 89
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "options",
+      "before": {
+        "first_pass": 307,
+        "partial": 75,
+        "missing": 262
+      },
+      "after": {
+        "first_pass": 313,
+        "partial": 75,
+        "missing": 256
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "options-colours",
+      "before": {
+        "missing": 3
+      },
+      "after": {
+        "missing": 1,
+        "first_pass": 2
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "options-thumbnails",
+      "before": {
+        "missing": 13,
+        "partial": 2,
+        "first_pass": 8
+      },
+      "after": {
+        "missing": 9,
+        "partial": 2,
+        "first_pass": 12
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-thumbnails-interaction",
+      "before": {
+        "missing": 7,
+        "first_pass": 1
+      },
+      "after": {
+        "missing": 3,
+        "first_pass": 5
+      }
+    }
+  ],
+  "staged_ledger": 326,
+  "pending_after_root_banks7": 49,
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "patch_digest": "457d97b232d5db217e60a27c6a302f9a1b134602eeebf1b829aa7e9424785be0",
+  "source_census_digest": "4c9917f91e715b30b9f6f9e20d7a33dd04e4d49ab3cdd07df85f2c68d1b0c1cb",
+  "artifact_id": 11427745525,
+  "files": {
+    "docs/rust/gui-coverage/reference-inventory.json": {
+      "input": "/workspace/validation-reviews/publication-next7-9bec37964-linux/staged/docs/rust/gui-coverage/reference-inventory.json",
+      "sha256": "7f1fa5f7c659f43ddb462ca7af60649eabe75b94caaaa03664464e02bc35d711",
+      "bytes": 8517269
+    },
+    "docs/rust/gui-coverage/native-inventory.json": {
+      "input": "/workspace/validation-reviews/publication-next7-9bec37964-linux/staged/docs/rust/gui-coverage/native-inventory.json",
+      "sha256": "e07c765e37b7bf6e0a25964f4593725b62b33d54d6348a42d51f6a8599093994",
+      "bytes": 6380635
+    },
+    "docs/rust/gui-coverage/overnight/progress.json": {
+      "input": "/workspace/validation-reviews/publication-next7-9bec37964-linux/staged/docs/rust/gui-coverage/overnight/progress.json",
+      "sha256": "86afa9eb4ffbbc02aea1f65685aeef5c601625e36f02d0e52ec136d6c15c56b6",
+      "bytes": 596662
+    },
+    "docs/rust/gui-coverage/overnight/reviewed-patch.json": {
+      "input": "/workspace/validation-reviews/publication-next7-9bec37964-linux/staged/docs/rust/gui-coverage/overnight/reviewed-patch.json",
+      "sha256": "b7b2b88d6ba843194dcac8da79d502864f354355debe912b0a5e932c0ae6f61c",
+      "bytes": 16056534
+    },
+    "docs/rust/gui-coverage/overnight/ci-evidence.json": {
+      "input": "/workspace/validation-reviews/publication-next7-9bec37964-linux/staged/docs/rust/gui-coverage/overnight/ci-evidence.json",
+      "sha256": "26a9b9725a8d4d0088a98baf6da17235f767522a058e00da0aa6b1c2c74efa31",
+      "bytes": 15911
+    },
+    "docs/rust/gui-coverage/audit/anchor-remap-9bec3796-publication.json": {
+      "input": "/workspace/validation-reviews/publication-next7-9bec37964-linux/staged/docs/rust/gui-coverage/audit/anchor-remap-9bec3796-publication.json",
+      "sha256": "dd5d1ed1d7dab46c75fa856bb1c6ee9cf1b35c09acef7a335ad8ead440a0013c",
+      "bytes": 3235738
+    },
+    "docs/rust/gui-progress.html": {
+      "input": "/workspace/validation-reviews/publication-next7-9bec37964-linux/staged/docs/rust/gui-progress.html",
+      "sha256": "546e4e293586303d34839935a1dba285c130dc859e1c7adbd950aabdf93a4919",
+      "bytes": 12003316
+    },
+    "publication-summary.json": {
+      "input": "/workspace/validation-reviews/publication-next7-9bec37964-linux/staged/publication-summary.json",
+      "sha256": "579642c98951fbabd791c00171dc716ab7786b5fb12c2a3b8c3428a0916431c3",
+      "bytes": 1454
+    },
+    "source-census.json": {
+      "input": "/workspace/validation-reviews/publication-next7-9bec37964-linux/staged/source-census.json",
+      "sha256": "64dd0db76f5d38679695130c82cda253c180a6da71f5fdc2249cddb117bfcc65",
+      "bytes": 3523306
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/selected-patch.json": {
+      "input": "/workspace/validation-reviews/publication-next7-9bec37964-linux/selected-patch.json",
+      "sha256": "7a4b8a23ed4c30e5f66ef63d4e92b9f7cf60520fea3b75ffc637c2686791df57",
+      "bytes": 151623
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/review.json": {
+      "input": "/workspace/validation-reviews/publication-next7-9bec37964-linux/review.json",
+      "sha256": "4dc9b73ce4941637896c9f9257781f917bf4781c3b441a326a996891459823bb",
+      "bytes": 2595
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/status-reconciliation-audit.json": {
+      "input": "/workspace/validation-reviews/publication-next7-9bec37964-linux/status-reconciliation-audit.json",
+      "sha256": "cb8a0cfa93264890af0dad2dacd26f7d19102c64bc83891a40ca18979ccab5a6",
+      "bytes": 35879
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/ci-evidence.json": {
+      "input": "/workspace/validation-reviews/ci-9bec37964/ci-evidence.json",
+      "sha256": "26a9b9725a8d4d0088a98baf6da17235f767522a058e00da0aa6b1c2c74efa31",
+      "bytes": 15911
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/native-render-manifest.json": {
+      "input": "/workspace/validation-reviews/ci-9bec37964/native-renders/native-render-manifest.json",
+      "sha256": "8c38f84ba7d8535d655a8625892eb16c48284c9623129626255b9c4c11de1659",
+      "bytes": 44863
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/browser/browser-check.json": {
+      "input": "/workspace/validation-reviews/report-browser-9bec37964/browser-check.json",
+      "sha256": "1942dbd50be4695f6657df59ff732d187f6aebb3605615103b4b4f3ae4ed0bb2",
+      "bytes": 11596
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/browser/report-desktop.png": {
+      "input": "/workspace/validation-reviews/report-browser-9bec37964/report-desktop.png",
+      "sha256": "143439e7bbce1fbcf6ebea126a7e3ad1b589edc71281e3433954956205b8b81a",
+      "bytes": 352790
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/browser/report-narrow.png": {
+      "input": "/workspace/validation-reviews/report-browser-9bec37964/report-narrow.png",
+      "sha256": "ac4851a55c56cad10fba7e765c96004d7f5d706be4a602264e7176d068a9f9ea",
+      "bytes": 296929
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/final-review-2-9bec37964.json": {
+      "input": "/workspace/validation-reviews/final-review-2-9bec37964.json",
+      "sha256": "a21bc417b0c91dad1cb240631502327e2bdbf48db9255483f7e86ec41e57a4b7",
+      "bytes": 59957
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/final-review-2-9bec37964.md": {
+      "input": "/workspace/validation-reviews/final-review-2-9bec37964.md",
+      "sha256": "871909426deeb317ccd00ee21549b1390d1d0f32fd0cc8d782b5e7b0e134384e",
+      "bytes": 7412
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/final-review-5-9bec37964.json": {
+      "input": "/workspace/validation-reviews/final-review-5-9bec37964.json",
+      "sha256": "cef9b90772795fbebcd8ad8c61ef7860fdbb8881cf71811dd01a94cd981082fc",
+      "bytes": 36155
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/final-review-5-9bec37964.md": {
+      "input": "/workspace/validation-reviews/final-review-5-9bec37964.md",
+      "sha256": "849e55c42fc4801fd9066f916bc14053107e267c861da3b8bfd5b9bb84fe741a",
+      "bytes": 8791
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/native/gui-colourset-darkmode-warning.png": {
+      "input": "/workspace/validation-reviews/ci-9bec37964/native-renders/gui-colourset-darkmode-warning.png",
+      "sha256": "deccfc8d14b7ab3030ec390dd464df0ed92f0984d12f8cd5b7b28c3b25b43de2",
+      "bytes": 14683
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/native/thumbnail_preview_selection_options.png": {
+      "input": "/workspace/validation-reviews/ci-9bec37964/native-renders/thumbnail_preview_selection_options.png",
+      "sha256": "a44ccbfc399d8492a02f4f31c7838c5ed83bb95f582c2addf6f965d2d79119bf",
+      "bytes": 104876
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/native/gui-coloursets-options.png": {
+      "input": "/workspace/validation-reviews/ci-9bec37964/native-renders/gui-coloursets-options.png",
+      "sha256": "4d7287cb0c91180b3deca48b5e8f94160b9fee310ea3617568f834bc119cc50d",
+      "bytes": 55002
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/native/gui-colour-picker.png": {
+      "input": "/workspace/validation-reviews/ci-9bec37964/native-renders/gui-colour-picker.png",
+      "sha256": "bb6b49e6ae5bec146b0d63688419ed51da0eeec5caf09573aa5636c8925c9834",
+      "bytes": 6437
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/native/gui-coloursets-live-main.png": {
+      "input": "/workspace/validation-reviews/ci-9bec37964/native-renders/gui-coloursets-live-main.png",
+      "sha256": "79f7083d13ef6df343ec561d3b1c461955ba9e6f1756f273ab6816bb4dd1bfe5",
+      "bytes": 41435
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/native/gui-colour-picker-minimum.png": {
+      "input": "/workspace/validation-reviews/ci-9bec37964/native-renders/gui-colour-picker-minimum.png",
+      "sha256": "7324a755a707b394b9cefe5add0e9001ebf041d0bbce8e236b3bcf5b4f2cf9d7",
+      "bytes": 5879
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/native/gui-coloursets-disabled.png": {
+      "input": "/workspace/validation-reviews/ci-9bec37964/native-renders/gui-coloursets-disabled.png",
+      "sha256": "bd93138fcea02cf8e9bf4c488bebac9e5cdd4c9885661997d67b2456f461e83f",
+      "bytes": 54841
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/native/gui-coloursets-live-viewer.png": {
+      "input": "/workspace/validation-reviews/ci-9bec37964/native-renders/gui-coloursets-live-viewer.png",
+      "sha256": "ce47e824954c08d3c9e9c4fc68c4230071b453a79635f42636c5a141d7413487",
+      "bytes": 17931
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/linux-full.log": {
+      "input": "/workspace/validation-reviews/ci-9bec37964/linux-full.log",
+      "sha256": "2e4ddb585e3a47733011ed122e347316f67df1b1e4bc7680632c855e8e224803",
+      "bytes": 426571
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/parity-models.log": {
+      "input": "/workspace/validation-reviews/ci-9bec37964/parity-models.log",
+      "sha256": "aedd0b31d079e8326ed6064c617579e11805cb4ecf550db6ae9fb17200508aa9",
+      "bytes": 297293
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/clippy.log": {
+      "input": "/workspace/validation-reviews/ci-9bec37964/clippy.log",
+      "sha256": "d3f3b6fd24a2703cc82cd5a0d83881c010e4f85f97493d887c45e6f2d7122727",
+      "bytes": 2133
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/validation-outcome.json": {
+      "input": "/workspace/validation-reviews/ci-9bec37964/validation-outcome.json",
+      "sha256": "5d941c370f70770d4f7236df9457070ec65798e129e305cb136a51a8c1bff633",
+      "bytes": 545
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/preparation/next7-inherited-native-anchor-proof-9bec37964.json": {
+      "input": "/workspace/validation-reviews/next7-inherited-native-anchor-proof-9bec37964.json",
+      "sha256": "fed071b8cc7cd1b3a77c437fd739a7377bce72345b5707202e3316b04e6633df",
+      "bytes": 1148
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/preparation/next7-palette-integration-source-proof-9bec37964.json": {
+      "input": "/workspace/validation-reviews/next7-palette-integration-source-proof-9bec37964.json",
+      "sha256": "1c21216a5d816149e6c9a8a4ebbc35865d86bbcd4742f095e7eb42a3179557ae",
+      "bytes": 10138
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/preparation/next7-conditional-status-text-map-9bec37964.json": {
+      "input": "/workspace/validation-reviews/next7-conditional-status-text-map-9bec37964.json",
+      "sha256": "1e5c8d0462ef69eaa6f60e555f512156b42dd770393126346fa8ec7066018861",
+      "bytes": 35997
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/preparation/next7-conditional-status-text-map-9bec37964-proof.json": {
+      "input": "/workspace/validation-reviews/next7-conditional-status-text-map-9bec37964-proof.json",
+      "sha256": "2dfef038b07d1931b86ec8ba42cec1047503413eccae79810cf30c184bb3a878",
+      "bytes": 732
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/preparation/next7-bank319-preservation-proof-9bec37964.json": {
+      "input": "/workspace/validation-reviews/next7-bank319-preservation-proof-9bec37964.json",
+      "sha256": "c88676ba4de78a7abd067b8cc4c1604ea76ca632eaf338db768c167923e06d91",
+      "bytes": 1225
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/preparation/next7-render-checklist-preparation-9bec37964.json": {
+      "input": "/workspace/validation-reviews/next7-render-checklist-preparation-9bec37964.json",
+      "sha256": "534bf3d4fde18df5ea8efd2097e1f9511840b4902d7223ee4b6322678694fd35",
+      "bytes": 3870
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/preparation/next7-selection-preparation-9bec37964.json": {
+      "input": "/workspace/validation-reviews/next7-selection-preparation-9bec37964.json",
+      "sha256": "e7a46804081b77c09e4e4986782742256c8c187b1e6b916b79f807aac1202717",
+      "bytes": 26350
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/preparation/next7-input-repin-proof-9bec37964.json": {
+      "input": "/workspace/validation-reviews/next7-input-repin-proof-9bec37964.json",
+      "sha256": "9294e35152be863c0c68b65c7fcc9e8280c02bd395195b1aa04bd6205f885019",
+      "bytes": 869
+    },
+    "docs/rust/gui-coverage/checkpoints/9bec37964/preparation/subset-source-preflight.json": {
+      "input": "/workspace/validation-reviews/publication-subset-preflight-next7-9bec37964-linux/subset-source-preflight.json",
+      "sha256": "8bbc387d9097318ada708cbaa2509bffc4304327963ed0eb0d6bf4e596866cb0",
+      "bytes": 55952
+    }
+  },
+  "scope": "Evidence integrity/preservation audit only. Existing root/reviewer packets supply approval; helper does not inspect images or grant approval."
+}

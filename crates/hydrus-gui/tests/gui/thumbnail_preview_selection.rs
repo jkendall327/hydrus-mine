@@ -6,7 +6,12 @@ use hydrus_store::{
 };
 use slint::platform::{Key, PointerEventButton, WindowEvent};
 use slint::{ComponentHandle as _, Model as _};
-use std::{cell::Cell, rc::Rc, sync::Arc};
+use std::{
+    cell::{Cell, RefCell},
+    collections::BTreeMap,
+    rc::Rc,
+    sync::Arc,
+};
 
 fn options(ui: &MainWindow, bound: &hydrus_gui::Bound) -> OptionsWindow {
     ui.invoke_menu_title_pressed(0, 20.0, 22.0);
@@ -37,6 +42,57 @@ fn indices(window: &OptionsWindow) -> [i32; 4] {
         .unwrap() as i32;
     [ctrl, ctrl + 1, shift, shift + 1]
 }
+type CheckStates = Rc<RefCell<BTreeMap<i32, (hydrus_gui::MenuChoiceFrame, bool, bool)>>>;
+
+fn wait_checks(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    states: &CheckStates,
+    expected: &[(i32, bool, bool)],
+) {
+    // Require a new observation after each pointer event, including clicks on
+    // disabled controls; a stale earlier state cannot satisfy the assertion.
+    states.borrow_mut().clear();
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(2);
+    loop {
+        headless::render(native, 1100, 900);
+        if expected.iter().all(|(row, checked, enabled)| {
+            states
+                .borrow()
+                .get(row)
+                .is_some_and(|(_, actual_checked, actual_enabled)| {
+                    actual_checked == checked && actual_enabled == enabled
+                })
+        }) {
+            break;
+        }
+        assert!(
+            std::time::Instant::now() < deadline,
+            "Options checkboxes did not display the expected checked/enabled state"
+        );
+        std::thread::sleep(std::time::Duration::from_millis(2));
+    }
+}
+
+fn click_check(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    states: &CheckStates,
+    row: i32,
+) {
+    let frame = states.borrow().get(&row).unwrap().0.clone();
+    assert!(frame.w > 0.0 && frame.h > 0.0);
+    let position = slint::LogicalPosition::new(frame.x + frame.w / 2.0, frame.y + frame.h / 2.0);
+    assert!(position.x > 0.0 && position.x < 1100.0);
+    assert!(position.y > 0.0 && position.y < 900.0);
+    native.dispatch_event(WindowEvent::PointerPressed {
+        position,
+        button: PointerEventButton::Left,
+    });
+    native.dispatch_event(WindowEvent::PointerReleased {
+        position,
+        button: PointerEventButton::Left,
+    });
+}
+
 fn settle(native: &slint::platform::software_renderer::MinimalSoftwareWindow) {
     for _ in 0..8 {
         headless::render(native, 1100, 700);
@@ -185,14 +241,60 @@ fn staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retiremen
         Preferences::default()
     );
     let applied = options(&ui, &bound);
-    for row in indices(&applied) {
-        applied.invoke_check_toggled(row, true);
-    }
+    let rows = indices(&applied);
     let last = (0..100)
         .take_while(|&n| windows.get(n).is_some())
         .last()
         .unwrap();
-    let pixels = headless::render(&windows.get(last).unwrap(), 1100, 900);
+    let options_native = windows.get(last).unwrap();
+    let states: CheckStates = Rc::new(RefCell::new(BTreeMap::new()));
+    applied.on_check_state_measured({
+        let states = states.clone();
+        move |row, frame, checked, enabled| {
+            states.borrow_mut().insert(row, (frame, checked, enabled));
+        }
+    });
+    applied.set_measure_check_states(true);
+    let mut expected = [
+        (rows[0], false, true),
+        (rows[1], false, false),
+        (rows[2], false, true),
+        (rows[3], false, false),
+    ];
+    wait_checks(&options_native, &states, &expected);
+    // A dependent checkbox must reject actual pointer input before its parent
+    // is enabled, including the visible checkmark rather than only the draft.
+    for row in [rows[1], rows[3]] {
+        click_check(&options_native, &states, row);
+        wait_checks(&options_native, &states, &expected);
+    }
+    assert_eq!(
+        store.read(settings::get::<Preferences>).unwrap(),
+        Preferences::default(),
+        "disabled input and visible drafts cannot save preferences"
+    );
+    for (index, row) in rows.iter().enumerate() {
+        click_check(&options_native, &states, *row);
+        expected[index].1 = true;
+        if index == 0 || index == 2 {
+            expected[index + 1].2 = true;
+        }
+        wait_checks(&options_native, &states, &expected);
+    }
+    assert_eq!(
+        store.read(settings::get::<Preferences>).unwrap(),
+        Preferences::default(),
+        "actual checked controls still stage until Apply"
+    );
+    wait_checks(&options_native, &states, &expected);
+    assert!(rows.iter().all(|row| {
+        states
+            .borrow()
+            .get(row)
+            .is_some_and(|(_, checked, enabled)| *checked && *enabled)
+    }));
+    applied.set_measure_check_states(false);
+    let pixels = headless::render(&options_native, 1100, 900);
     headless::save_png(
         &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
             .join("thumbnail_preview_selection_options.png"),

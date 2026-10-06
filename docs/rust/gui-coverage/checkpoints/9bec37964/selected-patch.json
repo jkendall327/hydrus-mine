@@ -1,0 +1,2248 @@
+{
+  "baseline_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+  "method": "Publish exactly seven original leaves after exact-source full Linux CI and fresh independent behavioral/rendered review. Preserve prior319 IDs and assessments, native inventory and all unselected assessments except exact source anchor remaps and ancestor counts. Windows/macOS deferred; consumer and capture limits retained.",
+  "reference": {
+    "updates": [
+      {
+        "id": "audit-options-colours-current-colourset",
+        "status": "first_pass",
+        "assessment": "Exact independent default/darkmode choice remains available with override off and is separate from the editing tab, which always opens default. All26 staged RGB roles survive Apply/Store reopen; unchanged Apply preserves concurrent Help changes and untouched roles. Saved active set reaches every represented role consumer through owner-local weak observers, including physically-local/trash versus remote selected/normal thumbnail fills/borders. Closed/rebound consumers cannot resume observer publication; real semantic RGB pixel assertions are authored.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-store/src/gui_colours.rs",
+            "line": 20,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "2316f29ba4b36bac799702b5e5afbec41bb9c5644e2ecee9f9bf4492ef35e496",
+            "symbol": "pub struct Settings",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/gui_colours.rs",
+            "line": 78,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "08ed04e947dd2fe6b4d42591cd0b34a07f84f83a959a9f71f1220881d8cce709",
+            "symbol": "pub fn save_changed(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/gui_colours.rs",
+            "line": 125,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "907ec5699988b30786d28f5a0c9b3cf33b88e7f7ae950d594ead1844b986db81",
+            "symbol": "pub fn load(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 871,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "b7d906720aaad71a3cc0de76b5d45730f7dde04c9819de63eda6b1f0bc10291a",
+            "symbol": "crate::gui_colours::Settings::from_legacy,",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 5957,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "0fbe1e20d806d6b93fef2ad7e7b6cdebc4f04f2cb3068d9a9780bba82415a266",
+            "symbol": "pub fn set_gui_colour(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_gui_colours.rs",
+            "line": 56,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb",
+            "symbol": "pub(crate) fn bind(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_window.rs",
+            "line": 526,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "0665081a8c794821e86e559b35ac20d4ebdded92bdbeaaa137be767135212dc3",
+            "symbol": "let gui_colour_list = crate::options_gui_colours::bind",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/gui_colours.rs",
+            "line": 18,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "538239f24796cccde34fe85db99f01b8620777e9c53afade426365bf34017cfe",
+            "symbol": "pub(crate) fn bind_guard(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/gui_colours.rs",
+            "line": 20,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "f40f103e5175330b9a18f895f85365f014c4d5e9b81528d50ef8b9d0d1da7cfe",
+            "symbol": "let weak = <Theme",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/gui_colour_actions.rs",
+            "line": 43,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "52f42a417c8e6938b7293be2635c48b2ede61288b708b00fe1f7e44b3c8fef63",
+            "symbol": "fn valid(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/gui_colour_actions.rs",
+            "line": 89,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "14c7667ded2c3b892a017d3a146cfb97b79db1f7c2c0d72564007b4318d3dfeb",
+            "symbol": "fn flip(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/ui/gui_coloursets.slint",
+            "line": 50,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "759d87a9023481d786417481cf5ff9c9fee2ecdd7606cdb5fd68c15ffed56b72",
+            "symbol": "export component GuiColourPickerWindow",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/ui/theme.slint",
+            "line": 16,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "da4eeb8d88c369a46e9cd4a837dfbd7fafac092b1076d1f47cd79e8d60c38718",
+            "symbol": "pure function thumbnail-background",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/grid.rs",
+            "line": 570,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "10cb032277ec4a06907bcf5c7f95ad8baf5920173a9778a7467e7159e8a28772",
+            "symbol": "// Collections aggregate current locations;",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 765,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "afd5610c796406d54a52ef2192312eb51fd73442aec43f9ad3c66a529d1d1ffc",
+            "symbol": "window.global::<Theme<'_>>().on_colours_changed",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ColoursPanel.py",
+            "line": 125,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "9d412371a58980df222507202727525986807e2355d4d0ae7e9392a3daa44fb5",
+            "symbol": "current colourset: ",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/gui_colours.rs",
+            "line": 54,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "66a6f91d8ec6fb8b09264d4815074812e911f18d0786a45914c511cf86b31b92",
+            "symbol": "fn all_twenty_six_rgb_roles",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/gui_colours.rs",
+            "line": 123,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "64f716fa29c167e8c3c9e47b7040b954a1eb9a21d3d5e69218a12b84386af9af",
+            "symbol": "fn staged_role_changes",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/gui_colours.rs",
+            "line": 154,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "4bb66ee60f8b488d39263e8777a7d73a433d5a80e50aa7977ccff9c78bba3457",
+            "symbol": "fn old_imported_store",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/gui_colours.rs",
+            "line": 240,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "8e5deda7ace7e319a26d83e2fa885a00783b3ab2ec2c72f694d3fbd9f611c7fe",
+            "symbol": "fn real_options_stage",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/gui_colours.rs",
+            "line": 430,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "2e6ba5df54fe718e584446abea219945b05cf52ff33138cc5a4a4b80a7fdf41d",
+            "symbol": "fn help_warning_hidden",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/gui_colours.rs",
+            "line": 693,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "61c648795c323dbd19d831d2d77966af24801b7e9c3772da6fd30709b1898220",
+            "symbol": "fn fresh_local_membership",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_gui_colours.rs",
+            "line": 333,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "b0c3282abef710620b430dffc0d5c3b825104969af2c82833a53a63d82f91ffb",
+            "symbol": "fn clipboard_hex_acceptance",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/record_gui_coloursets.py",
+            "line": 1,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/fixtures/gui_coloursets.json",
+            "line": 1,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ColoursPanel.py",
+            "line": 10,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "6a829e02f7b4cb58282559e42519067b14348a2a6616b849f0710702d3210aee",
+            "symbol": "class ColoursPanel(",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ColoursPanel.py",
+            "line": 150,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "ec561c946930e94bfb9b2f35a354e4758fab4834b484ee29ffc9b0209a86e212",
+            "symbol": "def UpdateOptions(",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/ClientGUI.py",
+            "line": 7899,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "b22f744647d4b39d75f1df8622af0ec8e2728689fadac19de7d3cb2222e72886",
+            "symbol": "def FlipDarkmode(",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/widgets/ClientGUIColourPicker.py",
+            "line": 196,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "d030c3f76db356c8f0d65b1f68e96674e579651ebe49e5edbde90ba4bd2b6309",
+            "symbol": "def _ImportHexFromClipboard(",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/canvas/ClientGUICanvas.py",
+            "line": 835,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "518c60a4a3650e5af39eb216a86eebd6faa79fc0388f39871c1bec0d88f032f3",
+            "symbol": "return self._new_options.GetColour( colour_type )",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/lists/ClientGUIListBoxes.py",
+            "line": 3249,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "e579116a87368fab7fef92c2096acbc79b83f4204f47eb0cc13cd6d75b761a0b",
+            "symbol": "return new_options.GetColour( CC.COLOUR_TAGS_BOX )",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/search/ClientGUIACDropdown.py",
+            "line": 1453,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "07129034114f35d5e2430d916fade09aaabe8aab9a731ab93620fe84d43bf293",
+            "symbol": "return new_options.GetColour( colour_type )",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          }
+        ],
+        "limitations": [
+          "Structural audit-options-colours-coloursets remains Partial and uncounted: native bounded RGB picker differs from QColorDialog HSV/HTML/history/platform topology.",
+          "Application Palette, stylesheet/QSS and OS appearance remain separately owned; generic controls and synthetic preview status retain native palette semantics.",
+          "Saved role updates are owner-local, weak and at most250ms; arbitrary whole-platform or unrepresented-widget parity is not claimed.",
+          "Represented native thumbnail fills/borders map all eight saved-role brushes into the extracted Paint Palette. Current physical storage membership distinguishes local/remote normal/selected paints; palette invalidation clears both current and previous fade snapshots without changing decoded thumbnail bytes/cache entries. The native grid keeps the saved grid role behind viewport margins and the bottom-right background-image layer. This covers represented native grid integration; QColorDialog topology, QSS/OS palettes and unrepresented controls remain outside scope. No dedicated combined saved-role-plus-background-bitmap pixel-parity claim is made.",
+          "Linux only at exact9bec source; Windows/macOS deferred. Only this original concrete ID earns credit; no structural parent/alias or unrelated thumbnail-option completion.",
+          "Native opening/minimum measurements use physical1x software-rendered client areas. OS compositor minimum enforcement, HiDPI native window behavior and broad font/platform pixel parity are not established.",
+          "Qt picker PNG uses19/83/197 and full QColorDialog topology; native picker capture uses the initial255/255/255 role. Qt Colours PNG showsdefault/default, native enabled capture intentionallyshowsdarkmode/darkmode after physical input. These are related different states, not paired bitmap parity.",
+          "RGB picker accepted/hidden/retired channel callbacks are verified against staged role values; actual standard SpinBox text-input behavior is not independently exercised here.",
+          "Role-paint exports deliberately isolate thumbnail/viewer paint in places; controlled fade-clock and250ms observer evidence do not establish full compositor or arbitrary scheduling parity."
+        ],
+        "remaining": [],
+        "implementation_validation": {
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/gui-coloursets.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37491826054",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/9bec37964/final-review-5-9bec37964.json",
+            "sha256": "cef9b90772795fbebcd8ad8c61ef7860fdbb8881cf71811dd01a94cd981082fc"
+          }
+        },
+        "native_source": {
+          "path": "crates/hydrus-store/src/gui_colours.rs",
+          "line": 20,
+          "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "line_sha256": "2316f29ba4b36bac799702b5e5afbec41bb9c5644e2ecee9f9bf4492ef35e496",
+          "symbol": "pub struct Settings"
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/ColoursPanel.py",
+          "line": 125,
+          "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "line_sha256": "9d412371a58980df222507202727525986807e2355d4d0ae7e9392a3daa44fb5",
+          "symbol": "current colourset: "
+        }
+      },
+      {
+        "id": "audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page",
+        "status": "first_pass",
+        "assessment": "Independent exact override checkbox gates the thirteen swatches in each editing tab while preserving the current-set selector. Cancel/reopen and field-scoped Apply preserve latest unrelated Help/role changes; imported retained ClientOptions fallback and native precedence persist. Saved override controls the thirteen represented Qt colour roles across owned thumbnail, autocomplete, tagbox, preview/viewer/archive/delete/duplicate consumers while leaving the application Palette/style unchanged. Hidden Options and stale/hidden child callbacks cannot change or save drafts; child rebind/close ownership is retained.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-store/src/gui_colours.rs",
+            "line": 20,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "2316f29ba4b36bac799702b5e5afbec41bb9c5644e2ecee9f9bf4492ef35e496",
+            "symbol": "pub struct Settings",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/gui_colours.rs",
+            "line": 78,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "08ed04e947dd2fe6b4d42591cd0b34a07f84f83a959a9f71f1220881d8cce709",
+            "symbol": "pub fn save_changed(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/gui_colours.rs",
+            "line": 125,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "907ec5699988b30786d28f5a0c9b3cf33b88e7f7ae950d594ead1844b986db81",
+            "symbol": "pub fn load(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 871,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "b7d906720aaad71a3cc0de76b5d45730f7dde04c9819de63eda6b1f0bc10291a",
+            "symbol": "crate::gui_colours::Settings::from_legacy,",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 5957,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "0fbe1e20d806d6b93fef2ad7e7b6cdebc4f04f2cb3068d9a9780bba82415a266",
+            "symbol": "pub fn set_gui_colour(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_gui_colours.rs",
+            "line": 56,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb",
+            "symbol": "pub(crate) fn bind(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_window.rs",
+            "line": 526,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "0665081a8c794821e86e559b35ac20d4ebdded92bdbeaaa137be767135212dc3",
+            "symbol": "let gui_colour_list = crate::options_gui_colours::bind",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/gui_colours.rs",
+            "line": 18,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "538239f24796cccde34fe85db99f01b8620777e9c53afade426365bf34017cfe",
+            "symbol": "pub(crate) fn bind_guard(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/gui_colours.rs",
+            "line": 20,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "f40f103e5175330b9a18f895f85365f014c4d5e9b81528d50ef8b9d0d1da7cfe",
+            "symbol": "let weak = <Theme",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/gui_colour_actions.rs",
+            "line": 43,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "52f42a417c8e6938b7293be2635c48b2ede61288b708b00fe1f7e44b3c8fef63",
+            "symbol": "fn valid(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/gui_colour_actions.rs",
+            "line": 89,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "14c7667ded2c3b892a017d3a146cfb97b79db1f7c2c0d72564007b4318d3dfeb",
+            "symbol": "fn flip(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/ui/gui_coloursets.slint",
+            "line": 50,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "759d87a9023481d786417481cf5ff9c9fee2ecdd7606cdb5fd68c15ffed56b72",
+            "symbol": "export component GuiColourPickerWindow",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/ui/theme.slint",
+            "line": 16,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "da4eeb8d88c369a46e9cd4a837dfbd7fafac092b1076d1f47cd79e8d60c38718",
+            "symbol": "pure function thumbnail-background",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/grid.rs",
+            "line": 570,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "10cb032277ec4a06907bcf5c7f95ad8baf5920173a9778a7467e7159e8a28772",
+            "symbol": "// Collections aggregate current locations;",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 765,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "afd5610c796406d54a52ef2192312eb51fd73442aec43f9ad3c66a529d1d1ffc",
+            "symbol": "window.global::<Theme<'_>>().on_colours_changed",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ColoursPanel.py",
+            "line": 124,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "c260dacb654c87aab4ea2c5c54312135583c4339029f3dd6d72d6ff1fae5441b",
+            "symbol": "override what is set in the stylesheet with the colours on this page: ",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/gui_colours.rs",
+            "line": 54,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "66a6f91d8ec6fb8b09264d4815074812e911f18d0786a45914c511cf86b31b92",
+            "symbol": "fn all_twenty_six_rgb_roles",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/gui_colours.rs",
+            "line": 123,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "64f716fa29c167e8c3c9e47b7040b954a1eb9a21d3d5e69218a12b84386af9af",
+            "symbol": "fn staged_role_changes",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/gui_colours.rs",
+            "line": 154,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "4bb66ee60f8b488d39263e8777a7d73a433d5a80e50aa7977ccff9c78bba3457",
+            "symbol": "fn old_imported_store",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/gui_colours.rs",
+            "line": 240,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "8e5deda7ace7e319a26d83e2fa885a00783b3ab2ec2c72f694d3fbd9f611c7fe",
+            "symbol": "fn real_options_stage",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/gui_colours.rs",
+            "line": 430,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "2e6ba5df54fe718e584446abea219945b05cf52ff33138cc5a4a4b80a7fdf41d",
+            "symbol": "fn help_warning_hidden",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/gui_colours.rs",
+            "line": 693,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "61c648795c323dbd19d831d2d77966af24801b7e9c3772da6fd30709b1898220",
+            "symbol": "fn fresh_local_membership",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_gui_colours.rs",
+            "line": 333,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "b0c3282abef710620b430dffc0d5c3b825104969af2c82833a53a63d82f91ffb",
+            "symbol": "fn clipboard_hex_acceptance",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/record_gui_coloursets.py",
+            "line": 1,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/fixtures/gui_coloursets.json",
+            "line": 1,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ColoursPanel.py",
+            "line": 10,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "6a829e02f7b4cb58282559e42519067b14348a2a6616b849f0710702d3210aee",
+            "symbol": "class ColoursPanel(",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ColoursPanel.py",
+            "line": 150,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "ec561c946930e94bfb9b2f35a354e4758fab4834b484ee29ffc9b0209a86e212",
+            "symbol": "def UpdateOptions(",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/ClientGUI.py",
+            "line": 7899,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "b22f744647d4b39d75f1df8622af0ec8e2728689fadac19de7d3cb2222e72886",
+            "symbol": "def FlipDarkmode(",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/widgets/ClientGUIColourPicker.py",
+            "line": 196,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "d030c3f76db356c8f0d65b1f68e96674e579651ebe49e5edbde90ba4bd2b6309",
+            "symbol": "def _ImportHexFromClipboard(",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/canvas/ClientGUICanvas.py",
+            "line": 835,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "518c60a4a3650e5af39eb216a86eebd6faa79fc0388f39871c1bec0d88f032f3",
+            "symbol": "return self._new_options.GetColour( colour_type )",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/lists/ClientGUIListBoxes.py",
+            "line": 3249,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "e579116a87368fab7fef92c2096acbc79b83f4204f47eb0cc13cd6d75b761a0b",
+            "symbol": "return new_options.GetColour( CC.COLOUR_TAGS_BOX )",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/search/ClientGUIACDropdown.py",
+            "line": 1453,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "07129034114f35d5e2430d916fade09aaabe8aab9a731ab93620fe84d43bf293",
+            "symbol": "return new_options.GetColour( colour_type )",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          }
+        ],
+        "limitations": [
+          "Structural audit-options-colours-coloursets remains Partial and uncounted: native bounded RGB picker differs from QColorDialog HSV/HTML/history/platform topology.",
+          "Application Palette, stylesheet/QSS and OS appearance remain separately owned; generic controls and synthetic preview status retain native palette semantics.",
+          "Saved role updates are owner-local, weak and at most250ms; arbitrary whole-platform or unrepresented-widget parity is not claimed.",
+          "Represented native thumbnail fills/borders map all eight saved-role brushes into the extracted Paint Palette. Current physical storage membership distinguishes local/remote normal/selected paints; palette invalidation clears both current and previous fade snapshots without changing decoded thumbnail bytes/cache entries. The native grid keeps the saved grid role behind viewport margins and the bottom-right background-image layer. This covers represented native grid integration; QColorDialog topology, QSS/OS palettes and unrepresented controls remain outside scope. No dedicated combined saved-role-plus-background-bitmap pixel-parity claim is made.",
+          "Linux only at exact9bec source; Windows/macOS deferred. Only this original concrete ID earns credit; no structural parent/alias or unrelated thumbnail-option completion.",
+          "Native opening/minimum measurements use physical1x software-rendered client areas. OS compositor minimum enforcement, HiDPI native window behavior and broad font/platform pixel parity are not established.",
+          "Qt picker PNG uses19/83/197 and full QColorDialog topology; native picker capture uses the initial255/255/255 role. Qt Colours PNG showsdefault/default, native enabled capture intentionallyshowsdarkmode/darkmode after physical input. These are related different states, not paired bitmap parity.",
+          "RGB picker accepted/hidden/retired channel callbacks are verified against staged role values; actual standard SpinBox text-input behavior is not independently exercised here.",
+          "Role-paint exports deliberately isolate thumbnail/viewer paint in places; controlled fade-clock and250ms observer evidence do not establish full compositor or arbitrary scheduling parity."
+        ],
+        "remaining": [],
+        "implementation_validation": {
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/gui-coloursets.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37491826054",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/9bec37964/final-review-5-9bec37964.json",
+            "sha256": "cef9b90772795fbebcd8ad8c61ef7860fdbb8881cf71811dd01a94cd981082fc"
+          }
+        },
+        "native_source": {
+          "path": "crates/hydrus-store/src/gui_colours.rs",
+          "line": 20,
+          "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "line_sha256": "2316f29ba4b36bac799702b5e5afbec41bb9c5644e2ecee9f9bf4492ef35e496",
+          "symbol": "pub struct Settings"
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/ColoursPanel.py",
+          "line": 124,
+          "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "line_sha256": "c260dacb654c87aab4ea2c5c54312135583c4339029f3dd6d72d6ff1fae5441b",
+          "symbol": "override what is set in the stylesheet with the colours on this page: "
+        }
+      },
+      {
+        "id": "audit-options-menu-menu-help-darkmode",
+        "status": "first_pass",
+        "assessment": "Actual Help check action reflects the saved current set and toggles default/darkmode. When override is off the exact reference Information warning is acknowledged first, then toggles regardless; when on it toggles immediately. Stylesheet/application Palette remain unchanged. The action reads latest settings at acknowledgement, updates the main owner immediately and other live role owners within250ms. Hidden acknowledgement is inert without consuming the notice; rebind/accepted close/final Bound drop permanently retire pending notices and retained callbacks while independent Store remains live.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-store/src/gui_colours.rs",
+            "line": 20,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "2316f29ba4b36bac799702b5e5afbec41bb9c5644e2ecee9f9bf4492ef35e496",
+            "symbol": "pub struct Settings",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/gui_colours.rs",
+            "line": 78,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "08ed04e947dd2fe6b4d42591cd0b34a07f84f83a959a9f71f1220881d8cce709",
+            "symbol": "pub fn save_changed(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/gui_colours.rs",
+            "line": 125,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "907ec5699988b30786d28f5a0c9b3cf33b88e7f7ae950d594ead1844b986db81",
+            "symbol": "pub fn load(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 871,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "b7d906720aaad71a3cc0de76b5d45730f7dde04c9819de63eda6b1f0bc10291a",
+            "symbol": "crate::gui_colours::Settings::from_legacy,",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 5957,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "0fbe1e20d806d6b93fef2ad7e7b6cdebc4f04f2cb3068d9a9780bba82415a266",
+            "symbol": "pub fn set_gui_colour(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_gui_colours.rs",
+            "line": 56,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "14857b5fa7ed28997f22d916dc00ee04274e1b935d9a856a8dbe04caf4ab24eb",
+            "symbol": "pub(crate) fn bind(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_window.rs",
+            "line": 526,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "0665081a8c794821e86e559b35ac20d4ebdded92bdbeaaa137be767135212dc3",
+            "symbol": "let gui_colour_list = crate::options_gui_colours::bind",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/gui_colours.rs",
+            "line": 18,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "538239f24796cccde34fe85db99f01b8620777e9c53afade426365bf34017cfe",
+            "symbol": "pub(crate) fn bind_guard(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/gui_colours.rs",
+            "line": 20,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "f40f103e5175330b9a18f895f85365f014c4d5e9b81528d50ef8b9d0d1da7cfe",
+            "symbol": "let weak = <Theme",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/gui_colour_actions.rs",
+            "line": 43,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "52f42a417c8e6938b7293be2635c48b2ede61288b708b00fe1f7e44b3c8fef63",
+            "symbol": "fn valid(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/gui_colour_actions.rs",
+            "line": 89,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "14c7667ded2c3b892a017d3a146cfb97b79db1f7c2c0d72564007b4318d3dfeb",
+            "symbol": "fn flip(",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/ui/gui_coloursets.slint",
+            "line": 50,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "759d87a9023481d786417481cf5ff9c9fee2ecdd7606cdb5fd68c15ffed56b72",
+            "symbol": "export component GuiColourPickerWindow",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/ui/theme.slint",
+            "line": 16,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "da4eeb8d88c369a46e9cd4a837dfbd7fafac092b1076d1f47cd79e8d60c38718",
+            "symbol": "pure function thumbnail-background",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/grid.rs",
+            "line": 570,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "10cb032277ec4a06907bcf5c7f95ad8baf5920173a9778a7467e7159e8a28772",
+            "symbol": "// Collections aggregate current locations;",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 765,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "afd5610c796406d54a52ef2192312eb51fd73442aec43f9ad3c66a529d1d1ffc",
+            "symbol": "window.global::<Theme<'_>>().on_colours_changed",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/ClientGUI.py",
+            "line": 7899,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "b22f744647d4b39d75f1df8622af0ec8e2728689fadac19de7d3cb2222e72886",
+            "symbol": "def FlipDarkmode(",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/gui_colours.rs",
+            "line": 54,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "66a6f91d8ec6fb8b09264d4815074812e911f18d0786a45914c511cf86b31b92",
+            "symbol": "fn all_twenty_six_rgb_roles",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/gui_colours.rs",
+            "line": 123,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "64f716fa29c167e8c3c9e47b7040b954a1eb9a21d3d5e69218a12b84386af9af",
+            "symbol": "fn staged_role_changes",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/gui_colours.rs",
+            "line": 154,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "4bb66ee60f8b488d39263e8777a7d73a433d5a80e50aa7977ccff9c78bba3457",
+            "symbol": "fn old_imported_store",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/gui_colours.rs",
+            "line": 240,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "8e5deda7ace7e319a26d83e2fa885a00783b3ab2ec2c72f694d3fbd9f611c7fe",
+            "symbol": "fn real_options_stage",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/gui_colours.rs",
+            "line": 430,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "2e6ba5df54fe718e584446abea219945b05cf52ff33138cc5a4a4b80a7fdf41d",
+            "symbol": "fn help_warning_hidden",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/gui_colours.rs",
+            "line": 693,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "61c648795c323dbd19d831d2d77966af24801b7e9c3772da6fd30709b1898220",
+            "symbol": "fn fresh_local_membership",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/options_gui_colours.rs",
+            "line": 333,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "b0c3282abef710620b430dffc0d5c3b825104969af2c82833a53a63d82f91ffb",
+            "symbol": "fn clipboard_hex_acceptance",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/record_gui_coloursets.py",
+            "line": 1,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/fixtures/gui_coloursets.json",
+            "line": 1,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ColoursPanel.py",
+            "line": 10,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "6a829e02f7b4cb58282559e42519067b14348a2a6616b849f0710702d3210aee",
+            "symbol": "class ColoursPanel(",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ColoursPanel.py",
+            "line": 150,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "ec561c946930e94bfb9b2f35a354e4758fab4834b484ee29ffc9b0209a86e212",
+            "symbol": "def UpdateOptions(",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/widgets/ClientGUIColourPicker.py",
+            "line": 196,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "d030c3f76db356c8f0d65b1f68e96674e579651ebe49e5edbde90ba4bd2b6309",
+            "symbol": "def _ImportHexFromClipboard(",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/canvas/ClientGUICanvas.py",
+            "line": 835,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "518c60a4a3650e5af39eb216a86eebd6faa79fc0388f39871c1bec0d88f032f3",
+            "symbol": "return self._new_options.GetColour( colour_type )",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/lists/ClientGUIListBoxes.py",
+            "line": 3249,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "e579116a87368fab7fef92c2096acbc79b83f4204f47eb0cc13cd6d75b761a0b",
+            "symbol": "return new_options.GetColour( CC.COLOUR_TAGS_BOX )",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/search/ClientGUIACDropdown.py",
+            "line": 1453,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "07129034114f35d5e2430d916fade09aaabe8aab9a731ab93620fe84d43bf293",
+            "symbol": "return new_options.GetColour( colour_type )",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/gui-coloursets.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          }
+        ],
+        "limitations": [
+          "Structural audit-options-colours-coloursets remains Partial and uncounted: native bounded RGB picker differs from QColorDialog HSV/HTML/history/platform topology.",
+          "Application Palette, stylesheet/QSS and OS appearance remain separately owned; generic controls and synthetic preview status retain native palette semantics.",
+          "Saved role updates are owner-local, weak and at most250ms; arbitrary whole-platform or unrepresented-widget parity is not claimed.",
+          "Represented native thumbnail fills/borders map all eight saved-role brushes into the extracted Paint Palette. Current physical storage membership distinguishes local/remote normal/selected paints; palette invalidation clears both current and previous fade snapshots without changing decoded thumbnail bytes/cache entries. The native grid keeps the saved grid role behind viewport margins and the bottom-right background-image layer. This covers represented native grid integration; QColorDialog topology, QSS/OS palettes and unrepresented controls remain outside scope. No dedicated combined saved-role-plus-background-bitmap pixel-parity claim is made.",
+          "Linux only at exact9bec source; Windows/macOS deferred. Only this original concrete ID earns credit; no structural parent/alias or unrelated thumbnail-option completion.",
+          "Native opening/minimum measurements use physical1x software-rendered client areas. OS compositor minimum enforcement, HiDPI native window behavior and broad font/platform pixel parity are not established.",
+          "Qt picker PNG uses19/83/197 and full QColorDialog topology; native picker capture uses the initial255/255/255 role. Qt Colours PNG showsdefault/default, native enabled capture intentionallyshowsdarkmode/darkmode after physical input. These are related different states, not paired bitmap parity.",
+          "RGB picker accepted/hidden/retired channel callbacks are verified against staged role values; actual standard SpinBox text-input behavior is not independently exercised here.",
+          "Role-paint exports deliberately isolate thumbnail/viewer paint in places; controlled fade-clock and250ms observer evidence do not establish full compositor or arbitrary scheduling parity."
+        ],
+        "remaining": [],
+        "implementation_validation": {
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/gui-coloursets.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37491826054",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/9bec37964/final-review-5-9bec37964.json",
+            "sha256": "cef9b90772795fbebcd8ad8c61ef7860fdbb8881cf71811dd01a94cd981082fc"
+          }
+        },
+        "native_source": {
+          "path": "crates/hydrus-store/src/gui_colours.rs",
+          "line": 20,
+          "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "line_sha256": "2316f29ba4b36bac799702b5e5afbec41bb9c5644e2ecee9f9bf4492ef35e496",
+          "symbol": "pub struct Settings"
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/ClientGUI.py",
+          "line": 7899,
+          "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "line_sha256": "b22f744647d4b39d75f1df8622af0ec8e2728689fadac19de7d3cb2222e72886",
+          "symbol": "def FlipDarkmode("
+        }
+      },
+      {
+        "id": "audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window",
+        "status": "first_pass",
+        "assessment": "Independent false-default Ctrl preference optionally focuses newly added targets through the existing preview source; Ctrl deselection clears only its own current focus. Apply merges edited fields, Cancel preserves stored settings, and retained closed/rebound main callbacks are inert.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+            "line": 11,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "373d023fffe3d1204eadbb5fe34e74a9fe3d7451eeb8676b7a53ed040046ce76",
+            "symbol": "pub struct Preferences",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 1306,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "043220d8681592cf470e1d20c740ccdc7e47c16a46c52a0097962346bb098ae3",
+            "symbol": "preview_selection.apply_legacy",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 4834,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "4565bcb18753a590f5e9c8d2039f738756ca003483bed031fd05b257f4c42760",
+            "symbol": "\"On ctrl-selection",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/selection.rs",
+            "line": 88,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "b5039585a9e1d0961985547ceb7e0d0601dff89cb2ccde61c77d52959bfe68d5",
+            "symbol": "pub fn hit_with_preview_focus",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/selection.rs",
+            "line": 227,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "3e0866a3b0c147dffbef7f83bb734e6106100b1900c1333e825a8d8462f65b11",
+            "symbol": "pub fn move_focus_with_preview",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/page.rs",
+            "line": 2678,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "24f6ee4ca8da83a8a79f93d27266869a070752513f45cc49a99e068a6feabdc2",
+            "symbol": "fn preview_selection_has_duration",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/page.rs",
+            "line": 2792,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "9e18dc6972d61aea16ec414d8012bff0a86662108132271a9c5fe48279ee67b8",
+            "symbol": "let eligible = |file|",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 4405,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "58ea9a55ef6e7f8143bd4c9926ae918663993938a46d9bc17209a8d4a43ff6b5",
+            "symbol": "let reselect = {",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 572,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
+            "symbol": "fn bind",
+            "declared_symbol": "if !binding_active.get()",
+            "source_review_scope": "Shared main-window binding entry replaces ambiguous/superseded closure statement; no individual retained-callback assertion or exact former closure is inferred.",
+            "source_review_method": "reviewed_main_binding_entry",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/record_thumbnail_preview_selection.py",
+            "line": 1,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/fixtures/thumbnail_preview_selection.json",
+            "line": 1,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+            "line": 210,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "ec561c946930e94bfb9b2f35a354e4758fab4834b484ee29ffc9b0209a86e212",
+            "symbol": "ThumbnailsPanel.UpdateOptions",
+            "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+            "source_review_method": "unique_python_ast_declaration",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py",
+            "line": 721,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "274a6ad39d65424f0eb66fe74d8403da9989ad4227c8b5f660ec2627fd77637d",
+            "symbol": "MediaResultsPanel._HitMedia",
+            "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+            "source_review_method": "unique_python_ast_declaration",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py",
+            "line": 2016,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "a60c68ddb7948c4c46e63c6ab107eeb3c6291adf0e1f80c5ea88e357673bfff2",
+            "symbol": "MediaResultsPanelThumbnails._InnerWidget.mousePressEvent",
+            "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+            "source_review_method": "unique_python_ast_declaration",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/media/ClientMediaList.py",
+            "line": 1274,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "55bdfca8a23ed08b0ba024870857b32a47e6a85756740502c3fd77b745059175",
+            "symbol": "MediaCollection.GetDurationMS",
+            "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+            "source_review_method": "unique_python_ast_declaration",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+            "line": 153,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "a45f714e2fc8a4692159e6ae085feeac3b73ebd89e221808ed238437056591f6",
+            "symbol": "fn all_qt_modifier_ranges_focus_anchor_ghost_and_keyboard_publications",
+            "source_review_scope": "Named entry of the explicitly cited module/fixture suite; aggregate source support, not a unique assertion for every leaf.",
+            "source_review_method": "reviewed_fixture_test_entry",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs",
+            "line": 158,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "eda8767cf7915815cd51040e7297d7e3795c51b93abe3454ef9c740da31210ef",
+            "symbol": "fn staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retirement",
+            "source_review_scope": "Named entry of the explicitly cited module/fixture suite; aggregate source support, not a unique assertion for every leaf.",
+            "source_review_method": "reviewed_fixture_test_entry",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          }
+        ],
+        "limitations": [
+          "Only the four frozen-original concrete thumbnail-preview preferences are in scope; no parent, alias, renderer/fade/blurhash or ghost-navigation duplicate credit.",
+          "Existing owned still/poster preview workers, presentation, statistics and page lifetime remain the consumer. Broader animation/player/renderer parity is outside these four preferences. Sidebar hide-preview and thumbnail cache changes are independent integration slices.",
+          "Exactly four frozen-original preference leaves only. No parent, alias, ghost-navigation duplicate, renderer/fade/blurhash or broader thumbnail/player completion credit.",
+          "Existing owned still/poster preview workers, presentation, viewing statistics and page lifetime remain the consumer; broader animation/player/renderer parity is outside these preferences.",
+          "Recorder observes actual Qt focus publications but disconnects downstream preview movie-playback connections only in its private process. This does not prove movie/player execution.",
+          "No direct matching Qt four-control Options PNG is committed: the actual Qt recorder emits JSON. The fresh native four-checked-state image was independently inspected; no whole-panel geometry/pixel equality is claimed.",
+          "Native GUI regression uses private synthetic None/Some0 metadata and injected still rasters to distinguish current preview pixels and viewing intervals. Actual Qt loaded-media/collection duration semantics are replayed separately; real movie decoding is outside this scope.",
+          "Fresh native image shows staged true values before Apply, while recorded defaults are allfalse. Other visible Options rows receive no credit from this image.",
+          "Linux-only validation at exact9bec; Windows/macOS deferred. No support-only completion credit."
+        ],
+        "remaining": [],
+        "implementation_validation": {
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37491826054",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/9bec37964/final-review-2-9bec37964.json",
+            "sha256": "a21bc417b0c91dad1cb240631502327e2bdbf48db9255483f7e86ec41e57a4b7"
+          }
+        },
+        "native_source": {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 11,
+          "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "line_sha256": "373d023fffe3d1204eadbb5fe34e74a9fe3d7451eeb8676b7a53ed040046ce76",
+          "symbol": "pub struct Preferences"
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+          "line": 210,
+          "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "line_sha256": "ec561c946930e94bfb9b2f35a354e4758fab4834b484ee29ffc9b0209a86e212",
+          "symbol": "ThumbnailsPanel.UpdateOptions",
+          "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+          "source_review_method": "unique_python_ast_declaration"
+        }
+      },
+      {
+        "id": "audit-options-thumbnails-interaction-on-shift-selection-focus-thumbnails-in-the-preview-window",
+        "status": "first_pass",
+        "assessment": "Independent false-default Shift preference optionally focuses anchored range endpoints and Shift-key navigation targets without changing selection anchor, last-hit priority, contraction or ghost restoration. Ctrl+Shift uses Shift range behavior; anchorless Shift fallback focuses unconditionally. Shift-all disables the existing ghost-navigation checkbox without clearing its value.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+            "line": 11,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "373d023fffe3d1204eadbb5fe34e74a9fe3d7451eeb8676b7a53ed040046ce76",
+            "symbol": "pub struct Preferences",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 1306,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "043220d8681592cf470e1d20c740ccdc7e47c16a46c52a0097962346bb098ae3",
+            "symbol": "preview_selection.apply_legacy",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 4834,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "4565bcb18753a590f5e9c8d2039f738756ca003483bed031fd05b257f4c42760",
+            "symbol": "\"On ctrl-selection",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/selection.rs",
+            "line": 88,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "b5039585a9e1d0961985547ceb7e0d0601dff89cb2ccde61c77d52959bfe68d5",
+            "symbol": "pub fn hit_with_preview_focus",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/selection.rs",
+            "line": 227,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "3e0866a3b0c147dffbef7f83bb734e6106100b1900c1333e825a8d8462f65b11",
+            "symbol": "pub fn move_focus_with_preview",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/page.rs",
+            "line": 2678,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "24f6ee4ca8da83a8a79f93d27266869a070752513f45cc49a99e068a6feabdc2",
+            "symbol": "fn preview_selection_has_duration",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/page.rs",
+            "line": 2792,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "9e18dc6972d61aea16ec414d8012bff0a86662108132271a9c5fe48279ee67b8",
+            "symbol": "let eligible = |file|",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 4405,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "58ea9a55ef6e7f8143bd4c9926ae918663993938a46d9bc17209a8d4a43ff6b5",
+            "symbol": "let reselect = {",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 572,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
+            "symbol": "fn bind",
+            "declared_symbol": "if !binding_active.get()",
+            "source_review_scope": "Shared main-window binding entry replaces ambiguous/superseded closure statement; no individual retained-callback assertion or exact former closure is inferred.",
+            "source_review_method": "reviewed_main_binding_entry",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/record_thumbnail_preview_selection.py",
+            "line": 1,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/fixtures/thumbnail_preview_selection.json",
+            "line": 1,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+            "line": 210,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "ec561c946930e94bfb9b2f35a354e4758fab4834b484ee29ffc9b0209a86e212",
+            "symbol": "ThumbnailsPanel.UpdateOptions",
+            "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+            "source_review_method": "unique_python_ast_declaration",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py",
+            "line": 721,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "274a6ad39d65424f0eb66fe74d8403da9989ad4227c8b5f660ec2627fd77637d",
+            "symbol": "MediaResultsPanel._HitMedia",
+            "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+            "source_review_method": "unique_python_ast_declaration",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py",
+            "line": 2016,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "a60c68ddb7948c4c46e63c6ab107eeb3c6291adf0e1f80c5ea88e357673bfff2",
+            "symbol": "MediaResultsPanelThumbnails._InnerWidget.mousePressEvent",
+            "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+            "source_review_method": "unique_python_ast_declaration",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/media/ClientMediaList.py",
+            "line": 1274,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "55bdfca8a23ed08b0ba024870857b32a47e6a85756740502c3fd77b745059175",
+            "symbol": "MediaCollection.GetDurationMS",
+            "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+            "source_review_method": "unique_python_ast_declaration",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+            "line": 153,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "a45f714e2fc8a4692159e6ae085feeac3b73ebd89e221808ed238437056591f6",
+            "symbol": "fn all_qt_modifier_ranges_focus_anchor_ghost_and_keyboard_publications",
+            "source_review_scope": "Named entry of the explicitly cited module/fixture suite; aggregate source support, not a unique assertion for every leaf.",
+            "source_review_method": "reviewed_fixture_test_entry",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs",
+            "line": 158,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "eda8767cf7915815cd51040e7297d7e3795c51b93abe3454ef9c740da31210ef",
+            "symbol": "fn staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retirement",
+            "source_review_scope": "Named entry of the explicitly cited module/fixture suite; aggregate source support, not a unique assertion for every leaf.",
+            "source_review_method": "reviewed_fixture_test_entry",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          }
+        ],
+        "limitations": [
+          "Only the four frozen-original concrete thumbnail-preview preferences are in scope; no parent, alias, renderer/fade/blurhash or ghost-navigation duplicate credit.",
+          "Existing owned still/poster preview workers, presentation, statistics and page lifetime remain the consumer. Broader animation/player/renderer parity is outside these four preferences. Sidebar hide-preview and thumbnail cache changes are independent integration slices.",
+          "Exactly four frozen-original preference leaves only. No parent, alias, ghost-navigation duplicate, renderer/fade/blurhash or broader thumbnail/player completion credit.",
+          "Existing owned still/poster preview workers, presentation, viewing statistics and page lifetime remain the consumer; broader animation/player/renderer parity is outside these preferences.",
+          "Recorder observes actual Qt focus publications but disconnects downstream preview movie-playback connections only in its private process. This does not prove movie/player execution.",
+          "No direct matching Qt four-control Options PNG is committed: the actual Qt recorder emits JSON. The fresh native four-checked-state image was independently inspected; no whole-panel geometry/pixel equality is claimed.",
+          "Native GUI regression uses private synthetic None/Some0 metadata and injected still rasters to distinguish current preview pixels and viewing intervals. Actual Qt loaded-media/collection duration semantics are replayed separately; real movie decoding is outside this scope.",
+          "Fresh native image shows staged true values before Apply, while recorded defaults are allfalse. Other visible Options rows receive no credit from this image.",
+          "Linux-only validation at exact9bec; Windows/macOS deferred. No support-only completion credit."
+        ],
+        "remaining": [],
+        "implementation_validation": {
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37491826054",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/9bec37964/final-review-2-9bec37964.json",
+            "sha256": "a21bc417b0c91dad1cb240631502327e2bdbf48db9255483f7e86ec41e57a4b7"
+          }
+        },
+        "native_source": {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 11,
+          "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "line_sha256": "373d023fffe3d1204eadbb5fe34e74a9fe3d7451eeb8676b7a53ed040046ce76",
+          "symbol": "pub struct Preferences"
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+          "line": 210,
+          "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "line_sha256": "ec561c946930e94bfb9b2f35a354e4758fab4834b484ee29ffc9b0209a86e212",
+          "symbol": "ThumbnailsPanel.UpdateOptions",
+          "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+          "source_review_method": "unique_python_ast_declaration"
+        }
+      },
+      {
+        "id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration",
+        "status": "first_pass",
+        "assessment": "Ctrl child is enabled only with its own parent and keeps its saved value while disabled. Static-only accepts GetDurationMS None, rejecting singleton Some(0); collections use their positive aggregate duration rather than the preview representative. The actual live click gate reaches owned preview pixels and statistics.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+            "line": 11,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "373d023fffe3d1204eadbb5fe34e74a9fe3d7451eeb8676b7a53ed040046ce76",
+            "symbol": "pub struct Preferences",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 1306,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "043220d8681592cf470e1d20c740ccdc7e47c16a46c52a0097962346bb098ae3",
+            "symbol": "preview_selection.apply_legacy",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 4834,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "4565bcb18753a590f5e9c8d2039f738756ca003483bed031fd05b257f4c42760",
+            "symbol": "\"On ctrl-selection",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/selection.rs",
+            "line": 88,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "b5039585a9e1d0961985547ceb7e0d0601dff89cb2ccde61c77d52959bfe68d5",
+            "symbol": "pub fn hit_with_preview_focus",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/selection.rs",
+            "line": 227,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "3e0866a3b0c147dffbef7f83bb734e6106100b1900c1333e825a8d8462f65b11",
+            "symbol": "pub fn move_focus_with_preview",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/page.rs",
+            "line": 2678,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "24f6ee4ca8da83a8a79f93d27266869a070752513f45cc49a99e068a6feabdc2",
+            "symbol": "fn preview_selection_has_duration",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/page.rs",
+            "line": 2792,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "9e18dc6972d61aea16ec414d8012bff0a86662108132271a9c5fe48279ee67b8",
+            "symbol": "let eligible = |file|",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 4405,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "58ea9a55ef6e7f8143bd4c9926ae918663993938a46d9bc17209a8d4a43ff6b5",
+            "symbol": "let reselect = {",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 572,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
+            "symbol": "fn bind",
+            "declared_symbol": "if !binding_active.get()",
+            "source_review_scope": "Shared main-window binding entry replaces ambiguous/superseded closure statement; no individual retained-callback assertion or exact former closure is inferred.",
+            "source_review_method": "reviewed_main_binding_entry",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/record_thumbnail_preview_selection.py",
+            "line": 1,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/fixtures/thumbnail_preview_selection.json",
+            "line": 1,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+            "line": 210,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "ec561c946930e94bfb9b2f35a354e4758fab4834b484ee29ffc9b0209a86e212",
+            "symbol": "ThumbnailsPanel.UpdateOptions",
+            "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+            "source_review_method": "unique_python_ast_declaration",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py",
+            "line": 721,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "274a6ad39d65424f0eb66fe74d8403da9989ad4227c8b5f660ec2627fd77637d",
+            "symbol": "MediaResultsPanel._HitMedia",
+            "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+            "source_review_method": "unique_python_ast_declaration",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py",
+            "line": 2016,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "a60c68ddb7948c4c46e63c6ab107eeb3c6291adf0e1f80c5ea88e357673bfff2",
+            "symbol": "MediaResultsPanelThumbnails._InnerWidget.mousePressEvent",
+            "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+            "source_review_method": "unique_python_ast_declaration",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/media/ClientMediaList.py",
+            "line": 1274,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "55bdfca8a23ed08b0ba024870857b32a47e6a85756740502c3fd77b745059175",
+            "symbol": "MediaCollection.GetDurationMS",
+            "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+            "source_review_method": "unique_python_ast_declaration",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+            "line": 153,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "a45f714e2fc8a4692159e6ae085feeac3b73ebd89e221808ed238437056591f6",
+            "symbol": "fn all_qt_modifier_ranges_focus_anchor_ghost_and_keyboard_publications",
+            "source_review_scope": "Named entry of the explicitly cited module/fixture suite; aggregate source support, not a unique assertion for every leaf.",
+            "source_review_method": "reviewed_fixture_test_entry",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs",
+            "line": 158,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "eda8767cf7915815cd51040e7297d7e3795c51b93abe3454ef9c740da31210ef",
+            "symbol": "fn staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retirement",
+            "source_review_scope": "Named entry of the explicitly cited module/fixture suite; aggregate source support, not a unique assertion for every leaf.",
+            "source_review_method": "reviewed_fixture_test_entry",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          }
+        ],
+        "limitations": [
+          "Only the four frozen-original concrete thumbnail-preview preferences are in scope; no parent, alias, renderer/fade/blurhash or ghost-navigation duplicate credit.",
+          "Existing owned still/poster preview workers, presentation, statistics and page lifetime remain the consumer. Broader animation/player/renderer parity is outside these four preferences. Sidebar hide-preview and thumbnail cache changes are independent integration slices.",
+          "Exactly four frozen-original preference leaves only. No parent, alias, ghost-navigation duplicate, renderer/fade/blurhash or broader thumbnail/player completion credit.",
+          "Existing owned still/poster preview workers, presentation, viewing statistics and page lifetime remain the consumer; broader animation/player/renderer parity is outside these preferences.",
+          "Recorder observes actual Qt focus publications but disconnects downstream preview movie-playback connections only in its private process. This does not prove movie/player execution.",
+          "No direct matching Qt four-control Options PNG is committed: the actual Qt recorder emits JSON. The fresh native four-checked-state image was independently inspected; no whole-panel geometry/pixel equality is claimed.",
+          "Native GUI regression uses private synthetic None/Some0 metadata and injected still rasters to distinguish current preview pixels and viewing intervals. Actual Qt loaded-media/collection duration semantics are replayed separately; real movie decoding is outside this scope.",
+          "Fresh native image shows staged true values before Apply, while recorded defaults are allfalse. Other visible Options rows receive no credit from this image.",
+          "Linux-only validation at exact9bec; Windows/macOS deferred. No support-only completion credit."
+        ],
+        "remaining": [],
+        "implementation_validation": {
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37491826054",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/9bec37964/final-review-2-9bec37964.json",
+            "sha256": "a21bc417b0c91dad1cb240631502327e2bdbf48db9255483f7e86ec41e57a4b7"
+          }
+        },
+        "native_source": {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 11,
+          "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "line_sha256": "373d023fffe3d1204eadbb5fe34e74a9fe3d7451eeb8676b7a53ed040046ce76",
+          "symbol": "pub struct Preferences"
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+          "line": 210,
+          "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "line_sha256": "ec561c946930e94bfb9b2f35a354e4758fab4834b484ee29ffc9b0209a86e212",
+          "symbol": "ThumbnailsPanel.UpdateOptions",
+          "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+          "source_review_method": "unique_python_ast_declaration"
+        }
+      },
+      {
+        "id": "audit-options-thumbnails-interaction-only-on-files-with-no-duration-2",
+        "status": "first_pass",
+        "assessment": "Shift child is enabled only with its own parent and retains disabled values. Static-only uses the actual endpoint media duration for range and keyboard targets; rejected targets keep existing preview focus/pixels/viewing interval even when range contraction removes that file from selection. Collections and singleton zero retain Qt distinctions.",
+        "evidence": [
+          {
+            "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+            "line": 11,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "373d023fffe3d1204eadbb5fe34e74a9fe3d7451eeb8676b7a53ed040046ce76",
+            "symbol": "pub struct Preferences",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-store/src/import/decode.rs",
+            "line": 1306,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "043220d8681592cf470e1d20c740ccdc7e47c16a46c52a0097962346bb098ae3",
+            "symbol": "preview_selection.apply_legacy",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/options.rs",
+            "line": 4834,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "4565bcb18753a590f5e9c8d2039f738756ca003483bed031fd05b257f4c42760",
+            "symbol": "\"On ctrl-selection",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/selection.rs",
+            "line": 88,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "b5039585a9e1d0961985547ceb7e0d0601dff89cb2ccde61c77d52959bfe68d5",
+            "symbol": "pub fn hit_with_preview_focus",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/src/selection.rs",
+            "line": 227,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "3e0866a3b0c147dffbef7f83bb734e6106100b1900c1333e825a8d8462f65b11",
+            "symbol": "pub fn move_focus_with_preview",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/page.rs",
+            "line": 2678,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "24f6ee4ca8da83a8a79f93d27266869a070752513f45cc49a99e068a6feabdc2",
+            "symbol": "fn preview_selection_has_duration",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/page.rs",
+            "line": 2792,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "9e18dc6972d61aea16ec414d8012bff0a86662108132271a9c5fe48279ee67b8",
+            "symbol": "let eligible = |file|",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 4405,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "58ea9a55ef6e7f8143bd4c9926ae918663993938a46d9bc17209a8d4a43ff6b5",
+            "symbol": "let reselect = {",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/src/lib.rs",
+            "line": 572,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "e39129530ffe8a1bd01a4360a9f29e8b637ae8a794d33358f8792e1822578896",
+            "symbol": "fn bind",
+            "declared_symbol": "if !binding_active.get()",
+            "source_review_scope": "Shared main-window binding entry replaces ambiguous/superseded closure statement; no individual retained-callback assertion or exact former closure is inferred.",
+            "source_review_method": "reviewed_main_binding_entry",
+            "role": "native_implementation",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared native_implementation; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/record_thumbnail_preview_selection.py",
+            "line": 1,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "381f9bfc69d49d39040a7d5fc3197ce385019a2ba2de649622f841a8c658ed37",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "oracle/fixtures/thumbnail_preview_selection.json",
+            "line": 1,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+            "role": "reference_recording",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_recording; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+            "line": 210,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "ec561c946930e94bfb9b2f35a354e4758fab4834b484ee29ffc9b0209a86e212",
+            "symbol": "ThumbnailsPanel.UpdateOptions",
+            "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+            "source_review_method": "unique_python_ast_declaration",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py",
+            "line": 721,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "274a6ad39d65424f0eb66fe74d8403da9989ad4227c8b5f660ec2627fd77637d",
+            "symbol": "MediaResultsPanel._HitMedia",
+            "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+            "source_review_method": "unique_python_ast_declaration",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py",
+            "line": 2016,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "a60c68ddb7948c4c46e63c6ab107eeb3c6291adf0e1f80c5ea88e357673bfff2",
+            "symbol": "MediaResultsPanelThumbnails._InnerWidget.mousePressEvent",
+            "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+            "source_review_method": "unique_python_ast_declaration",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "hydrus/client/media/ClientMediaList.py",
+            "line": 1274,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "55bdfca8a23ed08b0ba024870857b32a47e6a85756740502c3fd77b745059175",
+            "symbol": "MediaCollection.GetDurationMS",
+            "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+            "source_review_method": "unique_python_ast_declaration",
+            "role": "reference_source",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared reference_source; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui-model/tests/model/thumbnail_preview_selection.rs",
+            "line": 153,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "a45f714e2fc8a4692159e6ae085feeac3b73ebd89e221808ed238437056591f6",
+            "symbol": "fn all_qt_modifier_ranges_focus_anchor_ghost_and_keyboard_publications",
+            "source_review_scope": "Named entry of the explicitly cited module/fixture suite; aggregate source support, not a unique assertion for every leaf.",
+            "source_review_method": "reviewed_fixture_test_entry",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          },
+          {
+            "path": "crates/hydrus-gui/tests/gui/thumbnail_preview_selection.rs",
+            "line": 158,
+            "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+            "line_sha256": "eda8767cf7915815cd51040e7297d7e3795c51b93abe3454ef9c740da31210ef",
+            "symbol": "fn staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retirement",
+            "source_review_scope": "Named entry of the explicitly cited module/fixture suite; aggregate source support, not a unique assertion for every leaf.",
+            "source_review_method": "reviewed_fixture_test_entry",
+            "role": "authored_regression",
+            "description": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json: declared authored_regression; supports the bounded assessment above, not whole-parent parity.",
+            "executed_in_inventory": false,
+            "execution_scope": "Source/recording provenance only; no new execution asserted."
+          }
+        ],
+        "limitations": [
+          "Only the four frozen-original concrete thumbnail-preview preferences are in scope; no parent, alias, renderer/fade/blurhash or ghost-navigation duplicate credit.",
+          "Existing owned still/poster preview workers, presentation, statistics and page lifetime remain the consumer. Broader animation/player/renderer parity is outside these four preferences. Sidebar hide-preview and thumbnail cache changes are independent integration slices.",
+          "Exactly four frozen-original preference leaves only. No parent, alias, ghost-navigation duplicate, renderer/fade/blurhash or broader thumbnail/player completion credit.",
+          "Existing owned still/poster preview workers, presentation, viewing statistics and page lifetime remain the consumer; broader animation/player/renderer parity is outside these preferences.",
+          "Recorder observes actual Qt focus publications but disconnects downstream preview movie-playback connections only in its private process. This does not prove movie/player execution.",
+          "No direct matching Qt four-control Options PNG is committed: the actual Qt recorder emits JSON. The fresh native four-checked-state image was independently inspected; no whole-panel geometry/pixel equality is claimed.",
+          "Native GUI regression uses private synthetic None/Some0 metadata and injected still rasters to distinguish current preview pixels and viewing intervals. Actual Qt loaded-media/collection duration semantics are replayed separately; real movie decoding is outside this scope.",
+          "Fresh native image shows staged true values before Apply, while recorded defaults are allfalse. Other visible Options rows receive no credit from this image.",
+          "Linux-only validation at exact9bec; Windows/macOS deferred. No support-only completion credit."
+        ],
+        "remaining": [],
+        "implementation_validation": {
+          "source_commit": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "ci": "passed",
+          "tests_executed_at_checkpoint": true,
+          "native_render_review": "passed",
+          "manifest": "docs/rust/gui-coverage/parity/thumbnail-preview-selection.json",
+          "review_required": false,
+          "run_url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37491826054",
+          "validation_scope": "linux",
+          "required_platforms": [
+            "linux"
+          ],
+          "deferred_platforms": [
+            "windows",
+            "macos"
+          ],
+          "independent_review_evidence": {
+            "path": "docs/rust/gui-coverage/checkpoints/9bec37964/final-review-2-9bec37964.json",
+            "sha256": "a21bc417b0c91dad1cb240631502327e2bdbf48db9255483f7e86ec41e57a4b7"
+          }
+        },
+        "native_source": {
+          "path": "crates/hydrus-store/src/thumbnail_preview_selection.rs",
+          "line": 11,
+          "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "line_sha256": "373d023fffe3d1204eadbb5fe34e74a9fe3d7451eeb8676b7a53ed040046ce76",
+          "symbol": "pub struct Preferences"
+        },
+        "reference_source": {
+          "path": "hydrus/client/gui/panels/options/ThumbnailsPanel.py",
+          "line": 210,
+          "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b",
+          "line_sha256": "ec561c946930e94bfb9b2f35a354e4758fab4834b484ee29ffc9b0209a86e212",
+          "symbol": "ThumbnailsPanel.UpdateOptions",
+          "source_review_scope": "Exact Python AST class/method/function identity; no old-offset inference.",
+          "source_review_method": "unique_python_ast_declaration"
+        }
+      }
+    ],
+    "additions": []
+  },
+  "native": {
+    "updates": [
+      {
+        "id": "dialog.shared.rgb-colour.rgb",
+        "native_source": {
+          "path": "crates/hydrus-gui/ui/gui_coloursets.slint",
+          "line": 91,
+          "line_sha256": "80723a722dee61ae4558383625af87e4ea1be110923fd34169859e5fea650743",
+          "anchor_git_head": "9bec37964725add7a4f6f072c6a9426ef2e3789b"
+        }
+      }
+    ],
+    "additions": []
+  }
+}
