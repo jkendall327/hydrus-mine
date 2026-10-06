@@ -1,0 +1,386 @@
+{
+  "source_commit": "56b93ae49337356aa4f81c79b12171397278247b",
+  "run_id": 37425380545,
+  "artifact_id": 11394399260,
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "review_scope": "Two selected original sibling-colour controls only; independent source/assertion and actual paired visual review",
+  "selected_ids": [
+    "audit-options-tag-presentation-other-rendering-fade-the-colour-of-the-sibling-connector-string-on-qt6",
+    "audit-options-tag-presentation-other-rendering-namespace-for-the-colour-of-the-sibling-connecting-string"
+  ],
+  "eligible_selected_ids": [
+    "audit-options-tag-presentation-other-rendering-fade-the-colour-of-the-sibling-connector-string-on-qt6",
+    "audit-options-tag-presentation-other-rendering-namespace-for-the-colour-of-the-sibling-connecting-string"
+  ],
+  "ineligible_selected_ids": [],
+  "eligible_count": 2,
+  "claims": [
+    {
+      "id": "audit-options-tag-presentation-other-rendering-fade-the-colour-of-the-sibling-connector-string-on-qt6",
+      "eligibility": "eligible",
+      "reason": "Current exact-source Linux regressions pass; inspected native/Qt segmented consumer paint supports bounded fade/namespace behavior with retained topology/font/state caveats."
+    },
+    {
+      "id": "audit-options-tag-presentation-other-rendering-namespace-for-the-colour-of-the-sibling-connecting-string",
+      "eligibility": "eligible",
+      "reason": "Current exact-source Linux regressions pass; inspected native/Qt segmented consumer paint supports bounded fade/namespace behavior with retained topology/font/state caveats."
+    }
+  ],
+  "native_images_reviewed": 6,
+  "qt_images_reviewed": 4,
+  "images": [
+    {
+      "role": "native",
+      "path": "/workspace/validation-reviews/ci-56b93ae49/native-renders/sibling-colours-0-selected.png",
+      "sha256": "a4d6bfac5b4fcec5d6eb2a96fcce40914a1cf666569d807a67e0593bc9e05456",
+      "bytes": 18364,
+      "dimensions": [
+        760,
+        650
+      ],
+      "actually_inspected_with_view_image": true,
+      "artifact_hash_match": true
+    },
+    {
+      "role": "native",
+      "path": "/workspace/validation-reviews/ci-56b93ae49/native-renders/sibling-colours-0-unselected.png",
+      "sha256": "cc8325dbfa432bf5798a1e98c66359e422a08d95fb21f3d2f8af9b85651aca9d",
+      "bytes": 18293,
+      "dimensions": [
+        760,
+        650
+      ],
+      "actually_inspected_with_view_image": true,
+      "artifact_hash_match": true
+    },
+    {
+      "role": "native",
+      "path": "/workspace/validation-reviews/ci-56b93ae49/native-renders/sibling-colours-2-selected.png",
+      "sha256": "645648c3bd6b0cd64d47640521ae38a07a034f8fd364f5a7206f8d51406cd331",
+      "bytes": 18329,
+      "dimensions": [
+        760,
+        650
+      ],
+      "actually_inspected_with_view_image": true,
+      "artifact_hash_match": true
+    },
+    {
+      "role": "native",
+      "path": "/workspace/validation-reviews/ci-56b93ae49/native-renders/sibling-colours-2-unselected.png",
+      "sha256": "bfd82d371802730f45bfc6cba9ab317a46ce1e25efc869745fb8319745c11cf2",
+      "bytes": 18321,
+      "dimensions": [
+        760,
+        650
+      ],
+      "actually_inspected_with_view_image": true,
+      "artifact_hash_match": true
+    },
+    {
+      "role": "native",
+      "path": "/workspace/validation-reviews/ci-56b93ae49/native-renders/sibling-colours-collapsed-1100.png",
+      "sha256": "fe011509b6205d3874c878cf0fe9b582d8b5ba7025015c78d6f2c4e8544a545a",
+      "bytes": 21386,
+      "dimensions": [
+        1100,
+        650
+      ],
+      "actually_inspected_with_view_image": true,
+      "artifact_hash_match": true
+    },
+    {
+      "role": "native",
+      "path": "/workspace/validation-reviews/ci-56b93ae49/native-renders/sibling-colours-collapsed-760.png",
+      "sha256": "3d1c06b6fe1517f52f2cd044d060593383d76d4d9e7f5b862e926aa25225bb2a",
+      "bytes": 20774,
+      "dimensions": [
+        760,
+        650
+      ],
+      "actually_inspected_with_view_image": true,
+      "artifact_hash_match": true
+    },
+    {
+      "role": "qt_reference",
+      "path": "/workspace/hydrus-mine/oracle/fixtures/sibling-colours-qt-collapsed-1000.png",
+      "sha256": "274e8e70e38357df2dd905e7b6b1a2750372ca47cb353f704a853d4ba9014878",
+      "bytes": 8579,
+      "dimensions": [
+        998,
+        198
+      ],
+      "actually_inspected_with_view_image": true,
+      "committed_blob_match": true,
+      "recorder_capture_sites": [
+        {
+          "path": "oracle/fixtures/sibling-colours-qt-collapsed-1000.png",
+          "recorder": "oracle/record_sibling_colours.py",
+          "recorder_line": 114,
+          "capture_expression": "image.save; image=write.widget().grab().toImage()",
+          "role": "qt_ui_capture",
+          "filename_resolution": "exact_recorder_width_loop",
+          "verified_source_commit": "56b93ae49337356aa4f81c79b12171397278247b"
+        }
+      ]
+    },
+    {
+      "role": "qt_reference",
+      "path": "/workspace/hydrus-mine/oracle/fixtures/sibling-colours-qt-collapsed-700.png",
+      "sha256": "23fc4a6bcdb72f42c3aadfa2125d67bfe5c16205538bebe7bd3f4917887b7ab5",
+      "bytes": 8231,
+      "dimensions": [
+        698,
+        198
+      ],
+      "actually_inspected_with_view_image": true,
+      "committed_blob_match": true,
+      "recorder_capture_sites": [
+        {
+          "path": "oracle/fixtures/sibling-colours-qt-collapsed-700.png",
+          "recorder": "oracle/record_sibling_colours.py",
+          "recorder_line": 114,
+          "capture_expression": "image.save; image=write.widget().grab().toImage()",
+          "role": "qt_ui_capture",
+          "filename_resolution": "exact_recorder_width_loop",
+          "verified_source_commit": "56b93ae49337356aa4f81c79b12171397278247b"
+        }
+      ]
+    },
+    {
+      "role": "qt_reference",
+      "path": "/workspace/hydrus-mine/oracle/fixtures/sibling-colours-qt-selected.png",
+      "sha256": "64954ef333271277ded8316ac6d9241b21294e94bbdd77bfd04efc8f99d922c7",
+      "bytes": 8320,
+      "dimensions": [
+        700,
+        200
+      ],
+      "actually_inspected_with_view_image": true,
+      "committed_blob_match": true,
+      "recorder_capture_sites": [
+        {
+          "path": "oracle/fixtures/sibling-colours-qt-selected.png",
+          "recorder": "oracle/record_sibling_colours.py",
+          "recorder_line": 90,
+          "capture_expression": "write.grab().save",
+          "role": "qt_ui_capture",
+          "verified_source_commit": "56b93ae49337356aa4f81c79b12171397278247b"
+        }
+      ]
+    },
+    {
+      "role": "qt_reference",
+      "path": "/workspace/hydrus-mine/oracle/fixtures/sibling-colours-qt-unselected.png",
+      "sha256": "c3334d04497094318bf0045fc380fe60c9f1147d9e0c1c2b6c92f42e5fb17f18",
+      "bytes": 8201,
+      "dimensions": [
+        700,
+        200
+      ],
+      "actually_inspected_with_view_image": true,
+      "committed_blob_match": true,
+      "recorder_capture_sites": [
+        {
+          "path": "oracle/fixtures/sibling-colours-qt-unselected.png",
+          "recorder": "oracle/record_sibling_colours.py",
+          "recorder_line": 88,
+          "capture_expression": "write.grab().save",
+          "role": "qt_ui_capture",
+          "verified_source_commit": "56b93ae49337356aa4f81c79b12171397278247b"
+        }
+      ]
+    }
+  ],
+  "source_inputs": [
+    {
+      "source_commit": "56b93ae49337356aa4f81c79b12171397278247b",
+      "path": "crates/hydrus-gui/src/lib.rs",
+      "git_blob_oid": "358ca7914896cea60c2306fd6667f44798c13310",
+      "sha256": "92dc7d5b2a1a21900433b0d7cd07eb7d4608a62d643310a6d614a9bd181a3905"
+    },
+    {
+      "source_commit": "56b93ae49337356aa4f81c79b12171397278247b",
+      "path": "crates/hydrus-gui/src/tag_text.rs",
+      "git_blob_oid": "df5a3eb601932a31fb496597e2f28a92bd15c342",
+      "sha256": "f586c0ccdd25c3d2df993c6c0a9a6d1373a94d40147e5c6650409f094dd4c520"
+    },
+    {
+      "source_commit": "56b93ae49337356aa4f81c79b12171397278247b",
+      "path": "crates/hydrus-gui/tests/gui/sibling_colours.rs",
+      "git_blob_oid": "4a42b92c02ac22c0fe588a7c3785c59024c4674c",
+      "sha256": "c7a6d49715bdc255502390333d4e53f8efad17564670857d761bf3b6b5ec7c38"
+    },
+    {
+      "source_commit": "56b93ae49337356aa4f81c79b12171397278247b",
+      "path": "docs/rust/gui-coverage/parity/sibling-colours.json",
+      "git_blob_oid": "93bb978221234fff8498bdc22e41bc2da90c142b",
+      "sha256": "4bd2fdeea275956076580334b79b0a3330d6e96d41be2dfe6da671f78a78b1e0"
+    },
+    {
+      "source_commit": "56b93ae49337356aa4f81c79b12171397278247b",
+      "path": "crates/hydrus-core/src/tag_presentation.rs",
+      "sha256": "2ac0c4cd6a8ba83e12d739b4897efce0346da2b027fb877c407fdf34f99d5512"
+    },
+    {
+      "source_commit": "56b93ae49337356aa4f81c79b12171397278247b",
+      "path": "crates/hydrus-gui/ui/tag_text.slint",
+      "sha256": "71d69350d16bcd36d941e8276390ec7b5503c9685236b3fc83d0803910d0f396"
+    },
+    {
+      "source_commit": "56b93ae49337356aa4f81c79b12171397278247b",
+      "path": "crates/hydrus-gui-model/tests/model/sibling_colours.rs",
+      "sha256": "80c16c8da9cfb214ecd578b1238b5347c1046ff89acf7bef21d37a4398b5c66c"
+    },
+    {
+      "source_commit": "56b93ae49337356aa4f81c79b12171397278247b",
+      "path": "hydrus/client/gui/panels/options/TagPresentationPanel.py",
+      "sha256": "30e3e1030c6d9380f0edcf850d7fd613d00d345f402825c450ab54d60d4a6441"
+    },
+    {
+      "source_commit": "56b93ae49337356aa4f81c79b12171397278247b",
+      "path": "oracle/record_sibling_colours.py",
+      "sha256": "50e55897bdf760d8f0238bc31d66250638edc88dfc44046d6ce9b18882e98a1d"
+    },
+    {
+      "source_commit": "56b93ae49337356aa4f81c79b12171397278247b",
+      "path": "oracle/fixtures/sibling_colours.json",
+      "sha256": "e44bc45563746a26b075ab5f6c1b4cb33fb70a42615719e0e7080db9bedfcaad"
+    }
+  ],
+  "rgb_measurements": [
+    {
+      "role": "native",
+      "image": "sibling-colours-collapsed-760.png",
+      "sample_y": 580,
+      "gradient_extent": [
+        306,
+        377
+      ],
+      "trailing_colour": [
+        0,
+        170,
+        0
+      ],
+      "trailing_all_solid": true,
+      "trailing_sample_interval": [
+        660,
+        730
+      ]
+    },
+    {
+      "role": "native",
+      "image": "sibling-colours-collapsed-1100.png",
+      "sample_y": 580,
+      "gradient_extent": [
+        306,
+        377
+      ],
+      "trailing_colour": [
+        0,
+        170,
+        0
+      ],
+      "trailing_all_solid": true,
+      "trailing_sample_interval": [
+        1000,
+        1070
+      ]
+    },
+    {
+      "role": "qt",
+      "image": "sibling-colours-qt-collapsed-700.png",
+      "sample_y": 15,
+      "gradient_extent": [
+        260,
+        320
+      ],
+      "trailing_colour": [
+        0,
+        170,
+        0
+      ],
+      "trailing_all_solid": true,
+      "trailing_sample_interval": [
+        598,
+        678
+      ]
+    },
+    {
+      "role": "qt",
+      "image": "sibling-colours-qt-collapsed-1000.png",
+      "sample_y": 15,
+      "gradient_extent": [
+        260,
+        320
+      ],
+      "trailing_colour": [
+        0,
+        170,
+        0
+      ],
+      "trailing_all_solid": true,
+      "trailing_sample_interval": [
+        898,
+        978
+      ]
+    }
+  ],
+  "required_jobs": [
+    {
+      "name": "parity-models",
+      "id": 112143784034,
+      "head_sha": "56b93ae49337356aa4f81c79b12171397278247b",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "check",
+      "id": 112143784311,
+      "head_sha": "56b93ae49337356aa4f81c79b12171397278247b",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "execution_evidence": {
+    "linux_gui": "696 passed;0 failed",
+    "gui_test": "sibling_colours::options_cancel_retired_apply_reopen_and_all_segmented_native_consumers",
+    "gui_test_log_line": 2500,
+    "gui_total_log_line": 2653,
+    "model_tests": [
+      "sibling_colours::qt_collapsed_parent_suffix_keeps_its_own_fade_and_ideal_trailing_colour",
+      "sibling_colours::qt_sibling_colours_stage_cancel_apply_reopen_and_all_live_model_runs"
+    ],
+    "parity_models_log_lines": [
+      1833,
+      1867
+    ]
+  },
+  "limitations": [
+    "All four Qt PNGs are committed images from the real write list. Native case 0 is fade enabled; native case 2 is solid system namespace. Recorder selected/unselected PNGs were overwritten by the final fade-enabled snapshot inside collapsed(), after enabling parent decorators/collapsed suffixes. They are not exact native case-0 topology or solid-case references; compare shared colour/selection paint only.",
+    "Compare segmented alias/count/connector/ideal colours, selected backgrounds and suffix extent; allow the existing Qt/Slint font/palette/window-layout differences.",
+    "Qt collapsed screenshots use requested widths 700/1000 (inner viewports 698/998); native uses 760/1100. Verify suffix fixed-width fade and preceding solid trailing colour rather than absolute full-frame alignment.",
+    "No native Options checkbox/namespace screenshot is in this six-image set; staging, enabled/None state, Cancel, retired Apply, reopen and live consumers are supported by inspected passing source regressions.",
+    "Only the two exact original sibling-colour controls are eligible; no broad tag renderer, namespace editor family, hierarchy promotion, additional support credit or cross-platform parity is approved.",
+    "Linux exact-source evidence only; Windows/macOS are deferred. Qt PNGs are committed recordings, not regenerated Qt execution in this review."
+  ],
+  "blockers": [],
+  "canonical_writes": false,
+  "builds_run": false,
+  "inventory_or_progress_edits": false,
+  "publication_performed": false,
+  "input_hashes": {
+    "/workspace/validation-reviews/first20-render-checklist-56b93ae49.json": "995e7c38a1e2082f0129e508002a78a46993e243f38e60e98fe1bd88440a833d",
+    "/workspace/validation-reviews/ci-56b93ae49/native-render-manifest.json": "59b0aa78deb5219e302834bb245d4976fe64f088ce23fd825b622745ee251c69",
+    "/workspace/validation-reviews/ci-56b93ae49/jobs-latest.json": "f9029857fedb201425315a6c1c92a55c7ce1ca564670f029ae582945781ab108",
+    "/workspace/validation-reviews/ci-56b93ae49/linux-full.log": "e6f5fd66917190e98a161d1dcd6576c1d849f90d72779caec985b21479113503",
+    "/workspace/validation-reviews/ci-56b93ae49/parity-models.log": "2a0220bdb0a421fbe70d9d9d913f9ff1e70915865cc8994fa1f5f3a53789947b"
+  }
+}

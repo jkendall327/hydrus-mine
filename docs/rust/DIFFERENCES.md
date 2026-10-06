@@ -3635,4 +3635,7 @@ their own window, preserving a replacement error.
 Validation repairs now invalidate cached thumbnail colours when the stylesheet
 changes and hide an exact retired colour picker on repeated Cancel. Wheel
 controls publish their initial measured geometry as well as later changes.
-These repairs await full Linux replay and add no feature-completion credit.
+These repairs passed full Linux replay at `56b93ae49` (696 GUI tests).
+Completion credit remains limited to the 20 independently reviewed original
+leaves in the [260-item checkpoint](gui-coverage/checkpoints/56b93ae49/README.md);
+other repaired behavior retains its scoped assessment.

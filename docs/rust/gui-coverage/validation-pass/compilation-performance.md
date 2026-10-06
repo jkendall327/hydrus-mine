@@ -228,3 +228,25 @@ The subsequent platform-policy workflow edit changes the cache compatibility
 key, so the next run must seed that new configuration before reuse can be
 observed. Keep this conservative invalidation; no successful before/after timing
 claim follows from these failed builds.
+
+## Observations from completed ordinary validation
+
+Full Linux run `37425380545` at `56b93ae49` passed all required checks and
+696 GUI tests. Its test-only repair reused the generated UI in both Clippy and
+test compilation. The preceding run `37422951212` at `f9bc77be8` changed UI
+sources and rebuilt that crate. Cargo-reported phases were:
+
+| Phase | UI-changing run | Test-only repair run |
+| --- | ---: | ---: |
+| Strict all-target Clippy | 6m18s | 1m29s |
+| Test-profile compilation | 6m34s | 4m33s |
+| GUI test execution | 129.58s (2 failures) | 216.45s (all passed) |
+
+The rolling cache restored verified workspace artifacts and saved a new
+source/run/attempt snapshot. This confirms compiled-UI reuse during test edits,
+and records useful compilation savings in normal validation. Different changes
+and shared hosted runners prevent treating these observations as an isolated
+extraction benchmark or controlled cold-build comparison. Test execution was
+slower; no peak-memory or isolated linking improvement is established.
+[Logs and measurements](../checkpoints/56b93ae49/validation-outcome.json) are
+retained with the checkpoint. The bounded investigation remains closed.

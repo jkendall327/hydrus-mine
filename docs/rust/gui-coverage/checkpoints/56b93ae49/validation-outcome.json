@@ -1,0 +1,60 @@
+{
+  "source_commit": "56b93ae49337356aa4f81c79b12171397278247b",
+  "run_id": 37425380545,
+  "conclusion": "success",
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "gui_tests": {
+    "passed": 696,
+    "failed": 0,
+    "ignored": 0,
+    "runtime_seconds": 216.45
+  },
+  "steps": {
+    "fmt": {
+      "conclusion": "success",
+      "started_at": "2026-10-06T06:45:03Z",
+      "completed_at": "2026-10-06T06:45:09Z"
+    },
+    "clippy": {
+      "conclusion": "success",
+      "started_at": "2026-10-06T06:45:09Z",
+      "completed_at": "2026-10-06T06:46:39Z"
+    },
+    "test": {
+      "conclusion": "success",
+      "started_at": "2026-10-06T06:46:39Z",
+      "completed_at": "2026-10-06T06:59:18Z"
+    },
+    "parity ratchet": {
+      "conclusion": "success",
+      "started_at": "2026-10-06T06:59:19Z",
+      "completed_at": "2026-10-06T06:59:42Z"
+    }
+  },
+  "ordinary_validation_compile_observations": {
+    "previous_UI_edit": {
+      "source": "f9bc77be873c4394b9ad0a2662867e1cae745e88",
+      "clippy_seconds": 378,
+      "test_profile_compile_seconds": 394,
+      "GUI_runtime_seconds": 129.58
+    },
+    "current_test_only_edit": {
+      "clippy_seconds": 89,
+      "test_profile_compile_seconds": 273,
+      "generated_UI_recompiled": false
+    },
+    "limitations": "Different changes and shared hosted runners; not a controlled cold-build or isolated-extraction comparison. Test execution was slower; no peak-memory/linking improvement established."
+  },
+  "logs": {
+    "linux-full.log": "e6f5fd66917190e98a161d1dcd6576c1d849f90d72779caec985b21479113503",
+    "parity-models.log": "2a0220bdb0a421fbe70d9d9d913f9ff1e70915865cc8994fa1f5f3a53789947b",
+    "clippy.log": "51fa55c4fc03f92a0d55e9d0cfe2381a817cc84a5210e2572900d9e81daf0e24"
+  }
+}

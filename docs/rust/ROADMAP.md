@@ -5,11 +5,16 @@ done. Keep it current: when you finish something here, take it out (the
 commit, `GUI.md` and `DIFFERENCES.md` say what was done); when you stop
 partway, say exactly where.
 
-The owner's current priority (2026-10) is **breadth**: get every major
-area of the client working in a first pass, rather than perfecting each
-corner before moving on. The subscriptions dialog, import/export folders,
-duplicates tabs, about window and simple downloader page have had their
-first pass.
+The owner's current priority (2026-10-06) is **validated delivery on Linux**.
+The latest checkpoint banks 260 original concrete feature completions, including
+20 newly signed off after full Linux validation and fresh rendered review.
+There are 115 candidates awaiting sign-off: 42 prepared for final revalidation
+and 73 unresolved. Keep these counts separate from inventory assessments.
+Work in small batches, validate and publish each routinely, and reassess any
+batch that goes 24 hours without a new checkpoint. Broad implementation must
+not rebuild an unvalidated backlog. Windows and macOS are deferred; strict
+Linux linting, full tests, reference replays and rendered review remain required.
+See [the checkpoint evidence](gui-coverage/checkpoints/56b93ae49/README.md).
 
 The first parallel slate (2026-10-03) adds detailed embedded metadata,
 manual file export, local service review/management, tag sibling/parent
@@ -53,12 +58,12 @@ and [the frozen-baseline ledger](gui-coverage/overnight/progress.json). Remainin
 boundaries stay explicit in the map and `DIFFERENCES.md`.
 
 The [GUI migration map](gui-progress.html) expands selected reference features
-and all 97 exported native windows into nested work, including shared editors,
+and all 121 exported native windows into nested work, including shared editors,
 all 38 reference option tabs and 19 system-predicate groups. It contains 1,812
-reference nodes and 1,733 native nodes, with per-node assessments, concrete
+reference nodes and 1,799 native nodes, with per-node assessments, concrete
 remaining work and pinned source/evidence links. The frozen reference inventory
-now has 581 Missing, 390 Partial and 841 First pass entries; its status changes
-also include parent/alias assessments, which do not inflate the 240-item completion count.
+now has 561 Missing, 390 Partial and 861 First pass entries; its status changes
+also include parent/alias assessments, which do not inflate the 260-item signed-off completion count.
 Native first-pass claims cite scoped regression evidence; source-supported but
 unverified behavior is partial. These counts are not a whole-client completion
 percentage. Maintenance instructions and scope limits are in
@@ -232,16 +237,13 @@ leaves and their remaining boundaries in the GUI map to choose independent work;
 exclude parent groups, aliases and evidence-only reassessments from implementation
 completion goals.
 
-The owner's latest instruction (2026-10-05) is implementation throughput with
-cheap validation: strict backend/model Clippy, simple builds and fast tests.
-Generated native GUI Clippy/type checking exceeded the cheap budget and joins
-full native GUI,
-cross-platform, rendered and audit passes are deferred until the end of the
-project. Fix bugs that block ongoing work and record other defects for that pass.
-The integrated implementation count remains separate from the fully validated
-240-item ledger. Current work is consolidated into PR #57 following PR #37;
-historical intermediate drafts are superseded. Automatic CI uses one current
-Linux lint/model lane; full jobs require explicit manual validation dispatch.
+The October 6 delivery policy supersedes the earlier implementation-throughput
+policy described in this history. Do not defer full validation until project
+end. Current repair work is consolidated in PR #59, with full Linux validation
+at source `56b93ae49` and a published 260-item ledger. Automatic quick CI gives
+early diagnostics; dispatch the full Linux gate routinely for publication.
+Secondary platforms remain opt-in under `.github/publication-validation.json`.
+The broader implementation history above is not additional signed-off credit.
 
 ## 1. Manage subscriptions (network > subscriptions…)
 
