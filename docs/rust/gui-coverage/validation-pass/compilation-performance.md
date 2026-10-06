@@ -91,7 +91,7 @@ totaling 6,205,385,932 bytes (5.78 GiB). Branch snapshots, including the new Lin
 baseline cache, were retained. This makes room for bounded rolling snapshots;
 it is storage housekeeping, not a measured compilation speedup.
 
-## Remaining measurements
+## Local measurements and limits
 
 An isolated GUI compilation experiment is measuring Cargo unit times, the Slint
 compiler call, compiler/linker resource usage, and cold versus edit rebuilds.
@@ -118,9 +118,8 @@ showed about 8 GiB available. This was a measurement-policy stop, not evidence
 of an OOM or a successful cold build. A new empty-target measurement accounts
 for clean inactive cache while retaining memory, disk, OOM and wall-clock bounds.
 
-Generated-UI extraction and cache retention/freshness remain under investigation.
-Their benefits and the complete revised CI sequence will be reported only after
-measurements.
+The bounded local results and retained structural changes are recorded below.
+Hosted savings and complete revised CI duration remain unmeasured.
 
 ## Delivery timebox (2026-10-06)
 
@@ -162,3 +161,51 @@ These are correctness and tiny-library freshness results, not a hosted GUI
 speedup. Seed and reuse observations will accompany necessary repair validation;
 no separate open-ended cache experiment is required. Windows/macOS timestamp
 restoration is not enabled.
+
+## Experiment stop and generated UI extraction
+
+Further performance experiments ended at 05:11 UTC on October 6, ahead of the
+06:38 deadline. No fourth cold attempt or larger edit matrix is planned.
+
+| Measurement | Slint generation | Observed wall time | Sampled process-group peak | Result |
+| --- | --- | --- | --- | --- |
+| Empty compiled target, corrected environment | 6.518s | 1748.747s (29m09s) | 11,073,675,264 bytes (10.31 GiB) | Stopped by estimated available-memory guard |
+| Extracted generated UI, dependencies cached | 6.745s | 195.085s (3m15s) | 10,880,774,144 bytes (10.13 GiB) | Stopped by the same guard |
+
+Both source/instrumentation identities remained stable, cleanup left no surviving
+compiler processes, and no OOM was recorded. The baseline did reach the cgroup
+memory ceiling and reclamation pressure before estimated available memory fell
+below 2 GiB. These are incomplete builds, not successful elapsed-time samples.
+The dependency-cache difference prevents comparing their wall times as a speedup.
+Neither result establishes lower peak memory, linking cost, callback/test/Slint
+rebuild time or a percentage improvement. Cargo logs, partial unit measurements,
+resource samples and failure classifications are preserved separately from CI.
+
+The small extraction is retained for full validation: `hydrus-gui-ui` owns the
+single generated Slint module, and `hydrus-gui` re-exports the same public types.
+Authored UI files and resources retain their locations. The generated-only
+library disables its empty unit, bench and doc harnesses; existing controller
+and integration tests remain. A Cargo 1.94 control confirmed `bench=false` is
+also needed to avoid a duplicate cfg(test) library under all-target checks.
+This supports the reuse mechanism, not a measured GUI build-time claim.
+
+Comparing baseline and extracted generated Rust found only ten gettext-domain
+strings changed by the new package name (30 bytes). Slint 1.18 hardcodes that
+domain from CARGO_PKG_NAME; the build script compiles in a child process with the
+original `hydrus-gui` domain, preserving translation lookup without unsafe
+process-environment mutation. The child inherits Cargo's paths and forwards its
+normal dependency/resource tracking directives. Cargo locked metadata and
+formatting checks pass; complete native compilation, runtime rendering and
+platform behavior must pass the ensuing full-validation checkpoint.
+
+No additional UI split or paid runner change is proposed. The remaining large
+Rust compilation unit is still a bottleneck. Necessary repair CI will measure
+the resulting workflow and exercise the optional cache seed/reuse; performance
+work will not postpone delivery for another local experiment matrix.
+
+The production build-script child was subsequently compiled with denied Rust
+warnings and executed against the repaired UI with Slint warnings denied. It
+succeeded, retained all ten original translation-domain strings, emitted the
+new measured-frame getters and reported imported UI/static resource dependencies.
+This verifies source generation and the child path; full generated-Rust compilation
+and cross-platform runtime validation remain CI gates.

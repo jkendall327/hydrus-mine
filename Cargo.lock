@@ -2512,6 +2512,7 @@ dependencies = [
  "hydrus-downloader-exchange",
  "hydrus-duplicates",
  "hydrus-gui-model",
+ "hydrus-gui-ui",
  "hydrus-import",
  "hydrus-legacy",
  "hydrus-media",
@@ -2528,7 +2529,6 @@ dependencies = [
  "rusqlite",
  "serde_json",
  "slint",
- "slint-build",
  "tempfile",
  "tokio",
  "tower",
@@ -2562,6 +2562,14 @@ dependencies = [
  "serde_json",
  "sha2",
  "tempfile",
+]
+
+[[package]]
+name = "hydrus-gui-ui"
+version = "0.1.0"
+dependencies = [
+ "slint",
+ "slint-build",
 ]
 
 [[package]]

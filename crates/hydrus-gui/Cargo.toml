@@ -14,6 +14,7 @@ path = "src/main.rs"
 jiff.workspace = true
 hydrus-core.workspace = true
 hydrus-gui-model.workspace = true
+hydrus-gui-ui.workspace = true
 hydrus-store.workspace = true
 hydrus-parse.workspace = true
 hydrus-net.workspace = true
@@ -38,10 +39,7 @@ arboard = { version = "3", default-features = false }
 fs4.workspace = true
 rfd = { version = "0.17", default-features = false, features = ["xdg-portal"] }
 tempfile.workspace = true
-slint = { version = "1.18", default-features = false, features = ["std", "compat-1-2", "backend-winit", "renderer-software", "unstable-winit-030"] }
-
-[build-dependencies]
-slint-build = "1.18"
+slint.workspace = true
 
 [dev-dependencies]
 hydrus-api.workspace = true

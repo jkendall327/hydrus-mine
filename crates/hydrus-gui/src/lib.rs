@@ -12,10 +12,9 @@ use hydrus_core::HashId;
 use hydrus_store::sessions;
 use slint::{Model, ModelRc, SharedString, VecModel};
 
-/// The UI compiled from `ui/` (generated code).
-#[allow(missing_debug_implementations)]
+/// The UI compiled from `ui/`, provided by the generated UI library.
 mod ui {
-    slint::include_modules!();
+    pub use hydrus_gui_ui::*;
 }
 
 pub use ui::*;

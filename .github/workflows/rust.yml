@@ -59,7 +59,7 @@ jobs:
           set -o pipefail
           # Generated native GUI metadata exceeded the cheap local budget
           # (over 12 minutes and about 9 GiB). The manual full lane checks it.
-          cargo clippy --workspace --exclude hydrus-gui --all-targets --locked --keep-going -- -D warnings 2>&1 | tee /tmp/hydrus-quick-clippy.log
+          cargo clippy --workspace --exclude hydrus-gui --exclude hydrus-gui-ui --all-targets --locked --keep-going -- -D warnings 2>&1 | tee /tmp/hydrus-quick-clippy.log
       - name: GUI artifact runner tests
         run: python3 -m unittest discover -s scripts -p test_gui_test_artifact.py
       - name: workspace cache safety regressions
