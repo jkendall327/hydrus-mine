@@ -106,3 +106,18 @@ draft; a fixture-derived FFmpeg regression covers the draft, save/reopen and
 live timeout reader. Linux also enables existing interchange render exports.
 These changes still require native execution and exact-source full CI; none is
 credited as a new completion here.
+
+Additional repairs align MPV video zoom defaults with the recorded MPV branch,
+match preview fixture metadata to its injected raster, select the recorded file
+search domain, and drive current shortcut-edit entrypoints. Menu expectations
+retain the recorded implemented maintenance submenus. Unknown URL handoff checks
+all seeded associations exactly once. Delayed popup checks wait for the real
+refresh timer while retaining exact durable deadlines/content. Importer ownership
+is now asserted independently of retained GUI callbacks, without changing any
+FFmpeg deadline or kill/reap assertion.
+
+Lifetime tests explicitly establish component destruction before exercising
+retired callbacks. The predicate-editor callback-cycle test releases Slint's
+shown-window retention before its final Weak assertion. This does not establish
+automatic closure of a shown child when its parent is destroyed; that boundary
+remains a publication gap requiring separate evidence or repair.

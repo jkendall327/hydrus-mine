@@ -373,16 +373,11 @@ pub fn default_media_view() -> BTreeMap<u8, MediaView> {
     use ShowAction::{Mpv, Native, OpenExternallyButton};
     let image = ZoomRules::all(ScaleAction::ToCanvas, ZOOM_LANCZOS4, ZOOM_AREA);
     let null = ZoomRules::all(ScaleAction::Full, ZOOM_LINEAR, ZOOM_LINEAR);
-    let video = ZoomRules {
-        media_scale_up: ScaleAction::Full,
-        exact_zooms_only: true,
-        ..image
-    };
     [
         (Mime::GeneralImage, MediaView::new(Native, Native, image)),
         (Mime::GeneralAnimation, MediaView::new(Mpv, Mpv, image)),
-        // (with mpv, the reference shows video at 100% with half/double zooms)
-        (Mime::GeneralVideo, MediaView::new(Mpv, Mpv, video)),
+        // MPV uses canvas fit and regular zoom steps, as the recorded defaults do.
+        (Mime::GeneralVideo, MediaView::new(Mpv, Mpv, image)),
         (Mime::GeneralAudio, MediaView::new(Mpv, Mpv, null)),
         (
             Mime::GeneralApplication,
@@ -610,5 +605,25 @@ pub fn next_zoom(
         steps.into_iter().filter(|&z| z > current).reduce(f64::min)
     } else {
         steps.into_iter().filter(|&z| z < current).reduce(f64::max)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn mpv_video_defaults_fit_the_canvas_and_keep_regular_zoom_steps() {
+        let settings = MediaViewerSettings::default();
+        let video = settings.view(Mime::VideoMp4);
+        assert_eq!(video.media_show_action, ShowAction::Mpv);
+        assert_eq!(video.preview_show_action, ShowAction::Mpv);
+        let viewer = canvas_zooms(&settings, Mime::VideoMp4, Some((100, 100)), (150, 150), 1.0);
+        let preview =
+            preview_canvas_zooms(&settings, Mime::VideoMp4, Some((100, 100)), (150, 150), 1.0);
+        assert!((viewer[&ZoomType::DefaultForFiletype] - 1.5).abs() < f64::EPSILON);
+        assert!((preview[&ZoomType::DefaultForFiletype] - 1.5).abs() < f64::EPSILON);
+        let next = next_zoom(&settings, &video.zoom, 1.0, 3.0, true).unwrap();
+        assert!((next - 1.1).abs() < f64::EPSILON);
     }
 }

@@ -90,6 +90,11 @@ fn actual_menu_overlapping_deadlines_hidden_progress_store_reopen_and_rendered_c
         let saved = jobs(&store);
         assert_eq!(saved.len(), count, "owned deadline at {millis}");
         assert_eq!(bound.debug_long_popup.pending_delayed_popups(), 2 - count);
+        assert_eq!(
+            ui.get_popups().row_count(),
+            0,
+            "hidden Main freezes card projection"
+        );
         for (job, expected) in saved.iter().zip(fixture["published"].as_array().unwrap()) {
             assert_eq!(job.status_text_1.as_deref(), expected["text"].as_str());
             assert_eq!(job.status_title.as_deref(), expected["title"].as_str());
@@ -109,7 +114,22 @@ fn actual_menu_overlapping_deadlines_hidden_progress_store_reopen_and_rendered_c
     let reopened = Store::open(store.dir()).unwrap();
     assert_eq!(jobs(&reopened), saved);
     ui.show().unwrap();
+    // Show resumes the real 250ms refresh; it does not synchronously project jobs.
+    let deadline = std::time::Instant::now() + Duration::from_secs(4);
+    while ui.get_popups().row_count() != 2 {
+        slint::platform::update_timers_and_animations();
+        assert!(
+            std::time::Instant::now() < deadline,
+            "visible delayed popup cards did not refresh"
+        );
+        std::thread::sleep(Duration::from_millis(8));
+    }
     assert_eq!(ui.get_popups().row_count(), 2);
+    assert_eq!(
+        jobs(&store),
+        saved,
+        "projecting saved cards cannot republish jobs"
+    );
     for (index, expected) in fixture["cards"].as_array().unwrap().iter().enumerate() {
         let row = ui.get_popups().row_data(index).unwrap();
         assert_eq!(row.text_1, expected["text"].as_str().unwrap());

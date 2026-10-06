@@ -53,10 +53,14 @@ fn real_radio_keys_and_all_units_reach_the_search_consumer() {
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
-    let bound = bind(
-        &ui,
-        Pages::single(super::common::all_local_page(store.clone())),
-    );
+    // The recorder queries LOCAL_FILE_SERVICE_KEY, not combined local media.
+    let location = hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+        hydrus_core::service::builtin_keys::MY_FILES,
+    ));
+    let mut page = SearchPage::new(store.clone());
+    page.choose_location(location.clone());
+    assert_eq!(page.location(), &location);
+    let bound = bind(&ui, Pages::single(page));
     let window = open(&ui, &bound);
     assert_eq!(fields(&window).row_data(1).unwrap().kind, 8);
     assert_eq!(fields(&window).row_data(3).unwrap().kind, 1);

@@ -116,7 +116,34 @@ fn the_menu_is_the_reference_s() {
                 .iter()
                 .find(|entry| entry["menu"] == "locations")
                 .cloned();
+            // The thumbnail producer now implements both entire submenus. The
+            // viewer still lacks them, so keep its shared pruning policy intact.
+            let manage_maintenance: Vec<Value> = theirs
+                .iter()
+                .find(|entry| entry["menu"] == "manage")
+                .map(|manage| {
+                    manage["entries"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .filter(|entry| {
+                            matches!(
+                                entry["menu"].as_str(),
+                                Some("maintenance" | "viewing stats")
+                            )
+                        })
+                        .cloned()
+                        .collect()
+                })
+                .unwrap_or_default();
             let mut theirs = pruned(&theirs);
+            if let Some(manage) = theirs.iter_mut().find(|entry| entry["menu"] == "manage") {
+                assert_eq!(manage_maintenance.len(), 2);
+                manage["entries"]
+                    .as_array_mut()
+                    .unwrap()
+                    .extend(manage_maintenance);
+            }
             if let Some(locations) = locations {
                 let at = theirs
                     .iter()

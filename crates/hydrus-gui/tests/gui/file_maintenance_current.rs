@@ -446,7 +446,30 @@ fn actual_missing_file_integrity_runner_hands_useful_url_to_the_owned_named_impo
         .find(|class| class.url_type == UrlType::File)
         .unwrap();
     let url = class.example_url.clone();
-    let expected = url.clone();
+    // The basic fixture already associates three valid URLs with its first file.
+    // With only the File class installed these are unclassified, which Qt also
+    // admits for repair. Read the associations before adding this case's URLs.
+    let mut expected = store
+        .read(move |conn| {
+            let mut query = conn.prepare(
+                "SELECT u.url FROM file_urls f JOIN urls u USING(url_id) WHERE f.hash_id=?1 ORDER BY u.url",
+            )?;
+            Ok(query
+                .query_map([file], |row| row.get::<_, String>(0))?
+                .collect::<rusqlite::Result<Vec<_>>>()?)
+        })
+        .unwrap();
+    assert_eq!(
+        expected,
+        [
+            "https://danbooru.donmai.us/posts/1000",
+            "https://example.com/post/0",
+            "https://gelbooru.com/index.php?page=post&s=view&id=2000",
+        ]
+    );
+    assert!(expected.iter().all(|url| !class.matches(url, false)));
+    expected.push(url.clone());
+    expected.sort();
     store
         .write_and_refresh(move |ctx| {
             hydrus_store::settings::set(
@@ -516,7 +539,17 @@ fn actual_missing_file_integrity_runner_hands_useful_url_to_the_owned_named_impo
     let received = store
         .write(move |ctx| hydrus_store::queues::take_url_requests(ctx.conn(), queue))
         .unwrap();
-    assert_eq!(received, [expected]);
+    assert_eq!(
+        received, expected,
+        "every valid unknown/File URL is handed over once"
+    );
+    assert!(
+        store
+            .write(move |ctx| hydrus_store::queues::take_url_requests(ctx.conn(), queue))
+            .unwrap()
+            .is_empty(),
+        "the named queue handoff is consumed once"
+    );
     let recorded = hydrus_testkit::fixture_json("file_maintenance_current.json");
     let invalid_error = recorded["redownload"]["errors"][0].as_str().unwrap();
     assert!(

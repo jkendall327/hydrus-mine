@@ -234,20 +234,25 @@ fn captured_menu_and_populated_child_cannot_edit_hidden_replaced_rebound_or_drop
 }
 
 #[test]
-fn dropping_the_last_owner_releases_a_populated_editor_without_cancel() {
+fn dropping_hidden_components_releases_a_populated_editor_without_cancel_cycle() {
     let (_dir, store) = setup();
     let _windows = headless::init();
     let (ui, bound) = main(&store);
     add(&ui, "system:filesize < 7KB");
     let child = editor(&ui, &bound);
     let weak_child = child.as_weak();
+    let weak_main = ui.as_weak();
     ui.hide().unwrap();
     drop(ui);
+    assert!(weak_main.upgrade().is_none());
     drop(bound);
     assert!(
         weak_child.upgrade().is_some(),
         "retained child is still live"
     );
+    // Scope this to callback cycles: shown Slint windows retain components.
+    // Automatic child closure on parent destruction needs separate coverage.
+    child.hide().unwrap();
     drop(child);
     assert!(
         weak_child.upgrade().is_none(),
@@ -664,7 +669,13 @@ fn retained_populated_or_hidden_page_rebind_and_destroyed_main_cannot_publish() 
     assert!(successor.search_or.borrow().is_some());
     let current = successor.current.borrow().clone();
     let after = current.borrow().active_predicates().to_vec();
+    let weak_main = ui.as_weak();
+    ui.hide().unwrap();
     drop(ui);
+    assert!(
+        weak_main.upgrade().is_none(),
+        "the emitting Main is actually destroyed"
+    );
     live.invoke_remove(0);
     live.invoke_apply();
     assert_eq!(current.borrow().active_predicates(), after);

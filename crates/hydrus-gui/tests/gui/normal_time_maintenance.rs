@@ -499,9 +499,12 @@ fn dropped_binding_retires_retained_control_and_wakes_its_real_held_wait() {
     assert!(!files[1].1.exists());
     assert!(files[2].1.exists());
     assert!(files[3].1.exists());
-    // Dropped emitting Main is discovered by the owned timer/poll even when
-    // its Bound and public Control survive; no successor window is consulted.
+    // Destroy the emitting component, releasing Slint's shown-window retention.
+    // The owned timer/poll must notice despite retained Bound and public Control.
+    let weak_main = ui.as_weak();
+    ui.hide().unwrap();
     drop(ui);
+    assert!(weak_main.upgrade().is_none());
     next.maintenance.poll_at(due + 1_000_000).unwrap();
     assert!(!next.maintenance.running(Worker::Trash));
     assert!(!next.maintenance.running(Worker::Deferred));
