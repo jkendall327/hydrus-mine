@@ -1,0 +1,985 @@
+{
+  "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+  "run_id": 37438105898,
+  "helper_sha256": "1f27a8508e485c730fbdc8ea005e90f5051ea3f6fb43b33fb968c6683ad09afb",
+  "state": "gates_and_staged_preservation_verified_for_root_review",
+  "publication_performed": false,
+  "new_approval_created": false,
+  "canonical_writes": false,
+  "selected_count": 21,
+  "prior280_full_nodes_preserved": true,
+  "deferred_favourites_whole_node_preserved": true,
+  "unselected_assessments_limits_metadata_and_topology_preserved": true,
+  "native1799_preserved_except_exact_source_anchor_remaps": true,
+  "node_delta_fields": {
+    "reference": {
+      "client": [
+        "descendant_status_counts"
+      ],
+      "file": [
+        "descendant_status_counts"
+      ],
+      "pages": [
+        "descendant_status_counts"
+      ],
+      "database": [
+        "descendant_status_counts"
+      ],
+      "network": [
+        "descendant_status_counts"
+      ],
+      "shared-editors": [
+        "descendant_status_counts"
+      ],
+      "subscriptions": [
+        "descendant_status_counts"
+      ],
+      "subscriptions-merge": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "reference_source",
+        "remaining",
+        "status"
+      ],
+      "sidecars": [
+        "descendant_status_counts"
+      ],
+      "options": [
+        "descendant_status_counts"
+      ],
+      "options-gui-pages": [
+        "descendant_status_counts"
+      ],
+      "options-media-viewer": [
+        "descendant_status_counts"
+      ],
+      "options-media-viewer-hovers": [
+        "descendant_status_counts"
+      ],
+      "options-ratings": [
+        "descendant_status_counts"
+      ],
+      "options-shortcuts": [
+        "descendant_status_counts"
+      ],
+      "options-tag-suggestions": [
+        "descendant_status_counts"
+      ],
+      "audit-shared-sidecar-import": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "reference_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-gui-pages-navigation-and-drag-and-drop": [
+        "descendant_status_counts"
+      ],
+      "audit-options-gui-pages-navigation-and-drag-and-drop-selection-chases-dropped-page-after-drag-and-drop": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-gui-pages-navigation-and-drag-and-drop-with-shift-held-down": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-mouse-wheel-scrolls-tab-bar-not-page-selection": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-gui-pages-navigation-and-drag-and-drop-bugfix-disable-all-page-tab-drag-and-drop": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-gui-pages-navigation-and-drag-and-drop-experimental-hide-main-page-navigation-tabs": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-gui-pages-page-tab-names": [
+        "descendant_status_counts"
+      ],
+      "audit-options-gui-pages-page-tab-names-when-there-are-too-many-tabs-to-fit-elide-their-names-so-they-fit": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-media-viewer-mouse-behaviour": [
+        "descendant_status_counts"
+      ],
+      "audit-options-media-viewer-mouse-behaviour-anchor-mouse-cursor-during-media-viewer-drags": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-media-viewer-mouse-behaviour-if-set-to-anchor-drags-undo-on-apparent-touchscreen-drag": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-media-viewer-hovers-hover-windows": [
+        "descendant_status_counts"
+      ],
+      "audit-options-media-viewer-hovers-hover-windows-allow-a-mouse-wheel-scroll-over-the-taglist-to-propagate-to-the-main-canvas": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-ratings-dialogs": [
+        "descendant_status_counts"
+      ],
+      "audit-options-ratings-dialogs-dialogs-like-dislike-and-numerical-rating-icon-size": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-ratings-dialogs-dialogs-inc-dec-rating-height": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-shortcuts-built-in-hydrus-shortcut-sets": [
+        "descendant_status_counts"
+      ],
+      "audit-options-shortcuts-built-in-hydrus-shortcut-sets-edit": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-menu-menu-pages-sidebar": [
+        "descendant_status_counts"
+      ],
+      "audit-options-menu-menu-pages-save-current-page-s-sidebar-preview-size-on-client-exit": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-menu-menu-pages-save-current-page-s-sidebar-preview-size-now": [
+        "assessment",
+        "implementation_validation",
+        "limitations",
+        "remaining",
+        "status"
+      ],
+      "audit-options-menu-menu-pages-restore-all-pages-sidebar-preview-sizes-to-saved-value": [
+        "assessment",
+        "implementation_validation",
+        "limitations",
+        "remaining",
+        "status"
+      ],
+      "audit-options-sidebar-splitters": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-nested-shortcuts-set": [
+        "descendant_status_counts"
+      ],
+      "audit-options-nested-shortcuts-command": [
+        "descendant_status_counts"
+      ],
+      "audit-options-nested-shortcuts-command-keyboard": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "reference_source",
+        "remaining",
+        "status"
+      ],
+      "audit-options-nested-tag-suggestions": [
+        "descendant_status_counts"
+      ],
+      "audit-options-nested-tag-suggestions-weights": [
+        "assessment",
+        "evidence",
+        "implementation_validation",
+        "limitations",
+        "native_source",
+        "reference_source",
+        "remaining",
+        "status"
+      ],
+      "audit-media-menu-database-clear": [
+        "descendant_status_counts"
+      ],
+      "audit-media-menu-database-clear-cull-file-viewing-statistics-based-on-current-min-max-values": [
+        "assessment",
+        "implementation_validation",
+        "limitations",
+        "reference_source",
+        "remaining",
+        "status"
+      ]
+    },
+    "native": {}
+  },
+  "exact_source_anchor_remaps": [],
+  "ancestor_count_summaries": [
+    {
+      "inventory": "reference",
+      "id": "client",
+      "before": {
+        "partial": 389,
+        "missing": 541,
+        "first_pass": 881
+      },
+      "after": {
+        "partial": 388,
+        "missing": 521,
+        "first_pass": 902
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "file",
+      "before": {
+        "partial": 109,
+        "first_pass": 300,
+        "missing": 295
+      },
+      "after": {
+        "partial": 109,
+        "first_pass": 314,
+        "missing": 281
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "pages",
+      "before": {
+        "partial": 108,
+        "first_pass": 233,
+        "missing": 22
+      },
+      "after": {
+        "partial": 108,
+        "first_pass": 236,
+        "missing": 19
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "database",
+      "before": {
+        "missing": 67,
+        "partial": 3
+      },
+      "after": {
+        "missing": 66,
+        "first_pass": 1,
+        "partial": 3
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "network",
+      "before": {
+        "partial": 44,
+        "first_pass": 112,
+        "missing": 4
+      },
+      "after": {
+        "partial": 43,
+        "first_pass": 113,
+        "missing": 4
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "shared-editors",
+      "before": {
+        "partial": 36,
+        "first_pass": 72,
+        "missing": 8
+      },
+      "after": {
+        "partial": 36,
+        "first_pass": 73,
+        "missing": 7
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "subscriptions",
+      "before": {
+        "first_pass": 36,
+        "partial": 9,
+        "missing": 1
+      },
+      "after": {
+        "first_pass": 37,
+        "partial": 8,
+        "missing": 1
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "sidecars",
+      "before": {
+        "missing": 2,
+        "partial": 6,
+        "first_pass": 15
+      },
+      "after": {
+        "missing": 1,
+        "first_pass": 16,
+        "partial": 6
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "options",
+      "before": {
+        "first_pass": 277,
+        "partial": 75,
+        "missing": 292
+      },
+      "after": {
+        "first_pass": 291,
+        "partial": 75,
+        "missing": 278
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "options-gui-pages",
+      "before": {
+        "partial": 2,
+        "first_pass": 18,
+        "missing": 13
+      },
+      "after": {
+        "partial": 2,
+        "first_pass": 24,
+        "missing": 7
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "options-media-viewer",
+      "before": {
+        "missing": 5,
+        "first_pass": 17,
+        "partial": 1
+      },
+      "after": {
+        "missing": 3,
+        "first_pass": 19,
+        "partial": 1
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "options-media-viewer-hovers",
+      "before": {
+        "missing": 11,
+        "partial": 1,
+        "first_pass": 18
+      },
+      "after": {
+        "missing": 10,
+        "partial": 1,
+        "first_pass": 19
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "options-ratings",
+      "before": {
+        "missing": 8,
+        "partial": 2,
+        "first_pass": 6
+      },
+      "after": {
+        "missing": 6,
+        "first_pass": 8,
+        "partial": 2
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "options-shortcuts",
+      "before": {
+        "missing": 13
+      },
+      "after": {
+        "missing": 11,
+        "first_pass": 2
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "options-tag-suggestions",
+      "before": {
+        "missing": 8
+      },
+      "after": {
+        "missing": 7,
+        "first_pass": 1
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-gui-pages-navigation-and-drag-and-drop",
+      "before": {
+        "missing": 8,
+        "first_pass": 3
+      },
+      "after": {
+        "first_pass": 8,
+        "missing": 3
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-gui-pages-page-tab-names",
+      "before": {
+        "first_pass": 7,
+        "missing": 1
+      },
+      "after": {
+        "first_pass": 8
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-media-viewer-mouse-behaviour",
+      "before": {
+        "missing": 2,
+        "first_pass": 3
+      },
+      "after": {
+        "first_pass": 5
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-media-viewer-hovers-hover-windows",
+      "before": {
+        "missing": 2,
+        "first_pass": 4
+      },
+      "after": {
+        "first_pass": 5,
+        "missing": 1
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-ratings-dialogs",
+      "before": {
+        "missing": 2
+      },
+      "after": {
+        "first_pass": 2
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-shortcuts-built-in-hydrus-shortcut-sets",
+      "before": {
+        "missing": 2
+      },
+      "after": {
+        "missing": 1,
+        "first_pass": 1
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-menu-menu-pages-sidebar",
+      "before": {
+        "missing": 4
+      },
+      "after": {
+        "first_pass": 3,
+        "missing": 1
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-nested-shortcuts-set",
+      "before": {
+        "missing": 3
+      },
+      "after": {
+        "missing": 2,
+        "first_pass": 1
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-nested-shortcuts-command",
+      "before": {
+        "missing": 2
+      },
+      "after": {
+        "missing": 1,
+        "first_pass": 1
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-options-nested-tag-suggestions",
+      "before": {
+        "missing": 3
+      },
+      "after": {
+        "missing": 2,
+        "first_pass": 1
+      }
+    },
+    {
+      "inventory": "reference",
+      "id": "audit-media-menu-database-clear",
+      "before": {
+        "missing": 2
+      },
+      "after": {
+        "first_pass": 1,
+        "missing": 1
+      }
+    }
+  ],
+  "staged_ledger": 301,
+  "pending_after_root_banks21": 74,
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "patch_digest": "9f89349ceeee71dc75db633a9da2485a787088afbcfb690ff6c12f0ae4c967af",
+  "source_census_digest": "2647a8c6f6cf299851dd956ad7f6b262e4f9a10a9f7864681c8f6d7b28891b17",
+  "artifact_id": 11401641954,
+  "files": {
+    "docs/rust/gui-coverage/reference-inventory.json": {
+      "input": "/workspace/validation-reviews/publication-final21-6b66240c1-linux/staged/docs/rust/gui-coverage/reference-inventory.json",
+      "sha256": "2896b1bcb9c63c8579a12938d408239948e4bcd80f59b051bc08e1c0b9f5e270",
+      "bytes": 7821126
+    },
+    "docs/rust/gui-coverage/native-inventory.json": {
+      "input": "/workspace/validation-reviews/publication-final21-6b66240c1-linux/staged/docs/rust/gui-coverage/native-inventory.json",
+      "sha256": "7b9416b542621bcf5b007e3b9bea25df51c6531da0370dce3f94753983d5c8c9",
+      "bytes": 6378338
+    },
+    "docs/rust/gui-coverage/overnight/progress.json": {
+      "input": "/workspace/validation-reviews/publication-final21-6b66240c1-linux/staged/docs/rust/gui-coverage/overnight/progress.json",
+      "sha256": "203522917211a2a09df82be1d82f4b33320a2e359a29f02d4d06aa503cd80bdb",
+      "bytes": 558314
+    },
+    "docs/rust/gui-coverage/overnight/reviewed-patch.json": {
+      "input": "/workspace/validation-reviews/publication-final21-6b66240c1-linux/staged/docs/rust/gui-coverage/overnight/reviewed-patch.json",
+      "sha256": "958ff067bda15f94f1abb84aec1af2a37789c559f893de59d635a8fcfdf4aebb",
+      "bytes": 15290206
+    },
+    "docs/rust/gui-coverage/overnight/ci-evidence.json": {
+      "input": "/workspace/validation-reviews/publication-final21-6b66240c1-linux/staged/docs/rust/gui-coverage/overnight/ci-evidence.json",
+      "sha256": "16cf480eefb93656ab5b0b039c0044eaf1d78e16192a7441a96f6b434d789bc8",
+      "bytes": 15911
+    },
+    "docs/rust/gui-coverage/audit/anchor-remap-6b66240c-publication.json": {
+      "input": "/workspace/validation-reviews/publication-final21-6b66240c1-linux/staged/docs/rust/gui-coverage/audit/anchor-remap-6b66240c-publication.json",
+      "sha256": "af70b8caf4aa6f0ae5d0a0669f3e3d6a3d28b6c5d8748f4ebcdc5a96d9b70b63",
+      "bytes": 3131082
+    },
+    "docs/rust/gui-progress.html": {
+      "input": "/workspace/validation-reviews/publication-final21-6b66240c1-linux/staged/docs/rust/gui-progress.html",
+      "sha256": "adefde0a474bcf435a0482b225af20a93f858096926342e2795d38cbccb7a47e",
+      "bytes": 11420173
+    },
+    "publication-summary.json": {
+      "input": "/workspace/validation-reviews/publication-final21-6b66240c1-linux/staged/publication-summary.json",
+      "sha256": "98f345ff247e266bc2129eb1b7fba0601acf48dfbde43d10aada00ed3cffc4d0",
+      "bytes": 1455
+    },
+    "source-census.json": {
+      "input": "/workspace/validation-reviews/publication-final21-6b66240c1-linux/staged/source-census.json",
+      "sha256": "88f9db2a16f1f800f6cfcb29aeb3709e1cfebfbcfc9462b42ff099252fb4fbd0",
+      "bytes": 3515258
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/selected-patch.json": {
+      "input": "/workspace/validation-reviews/publication-final21-6b66240c1-linux/selected-patch.json",
+      "sha256": "c0a7a8d5e2f8893016d482cb540d3fac84ebe73818e4063910b56c9dc106dd5e",
+      "bytes": 383388
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/review.json": {
+      "input": "/workspace/validation-reviews/publication-final21-6b66240c1-linux/review.json",
+      "sha256": "26a196ee28239fc4d7de18166cb1cc08591fc058043f23ce89cb43401a6168f8",
+      "bytes": 6767
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/status-reconciliation-audit.json": {
+      "input": "/workspace/validation-reviews/publication-final21-6b66240c1-linux/status-reconciliation-audit.json",
+      "sha256": "fd88d5173a80a47d5ce30cf5379f67da55caf50fe45e2ebe2181873f74e2e422",
+      "bytes": 95471
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/ci-evidence.json": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/ci-evidence.json",
+      "sha256": "16cf480eefb93656ab5b0b039c0044eaf1d78e16192a7441a96f6b434d789bc8",
+      "bytes": 15911
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native-render-manifest.json": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/native-render-manifest.json",
+      "sha256": "713e9b0319e0f9757da7933bf130976010b6e1b34ebdd0cec16ef2ea3df01208",
+      "bytes": 43304
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/browser/browser-check.json": {
+      "input": "/workspace/validation-reviews/report-browser-6b66240c1/browser-check.json",
+      "sha256": "79eb883c8395ad195192884be678e58f19d0d7e0a86abd3dde2693f4bd4efcbd",
+      "bytes": 10411
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/browser/report-desktop.png": {
+      "input": "/workspace/validation-reviews/report-browser-6b66240c1/report-desktop.png",
+      "sha256": "f47b2f5f2413d373cb937143ac3bfc3d2639e5254ccaefc51d450b96d474b04a",
+      "bytes": 323282
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/browser/report-narrow.png": {
+      "input": "/workspace/validation-reviews/report-browser-6b66240c1/report-narrow.png",
+      "sha256": "fb2dc1d6c92afe2573b5eed5af4fc86c0fb65d4965d538b280c60ac366d74c32",
+      "bytes": 268619
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/final-review-2-6b66240c1.json": {
+      "input": "/workspace/validation-reviews/final-review-2-6b66240c1.json",
+      "sha256": "7c4e0643526c0a8854528d1a4ec00b99c400022a95e295a94845703d504c170f",
+      "bytes": 30600
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/final-review-2-6b66240c1.md": {
+      "input": "/workspace/validation-reviews/final-review-2-6b66240c1.md",
+      "sha256": "3a9e6293136a94aa7f62421b3813da429e4f8aa258fda5e492d733b2eb29da16",
+      "bytes": 6265
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/final-review-3-6b66240c1.json": {
+      "input": "/workspace/validation-reviews/final-review-3-6b66240c1.json",
+      "sha256": "b706dd5972d89451d09b64e66efb45afc531fef0f315b270d6f8917657d05278",
+      "bytes": 79632
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/final-review-3-6b66240c1.md": {
+      "input": "/workspace/validation-reviews/final-review-3-6b66240c1.md",
+      "sha256": "e3e69405cabb9afa0600a81ae1b9e44954db9fa817af57a8aa090264854d2cac",
+      "bytes": 12310
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/final-review-4-6b66240c1.json": {
+      "input": "/workspace/validation-reviews/final-review-4-6b66240c1.json",
+      "sha256": "d45072a75e28d1df37bcb812e8e932b3aef62e506363ca8566e7c98c6934fb2f",
+      "bytes": 133495
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/final-review-4-6b66240c1.md": {
+      "input": "/workspace/validation-reviews/final-review-4-6b66240c1.md",
+      "sha256": "17074b95ed736f1895f66bc6e52f4c77e5959628fab0981b126750eb59ded423",
+      "bytes": 22698
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/final-review-5-6b66240c1.json": {
+      "input": "/workspace/validation-reviews/final-review-5-6b66240c1.json",
+      "sha256": "47d15c04e59ed581dc415dab5bfcdc5ebbd6510ca426b7b80f4912c438b037f5",
+      "bytes": 45907
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/final-review-5-6b66240c1.md": {
+      "input": "/workspace/validation-reviews/final-review-5-6b66240c1.md",
+      "sha256": "e5715b3d4329e8bea057433c194873db1012d6e3b7d083647a8299b79823ebbd",
+      "bytes": 10155
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/final-review-6-6b66240c1.json": {
+      "input": "/workspace/validation-reviews/final-review-6-6b66240c1.json",
+      "sha256": "583edf30f2ef435da0b728a34195b31ae90730618881e9fa850086a9e8262182",
+      "bytes": 22863
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/final-review-6-6b66240c1.md": {
+      "input": "/workspace/validation-reviews/final-review-6-6b66240c1.md",
+      "sha256": "3c1d1190b7161bc8d8648d95a5b5afef319a727aa89783da1d8f9821f6b6919c",
+      "bytes": 3192
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/subscription_merge_completed.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/subscription_merge_completed.png",
+      "sha256": "0e71be27f2bc2caa8df95afefb60d74fc5ee7301858e36e1cf34a2b037b2b620",
+      "bytes": 42234
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/rating-dialog-sizes.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/rating-dialog-sizes.png",
+      "sha256": "884dd5a3fd6735e733ea933f8f87fc7edaa48aa7c232e01b4b90ce9427fb8638",
+      "bytes": 10893
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/notebook_tabs_hidden_2.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/notebook_tabs_hidden_2.png",
+      "sha256": "750f02f8e2b3c2f66065f26b3584982941acd0b4a87f597cfcf09425958403ce",
+      "bytes": 37931
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/notebook_tabs_elide_true.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/notebook_tabs_elide_true.png",
+      "sha256": "82c426b13440df106b84fa9f73f926cb0ab0c43d138be381d509a21c4fe216b4",
+      "bytes": 31486
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/viewer-tags-wheel.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/viewer-tags-wheel.png",
+      "sha256": "ecc16f05182d385b79cbdc367f65335439fe81907177d5c7eeb45286fc15586a",
+      "bytes": 97721
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/options_viewer_drag_anchor.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/options_viewer_drag_anchor.png",
+      "sha256": "704cd177c66278a648a1c6e6851d01916dfdcaf5a3d42497d4c2f8adff0bd414",
+      "bytes": 114072
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/router-import-permitted-pngs.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/router-import-permitted-pngs.png",
+      "sha256": "84df11d6f588ac5527ee715e0f796f41d466151ae9dd7ebf566432b15b6593a4",
+      "bytes": 60439
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/options_shortcut_sets.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/options_shortcut_sets.png",
+      "sha256": "f109e477ede1091a5f4b088b9c7796edf737a0f70ca9115d1aa84f30d936a612",
+      "bytes": 81834
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/router_queue_exchange.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/router_queue_exchange.png",
+      "sha256": "a641c13e44159f08b848a6f579882abbe2513d1d08b4843a2ee46f288837fd37",
+      "bytes": 23037
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/subscription_merge_later_primary.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/subscription_merge_later_primary.png",
+      "sha256": "9f58f91307630ea41f1fd68e392eb437ab289cca3a7a23cf94895539d5c35c5d",
+      "bytes": 49876
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/notebook_tabs_left.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/notebook_tabs_left.png",
+      "sha256": "7b1739eb7d29f01969ee829be8d8e7bb7db9cc37cfdc7469769eae30c097fd5f",
+      "bytes": 44502
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/viewer_drag_anchor.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/viewer_drag_anchor.png",
+      "sha256": "b519180a40cbe0de985cba2abe5dd07bcf81e701612e73a0a8c92bdabbdd912a",
+      "bytes": 20502
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/related_tag_suggestions.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/related_tag_suggestions.png",
+      "sha256": "b596b3855b76dcf9f161c5ce8f5bfb76c8a5ccd1fe51f19e9a4024fa5bd5d2a6",
+      "bytes": 50089
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/related_tag_weights.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/related_tag_weights.png",
+      "sha256": "7af17d0881935f6f52709c3eca1027337f2e2100bc4e6c5d88a8fdc7a9a7e005",
+      "bytes": 24871
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/shortcut_set_builtin_main_gui.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/shortcut_set_builtin_main_gui.png",
+      "sha256": "4789b2ff7499ac2aee8bd230b643f8321404d64e2d0697ae6ef72f1db479a786",
+      "bytes": 59073
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/notebook_tabs_right.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/notebook_tabs_right.png",
+      "sha256": "4f295824daa37c62f6805e1b6931698535aabceca57d65b891cd598101b17d02",
+      "bytes": 44609
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/shortcut_capture_keyboard.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/shortcut_capture_keyboard.png",
+      "sha256": "64c181ba62a13028557a54289998758c26d92ca0f069e110fbb4ad25a7b7bd62",
+      "bytes": 19087
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/notebook_tabs_bottom.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/notebook_tabs_bottom.png",
+      "sha256": "dca450ffac45e7fd4eb56f0478d349d472924c0235471ceb7ec89c77e6e8d43a",
+      "bytes": 37721
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/tab-drag-transfer.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/tab-drag-transfer.png",
+      "sha256": "4e726ff8769e28478133433851305c6565d3cf3b01e25750d53dc9824a866d2d",
+      "bytes": 49565
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/notebook_tabs_elide_false.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/notebook_tabs_elide_false.png",
+      "sha256": "e5cb6b3996ee8f882d4ab27ede3d61ec7967d886fe5e98e2809df2d6ef0516d8",
+      "bytes": 31363
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/hidden-page-preview-native.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/hidden-page-preview-native.png",
+      "sha256": "5062203a4ddbd03b35e9f85b8dfa05868cccba6c894084524258015d58e6fb62",
+      "bytes": 405614
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/notebook_tabs_top.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/notebook_tabs_top.png",
+      "sha256": "38d82681b3f466ec71639c836ccfd97ec6b10cfe4f130f3aae67aa59f0a1f0a4",
+      "bytes": 40628
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/notebook_tabs_selected_near_fit.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/notebook_tabs_selected_near_fit.png",
+      "sha256": "e091d4a9fc199b25484e7cea7678cb773f2bd28c34c24226e647313c30be839d",
+      "bytes": 26485
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/viewing_statistics_cull_question.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/viewing_statistics_cull_question.png",
+      "sha256": "685722ccc13f502dee0e319a3de37b9fbc9e128f382fabb2876217624da0e86c",
+      "bytes": 29851
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/sidebar_layout_native.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/sidebar_layout_native.png",
+      "sha256": "c7fe4926560a589e8dc7a7ea8c0e012f9bef5daf3ce6fd53c23bc93cb747fbdd",
+      "bytes": 35280
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/page-owned-preview.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/page-owned-preview.png",
+      "sha256": "7dc502c623513612ea769386f9397b4b910ac3c7f127566073d50d7ece0c9f83",
+      "bytes": 269844
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/native/notebook_tabs_hidden_1.png": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/native-renders/notebook_tabs_hidden_1.png",
+      "sha256": "2513de07aed64dfe02307ba8380e2bc8110ac4ecab4230c0cf46bca6bd7281ed",
+      "bytes": 37874
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/linux-full.log": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+      "sha256": "5cc83ac2fdd75b757b5565371a47916db772a9129025974040bec819b9f5772a",
+      "bytes": 425579
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/parity-models.log": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+      "sha256": "dfcecb8f4452d70df4e12b56ef497067e0b1e28474da77d12f16aee7922841ac",
+      "bytes": 243934
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/clippy.log": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/clippy.log",
+      "sha256": "7c9b0e82c39f386de39db7ea42090d4e43c04aca4dd0d45924c542ff4788b181",
+      "bytes": 2134
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/validation-outcome.json": {
+      "input": "/workspace/validation-reviews/ci-6b66240c1/validation-outcome.json",
+      "sha256": "6311043c02f5822268efce914192fb59b12b4190a91a2dafd60d1c147c3849ad",
+      "bytes": 1940
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/ffmpeg-deadline-regression/repaired-proof.json": {
+      "input": "/workspace/validation-reviews/ffmpeg-deadline-repair/repaired-proof.json",
+      "sha256": "59e9afd88aec3b4ceda401d9fefdbfd987d19236496946be85055824f6993f5f",
+      "bytes": 3115
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/ffmpeg-deadline-regression/repaired-media.log": {
+      "input": "/workspace/validation-reviews/ffmpeg-deadline-repair/repaired-media.log",
+      "sha256": "7f695623aeb47abbd836d4705815f5b47d3fcafa72bfdd25bca0969f8aab5366",
+      "bytes": 11094
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/ffmpeg-deadline-regression/repaired-repeat-1.log": {
+      "input": "/workspace/validation-reviews/ffmpeg-deadline-repair/repaired-repeat-1.log",
+      "sha256": "880077c85611b72ecebd7d0e7a7ec4ae24a05bc9b3ecc24d25f7560d60e22574",
+      "bytes": 4117
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/ffmpeg-deadline-regression/repaired-repeat-2.log": {
+      "input": "/workspace/validation-reviews/ffmpeg-deadline-repair/repaired-repeat-2.log",
+      "sha256": "d7a6075491dbffd58c3fc3d700380a5a42d1ec5675b9e39eb43eea1ad6653d53",
+      "bytes": 4117
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/ffmpeg-deadline-regression/repaired-repeat-3.log": {
+      "input": "/workspace/validation-reviews/ffmpeg-deadline-repair/repaired-repeat-3.log",
+      "sha256": "f19916900876655a818b3c0c5d307f951a53bcea89c07bc6307011d513b5a6ad",
+      "bytes": 4117
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/ffmpeg-deadline-regression/repaired-repeat-4.log": {
+      "input": "/workspace/validation-reviews/ffmpeg-deadline-repair/repaired-repeat-4.log",
+      "sha256": "604b7e103b6be2c2f701e2e84975477290677b2c882c29f13cc12bf1a5dd64c5",
+      "bytes": 4117
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/ffmpeg-deadline-regression/repaired-repeat-5.log": {
+      "input": "/workspace/validation-reviews/ffmpeg-deadline-repair/repaired-repeat-5.log",
+      "sha256": "b36f77b0d361a6c3b1068b95f25cdd48e10dbf6757ef7838127366ba742d3c58",
+      "bytes": 4117
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/ffmpeg-deadline-regression/repaired-repeat-6.log": {
+      "input": "/workspace/validation-reviews/ffmpeg-deadline-repair/repaired-repeat-6.log",
+      "sha256": "6a4845a97968f05e6dc94897312d427f105b8ac8cccda3ef2a258079a2ddcea4",
+      "bytes": 4117
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/ffmpeg-deadline-regression/repaired-repeat-7.log": {
+      "input": "/workspace/validation-reviews/ffmpeg-deadline-repair/repaired-repeat-7.log",
+      "sha256": "c451d976a182d5f4f4110c475813a3d7511f8a97004fb67bacdd6a0e148edc8e",
+      "bytes": 4117
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/ffmpeg-deadline-regression/repaired-repeat-8.log": {
+      "input": "/workspace/validation-reviews/ffmpeg-deadline-repair/repaired-repeat-8.log",
+      "sha256": "81036a456bbb255ffce080a9cffaf09e995949fecf4bcbe5f3590d838ab3fcc7",
+      "bytes": 4117
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/ffmpeg-deadline-regression/repaired-repeat-9.log": {
+      "input": "/workspace/validation-reviews/ffmpeg-deadline-repair/repaired-repeat-9.log",
+      "sha256": "c00d836f91ede29bdd1216c70d7c0da9308293cab0a2a3345a4b53cf56e56154",
+      "bytes": 4117
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/ffmpeg-deadline-regression/repaired-repeat-10.log": {
+      "input": "/workspace/validation-reviews/ffmpeg-deadline-repair/repaired-repeat-10.log",
+      "sha256": "3716318b211b2aad944741fc11ca9e2b0fb5d23b275582928b83dd9210d170b8",
+      "bytes": 4117
+    },
+    "docs/rust/gui-coverage/checkpoints/6b66240c1/ffmpeg-deadline-regression/direct-transport-proof.json": {
+      "input": "/workspace/validation-reviews/ffmpeg-deadline-repair/direct-transport-proof.json",
+      "sha256": "b0caea3f93161052cd0c78acc84c9f32b9c6bac89f46925347a2ae5e792c8420",
+      "bytes": 587
+    }
+  },
+  "supplemental_local_regression_proof": "/workspace/validation-reviews/ffmpeg-deadline-repair/repaired-proof.json",
+  "scope": "Evidence integrity/preservation audit only. Existing root/reviewer packets supply approval; helper does not inspect images or grant approval."
+}

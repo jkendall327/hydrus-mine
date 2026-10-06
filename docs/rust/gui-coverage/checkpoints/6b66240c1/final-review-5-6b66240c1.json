@@ -1,0 +1,733 @@
+{
+  "schema": 1,
+  "reviewer": "reference_visual_5",
+  "reviewed_at": "2026-10-06T09:19:59.165304+00:00",
+  "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+  "run_id": 37438105898,
+  "artifact_id": 11401641954,
+  "validation_scope": "linux",
+  "approval": true,
+  "claims": [
+    {
+      "id": "audit-options-media-viewer-mouse-behaviour-anchor-mouse-cursor-during-media-viewer-drags",
+      "approval": true,
+      "caveats": [
+        "No Qt PNG: this recorder writes JSON only. Fresh native controls/scene images were actually inspected; this cannot be called a paired Qt visual comparison.",
+        "Physical cursor warp requires OS/compositor support; native requests through existing Winit window may fail/are ignored in headless backend. Pure replay proves request semantics; GUI proves actual pointer-to-media deltas, not compositor execution.",
+        "No full touchscreen-event support, preview/filter canvases, other mouse controls or broader Media Viewer parent credit.",
+        "Still PNG records the intended panned image beyond viewport; it does not prove numerical motion or compositor warp. Exact requested warps/state come from reference/model replay and actual media deltas from passing physical pointer GUI test.",
+        "Unselected seek-bar optional caption is truncated at the right in Options capture; selected anchor/touch labels and checkmarks are fully readable. No broader Options parity follows.",
+        "Linux-only required validation; Windows/macOS deferred and not approved. No parents or aliases earn completion credit."
+      ]
+    },
+    {
+      "id": "audit-options-media-viewer-mouse-behaviour-if-set-to-anchor-drags-undo-on-apparent-touchscreen-drag",
+      "approval": true,
+      "caveats": [
+        "No Qt PNG: this recorder writes JSON only. Fresh native controls/scene images were actually inspected; this cannot be called a paired Qt visual comparison.",
+        "Physical cursor warp requires OS/compositor support; native requests through existing Winit window may fail/are ignored in headless backend. Pure replay proves request semantics; GUI proves actual pointer-to-media deltas, not compositor execution.",
+        "No full touchscreen-event support, preview/filter canvases, other mouse controls or broader Media Viewer parent credit.",
+        "Still PNG records the intended panned image beyond viewport; it does not prove numerical motion or compositor warp. Exact requested warps/state come from reference/model replay and actual media deltas from passing physical pointer GUI test.",
+        "Unselected seek-bar optional caption is truncated at the right in Options capture; selected anchor/touch labels and checkmarks are fully readable. No broader Options parity follows.",
+        "Linux-only required validation; Windows/macOS deferred and not approved. No parents or aliases earn completion credit."
+      ]
+    },
+    {
+      "id": "audit-options-media-viewer-hovers-hover-windows-allow-a-mouse-wheel-scroll-over-the-taglist-to-propagate-to-the-main-canvas",
+      "approval": true,
+      "caveats": [
+        "No Qt PNG: recorder writes JSON only. Fresh native hover PNG proves presentation/scroll state but cannot visually compare Qt pixels.",
+        "Measured native row heights and Winit line normalization(60logical pixels per line; three rows per tick) differ from Qt pixels/platform line preferences; fractional Qt wheel accumulation is not claimed.",
+        "Ordinary browser viewer hover only. Preview/filter canvases without native hover panes, full tag selection/context actions and broader hover/list parents remain Partial or Missing.",
+        "Only viewer-tags-wheel.png is exported: selected Options dropdown and subsequent navigation/zoom/timing states are asserted but have no dedicated native captures.",
+        "Strict0.57-second delay/direction/new-media grace and250-second reset are matched under recorded/model clocks. Native physical wheel test uses650ms quiet waits; OS-level event timing equality is not claimed.",
+        "Top/bottom list rows are clipped by the scrolled viewport as intended; image caption unchanged is established by the passing test, not a paired before/after screenshot.",
+        "Linux-only required validation; Windows/macOS deferred and not approved. No parents or aliases earn completion credit."
+      ]
+    },
+    {
+      "id": "audit-media-menu-database-clear-cull-file-viewing-statistics-based-on-current-min-max-values",
+      "approval": true,
+      "caveats": [
+        "No Qt PNG: recorder captures scripted question/Information strings and real DB results as JSON, not a photographed QMessageBox. Fresh question PNG was viewed: all paragraphs and both buttons are readable; no paired Qt screenshot exists.",
+        "Native invalid-rule errors use owned Warning notice rather than reference global Python exception presentation; values exceeding native SQL integer range are rejected atomically.",
+        "Preview min/max Options rules support culling only; missing timed preview-display consumer remains unclaimed, zero extra credit.",
+        "Broader database maintenance, viewing-statistics parents/aliases and unselected clear-all remain unresolved; no credit from shared tests or packet.",
+        "Completion and invalid-error notice states are asserted but not exported as dedicated PNGs.",
+        "Native question buttons are tall but labels and all paragraphs fit. Headless PNG has no OS titlebar; Are you sure? is source metadata, not visible-decoration parity.",
+        "Timer owner/visibility and synchronous one-shot acceptance remain bounded to this owned question; the existing250ms invalidation timer does not establish broad timing or modal-platform parity.",
+        "Linux-only required validation; Windows/macOS deferred and not approved. No parents or aliases earn completion credit."
+      ]
+    }
+  ],
+  "eligible_ids": [
+    "audit-options-media-viewer-mouse-behaviour-anchor-mouse-cursor-during-media-viewer-drags",
+    "audit-options-media-viewer-mouse-behaviour-if-set-to-anchor-drags-undo-on-apparent-touchscreen-drag",
+    "audit-options-media-viewer-hovers-hover-windows-allow-a-mouse-wheel-scroll-over-the-taglist-to-propagate-to-the-main-canvas",
+    "audit-media-menu-database-clear-cull-file-viewing-statistics-based-on-current-min-max-values"
+  ],
+  "not_eligible_ids": [],
+  "unselected_id_excluded": "audit-media-menu-database-clear-clear-all-file-viewing-statistics",
+  "banked_count_preserved": 280,
+  "source_files": [
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/src/viewer_drag.rs",
+      "sha256": "93dbf78c7e601f0d7e9fc2550ba70b390f3a8ad319a55508c5750ccfe472aa46",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/src/viewer_tag_wheel.rs",
+      "sha256": "32d20ff296bd546543ee890b3bce4c079d7b5c00b5b16d320b0a5e8e93699673",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/src/viewing_maintenance.rs",
+      "sha256": "b11a49512b5b0fd8b4bdd4dbaae48d93bf15a760262f56e8cd96ac203a462fbd",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/viewer_drag.rs",
+      "sha256": "5e6d31b883d0599f80a75ef4bc61c7dcf67fceeee6db6f91ef6a14b3d8d96cc8",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/viewer_tag_wheel.rs",
+      "sha256": "f7b56da2c3855a12574cea533e50272baf989c29f8a7043419af8602aa5eb2a9",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/viewing_maintenance.rs",
+      "sha256": "c8c891d2c2d97e75c8cb675b7da2be75eb9ed23219285ccab421dc1299281052",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/viewer_drag.rs",
+      "sha256": "8bb455bf52c51319b49708afb88157de66c24fb9557de04cff38bc22d920720e",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/viewer_tag_wheel.rs",
+      "sha256": "30355f564b28006d6e8113502c3f845ce931bf4218eee9e1acf3584ea8dafffb",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/viewer_presentation.rs",
+      "sha256": "dfb0800e5c3349b377262bd916c54d39973bf9bbc009571eadd1cc0d55a13fc0",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/viewing_tracking.rs",
+      "sha256": "0bac7aa0a541f9563c4e8f5d0d279e8d5502e193d817a25caa1a6f0e24b4a7f4",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/viewing_maintenance_window.rs",
+      "sha256": "625df50f98abe5ae73355d42871f53fc6760936d67462c01c46258088125c24a",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/lib.rs",
+      "sha256": "92dc7d5b2a1a21900433b0d7cd07eb7d4608a62d643310a6d614a9bd181a3905",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/viewer.slint",
+      "sha256": "21b48a62dce3c3b9eff9c509a9300b95bf5b7f33eec66fe34c1b05f4515ef96e",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/viewer_tags_hover.slint",
+      "sha256": "8a3271edf1a7b90c5a5c891df4d0e25c2aea584ca80cfbed2bd3acf1e33f9ca6",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/viewer_drag.rs",
+      "sha256": "9a0793cab507bca92d5207aa509cef29c047ca0afe02ab7bfd4b4b8cfa623e34",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/viewer_tag_wheel.rs",
+      "sha256": "350ac3b1ce338cd7fe0d0d4c41a6614742db474713cbf67675ffff95bd2a1bb1",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/viewing_maintenance.rs",
+      "sha256": "d17d5cc694795a3c824cc649fc2bd1f63913089b79d98b8c50d48578a0149893",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-store/src/settings.rs",
+      "sha256": "e74448ef8754a400fccbe274393d067e4b6b171e189bdc97c5d8edcbd3bb2687",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-store/src/import/decode.rs",
+      "sha256": "ce988cd231d08607710465c9a64c3aa01e4a1eaec75a9f698a1d16b25204434d",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-store/src/viewing_maintenance.rs",
+      "sha256": "1ebe9bced86b8c4098a482557bb59d82eb5d6a8b1e4faafd645629da8d757cfa",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/src/options.rs",
+      "sha256": "0959b5f502712b18a6cf8ebb089f1448770b25b291100468cd2e6fba9acb0ae0",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/canvas/ClientGUICanvas.py",
+      "sha256": "cd8f2785f7c911c56cfdde97c3becf5b9209d2b4c1a63b78837a899b2d39baf3",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py",
+      "sha256": "5e6d3c92c2104a7047be42fe94703066a3a0b4b127875d48fc53e98f7bbb68f9",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/db/ClientDBFilesViewingStats.py",
+      "sha256": "98a16b7ac533d6fbecaac10bedf3edae92e0c0bb60d5665d797b00e79d817c01",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/hydrus/client/gui/ClientGUI.py",
+      "sha256": "fb2bc6a31759c068475021e27213a1516d4bba7c837fe1d9d95f72442ed3e5cf",
+      "role": "scoped source/reference/test read",
+      "exact_source_match": true,
+      "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "hash_matches_exact_source": true
+    }
+  ],
+  "assignment": {
+    "path": "/workspace/validation-reviews/final21-review-assignments-6b66240c1.json",
+    "sha256": "df7c687fac6a3d83c240fdd8611265595df501f42df807d074f47fd540d8bdd7"
+  },
+  "ci": {
+    "path": "/workspace/validation-reviews/ci-6b66240c1/ci-evidence.json",
+    "sha256": "16cf480eefb93656ab5b0b039c0044eaf1d78e16192a7441a96f6b434d789bc8",
+    "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37438105898",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 112184900597,
+        "name": "check",
+        "conclusion": "success",
+        "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37438105898/job/112184900597"
+      },
+      {
+        "id": 112184901039,
+        "name": "parity-models",
+        "conclusion": "success",
+        "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37438105898/job/112184901039"
+      }
+    ],
+    "gui_result": "696 passed;0failed;0ignored",
+    "media_result": "67 passed;0failed;0ignored",
+    "strict_clippy_success": true
+  },
+  "artifact": {
+    "manifest_path": "/workspace/validation-reviews/ci-6b66240c1/native-render-manifest.json",
+    "manifest_sha256": "713e9b0319e0f9757da7933bf130976010b6e1b34ebdd0cec16ef2ea3df01208",
+    "zip_sha256": "bc98decc6ffa86b0cedd7df33899202bb83711bcd2b9e4a40c72892baddd5c67",
+    "zip_digest_matches_upload_log": true,
+    "total_pngs": 266,
+    "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37438105898/artifacts/11401641954"
+  },
+  "logs": [
+    {
+      "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+      "sha256": "5cc83ac2fdd75b757b5565371a47916db772a9129025974040bec819b9f5772a"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+      "sha256": "dfcecb8f4452d70df4e12b56ef497067e0b1e28474da77d12f16aee7922841ac"
+    }
+  ],
+  "groups": [
+    {
+      "ids": [
+        "audit-options-media-viewer-mouse-behaviour-anchor-mouse-cursor-during-media-viewer-drags",
+        "audit-options-media-viewer-mouse-behaviour-if-set-to-anchor-drags-undo-on-apparent-touchscreen-drag"
+      ],
+      "manifest_path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/viewer-drag-anchor.json",
+      "approval": true,
+      "reference_read": "Actual MediaViewerPanel UpdateOptions plus real displayed JPEG CanvasMediaListBrowser BeginDrag/HandleMouseMoveWithoutEvent/MoveDelta/EndDrag; only mouse lookup and warp execution are substituted. Four anchor/touch combinations and six motions each. Final true/true case retains anchor at50 Manhattan pixels, latches touch at51, stops requesting warps after latch; release has zero pan and next press clears touch.",
+      "reference_evidence": [
+        {
+          "path": "/workspace/hydrus-mine/oracle/record_viewer_anchor_options.py",
+          "sha256": "72bb5daea78ef3d3fe5d0db2cef5007caf6604e7dfde15b81420d9111818d45b",
+          "role": "Qt recorder actually read",
+          "exact_source_match": true,
+          "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "hash_matches_exact_source": true
+        },
+        {
+          "path": "/workspace/hydrus-mine/oracle/fixtures/viewer_anchor_options.json",
+          "sha256": "e3327e296fd69425604209519aa05c9cd9d035b741cad7a7331a3533e088cba2",
+          "role": "Qt JSON actually read",
+          "exact_source_match": true,
+          "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "hash_matches_exact_source": true
+        }
+      ],
+      "native_images": [
+        {
+          "path": "/workspace/validation-reviews/ci-6b66240c1/native-renders/viewer_drag_anchor.png",
+          "sha256": "b519180a40cbe0de985cba2abe5dd07bcf81e701612e73a0a8c92bdabbdd912a",
+          "bytes": 20502,
+          "width": 1000,
+          "height": 750,
+          "actually_viewed": true,
+          "hash_matches_artifact_manifest": true,
+          "capture_state": "Snapshot of live JPEG browser viewer after all24 physical pointer motions and releases; saved anchor_drag=true/touch_unanchors=true. Pan deltas are asserted before snapshot; do not infer warp execution from still pixels.",
+          "authoring_test": "viewer_drag::actual_pointer_drags_replay_qt_and_options_refresh_cancel_and_reopen"
+        },
+        {
+          "path": "/workspace/validation-reviews/ci-6b66240c1/native-renders/options_viewer_drag_anchor.png",
+          "sha256": "704cd177c66278a648a1c6e6851d01916dfdcaf5a3d42497d4c2f8adff0bd414",
+          "bytes": 114072,
+          "width": 1100,
+          "height": 850,
+          "actually_viewed": true,
+          "hash_matches_artifact_manifest": true,
+          "capture_state": "Reopened Media Viewer Options with both selected checkboxes checked after cancelled false/false draft. Capture actual controls; later close/re-show retained viewer cannot pan.",
+          "authoring_test": "viewer_drag::actual_pointer_drags_replay_qt_and_options_refresh_cancel_and_reopen"
+        }
+      ],
+      "visual_findings": [
+        "options_viewer_drag_anchor.png: selected Media Viewer page displays exact anchor and apparent touchscreen labels, both checked. Their captions and checkmarks fit inside the1100x850 viewport. Apply and Cancel are readable. Unselected seek-bar optional caption truncates at the right; that does not obscure these selected controls and gives no broader Options credit.",
+        "viewer_drag_anchor.png: actual JPEG remains drawn at the panned position after recorded physical pointer motions. The image extends beyond the viewport; this is the intentional pan/large existing zoom scene, not evidence of a zero-sized/missing image. Still pixels cannot prove cursor warp execution or numerical drag deltas. Those remain separately source/reference/scoped-test evidence."
+      ],
+      "assertions_reviewed": [
+        "Exact staged checkbox labels and Linux defaultanchor=true/touch=false; platform-aware macOS default is source/model only, not validation for that deferred platform.",
+        "Pure replay compares exact pan delta, requested warp list, last anchor and touch flag at each recorded motion. Physical GUI pointer press/move/release compares actual media deltas; released pointer must not pan.",
+        "Apply refreshes existing viewer; cancelled false/false draft leaves saved true/true and live viewer intact; independent Store reopening and reopened checkboxes remain asserted.",
+        "Two simultaneously visible viewers use independent CanvasTracker lifetimes and per-input saved-settings reads. Earlier viewer reads Apply; exactly50/51 touch threshold totals111/10 pan; opening successor does not retire earlier owner. Closing earlier owner preserves successor slot, retained/re-shown closed owner remains retired."
+      ],
+      "test_evidence": [
+        {
+          "name": "viewer_drag::anchored_and_touch_overridden_drags_replay_actual_qt_threshold_and_warps",
+          "passed": true,
+          "proof": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 3191,
+              "text": "2026-10-06T09:14:43.8097593Z test viewer_drag::anchored_and_touch_overridden_drags_replay_actual_qt_threshold_and_warps ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+              "line": 1930,
+              "text": "2026-10-06T08:48:00.7449101Z test viewer_drag::anchored_and_touch_overridden_drags_replay_actual_qt_threshold_and_warps ... ok"
+            }
+          ]
+        },
+        {
+          "name": "viewer_drag::anchor_options_remain_drafts_until_apply_and_survive_reopen",
+          "passed": true,
+          "proof": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 3193,
+              "text": "2026-10-06T09:14:43.8208077Z test viewer_drag::anchor_options_remain_drafts_until_apply_and_survive_reopen ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+              "line": 1932,
+              "text": "2026-10-06T08:48:00.7605347Z test viewer_drag::anchor_options_remain_drafts_until_apply_and_survive_reopen ... ok"
+            }
+          ]
+        },
+        {
+          "name": "viewer_drag::actual_pointer_drags_replay_qt_and_options_refresh_cancel_and_reopen",
+          "passed": true,
+          "proof": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 2608,
+              "text": "2026-10-06T09:14:09.2118535Z test viewer_drag::actual_pointer_drags_replay_qt_and_options_refresh_cancel_and_reopen ... ok"
+            }
+          ]
+        },
+        {
+          "name": "viewer_drag::two_visible_viewers_read_saved_preferences_and_keep_independent_live_lifetimes",
+          "passed": true,
+          "proof": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 2611,
+              "text": "2026-10-06T09:14:10.4270709Z test viewer_drag::two_visible_viewers_read_saved_preferences_and_keep_independent_live_lifetimes ... ok"
+            }
+          ]
+        },
+        {
+          "name": "import::decode::tests::viewer_pointer_options_import_both_drag_preferences",
+          "passed": true,
+          "proof": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 3942,
+              "text": "2026-10-06T09:16:10.9767965Z test import::decode::tests::viewer_pointer_options_import_both_drag_preferences ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+              "line": 2285,
+              "text": "2026-10-06T08:48:25.0640408Z test import::decode::tests::viewer_pointer_options_import_both_drag_preferences ... ok"
+            }
+          ]
+        }
+      ],
+      "caveats": [
+        "No Qt PNG: this recorder writes JSON only. Fresh native controls/scene images were actually inspected; this cannot be called a paired Qt visual comparison.",
+        "Physical cursor warp requires OS/compositor support; native requests through existing Winit window may fail/are ignored in headless backend. Pure replay proves request semantics; GUI proves actual pointer-to-media deltas, not compositor execution.",
+        "No full touchscreen-event support, preview/filter canvases, other mouse controls or broader Media Viewer parent credit.",
+        "Still PNG records the intended panned image beyond viewport; it does not prove numerical motion or compositor warp. Exact requested warps/state come from reference/model replay and actual media deltas from passing physical pointer GUI test.",
+        "Unselected seek-bar optional caption is truncated at the right in Options capture; selected anchor/touch labels and checkmarks are fully readable. No broader Options parity follows.",
+        "Linux-only required validation; Windows/macOS deferred and not approved. No parents or aliases earn completion credit."
+      ],
+      "blocking_findings": []
+    },
+    {
+      "ids": [
+        "audit-options-media-viewer-hovers-hover-windows-allow-a-mouse-wheel-scroll-over-the-taglist-to-propagate-to-the-main-canvas"
+      ],
+      "manifest_path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/viewer-tag-wheel.json",
+      "approval": true,
+      "reference_read": "Actual MediaViewerHoversPanel four saved codes/labels; real CanvasHoverFrameTags and child QScrollArea wheel handlers on detached synthetic media. Held clock and explicit delivery at edges record48 policy/bar/time/direction gates. Child initial scrolling consumed; terminal edge ignored. Real SetMedia keeps offset100 for another long list and clamps0 for short list; direction retained at1100 and reset at1301 after previous1000.",
+      "reference_evidence": [
+        {
+          "path": "/workspace/hydrus-mine/oracle/record_viewer_tag_wheel.py",
+          "sha256": "d4f9af01d28c503d807ef25160e01db37fb8cb1dbf92a2205167f980ef7f2f91",
+          "role": "Qt recorder actually read",
+          "exact_source_match": true,
+          "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "hash_matches_exact_source": true
+        },
+        {
+          "path": "/workspace/hydrus-mine/oracle/fixtures/viewer_tag_wheel.json",
+          "sha256": "b08490675b4e3803fe98c6aa25fe9786f5057555a3e0b99b4b99f37e63d49f6a",
+          "role": "Qt JSON actually read",
+          "exact_source_match": true,
+          "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "hash_matches_exact_source": true
+        }
+      ],
+      "native_images": [
+        {
+          "path": "/workspace/validation-reviews/ci-6b66240c1/native-renders/viewer-tags-wheel.png",
+          "sha256": "ecc16f05182d385b79cbdc367f65335439fe81907177d5c7eeb45286fc15586a",
+          "bytes": 97721,
+          "width": 1000,
+          "height": 300,
+          "actually_viewed": true,
+          "hash_matches_artifact_manifest": true,
+          "capture_state": "Live JPEG browser viewer at first file with at least200 synthetic wheel tags, pointer50/140 reveals left hover, policy0(never). One physical -60 wheel tick has increased measured tag offset and left file caption unchanged; snapshot preserves actual pan/scroll layout.",
+          "authoring_test": "viewer_tag_wheel::long_tag_hover_scrolls_before_policy_gated_real_navigation_and_zoom"
+        }
+      ],
+      "visual_findings": [
+        "viewer-tags-wheel.png: left hover is visible with readable wheel:000 and following rows, scroll bar and thumb. Rows clipped at top/bottom are the scrolled clipped list viewport expected after one real wheel event, not vanished tag content. The JPEG remains shown; caption/navigation unchanged is established by the exact GUI assertion, not screenshot equality.",
+        "The native capture is a1000x300 short viewer after first list consumption under policynever. It does not capture the four-choice Options control, edge navigation, timing boundaries or Ctrl zoom. These remain recorded/runtime assertions with no separate native PNG."
+      ],
+      "assertions_reviewed": [
+        "Exact choices: never propagate; only propagate when list has no vertical scrollbar; only propagate if vertical scrollbar has not been used recently; propagate immediately after vertical scrollbar hits an end (Qt default). Saved defaultcode2=delayed; model/import verify all four codes and raw labels.",
+        "Real native TouchArea wheel reaches existing owned handler. Actual measured tag rows scroll first regardless of policy; only unchanged clamped edge consults gate then existing previous/next/Ctrl-zoom callbacks.",
+        "Strict >0.57seconds and same direction, direction reversal, new-media grace and >250second direction reset match held-clock Qt gates in model replay; physical GUI uses bounded650ms waits to prove recent scrolling suppresses and quiet edge navigates, without exact OS timing equivalence.",
+        "Physical wheel tests retain assertions for never/no-scrollbar/immediate/delayed, actual next/previous caption, short-list zero offset, Ctrl-wheel actual increased media width, cancelled draft, Store reopening, reopened index3 and retired-owner refusal. Shared two-visible-viewer regression proves older live viewer reads saved wheel policy and does not change successor navigation."
+      ],
+      "test_evidence": [
+        {
+          "name": "viewer_tag_wheel::parent_wheel_gates_replay_actual_qt_boundaries_and_directions",
+          "passed": true,
+          "proof": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 3198,
+              "text": "2026-10-06T09:14:43.9461609Z test viewer_tag_wheel::parent_wheel_gates_replay_actual_qt_boundaries_and_directions ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+              "line": 1937,
+              "text": "2026-10-06T08:48:00.8740724Z test viewer_tag_wheel::parent_wheel_gates_replay_actual_qt_boundaries_and_directions ... ok"
+            }
+          ]
+        },
+        {
+          "name": "viewer_tag_wheel::four_policy_choices_stage_cancel_save_and_reopen_with_reference_labels",
+          "passed": true,
+          "proof": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 3197,
+              "text": "2026-10-06T09:14:43.9447992Z test viewer_tag_wheel::four_policy_choices_stage_cancel_save_and_reopen_with_reference_labels ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+              "line": 1938,
+              "text": "2026-10-06T08:48:00.8799151Z test viewer_tag_wheel::four_policy_choices_stage_cancel_save_and_reopen_with_reference_labels ... ok"
+            }
+          ]
+        },
+        {
+          "name": "viewer_tag_wheel::long_tag_hover_scrolls_before_policy_gated_real_navigation_and_zoom",
+          "passed": true,
+          "proof": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 2627,
+              "text": "2026-10-06T09:14:13.3087588Z test viewer_tag_wheel::long_tag_hover_scrolls_before_policy_gated_real_navigation_and_zoom ... ok"
+            }
+          ]
+        },
+        {
+          "name": "viewer_drag::two_visible_viewers_read_saved_preferences_and_keep_independent_live_lifetimes",
+          "passed": true,
+          "proof": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 2611,
+              "text": "2026-10-06T09:14:10.4270709Z test viewer_drag::two_visible_viewers_read_saved_preferences_and_keep_independent_live_lifetimes ... ok"
+            }
+          ]
+        },
+        {
+          "name": "import::decode::tests::viewer_tag_wheel_imports_all_four_reference_policy_codes",
+          "passed": true,
+          "proof": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 3945,
+              "text": "2026-10-06T09:16:11.2127254Z test import::decode::tests::viewer_tag_wheel_imports_all_four_reference_policy_codes ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+              "line": 2288,
+              "text": "2026-10-06T08:48:25.2914413Z test import::decode::tests::viewer_tag_wheel_imports_all_four_reference_policy_codes ... ok"
+            }
+          ]
+        }
+      ],
+      "caveats": [
+        "No Qt PNG: recorder writes JSON only. Fresh native hover PNG proves presentation/scroll state but cannot visually compare Qt pixels.",
+        "Measured native row heights and Winit line normalization(60logical pixels per line; three rows per tick) differ from Qt pixels/platform line preferences; fractional Qt wheel accumulation is not claimed.",
+        "Ordinary browser viewer hover only. Preview/filter canvases without native hover panes, full tag selection/context actions and broader hover/list parents remain Partial or Missing.",
+        "Only viewer-tags-wheel.png is exported: selected Options dropdown and subsequent navigation/zoom/timing states are asserted but have no dedicated native captures.",
+        "Strict0.57-second delay/direction/new-media grace and250-second reset are matched under recorded/model clocks. Native physical wheel test uses650ms quiet waits; OS-level event timing equality is not claimed.",
+        "Top/bottom list rows are clipped by the scrolled viewport as intended; image caption unchanged is established by the passing test, not a paired before/after screenshot.",
+        "Linux-only required validation; Windows/macOS deferred and not approved. No parents or aliases earn completion credit."
+      ],
+      "blocking_findings": []
+    },
+    {
+      "ids": [
+        "audit-media-menu-database-clear-cull-file-viewing-statistics-based-on-current-min-max-values"
+      ],
+      "manifest_path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/viewing-statistics-cleanup.json",
+      "approval": true,
+      "reference_read": "Actual Qt MainWindow cull/clear handlers with scripted decision/information presentation and database command routing into real ClientDBFilesViewingStats on isolated SQLite corpus. Eight events: cull decline/accept; None/zero bounds; invalid media and preview min>max; clear decline/accept. Reference SQL culls minimum viewcount before maximum duration, preserving last-viewed timestamps and ClientAPI canvas records.",
+      "reference_evidence": [
+        {
+          "path": "/workspace/hydrus-mine/oracle/record_viewing_maintenance.py",
+          "sha256": "19f9635f070a822c5a2b4b13596cfb196578242e5b4f070e2b1fbaab026a9618",
+          "role": "Qt recorder actually read",
+          "exact_source_match": true,
+          "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "hash_matches_exact_source": true
+        },
+        {
+          "path": "/workspace/hydrus-mine/oracle/fixtures/viewing_maintenance.json",
+          "sha256": "540528425ca748cc1b6ce80e77719954dc6347f59404c7ee258be3951233f39a",
+          "role": "Qt JSON actually read",
+          "exact_source_match": true,
+          "anchor_git_head": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "hash_matches_exact_source": true
+        }
+      ],
+      "native_images": [
+        {
+          "path": "/workspace/validation-reviews/ci-6b66240c1/native-renders/viewing_statistics_cull_question.png",
+          "sha256": "685722ccc13f502dee0e319a3de37b9fbc9e128f382fabb2876217624da0e86c",
+          "bytes": 29851,
+          "width": 680,
+          "height": 420,
+          "actually_viewed": true,
+          "hash_matches_artifact_manifest": true,
+          "capture_state": "Pending live cull confirmation titled Are you sure? after saved rules changed while dialog open to media2000/60000ms and preview5000/10000ms. Full multi-paragraph explanation, do it/forget it buttons; no acceptance has occurred at capture.",
+          "authoring_test": "viewing_maintenance::real_menu_clear_and_cull_read_live_rules_preserve_declines_and_reopen"
+        }
+      ],
+      "visual_findings": [
+        "viewing_statistics_cull_question.png: all four explanation paragraphs are fully readable, including minimum100views/100seconds ->50views, maximum10views/100000seconds ->600seconds, and separate preview/media rules. do it and forget it buttons are fully inside680x420. They are tall in this native layout; no selected question text/button clipping observed.",
+        "Headless capture omits operating-system titlebar; Are you sure? is set by source rather than visible in this PNG. Acceptance/completion/error states are runtime asserted and unexported. The native question is still pending and no rows have been culled at capture."
+      ],
+      "assertions_reviewed": [
+        "Only selected cull ID receives preparation. Shared packet/tests also cover clear-all, but it remains unselected/unresolved and receives no approval or credit.",
+        "Actual Database>clear>cull menu entry must be usable and dispatch owned question. Question text and do it/forget it labels match exact Qt recording; saved limits are changed after opening and current values read only in acceptance transaction.",
+        "Production cull loads both saved canvas limits in Store writer transaction, validates all min/max and SQL integer bounds before writes, culls count by minimum then caps duration by maximum; None disables bound and zero matches SQL semantics.",
+        "Model fixture replay checks exact records for all cull events, preserves timestamps/other canvases and declined/invalid rows, independent Store reopen and real media consumer. GUI acceptance checks recorded cull result, Information title/completion message and one-shot refusal; retained hidden/predecessor callbacks cannot change rows or clear successor slot.",
+        "Owned250ms validity timer closes hidden/retired question; acceptance also synchronously checks current owner/window/one-shot state. Regression checks dropping closed question releases timer owner without strong callback cycle."
+      ],
+      "test_evidence": [
+        {
+          "name": "viewing_maintenance::reference_clear_cull_questions_rules_errors_and_real_reopened_media_match",
+          "passed": true,
+          "proof": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 3205,
+              "text": "2026-10-06T09:14:44.1533538Z test viewing_maintenance::reference_clear_cull_questions_rules_errors_and_real_reopened_media_match ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+              "line": 1944,
+              "text": "2026-10-06T08:48:01.0975038Z test viewing_maintenance::reference_clear_cull_questions_rules_errors_and_real_reopened_media_match ... ok"
+            }
+          ]
+        },
+        {
+          "name": "viewing_maintenance::cull_reads_current_rules_and_a_preview_validation_failure_preserves_media_rows",
+          "passed": true,
+          "proof": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 3200,
+              "text": "2026-10-06T09:14:44.0360475Z test viewing_maintenance::cull_reads_current_rules_and_a_preview_validation_failure_preserves_media_rows ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+              "line": 1939,
+              "text": "2026-10-06T08:48:00.9574529Z test viewing_maintenance::cull_reads_current_rules_and_a_preview_validation_failure_preserves_media_rows ... ok"
+            }
+          ]
+        },
+        {
+          "name": "viewing_maintenance::real_menu_clear_and_cull_read_live_rules_preserve_declines_and_reopen",
+          "passed": true,
+          "proof": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 2620,
+              "text": "2026-10-06T09:14:12.3015884Z test viewing_maintenance::real_menu_clear_and_cull_read_live_rules_preserve_declines_and_reopen ... ok"
+            }
+          ]
+        },
+        {
+          "name": "viewing_maintenance::retired_hidden_and_successor_owners_cannot_clear_or_cull_current_records",
+          "passed": true,
+          "proof": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 2621,
+              "text": "2026-10-06T09:14:12.3787114Z test viewing_maintenance::retired_hidden_and_successor_owners_cannot_clear_or_cull_current_records ... ok"
+            }
+          ]
+        },
+        {
+          "name": "viewing_maintenance::closing_and_dropping_the_question_releases_its_timer_owner",
+          "passed": true,
+          "proof": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 2619,
+              "text": "2026-10-06T09:14:12.1562720Z test viewing_maintenance::closing_and_dropping_the_question_releases_its_timer_owner ... ok"
+            }
+          ]
+        }
+      ],
+      "caveats": [
+        "No Qt PNG: recorder captures scripted question/Information strings and real DB results as JSON, not a photographed QMessageBox. Fresh question PNG was viewed: all paragraphs and both buttons are readable; no paired Qt screenshot exists.",
+        "Native invalid-rule errors use owned Warning notice rather than reference global Python exception presentation; values exceeding native SQL integer range are rejected atomically.",
+        "Preview min/max Options rules support culling only; missing timed preview-display consumer remains unclaimed, zero extra credit.",
+        "Broader database maintenance, viewing-statistics parents/aliases and unselected clear-all remain unresolved; no credit from shared tests or packet.",
+        "Completion and invalid-error notice states are asserted but not exported as dedicated PNGs.",
+        "Native question buttons are tall but labels and all paragraphs fit. Headless PNG has no OS titlebar; Are you sure? is source metadata, not visible-decoration parity.",
+        "Timer owner/visibility and synchronous one-shot acceptance remain bounded to this owned question; the existing250ms invalidation timer does not establish broad timing or modal-platform parity.",
+        "Linux-only required validation; Windows/macOS deferred and not approved. No parents or aliases earn completion credit."
+      ],
+      "blocking_findings": []
+    }
+  ],
+  "qt_pngs_inspected": [],
+  "no_qt_png_ids": [
+    "audit-options-media-viewer-mouse-behaviour-anchor-mouse-cursor-during-media-viewer-drags",
+    "audit-options-media-viewer-mouse-behaviour-if-set-to-anchor-drags-undo-on-apparent-touchscreen-drag",
+    "audit-options-media-viewer-hovers-hover-windows-allow-a-mouse-wheel-scroll-over-the-taglist-to-propagate-to-the-main-canvas",
+    "audit-media-menu-database-clear-cull-file-viewing-statistics-based-on-current-min-max-values"
+  ],
+  "blocking_render_findings": [],
+  "stale_pending_validation_wording": "Only stale hosted-tests/native-render-inspection-pending wording for these four finite selected leaves is eligible for removal after root assembles final21 publication gate. Preserve all compositor, clock, row geometry, missing exports, exception presentation, platform and unselected-parent limitations.",
+  "actions": "Scratch report only; no builds/local tests, Qt recorder runs, product/canonical edits or claims for clear-all."
+}

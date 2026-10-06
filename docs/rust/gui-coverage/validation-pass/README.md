@@ -3,12 +3,12 @@
 The pass started from merged source `3702cdbee99473cfd7af073aa044fe847f78f405`.
 The prior checkpoint validated `028fd72f` (240 original leaves).
 
-The latest October 6 checkpoint validates `ff858ded1` and publishes **280 signed-off
-original leaves: 20 new in this batch, 40 across today's two checkpoints,
-95 candidates still pending**. Full Linux validation
-passed, including all 696 native GUI tests, and the selected 20 received fresh
+The latest October 6 checkpoint validates `6b66240c1` and publishes **301 signed-off
+original leaves: 21 new in this batch, 61 across today's three checkpoints,
+74 candidates still pending**. Full Linux validation
+passed, including all 696 native GUI tests, and the selected 21 received fresh
 rendered/behavioral review. Windows/macOS are deferred.
-[Durable checkpoint evidence](../checkpoints/ff858ded1/README.md) retains the
+[Durable checkpoint evidence](../checkpoints/6b66240c1/README.md) retains the
 selected images, logs, hashes and review limits. The notes below preserve the
 chronological investigation and failed-run history.
 Source review of all 153 parity manifests is recorded in `review-1.md` through
@@ -18,15 +18,19 @@ previously validated IDs. Structural parents may retain a scoped assessment but
 receive no completed-leaf credit.
 The supplemental `demotions-render-evidence.json` defers seven further claims
 whose defining native behavior lacks assertions, initially leaving 135 candidates.
-Forty are now published; 22 more are prepared for final revalidation and 73
-remain unresolved. No pending candidate receives completion credit.
+Sixty-one are now published; 74 remain unresolved. No pending candidate receives
+completion credit. Favourites was removed from the prepared batch because its
+fresh service-label capture is inconsistent with the selected test service.
 
 The next 22-candidate validation at publication source `4b7455ce1` passed all
 696 GUI tests but failed one media subprocess test before its PID marker was
 observed. The [failed-run evidence](failed-runs/4b7455ce1/README.md) preserves
 the exact outcome. Test transport hardening retains all timing values and
-assertions and leaves production behavior unchanged; the 22 remain pending
-until repaired-source full Linux validation and fresh review pass.
+assertions and leaves production behavior unchanged. Repaired source `6b66240c1`
+passed full Linux validation, including all 67 media unit tests; 21 candidates
+then passed fresh review and were published. Favourites remains deferred. The
+original subprocess failure's precise cause was not recorded, so no particular
+spawn error is claimed as established.
 
 The initial full hosted run is
 https://github.com/jkendall327/hydrus-mine/actions/runs/37396014073.

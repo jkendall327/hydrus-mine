@@ -1,0 +1,11 @@
+{
+  "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+  "run_id": 37438105898,
+  "artifact_id": 11401641954,
+  "image": "/workspace/validation-reviews/ci-6b66240c1/native-renders/most-used-tags-options.png",
+  "sha256": "015bdd9aa535d8a181ae300ffc209d1838f2470b3784e6b6d944cd582fe153a9",
+  "actual_view_image_inspection": true,
+  "visible_service": "downloader tags",
+  "expected_service_from_test": "my tags",
+  "decision": "Excluded from current21; not approved. Bounded settled actual-display assertion proposal remains unapplied until this checkpoint is banked. No persistent state corruption inferred from a potentially unsettled capture."
+}

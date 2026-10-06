@@ -1,0 +1,620 @@
+{
+  "schema_version": 1,
+  "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+  "run_id": 37438105898,
+  "artifact_id": 11401641954,
+  "validation_scope": "linux",
+  "required_platforms": [
+    "linux"
+  ],
+  "deferred_platforms": [
+    "windows",
+    "macos"
+  ],
+  "claims": [
+    {
+      "id": "audit-options-ratings-dialogs-dialogs-inc-dec-rating-height",
+      "manifest": "docs/rust/gui-coverage/parity/rating-context-sizes.json",
+      "approval": true,
+      "validation_scope": "linux",
+      "caveats": [
+        "Preview rating rows stayPartial; service-editor examples do not prove a preview-canvas rating-control consumer.",
+        "Qt reference is Ratings Options (dialog26.90/41.25), native screenshot is Manage Ratings26/41 after real held-left drag. Compare graphic geometry/readability, not equal panel topology or untouched draft stars.",
+        "Native typed number rows differ from Qt spinboxes. Ratings Options style selector/live examples and wider service families remainPartial.",
+        "Independent ranges Dialog icon6..128 and counter12..128; disabled reference ratio-clamp means no coupling. Exact binary rounding, persisted file ratings and service config must stay unchanged.",
+        "Linux validation only; Windows/macOS deferred. No parent, alias, preview-size or broader rating-service completion credit.",
+        "Native image is the Manage Ratings consumer after a real held-left drag with four green/one unfilled numerical circles and zero counter; Qt image is Ratings Options with unchanged gray examples. Font metrics, control arrangement and draft state differ; no whole-panel pixel equality claimed."
+      ],
+      "native_images": [
+        {
+          "path": "/workspace/validation-reviews/ci-6b66240c1/native-renders/rating-dialog-sizes.png",
+          "sha256": "884dd5a3fd6735e733ea933f8f87fc7edaa48aa7c232e01b4b90ce9427fb8638",
+          "name": "rating-dialog-sizes.png",
+          "dimensions": [
+            640,
+            300
+          ],
+          "actually_viewed_fresh": true,
+          "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "run_id": 37438105898,
+          "artifact_id": 11401641954
+        }
+      ],
+      "basis": "Fresh image shows readable per-service like/numerical/counter controls. Exact tests verify saved Dialog26.9/41.25 float preferences, integer26/41 live dimensions and82 counter width, independent ranges/rounding, real held-right versus held-left input, unchanged TouchArea model identity, durable reopen and unchanged file ratings/service configuration after Cancel.",
+      "passing_tests": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/rating_sizes.rs",
+          "name": "sizes_replay_owned_options_and_reach_dialog_and_service_examples_after_reopen",
+          "line": 50,
+          "execution": "passed",
+          "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 2398,
+              "text": "2026-10-06T09:13:03.5902088Z test rating_sizes::sizes_replay_owned_options_and_reach_dialog_and_service_examples_after_reopen ... ok"
+            }
+          ]
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/rating_sizes.rs",
+          "name": "four_sizes_replay_qt_ranges_fractional_values_cancel_and_reopen",
+          "line": 16,
+          "execution": "passed",
+          "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 3047,
+              "text": "2026-10-06T09:14:39.2537463Z test rating_sizes::four_sizes_replay_qt_ranges_fractional_values_cancel_and_reopen ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+              "line": 1786,
+              "text": "2026-10-06T08:47:56.3900336Z test rating_sizes::four_sizes_replay_qt_ranges_fractional_values_cancel_and_reopen ... ok"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "audit-options-ratings-dialogs-dialogs-like-dislike-and-numerical-rating-icon-size",
+      "manifest": "docs/rust/gui-coverage/parity/rating-context-sizes.json",
+      "approval": true,
+      "validation_scope": "linux",
+      "caveats": [
+        "Preview rating rows stayPartial; service-editor examples do not prove a preview-canvas rating-control consumer.",
+        "Qt reference is Ratings Options (dialog26.90/41.25), native screenshot is Manage Ratings26/41 after real held-left drag. Compare graphic geometry/readability, not equal panel topology or untouched draft stars.",
+        "Native typed number rows differ from Qt spinboxes. Ratings Options style selector/live examples and wider service families remainPartial.",
+        "Independent ranges Dialog icon6..128 and counter12..128; disabled reference ratio-clamp means no coupling. Exact binary rounding, persisted file ratings and service config must stay unchanged.",
+        "Linux validation only; Windows/macOS deferred. No parent, alias, preview-size or broader rating-service completion credit.",
+        "Native image is the Manage Ratings consumer after a real held-left drag with four green/one unfilled numerical circles and zero counter; Qt image is Ratings Options with unchanged gray examples. Font metrics, control arrangement and draft state differ; no whole-panel pixel equality claimed."
+      ],
+      "native_images": [
+        {
+          "path": "/workspace/validation-reviews/ci-6b66240c1/native-renders/rating-dialog-sizes.png",
+          "sha256": "884dd5a3fd6735e733ea933f8f87fc7edaa48aa7c232e01b4b90ce9427fb8638",
+          "name": "rating-dialog-sizes.png",
+          "dimensions": [
+            640,
+            300
+          ],
+          "actually_viewed_fresh": true,
+          "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "run_id": 37438105898,
+          "artifact_id": 11401641954
+        }
+      ],
+      "basis": "Fresh image shows readable per-service like/numerical/counter controls. Exact tests verify saved Dialog26.9/41.25 float preferences, integer26/41 live dimensions and82 counter width, independent ranges/rounding, real held-right versus held-left input, unchanged TouchArea model identity, durable reopen and unchanged file ratings/service configuration after Cancel.",
+      "passing_tests": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/rating_sizes.rs",
+          "name": "sizes_replay_owned_options_and_reach_dialog_and_service_examples_after_reopen",
+          "line": 50,
+          "execution": "passed",
+          "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 2398,
+              "text": "2026-10-06T09:13:03.5902088Z test rating_sizes::sizes_replay_owned_options_and_reach_dialog_and_service_examples_after_reopen ... ok"
+            }
+          ]
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/rating_sizes.rs",
+          "name": "four_sizes_replay_qt_ranges_fractional_values_cancel_and_reopen",
+          "line": 16,
+          "execution": "passed",
+          "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 3047,
+              "text": "2026-10-06T09:14:39.2537463Z test rating_sizes::four_sizes_replay_qt_ranges_fractional_values_cancel_and_reopen ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+              "line": 1786,
+              "text": "2026-10-06T08:47:56.3900336Z test rating_sizes::four_sizes_replay_qt_ranges_fractional_values_cancel_and_reopen ... ok"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "audit-options-nested-tag-suggestions-weights",
+      "manifest": "docs/rust/gui-coverage/parity/related-tag-weights.json",
+      "approval": true,
+      "validation_scope": "linux",
+      "caveats": [
+        "No committed QtPNG for this group; actual questions/warnings/rank/header traces in related_tag_weights.json/related_weight_table.json support semantic comparison. Native captures must be inspected for legibility.",
+        "Qt shows both tables; native uses a shared view selector preserving separate sort/selection. Native questions/warnings are blocking inline panes rather than Qt modal child frames.",
+        "Full-corpus local-service query lacks time budgets/Qt large-population sampling, selected-tag exclusion/search modes, repository/alternate service/file-lookup availability. Bounded corpus/binary64 truncation only; large top100 ties/cross-status duplicate maps remain unproved.",
+        "Native weight capture is staged Add probe10000 before child Apply; consumer capture is earlier initial ranked list1154/1154/707, not photographed reranking after save. Exact rerank4616/577/353 is a required test assertion.",
+        "Linux validation only; Windows/macOS deferred. Broader related-tag search controls, suggestion width/layout/default-page, parents and aliases remain outside this original weights leaf.",
+        "No committed Qt weights UI PNG exists: actual Qt namespace questions, sort/header traces and cosine/rank JSON fixtures support semantics; the two fresh native images were inspected for readable controls and visible ranks, without a claim of Qt/native pixel equality."
+      ],
+      "native_images": [
+        {
+          "path": "/workspace/validation-reviews/ci-6b66240c1/native-renders/related_tag_suggestions.png",
+          "sha256": "b596b3855b76dcf9f161c5ce8f5bfb76c8a5ccd1fe51f19e9a4024fa5bd5d2a6",
+          "name": "related_tag_suggestions.png",
+          "dimensions": [
+            1100,
+            700
+          ],
+          "actually_viewed_fresh": true,
+          "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "run_id": 37438105898,
+          "artifact_id": 11401641954
+        },
+        {
+          "path": "/workspace/validation-reviews/ci-6b66240c1/native-renders/related_tag_weights.png",
+          "sha256": "7af17d0881935f6f52709c3eca1027337f2e2100bc4e6c5d88a8fdc7a9a7e005",
+          "name": "related_tag_weights.png",
+          "dimensions": [
+            650,
+            520
+          ],
+          "actually_viewed_fresh": true,
+          "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "run_id": 37438105898,
+          "artifact_id": 11401641954
+        }
+      ],
+      "basis": "Fresh captures expose staged probe10000% search weights and exact initial related rows1154/1154/707. Passing unchanged assertions independently verify child-only staging/parent Cancel, reserved/protected slices, separate search/result sort/selection, field-scoped persistence, live saved rerank4616/577/353 and actual mapping addition only after Manage Tags Apply.",
+      "passing_tests": [
+        {
+          "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "name": "related_weight_drafts_cancel_reopen_and_re_rank_an_already_open_service_panel",
+          "line": 5891,
+          "execution": "passed",
+          "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 2301,
+              "text": "2026-10-06T09:12:42.8598320Z test options_window::related_weight_drafts_cancel_reopen_and_re_rank_an_already_open_service_panel ... ok"
+            }
+          ]
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/related_weight_table.rs",
+          "name": "owned_weight_headers_and_table_switches_replay_qt_without_changing_cancelled_settings",
+          "line": 34,
+          "execution": "passed",
+          "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 2413,
+              "text": "2026-10-06T09:13:05.7576329Z test related_weight_table::owned_weight_headers_and_table_switches_replay_qt_without_changing_cancelled_settings ... ok"
+            }
+          ]
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/related_weights.rs",
+          "name": "namespace_questions_and_detached_tables_match_actual_qt",
+          "line": 6,
+          "execution": "passed",
+          "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 3046,
+              "text": "2026-10-06T09:14:39.1949700Z test related_weights::namespace_questions_and_detached_tables_match_actual_qt ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+              "line": 1785,
+              "text": "2026-10-06T08:47:56.3250784Z test related_weights::namespace_questions_and_detached_tables_match_actual_qt ... ok"
+            }
+          ]
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/related_weights.rs",
+          "name": "search_and_result_weights_change_actual_qt_cosine_ranking_separately",
+          "line": 73,
+          "execution": "passed",
+          "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 3049,
+              "text": "2026-10-06T09:14:39.3382889Z test related_weights::search_and_result_weights_change_actual_qt_cosine_ranking_separately ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+              "line": 1788,
+              "text": "2026-10-06T08:47:56.5048379Z test related_weights::search_and_result_weights_change_actual_qt_cosine_ranking_separately ... ok"
+            }
+          ]
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/related_weights.rs",
+          "name": "real_service_mappings_replay_recorded_ranks_and_never_cross_service",
+          "line": 114,
+          "execution": "passed",
+          "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 3057,
+              "text": "2026-10-06T09:14:39.6256776Z test related_weights::real_service_mappings_replay_recorded_ranks_and_never_cross_service ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+              "line": 1797,
+              "text": "2026-10-06T08:47:56.7219352Z test related_weights::real_service_mappings_replay_recorded_ranks_and_never_cross_service ... ok"
+            }
+          ]
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/related_weights.rs",
+          "name": "options_acceptance_merges_only_weights_and_preserves_live_unrelated_preferences",
+          "line": 182,
+          "execution": "passed",
+          "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 3055,
+              "text": "2026-10-06T09:14:39.5527214Z test related_weights::options_acceptance_merges_only_weights_and_preserves_live_unrelated_preferences ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+              "line": 1794,
+              "text": "2026-10-06T08:47:56.5767729Z test related_weights::options_acceptance_merges_only_weights_and_preserves_live_unrelated_preferences ... ok"
+            }
+          ]
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/related_weights.rs",
+          "name": "binary64_result_rounding_and_sibling_contexts_replay_the_actual_db",
+          "line": 221,
+          "execution": "passed",
+          "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 3054,
+              "text": "2026-10-06T09:14:39.4328201Z test related_weights::binary64_result_rounding_and_sibling_contexts_replay_the_actual_db ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+              "line": 1793,
+              "text": "2026-10-06T08:47:56.5682775Z test related_weights::binary64_result_rounding_and_sibling_contexts_replay_the_actual_db ... ok"
+            }
+          ]
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/related_weights.rs",
+          "name": "folded_header_sorts_add_selection_and_independent_tables_match_actual_qt",
+          "line": 347,
+          "execution": "passed",
+          "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+          "passing_log": [
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+              "line": 3045,
+              "text": "2026-10-06T09:14:39.1938766Z test related_weights::folded_header_sorts_add_selection_and_independent_tables_match_actual_qt ... ok"
+            },
+            {
+              "path": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+              "line": 1784,
+              "text": "2026-10-06T08:47:56.3240055Z test related_weights::folded_header_sorts_add_selection_and_independent_tables_match_actual_qt ... ok"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "selected_count": 3,
+  "approved_count": 3,
+  "parent_alias_support_credit": 0,
+  "favourites_excluded": true,
+  "excluded_id": "audit-options-nested-tag-suggestions-favourites",
+  "excluded_scope_note": "Favourites remains blocked/unapproved and outside this report, regardless6b render. Diagnostic first-frame service-label mismatch provenance is next22-review2-diagnostic-4b7455ce1.json; no persistent product defect is asserted and proposal remains unapplied.",
+  "canonical_edits": false,
+  "builds_run": false,
+  "banked280_unchanged": true,
+  "frozen_reference_denominator": 1812,
+  "ci": {
+    "conclusion": "success",
+    "check_job": 112184900597,
+    "parity_job": 112184901039,
+    "strict_clippy": "required check step passed",
+    "GUI": {
+      "passed": 696,
+      "failed": 0,
+      "ignored": 0
+    },
+    "media_unit": {
+      "passed": 67,
+      "failed": 0
+    },
+    "ZIP_sha256": "bc98decc6ffa86b0cedd7df33899202bb83711bcd2b9e4a40c72892baddd5c67"
+  },
+  "actual_fresh_images_reviewed": [
+    {
+      "path": "/workspace/validation-reviews/ci-6b66240c1/native-renders/rating-dialog-sizes.png",
+      "sha256": "884dd5a3fd6735e733ea933f8f87fc7edaa48aa7c232e01b4b90ce9427fb8638",
+      "name": "rating-dialog-sizes.png",
+      "dimensions": [
+        640,
+        300
+      ],
+      "actually_viewed_fresh": true,
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "run_id": 37438105898,
+      "artifact_id": 11401641954
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-6b66240c1/native-renders/related_tag_suggestions.png",
+      "sha256": "b596b3855b76dcf9f161c5ce8f5bfb76c8a5ccd1fe51f19e9a4024fa5bd5d2a6",
+      "name": "related_tag_suggestions.png",
+      "dimensions": [
+        1100,
+        700
+      ],
+      "actually_viewed_fresh": true,
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "run_id": 37438105898,
+      "artifact_id": 11401641954
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-6b66240c1/native-renders/related_tag_weights.png",
+      "sha256": "7af17d0881935f6f52709c3eca1027337f2e2100bc4e6c5d88a8fdc7a9a7e005",
+      "name": "related_tag_weights.png",
+      "dimensions": [
+        650,
+        520
+      ],
+      "actually_viewed_fresh": true,
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "run_id": 37438105898,
+      "artifact_id": 11401641954
+    }
+  ],
+  "reference_images_actually_reviewed": [
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/rating_context_sizes.png",
+      "sha256": "467a7a81abce0dd6ba7089341a10f79bd23dcb79304ccfff2e80d8f646d159bc",
+      "actually_viewed": true,
+      "dimensions": [
+        900,
+        1100
+      ],
+      "capture_source": "oracle/record_rating_context_sizes.py:17 OUT fixtures/rating_context_sizes.json;32 real RatingsPanel;84 UpdateOptions;85 panel.grab().save OUT.replace(.json,.png)"
+    }
+  ],
+  "support_only_backend_tests": [
+    {
+      "path": "crates/hydrus-store/src/import/decode.rs",
+      "name": "preview_and_dialog_rating_sizes_import_exact_fractional_preferences",
+      "line": 3761,
+      "support_only": true,
+      "execution": "passed",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "passing_log": [
+        {
+          "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+          "line": 3918,
+          "text": "2026-10-06T09:16:08.8938221Z test import::decode::tests::preview_and_dialog_rating_sizes_import_exact_fractional_preferences ... ok"
+        },
+        {
+          "path": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+          "line": 2261,
+          "text": "2026-10-06T08:48:23.0223641Z test import::decode::tests::preview_and_dialog_rating_sizes_import_exact_fractional_preferences ... ok"
+        }
+      ]
+    }
+  ],
+  "source_inputs": [
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/rating-context-sizes.json",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "be49eb2f03f0384286827d7196c4150dea9f347e2bc3d3bbea6224a5e845825d",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/docs/rust/gui-coverage/parity/related-tag-weights.json",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "847716b66081e8b4e578c4bb017b1f4a4e3342eb5c8d87b893980ba50cd3b6cd",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/rating_sizes.rs",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "3bf5b6ecd3cc760858a264f2520a91fdf4752140e67f8542be39819247df4dab",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/rating_sizes.rs",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "5ece5d6dd2a29332eb55fac6a94ec4623e285e339bc90288bcbeef914dfcbb07",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/options_window.rs",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "185eb830a8973ea6935a654761ab5a19014482e2c633ffc5529cb600c0e873f2",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/tests/gui/related_weight_table.rs",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "dacbd125bd25b991c4e726613a1221076b9c2b1a2dac42bfaa9e9e9c77bd95ba",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/tests/model/related_weights.rs",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "f1d42450da6267f01d6a20c7da232a692a468c470fdf7a4ff39b664a3750d0f8",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/src/options.rs",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "0959b5f502712b18a6cf8ebb089f1448770b25b291100468cd2e6fba9acb0ae0",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/manage_ratings_window.rs",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "9c900da7940722fb5ef5cddebb4864b2c995bbc56a88ca3174399db80af529e7",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/related_weights_window.rs",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "d6ebe321f58939982893833a03c58c868992b280dca8dccc83a5be176ffbfdef",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/manage_tags_window.rs",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "35d5ad952782e58e118d37ad092fa1a61de63980d24bede16086e30062e13297",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/src/related_weights.rs",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "c9b60881c793e115c84ee17e0cfbaebd6c5941322dd67ca0b14c6268057b0205",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-store/src/related_tags.rs",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "1597c9dde06340bfdfb77e31f434d1b769c98f0db6d3d44feae5bccbd7aaf250",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_rating_context_sizes.py",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "7603b494d9e62d12c891063b787faa5cec6d96fba6b6ff4f646a391e9d63921c",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/rating_context_sizes.json",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "73e8d6b84b0920fdc09a25c27bef7619a418c54831164ea27b0786ccbe039ba8",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/rating_context_sizes.png",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "467a7a81abce0dd6ba7089341a10f79bd23dcb79304ccfff2e80d8f646d159bc",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/related_tag_weights.json",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "bee08ac5c985fbc9637c1380e2d0479ae4df4e2a74c3903fa06eda3916b9d44e",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/fixtures/related_weight_table.json",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "8bad57adfb5964dc698aa4d4f958fe2ee313c2901166c8e0f958d31bb4089dd5",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/src/rating_sizes.rs",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "1bbc9131e2f9658c38feddb3c8bd2b9d4b1341c7dd8ada528df0dac12aabb53d",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui-model/src/rating_example.rs",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "eaff65e0d9b9abe0d61ac2246f296ca5b440106ca744f2eb09d4a33ba233daf0",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/manage_ratings.slint",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "6db1a9300d2c6e81409156177f3c5d3caec5f8c13d9bae2a466a6b408ac08b80",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/src/related_tags_worker.rs",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "e31403caf8c4a32b7e809d531c701d0fb79c96fc0f4174e0fbf083f01e2740da",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/crates/hydrus-gui/ui/related_weights.slint",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "9a5eef3bea9206bad443c0fff8314be0fe603a78b9ba58818af3e9410c9b15f7",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_related_tag_weights.py",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "c97dcbaf0eb7f297cfd70df34b369797fd1019f6fc412067793219e8db6d9538",
+      "committed_blob_match": true
+    },
+    {
+      "path": "/workspace/hydrus-mine/oracle/record_related_weight_table.py",
+      "source_commit": "6b66240c16164a0021f0dd9e128995a25ed28c1d",
+      "sha256": "31813fb97e5303436828719680cc2628c158a88426b68109120d04c15493ed81",
+      "committed_blob_match": true
+    }
+  ],
+  "input_hashes": [
+    {
+      "path": "/workspace/validation-reviews/ci-6b66240c1/native-render-manifest.json",
+      "sha256": "713e9b0319e0f9757da7933bf130976010b6e1b34ebdd0cec16ef2ea3df01208"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-6b66240c1/ci-evidence.json",
+      "sha256": "16cf480eefb93656ab5b0b039c0044eaf1d78e16192a7441a96f6b434d789bc8"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-6b66240c1/linux-full.log",
+      "sha256": "5cc83ac2fdd75b757b5565371a47916db772a9129025974040bec819b9f5772a"
+    },
+    {
+      "path": "/workspace/validation-reviews/ci-6b66240c1/parity-models.log",
+      "sha256": "dfcecb8f4452d70df4e12b56ef497067e0b1e28474da77d12f16aee7922841ac"
+    },
+    {
+      "path": "/workspace/validation-reviews/final21-review-assignments-6b66240c1.json",
+      "sha256": "df7c687fac6a3d83c240fdd8611265595df501f42df807d074f47fd540d8bdd7"
+    },
+    {
+      "path": "/workspace/validation-reviews/final21-render-checklist-6b66240c1.json",
+      "sha256": "af0fc1f3dd45cff5837903ce140691d71d9e7e5f8aea0130c0e5f7244ed5b4f3"
+    },
+    {
+      "path": "/workspace/validation-reviews/next22-review2-prep-4b7455ce1.json",
+      "sha256": "27cddcc93580fb47c2084b6d5f1bdf63c8678b40920c81865cd6df73798d56f3"
+    },
+    {
+      "path": "/workspace/validation-reviews/next22-review2-diagnostic-4b7455ce1.json",
+      "sha256": "15bbdd7ad6457b876f0b6e62596b44bc820a8c33a5fa5b55e3388baa92895fa6"
+    }
+  ]
+}
