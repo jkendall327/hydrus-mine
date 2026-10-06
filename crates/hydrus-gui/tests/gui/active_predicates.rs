@@ -719,6 +719,10 @@ fn retained_or_system_child_does_not_keep_the_or_or_main_component_alive() {
         .clone_strong();
     let weak_or = child.as_weak();
     let weak_main = ui.as_weak();
+    // Release platform retention to isolate callbacks from the retained system
+    // child. Shown-window retention is not a callback ownership cycle.
+    child.hide().unwrap();
+    ui.hide().unwrap();
     drop(child);
     drop(bound);
     drop(ui);
