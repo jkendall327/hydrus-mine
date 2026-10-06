@@ -1067,6 +1067,14 @@ mod image_cache_tests {
     #[test]
     fn current_pair_pixels_survive_cache_shrink_but_navigation_cannot_reuse_an_evicted_future_copy()
     {
+        struct Restore(Vec<std::path::PathBuf>);
+        impl Drop for Restore {
+            fn drop(&mut self) {
+                for path in &self.0 {
+                    std::fs::rename(path.with_extension("cache-test-held"), path).unwrap();
+                }
+            }
+        }
         let legacy = hydrus_testkit::legacy_fixture("basic");
         let dir = tempfile::tempdir().unwrap();
         hydrus_store::import::import_legacy(
@@ -1109,14 +1117,6 @@ mod image_cache_tests {
                 .unwrap(),
             storage.thumbnail_path(&result.hash).unwrap(),
         ];
-        struct Restore(Vec<std::path::PathBuf>);
-        impl Drop for Restore {
-            fn drop(&mut self) {
-                for path in &self.0 {
-                    std::fs::rename(path.with_extension("cache-test-held"), path).unwrap();
-                }
-            }
-        }
         let mut restore = Restore(Vec::new());
         for path in paths {
             if path.exists() {

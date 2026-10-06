@@ -199,7 +199,7 @@ mod tests {
     use super::*;
     use hydrus_core::ServiceKey;
     use hydrus_store::services::{self, ServiceKind};
-    use slint::{ComponentHandle as _, Model as _};
+    use slint::Model as _;
 
     fn current() -> (TagSyncReviewWindow, Rc<Cell<bool>>) {
         OPEN.with_borrow(|open| {

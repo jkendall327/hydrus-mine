@@ -606,7 +606,7 @@ mod tests {
                             .unwrap();
                         Ok(())
                     })
-                    .unwrap()
+                    .unwrap();
             }
         });
         writer_entered

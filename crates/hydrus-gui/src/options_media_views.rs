@@ -657,9 +657,9 @@ mod tests {
             &Rc::default(),
             &Rc::default(),
             &Rc::default(),
-            &Default::default(),
-            &Default::default(),
-            &Default::default(),
+            &crate::tag_suggestions_window::Slots::default(),
+            &crate::external_call_window::Slots::default(),
+            &crate::options_open_externally::Slots::default(),
             Rc::new(|| {}),
         )
         .unwrap();

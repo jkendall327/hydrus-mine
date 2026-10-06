@@ -45,5 +45,11 @@
   },
   "initial_ci_compiler_lane": "failed: 42 GUI integration-test diagnostics; all reported sites repaired, hosted recheck pending",
   "supplemental_render_demotions": 7,
-  "initial_ci_check_interruption": "Runner shutdown during Clippy at 2026-10-06T01:39:59Z, exit143; Clippy upload/test/render/cache steps skipped. Next full lane bounds Clippy jobs to1."
+  "initial_ci_check_interruption": "Runner shutdown during Clippy at 2026-10-06T01:39:59Z, exit143; Clippy upload/test/render/cache steps skipped. Next full lane bounds Clippy jobs to1.",
+  "second_ci_run": 37400996618,
+  "second_ci_source": "da7223c05bc436ae0e45e9caf612397e73f5ded9",
+  "second_ci_model_lane": "passed: reference and backend tests",
+  "second_ci_platform_builds": "macOS and Windows failed on unused strong vacuum owner field and redundant tag-sync test trait import; both repaired, hosted recheck pending",
+  "second_ci_compiler_lane": "Linux cargo check reports the same two deny-warning library/lib-test issues as macOS and Windows. Both repaired; complete integration compilation and Clippy recheck remain pending.",
+  "second_ci_clippy_lane": "failed: two compiler warnings plus native library/test pedantic diagnostics (condition collapse, lifetime-only test owner access, explicit capture/default types, semicolon, item placement); all reported sites repaired, hosted recheck pending"
 }

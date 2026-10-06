@@ -17,7 +17,8 @@ use slint::{ComponentHandle as _, ModelRc, SharedString, Timer, TimerMode, VecMo
 use crate::{TableRow, VacuumReviewWindow};
 
 struct Open {
-    window: VacuumReviewWindow,
+    // Keep the child alive while callbacks and Confirmation hold weak handles.
+    _window: VacuumReviewWindow,
     state: Rc<Confirmation>,
 }
 struct Family {
@@ -55,7 +56,7 @@ impl Slot {
             .current
             .borrow()
             .as_ref()
-            .map(|open| open.window.clone_strong())
+            .and_then(|open| open.state.window.upgrade())
     }
 }
 /// Only the final shared Bound owner retires the slot; callback clones do not own it.
@@ -248,10 +249,10 @@ fn open_using_with_admission(
         .borrow()
         .as_ref()
         .map(|open| open.state.clone());
-    if let Some(state) = existing {
-        if let Some(window) = state.input() {
-            return window.show().map_err(|error| error.to_string());
-        }
+    if let Some(state) = existing
+        && let Some(window) = state.input()
+    {
+        return window.show().map_err(|error| error.to_string());
     }
     let rows = vacuum::data(store)
         .map_err(|error| error.to_string())?
@@ -357,7 +358,7 @@ fn open_using_with_admission(
             }
         });
     *slot.0.current.borrow_mut() = Some(Open {
-        window: window.clone_strong(),
+        _window: window.clone_strong(),
         state: state.clone(),
     });
     if let Err(error) = window.show() {
@@ -371,6 +372,14 @@ fn open_using_with_admission(
 mod tests {
     use super::*;
     use slint::Model as _;
+
+    #[expect(
+        clippy::used_underscore_binding,
+        reason = "tests inspect the lifetime-only Bound owner"
+    )]
+    fn bound_window(bound: &crate::Bound) -> Option<VacuumReviewWindow> {
+        bound._vacuum_review_owner.0.window()
+    }
 
     fn store() -> (tempfile::TempDir, Arc<Store>) {
         let directory = tempfile::tempdir().unwrap();
@@ -596,7 +605,7 @@ mod tests {
             crate::Pages::single(crate::SearchPage::new(store.clone())),
         );
         menu(&ui);
-        let review = bound._vacuum_review_owner.0.window().unwrap();
+        let review = bound_window(&bound).unwrap();
         start_question(&review);
         let question = review.get_question();
         ui.window()
@@ -605,14 +614,14 @@ mod tests {
         review.invoke_answered(true);
         // Admission closes the review synchronously, before spawning its worker.
         // These assertions detect wrong admission without a sleep-based absence check.
-        assert!(bound._vacuum_review_owner.0.window().is_some());
+        assert!(bound_window(&bound).is_some());
         assert!(review.window().is_visible());
         assert_eq!(review.get_question(), question);
         assert_eq!(recorded_time(&store), None);
         // The separate lifetime timer must also preserve the pending review.
         std::thread::sleep(Duration::from_millis(300));
         slint::platform::update_timers_and_animations();
-        assert!(bound._vacuum_review_owner.0.window().is_some());
+        assert!(bound_window(&bound).is_some());
         assert!(review.window().is_visible());
         assert_eq!(review.get_question(), question);
         ui.invoke_answer(false);
@@ -620,7 +629,7 @@ mod tests {
         assert!(ui.window().is_visible());
         assert_eq!(review.get_question(), question);
         review.invoke_answered(true);
-        assert!(bound._vacuum_review_owner.0.window().is_none());
+        assert!(bound_window(&bound).is_none());
         assert!(!review.window().is_visible());
         // This is the production menu hook and real off-thread SQLite consumer.
         let deadline = std::time::Instant::now() + Duration::from_secs(5);
@@ -657,27 +666,27 @@ mod tests {
         let pages = || crate::Pages::single(crate::SearchPage::new(store.clone()));
         let first = crate::bind(&ui, pages());
         menu(&ui);
-        let old = first._vacuum_review_owner.0.window().unwrap();
+        let old = bound_window(&first).unwrap();
         start_question(&old);
         ui.hide().unwrap();
         old.invoke_answered(true);
-        assert!(first._vacuum_review_owner.0.window().is_none());
+        assert!(bound_window(&first).is_none());
         assert!(!old.window().is_visible());
         assert_eq!(recorded_time(&store), None);
         ui.show().unwrap();
         menu(&ui);
-        let rebound_child = first._vacuum_review_owner.0.window().unwrap();
+        let rebound_child = bound_window(&first).unwrap();
         start_question(&rebound_child);
         let second = crate::bind(&ui, pages());
         assert!(!rebound_child.window().is_visible());
-        assert!(first._vacuum_review_owner.0.window().is_none());
+        assert!(bound_window(&first).is_none());
         menu(&ui);
-        let current = second._vacuum_review_owner.0.window().unwrap();
+        let current = bound_window(&second).unwrap();
         start_question(&current);
         rebound_child.show().unwrap();
         rebound_child.invoke_answered(true);
         rebound_child.invoke_close_clicked();
-        assert!(second._vacuum_review_owner.0.window().is_some());
+        assert!(bound_window(&second).is_some());
         assert!(!current.get_question().is_empty());
         store
             .write(|ctx| {
@@ -704,7 +713,7 @@ mod tests {
             .dispatch_event(slint::platform::WindowEvent::CloseRequested);
         ui.invoke_answer(true);
         assert!(!current.window().is_visible());
-        assert!(second._vacuum_review_owner.0.window().is_none());
+        assert!(bound_window(&second).is_none());
         ui.show().unwrap();
         current.show().unwrap();
         current.invoke_answered(true);
@@ -713,7 +722,7 @@ mod tests {
         rebound_child.hide().unwrap();
         let third = crate::bind(&ui, pages());
         menu(&ui);
-        let kept_child = third._vacuum_review_owner.0.window().unwrap();
+        let kept_child = bound_window(&third).unwrap();
         start_question(&kept_child);
         let kept = third.clone();
         drop(third);
