@@ -200,9 +200,21 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
     dim(ui.get_sidebar_actual_width(), 475.0);
     dim(ui.get_preview_actual_height(), 290.0);
     ui.invoke_tab_chosen(0, 0);
+    let hidden_page = bound.pages.borrow().shown().key;
     sidebar(&ui, TOGGLE);
-    render(&native);
+    let hidden = render(&native);
     assert!(ui.get_sidebar_hidden());
+    dim(ui.get_sidebar_actual_width(), 0.0);
+    assert_eq!(bound.pages.borrow().shown().key, hidden_page);
+    assert_eq!(ui.get_layout_page_key(), hidden_page.to_hex());
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("sidebar-hidden-current-native.png"),
+        &hidden,
+        1400,
+        1000,
+    )
+    .unwrap();
     sidebar(&ui, SAVE);
     let saved = store.read(page_layout::load).unwrap();
     assert_eq!((saved.hpos, saved.vpos), (0, -295));
@@ -246,8 +258,20 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
     render(&native);
     dim(ui.get_preview_actual_height(), 0.0);
     new_page(&ui, &bound);
-    render(&native);
+    let new_page_key = bound.pages.borrow().shown().key;
+    let hidden_preview = render(&native);
     dim(ui.get_preview_actual_height(), 0.0);
+    assert!(ui.get_preview_splitter_hidden());
+    assert_eq!(bound.pages.borrow().shown().key, new_page_key);
+    assert_eq!(ui.get_layout_page_key(), new_page_key.to_hex());
+    headless::save_png(
+        &std::path::Path::new(env!("CARGO_TARGET_TMPDIR"))
+            .join("sidebar-preview-hidden-new-native.png"),
+        &hidden_preview,
+        1400,
+        1000,
+    )
+    .unwrap();
     let w = options(&ui, &bound);
     hide(&w, false);
     w.invoke_apply();

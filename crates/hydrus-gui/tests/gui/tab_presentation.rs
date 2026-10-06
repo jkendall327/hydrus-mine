@@ -196,6 +196,29 @@ fn apply_cancel_reopen_and_four_sides_preserve_real_nested_selection_and_full_na
             .unwrap(),
         defaults
     );
+    let popup_deadline = std::time::Instant::now() + std::time::Duration::from_secs(2);
+    while !ui
+        .get_popups()
+        .iter()
+        .any(|popup| popup.text_1.contains("not a value it can have"))
+    {
+        assert!(
+            std::time::Instant::now() < popup_deadline,
+            "invalid choice must publish its error"
+        );
+        settle(&windows.get(0).unwrap());
+    }
+
+    ui.invoke_popups_dismiss_all();
+    settle(&windows.get(0).unwrap());
+    assert_eq!(ui.get_popups().row_count(), 0);
+    assert!(ui.get_popup_summary().is_empty());
+    assert_eq!(
+        store
+            .read(settings::get::<TabPresentationSettings>)
+            .unwrap(),
+        defaults
+    );
     let fixture = hydrus_testkit::fixture_json("tab_presentation.json");
     let mut previous = None;
     for step in fixture["alignments"].as_array().unwrap() {

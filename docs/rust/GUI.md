@@ -4573,3 +4573,12 @@ fresh independent review at `63f9e35ab` approve exactly these three leaves:
 334 signed off, 94 new across seven October 6 checkpoints, 41 pending. All
 698 GUI and 67 media tests pass. The 15 selected captures and preserved limits
 are recorded in the checkpoint evidence.
+
+The next five-candidate evidence batch adds actual hidden sidebar/new-page preview
+states, ClearAll confirmation/completion, settled blurhash enabled/disabled
+consumers and reopened saved Options, plus cleared/resized/same-marker thumbnail
+backgrounds. Tab orientation captures dismiss the deliberately tested invalid
+choice error through the production popup action after verifying its appearance.
+Existing cancellation, persistence, geometry, pixel and owner-retirement checks
+remain. These are pending full Linux execution and fresh independent image review;
+the published ledger remains 334 signed off with 41 candidates pending.
